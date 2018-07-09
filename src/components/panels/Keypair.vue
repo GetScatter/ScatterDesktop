@@ -3,7 +3,7 @@
 
         <section class="panel display">
             <section class="head">
-                <i class="fa fa-trash-o" @click="deleteKeyPair"></i>
+                <i class="fa fa-trash-o" @click="deleteKeyPair" v-tooltip.left-start="'Delete Keypair'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="keypair">

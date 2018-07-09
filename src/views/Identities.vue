@@ -3,9 +3,7 @@
 
         <section class="panel sub-menu">
 
-            <section class="head">
-                <i class="fa fa-plus-square-o" @click="newIdentity"></i>
-            </section>
+            <sub-menu-head v-on:new="newIdentity" tooltip="New Identity"></sub-menu-head>
 
             <section class="items-list scrollable">
                 <section class="item" v-if="selectedIdentity" :class="{'active':selectedIdentity.publicKey === identity.publicKey}" v-for="identity in identities" @click="selectedIdentity = identity">

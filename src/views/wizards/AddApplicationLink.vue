@@ -47,7 +47,7 @@
                         You can click the <i class="fa fa-refresh"></i> button to get a new unique identifier.<br>
                         There is also a default Application Link with the identifier "scatter" which serves as a starting point and catch-all for Scatter.
                     </section>
-                    <cin :placeholder="'Unique App Key'" dynamic-button="refresh" v-on:dynamic="appLink.nextId()" forced="true" disabled="true" :text="appLink.id"></cin>
+                    <cin :placeholder="'Unique App Key'" dynamic-tooltip="Refresh App Key" dynamic-button="refresh" v-on:dynamic="appLink.nextId()" forced="true" disabled="true" :text="appLink.id"></cin>
                 </section>
 
                 <section :ref="steps.STRATEGY.ref" class="info-box">

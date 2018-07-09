@@ -3,9 +3,7 @@
 
         <section class="panel sub-menu">
 
-            <section class="head">
-                <i class="fa fa-plus-square-o" @click="newAppLink"></i>
-            </section>
+            <sub-menu-head v-on:new="newAppLink" tooltip="New Application Link"></sub-menu-head>
 
             <section class="items-list scrollable">
                 <section class="item"

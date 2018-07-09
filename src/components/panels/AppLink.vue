@@ -3,7 +3,7 @@
 
         <section class="panel display">
             <section class="head">
-                <i class="fa fa-trash-o" @click="deleteAppLink"></i>
+                <i class="fa fa-trash-o" @click="deleteAppLink" v-tooltip.left-start="'Delete Application Link'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="appLink">
@@ -21,7 +21,7 @@
                     <section class="info-box">
                         <figure class="header">Application Link Information</figure>
                         <cin placeholder="App Name" :text="appLink.name" v-on:changed="changed => bind(changed, 'appLink.name')"></cin>
-                        <cin :placeholder="'Unique App Key'" :dynamic-button="canChangeId ? 'refresh' : null" v-on:dynamic="appLink.nextId()" forced="true" disabled="true" :text="appLink.id"></cin>
+                        <cin :placeholder="'Unique App Key'" :dynamic-button="canChangeId ? 'refresh' : null" dynamic-tooltip="Refresh App Key" v-on:dynamic="appLink.nextId()" forced="true" disabled="true" :text="appLink.id"></cin>
 
                         <br>
                         <btn :red="appLink.enabledByDefault" :secondary="!appLink.enabledByDefault" v-on:clicked="toggleEnableByDefault"

@@ -3,7 +3,7 @@
 
         <section class="panel display">
             <section class="head">
-                <i class="fa fa-trash-o" @click="removeIdentity"></i>
+                <i class="fa fa-trash-o" @click="removeIdentity" v-tooltip.left-start="'Delete Identity'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="identity">

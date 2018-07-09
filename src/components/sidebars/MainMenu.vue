@@ -7,7 +7,7 @@
                     <figure class="grand-hotel">Scatter</figure>
                 </section>
                 <section class="window-actions">
-                    <i class="fa fa-times" @click="minimize"></i>
+                    <i class="fa fa-arrow-down" v-tooltip="'Minimize to Tray'" @click="minimize"></i>
                 </section>
             </section>
 

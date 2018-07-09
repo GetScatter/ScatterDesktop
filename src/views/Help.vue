@@ -71,6 +71,7 @@
         KEYPAIR:{title:'Import Keypair', description:'Learn how to import a keypair.', type:SubMenuTypes.WIZARDS},
         LINK_ACCOUNT:{title:'Link Blockchain Account', description:'Link a blockchain account to a specific network.', type:SubMenuTypes.WIZARDS},
         NETWORK:{title:'Add Blockchain Network', description:'Networks allow you to connect to various blockchains.', type:SubMenuTypes.WIZARDS},
+        WEB_EXTENSION:{title:'Web Extension', description:'Get the web extension for various browsers.', type:SubMenuTypes.WIZARDS},
         APPLICATIONS:{title:'Add Application Link', description:'Application links allow other apps to talk to Scatter.', type:SubMenuTypes.WIZARDS},
 
         // LEARN
@@ -103,6 +104,7 @@
                 if(option.title === HelpOptions.KEYPAIR.title) return this.$router.push({name:RouteNames.WIZ_SETUP_KEYPAIR});
                 if(option.title === HelpOptions.LINK_ACCOUNT.title) return this.$router.push({name:RouteNames.WIZ_LINK_BLOCKCHAIN_ACCOUNT});
                 if(option.title === HelpOptions.NETWORK.title) return this.$router.push({name:RouteNames.WIZ_ADD_BLOCKCHAIN_NETWORK});
+                if(option.title === HelpOptions.WEB_EXTENSION.title) return this.$router.push({name:RouteNames.WIZ_WEB_EXTENSION});
                 if(option.title === HelpOptions.APPLICATIONS.title) return this.$router.push({name:RouteNames.WIZ_ADD_APPLICATION_LINK});
             }
         }

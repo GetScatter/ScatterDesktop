@@ -134,7 +134,7 @@ a {
       font-weight:600;
     }
     .description {
-      font-size:11px;
+      font-size:13px;
       margin-top:3px;
 
       &.red {
@@ -162,7 +162,7 @@ a {
   }
 
   .description {
-    font-size: 13px;
+    font-size: 16px;
     color: $mid-dark-grey;
 
     .red {
@@ -243,3 +243,16 @@ $speed:0.5s;
 .slide-left-leave-to {      transform: translate(-100%, 0);     }
 .slide-right-enter {        transform: translate(-100%, 0);     }
 .slide-right-leave-to {     transform: translate(100%, 0);      }
+
+
+.tooltip {
+  z-index: 10000;
+  padding:5px 10px;
+  background:$dark-grey;
+  border-radius:4px;
+  color:#fff;
+
+  .left-start {
+    margin-right:10px;
+  }
+}

@@ -91,7 +91,7 @@
                     </section>
 
                     <cin placeholder="Chain ID" :text="network.chainId"
-                         :dynamic-button="'chain'" v-on:dynamic="fetchChainId" v-on:changed="changed => bind(changed, 'network.chainId')"></cin>
+                         :dynamic-button="'chain'" dynamic-tooltip="Fetch Chain ID" v-on:dynamic="fetchChainId" v-on:changed="changed => bind(changed, 'network.chainId')"></cin>
                 </section>
 
                 <section :ref="steps.SAVE.ref" class="info-box">

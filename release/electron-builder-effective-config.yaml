@@ -1,0 +1,50 @@
+directories:
+  output: release
+  buildResources: resources
+productName: Scatter Desktop
+appId: com.get-scatter.server
+artifactName: '${os}-${productName}-${version}-${arch}.${ext}'
+asar: true
+files:
+  - dist/**/*
+  - static/**/*
+  - electron.js
+  - package.json
+publish:
+  provider: github
+nsis:
+  allowToChangeInstallationDirectory: true
+  oneClick: false
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: Scatter
+dmg:
+  icon: static/icons/icon.icns
+  contents:
+    - x: 110
+      'y': 150
+    - x: 240
+      'y': 150
+      type: link
+      path: /Applications
+win:
+  icon: static/icons/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+linux:
+  category: Network
+  desktop:
+    Name: Scatter
+    GenericName: Scatter Desktop
+    X-GNOME-FullName: scatter
+    Comment: Scatter desktop signature server.
+    Type: Application
+    Terminal: 'false'
+    StartupNotify: 'false'
+    Categories: Network;
+  icon: static/icons
+  target: AppImage
+electronVersion: 2.0.3

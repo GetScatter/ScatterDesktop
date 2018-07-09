@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import VTooltip from 'v-tooltip'
 
 import VueRouter from 'vue-router'
 import {Routing} from './Routing';
@@ -47,6 +48,9 @@ export default class VueInitializer {
 
     setupVuePlugins(){
         Vue.use(VueRouter);
+        Vue.use(VTooltip, {
+            defaultOffset:5
+        });
     }
 
     registerComponents(components){

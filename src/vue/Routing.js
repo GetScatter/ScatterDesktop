@@ -11,6 +11,7 @@ import LinkBlockchainAccount from '../views/wizards/LinkBlockchainAccount.vue'
 import AddBlockchainNetwork from '../views/wizards/AddBlockchainNetwork.vue'
 import AddApplicationLink from '../views/wizards/AddApplicationLink.vue'
 import ImportKeypair from '../views/wizards/ImportKeypair.vue'
+import GetWebExtensions from '../views/wizards/GetWebExtensions.vue'
 
 
 export const RouteNames = {
@@ -32,6 +33,7 @@ export const RouteNames = {
     WIZ_LINK_BLOCKCHAIN_ACCOUNT:'wiz_link_block_acc',
     WIZ_ADD_BLOCKCHAIN_NETWORK:'wiz_add_block_net',
     WIZ_ADD_APPLICATION_LINK:'wiz_add_app_link',
+    WIZ_WEB_EXTENSION:'wiz_web_ext',
 };
 
 const RouteViews = {
@@ -49,6 +51,7 @@ const RouteViews = {
     [RouteNames.WIZ_LINK_BLOCKCHAIN_ACCOUNT]:LinkBlockchainAccount,
     [RouteNames.WIZ_ADD_BLOCKCHAIN_NETWORK]:AddBlockchainNetwork,
     [RouteNames.WIZ_ADD_APPLICATION_LINK]:AddApplicationLink,
+    [RouteNames.WIZ_WEB_EXTENSION]:GetWebExtensions,
 };
 
 export const RouteDepth = {

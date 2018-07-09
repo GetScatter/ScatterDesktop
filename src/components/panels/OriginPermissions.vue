@@ -3,7 +3,7 @@
 
         <section class="panel display">
             <section class="head">
-                <i class="fa fa-trash-o" @click="removeAllPermissions"></i>
+                <i class="fa fa-trash-o" @click="removeAllPermissions" v-tooltip.left-start="'Delete All Permissions'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="perms.length">

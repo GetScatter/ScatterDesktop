@@ -3,9 +3,7 @@
 
         <section class="panel sub-menu">
 
-            <section class="head">
-                <i class="fa fa-plus-square-o" @click="newItem"></i>
-            </section>
+            <sub-menu-head v-on:new="newItem" :tooltip="`New ${this.subMenuType}`"></sub-menu-head>
 
             <section class="items-list scrollable">
                 <section class="item-type-switcher">
@@ -51,8 +49,8 @@
     import Network from '../models/Network'
 
     const SubMenuTypes = {
-        KEYS:'keys',
-        NETWORKS:'networks'
+        KEYS:'Keypair',
+        NETWORKS:'Network'
     };
 
     export default {
@@ -70,7 +68,7 @@
                 'keypairs',
                 'accounts',
                 'networks'
-            ])
+            ]),
         },
         mounted(){
             this.bindSelected();

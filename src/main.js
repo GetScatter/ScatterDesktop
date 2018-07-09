@@ -42,6 +42,7 @@ import InputComponent from './components/reusable/InputComponent.vue'
 import ButtonComponent from './components/reusable/ButtonComponent.vue'
 import TagsComponent from './components/reusable/TagsComponent.vue'
 import SelectComponent from './components/reusable/SelectComponent.vue'
+import SubMenuHead from './components/reusable/SubMenuHead.vue'
 
 
 import SocketService from './services/SocketService'
@@ -63,6 +64,7 @@ class Main {
             {tag:'btn', vue:ButtonComponent},
             {tag:'tags', vue:TagsComponent},
             {tag:'sel', vue:SelectComponent},
+            {tag:'sub-menu-head', vue:SubMenuHead},
 
             // PANELS
             {tag:'identity', vue:Identity},

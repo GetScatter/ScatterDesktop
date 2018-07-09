@@ -3,7 +3,7 @@
 
         <section class="panel display">
             <section class="head">
-                <i class="fa fa-trash-o" @click="deleteNetwork"></i>
+                <i class="fa fa-trash-o" @click="deleteNetwork" v-tooltip.left-start="'Delete Network'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="network">
@@ -39,7 +39,7 @@
                         <btn text="https" :disabled="isEndorsed" :secondary="network.protocol !== 'https'" v-on:clicked="network.protocol = 'https'"></btn>
 
                         <cin :disabled="isEndorsed" placeholder="Chain ID" :text="network.chainId"
-                             :dynamic-button="isEndorsed ? null : 'chain'" v-on:dynamic="fetchChainId" v-on:changed="changed => bind(changed, 'network.chainId')"></cin>
+                             :dynamic-button="isEndorsed ? null : 'chain'" dynamic-tooltip="Fetch Chain ID" v-on:dynamic="fetchChainId" v-on:changed="changed => bind(changed, 'network.chainId')"></cin>
 
 
 

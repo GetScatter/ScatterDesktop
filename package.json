@@ -35,7 +35,9 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "devpack": "npm run build && npm run pack",
-    "release": "npm run build && npm run dist"
+    "release-win": "npm run build && electron-builder --win",
+    "release-linux": "npm run build && electron-builder --linux",
+    "release-mac": "npm run build && electron-builder --mac"
   },
   "dependencies": {
     "aes-oop": "^1.0.4",
@@ -49,6 +51,7 @@
     "node-rsa": "^1.0.0",
     "scrypt-async": "^2.0.0",
     "socket.io": "^2.1.1",
+    "v-tooltip": "^2.0.0-rc.33",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
