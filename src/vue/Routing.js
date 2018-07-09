@@ -5,6 +5,12 @@ import Login from '../views/Login.vue'
 import Settings from '../views/Settings.vue'
 import PopOut from '../views/PopOut.vue'
 import Permissions from '../views/Permissions.vue'
+import Help from '../views/Help.vue'
+import SetupAnIdentity from '../views/wizards/SetupAnIdentity.vue'
+import LinkBlockchainAccount from '../views/wizards/LinkBlockchainAccount.vue'
+import AddBlockchainNetwork from '../views/wizards/AddBlockchainNetwork.vue'
+import AddApplicationLink from '../views/wizards/AddApplicationLink.vue'
+import ImportKeypair from '../views/wizards/ImportKeypair.vue'
 
 
 export const RouteNames = {
@@ -13,11 +19,19 @@ export const RouteNames = {
     BLOCKCHAINS:'blockchains',
     LINKED_APPS:'linkedApps',
     PERMISSIONS:'permissions',
+    HELP:'help',
     SETTINGS:'settings',
     NOT_IDENTITIES:'not_identities',
 
     // POPOUT
     POP_OUT:'popout',
+
+    // WIZARDS
+    WIZ_SETUP_ID:'wiz_setup_id',
+    WIZ_SETUP_KEYPAIR:'wiz_setup_keypair',
+    WIZ_LINK_BLOCKCHAIN_ACCOUNT:'wiz_link_block_acc',
+    WIZ_ADD_BLOCKCHAIN_NETWORK:'wiz_add_block_net',
+    WIZ_ADD_APPLICATION_LINK:'wiz_add_app_link',
 };
 
 const RouteViews = {
@@ -26,9 +40,15 @@ const RouteViews = {
     [RouteNames.BLOCKCHAINS]:Blockchains,
     [RouteNames.LINKED_APPS]:LinkedApps,
     [RouteNames.PERMISSIONS]:Permissions,
+    [RouteNames.HELP]:Help,
     [RouteNames.SETTINGS]:Settings,
     [RouteNames.NOT_IDENTITIES]:Identities,
     [RouteNames.POP_OUT]:PopOut,
+    [RouteNames.WIZ_SETUP_ID]:SetupAnIdentity,
+    [RouteNames.WIZ_SETUP_KEYPAIR]:ImportKeypair,
+    [RouteNames.WIZ_LINK_BLOCKCHAIN_ACCOUNT]:LinkBlockchainAccount,
+    [RouteNames.WIZ_ADD_BLOCKCHAIN_NETWORK]:AddBlockchainNetwork,
+    [RouteNames.WIZ_ADD_APPLICATION_LINK]:AddApplicationLink,
 };
 
 export const RouteDepth = {
@@ -37,6 +57,7 @@ export const RouteDepth = {
     [RouteNames.BLOCKCHAINS]:1,
     [RouteNames.LINKED_APPS]:2,
     [RouteNames.PERMISSIONS]:3,
+    [RouteNames.HELP]:4,
     [RouteNames.SETTINGS]:7,
     [RouteNames.NOT_IDENTITIES]:3,
 };

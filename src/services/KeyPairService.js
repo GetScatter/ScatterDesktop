@@ -90,10 +90,10 @@ export default class KeyPairService {
         context[Actions.SET_SCATTER](scatter).then(() => callback());
     }
 
-    static removeKeyPair(keypair, context, callback){
-        const scatter = context.scatter.clone();
+    static removeKeyPair(keypair, callback){
+        const scatter = store.state.scatter.clone();
         scatter.keychain.removeKeyPair(keypair);
-        context[Actions.SET_SCATTER](scatter).then(() => callback());
+        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
     }
 
     static getKeyPairFromPublicKey(publicKey, decrypt = false){

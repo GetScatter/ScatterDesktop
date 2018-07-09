@@ -39,5 +39,21 @@ export default class AppLink {
         return p;
     }
     clone(){ return AppLink.fromJson(JSON.parse(JSON.stringify(this))) }
+    static defaultAppLink(){
+        return AppLink.fromJson({
+            id:'scatter',
+            name:'Scatter Default App Link',
+            enabledByDefault:true,
+            isListening:true
+        })
+    }
+
+    isDefault(){
+        return this.id === 'scatter';
+    }
+
+    nextId(){
+        this.id = IdGenerator.text(64);
+    }
 
 }

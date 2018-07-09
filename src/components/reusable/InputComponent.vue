@@ -1,6 +1,6 @@
 <template>
     <section class="input" :class="{'forced':forced}">
-        <input :maxlength="maxlength || -1" :class="{'hide-date':type === 'date' && !input.length}" :disabled="disabled || false" :type="type || 'text'" v-model="input" />
+        <input @blur="blur" :maxlength="maxlength || -1" :class="{'hide-date':type === 'date' && !input.length}" :disabled="disabled || false" :type="type || 'text'" v-model="input" />
         <label :class="{'hidden':input.toString().length, 'for-disabled':disabled || false}">{{placeholder}}</label>
         <label v-if="forced" class="forced">{{placeholder}}</label>
         <figure class="dynamic-button" v-if="dynamicButton" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
@@ -17,6 +17,7 @@
         data(){ return { input:this.text || '' }},
         methods: {
             emit(){ this.$emit('changed', this.input) },
+            blur(){ this.$emit('blur') },
             emitDynamicButton(){ this.$emit('dynamic') },
         },
         props:['placeholder', 'type', 'maxlength', 'text', 'disabled', 'forced', 'copy', 'dynamicButton'],

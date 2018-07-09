@@ -50,10 +50,10 @@
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'key'},
                 {route:RouteNames.LINKED_APPS, name:'Applications', icon:'plug'},
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'shield'},
+                {route:RouteNames.HELP, name:'Help', icon:'question-circle', disabled:false},
                 {route:RouteNames.SETTINGS, name:'Settings', icon:'gear'},
                 {route:RouteNames.NOT_IDENTITIES, name:'RIDL ( Coming Soon )', icon:'star-half-o', disabled:true},
                 {route:RouteNames.NOT_IDENTITIES, name:'Alerts ( Coming Soon )', icon:'bell', disabled:true},
-                {route:RouteNames.NOT_IDENTITIES, name:'Help ( Coming Soon )', icon:'question-circle', disabled:true},
             ]
         }},
         methods:{

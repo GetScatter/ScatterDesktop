@@ -17,6 +17,9 @@
         </section>
 
         <origin-perms v-on:emptied="selectNextOrigin" :key="selectedOrigin" :origin="selectedOrigin" v-if="selectedOrigin"></origin-perms>
+        <nothing-here v-if="!origins.length" :description="`
+            As you start using Scatter to interact with applications and websites this will fill up and you will be able to manage your permissions for Identities and Contracts.
+        `"></nothing-here>
 
     </section>
 </template>

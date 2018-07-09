@@ -50,12 +50,7 @@ export const actions = {
             firstIdentity.name = 'MyFirstIdentity';
             scatter.keychain.updateOrPushIdentity(firstIdentity);
 
-            const catchAllAppLink = AppLink.fromJson({
-                id:'scatter',
-                name:'Scatter Default App Link',
-                enabledByDefault:true,
-                isListening:true
-            });
+            const catchAllAppLink = AppLink.defaultAppLink();
 
             scatter.keychain.linkedApps.push(catchAllAppLink);
             SocketService.initialize();

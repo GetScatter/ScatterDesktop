@@ -19,7 +19,10 @@
         </section>
 
 
-        <app-link v-if="selectedApp" :key="selectedApp.id" :app="selectedApp"></app-link>
+        <app-link v-if="selectedApp" :key="selectedApp.id" v-on:deleted="nextAppLink" :app="selectedApp"></app-link>
+        <nothing-here v-if="!linkedApps.length" :description="`
+            You have no Application Links, and without them no applications can use your Scatter.
+        `" button-text="Create Application Link" button-fn="newAppLink"></nothing-here>
 
     </section>
 </template>
@@ -44,12 +47,17 @@
             ])
         },
         mounted(){
-            if(this.linkedApps.length) this.selectedApp = this.linkedApps[0].clone();
-            else this.selectedApp = AppLink.placeholder();
+            this.nextAppLink();
         },
         methods: {
+            nextAppLink(){
+                if(this.linkedApps.length) this.selectedApp =  this.linkedApps[0].clone();
+                else this.newAppLink();
+            },
             newAppLink(){
-                this.selectedApp = AppLink.placeholder();
+                this.selectedApp = this.linkedApps.find(x => x.isDefault())
+                    ? AppLink.placeholder()
+                    : AppLink.defaultAppLink();
             }
         }
     }

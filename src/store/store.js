@@ -5,6 +5,7 @@ import {mutations} from './mutations';
 import {actions} from './actions';
 
 import {PopupDisplayTypes} from '../models/popups/Popup'
+import Scatter from '../models/Scatter';
 
 Vue.use(Vuex);
 
@@ -19,7 +20,7 @@ const state = {
 
 const getters = {
     // App State
-    unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && !state.scatter.isEncrypted(),
+    unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && state.scatter instanceof Scatter && !state.scatter.isEncrypted(),
 
     // Keychain centric
     identities:state =>     state.scatter.keychain.identities || [],

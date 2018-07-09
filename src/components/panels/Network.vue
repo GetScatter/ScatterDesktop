@@ -87,7 +87,6 @@
             ])
         },
         mounted(){
-            console.log('this.net', this.net);
             this.network = this.net.clone();
             PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network).then(x => this.isEndorsed = x);
         },
@@ -117,6 +116,7 @@
                 const scatter = this.scatter.clone();
                 scatter.settings.updateOrPushNetwork(this.network);
                 this[Actions.SET_SCATTER](scatter);
+                PopupService.push(Popup.snackbar("Network Saved!", "check"));
 
             },
             deleteNetwork(){
@@ -130,6 +130,7 @@
                         scatter.settings.removeNetwork(this.network);
                         await this[Actions.SET_SCATTER](scatter);
                         this.network = Network.placeholder();
+                        PopupService.push(Popup.snackbar("Network Deleted!", "check"));
                     }
                 });
             },
@@ -140,7 +141,8 @@
         props:['net'],
         watch:{
             network:{
-                handler(){
+                handler(a,b){
+                    if(!b) return;
                     clearTimeout(saveTimeout);
                     saveTimeout = setTimeout(() => {
                         this.save();

@@ -141,7 +141,6 @@ export default class EOS extends Plugin {
 
             const data = abi.fromBuffer(action.name, action.data);
             const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
-            console.log('actionAbi', actionAbi);
             let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
 
             if(ricardian){

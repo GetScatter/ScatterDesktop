@@ -41,7 +41,6 @@ const socketHandler = (socket) => {
 
 
     socket.on('identify', data => {
-        console.log('identify', data);
         // Only specified origins
         if(!data.hasOwnProperty('plugin') || data.plugin.length < 3) return false;
         // Only specified pins ( 64 char min, RSA type pkcs8 public key )
@@ -105,7 +104,6 @@ const socketHandler = (socket) => {
 
 
     socket.on('disconnect', () => {
-        console.log('someone disconnected')
         appLinkConnections[getAppLink().id] =
             (appLinkConnections[getAppLink().id] || 1) - 1;
     });

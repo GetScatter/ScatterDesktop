@@ -233,7 +233,6 @@ export default class Identity {
      * @param selectedLocation
      */
     static asReturnedFields(requiredFields, identity, selectedLocation = null){
-        console.log('identity1', identity);
         const returnedFields = identity.asOnlyRequiredFields(requiredFields, selectedLocation);
         delete returnedFields.hash;
         delete returnedFields.name;

@@ -57,8 +57,6 @@ export default class BackupService {
         const backupLocation = store.state.scatter.settings.backupLocation;
         if(!backupLocation || !backupLocation.length) return false;
 
-        console.log('saving');
-
         await saveFile(backupLocation);
     }
 

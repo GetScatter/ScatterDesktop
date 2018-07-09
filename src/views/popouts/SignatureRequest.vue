@@ -184,7 +184,6 @@
             },
         },
         mounted(){
-            console.log(this.payload)
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
             if(!id) return this.returnResult(Error.identityMissing());
             this.identity = Identity.fromJson(id);
@@ -235,7 +234,6 @@
                 this.scrollTop = e.target.scrollTop;
             },
             returnResult(result){
-                console.log('res', result)
                 this.$emit('returned', result);
             },
             accepted(){
@@ -282,7 +280,6 @@
                 if(whitelist.props.includes(prop))
                     whitelist.props = whitelist.props.filter(x => x !== prop);
                 else whitelist.props.push(prop);
-                console.log(whitelist, prop);
             }
 
         },

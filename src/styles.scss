@@ -72,6 +72,10 @@ a {
       &:hover {
         color:$dark-blue;
       }
+
+      &.blue {
+        color:$dark-blue;
+      }
     }
   }
 
@@ -160,6 +164,10 @@ a {
   .description {
     font-size: 13px;
     color: $mid-dark-grey;
+
+    .red {
+      color:$red;
+    }
   }
 
   .split-panels {
@@ -175,11 +183,6 @@ a {
         margin-right: 20px;
       }
     }
-
-
-
-
-
   }
 
   .info-box {

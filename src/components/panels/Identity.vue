@@ -8,7 +8,7 @@
 
             <section class="selected-item scrollable" v-if="identity">
 
-                <figure class="name" :class="{'bad-name':badIdentityName()}">{{identity.name.length ? identity.name : 'Identity Name Required'}}</figure>
+                <figure class="name" :class="{'bad-name':!isValidName}">{{identity.name.length ? identity.name : 'Identity Name Required'}}</figure>
                 <figure class="description">This identity is linked to 23 apps.</figure>
 
                 <section class="split-panels left">
@@ -58,7 +58,7 @@
                              :parser="(obj) => obj.name"
                              v-on:changed="changed => bind(changed, 'selectedLocation.country')"></sel>
 
-                        <cin placeholder="State" maxlength="2" :text="selectedLocation.state" v-on:changed="changed => bind(changed, 'selectedLocation.state')"></cin>
+                        <cin placeholder="State" v-if="selectedLocation.country.code === 'US'" maxlength="2" :text="selectedLocation.state" v-on:changed="changed => bind(changed, 'selectedLocation.state')"></cin>
                     </section>
                 </section>
             </section>
@@ -94,16 +94,16 @@
             ...mapGetters([
                 'networks',
                 'accounts',
-            ])
+            ]),
+            isValidName(){
+                return this.identity && Identity.nameIsValid(this.identity.name);
+            }
         },
         mounted(){
             this.identity = this.id.clone();
             this.selectedLocation = this.identity.locations[0];
         },
         methods: {
-            badIdentityName(){
-                return !this.identity.name.length
-            },
             addLocation(){
                 const location = LocationInformation.placeholder();
                 this.identity.locations.push(location);
@@ -120,13 +120,12 @@
                 ), async accepted => {
                     if(!accepted) return;
 
-                    const replacementIdentity = Identity.placeholder();
-                    await replacementIdentity.initialize(this.scatter.hash);
 
                     const scatter = this.scatter.clone();
                     scatter.keychain.removeIdentity(this.identity);
                     this[Actions.SET_SCATTER](scatter);
-                    this.identity = replacementIdentity;
+                    this.$emit('deleted');
+                    PopupService.push(Popup.snackbar("Identity Removed!", "check"));
                 });
 
             },
@@ -138,14 +137,12 @@
                 if(this.scatter.keychain.identities.find(id => id.publicKey !== this.identity.publicKey && id.name.toLowerCase() === this.identity.name.toLowerCase()))
                     return;
 
-                if(this.badIdentityName())
-                    return;
-
-                console.log('saving');
+                if(!this.isValidName) return;
 
                 const scatter = this.scatter.clone();
                 scatter.keychain.updateOrPushIdentity(this.identity);
                 this[Actions.SET_SCATTER](scatter);
+                PopupService.push(Popup.snackbar("Identity Saved!", "check"));
             },
             ...mapActions([
                 Actions.SET_SCATTER
@@ -154,12 +151,12 @@
         props:['id'],
         watch:{
             'identity':{
-                handler(){
-                    console.log('changed');
+                handler(a,b){
+                    if(!b) return;
                     clearTimeout(saveTimeout);
                     saveTimeout = setTimeout(() => {
                         this.save();
-                    }, 1000);
+                    }, 500);
                 },
                 deep:true
             }

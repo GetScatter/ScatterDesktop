@@ -7,19 +7,17 @@
             </section>
 
             <section class="selected-item scrollable">
-                <figure class="name">Select your Language</figure>
-                <figure class="description">Scatter is available in multiple languages, because blockchain is all about communities from all around the world.</figure>
 
-                <section class="info-box">
+                <figure class="name">{{title ? title : 'Nothing Here Yet.'}}</figure>
+                <figure class="description">
+                    {{description}}
+                </figure>
 
 
-                    <sel :placeholder="'Language'"
-                         :options="languages"
-                         :selected="selectedLanguage"
-                         :parser="x => x"
-                         v-on:changed="selectLanguage"></sel>
-
+                <section class="info-box" v-if="buttonText">
+                    <btn :text="buttonText" v-on:clicked="buttonFn"></btn>
                 </section>
+
 
             </section>
         </section>
@@ -30,33 +28,28 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
-    import {LANG} from '../../localization/locales';
 
     export default {
         data () {return {
-            languages:LANG
+
         }},
         computed:{
             ...mapState([
                 'scatter'
             ]),
             ...mapGetters([
-                'networks',
-            ]),
-            selectedLanguage(){
-                return LANG.ENGLISH
-            }
+
+            ])
         },
         mounted(){
+
         },
         methods: {
-            selectLanguage(language){
-
-            },
             ...mapActions([
                 Actions.SET_SCATTER
             ])
         },
+        props:['title', 'description', 'buttonText', 'buttonFn'],
     }
 </script>
 

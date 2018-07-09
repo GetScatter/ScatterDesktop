@@ -15,7 +15,7 @@
         </section>
 
 
-        <section class="snackbar-holder">
+        <section class="snackbar-holder" :class="{'has-snackbar':snackbars.length}">
             <transition-group name="snackbar-transition">
                 <snackbar :popup="popup" v-for="popup in snackbars" :key="popup.id"></snackbar>
             </transition-group>
@@ -74,8 +74,11 @@
         left:0;
         right:0;
         text-align:center;
-        padding-bottom:20px;
         z-index:10001;
+
+        &.has-snackbar {
+            padding-bottom:20px;
+        }
     }
 
     .pop-in {

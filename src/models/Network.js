@@ -36,6 +36,7 @@ export default class Network {
     isEmpty(){ return !this.host.length; }
     isValid(){ return (this.host.length && this.port) || this.chainId.length }
     setPort(){
+        if(!this.port) this.port = 80;
         if(![80,443].includes(parseInt(this.port))) return;
         this.port = this.protocol === 'http' ? 80 : 443;
     }

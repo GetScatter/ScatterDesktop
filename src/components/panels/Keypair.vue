@@ -9,7 +9,7 @@
             <section class="selected-item scrollable" v-if="keypair">
 
                 <figure class="name" :class="{'bad-name':badKeypairName()}">{{keypair.name.length ? keypair.name : 'Keypair Name Required'}}</figure>
-                <figure v-if="isNew()" class="description">
+                <figure v-if="isNew" class="description">
                     Keypairs are what allow you to interact with the blockchain, and they can also serve as a much more secure way of interacting with
                     things on the internet.
                 </figure>
@@ -20,32 +20,32 @@
 
                         <cin placeholder="Keypair Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
 
-                        <sel v-if="isNew()" :selected="keypair.blockchain.toUpperCase()"
+                        <sel v-if="isNew" :selected="keypair.blockchain.toUpperCase()"
                              :options="blockchains"
                              :parser="blockchain => blockchain.key.toUpperCase()"
                              v-on:changed="blockchainChanged" :key="1"></sel>
 
-                        <cin v-if="isNew()" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                        <cin v-if="isNew" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                         <cin placeholder="Public Key" disabled="true" :text="keypair.publicKey"></cin>
 
                         <br>
-                        <btn v-if="isNew()" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
-                        <btn v-if="isNew() && keypair.publicKey.length" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
-                        <btn v-if="!isNew()" v-on:clicked="copyKeyPair" text="Copy Public Key" secondary="true"></btn>
-                        <btn v-on:clicked="saveKeyPair" :text="isNew() ? 'Save Keypair' : 'Update Name'" style="float:right;"></btn>
+                        <btn v-if="isNew" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
+                        <btn v-if="isNew && keypair.publicKey.length" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
+                        <btn v-if="!isNew" v-on:clicked="copyKeyPair" text="Copy Public Key" secondary="true"></btn>
+                        <btn v-on:clicked="saveKeyPair" :text="isNew ? 'Save Keypair' : 'Update Name'" style="float:right;"></btn>
                     </section>
                 </section>
 
-                <section class="split-panels" v-if="!isNew()">
+                <section class="split-panels" v-if="!isNew">
                     <section class="info-box">
                         <figure class="header">Import Accounts</figure>
 
                         <sel :selected="selectedNetwork.name"
-                             :options="availableNetworks()"
+                             :options="availableNetworks"
                              :parser="network => network.name"
                              v-on:changed="changed => bind(changed, 'selectedNetwork')" :key="1"></sel>
 
-                        <section v-if="isImportable()">
+                        <section v-if="isImportable">
                             <br>
                             <btn v-on:clicked="fetchAccounts" text="Fetch Accounts"></btn>
 
@@ -53,8 +53,8 @@
                                 <br>
                                 <hr/>
                                 <figure class="header">Available Accounts</figure>
-                                <tags adder="true" v-if="filteredFetchedAccounts().length"
-                                      :items="filteredFetchedAccounts()"
+                                <tags adder="true" v-if="filteredFetchedAccounts.length"
+                                      :items="filteredFetchedAccounts"
                                       :parser="item => `${item.name}@${item.authority}`"
                                       v-on:clicked="linkAccount"></tags>
                                 <figure v-else>
@@ -63,16 +63,16 @@
                             </section>
                         </section>
 
-                        <section v-if="!isImportable()">
+                        <section v-if="!isImportable">
                             <br>
                             <btn v-on:clicked="linkKeypairToNetwork" text="Link to Network"></btn>
                         </section>
 
-                        <section v-if="linkedAccounts().length">
+                        <section v-if="linkedAccounts.length">
                             <br>
                             <hr/>
                             <figure class="header">Linked Accounts / Keypairs</figure>
-                            <tags :items="linkedAccounts()"
+                            <tags :items="linkedAccounts"
                                   :parser="item => item.formatted()"
                                   v-on:clicked="unlinkAccount"></tags>
                         </section>
@@ -84,9 +84,6 @@
                 </section>
             </section>
         </section>
-
-        <!-- INPUT FIELD USED FOR COPYING -->
-        <input tabindex="-1" type="text" ref="copier" class="copier" />
 
     </section>
 </template>
@@ -102,6 +99,7 @@
     import AccountService from '../../services/AccountService';
     import PluginRepository from '../../plugins/PluginRepository'
 
+    import ElectronHelpers from '../../util/ElectronHelpers';
     import PopupService from '../../services/PopupService';
     import {Popup} from '../../models/popups/Popup'
 
@@ -123,11 +121,26 @@
                 'keypairs',
                 'networks',
                 'accounts'
-            ])
+            ]),
+            filteredFetchedAccounts(){
+                return this.availableAccounts.filter(account => !this.linkedAccounts.map(x => x.unique()).includes(account.unique()));
+            },
+            linkedAccounts(){
+                return this.accounts.filter(account => account.keypairUnique === this.keypair.unique());
+            },
+            isImportable(){
+                return AccountService.accountsAreImported(this.keypair);
+            },
+            availableNetworks(){
+                return this.networks.filter(network => network.blockchain === this.keypair.blockchain)
+            },
+            isNew(){
+                return !this.keypairs.find(x => x.publicKey === this.keypair.publicKey);
+            },
         },
         mounted(){
             this.keypair = this.kp;
-            this.selectedNetwork = this.availableNetworks()[0];
+            this.selectedNetwork = this.availableNetworks[0];
         },
         props:['kp'],
         methods: {
@@ -152,36 +165,18 @@
                 this.availableAccounts = await AccountService.getImportableAccounts(this.keypair, this.selectedNetwork);
                 this.fetchedAccounts = true;
             },
-            filteredFetchedAccounts(){
-                return this.availableAccounts.filter(account => !this.linkedAccounts().map(x => x.unique()).includes(account.unique()));
-            },
-            linkedAccounts(){
-                return this.accounts.filter(account => account.keypairUnique === this.keypair.unique());
-            },
-            isImportable(){
-                return AccountService.accountsAreImported(this.keypair);
-            },
-            availableNetworks(){
-                return this.networks.filter(network => network.blockchain === this.keypair.blockchain)
-            },
-            isNew(){
-                return !this.keypairs.find(x => x.publicKey === this.keypair.publicKey);
-            },
             badKeypairName(){
                 return !this.keypair.name.length
             },
             deleteKeyPair(){
-
                 PopupService.promptGuard(Popup.prompt(
                     "Deleting Keypair", "This will delete the keypair, it's accounts, and all associated permissions.",
                     "trash-o", "Delete Keypair"
                 ), accepted => {
-                    if(accepted) KeyPairService.removeKeyPair(this.keypair, this, () => {
+                    if(accepted) KeyPairService.removeKeyPair(this.keypair, () => {
                         this.keypair = Keypair.placeholder();
                     });
                 });
-
-
             },
             blockchainChanged(blockchainObject){
                 const blockchain = blockchainObject.value;
@@ -199,13 +194,10 @@
                 } else clearAndChange();
             },
             copyKeyPair(){
-                const copier = this.$refs.copier;
-                copier.value = this.isNew()
+                ElectronHelpers.copy(this.isNew
                     ? this.keypair.privateKey
-                    : this.keypair.publicKey;
-                copier.select();
-                document.execCommand("copy");
-                copier.value = '';
+                    : this.keypair.publicKey);
+                PopupService.push(Popup.snackbar("Keypair copied to keyboard!", "key"))
             },
             async makePublicKey(){
                 setTimeout(async () => {
@@ -227,11 +219,20 @@
                 await KeyPairService.generateKeyPair(this.keypair);
             },
             saveKeyPair(){
-                if(this.isNew()) KeyPairService.saveKeyPair(this.keypair, this, () => {
-                    //...
-                });
+                if(this.isNew) PopupService.push(Popup.prompt(
+                    "Have you copied the private key?",
+                    "You will not be able to copy the private key again once you save this keypair.",
+                    "exclamation-triangle",
+                    "Yes",
+                    accepted => {
+                        if(!accepted) return;
+                        KeyPairService.saveKeyPair(this.keypair, this, () => {
+                            PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
+                        });
+                    },
+                    "Go Back"));
                 else KeyPairService.updateKeyPair(this.keypair, this, () => {
-                    //...
+                    PopupService.push(Popup.snackbar("Keypair Updated!", "check"));
                 });
             },
             ...mapActions([
@@ -243,8 +244,4 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
-
-    .keypair {
-
-    }
 </style>

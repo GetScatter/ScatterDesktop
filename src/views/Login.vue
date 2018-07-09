@@ -30,29 +30,6 @@
         },
         mounted(){
 
-//            SocketService.open(new AppLink('Browser', 12345))
-
-
-//            setTimeout(() => {
-//                const popup = Popup.popout({hi:'bye'}, res => console.log('Pop out callback'));
-//                PopupService.push(popup)
-//            }, 2000)
-
-//            setTimeout(() => {
-//                const popup = Popup.selector("Select Account", "Select a blockchain account that you wish to link to this Identity.",
-//                    "link", this.accounts, account => account.formattedWithNetwork(this.networks), result => {
-//                        console.log(result);
-//                    });
-//                PopupService.push(popup)
-//            }, 2000)
-
-//            setTimeout(() => {
-//                const popup = Popup.prompt("Select Account", "Select a blockchain account that you wish to link to this Identity.",
-//                    "link", "Press Me", result => {
-//                        console.log(result);
-//                    });
-//                PopupService.push(popup)
-//            }, 2000)
         }
     }
 </script>

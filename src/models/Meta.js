@@ -1,5 +1,4 @@
 const {app} = window.require('electron').remote;
-// const version = window.require('../../../../package.json').version;
 
 export default class Meta {
 

@@ -15,6 +15,8 @@ import Identity from './components/panels/Identity.vue'
 import Keypair from './components/panels/Keypair.vue'
 import AppLink from './components/panels/AppLink.vue'
 import Network from './components/panels/Network.vue'
+import NothingHere from './components/panels/NothingHere.vue'
+import Terms from './components/panels/Terms.vue'
 import OriginPermissions from './components/panels/OriginPermissions.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
 import SettingsAutoLock from './components/panels/SettingsAutoLock.vue'
@@ -67,6 +69,8 @@ class Main {
             {tag:'keypair', vue:Keypair},
             {tag:'app-link', vue:AppLink},
             {tag:'network', vue:Network},
+            {tag:'terms', vue:Terms},
+            {tag:'nothing-here', vue:NothingHere},
             {tag:'origin-perms', vue:OriginPermissions},
             {tag:'settings-language', vue:SettingsLanguage},
             {tag:'settings-autolock', vue:SettingsAutoLock},
@@ -102,11 +106,6 @@ class Main {
         };
 
         new VueInitializer(routes, components, middleware, async (router, store) => {
-
-            // await store.dispatch('setSeed','asdfasdf');
-            // await store.dispatch('loadScatter', '');
-            // router.push({name: RouteNames.BLOCKCHAINS});
-
 
 
         });

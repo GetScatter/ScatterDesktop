@@ -10,7 +10,9 @@ let popouts = [];
 export default class PopupService {
 
     static push(popup){
-        console.log(popup);
+
+        if(store.state.popups.find(x => JSON.stringify(x.data) === JSON.stringify(popup.data)))
+            return false;
 
         if(popup.displayType === PopupDisplayTypes.POP_OUT)
             return this.openPopOut(popup);

@@ -2,18 +2,26 @@
     <section class="view-base">
         <section class="router-base">
 
-            <section v-if="hasSidebar()">
-                <auth class="sidebar" :class="{'hidden':routeNames.LOGIN !== $route.name}"></auth>
-                <main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}"></main-menu>
+
+            <section v-if="!onboarding">
+                <section v-if="hasSidebar()">
+                    <auth class="sidebar" :class="{'hidden':routeNames.LOGIN !== $route.name}"></auth>
+                    <main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}"></main-menu>
+                </section>
+
+                <main :class="{'expanded':routeNames.LOGIN === $route.name, 'no-sidebar':!hasSidebar()}">
+
+                    <section style="background:red;"></section>
+                    <transition :name="transitionName">
+                        <router-view></router-view>
+                    </transition>
+                </main>
             </section>
 
-            <main :class="{'expanded':routeNames.LOGIN === $route.name, 'no-sidebar':!hasSidebar()}">
+            <section v-else>
+                <terms></terms>
+            </section>
 
-                <section style="background:red;"></section>
-                <transition :name="transitionName">
-                    <router-view></router-view>
-                </transition>
-            </main>
             <popups></popups>
         </section>
 
@@ -21,6 +29,8 @@
 </template>
 
 <script>
+    import { mapActions, mapGetters, mapState } from 'vuex'
+    import * as Actions from '../store/constants';
     import {RouteNames, RouteDepth, Routing} from '../vue/Routing'
 
     export default {
@@ -30,6 +40,17 @@
             menuTransitionName:'',
             loggingIn:false,
         }},
+        computed:{
+            ...mapState([
+                'scatter'
+            ]),
+            ...mapGetters([
+                'unlocked',
+            ]),
+            onboarding(){
+                return this.unlocked && !this.scatter.meta.acceptedTerms;
+            }
+        },
         methods:{
             hasSidebar(){
                 return Routing.hasSidebar(this.$route.name)

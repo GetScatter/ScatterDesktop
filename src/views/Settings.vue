@@ -88,8 +88,6 @@
                             return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "ban", "Okay"));
                         }
 
-                        console.log('thissca', this.scatter);
-
                         this.unlocked = true;
                     }))
             }

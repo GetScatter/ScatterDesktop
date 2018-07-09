@@ -21,7 +21,7 @@
                     <section class="info-box">
                         <figure class="header">Application Link Information</figure>
                         <cin placeholder="App Name" :text="appLink.name" v-on:changed="changed => bind(changed, 'appLink.name')"></cin>
-                        <cin :placeholder="'Unique App Key'" forced="true" disabled="true" :text="appLink.id"></cin>
+                        <cin :placeholder="'Unique App Key'" :dynamic-button="canChangeId ? 'refresh' : null" v-on:dynamic="appLink.nextId()" forced="true" disabled="true" :text="appLink.id"></cin>
 
                         <br>
                         <btn :red="appLink.enabledByDefault" :secondary="!appLink.enabledByDefault" v-on:clicked="toggleEnableByDefault"
@@ -92,6 +92,9 @@
             ]),
             appLinkConnections(){
                 return this.appLink !== null ? SocketService.getConnectionCount(this.appLink) : 0;
+            },
+            canChangeId(){
+                return !this.appLink.isDefault() || !this.linkedApps.find(x => x.id === this.appLink.id);
             }
         },
         mounted(){
@@ -119,7 +122,7 @@
             isNew(){
                 return !this.linkedApps.find(x => x.id === this.appLink.id);
             },
-            saveAppLink(){
+            saveAppLink(snackbar = true){
                 const appLinkClone = this.appLink.clone();
                 const scatter = this.scatter.clone();
 
@@ -132,6 +135,7 @@
 
                 scatter.keychain.updateOrPushAppLink(appLinkClone);
                 this[Actions.SET_SCATTER](scatter);
+                if(snackbar) PopupService.push(Popup.snackbar("App Link Saved!", "check"));
             },
             toggleEnableByDefault(){
                 this.appLink.enabledByDefault = !this.appLink.enabledByDefault;
@@ -140,14 +144,14 @@
                 if(this.appLink.enabledByDefault) SocketService.open(this.appLink);
                 else SocketService.close(this.appLink);
 
-                this.saveAppLink();
+                this.saveAppLink(false);
             },
             toggleSocketListener(){
                 if(this.appLink.isListening) SocketService.close(this.appLink);
                 else SocketService.open(this.appLink);
 
                 this.appLink.isListening = !this.appLink.isListening;
-                this.saveAppLink();
+                this.saveAppLink(false);
             },
             deleteAppLink(){
 
@@ -160,7 +164,8 @@
                         const scatter = this.scatter.clone();
                         scatter.keychain.removeAppLink(this.appLink);
                         await this[Actions.SET_SCATTER](scatter);
-                        this.appLink = AppLink.placeholder();
+                        this.$emit('deleted');
+                        PopupService.push(Popup.snackbar("App Link Deleted!", "check"));
                     }
                 });
 

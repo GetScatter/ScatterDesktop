@@ -16,7 +16,7 @@
 
         </section>
 
-        <identity :key="selectedIdentity.publicKey" :id="selectedIdentity" v-if="selectedIdentity"></identity>
+        <identity v-on:deleted="nextIdentity" :key="selectedIdentity.publicKey" :id="selectedIdentity" v-if="selectedIdentity"></identity>
 
     </section>
 </template>
@@ -42,13 +42,17 @@
             ])
         },
         mounted(){
-            this.selectedIdentity = this.identities[0].clone();
+            this.nextIdentity();
         },
         methods: {
             async newIdentity(){
                 const id = Identity.placeholder();
                 await id.initialize(this.scatter.hash);
                 this.selectedIdentity = id;
+            },
+            async nextIdentity(){
+                if(this.identities.length) this.selectedIdentity = this.identities[0].clone();
+                else this.newIdentity();
             }
         }
     }

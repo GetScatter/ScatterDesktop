@@ -134,7 +134,6 @@
                 this.$emit('returned', result);
             },
             selectIdentity(identity){
-                console.log('this.accountRequirements', this.fields, this.accountRequirements);
                 if(!this.accountRequirements.length)
                     return this.returnResult({identity});
 

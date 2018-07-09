@@ -4,7 +4,7 @@
         <section class="tags">
             <figure class="tag" :class="{'adder':adder}" v-for="item in items" @click="emit(item)">
                 <span>{{parse(item)}}</span>
-                <i class="fa fa-times"></i>
+                <i class="fa fa-times" :class="{'fa-times':!adder, 'fa-plus':adder}"></i>
             </figure>
         </section>
 
@@ -68,8 +68,8 @@
                 }
 
                 &:hover {
-                    background:$light-blue;
-                    border:1px solid $dark-blue;
+                    background:$red;
+                    border:1px solid $dark-red;
                     color:#fff;
 
                     i {
@@ -84,9 +84,8 @@
 
                 &.adder {
                     &:hover {
-                        i {
-                            opacity:0;
-                        }
+                        background:$light-blue;
+                        border:1px solid $dark-blue;
                     }
 
                     &:active {
