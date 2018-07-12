@@ -147,9 +147,7 @@
         methods: {
             checkName(){
                 this.identity.name = this.identity.name.trim();
-                if(!this.isValidName){
-                    PopupService.push(Popup.snackbar("The name you entered is invalid. Names but be between 3-20 characters and include only a-Z, 0-9 and - or _", "ban"))
-                }
+                if(!this.isValidName) PopupService.push(Popup.invalidIdentityName())
             },
             save(){
                 if(this.scatter.keychain.identities.find(id => id.publicKey !== this.identity.publicKey && id.name.toLowerCase() === this.identity.name.toLowerCase()))

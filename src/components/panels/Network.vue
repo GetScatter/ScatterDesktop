@@ -22,8 +22,25 @@
 
 
                 <section class="split-panels left">
+                    <section class="info-box" v-if="isNew && restorableNetworks.length">
+                        <figure class="header">Restore Endorsed Networks</figure>
+
+                        <section>
+                            <sel :selected="selectedEndorsedNetwork || restorableNetworks[0]"
+                                 :options="restorableNetworks"
+                                 :parser="n => n.name"
+                                 v-on:changed="n => selectedEndorsedNetwork = n"></sel>
+
+                            <btn text="Restore Endorsed Network" :secondary="true" v-on:clicked="network = (selectedEndorsedNetwork || restorableNetworks[0])"></btn>
+                        </section>
+                    </section>
+
                     <section class="info-box">
                         <figure class="header">Network Information</figure>
+
+
+
+
 
                         <sel :disabled="isEndorsed" :selected="network.blockchain.toUpperCase()"
                              :options="blockchains"
@@ -41,13 +58,6 @@
                         <cin :disabled="isEndorsed" placeholder="Chain ID" :text="network.chainId"
                              :dynamic-button="isEndorsed ? null : 'chain'" dynamic-tooltip="Fetch Chain ID" v-on:dynamic="fetchChainId" v-on:changed="changed => bind(changed, 'network.chainId')"></cin>
 
-
-
-
-                        <!--<br>-->
-                        <!--<btn :red="appLink.enabledByDefault" :secondary="!appLink.enabledByDefault" v-on:clicked="toggleEnableByDefault"-->
-                             <!--:text="appLink.enabledByDefault ? 'Starts with Scatter' : 'Starts Manually Only'"></btn>-->
-                        <!--<btn v-on:clicked="saveAppLink" :text="isNew() ? 'Save Application Link' : 'Update Application Link'" style="float:right;"></btn>-->
                     </section>
 
 
@@ -77,6 +87,8 @@
             blockchains:BlockchainsArray,
             network:null,
             isEndorsed:true,
+            endorsedNetworks:[],
+            selectedEndorsedNetwork:null,
         }},
         computed:{
             ...mapState([
@@ -84,11 +96,22 @@
             ]),
             ...mapGetters([
                 'networks',
-            ])
+            ]),
+            restorableNetworks(){
+//                return this.endorsedNetworks;
+                const uniques = this.networks.map(x => x.unique());
+                return this.endorsedNetworks.filter(x => !uniques.includes(x.unique()));
+            },
+            isNew(){
+                return !this.networks.map(x => x.unique()).includes(this.network.unique());
+            }
         },
         mounted(){
             this.network = this.net.clone();
             PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network).then(x => this.isEndorsed = x);
+            BlockchainsArray.map(async blockchain => {
+                this.endorsedNetworks.push(await PluginRepository.plugin(blockchain.value).getEndorsedNetwork());
+            })
         },
         methods: {
             badNetworkName(){
@@ -117,7 +140,8 @@
                 scatter.settings.updateOrPushNetwork(this.network);
                 this[Actions.SET_SCATTER](scatter);
                 PopupService.push(Popup.snackbar("Network Saved!", "check"));
-
+                PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network).then(x => this.isEndorsed = x);
+                this.$emit('selected', this.network);
             },
             deleteNetwork(){
                 PopupService.promptGuard(Popup.prompt(
@@ -131,6 +155,7 @@
                         await this[Actions.SET_SCATTER](scatter);
                         this.network = Network.placeholder();
                         PopupService.push(Popup.snackbar("Network Deleted!", "check"));
+                        this.$emit('selected', this.network);
                     }
                 });
             },

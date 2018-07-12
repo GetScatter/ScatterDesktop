@@ -37,8 +37,10 @@
 
         <section class="panel display">
             <transition name="slide-right">
-                <keypair v-if="subMenuType === subMenuTypes.KEYS && selectedSubMenuItem" :key="selectedSubMenuItem.publicKey" :kp="selectedSubMenuItem"></keypair>
-                <network v-if="subMenuType === subMenuTypes.NETWORKS && selectedSubMenuItem" :key="selectedSubMenuItem.unique()" :net="selectedSubMenuItem"></network>
+                <keypair v-on:selected="selectedNewItem" v-if="subMenuType === subMenuTypes.KEYS && selectedSubMenuItem"
+                         :key="selectedSubMenuItem.id" :kp="selectedSubMenuItem"></keypair>
+                <network v-on:selected="selectedNewItem" v-if="subMenuType === subMenuTypes.NETWORKS && selectedSubMenuItem"
+                         :key="selectedSubMenuItem.unique()" :net="selectedSubMenuItem"></network>
             </transition>
         </section>
 
@@ -97,6 +99,9 @@
             },
             linkedAccounts(keypair){
                 return this.accounts.filter(x => x.keypairUnique === keypair.unique()).length
+            },
+            selectedNewItem(item){
+                this.selectedSubMenuItem = item;
             }
         },
         watch:{

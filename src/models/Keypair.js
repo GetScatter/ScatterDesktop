@@ -1,9 +1,11 @@
 import AES from 'aes-oop';
 import {Blockchains} from './Blockchains';
+import IdGenerator from '../util/IdGenerator';
 
 export default class Keypair {
 
     constructor(){
+        this.id = IdGenerator.text(24);
         this.blockchain = Blockchains.EOS;
         this.name = '';
         this.privateKey = '';
@@ -14,6 +16,7 @@ export default class Keypair {
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
 
     unique(){ return `${this.blockchain}:${this.publicKey.toLowerCase()}`; }
+    clone(){ return Keypair.fromJson(JSON.parse(JSON.stringify(this))) }
 
     static blockchain(publicKey){
         if(publicKey.indexOf('EOS') !== -1) return Blockchains.EOS;

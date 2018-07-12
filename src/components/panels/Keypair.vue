@@ -171,6 +171,7 @@
                 ), accepted => {
                     if(accepted) KeyPairService.removeKeyPair(this.keypair, () => {
                         this.keypair = Keypair.placeholder();
+                        this.$emit('selected', this.keypair.clone());
                     });
                 });
             },
@@ -225,6 +226,7 @@
                         if(!accepted) return;
                         KeyPairService.saveKeyPair(this.keypair, this, () => {
                             PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
+                            this.$emit('selected', this.keypair.clone());
                         });
                     },
                     "Go Back"));

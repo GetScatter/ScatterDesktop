@@ -1,3 +1,4 @@
+import Onboarding from '../views/Onboarding.vue'
 import Identities from '../views/Identities.vue'
 import Blockchains from '../views/Blockchains.vue'
 import LinkedApps from '../views/LinkedApps.vue'
@@ -16,6 +17,7 @@ import GetWebExtensions from '../views/wizards/GetWebExtensions.vue'
 
 export const RouteNames = {
     LOGIN:'login',
+    ONBOARDING:'onboarding',
     IDENTITIES:'identities',
     BLOCKCHAINS:'blockchains',
     LINKED_APPS:'linkedApps',
@@ -38,6 +40,7 @@ export const RouteNames = {
 
 const RouteViews = {
     [RouteNames.LOGIN]:Login,
+    [RouteNames.ONBOARDING]:Onboarding,
     [RouteNames.IDENTITIES]:Identities,
     [RouteNames.BLOCKCHAINS]:Blockchains,
     [RouteNames.LINKED_APPS]:LinkedApps,
@@ -55,7 +58,8 @@ const RouteViews = {
 };
 
 export const RouteDepth = {
-    [RouteNames.LOGIN]:-1,
+    [RouteNames.LOGIN]:-2,
+    [RouteNames.ONBOARDING]:-1,
     [RouteNames.IDENTITIES]:0,
     [RouteNames.BLOCKCHAINS]:1,
     [RouteNames.LINKED_APPS]:2,
@@ -97,6 +101,7 @@ export class Routing {
 
     static hasSidebar(routeName){
         return ![
+            RouteNames.ONBOARDING,
             RouteNames.POP_OUT,
         ].includes(routeName)
     }

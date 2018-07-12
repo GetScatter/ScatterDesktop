@@ -139,7 +139,7 @@
                 if(this.scatter.keychain.identities.find(id => id.publicKey !== this.identity.publicKey && id.name.toLowerCase() === this.identity.name.toLowerCase()))
                     return;
 
-                if(!this.isValidName) return;
+                if(!this.isValidName) return PopupService.push(Popup.invalidIdentityName());
 
                 const scatter = this.scatter.clone();
                 scatter.keychain.updateOrPushIdentity(this.identity);

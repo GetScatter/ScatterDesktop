@@ -54,7 +54,7 @@
             async create(){
                 if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) return false;
                 await this[Actions.CREATE_SCATTER](this.password);
-                this.$router.push({name:RouteNames.IDENTITIES});
+                this.$router.push({name:RouteNames.ONBOARDING});
             },
             async unlock(){
                 await this[Actions.SET_SEED](this.password);
