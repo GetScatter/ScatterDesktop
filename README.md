@@ -27,6 +27,13 @@ Currently only windows is available for Open Beta. More operating systems will c
 Scatter now has internal help / wizards to help you set up every step of the way.
 Click the "Help" menu from the sidebar to get started.
 
+## Running in development mode
+
+- clone the repo
+- run `npm i` to install the dependencies
+- run `npm start` to start the local server with hot-reloading
+- run `electron .` from the directory to start electron.
+
 
 
 
