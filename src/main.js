@@ -1,8 +1,13 @@
+import 'typeface-roboto'
+import 'typeface-grand-hotel'
 import './styles.scss'
+
 import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
 import * as Actions from './store/constants'
 import {RouteNames} from './vue/Routing'
+
+
 
 
 // Globals

@@ -1,9 +1,22 @@
-const {app, BrowserWindow, Tray, Menu} = require('electron')
+const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron')
 const path = require("path");
 const url = require("url");
 
 let tray = null;
 let win = null;
+
+const setupMenu = () => {
+    const menu = new Menu();
+
+    menu.append(new MenuItem({
+        label: 'Print',
+        accelerator: 'CmdOrCtrl+Shift+D',
+        click: () => { win.toggleDevTools(); }
+    }));
+
+    // Menu.setApplicationMenu(menu)
+    win.setMenu(menu);
+};
 
 app.on('ready', function () {
 
@@ -55,7 +68,9 @@ app.on('ready', function () {
     tray.setToolTip('Scatter Desktop Companion');
     tray.setContextMenu(contextMenu);
 
-    // win.setMenu(null);
+    setupMenu();
+
+
 
 });
 
