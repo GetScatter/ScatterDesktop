@@ -16,8 +16,6 @@ to software that has not been tested by large numbers yet.
 
 ## Installation
 
-Currently only windows is available for Open Beta. More operating systems will come soon.
-
 - Windows: [Click to download the latest Window Installer](https://github.com/GetScatter/ScatterDesktop/raw/master/release/win-Scatter%20Desktop-8.0.0.exe)
 - Ubuntu: [Click to download the latest Linux AppImage](https://github.com/GetScatter/ScatterDesktop/raw/master/release/linux-Scatter%20Desktop-8.0.0-x86_64.AppImage)
 - Mac: Coming Soon
