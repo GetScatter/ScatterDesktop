@@ -35,8 +35,13 @@
         </section>
 
 
-        <keypair v-if="subMenuType === subMenuTypes.KEYS && selectedSubMenuItem" :key="selectedSubMenuItem.publicKey" :kp="selectedSubMenuItem"></keypair>
-        <network v-if="subMenuType === subMenuTypes.NETWORKS && selectedSubMenuItem" :key="selectedSubMenuItem.unique()" :net="selectedSubMenuItem"></network>
+        <section class="panel display">
+            <transition name="slide-right">
+                <keypair v-if="subMenuType === subMenuTypes.KEYS && selectedSubMenuItem" :key="selectedSubMenuItem.publicKey" :kp="selectedSubMenuItem"></keypair>
+                <network v-if="subMenuType === subMenuTypes.NETWORKS && selectedSubMenuItem" :key="selectedSubMenuItem.unique()" :net="selectedSubMenuItem"></network>
+            </transition>
+        </section>
+
 
     </section>
 </template>

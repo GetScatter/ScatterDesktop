@@ -17,10 +17,15 @@
         </section>
 
 
-        <app-link v-if="selectedApp" :key="selectedApp.id" v-on:deleted="nextAppLink" :app="selectedApp"></app-link>
-        <nothing-here v-if="!linkedApps.length" :description="`
-            You have no Application Links, and without them no applications can use your Scatter.
-        `" button-text="Create Application Link" button-fn="newAppLink"></nothing-here>
+        <section class="panel display">
+            <transition name="slide-right">
+                <app-link v-if="selectedApp" :key="selectedApp.id" v-on:deleted="nextAppLink" :app="selectedApp"></app-link>
+            </transition>
+            <nothing-here v-if="!selectedApp && !linkedApps.length" :description="`
+                    You have no Application Links, and without them no applications can use your Scatter.
+                `" button-text="Create Application Link" button-fn="newAppLink"></nothing-here>
+        </section>
+
 
     </section>
 </template>

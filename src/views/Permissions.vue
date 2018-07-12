@@ -16,10 +16,15 @@
 
         </section>
 
-        <origin-perms v-on:emptied="selectNextOrigin" :key="selectedOrigin" :origin="selectedOrigin" v-if="selectedOrigin"></origin-perms>
-        <nothing-here v-if="!origins.length" :description="`
-            As you start using Scatter to interact with applications and websites this will fill up and you will be able to manage your permissions for Identities and Contracts.
-        `"></nothing-here>
+        <section class="panel display">
+            <transition name="slide-right">
+                <origin-perms v-on:emptied="selectNextOrigin" :key="selectedOrigin" :origin="selectedOrigin" v-if="selectedOrigin"></origin-perms>
+            </transition>
+            <nothing-here v-if="!selectedOrigin && !origins.length" :description="`
+                As you start using Scatter to interact with applications and websites this will fill up and you will be able to manage your permissions for Identities and Contracts.
+            `"></nothing-here>
+        </section>
+
 
     </section>
 </template>

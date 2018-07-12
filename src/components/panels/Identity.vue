@@ -1,7 +1,7 @@
 <template>
     <section>
 
-        <section class="panel display">
+        <section>
             <section class="head">
                 <i class="fa fa-trash-o" @click="removeIdentity" v-tooltip.left-start="'Delete Identity'"></i>
             </section>

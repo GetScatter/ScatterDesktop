@@ -1,7 +1,7 @@
 <template>
     <section>
 
-        <section class="panel display">
+        <section>
             <section class="head">
 
             </section>

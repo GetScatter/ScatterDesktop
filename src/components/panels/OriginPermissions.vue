@@ -1,7 +1,7 @@
 <template>
     <section>
 
-        <section class="panel display">
+        <section>
             <section class="head">
                 <i class="fa fa-trash-o" @click="removeAllPermissions" v-tooltip.left-start="'Delete All Permissions'"></i>
             </section>

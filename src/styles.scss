@@ -40,12 +40,12 @@ a {
     width:270px;
     background:$very-light-blue;
     float:left;
-    //box-shadow:inset 2px 0 8px rgba(0,0,0,0.04);
   }
 
   &.display {
     width:calc(100% - 270px);
     float:left;
+    position: relative;
   }
 
   &.sub-menu, &.display {
@@ -236,14 +236,14 @@ $speed:0.5s;
 .slide-right-leave-active,
 .slide-right-enter-active {
   position:absolute;
-  top:0; left:0; right:0;
+  top:0; right:0; left:0;
   transition: $speed;
 }
 
-.slide-left-enter {         transform: translate(100%, 0);      }
-.slide-left-leave-to {      transform: translate(-100%, 0);     }
-.slide-right-enter {        transform: translate(-100%, 0);     }
-.slide-right-leave-to {     transform: translate(100%, 0);      }
+.slide-left-enter {         transform: translate(100%, 0);  opacity:0; }
+.slide-left-leave-to {      transform: translate(-100%, 0); opacity:0; }
+.slide-right-enter {        transform: translate(100%, 0); opacity:0;  }
+.slide-right-leave-to {     transform: translate(100%, 0); opacity:0;  }
 
 
 .tooltip {

@@ -14,7 +14,11 @@
 
         </section>
 
-        <identity v-on:deleted="nextIdentity" :key="selectedIdentity.publicKey" :id="selectedIdentity" v-if="selectedIdentity"></identity>
+        <section class="panel display">
+            <transition name="slide-right">
+                <identity v-on:deleted="nextIdentity" :key="selectedIdentity.publicKey" :id="selectedIdentity" v-if="selectedIdentity"></identity>
+            </transition>
+        </section>
 
     </section>
 </template>
