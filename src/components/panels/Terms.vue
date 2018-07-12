@@ -10,7 +10,7 @@
                 </figure>
                 <section class="buttons">
                     <btn text="Accept" v-on:clicked="acceptTerms(true)"></btn>
-                    <btn red="true" text="Deny" v-on:clicked="acceptTerms(false)"></btn>
+                    <btn red="true" text="Reject" v-on:clicked="acceptTerms(false)"></btn>
                 </section>
             </section>
 
