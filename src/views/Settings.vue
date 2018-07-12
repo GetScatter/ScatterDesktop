@@ -3,7 +3,7 @@
 
         <section class="panel sub-menu">
             <section class="head">
-                <i v-if="!unlocked" class="fa fa-unlock" @click="unlock"></i>
+                <i v-if="!unlocked" v-tooltip="'Unlock Sensitive Settings'" class="fa fa-unlock" @click="unlock"></i>
             </section>
 
             <section class="items-list scrollable" v-if="selectedOption">

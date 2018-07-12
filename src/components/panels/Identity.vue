@@ -20,7 +20,8 @@
 
                         <!--<btn v-on:clicked="() => {}" text="Claim RIDL Identity"></btn>-->
                         <!--<btn v-on:clicked="() => {}" text="Register with RIDL"></btn>-->
-                        <cin placeholder="Identity's Public Key" forced="true" disabled="true" copy="true" :text="identity.publicKey"></cin>
+                        <btn v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show Identity Key`"></btn>
+                        <cin v-show="showingPublicKey" placeholder="Identity's Public Key" forced="true" disabled="true" copy="true" :text="identity.publicKey"></cin>
                     </section>
 
                     <section class="info-box">
@@ -86,6 +87,7 @@
             identity:null,
             countries: Countries,
             selectedLocation:null,
+            showingPublicKey:false,
         }},
         computed:{
             ...mapState([

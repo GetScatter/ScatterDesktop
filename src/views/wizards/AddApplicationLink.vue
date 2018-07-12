@@ -181,10 +181,6 @@
 
         },
         methods: {
-            scrollTo(step){
-                this.$refs.scroller.scrollTop = this.$refs[step.ref].offsetTop-120;
-                this.onStep = step;
-            },
             testPrompt(){
                 const app = `FakeApp-${Math.round(Math.random()*10000)}`;
                 PopupService.push(Popup.prompt("App Requesting Access", `${app} is requesting access to use Scatter`, "eye", "Allow", async accepted => {

@@ -8,7 +8,7 @@
             <section class="items-list scrollable">
                 <section class="item" v-if="selectedIdentity" :class="{'active':selectedIdentity.publicKey === identity.publicKey}" v-for="identity in identities" @click="selectedIdentity = identity">
                     <figure class="title">{{identity.name}}</figure>
-                    <figure class="description">23 connected apps</figure>
+                    <figure class="description">{{connectedApps(identity)}} connected apps</figure>
                 </section>
             </section>
 
@@ -36,7 +36,8 @@
                 'scatter'
             ]),
             ...mapGetters([
-                'identities'
+                'identities',
+                'permissions',
             ])
         },
         mounted(){
@@ -51,6 +52,9 @@
             async nextIdentity(){
                 if(this.identities.length) this.selectedIdentity = this.identities[0].clone();
                 else this.newIdentity();
+            },
+            connectedApps(identity){
+                return this.permissions.filter(x => x.isIdentity && x.identity === identity.publicKey).length
             }
         }
     }

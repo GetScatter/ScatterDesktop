@@ -76,10 +76,6 @@
                                   :parser="item => item.formatted()"
                                   v-on:clicked="unlinkAccount"></tags>
                         </section>
-                        <!--<cin placeholder="First Name" :text="identity.personal.firstName" v-on:changed="changed => bind(changed, 'identity.personal.firstName')"></cin>-->
-                        <!--<cin placeholder="Last Name" :text="identity.personal.lastName" v-on:changed="changed => bind(changed, 'identity.personal.lastName')"></cin>-->
-                        <!--<cin placeholder="Email" :text="identity.personal.email" v-on:changed="changed => bind(changed, 'identity.personal.email')"></cin>-->
-                        <!--<cin placeholder="Date of Birth" type="date" :text="identity.personal.birthdate" v-on:changed="changed => bind(changed, 'identity.personal.birthdate')"></cin>-->
                     </section>
                 </section>
             </section>
@@ -197,7 +193,7 @@
                 ElectronHelpers.copy(this.isNew
                     ? this.keypair.privateKey
                     : this.keypair.publicKey);
-                PopupService.push(Popup.snackbar("Keypair copied to keyboard!", "key"))
+                PopupService.push(Popup.snackbar("Keypair copied to clipboard!", "key"))
             },
             async makePublicKey(){
                 setTimeout(async () => {
@@ -217,6 +213,7 @@
                 this.keypair.privateKey = '';
 
                 await KeyPairService.generateKeyPair(this.keypair);
+                PopupService.push(Popup.snackbar("A new keypair was generated."));
             },
             saveKeyPair(){
                 if(this.isNew) PopupService.push(Popup.prompt(

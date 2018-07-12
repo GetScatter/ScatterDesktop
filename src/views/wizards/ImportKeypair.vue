@@ -158,13 +158,9 @@
             this.keypair.blockchain = Blockchains.EOS;
         },
         methods: {
-            scrollTo(step){
-                this.$refs.scroller.scrollTop = this.$refs[step.ref].offsetTop-120;
-                this.onStep = step;
-            },
             copyKeyPair(){
                 ElectronHelpers.copy(this.keypair.privateKey);
-                PopupService.push(Popup.snackbar("Keypair copied to keyboard!", "key"))
+                PopupService.push(Popup.snackbar("Keypair copied to clipboard!", "key"))
             },
             blockchainChanged(blockchainObject){
                 const blockchain = blockchainObject.value;
@@ -199,12 +195,23 @@
                 this.keypair.privateKey = '';
 
                 await KeyPairService.generateKeyPair(this.keypair);
+                this.scrollTo(WizardSteps.PRIVATE_KEY);
+                PopupService.push(Popup.snackbar("A new keypair was generated."));
             },
             saveKeyPair(){
-                KeyPairService.saveKeyPair(this.keypair, this, () => {
-                    PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
-                    this.$router.push({name:RouteNames.BLOCKCHAINS});
-                });
+                PopupService.push(Popup.prompt(
+                    "Have you copied the private key?",
+                    "You will not be able to copy the private key again once you save this keypair.",
+                    "exclamation-triangle",
+                    "Yes",
+                    accepted => {
+                        if(!accepted) return;
+                        KeyPairService.saveKeyPair(this.keypair, this, () => {
+                            PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
+                            this.$router.push({name:RouteNames.BLOCKCHAINS});
+                        });
+                    },
+                "Go Back"));
             },
             ...mapActions([
                 Actions.SET_SCATTER

@@ -154,10 +154,6 @@
 
         },
         methods: {
-            scrollTo(step){
-                this.$refs.scroller.scrollTop = this.$refs[step.ref].offsetTop-120;
-                this.onStep = step;
-            },
             changeProtocol(protocol){
                 this.network.protocol = protocol;
                 this.network.setPort();

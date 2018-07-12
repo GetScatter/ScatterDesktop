@@ -20,7 +20,7 @@
 
         <section class="panel display">
             <section class="head">
-                <i class="fa fa-check" :class="{'blue':isValidName}" @click="save"></i>
+
             </section>
 
             <section ref="scroller" class="selected-item scrollable" v-if="identity">
@@ -84,6 +84,15 @@
 
                     <cin placeholder="State" v-if="selectedLocation.country.code === 'US'" maxlength="2" :text="selectedLocation.state" v-on:changed="changed => bind(changed, 'selectedLocation.state')"></cin>
                 </section>
+
+                <section :ref="steps.SAVE.ref" class="info-box">
+                    <figure class="name">Saving your Identity</figure>
+                    <section class="description">
+                        Identities usually <b>auto-save</b> but for the purposes of this tutorial only you will have to manually save it.
+                    </section>
+
+                    <btn :disabled="!isValidName" v-on:clicked="save" text="Save New Identity"></btn>
+                </section>
             </section>
 
 
@@ -108,6 +117,7 @@
         NAME:{ref:'name', title:'Name your Identity', description:'What are Identity names?'},
         PERSONAL:{ref:'personal', title:'Personal Information', description:'This is not mandatory.'},
         LOCATION:{ref:'location', title:'Location Information', description:'This is not mandatory.'},
+        SAVE:{ref:'save', title:'Save', description:'You usually don\'t have to do this.'},
     };
 
     export default {
@@ -135,10 +145,6 @@
             this.selectedLocation = this.identity.locations[0];
         },
         methods: {
-            scrollTo(step){
-                this.$refs.scroller.scrollTop = this.$refs[step.ref].offsetTop-120;
-                this.onStep = step;
-            },
             checkName(){
                 this.identity.name = this.identity.name.trim();
                 if(!this.isValidName){

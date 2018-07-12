@@ -35,6 +35,11 @@ export default class VueInitializer {
                         props.reduce((obj,key)=> obj[key], this)[lastKey] = changed;
                     },
                     locale:(key) => localized(key, store.getters.language),
+                    scrollTo(step){
+                        const ref = typeof step === 'object' ? step.ref : step;
+                        if(typeof step === 'object') this.onStep = step;
+                        this.$refs.scroller.scrollTop = this.$refs[step.ref].offsetTop-120;
+                    },
                 }
             })
 

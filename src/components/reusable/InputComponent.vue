@@ -1,6 +1,6 @@
 <template>
     <section class="input" :class="{'forced':forced}">
-        <input @blur="blur" :maxlength="maxlength || -1" :class="{'hide-date':type === 'date' && !input.length}" :disabled="disabled || false" :type="type || 'text'" v-model="input" />
+        <input @keyup.enter="enter" @blur="blur" :maxlength="maxlength || -1" :class="{'hide-date':type === 'date' && !input.length}" :disabled="disabled || false" :type="type || 'text'" v-model="input" />
         <label :class="{'hidden':input.toString().length, 'for-disabled':disabled || false}">{{placeholder}}</label>
         <label v-if="forced" class="forced">{{placeholder}}</label>
         <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
@@ -18,6 +18,7 @@
     export default {
         data(){ return { input:this.text || '' }},
         methods: {
+            enter(){ this.$emit('enter') },
             emit(){ this.$emit('changed', this.input) },
             blur(){ this.$emit('blur') },
             emitDynamicButton(){ this.$emit('dynamic') },

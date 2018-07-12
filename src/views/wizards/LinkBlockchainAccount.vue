@@ -182,10 +182,6 @@
             }
         },
         methods: {
-            scrollTo(step){
-                this.$refs.scroller.scrollTop = this.$refs[step.ref].offsetTop-120;
-                this.onStep = step;
-            },
             keypairChanged(keypair){
                 this.keypair = keypair;
                 this.selectedNetwork = this.availableNetworks[0];
