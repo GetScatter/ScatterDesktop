@@ -7,6 +7,7 @@ import {store} from '../store/store'
 import * as Actions from '../store/constants'
 import {localized} from '../localization/locales'
 import * as LANG_KEYS from '../localization/keys'
+import ElectronHelpers from '../util/ElectronHelpers'
 
 /***
  * Sets up an instance of Vue.
@@ -33,6 +34,9 @@ export default class VueInitializer {
                         let props = dotNotation.split(".");
                         const lastKey = props.pop();
                         props.reduce((obj,key)=> obj[key], this)[lastKey] = changed;
+                    },
+                    openInBrowser(url){
+                        ElectronHelpers.openLinkInBrowser(url);
                     },
                     locale:(key) => localized(key, store.getters.language),
                     scrollTo(step){

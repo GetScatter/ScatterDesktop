@@ -103,7 +103,6 @@
     import SocketService from '../../services/SocketService';
     import PopupService from '../../services/PopupService';
     import {Popup} from '../../models/popups/Popup'
-    import ElectronHelpers from '../../util/ElectronHelpers'
 
 
 
@@ -127,9 +126,6 @@
 
         },
         methods: {
-            openInBrowser(url){
-                ElectronHelpers.openLinkInBrowser(url);
-            },
             ...mapActions([
                 Actions.SET_SCATTER
             ])
@@ -140,57 +136,5 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables.scss";
 
-    .extensions {
-        margin-top:20px;
 
-        .extension {
-            width:150px;
-            height:150px;
-            border-radius:4px;
-            border:2px solid rgba(0,0,0,0.1);
-            box-shadow:0 0 0 rgba(0,0,0,0);
-            text-align:center;
-            display:inline-block;
-            margin-right:16px;
-            background:transparent;
-            transition: border 0.7s ease, box-shadow 1.5s ease, background 0.5s ease;
-
-            .icon {
-                width:100%;
-                height:110px;
-                line-height:110px;
-                font-size:60px;
-                color:$mid-light-grey;
-                transition: color 0.3s ease;
-            }
-
-            .text {
-                font-size:14px;
-                font-weight: 600;
-                color:$dark-grey;
-                transition: color 0.3s ease;
-            }
-
-            &.disabled {
-                cursor: not-allowed;
-                .icon, .text {
-                    color:$light-grey;
-                }
-            }
-
-            &:not(.disabled){
-                cursor: pointer;
-                &:hover {
-                    border:2px solid $dark-blue;
-                    box-shadow:0 0 90px rgba(0,0,0,0.3);
-                    background:$light-blue;
-
-                    .icon, .text {
-                        color:#fff;
-                    }
-                }
-            }
-        }
-
-    }
 </style>

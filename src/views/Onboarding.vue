@@ -44,6 +44,32 @@
                 <i class="name-terms">{{keypair.publicKey.length ? keypair.publicKey : 'Once you enter a valid private key you will see the public key here.'}}</i>
             </section>
 
+            <section class="onboarder" v-if="step === steps.EXTENSION">
+                <h1>Get the Web Extension</h1>
+                <p>
+                    If you want to interact with web applications you'll need one of the web extensions as well.
+                </p>
+
+                <section class="extensions">
+                    <section class="extension" @click="openInBrowser('https://chrome.google.com/webstore/detail/scatter-web-connector/kgikkekbjibkhhmjchblangiiphleodk?hl=en')">
+                        <figure class="icon"><i class="fa fa-chrome"></i></figure>
+                        <figure class="text">Chrome</figure>
+                    </section>
+
+                    <section class="extension disabled">
+                        <figure class="icon"><i class="fa fa-firefox"></i></figure>
+                        <figure class="text">Firefox</figure>
+                    </section>
+
+                    <section class="extension disabled">
+                        <figure class="icon"><i class="fa fa-safari"></i></figure>
+                        <figure class="text">Safari</figure>
+                    </section>
+                </section>
+                <i class="name-terms">Once you've installed the extension, simply open it up by clicking the little Scatter icon on your browser's toolbar ( top right ) and click "<b>Link with Scatter</b>"</i>
+                <btn text="Continue to Scatter" v-on:clicked="finish"></btn>
+            </section>
+
         </section>
 
 
@@ -65,7 +91,8 @@
 
     const STEPS = {
         IDENTITY:'identity',
-        BLOCKCHAIN:'blockchain'
+        BLOCKCHAIN:'blockchain',
+        EXTENSION:'extension'
     };
 
     export default {
@@ -86,6 +113,7 @@
             ])
         },
         mounted(){
+//            this.step = STEPS.EXTENSION;
         },
         methods: {
             setIdentityName(){
@@ -116,15 +144,6 @@
 
                 const network = await PluginRepository.plugin(this.keypair.blockchain).getEndorsedNetwork();
 
-                const finishedImporting = () => {
-                    PopupService.push(Popup.prompt(`You're ready to go!`,
-                        `Make sure you go to the "Help" section and download a Web Browser Extension if you want to interact with web applications.`,
-                        "check", "Finish", () => {
-                            this.$router.push({name:RouteNames.IDENTITIES});
-                        }));
-
-                };
-
                 const importAccount = async () => {
                     if(AccountService.accountsAreImported(this.keypair)){
                         const availableAccounts = await AccountService.getImportableAccounts(this.keypair, network);
@@ -137,10 +156,10 @@
                         }
                         const account = availableAccounts[0];
                         await AccountService.addAccount(account, this);
-                        finishedImporting();
+                        this.step = STEPS.EXTENSION;
                     } else {
                         await AccountService.addAccountFromKeypair(this.keypair, network, this);
-                        finishedImporting();
+                        this.step = STEPS.EXTENSION;
                     }
                 };
 
@@ -154,7 +173,14 @@
                 else await importAccount();
             },
             skipBlockchain(){
-                this.$router.push({name:RouteNames.IDENTITIES});
+                this.finish();
+            },
+            finish(){
+                PopupService.push(Popup.prompt(`You're ready to go!`,
+                    `You've set up your Identity and imported a blockchain account. Enjoy Scatter.`,
+                    "check", "Continue", () => {
+                        this.$router.push({name:RouteNames.IDENTITIES});
+                    }));
             },
             ...mapActions([
                 Actions.SET_SCATTER
@@ -180,12 +206,12 @@
             font-family: 'Grand Hotel', sans-serif;
             font-size: 72px;
             color: #f6f6f6;
-            margin-bottom:60px;
+            margin-bottom:20px;
         }
 
         .onboarder {
             -webkit-app-region: no-drag;
-            max-width:500px;
+            max-width:510px;
             margin:0 auto;
 
             h1 {
@@ -218,7 +244,9 @@
 
             .name-terms {
                 font-size: 13px;
-                line-height:50px;
+                line-height:18px;
+                padding:10px 0;
+                display: block;
             }
         }
 
