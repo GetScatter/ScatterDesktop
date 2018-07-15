@@ -112,7 +112,9 @@ const socketHandler = (socket) => {
 export default class SocketService {
 
     static initialize(){
-        io = window.require('socket.io').listen(50005);
+        const server = window.require('http').createServer();
+        server.listen(50005, 'localhost');
+        io = window.require('socket.io').listen(server);
     }
 
     static getConnectionCount(appLink){
