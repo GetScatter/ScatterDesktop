@@ -31,6 +31,8 @@
 
     import SocketService from '../../services/SocketService'
     import PasswordService from '../../services/PasswordService'
+    import PopupService from "../../services/PopupService";
+    import {Popup} from '../../models/popups/Popup'
 
     export default {
         name: 'Auth',
@@ -59,10 +61,18 @@
             async unlock(){
                 await this[Actions.SET_SEED](this.password);
                 await this[Actions.LOAD_SCATTER]();
-                if(!this.scatter.isEncrypted()){
+
+                const failed = () => {
+                    console.log('failed');
+                    PopupService.push(Popup.snackbar("Bad Password", "ban"))
+                };
+
+                if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
                     SocketService.initialize();
                     SocketService.openAllDefaults();
                     this.$router.push({name:RouteNames.IDENTITIES});
+                } else {
+                    failed();
                 }
             },
             ...mapActions([
