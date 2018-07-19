@@ -47,6 +47,17 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data, callback))
     }
 
+    static mnemonic(phrase){
+        const data = {
+            phrase,
+            icon:'key',
+            title:'Your Password Backup',
+            description:'This Mnemonic phrase is only a backup for your password, it will not regenerate your keys.',
+            buttonText:'Okay'
+        };
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, data, () => {}))
+    };
+
     static invalidIdentityName(){
         return Popup.snackbar("The name you entered is invalid. Names but be between 3-20 characters and include only a-Z, 0-9 and - or _", "ban");
     };
@@ -54,6 +65,7 @@ export class Popup {
 }
 
 export const PopupTypes = {
+    MNEMONIC:'mnemonic',
     PROMPT:'prompt',
     TEXT_PROMPT:'textPrompt',
     SELECTOR:'selector'

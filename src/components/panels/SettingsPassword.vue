@@ -53,8 +53,11 @@
             async changePassword(){
                 if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) return false;
 
-                await PasswordService.changePassword(this.password);
+                const mnemonic = await PasswordService.changePassword(this.password);
+                PopupService.push(Popup.mnemonic(mnemonic));
                 PopupService.push(Popup.prompt("New Password Set!", "You have set a new password", "asterisk", "Okay"));
+                this.password = '';
+                this.confirmPassword = '';
             },
             ...mapActions([
                 Actions.SET_SCATTER

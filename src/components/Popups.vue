@@ -9,6 +9,7 @@
                     <prompt v-if="nextPopIn.data.type === popupTypes.PROMPT"></prompt>
                     <text-prompt v-if="nextPopIn.data.type === popupTypes.TEXT_PROMPT"></text-prompt>
                     <selector v-if="nextPopIn.data.type === popupTypes.SELECTOR"></selector>
+                    <mnemonic v-if="nextPopIn.data.type === popupTypes.MNEMONIC"></mnemonic>
                 </section>
             </section>
 

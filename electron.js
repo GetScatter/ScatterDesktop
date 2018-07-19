@@ -31,27 +31,22 @@ app.on('ready', function () {
         icon:'assets/icon.png'
     });
 
-    // win.openDevTools();
+    win.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';
     if(process.mainModule.filename.indexOf('app.asar') === -1){
         mainUrl = 'http://localhost:8080/';
-        trayIcon = 'static/icons/icon.png';
+        trayIcon = 'static/icons/icon-tray.png';
     } else {
         mainUrl = url.format({
             pathname: path.join(__dirname, "dist", "index.html"),
             protocol: "file:",
             slashes: true
         });
-        trayIcon = __dirname + '/static/icons/icon.png';
+        trayIcon = __dirname + '/static/icons/icon-tray.png';
     }
     win.loadURL(mainUrl);
-
-
-
-    // win.loadURL('http://localhost:8080/');
-    // win.loadURL('http://localhost:8080/#/popout');
 
     win.on('closed', () => {
         win = null;

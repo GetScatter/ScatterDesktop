@@ -13,6 +13,8 @@ import Scatter from '../models/Scatter';
 import AppLink from '../models/AppLink';
 
 import AES from 'aes-oop';
+import PopupService from "../services/PopupService";
+import {Popup} from '../models/popups/Popup'
 
 export const actions = {
     [Actions.HOLD_SCATTER]:({commit}, scatter) => commit(Actions.SET_SCATTER, scatter),
@@ -61,7 +63,7 @@ export const actions = {
             dispatch(Actions.SET_SEED, password).then(mnemonic => {
                 dispatch(Actions.SET_SCATTER, scatter).then(_scatter => {
 
-                    //TODO: Prompt mnemonic
+                    PopupService.push(Popup.mnemonic(mnemonic));
                     resolve();
                 })
             })
