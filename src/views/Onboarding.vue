@@ -173,7 +173,8 @@
                 else await importAccount();
             },
             skipBlockchain(){
-                this.finish();
+                // this.finish();
+              this.step = STEPS.EXTENSION;
             },
             finish(){
                 PopupService.push(Popup.prompt(`You're ready to go!`,

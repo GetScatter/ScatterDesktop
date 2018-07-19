@@ -13,7 +13,9 @@
             <btn :text="nextPopIn.data.props.buttonText" :red="true" v-on:clicked="returnResult(returnedText)"></btn>
         </section>
         <section>
-            <cin :placeholder="input.placeholder" :type="input.type || 'text'" :text="returnedText" v-on:changed="x => returnedText = x"></cin>
+            <cin :placeholder="input.placeholder" :type="input.type || 'text'"
+                 v-on:enter="returnResult(returnedText)" :text="returnedText"
+                 v-on:changed="x => returnedText = x"></cin>
         </section>
     </section>
 </template>
