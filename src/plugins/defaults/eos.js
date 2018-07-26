@@ -13,7 +13,7 @@ import StorageService from '../../services/StorageService'
 
 const getAccountsFromPublicKey = (publicKey, network) => {
     return Promise.race([
-        new Promise(resolve => setTimeout(() => resolve([]), 2000)),
+        new Promise(resolve => setTimeout(() => resolve([]), 10000)),
         new Promise((resolve, reject) => {
             const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId});
             eos.getKeyAccounts(publicKey).then(res => {

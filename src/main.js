@@ -31,6 +31,7 @@ import SettingsPassword from './components/panels/SettingsPassword.vue'
 
 // POPUPS
 import Popups from './components/Popups.vue'
+import Mnemonic from './components/popups/Mnemonic.vue'
 import Prompt from './components/popups/Prompt.vue'
 import Selector from './components/popups/Selector.vue'
 import Snackbar from './components/popups/Snackbar.vue'
@@ -53,6 +54,7 @@ import SubMenuHead from './components/reusable/SubMenuHead.vue'
 import SocketService from './services/SocketService'
 import {Popup} from './models/popups/Popup';
 import PopupService from './services/PopupService';
+import MnemonicUtil from './util/Mnemonic'
 
 const {remote, BrowserWindow} = window.require('electron');
 const app = remote.app;
@@ -88,6 +90,7 @@ class Main {
             // POPUPS
             {tag:'popups', vue:Popups},
             {tag:'prompt', vue:Prompt},
+            {tag:'mnemonic', vue:Mnemonic},
             {tag:'text-prompt', vue:TextPrompt},
             {tag:'selector', vue:Selector},
             {tag:'snackbar', vue:Snackbar},

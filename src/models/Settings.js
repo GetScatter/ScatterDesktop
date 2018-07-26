@@ -13,6 +13,7 @@ export default class Settings {
         this.language = LANG.ENGLISH;
         this.autoBackup = BACKUP_STRATEGIES.MANUAL;
         this.backupLocation = '';
+        this.advancedMode = false;
     }
 
     static placeholder(){ return new Settings(); }

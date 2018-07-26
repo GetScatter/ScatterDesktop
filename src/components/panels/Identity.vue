@@ -9,7 +9,7 @@
             <section class="selected-item scrollable" v-if="identity">
 
                 <figure class="name" :class="{'bad-name':!isValidName}">{{identity.name.length ? identity.name : 'Identity Name Required'}}</figure>
-                <figure class="description">This identity is linked to 23 apps.</figure>
+                <figure class="description">This identity is linked to {{connectedApps}} apps.</figure>
 
                 <section class="split-panels left">
                     <section class="info-box">
@@ -96,10 +96,14 @@
             ...mapGetters([
                 'networks',
                 'accounts',
+                'permissions'
             ]),
             isValidName(){
                 return this.identity && Identity.nameIsValid(this.identity.name);
-            }
+            },
+            connectedApps(){
+                return this.permissions.filter(x => x.isIdentity && x.identity === this.identity.publicKey).length
+            },
         },
         mounted(){
             this.identity = this.id.clone();

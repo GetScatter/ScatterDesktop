@@ -7,13 +7,22 @@ import StorageService from '../services/StorageService';
 import AES from 'aes-oop';
 import Scatter from '../models/Scatter';
 import SocketService from '../services/SocketService'
+import PopupService from '../services/PopupService'
+import {Popup} from '../models/popups/Popup'
 
 export default class PasswordService {
 
     static isValidPassword(password, confirmPassword = null){
         // TODO: Password error prompts
-        if(!password || password.length < 8) return false;
-        if(confirmPassword !== null && password !== confirmPassword) return false;
+        if(!password || password.length < 8) {
+            PopupService.push(Popup.prompt("Invalid Password", "Passwords must be at least 8 characters long.", "ban", "Okay"));
+            return false;
+        }
+
+        if(confirmPassword !== null && password !== confirmPassword) {
+          PopupService.push(Popup.prompt("Confirmation Mismatch", "The confirmation password does not match.", "ban", "Okay"));
+            return false;
+        }
 
         // TODO: Strengthen password restrictions
 
