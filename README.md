@@ -20,7 +20,7 @@ to software that has not been tested by large numbers yet.
 Scatter Desktop from this GitHub, and **NO WHERE ELSE**.
 
 - Windows: [Click to download the latest Window Installer](https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/win-Scatter.Desktop-8.0.0.exe)
-- Ubuntu: [Click to download the latest Linux AppImage]https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/linux-Scatter.Desktop-8.0.0-x86_64.AppImage)
+- Ubuntu: [Click to download the latest Linux AppImage](https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/linux-Scatter.Desktop-8.0.0-x86_64.AppImage)
 - Mac: Coming Soon
 
 ## Setup
