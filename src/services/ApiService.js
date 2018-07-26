@@ -90,7 +90,8 @@ export default class ApiService {
      * @returns {Promise.<*>}
      */
     static async [Actions.FORGET_IDENTITY](request){
-        return PermissionService.removeIdentityPermission(request.payload.origin);
+        await PermissionService.removeIdentityPermission(request.payload.origin);
+        return {id:request.id, result:true};
     }
 
     /***
