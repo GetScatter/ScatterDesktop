@@ -11,7 +11,6 @@ export default class Account {
     }
 
     formatted(){
-
         return PluginRepository.plugin(this.blockchain()).accountFormatter(this);
     }
 

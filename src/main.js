@@ -20,6 +20,7 @@ import Identity from './components/panels/Identity.vue'
 import Keypair from './components/panels/Keypair.vue'
 import AppLink from './components/panels/AppLink.vue'
 import Network from './components/panels/Network.vue'
+import Transfer from './components/panels/Transfer.vue'
 import NothingHere from './components/panels/NothingHere.vue'
 import Terms from './components/panels/Terms.vue'
 import OriginPermissions from './components/panels/OriginPermissions.vue'
@@ -78,6 +79,7 @@ class Main {
             {tag:'keypair', vue:Keypair},
             {tag:'app-link', vue:AppLink},
             {tag:'network', vue:Network},
+            {tag:'transfer', vue:Transfer},
             {tag:'terms', vue:Terms},
             {tag:'nothing-here', vue:NothingHere},
             {tag:'origin-perms', vue:OriginPermissions},

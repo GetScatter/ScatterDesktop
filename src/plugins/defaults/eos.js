@@ -8,7 +8,11 @@ import Eos from 'eosjs'
 let {ecc, Fcbuffer} = Eos.modules;
 import ObjectHelpers from '../../util/ObjectHelpers'
 import * as ricardianParser from 'eos-rc-parser';
+import {Popup} from '../../models/popups/Popup'
+import PopupService from '../../services/PopupService'
 import StorageService from '../../services/StorageService'
+import ApiService from '../../services/ApiService'
+import * as Actions from '../../models/api/ApiActions';
 
 
 const getAccountsFromPublicKey = (publicKey, network) => {
@@ -93,6 +97,31 @@ export default class EOS extends Plugin {
                 .map(message => message.authorization
                     .map(auth => `${auth.actor}@${auth.permission}`))
         );
+    }
+
+    async balanceFor(account, network, tokenAccount, symbol){
+        const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId});
+
+        const balances = await eos.getTableRows({
+            json:true,
+            code:tokenAccount,
+            scope:account.name,
+            table:'accounts',
+            limit:500
+        }).then(res => res.rows).catch(() => []);
+
+        const row = balances.find(row => row.balance.split(" ")[1].toLowerCase() === symbol.toLowerCase());
+        return row ? row.balance.split(" ")[0] : 0;
+    }
+
+    async transfer(account, to, amount, network, tokenAccount, symbol, memo){
+        const signProvider = args => this.signer({data:args.buf}, account.publicKey, true);
+        const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId, signProvider});
+        const contract = await eos.contract(tokenAccount);
+        const options = { authorization:[account.formatted()] };
+        return await contract.transfer(account.name, to, amount, memo, options)
+            .catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
+            .then(result => result);
     }
 
     async signer(payload, publicKey, arbitrary = false, isHash = false){

@@ -157,6 +157,10 @@ export default class ETH extends Plugin {
         return [Blockchains.EOS];
     }
 
+    async balanceFor(account, network, tokenAccount, symbol){
+        return 0;
+    }
+
 //     async getBalances(account, network, code = 'eosio.token', table = 'accounts'){
 //         // TODO: Add ability to get ETH balances
 //         return new Promise((r) => {

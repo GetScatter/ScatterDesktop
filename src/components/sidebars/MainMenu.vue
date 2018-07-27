@@ -46,6 +46,7 @@
         name: 'MainMenu',
         data () {return {
             links:[
+                {route:RouteNames.TRANSFER, name:'Transfer', icon:'paper-plane'},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'key'},
                 {route:RouteNames.LINKED_APPS, name:'Applications', icon:'plug'},

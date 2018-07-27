@@ -6,6 +6,7 @@ import Login from '../views/Login.vue'
 import Settings from '../views/Settings.vue'
 import PopOut from '../views/PopOut.vue'
 import Permissions from '../views/Permissions.vue'
+import Transfers from '../views/Transfers.vue'
 import Help from '../views/Help.vue'
 import SetupAnIdentity from '../views/wizards/SetupAnIdentity.vue'
 import LinkBlockchainAccount from '../views/wizards/LinkBlockchainAccount.vue'
@@ -18,6 +19,7 @@ import GetWebExtensions from '../views/wizards/GetWebExtensions.vue'
 export const RouteNames = {
     LOGIN:'login',
     ONBOARDING:'onboarding',
+    TRANSFER:'transfer',
     IDENTITIES:'identities',
     BLOCKCHAINS:'blockchains',
     LINKED_APPS:'linkedApps',
@@ -41,6 +43,7 @@ export const RouteNames = {
 const RouteViews = {
     [RouteNames.LOGIN]:Login,
     [RouteNames.ONBOARDING]:Onboarding,
+    [RouteNames.TRANSFER]:Transfers,
     [RouteNames.IDENTITIES]:Identities,
     [RouteNames.BLOCKCHAINS]:Blockchains,
     [RouteNames.LINKED_APPS]:LinkedApps,
@@ -60,11 +63,12 @@ const RouteViews = {
 export const RouteDepth = {
     [RouteNames.LOGIN]:-2,
     [RouteNames.ONBOARDING]:-1,
-    [RouteNames.IDENTITIES]:0,
-    [RouteNames.BLOCKCHAINS]:1,
-    [RouteNames.LINKED_APPS]:2,
-    [RouteNames.PERMISSIONS]:3,
-    [RouteNames.HELP]:4,
+    [RouteNames.TRANSFER]:1,
+    [RouteNames.IDENTITIES]:2,
+    [RouteNames.BLOCKCHAINS]:3,
+    [RouteNames.LINKED_APPS]:4,
+    [RouteNames.PERMISSIONS]:5,
+    [RouteNames.HELP]:6,
     [RouteNames.SETTINGS]:7,
     [RouteNames.NOT_IDENTITIES]:3,
 };
