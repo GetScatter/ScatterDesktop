@@ -33,6 +33,13 @@
                         <btn v-if="isNew && keypair.publicKey.length" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
                         <btn v-if="!isNew" v-on:clicked="copyKeyPair" text="Copy Public Key" secondary="true"></btn>
                         <btn v-on:clicked="saveKeyPair" :text="isNew ? 'Save Keypair' : 'Update Name'" style="float:right;"></btn>
+
+                        <btn v-if="!isNew" v-on:clicked="toggleQR" :text="qr === '' ? 'Show Encrypted QR' : 'Hide QR'"></btn>
+
+                        <section style="width:100%; margin-left:-15px;">
+                            <img :src="qr" />
+                        </section>
+
                     </section>
                 </section>
 
@@ -93,6 +100,7 @@
     import {BlockchainsArray, Blockchains} from '../../models/Blockchains';
     import KeyPairService from '../../services/KeyPairService';
     import AccountService from '../../services/AccountService';
+    import QRService from '../../services/QRService';
     import PluginRepository from '../../plugins/PluginRepository'
 
     import ElectronHelpers from '../../util/ElectronHelpers';
@@ -108,6 +116,7 @@
             availableAccounts:[],
             keypair:null,
             fetchedAccounts:false,
+            qr:'',
         }},
         computed: {
             ...mapState([
@@ -140,6 +149,10 @@
         },
         props:['kp'],
         methods: {
+            async toggleQR(){
+                if(this.qr === '') this.qr = await QRService.createQR(this.keypair.privateKey);
+                else this.qr = '';
+            },
             async linkKeypairToNetwork(){
                 await AccountService.addAccountFromKeypair(this.keypair, this.selectedNetwork, this);
             },
