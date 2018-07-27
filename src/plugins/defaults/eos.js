@@ -13,6 +13,7 @@ import PopupService from '../../services/PopupService'
 import StorageService from '../../services/StorageService'
 import ApiService from '../../services/ApiService'
 import * as Actions from '../../models/api/ApiActions';
+import {store} from '../../store/store'
 
 
 const getAccountsFromPublicKey = (publicKey, network) => {
@@ -115,7 +116,26 @@ export default class EOS extends Plugin {
     }
 
     async transfer(account, to, amount, network, tokenAccount, symbol, memo){
-        const signProvider = args => this.signer({data:args.buf}, account.publicKey, true);
+        const signProvider = async payload => {
+            return new Promise(async resolve => {
+                payload.messages = await this.requestParser(payload, Network.fromJson(network));
+                payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+                const request = {
+                    payload,
+                    origin:'Internal Scatter Transfer',
+                    blockchain:'eos',
+                    requiredFields:{},
+                    type:Actions.REQUEST_SIGNATURE,
+                    id:1,
+                }
+
+                PopupService.push(Popup.popout(request, async ({result}) => {
+                    if(!result || (!result.accepted || false)) return resolve(null);
+                    resolve(this.signer({data:payload.buf}, account.publicKey, true));
+                }));
+            })
+        };
+
         const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId, signProvider});
         const contract = await eos.contract(tokenAccount);
         const options = { authorization:[account.formatted()] };

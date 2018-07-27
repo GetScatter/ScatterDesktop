@@ -10,14 +10,13 @@
 
                 <figure class="name">Transfer Tokens</figure>
                 <figure class="description">
-                    You can transfer funds between blockchain accounts using Scatter.
+                    Transferring tokens between accounts is an irreversible action. Make sure you are transferring to the right person.
                 </figure>
 
 
 
                 <section class="split-panels left">
                     <section class="info-box">
-                        <figure class="header">Token Details</figure>
 
                         <sel :selected="token"
                              :options="tokens"
@@ -34,7 +33,7 @@
                             </section>
                             <cin placeholder="Memo" :text="memo" v-on:changed="changed => bind(changed, 'memo')"></cin>
                             <br>
-                            <btn style="float:right;" text="Send Tokens" :red="true" large="true" v-on:clicked="send"></btn>
+                            <btn :disabled="sending" style="float:right;" text="Send Tokens" :red="true" large="true" v-on:clicked="send"></btn>
                         </section>
 
                     </section>
@@ -66,6 +65,8 @@
             to:'',
             amount:0,
             memo:'',
+
+            sending:false,
 
             token:null,
             tokens:[{
@@ -110,6 +111,7 @@
                 if(parseFloat(this.amount) <= 0) return PopupService.push(Popup.prompt("Invalid Amount", "You must send an amount greater than 0", "ban", "Okay"));
                 if(!this.to.trim().length) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "ban", "Okay"));
 
+                this.sending = true;
                 if(this.account.blockchain() === Blockchains.EOS) this.sendEosTokens();
             },
 
@@ -119,21 +121,14 @@
                 this.amount = amount;
 
 
-
-                PopupService.promptGuard(Popup.prompt(
-                    "Sending Tokens",
-                    `You are about to send ${this.amount} ${this.token.symbol} tokens to ${this.to}. Are you sure you want to continue?`,
-                    "exclamation-triangle",
-                    "Yes", () => {}, "No"
-                ), async accepted => {
-                    if(!accepted) return;
-
-                    const transfer = await PluginRepository.plugin(this.account.blockchain())
-                        .transfer(this.account, this.to, `${amount} ${this.token.symbol}`, this.network, this.token.account, this.token.symbol, this.memo);
-                    if(transfer.hasOwnProperty('error')) PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
+                const transfer = await PluginRepository.plugin(this.account.blockchain())
+                    .transfer(this.account, this.to, `${amount} ${this.token.symbol}`, this.network, this.token.account, this.token.symbol, this.memo);
+                if(transfer !== null) {
+                    if (transfer.hasOwnProperty('error')) PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
                     else PopupService.push(Popup.prompt("Success!", `Transaction ID: ${transfer.transaction_id}`, "check", "Okay"))
-                })
+                }
 
+                this.sending = false;
             },
 
             ...mapActions([
