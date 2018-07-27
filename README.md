@@ -21,7 +21,7 @@ Scatter Desktop from this GitHub, and **NO WHERE ELSE**.
 
 - Windows: [Click to download the latest Window Installer](https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/win-Scatter.Desktop-8.0.0.exe)
 - Ubuntu: [Click to download the latest Linux AppImage](https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/linux-Scatter.Desktop-8.0.0-x86_64.AppImage)
-- Mac: Coming Soon
+- Mac: [Click to download the latest Mac dmg](https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/mac-Scatter.Desktop-8.0.0.dmg)
 
 ## Setup
 
