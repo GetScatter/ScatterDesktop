@@ -53,8 +53,8 @@
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'shield'},
                 {route:RouteNames.HELP, name:'Help', icon:'question-circle', disabled:false},
                 {route:RouteNames.SETTINGS, name:'Settings', icon:'gear'},
-                {route:RouteNames.NOT_IDENTITIES, name:'RIDL ( Coming Soon )', icon:'star-half-o', disabled:true},
-                {route:RouteNames.NOT_IDENTITIES, name:'Alerts ( Coming Soon )', icon:'bell', disabled:true},
+                {route:RouteNames.NOT_IDENTITIES, name:'Address Book', icon:'address-card', disabled:true},
+                {route:RouteNames.NOT_IDENTITIES, name:'RIDL', icon:'star-half-o', disabled:true},
             ]
         }},
         methods:{
