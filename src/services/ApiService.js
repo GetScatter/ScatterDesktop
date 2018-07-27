@@ -144,7 +144,11 @@ export default class ApiService {
             const plugin = PluginRepository.plugin(blockchain);
 
             // Convert buf and abi to messages
-            payload.messages = await plugin.requestParser(payload, Network.fromJson(payload.network));
+            switch(blockchain){
+                case Blockchains.EOS: payload.messages = await plugin.requestParser(payload, Network.fromJson(payload.network)); break;
+                case Blockchains.ETH: payload.messages = await plugin.requestParser(payload, payload.hasOwnProperty('abi') ? payload.abi : null); break;
+            }
+
 
             const availableAccounts = possibleId.accounts.map(x => x.formatted());
             const participants = ObjectHelpers.distinct(plugin.actionParticipants(payload))
