@@ -19,11 +19,13 @@ to software that has not been tested by large numbers yet.
 **Because we are in Open Beta none of these package are signed yet.** Make sure you only download 
 Scatter Desktop from this GitHub, and **NO WHERE ELSE**.
 
-- Windows: [Click to download the latest Window Installer](https://github.com/GetScatter/ScatterDesktop/raw/master/release/win-Scatter%20Desktop-8.0.0.exe)
-- Ubuntu: [Click to download the latest Linux AppImage](https://github.com/GetScatter/ScatterDesktop/raw/master/release/linux-Scatter%20Desktop-8.0.0-x86_64.AppImage)
-- Mac: Coming Soon
+- Windows: [Click to download the latest Window Installer](https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/win-Scatter.Desktop-8.0.0.exe)
+- Ubuntu: [Click to download the latest Linux AppImage](https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/linux-Scatter.Desktop-8.0.0-x86_64.AppImage)
+- Mac: [Click to download the latest Mac dmg](https://github.com/GetScatter/ScatterDesktop/releases/download/8.0.0/mac-Scatter.Desktop-8.0.0.dmg)
 
 ## Setup
+
+**If you have both the Scatter Classic extension ( old one ) and the new Web Connector extension enabled in your chrome extensions you will need to disable the Scatter Classic extension** ( `chrome://extensions` )
 
 Scatter now has internal help / wizards to help you set up every step of the way.
 Click the "Help" menu from the sidebar to get started.
