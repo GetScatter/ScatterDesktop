@@ -23,7 +23,7 @@
                              :parser="t => t.symbol"
                              v-on:changed="selectToken"></sel>
 
-                        <cin disabled="true" placeholder="Token Balance" :text="`${tokenBalance} ${token.symbol}`"></cin>
+                        <cin disabled="true" forced="true" placeholder="Transferable Tokens" :text="`${tokenBalance} ${token.symbol}`"></cin>
 
                         <section v-if="tokenBalance > 0">
                             <br>
@@ -69,10 +69,7 @@
             sending:false,
 
             token:null,
-            tokens:[{
-                account:'eosio.token',
-                symbol:'EOS'
-            }],
+            tokens:[],
             tokenBalance:0,
         }},
         computed:{
@@ -87,15 +84,17 @@
             }
         },
         mounted(){
-            this.selectToken(this.tokens[0]);
-            this.fetchTokens();
+            this.initTokens();
         },
         methods: {
-            async fetchTokens(){
-                const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);
-                eosTokens.map(token => {
-                    if(!this.tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) this.tokens.push(token);
-                });
+            async initTokens(){
+                await PluginRepository.plugin(this.account.blockchain()).fetchTokens(this.tokens);
+                switch(this.account.blockchain()){
+                    case Blockchains.EOS: this.token = this.tokens.find(x => x.symbol === 'EOS'); break;
+                    case Blockchains.ETH: this.token = this.tokens.find(x => x.symbol === 'ETH'); break;
+                }
+                if(!this.token) this.token = this.tokens[0];
+                this.setTokenBalance();
             },
 
             selectToken(token){

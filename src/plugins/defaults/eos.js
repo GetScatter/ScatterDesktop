@@ -115,6 +115,13 @@ export default class EOS extends Plugin {
         return row ? row.balance.split(" ")[0] : 0;
     }
 
+    async fetchTokens(tokens){
+        const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);
+        eosTokens.map(token => {
+            if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
+        });
+    }
+
     async transfer(account, to, amount, network, tokenAccount, symbol, memo){
         const signProvider = async payload => {
             return new Promise(async resolve => {

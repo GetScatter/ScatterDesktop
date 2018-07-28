@@ -6,69 +6,18 @@ import Network from '../../models/Network'
 const EthTx = require('ethereumjs-tx')
 const ethUtil = require('ethereumjs-util');
 import Web3 from 'web3';
+import ProviderEngine from 'web3-provider-engine';
+import RpcSubprovider from 'web3-provider-engine/subproviders/rpc';
+import HookedWalletSubprovider from "web3-provider-engine/subproviders/hooked-wallet";
 
 import IdGenerator from '../../util/IdGenerator';
 import KeyPairService from '../../services/KeyPairService';
 import ObjectHelpers from '../../util/ObjectHelpers'
-//
-//
-//
-// let messageSender = new WeakMap();
-// let throwIfNoIdentity = new WeakMap();
-// let network = new WeakMap();
-const web3 = new Web3();
-//
-// const proxy = (dummy, handler) => new Proxy(dummy, handler);
-//
-// class ScatterEthereumWallet {
-//     constructor(){
-//         this.getAccounts = this.getAccounts.bind(this);
-//         this.signTransaction = this.signTransaction.bind(this);
-//     }
-//
-//     async getAccounts(callback) {
-//         const result = await messageSender(NetworkMessageTypes.IDENTITY_FROM_PERMISSIONS);
-//         const accounts = !result ? [] : result.accounts
-//             .filter(account => account.blockchain === Blockchains.ETH)
-//             .map(account => account.publicKey);
-//
-//         callback(null, accounts);
-//         return accounts;
-//     }
-//
-//     async signTransaction(transaction){
-//         if(!network) throw Error.noNetwork();
-//
-//         // Basic settings
-//         if (transaction.gas !== undefined) transaction.gasLimit = transaction.gas;
-//         transaction.value = transaction.value || '0x00';
-//         if(transaction.hasOwnProperty('data')) transaction.data = ethUtil.addHexPrefix(transaction.data);
-//
-//         // Required Fields
-//         const requiredFields = IdentityRequiredFields.fromJson(transaction.hasOwnProperty('requiredFields') ? transaction.requiredFields : {});
-//         if(!requiredFields.isValid()) throw Error.malformedRequiredFields();
-//
-//         // Contract ABI
-//         const abi = transaction.hasOwnProperty('abi') ? transaction.abi : null;
-//         if(!abi && transaction.hasOwnProperty('data'))
-//             throw Error.signatureError('no_abi', 'You must provide a JSON ABI along with your transaction so that users can read the contract');
-//
-//         // Messages for display
-//         transaction.messages = await messagesBuilder(transaction, abi);
-//
-//         // Signature Request Popup
-//         const payload = Object.assign(transaction, { domain:strippedHost(), network, requiredFields });
-//         const {signatures, returnedFields} = await messageSender(NetworkMessageTypes.REQUEST_SIGNATURE, payload);
-//
-//         if(transaction.hasOwnProperty('fieldsCallback'))
-//             transaction.fieldsCallback(returnedFields);
-//
-//         return signatures[0];
-//     }
-// }
-//
-//
 
+import PopupService from '../../services/PopupService'
+import {Popup} from '../../models/popups/Popup'
+
+const web3 = new Web3();
 
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 
@@ -127,6 +76,18 @@ export default class ETH extends Plugin {
             payload.messages
                 .map(message => message.authorization)
         );
+    }
+
+    async fetchTokens(tokens){
+        const ethTokens = [{account:'eth', symbol:'ETH'}];
+        ethTokens.map(token => {
+            if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
+        });
+    }
+
+    async transfer(account, to, amount, network, tokenAccount, symbol, memo){
+        PopupService.push(Popup.prompt("Ethereum transfers not enabled yet", "Sorry, but only EOS transfers are currently enabled", "ban", "Okay"))
+        return null;
     }
 
     async signer(transaction, publicKey, arbitrary = false, isHash = false){
