@@ -43,7 +43,7 @@ export default class Error {
     }
 
     static signatureAccountMissing(){
-        return this.signatureError("account_missing", "Missing required accounts, repull the identity");
+        return this.signatureError("account_missing", "You are trying to sign a request with an account that isn't currently linked or doesn't exist in the user's Scatter");
     }
 
     static malformedRequiredFields(){

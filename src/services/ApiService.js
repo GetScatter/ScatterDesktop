@@ -20,6 +20,7 @@ import Network from '../models/Network'
 export default class ApiService {
 
     static async handler(request){
+        console.log('req', request);
         const action = Action.fromJson(request);
 
         // Only accept pre-defined messages.
@@ -48,7 +49,7 @@ export default class ApiService {
         return new Promise((resolve) => {
 
             const possibleId = PermissionService.identityFromPermissions(request.payload.origin);
-            if(possibleId) return resolve(possibleId);
+            if(possibleId) return resolve({id:request.id, result:possibleId});
 
             PopupService.push(Popup.popout(request, ({result}) => {
                 if(!result) return resolve(Error.signatureError("identity_rejected", "User rejected the provision of an Identity"));
@@ -184,6 +185,24 @@ export default class ApiService {
                 await PermissionService.addActionPermissions(origin, identity, participants, result.whitelists);
                 await signAndReturn(result.selectedLocation);
             }));
+        });
+    }
+
+    static async [Actions.CREATE_TRANSACTION](request){
+        return new Promise(async resolve => {
+
+            const {payload} = request;
+            const {blockchain, actions, account, network} = payload;
+
+            const plugin = PluginRepository.plugin(blockchain);
+            const transaction = await plugin.createTransaction(actions, Account.fromJson(account), Network.fromJson(network));
+            const result = Object.assign(transaction, {
+                network,
+                blockchain,
+                requiredFields:[],
+            });
+
+            resolve({id:request.id, result});
         });
     }
 

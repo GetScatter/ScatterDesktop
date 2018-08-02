@@ -214,4 +214,80 @@ export default class EOS extends Plugin {
             };
         }));
     }
+
+    // async createTransaction(contract, action, params, account, network){
+    //
+    //     /*
+    //     {
+    //         actions:[
+    //             {contract:'eosio.token', action:'transfer', params:[...]}
+    //             {contract:'eosio.token', action:'transfer', params:[...]}
+    //             {contract:'hello', action:'hi', params:[...]}
+    //         ]
+    //     }
+    //      */
+    //
+    //
+    //     let tx = {};
+    //     const signProvider = x => {
+    //         tx.buf = {data:x.buf};
+    //         tx.transaction = x.transaction;
+    //     }
+    //
+    //     const options = {
+    //         httpEndpoint:network.fullhost(),
+    //         chainId:network.chainId,
+    //         broadcast: false,
+    //         sign: true,
+    //         signProvider
+    //     };
+    //
+    //     const eos = Eos(options);
+    //
+    //     const actionOptions = { authorization:[`${account.name}@${account.authority}`] };
+    //
+    //     const c = await eos.contract(contract);
+    //     await c[action](...params, {authorization:[`${account.name}@${account.authority}`]});
+    //     return tx;
+    // }
+
+    async createTransaction(actions, account, network){
+        let tx = {};
+        const formatContract = x => x.replace('.', '_');
+        const actionOptions = { authorization:[`${account.name}@${account.authority}`] };
+
+        const signProvider = x => {
+            tx.buf = {data:x.buf};
+            tx.transaction = x.transaction;
+            return [];
+        };
+
+        const options = {
+            httpEndpoint:network.fullhost(),
+            chainId:network.chainId,
+            broadcast: false,
+            sign: true,
+            signProvider
+        };
+
+        const contractNames = actions.map(x => x.contract);
+
+        const eos = Eos(options);
+
+        await eos.transaction(contractNames, contracts => {
+            actions.map(action => {
+                console.log('hi', formatContract(action.contract), action.action, ...action.params);
+                try {
+                    contracts[formatContract(action.contract)][action.action](...action.params, actionOptions);
+                } catch(e){
+                    console.log('err', e);
+                }
+            });
+        }, {broadcast:false}).catch(() => {});
+
+
+        // const c = await eos.contract(contract);
+        // await c[action](...params, {authorization:[`${account.name}@${account.authority}`]});
+        return tx;
+    }
 }
