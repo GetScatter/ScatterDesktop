@@ -83,15 +83,11 @@
 
                             <section class="list-item" v-for="item in linkedAccounts">
                                 <figure class="name">{{item.formatted()}}</figure>
+                                <figure class="date">{{item.network().name}}</figure>
                                 <figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(item)">
                                     <i class="fa fa-ban"></i>
                                 </figure>
                             </section>
-
-
-                            <!--<tags :items="linkedAccounts"-->
-                                  <!--:parser="item => item.formatted()"-->
-                                  <!--v-on:clicked="unlinkAccount"></tags>-->
                         </section>
                     </section>
                 </section>

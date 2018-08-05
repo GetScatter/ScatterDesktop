@@ -1,5 +1,6 @@
 import Keypair from './Keypair';
 import PluginRepository from '../plugins/PluginRepository';
+import {store} from '../store/store'
 
 export default class Account {
     constructor(){
@@ -17,6 +18,10 @@ export default class Account {
     formattedWithNetwork(networks){
         const networkName = networks.find(x => x.unique() === this.networkUnique).name;
         return `${networkName} - ${this.formatted()}`;
+    }
+
+    network(){
+        return store.state.scatter.settings.networks.find(x => x.unique() === this.networkUnique);
     }
 
     blockchain(){
