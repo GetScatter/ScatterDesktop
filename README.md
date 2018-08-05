@@ -23,8 +23,6 @@ Scatter Desktop from this GitHub, and **NOWHERE ELSE**.
 
 ## Setup
 
-**If you have both the Scatter Classic extension ( old one ) and the new Web Connector extension enabled in your chrome extensions you will need to disable the Scatter Classic extension** ( `chrome://extensions` )
-
 Scatter now has internal help / wizards to help you set up every step of the way.
 Click the "Help" menu from the sidebar to get started.
 
