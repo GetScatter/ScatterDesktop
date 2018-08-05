@@ -17,7 +17,7 @@ to software that has not been tested by large numbers yet.
 ## Installation
 
 **Because we are in Open Beta none of these package are signed yet.** Make sure you only download 
-Scatter Desktop from this GitHub, and **NO WHERE ELSE**.
+Scatter Desktop from this GitHub, and **NOWHERE ELSE**.
 
 ### [CLICK HERE AND GRAB THE LATEST RELEASE](https://github.com/GetScatter/ScatterDesktop/releases)
 
