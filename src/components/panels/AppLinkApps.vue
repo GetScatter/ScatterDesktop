@@ -37,10 +37,17 @@
                     <cin placeholder="Search..." :text="searchText" v-on:changed="changed => bind(changed, 'searchText')"></cin>
                     <br><br>
 
-                    <section class="list-item" v-for="item in filteredPermsList">
+                    <section class="list-item" v-for="item in filteredPermsList" v-if="type === 'whitelist'">
                         <figure class="name">{{item.plugin}}</figure>
                         <figure class="date">Created At: <b>{{(new Date(item.createdAt)).toLocaleString()}}</b></figure>
                         <figure class="button" v-tooltip="'Remove'" @click="removeWhitelistOrBlacklist(item.plugin)">
+                            <i class="fa fa-ban"></i>
+                        </figure>
+                    </section>
+
+                    <section class="list-item" v-for="item in filteredPermsList" v-if="type === 'blacklist'">
+                        <figure class="name">{{item}}</figure>
+                        <figure class="button" v-tooltip="'Remove'" @click="removeWhitelistOrBlacklist(item)">
                             <i class="fa fa-ban"></i>
                         </figure>
                     </section>
@@ -86,7 +93,9 @@
                 return this.type === 'whitelist' ? this.appLink.whitelist : this.appLink.blacklist;
             },
             filteredPermsList(){
-                return this.permsList.filter(x => x.plugin.toLowerCase().indexOf(this.searchText.toLowerCase()) > -1)
+                return this.type === 'whitelist'
+                    ? this.permsList.filter(x => x && x.plugin.toLowerCase().indexOf(this.searchText.toLowerCase()) > -1)
+                    : this.appLink.blacklist.filter(x => x.toLowerCase().indexOf(this.searchText.toLowerCase()) > -1);
             }
         },
         mounted(){
