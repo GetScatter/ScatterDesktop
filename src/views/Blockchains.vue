@@ -13,9 +13,11 @@
                             :class="{'active':subMenuType === subMenuTypes.NETWORKS}">Networks</figure>
                 </section>
 
+                <menu-search></menu-search>
+
                 <section class="item" v-if="subMenuType === subMenuTypes.KEYS"
                          :class="{'active':selectedSubMenuItem && selectedSubMenuItem.publicKey === keypair.publicKey}"
-                         v-for="keypair in keypairs" @click="selectedSubMenuItem = keypair">
+                         v-for="keypair in filteredKeypairs" @click="selectedSubMenuItem = keypair">
                     <figure class="title">{{keypair.name}}</figure>
                     <figure class="description">
                         {{linkedAccounts(keypair)}} linked account{{linkedAccounts(keypair) === 1 ? '' : 's'}}
@@ -24,7 +26,7 @@
 
                 <section class="item" v-if="subMenuType === subMenuTypes.NETWORKS"
                          :class="{'active':selectedSubMenuItem && selectedSubMenuItem.unique() === network.unique()}"
-                         v-for="network in networks" @click="selectedSubMenuItem = network">
+                         v-for="network in filteredNetworks" @click="selectedSubMenuItem = network">
                     <figure class="title">{{network.name}}</figure>
                     <figure class="description">
                         Blockchain: {{network.blockchain.toUpperCase()}}<br>
@@ -69,13 +71,24 @@
         }},
         computed: {
             ...mapState([
-                'scatter'
+                'scatter',
+                'searchTerms'
             ]),
             ...mapGetters([
                 'keypairs',
                 'accounts',
                 'networks'
             ]),
+            filteredKeypairs(){
+                return this.keypairs.filter(x => (this.selectedSubMenuItem !== null && x.id === this.selectedSubMenuItem.id) ||
+                                                 x.name.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1 ||
+                                                 x.publicKey.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
+            },
+            filteredNetworks(){
+                return this.networks.filter(x => (this.selectedSubMenuItem !== null && x.id === this.selectedSubMenuItem.id) ||
+                                                 x.name.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1 ||
+                                                 x.unique().toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
+            }
         },
         mounted(){
             this.bindSelected();

@@ -143,11 +143,14 @@
         },
         methods: {
             async removeAllPermissions(){
-                const scatter = this.scatter.clone();
-                scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.origin !== this.origin);
-                await this[Actions.SET_SCATTER](scatter);
-                this.backToMenu();
-                PopupService.push(Popup.snackbar("All Permissions Removed!", "check"));
+                PopupService.push(Popup.prompt("Removing All Origin Permissions", "Are you sure?", "trash-o", "Yes", async accepted => {
+                    if(!accepted) return;
+                    const scatter = this.scatter.clone();
+                    scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.origin !== this.origin);
+                    await this[Actions.SET_SCATTER](scatter);
+                    this.backToMenu();
+                    PopupService.push(Popup.snackbar("All Origin Permissions Removed!", "check"));
+                }, "Cancel"))
             },
             async removePermission(permission){
                 PopupService.push(Popup.prompt("Removing Permission", "Are you sure?", "trash-o", "Yes", async accepted => {

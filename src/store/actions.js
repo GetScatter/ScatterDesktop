@@ -17,6 +17,7 @@ import PopupService from "../services/PopupService";
 import {Popup} from '../models/popups/Popup'
 
 export const actions = {
+    [Actions.SET_SEARCH_TERMS]:({commit}, terms) => commit(Actions.SET_SEARCH_TERMS, terms),
     [Actions.HOLD_SCATTER]:({commit}, scatter) => commit(Actions.SET_SCATTER, scatter),
     [Actions.SET_SEED]:({commit}, password) => {
         return new Promise(async (resolve, reject) => {

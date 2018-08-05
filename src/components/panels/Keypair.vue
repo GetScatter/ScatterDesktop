@@ -77,11 +77,21 @@
 
                         <section v-if="linkedAccounts.length">
                             <br>
+                            <br>
                             <hr/>
                             <figure class="header">Linked Accounts / Keypairs</figure>
-                            <tags :items="linkedAccounts"
-                                  :parser="item => item.formatted()"
-                                  v-on:clicked="unlinkAccount"></tags>
+
+                            <section class="list-item" v-for="item in linkedAccounts">
+                                <figure class="name">{{item.formatted()}}</figure>
+                                <figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(item)">
+                                    <i class="fa fa-ban"></i>
+                                </figure>
+                            </section>
+
+
+                            <!--<tags :items="linkedAccounts"-->
+                                  <!--:parser="item => item.formatted()"-->
+                                  <!--v-on:clicked="unlinkAccount"></tags>-->
                         </section>
                     </section>
                 </section>

@@ -10,6 +10,8 @@ import Scatter from '../models/Scatter';
 Vue.use(Vuex);
 
 const state = {
+    searchTerms:'',
+
     seed:'',
     mnemonic:'',
 

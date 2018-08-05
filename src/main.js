@@ -19,6 +19,7 @@ import Auth from './components/sidebars/Auth.vue'
 import Identity from './components/panels/Identity.vue'
 import Keypair from './components/panels/Keypair.vue'
 import AppLink from './components/panels/AppLink.vue'
+import AppLinkApps from './components/panels/AppLinkApps.vue'
 import Network from './components/panels/Network.vue'
 import Transfer from './components/panels/Transfer.vue'
 import NothingHere from './components/panels/NothingHere.vue'
@@ -50,6 +51,7 @@ import ButtonComponent from './components/reusable/ButtonComponent.vue'
 import TagsComponent from './components/reusable/TagsComponent.vue'
 import SelectComponent from './components/reusable/SelectComponent.vue'
 import SubMenuHead from './components/reusable/SubMenuHead.vue'
+import MenuSearch from './components/reusable/MenuSearch.vue'
 
 
 import SocketService from './services/SocketService'
@@ -73,11 +75,13 @@ class Main {
             {tag:'tags', vue:TagsComponent},
             {tag:'sel', vue:SelectComponent},
             {tag:'sub-menu-head', vue:SubMenuHead},
+            {tag:'menu-search', vue:MenuSearch},
 
             // PANELS
             {tag:'identity', vue:Identity},
             {tag:'keypair', vue:Keypair},
             {tag:'app-link', vue:AppLink},
+            {tag:'app-link-apps', vue:AppLinkApps},
             {tag:'network', vue:Network},
             {tag:'transfer', vue:Transfer},
             {tag:'terms', vue:Terms},

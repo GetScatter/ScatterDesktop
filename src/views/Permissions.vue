@@ -4,10 +4,11 @@
         <section class="panel sub-menu">
 
             <section class="head">
-
+                <i v-tooltip="'Clear All Permissions'" class="fa fa-trash-o" @click="clearAllPermissions"></i>
             </section>
 
             <section class="items-list scrollable">
+                <menu-search></menu-search>
                 <section class="item" :class="{'active':selectedOrigin === origin}" v-for="(count, origin) in origins" @click="selectedOrigin = origin">
                     <figure class="title">{{origin}}</figure>
                     <figure class="description">{{count}} permission{{count !== 1 ? 's':''}}</figure>
@@ -35,6 +36,8 @@
     import {Countries} from '../data/Countries'
 
     import Identity from '../models/Identity'
+    import {Popup} from '../models/popups/Popup'
+    import PopupService from '../services/PopupService';
 
     export default {
         name: 'Identities',
@@ -43,13 +46,17 @@
         }},
         computed: {
             ...mapState([
-                'scatter'
+                'scatter',
+                'searchTerms'
             ]),
             ...mapGetters([
                 'permissions'
             ]),
             origins(){
                 return this.permissions.reduce((acc, p) => {
+                    if(p.origin.toString().toLowerCase().indexOf(this.searchTerms.toLowerCase()) === -1)
+                        return acc;
+
                     if(!Object.keys(acc).includes(p.origin)) acc[p.origin] = 1;
                     else acc[p.origin] += 1;
                     return acc;
@@ -64,6 +71,19 @@
                 if(Object.keys(this.origins).length) this.selectedOrigin = Object.keys(this.origins)[0];
                 else this.selectedOrigin = null;
             },
+            clearAllPermissions(){
+                PopupService.push(Popup.prompt("Removing All Permissions", "Are you sure?", "trash-o", "Yes", async accepted => {
+                    if(!accepted) return;
+                    const scatter = this.scatter.clone();
+                    scatter.keychain.permissions = [];
+                    await this[Actions.SET_SCATTER](scatter);
+                    PopupService.push(Popup.snackbar("All Permissions Removed!", "check"));
+                    this.selectedOrigin = null;
+                }, "Cancel"))
+            },
+            ...mapActions([
+                Actions.SET_SCATTER
+            ])
         },
         watch:{
             origins(){

@@ -9,24 +9,39 @@
             <section class="selected-item scrollable" v-if="account && token">
 
                 <figure class="name">Transfer Tokens</figure>
-                <figure class="description">
-                    Transferring tokens between accounts is an irreversible action. Make sure you are transferring to the right person.
-                </figure>
-
-
+                <!--<figure class="description">-->
+                    <!--Transferring tokens between accounts is an irreversible action. Make sure you are transferring to the right person.-->
+                <!--</figure>-->
+                <!--<br>-->
 
                 <section class="split-panels left">
                     <section class="info-box">
 
-                        <sel :selected="token"
-                             :options="tokens"
-                             :parser="t => t.symbol"
-                             v-on:changed="selectToken"></sel>
+                        <btn :disabled="sending" :text="customToken ? 'Select Token From List' : 'Use Custom Token'" :secondary="true" v-on:clicked="toggleCustomToken"></btn>
 
+                        <section v-if="!customToken">
+                            <br>
+                            <sel :selected="token"
+                                 :options="tokens"
+                                 :parser="t => t.symbol"
+                                 v-on:changed="selectToken"></sel>
+                        </section>
+
+                        <section v-else>
+                            <cin placeholder="Custom Token Symbol" :text="token.symbol" v-on:changed="changed => bind(changed, 'token.symbol')"></cin>
+                            <cin placeholder="Custom Token Account" :text="token.account" v-on:changed="changed => bind(changed, 'token.account')"></cin>
+                        </section>
+
+                        <br>
                         <cin disabled="true" forced="true" placeholder="Transferable Tokens" :text="`${tokenBalance} ${token.symbol}`"></cin>
 
+                    </section>
+                </section>
+
+                <section class="split-panels">
+                    <section class="info-box">
+
                         <section v-if="tokenBalance > 0">
-                            <br>
                             <section style="overflow:hidden;">
                                 <cin class="half-input" placeholder="Recipient Account" :text="to" v-on:changed="changed => bind(changed, 'to')"></cin>
                                 <cin class="half-input" placeholder="Quantity" type="number" :text="amount" v-on:changed="changed => bind(changed, 'amount')"></cin>
@@ -71,6 +86,8 @@
             token:null,
             tokens:[],
             tokenBalance:0,
+
+            customToken:false,
         }},
         computed:{
             ...mapState([
@@ -87,6 +104,9 @@
             this.initTokens();
         },
         methods: {
+            toggleCustomToken(){
+                this.customToken = !this.customToken;
+            },
             async initTokens(){
                 await PluginRepository.plugin(this.account.blockchain()).fetchTokens(this.tokens);
                 switch(this.account.blockchain()){
@@ -136,7 +156,12 @@
         },
         props:['account'],
         watch:{
-
+            token:{
+                handler(){
+                    if(!this.customToken) return;
+                    this.setTokenBalance();
+                }, deep:true
+            }
         },
     }
 </script>

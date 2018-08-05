@@ -71,8 +71,8 @@
         KEYPAIR:{title:'Import Keypair', description:'Learn how to import a keypair.', type:SubMenuTypes.WIZARDS},
         LINK_ACCOUNT:{title:'Link Blockchain Account', description:'Link a blockchain account to a specific network.', type:SubMenuTypes.WIZARDS},
         NETWORK:{title:'Add Blockchain Network', description:'Networks allow you to connect to various blockchains.', type:SubMenuTypes.WIZARDS},
-        WEB_EXTENSION:{title:'Web Extension', description:'Get the web extension for various browsers.', type:SubMenuTypes.WIZARDS},
-        APPLICATIONS:{title:'Add Application Link', description:'Application links allow other apps to talk to Scatter.', type:SubMenuTypes.WIZARDS},
+//        WEB_EXTENSION:{title:'Web Extension', description:'Get the web extension for various browsers.', type:SubMenuTypes.WIZARDS},
+//        APPLICATIONS:{title:'Add Application Link', description:'Application links allow other apps to talk to Scatter.', type:SubMenuTypes.WIZARDS},
 
         // LEARN
         KEYPAIRS:{title:'What are Keypairs?', description:'Let\'s learn a little about asymmetric encryption!', type:SubMenuTypes.LEARN},

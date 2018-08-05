@@ -3,27 +3,41 @@
 
         <section class="panel sub-menu">
 
-            <sub-menu-head v-on:new="newAppLink" tooltip="New Application Link"></sub-menu-head>
+            <section class="head">
+
+            </section>
 
             <section class="items-list scrollable">
-                <section class="item"
-                         :class="{'active':selectedApp && selectedApp.id === appLink.id}"
-                         v-for="appLink in linkedApps" @click="selectedApp = appLink">
-                    <figure class="title">{{appLink.name}}</figure>
-                    <figure class="description red" v-if="appLink.isListening"><u><b>Enabled</b></u></figure>
-                    <figure class="description" v-else>Disabled</figure>
+                <!--<section class="item" :class="{'active':selectedPage === pageTypes.CONFIGURE}" @click="selectedPage = pageTypes.CONFIGURE">-->
+                    <!--<figure class="title">Configure App Link</figure>-->
+                    <!--<figure class="description">Configure the way Scatter Desktop interacts with web and desktop applications.</figure>-->
+                <!--</section>-->
+
+                <section class="item" :class="{'active':selectedPage === pageTypes.WHITELIST}" @click="selectedPage = pageTypes.WHITELIST">
+                    <figure class="title">Whitelisted Applications</figure>
+                    <figure class="description">View and moderate applications that are allowed to interact with your Scatter.</figure>
                 </section>
+
+                <section class="item" :class="{'active':selectedPage === pageTypes.BLACKLIST}" @click="selectedPage = pageTypes.BLACKLIST">
+                    <figure class="title">Blacklisted Applications</figure>
+                    <figure class="description">View and moderate applications that are NOT allowed to interact with your Scatter.</figure>
+                </section>
+
+                <!--<section class="item"-->
+                         <!--:class="{'active':appLink && appLink.id === appLink.id}"-->
+                         <!--v-for="appLink in linkedApps" @click="selectedApp = appLink">-->
+                    <!--<figure class="title">{{appLink.name}}</figure>-->
+                    <!--<figure class="description red" v-if="appLink.isListening"><u><b>Enabled</b></u></figure>-->
+                    <!--<figure class="description" v-else>Disabled</figure>-->
+                <!--</section>-->
             </section>
         </section>
 
 
         <section class="panel display">
             <transition name="slide-right">
-                <app-link v-if="selectedApp" :key="selectedApp.id" v-on:deleted="nextAppLink" :app="selectedApp"></app-link>
+                <app-link-apps :key="selectedPage" :app="appLink" :type="selectedPage"></app-link-apps>
             </transition>
-            <nothing-here v-if="!selectedApp && !linkedApps.length" :description="`
-                    You have no Application Links, and without them no applications can use your Scatter.
-                `" button-text="Create Application Link" button-fn="newAppLink"></nothing-here>
         </section>
 
 
@@ -36,9 +50,17 @@
 
     import AppLink from '../models/AppLink';
 
+    const PAGE_TYPES = {
+        CONFIGURE:'configure',
+        WHITELIST:'whitelist',
+        BLACKLIST:'blacklist'
+    }
+
     export default {
         name: 'Blockchains',
         data () {return {
+            pageTypes:PAGE_TYPES,
+            selectedPage:PAGE_TYPES.WHITELIST,
             selectedApp:null
         }},
         computed: {
@@ -47,21 +69,16 @@
             ]),
             ...mapGetters([
                 'linkedApps'
-            ])
+            ]),
+            appLink(){
+                return this.linkedApps[0];
+            }
         },
         mounted(){
-            this.nextAppLink();
+
         },
         methods: {
-            nextAppLink(){
-                if(this.linkedApps.length) this.selectedApp =  this.linkedApps[0].clone();
-                else this.newAppLink();
-            },
-            newAppLink(){
-                this.selectedApp = this.linkedApps.find(x => x.isDefault())
-                    ? AppLink.placeholder()
-                    : AppLink.defaultAppLink();
-            }
+
         }
     }
 </script>

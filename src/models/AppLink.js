@@ -5,6 +5,7 @@ export class AppLinkPairing {
     constructor(plugin, pin){
         this.plugin = plugin;
         this.pin = pin;
+        this.createdAt = +new Date();
     }
 
     unique(){ return this.plugin }

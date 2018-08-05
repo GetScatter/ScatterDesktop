@@ -312,3 +312,42 @@ $speed:0.5s;
   }
 
 }
+
+
+.list-item {
+  padding-bottom:15px;
+  border-bottom:1px solid rgba(0,0,0,0.1);
+  margin-bottom:30px;
+
+  .name {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .date {
+    font-size: 11px;
+  }
+
+  .button {
+    width:30px;
+    height:30px;
+    line-height:28px;
+    text-align: center;
+    background:$red;
+    color:#fff;
+    border-radius:4px;
+    margin-top:10px;
+    cursor: pointer;
+    border:2px solid transparent;
+
+    transition: all 0.2s ease;
+    transition-property: background, border, color;
+
+
+    &:hover {
+      border:2px solid $red;
+      color:$red;
+      background:transparent;
+    }
+  }
+}

@@ -116,6 +116,7 @@ export default class EOS extends Plugin {
     }
 
     async fetchTokens(tokens){
+        tokens.push({symbol:'EOS', account:'eosio.token'});
         const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);
         eosTokens.map(token => {
             if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
@@ -235,7 +236,6 @@ export default class EOS extends Plugin {
         };
 
         const contractNames = actions.map(x => x.contract);
-
         const eos = Eos(options);
 
         await eos.transaction(contractNames, contracts => {
@@ -249,9 +249,6 @@ export default class EOS extends Plugin {
             });
         }, {broadcast:false}).catch(() => {});
 
-
-        // const c = await eos.contract(contract);
-        // await c[action](...params, {authorization:[`${account.name}@${account.authority}`]});
         return tx;
     }
 }

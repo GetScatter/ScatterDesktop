@@ -1,3 +1,5 @@
+export const SET_SEARCH_TERMS = 'setSearchTerms';
+
 export const SET_SEED =         'setSeed';
 export const SET_MNEMONIC =     'setMnemonic';
 

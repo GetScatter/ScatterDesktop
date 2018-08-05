@@ -8,6 +8,7 @@
             </section>
 
             <section class="items-list scrollable">
+                <menu-search></menu-search>
                 <section class="item" :class="{'active':selectedAccount && selectedAccount.unique() === account.unique()}" v-for="account in eosAccounts" @click="selectedAccount = account">
                     <figure class="title">{{account.name}}</figure>
                     <figure class="description">{{account.formattedWithNetwork(networks)}}</figure>
@@ -39,14 +40,17 @@
         }},
         computed: {
             ...mapState([
-                'scatter'
+                'scatter',
+                'searchTerms',
             ]),
             ...mapGetters([
                 'accounts',
                 'networks',
             ]),
             eosAccounts(){
-                return this.accounts.filter(x => x.blockchain() === 'eos');
+                return this.accounts.filter(x => x.blockchain() === 'eos')
+                    .filter(x => x.name.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1 ||
+                            x.publicKey.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1);
             },
         },
         mounted(){

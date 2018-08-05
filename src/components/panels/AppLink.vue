@@ -3,34 +3,23 @@
 
         <section>
             <section class="head">
-                <i class="fa fa-trash-o" @click="deleteAppLink" v-tooltip.left-start="'Delete Application Link'"></i>
+
             </section>
 
             <section class="selected-item scrollable" v-if="appLink">
 
-                <figure class="name" :class="{'bad-name':badAppLinkName()}">{{appLink.name.length ? appLink.name : 'Application Name Required'}} ( {{appLinkConnections}} )</figure>
+                <figure class="name" :class="{'bad-name':badAppLinkName()}">Configure App Link</figure>
                 <figure class="description">
-                    Linked apps have the ability to interact with your Scatter.
+                    The "App Link" allows applications to interact with your Scatter.
+                    <br><br>
+
+                    You have full control over the applications that can contact your Scatter and can revoke their access at any point in time.
                     Any app that isn't manually linked to your Scatter can not reach it.<br><br>
+
                     Even if an app is linked to your Scatter that does not mean it can fetch information from it without requesting it from you,
                     and it will <b>never</b> be able to fetch sensitive information such as private keys.
                     <br><br>
                 </figure>
-
-                <section class="split-panels left">
-                    <section class="info-box">
-                        <figure class="header">Application Link Information</figure>
-                        <cin placeholder="App Name" :text="appLink.name" v-on:changed="changed => bind(changed, 'appLink.name')"></cin>
-                        <cin :placeholder="'Unique App Key'" :dynamic-button="canChangeId ? 'refresh' : null" dynamic-tooltip="Refresh App Key" v-on:dynamic="appLink.nextId()" forced="true" disabled="true" :text="appLink.id"></cin>
-
-                        <br>
-                        <btn :red="appLink.enabledByDefault" :secondary="!appLink.enabledByDefault" v-on:clicked="toggleEnableByDefault"
-                             :text="appLink.enabledByDefault ? 'Starts with Scatter' : 'Starts Manually Only'"></btn>
-                        <btn v-on:clicked="saveAppLink" :text="isNew() ? 'Save Application Link' : 'Update Application Link'" style="float:right;"></btn>
-                    </section>
-
-
-                </section>
 
                 <section class="split-panels">
 

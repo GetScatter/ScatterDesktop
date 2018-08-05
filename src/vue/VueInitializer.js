@@ -27,7 +27,7 @@ export default class VueInitializer {
 
             Vue.mixin({
                 data(){ return {
-                    langKeys:LANG_KEYS
+                    langKeys:LANG_KEYS,
                 }},
                 methods: {
                     bind(changed, dotNotation) {
@@ -70,7 +70,10 @@ export default class VueInitializer {
 
     setupRouting(routes, middleware){
         const router = new VueRouter({routes});
-        router.beforeEach((to, from, next) => middleware(to, next, store));
+        router.beforeEach((to, from, next) => {
+            store.dispatch(Actions.SET_SEARCH_TERMS, '');
+            return middleware(to, next, store)
+        });
         return router;
     }
 
