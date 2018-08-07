@@ -168,7 +168,6 @@
         props:['kp'],
         methods: {
             async toggleQR(){
-                //TODO: Needs to include salt
                 if(this.qr === '') this.qr = await QRService.createQR(this.keypair.privateKey);
                 else this.qr = '';
             },

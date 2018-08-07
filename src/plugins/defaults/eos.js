@@ -158,7 +158,7 @@ export default class EOS extends Plugin {
 
         let sig;
         if(arbitrary && isHash) sig = ecc.Signature.signHash(payload.data, privateKey).toString();
-        return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf.data, 'utf8'), privateKey);
+        return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);
     }
 
     async requestParser(signargs, network){
