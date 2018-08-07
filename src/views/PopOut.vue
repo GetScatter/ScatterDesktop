@@ -37,7 +37,6 @@
             windowMessage:null,
         }},
         mounted(){
-            WindowService.openTools();
             WindowService.watch(WindowMessageTypes.POPUP, windowMessage => {
                 this.windowMessage = windowMessage;
                 this[Actions.HOLD_SCATTER](Scatter.fromJson(this.windowMessage.data.scatter));

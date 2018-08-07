@@ -7,6 +7,7 @@
                     <figure class="grand-hotel">Scatter</figure>
                 </section>
                 <section class="window-actions">
+                    <i class="fa fa-code" v-tooltip="'Open Console'" @click="openConsole"></i>
                     <i class="fa fa-arrow-down" v-tooltip="'Minimize to Tray'" @click="minimize"></i>
                 </section>
             </section>
@@ -45,6 +46,8 @@
     import * as Actions from '../../store/constants';
     import {RouteNames} from '../../vue/Routing'
 
+    import WindowService from '../../services/WindowService'
+
     const { remote } = window.require('electron');
 
 
@@ -70,6 +73,9 @@
             },
             quit(){
                 remote.app.quit();
+            },
+            openConsole(){
+                WindowService.openTools();
             },
             ...mapActions([
 
