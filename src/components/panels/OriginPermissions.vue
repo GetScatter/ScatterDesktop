@@ -3,7 +3,7 @@
 
         <section>
             <section class="head">
-                <i class="fa fa-trash-o" @click="removeAllPermissions" v-tooltip.left-start="'Delete All Permissions'"></i>
+                <i class="fa fa-trash-o" @click="removeAllPermissions" v-tooltip="'Delete All Origin Permissions'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="perms.length">
@@ -62,7 +62,7 @@
                     </section>
                 </section>
 
-                <section class="split-panels">
+                <section class="split-panels" v-if="contractPermissions.length">
                     <section class="info-box">
                         <figure class="header">Contract Permissions</figure>
 

@@ -4,7 +4,7 @@
         <section class="panel sub-menu">
 
             <section class="head">
-                <i v-tooltip="'Clear All Permissions'" class="fa fa-trash-o" @click="clearAllPermissions"></i>
+                <i v-tooltip="'Delete All Permissions'" class="fa fa-trash-o" @click="clearAllPermissions"></i>
             </section>
 
             <section class="items-list scrollable">

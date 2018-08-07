@@ -3,25 +3,24 @@
 
         <section>
             <section class="head">
-                <i class="fa fa-trash-o" @click="deleteKeyPair" v-tooltip.left-start="'Delete Keypair'"></i>
+                <i class="fa fa-trash-o" @click="deleteKeyPair" v-tooltip="'Delete Keypair'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="keypair">
 
-                <figure class="name" :class="{'bad-name':badKeypairName()}">{{keypair.name.length ? keypair.name : 'Name Required'}}</figure>
-                <figure v-if="isNew" class="description">
-                    Keypairs are what allow you to interact with the blockchain, and they can also serve as a much more secure way of interacting with
-                    things on the internet.
-                </figure>
+                <cin big="true" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
+
 
                 <section class="split-panels left">
-                    <section class="info-box">
+                    <section class="info-box top">
 
-                        <swch v-if="isNew" first="Generate" second="Import" :selected="importingKey ? 'Generate' : 'Import'" v-on:switched="importingKey = !importingKey"></swch>
+                        <section style="overflow: hidden;">
+                            <swch style="float:left;" v-if="isNew" first="Generate" second="Import" :selected="importingKey ? 'Generate' : 'Import'" v-on:switched="importingKey = !importingKey"></swch>
+                            <btn v-if="isNew" v-on:clicked="saveKeyPair" text="Save Keypair" style="float:right;"></btn>
+                        </section>
+                        <br>
 
-                        <cin placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
-
-                        <sel v-if="isNew" :selected="keypair.blockchain.toUpperCase()"
+                        <sel v-tooltip="'Select a Blockchain'" v-if="isNew" :selected="keypair.blockchain.toUpperCase()"
                              :options="blockchains"
                              :parser="blockchain => blockchain.key.toUpperCase()"
                              v-on:changed="blockchainChanged" :key="1"></sel>
@@ -37,7 +36,7 @@
 
                         <btn v-if="isNew && !importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
                         <btn v-if="isNew && keypair.publicKey.length" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
-                        <btn v-if="isNew" v-on:clicked="saveKeyPair" text="Save Keypair" style="float:right;"></btn>
+
 
 
                         <section style="width:100%; margin-left:-15px;">
@@ -48,7 +47,7 @@
                 </section>
 
                 <section class="split-panels" v-if="!isNew">
-                    <section class="info-box">
+                    <section class="info-box top">
                         <figure class="header">Import Accounts</figure>
 
                         <sel :selected="selectedNetwork.name"

@@ -17,7 +17,7 @@
                 <section class="split-panels left">
                     <section class="info-box">
 
-                        <btn :disabled="sending" :text="customToken ? 'Select Token From List' : 'Use Custom Token'" :secondary="true" v-on:clicked="toggleCustomToken"></btn>
+                        <swch first="Token Selector" second="Custom Token" :selected="customToken ? 'Token Selector' : 'Custom Token'" v-on:switched="toggleCustomToken"></swch>
 
                         <section v-if="!customToken">
                             <br>

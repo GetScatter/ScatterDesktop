@@ -1,5 +1,5 @@
 <template>
-    <section class="input" :class="{'forced':forced}">
+    <section class="input" :class="{'forced':forced, 'big':big}">
         <input @keyup.enter="enter" @blur="blur" :maxlength="maxlength || -1" :class="{'large-font':largeFont, 'hide-date':type === 'date' && !input.length}" :disabled="disabled || false" :type="type || 'text'" v-model="input" />
         <label :class="{'hidden':input.toString().length, 'for-disabled':disabled || false}">{{placeholder}}</label>
         <label v-if="forced" class="forced">{{placeholder}}</label>
@@ -26,7 +26,7 @@
                 ElectronHelpers.copy(this.text);
             }
         },
-        props:['placeholder', 'type', 'maxlength', 'text', 'disabled', 'forced', 'copy', 'dynamicButton', 'dynamicTooltip', 'largeFont'],
+        props:['placeholder', 'type', 'maxlength', 'text', 'disabled', 'forced', 'copy', 'dynamicButton', 'dynamicTooltip', 'largeFont', 'big'],
         watch:{
             input:function(){ this.emit(); },
             text:function(){ this.input = this.text; },
@@ -130,6 +130,24 @@
             }
 
             &.large-font {
+                font-size: 20px;
+            }
+        }
+
+        &.big {
+            margin-bottom: 10px;
+
+            input {
+                font-size: 26px;
+
+                &:focus {
+                  ~ label {
+                    bottom:34px;
+                  }
+                }
+            }
+
+            label {
                 font-size: 20px;
             }
         }

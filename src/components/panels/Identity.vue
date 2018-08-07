@@ -3,24 +3,18 @@
 
         <section>
             <section class="head">
-                <i class="fa fa-trash-o" @click="removeIdentity" v-tooltip.left-start="'Delete Identity'"></i>
+                <i class="fa fa-trash-o" @click="removeIdentity" v-tooltip="'Delete Identity'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="identity">
 
-                <figure class="name" :class="{'bad-name':!isValidName}">{{identity.name.length ? identity.name : 'Identity Name Required'}}</figure>
-                <figure class="description">This identity is linked to {{connectedApps}} apps.</figure>
-
                 <section class="split-panels left">
-                    <section class="info-box">
-                        <figure class="header">Identity Information</figure>
-                        <cin placeholder="Identity Name ( Username )" :text="identity.name" v-on:changed="changed => bind(changed, 'identity.name')"></cin>
-                        <!--<cin placeholder="Username Registered with RIDL" forced="true" disabled="true" :text="identity.name"></cin>-->
+                    <section class="info-box top">
+                      <cin big="true" placeholder="Identity Name ( Username )" :text="identity.name" v-on:changed="changed => bind(changed, 'identity.name')"></cin>
                         <!--<btn v-on:clicked="() => {}" text="Release RIDL Identity"></btn>-->
-
                         <!--<btn v-on:clicked="() => {}" text="Claim RIDL Identity"></btn>-->
                         <!--<btn v-on:clicked="() => {}" text="Register with RIDL"></btn>-->
-                        <btn v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show ID Proof`"></btn>
+                        <btn v-if="isNew" v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show ID Proof`"></btn>
                         <cin v-show="showingPublicKey" disabled="true" copy="true" :text="identity.publicKey"></cin>
                     </section>
 
@@ -62,7 +56,7 @@
                         <cin placeholder="State" v-if="selectedLocation.country.code === 'US'" maxlength="2" :text="selectedLocation.state" v-on:changed="changed => bind(changed, 'selectedLocation.state')"></cin>
                     </section>
                 </section>
-            </section>
+              </section>
         </section>
 
     </section>
@@ -104,6 +98,9 @@
             connectedApps(){
                 return this.permissions.filter(x => x.isIdentity && x.identity === this.identity.publicKey).length
             },
+            isNew(){
+                return !!this.scatter.keychain.findIdentity(this.identity.publicKey);
+            }
         },
         mounted(){
             this.identity = this.id.clone();

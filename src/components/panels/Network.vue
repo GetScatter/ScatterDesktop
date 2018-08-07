@@ -3,7 +3,7 @@
 
         <section>
             <section class="head">
-                <i class="fa fa-trash-o" @click="deleteNetwork" v-tooltip.left-start="'Delete Network'"></i>
+                <i class="fa fa-trash-o" @click="deleteNetwork" v-tooltip="'Delete Network'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="network">
@@ -36,12 +36,6 @@
                     </section>
 
                     <section class="info-box">
-                        <figure class="header">Network Information</figure>
-
-
-
-
-
                         <sel :disabled="isEndorsed" :selected="network.blockchain.toUpperCase()"
                              :options="blockchains"
                              :parser="blockchain => blockchain.value.toUpperCase()"

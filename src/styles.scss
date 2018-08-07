@@ -40,6 +40,7 @@ a {
     width:270px;
     background:$very-light-blue;
     float:left;
+    box-shadow:inset -2px 0 10px rgba(0,0,0,0.02), inset 2px 0 10px rgba(0,0,0,0.02);
   }
 
   &.display {
@@ -48,12 +49,18 @@ a {
     position: relative;
   }
 
-  &.sub-menu, &.display {
+  &.sub-menu {
     .head {
       text-align:right;
       i {
         margin-left:20px;
       }
+    }
+  }
+
+  &.display {
+    .head {
+      text-align:left;
     }
   }
 
@@ -103,15 +110,17 @@ a {
       background:rgba(0,0,0,0.06);
       box-shadow:inset 2px 0 5px rgba(0,0,0,0);
 
-      transition: background 0.2s ease, box-shadow 0.4s ease, color 0.2s ease;
+      transition: all 0.7s ease;
+      transition-property: background, box-shadow, color;
 
       &:hover {
         background:rgba(255,255,255,0.1);
       }
 
       &.active {
-        background:rgba(0,0,0,0.02);
+        background:rgba(0,0,0,0);
         color:$dark-grey;
+
       }
     }
 
@@ -126,8 +135,9 @@ a {
     transition: background 0.3s ease, box-shadow 0.3s ease;
 
     &:hover, &.active {
-      box-shadow:inset 25px 0 55px -5px rgba(0,0,0,0.01);
+      box-shadow:inset 25px 0 55px -5px rgba(0,0,0,0.01), 0 2px 5px rgba(0,0,0,0.02);
       background:#fff;
+
     }
 
     .title {
@@ -192,6 +202,10 @@ a {
     clear:both;
 
     padding-bottom:30px;
+
+    &.top {
+        margin-top:0;
+    }
 
     .header {
       font-size: 11px;
