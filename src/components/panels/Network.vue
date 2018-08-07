@@ -14,7 +14,7 @@
                     <br><br>
                 </section>
                 <figure class="description">
-                    Networks allow you to define where your blockchiun keys and accounts exist. So websites use testing networks or non-standard networks
+                    Networks allow you to define where your blockchain keys and accounts exist. Some websites use testing networks or non-standard networks
                     to interact with proprietary blockchains. You do not have to fear them as Scatter still protects you and they will never be able to
                     get your private keys.
                 </figure>
