@@ -163,6 +163,7 @@
             setTimeout(() => {canSave = true}, 1000);
         },
         destroyed(){
+            clearTimeout(saveTimeout);
             canSave = false;
         },
         props:['kp'],
