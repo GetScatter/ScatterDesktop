@@ -160,7 +160,7 @@
         mounted(){
             this.keypair = this.kp;
             this.selectedNetwork = this.availableNetworks[0];
-            setTimeout(() => {canSave = true}, 600);
+            setTimeout(() => {canSave = true}, 1000);
         },
         destroyed(){
             canSave = false;
