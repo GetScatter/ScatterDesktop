@@ -44,32 +44,6 @@
                 <i class="name-terms">{{keypair.publicKey.length ? keypair.publicKey : 'Once you enter a valid private key you will see the public key here.'}}</i>
             </section>
 
-            <section class="onboarder" v-if="step === steps.EXTENSION">
-                <h1>Get the Web Extension</h1>
-                <p>
-                    If you want to interact with web applications you'll need one of the web extensions as well.
-                </p>
-
-                <section class="extensions">
-                    <section class="extension" @click="openInBrowser('https://chrome.google.com/webstore/detail/scatter-web-connector/kgikkekbjibkhhmjchblangiiphleodk?hl=en')">
-                        <figure class="icon"><i class="fa fa-chrome"></i></figure>
-                        <figure class="text">Chrome</figure>
-                    </section>
-
-                    <section class="extension disabled">
-                        <figure class="icon"><i class="fa fa-firefox"></i></figure>
-                        <figure class="text">Firefox</figure>
-                    </section>
-
-                    <section class="extension disabled">
-                        <figure class="icon"><i class="fa fa-safari"></i></figure>
-                        <figure class="text">Safari</figure>
-                    </section>
-                </section>
-                <i class="name-terms">Once you've installed the extension, simply open it up by clicking the little Scatter icon on your browser's toolbar ( top right ) and click "<b>Link with Scatter</b>"</i>
-                <btn text="Continue to Scatter" v-on:clicked="finish"></btn>
-            </section>
-
         </section>
 
 
@@ -92,7 +66,6 @@
     const STEPS = {
         IDENTITY:'identity',
         BLOCKCHAIN:'blockchain',
-        EXTENSION:'extension'
     };
 
     export default {
@@ -156,10 +129,10 @@
                         }
                         const account = availableAccounts[0];
                         await AccountService.addAccount(account, this);
-                        this.step = STEPS.EXTENSION;
+                        this.finish();
                     } else {
                         await AccountService.addAccountFromKeypair(this.keypair, network, this);
-                        this.step = STEPS.EXTENSION;
+                        this.finish();
                     }
                 };
 
@@ -173,15 +146,10 @@
                 else await importAccount();
             },
             skipBlockchain(){
-                // this.finish();
-              this.step = STEPS.EXTENSION;
+                this.finish();
             },
             finish(){
-                PopupService.push(Popup.prompt(`You're ready to go!`,
-                    `You've set up your Identity and imported a blockchain account. Enjoy Scatter.`,
-                    "check", "Continue", () => {
-                        this.$router.push({name:RouteNames.IDENTITIES});
-                    }));
+                this.$router.push({name:RouteNames.IDENTITIES});
             },
             ...mapActions([
                 Actions.SET_SCATTER
