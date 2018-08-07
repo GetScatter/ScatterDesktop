@@ -39,6 +39,7 @@
 
                     <section class="list-item" v-for="item in filteredPermsList" v-if="type === 'whitelist'">
                         <figure class="name">{{item.plugin}}</figure>
+                        <figure class="date">Origin: <b>{{item.origin}}</b></figure>
                         <figure class="date">Created At: <b>{{(new Date(item.createdAt)).toLocaleString()}}</b></figure>
                         <figure class="button" v-tooltip="'Remove'" @click="removeWhitelistOrBlacklist(item.plugin)">
                             <i class="fa fa-ban"></i>

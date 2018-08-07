@@ -2,9 +2,10 @@ import IdGenerator from '../util/IdGenerator'
 
 export class AppLinkPairing {
 
-    constructor(plugin, pin){
+    constructor(plugin, pin, origin){
         this.plugin = plugin;
         this.pin = pin;
+        this.origin = origin;
         this.createdAt = +new Date();
     }
 

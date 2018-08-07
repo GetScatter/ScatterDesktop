@@ -41,14 +41,17 @@ const socketHandler = (socket) => {
 
 
     socket.on('identify', data => {
+        console.log('data', data);
         // Only specified origins
+        if(!data.hasOwnProperty('origin') || !data.origin.length) return false;
+        // Only specified plugins
         if(!data.hasOwnProperty('plugin') || data.plugin.length < 3) return false;
         // Only specified pins ( 64 char min, RSA type pkcs8 public key )
         if(!data.hasOwnProperty('pin') || data.pin.length < 64) return false;
 
         const scatter = store.state.scatter.clone();
         const appLink = getAppLink();
-        const pairing = AppLinkPairing.fromJson({plugin:data.plugin, pin:data.pin});
+        const pairing = AppLinkPairing.fromJson(data);
 
         const updateScatter = () => {
             scatter.keychain.updateOrPushAppLink(appLink);
@@ -61,7 +64,7 @@ const socketHandler = (socket) => {
         };
 
         // Origin is blacklisted
-        if(appLink.blacklist.includes(data.plugin))
+        if(appLink.blacklist.includes(data.origin))
             return socket.emit('rejected',
                 {type:'blacklisted', message:'The user has blacklisted this connection.'});
 
@@ -73,15 +76,18 @@ const socketHandler = (socket) => {
                 return socket.emit('rejected',
                     {type:'pin_mismatch', message:'The user has linked to your app using a different RSA key.'});
 
+            if(whitelist.origin !== data.origin)
+                return socket.emit('rejected',
+                    {type:'origin_mismatch', message:'The user has linked to your app using a different origin.'});
+
             // Whitelist passes, letting the client through.
             else return allow(whitelist);
         }
 
-        WindowService.flashWindow();
-        PopupService.push(Popup.prompt("App Requesting Access", `${data.plugin} is requesting access to use Scatter`, "eye", "Allow", async accepted => {
-            if(!accepted) {
+        PopupService.push(Popup.popout({type:'linkApp', payload:data}, async ({result}) => {
+            if(!result) {
                 // blacklisting app
-                appLink.blacklist.push(data.plugin);
+                appLink.blacklist.push(data.origin);
                 await updateScatter();
                 socket.emit('auth', false);
                 return socket.disconnect();
@@ -92,8 +98,7 @@ const socketHandler = (socket) => {
             await updateScatter();
 
             allow();
-
-        }, "Blacklist"))
+        }));
     });
 
 

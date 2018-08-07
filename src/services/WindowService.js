@@ -30,6 +30,10 @@ const sendMessage = (windowId, type, data, resolver = null) => {
 
 export default class WindowService {
 
+    static openTools(){
+        remote.getCurrentWindow().openDevTools();
+    }
+
     static flashWindow(){
         remote.getCurrentWindow().flashFrame(true);
     }

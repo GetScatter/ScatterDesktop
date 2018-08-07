@@ -8,7 +8,7 @@
             <section class="items-list scrollable">
                 <section class="item-type-switcher">
                     <figure class="item-type" @click="subMenuType = subMenuTypes.KEYS"
-                            :class="{'active':subMenuType === subMenuTypes.KEYS}">Keys & Accounts</figure>
+                            :class="{'active':subMenuType === subMenuTypes.KEYS}">Accounts</figure>
                     <figure class="item-type" @click="subMenuType = subMenuTypes.NETWORKS"
                             :class="{'active':subMenuType === subMenuTypes.NETWORKS}">Networks</figure>
                 </section>

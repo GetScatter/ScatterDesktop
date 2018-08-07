@@ -164,7 +164,7 @@
                 };
 
                 if(!this.keypairSaved) {
-                    this.keypair.name = 'Keypair From Setup Wizard';
+                    this.keypair.name = 'Imported From Setup Wizard';
                     KeyPairService.saveKeyPair(this.keypair, this, async () => {
                         this.keypairSaved = true;
                         await importAccount();

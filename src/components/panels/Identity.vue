@@ -20,7 +20,7 @@
 
                         <!--<btn v-on:clicked="() => {}" text="Claim RIDL Identity"></btn>-->
                         <!--<btn v-on:clicked="() => {}" text="Register with RIDL"></btn>-->
-                        <btn v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show Identity Key`"></btn>
+                        <btn v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show ID Proof`"></btn>
                         <cin v-show="showingPublicKey" placeholder="Identity's Public Key" forced="true" disabled="true" copy="true" :text="identity.publicKey"></cin>
                     </section>
 

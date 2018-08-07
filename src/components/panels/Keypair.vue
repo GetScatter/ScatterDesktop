@@ -8,7 +8,7 @@
 
             <section class="selected-item scrollable" v-if="keypair">
 
-                <figure class="name" :class="{'bad-name':badKeypairName()}">{{keypair.name.length ? keypair.name : 'Keypair Name Required'}}</figure>
+                <figure class="name" :class="{'bad-name':badKeypairName()}">{{keypair.name.length ? keypair.name : 'Name Required'}}</figure>
                 <figure v-if="isNew" class="description">
                     Keypairs are what allow you to interact with the blockchain, and they can also serve as a much more secure way of interacting with
                     things on the internet.
@@ -18,7 +18,7 @@
                     <section class="info-box">
                         <!--<figure class="header">Keypair Data</figure>-->
 
-                        <cin placeholder="Keypair Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
+                        <cin placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
 
                         <sel v-if="isNew" :selected="keypair.blockchain.toUpperCase()"
                              :options="blockchains"
@@ -26,12 +26,11 @@
                              v-on:changed="blockchainChanged" :key="1"></sel>
 
                         <cin v-if="isNew" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
-                        <cin placeholder="Public Key" disabled="true" :text="keypair.publicKey"></cin>
+                        <cin placeholder="Public Key" disabled="true" :text="keypair.publicKey" copy="true"></cin>
 
                         <br>
                         <btn v-if="isNew" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
                         <btn v-if="isNew && keypair.publicKey.length" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
-                        <btn v-if="!isNew" v-on:clicked="copyKeyPair" text="Copy Public Key" secondary="true"></btn>
                         <btn v-on:clicked="saveKeyPair" :text="isNew ? 'Save Keypair' : 'Update Name'" style="float:right;"></btn>
 
                         <btn v-if="!isNew" v-on:clicked="toggleQR" :text="qr === '' ? 'Show Encrypted QR' : 'Hide QR'"></btn>
