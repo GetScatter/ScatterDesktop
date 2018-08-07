@@ -30,7 +30,7 @@
                             <cin v-if="isNew" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                         </section>
 
-                        <swch v-if="!isNew" first="Show Data" second="Hide" :selected="qr === '' ? 'Show Data' : 'Hide'" v-on:switched="toggleQR"></swch>
+                        <swch v-if="!isNew" first="Show Key Data" second="Hide" :selected="qr === '' ? 'Show Key Data' : 'Hide'" v-on:switched="toggleQR"></swch>
 
                         <cin v-if="isNew || qr !== ''" placeholder="Public Key" disabled="true" :text="keypair.publicKey" :copy="!isNew"></cin>
 

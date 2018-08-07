@@ -13,13 +13,19 @@
 
             <section class="links">
 
-                <router-link :to="{name:link.disabled ? '' : link.route}" class="link" :class="{'disabled':link.disabled}" v-for="(link, index) in links" :key="index">
-                    <figure class="text">
-                        <i class="fa" :class="'fa-'+link.icon"></i>
-                        <span>{{link.name}}</span>
-                    </figure>
-                </router-link>
+                <section v-for="(link, index) in links" :key="index">
+                    <figure class="line" v-if="lines.includes(index)"></figure>
 
+                    <router-link :to="{name:link.disabled ? '' : link.route}" class="link" :class="{'disabled':link.disabled}">
+
+                        <figure class="text">
+                            <i class="fa" :class="'fa-'+link.icon"></i>
+                            <span>{{link.name}}</span>
+                        </figure>
+                    </router-link>
+                </section>
+
+                <figure class="line"></figure>
                 <figure class="link" @click="quit">
                     <figure class="text">
                         <i class="fa fa-power-off"></i>
@@ -45,16 +51,17 @@
     export default {
         name: 'MainMenu',
         data () {return {
+            lines:[4],
             links:[
                 {route:RouteNames.TRANSFER, name:'Transfer', icon:'paper-plane'},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'key'},
-                {route:RouteNames.LINKED_APPS, name:'Applications', icon:'plug'},
+                // {route:RouteNames.LINKED_APPS, name:'Applications', icon:'plug'},
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'shield'},
                 {route:RouteNames.HELP, name:'Help', icon:'question-circle', disabled:false},
                 {route:RouteNames.SETTINGS, name:'Settings', icon:'gear'},
-                {route:RouteNames.NOT_IDENTITIES, name:'Address Book', icon:'address-card', disabled:true},
-                {route:RouteNames.NOT_IDENTITIES, name:'RIDL', icon:'star-half-o', disabled:true},
+                // {route:RouteNames.NOT_IDENTITIES, name:'Address Book', icon:'address-card', disabled:true},
+                // {route:RouteNames.NOT_IDENTITIES, name:'RIDL', icon:'star-half-o', disabled:true},
             ]
         }},
         methods:{
@@ -147,6 +154,13 @@
                         margin-left:10px;
                     }
                 }
+            }
+
+            .line {
+              width:100%;
+              height:10px;
+              background:rgba(0,0,0,0.04);
+              box-shadow:inset 0 1px 1px rgba(0,0,0,0.04);
             }
         }
     }

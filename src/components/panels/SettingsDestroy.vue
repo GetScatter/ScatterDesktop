@@ -51,7 +51,7 @@
                 PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash-o", "Yes", async accepted => {
                     if(!accepted) return false;
 
-                    await SocketService.closeAll();
+                    await SocketService.close();
                     await StorageService.removeScatter();
                     this.$router.push('/');
                 }, "No"))

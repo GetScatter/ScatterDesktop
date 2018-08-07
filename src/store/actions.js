@@ -57,7 +57,7 @@ export const actions = {
 
             scatter.keychain.linkedApps.push(catchAllAppLink);
             SocketService.initialize();
-            SocketService.open(catchAllAppLink);
+            SocketService.open();
 
             await StorageService.setSalt(Hasher.insecureHash(IdGenerator.text(32)));
 

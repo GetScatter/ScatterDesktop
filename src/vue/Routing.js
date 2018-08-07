@@ -1,7 +1,6 @@
 import Onboarding from '../views/Onboarding.vue'
 import Identities from '../views/Identities.vue'
 import Blockchains from '../views/Blockchains.vue'
-import LinkedApps from '../views/LinkedApps.vue'
 import Login from '../views/Login.vue'
 import Settings from '../views/Settings.vue'
 import PopOut from '../views/PopOut.vue'
@@ -11,7 +10,6 @@ import Help from '../views/Help.vue'
 import SetupAnIdentity from '../views/wizards/SetupAnIdentity.vue'
 import LinkBlockchainAccount from '../views/wizards/LinkBlockchainAccount.vue'
 import AddBlockchainNetwork from '../views/wizards/AddBlockchainNetwork.vue'
-import AddApplicationLink from '../views/wizards/AddApplicationLink.vue'
 import ImportKeypair from '../views/wizards/ImportKeypair.vue'
 import GetWebExtensions from '../views/wizards/GetWebExtensions.vue'
 
@@ -22,7 +20,6 @@ export const RouteNames = {
     TRANSFER:'transfer',
     IDENTITIES:'identities',
     BLOCKCHAINS:'blockchains',
-    LINKED_APPS:'linkedApps',
     PERMISSIONS:'permissions',
     HELP:'help',
     SETTINGS:'settings',
@@ -36,7 +33,6 @@ export const RouteNames = {
     WIZ_SETUP_KEYPAIR:'wiz_setup_keypair',
     WIZ_LINK_BLOCKCHAIN_ACCOUNT:'wiz_link_block_acc',
     WIZ_ADD_BLOCKCHAIN_NETWORK:'wiz_add_block_net',
-    WIZ_ADD_APPLICATION_LINK:'wiz_add_app_link',
     WIZ_WEB_EXTENSION:'wiz_web_ext',
 };
 
@@ -46,7 +42,6 @@ const RouteViews = {
     [RouteNames.TRANSFER]:Transfers,
     [RouteNames.IDENTITIES]:Identities,
     [RouteNames.BLOCKCHAINS]:Blockchains,
-    [RouteNames.LINKED_APPS]:LinkedApps,
     [RouteNames.PERMISSIONS]:Permissions,
     [RouteNames.HELP]:Help,
     [RouteNames.SETTINGS]:Settings,
@@ -56,7 +51,6 @@ const RouteViews = {
     [RouteNames.WIZ_SETUP_KEYPAIR]:ImportKeypair,
     [RouteNames.WIZ_LINK_BLOCKCHAIN_ACCOUNT]:LinkBlockchainAccount,
     [RouteNames.WIZ_ADD_BLOCKCHAIN_NETWORK]:AddBlockchainNetwork,
-    [RouteNames.WIZ_ADD_APPLICATION_LINK]:AddApplicationLink,
     [RouteNames.WIZ_WEB_EXTENSION]:GetWebExtensions,
 };
 
@@ -66,11 +60,10 @@ export const RouteDepth = {
     [RouteNames.TRANSFER]:1,
     [RouteNames.IDENTITIES]:2,
     [RouteNames.BLOCKCHAINS]:3,
-    [RouteNames.LINKED_APPS]:4,
-    [RouteNames.PERMISSIONS]:5,
-    [RouteNames.HELP]:6,
-    [RouteNames.SETTINGS]:7,
-    [RouteNames.NOT_IDENTITIES]:3,
+    [RouteNames.PERMISSIONS]:4,
+    [RouteNames.HELP]:5,
+    [RouteNames.SETTINGS]:6,
+    [RouteNames.NOT_IDENTITIES]:0,
 };
 
 export class Routing {

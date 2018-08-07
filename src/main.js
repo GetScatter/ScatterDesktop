@@ -18,8 +18,6 @@ import Auth from './components/sidebars/Auth.vue'
 // Panels
 import Identity from './components/panels/Identity.vue'
 import Keypair from './components/panels/Keypair.vue'
-import AppLink from './components/panels/AppLink.vue'
-import AppLinkApps from './components/panels/AppLinkApps.vue'
 import Network from './components/panels/Network.vue'
 import Transfer from './components/panels/Transfer.vue'
 import NothingHere from './components/panels/NothingHere.vue'
@@ -44,7 +42,6 @@ import PopInHead from './components/popups/fragments/PopInHead.vue'
 import GetIdentity from './views/popouts/GetIdentity.vue'
 import SignatureRequest from './views/popouts/SignatureRequest.vue'
 import SuggestNetwork from './views/popouts/SuggestNetwork.vue'
-import LinkApp from './views/popouts/LinkApp.vue'
 
 // Reusable components
 import InputComponent from './components/reusable/InputComponent.vue'
@@ -83,8 +80,6 @@ class Main {
             // PANELS
             {tag:'identity', vue:Identity},
             {tag:'keypair', vue:Keypair},
-            {tag:'app-link', vue:AppLink},
-            {tag:'app-link-apps', vue:AppLinkApps},
             {tag:'network', vue:Network},
             {tag:'transfer', vue:Transfer},
             {tag:'terms', vue:Terms},
@@ -109,7 +104,6 @@ class Main {
             {tag:'get-identity', vue:GetIdentity},
             {tag:'signature-request', vue:SignatureRequest},
             {tag:'suggest-network', vue:SuggestNetwork},
-            {tag:'link-app', vue:LinkApp},
 
             // GLOBALS
             {tag:'view-base', vue:ViewBase},

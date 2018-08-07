@@ -69,7 +69,7 @@
 
                 if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
                     SocketService.initialize();
-                    SocketService.openAllDefaults();
+                    SocketService.open();
                     this.$router.push({name:RouteNames.IDENTITIES});
                 } else {
                     failed();

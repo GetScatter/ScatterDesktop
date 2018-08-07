@@ -67,7 +67,7 @@ export default class PasswordService {
                 resolve(true);
             } catch(e) {
                 resolve(false);
-                SocketService.closeAll();
+                SocketService.close();
             }
         })
     }
