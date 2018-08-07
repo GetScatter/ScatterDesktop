@@ -76,7 +76,7 @@ export default class ApiService {
     static async [Actions.AUTHENTICATE](request){
         return new Promise(async resolve => {
             const identity = PermissionService.identityFromPermissions(request.payload.origin);
-            if(!identity) return Error.identityMissing();
+            if(!identity) return resolve({id:request.id, result:Error.identityMissing()});
 
             const plugin = PluginRepository.plugin(Blockchains.EOS);
             const signed = await plugin.signer({data:request.payload.origin}, identity.publicKey, true);

@@ -61,12 +61,17 @@ const socketHandler = (socket) => {
         };
 
         // Origin is blacklisted
-        if(appLink.blacklist.includes(data.plugin)) return;
+        if(appLink.blacklist.includes(data.plugin))
+            return socket.emit('rejected',
+                {type:'blacklisted', message:'The user has blacklisted this connection.'});
+
 
         const whitelist = appLink.whitelist.find(x => x.unique() === pairing.unique());
         if(whitelist){
             // Mismatched pin
-            if(whitelist.pin !== data.pin) return;
+            if(whitelist.pin !== data.pin)
+                return socket.emit('rejected',
+                    {type:'pin_mismatch', message:'The user has linked to your app using a different RSA key.'});
 
             // Whitelist passes, letting the client through.
             else return allow(whitelist);
