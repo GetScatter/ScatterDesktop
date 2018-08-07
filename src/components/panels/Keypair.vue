@@ -16,7 +16,8 @@
 
                 <section class="split-panels left">
                     <section class="info-box">
-                        <!--<figure class="header">Keypair Data</figure>-->
+
+                        <swch v-if="isNew" first="Generate" second="Import" :selected="importingKey ? 'Generate' : 'Import'" v-on:switched="importingKey = !importingKey"></swch>
 
                         <cin placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
 
@@ -25,15 +26,19 @@
                              :parser="blockchain => blockchain.key.toUpperCase()"
                              v-on:changed="blockchainChanged" :key="1"></sel>
 
-                        <cin v-if="isNew" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
-                        <cin placeholder="Public Key" disabled="true" :text="keypair.publicKey" copy="true"></cin>
+                        <section v-if="importingKey">
+                            <cin v-if="isNew" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                        </section>
 
-                        <br>
-                        <btn v-if="isNew" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
+                        <swch v-if="!isNew" first="Show Data" second="Hide" :selected="qr === '' ? 'Show Data' : 'Hide'" v-on:switched="toggleQR"></swch>
+
+                        <cin v-if="isNew || qr !== ''" placeholder="Public Key" disabled="true" :text="keypair.publicKey" :copy="!isNew"></cin>
+
+
+                        <btn v-if="isNew && !importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
                         <btn v-if="isNew && keypair.publicKey.length" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
-                        <btn v-on:clicked="saveKeyPair" :text="isNew ? 'Save Keypair' : 'Update Name'" style="float:right;"></btn>
+                        <btn v-if="isNew" v-on:clicked="saveKeyPair" text="Save Keypair" style="float:right;"></btn>
 
-                        <btn v-if="!isNew" v-on:clicked="toggleQR" :text="qr === '' ? 'Show Encrypted QR' : 'Hide QR'"></btn>
 
                         <section style="width:100%; margin-left:-15px;">
                             <img :src="qr" />
@@ -112,9 +117,13 @@
     import PopupService from '../../services/PopupService';
     import {Popup} from '../../models/popups/Popup'
 
+    let canSave = false;
+    let saveTimeout = null;
+
     export default {
         name: 'Keypair',
         data () {return {
+            importingKey:false,
             blockchain:Blockchains,
             blockchains:BlockchainsArray,
             selectedNetwork:null,
@@ -151,6 +160,10 @@
         mounted(){
             this.keypair = this.kp;
             this.selectedNetwork = this.availableNetworks[0];
+            setTimeout(() => {canSave = true}, 200);
+        },
+        destroyed(){
+            canSave = false;
         },
         props:['kp'],
         methods: {
@@ -256,6 +269,23 @@
             ...mapActions([
                 Actions.SET_SCATTER
             ])
+        },
+        watch:{
+            'keypair.name'(){
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    if(canSave) {
+                        if(this.isNew) return false;
+                        if(!this.keypair.name.length) return false;
+                        if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return false;
+
+                        KeyPairService.updateKeyPair(this.keypair, this, () => {
+                            PopupService.push(Popup.snackbar("Keypair Updated!", "check"));
+                        });
+                    }
+                }, 500);
+
+            }
         }
     }
 </script>

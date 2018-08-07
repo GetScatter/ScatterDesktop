@@ -6,7 +6,7 @@
         <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
             <i class="fa " :class="`fa-${dynamicButton}`"></i>
         </figure>
-        <figure class="copy" v-if="copy">
+        <figure class="copy" v-if="copy" :class="{'unforced':!forced}">
             <i class="fa fa-copy" v-tooltip="'Copy'" @click="copyText"></i>
         </figure>
     </section>
@@ -88,6 +88,10 @@
             }
 
             &.not-disabled {
+                bottom:10px;
+            }
+
+            &.unforced {
                 bottom:10px;
             }
         }

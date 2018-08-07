@@ -53,6 +53,7 @@ import TagsComponent from './components/reusable/TagsComponent.vue'
 import SelectComponent from './components/reusable/SelectComponent.vue'
 import SubMenuHead from './components/reusable/SubMenuHead.vue'
 import MenuSearch from './components/reusable/MenuSearch.vue'
+import SwitchComponent from './components/reusable/SwitchComponent.vue'
 
 
 import SocketService from './services/SocketService'
@@ -77,6 +78,7 @@ class Main {
             {tag:'sel', vue:SelectComponent},
             {tag:'sub-menu-head', vue:SubMenuHead},
             {tag:'menu-search', vue:MenuSearch},
+            {tag:'swch', vue:SwitchComponent},
 
             // PANELS
             {tag:'identity', vue:Identity},
