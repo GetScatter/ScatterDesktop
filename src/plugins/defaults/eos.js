@@ -100,6 +100,14 @@ export default class EOS extends Plugin {
         );
     }
 
+    async accountData(account, network){
+        const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId});
+        return Promise.race([
+            new Promise(resolve => setTimeout(() => resolve(null), 2000)),
+            eos.getAccount(account.name)
+        ])
+    }
+
     async balanceFor(account, network, tokenAccount, symbol){
         const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId});
 

@@ -17,22 +17,16 @@
                     <section class="info-box">
                         <figure class="header">Backup Strategy</figure>
 
-                        <btn text="Automatic Backups" :red="autoBackup === strategies.AUTOMATIC"
-                             :secondary="autoBackup !== strategies.AUTOMATIC" v-on:clicked="setBackupStrategy(strategies.AUTOMATIC)"></btn>
-
-                        <btn text="Manual Backups Only" :red="autoBackup === strategies.MANUAL"
-                             :secondary="autoBackup !== strategies.MANUAL" v-on:clicked="setBackupStrategy(strategies.MANUAL)"></btn>
+                        <swch first="Automatic Backups" second="Manual Backups Only"
+                              :selected="autoBackup !== strategies.AUTOMATIC ? 'Automatic Backups' : 'Manual Backups Only'"
+                              v-on:switched="setBackupStrategy(autoBackup === strategies.AUTOMATIC ? strategies.MANUAL : strategies.AUTOMATIC)"></swch>
 
                         <section v-if="autoBackup === strategies.AUTOMATIC">
-                            <btn text="Automatic Backup Location" v-on:clicked="setBackupLocation()"></btn>
+                            <btn text="Choose Automatic Backup Location" secondary="true" large="true" v-on:clicked="setBackupLocation()"></btn>
                         </section>
-                    </section>
-                </section>
-
-                <section class="split-panels">
-                    <section class="info-box">
-                        <figure class="header">Manual Backup</figure>
-                        <btn text="Create Backup" v-on:clicked="createBackup"></btn>
+                        <section v-if="autoBackup === strategies.MANUAL">
+                            <btn text="Create New Backup" large="true" secondary="true" v-on:clicked="createBackup"></btn>
+                        </section>
                     </section>
                 </section>
 

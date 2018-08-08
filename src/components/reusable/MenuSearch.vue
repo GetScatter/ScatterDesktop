@@ -69,6 +69,12 @@
             font-size: 11px;
             font-weight: bold;
 
+            $placeholder-color:rgba(0,0,0,0.2);
+            &::-webkit-input-placeholder {   color: $placeholder-color; }
+            &::-moz-placeholder {            color: $placeholder-color; }
+            &:-ms-input-placeholder {        color: $placeholder-color; }
+            &:-moz-placeholder {             color: $placeholder-color; }
+
 
             &:focus {
                 & + .search-bg {

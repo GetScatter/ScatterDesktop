@@ -119,10 +119,10 @@
                 height:60px;
                 line-height:60px;
                 padding-left:0;
-                box-shadow:inset 0 0 0 #fff, inset 180px 0 20px -70px transparent;
+                box-shadow:inset 0 0 0 transparent, inset 0 0 0 transparent, inset 0 0 0 transparent, inset 0 0 0 transparent;
                 font-size:16px;
                 background:transparent;
-                transition: background 0.5s ease, padding 0.3s ease, box-shadow 0.5s ease, color 0.5s ease, border 0.4s ease;
+                transition: background 0.9s ease, padding 0.3s ease, box-shadow 0.5s ease, color 0.5s ease, border 0.4s ease;
 
                 &:hover, &.active, &.router-link-active {
                     &:not(.disabled){
@@ -134,8 +134,9 @@
 
                 &.router-link-active {
                     &:not(.disabled){
+                        transition: background 0.5s ease, padding 1.8s ease, box-shadow 1.5s ease, color 0.5s ease, border 0.4s ease;
                         padding-left:0;
-                        box-shadow:inset 5px 0 0 $light-blue, inset 60px 0 80px -40px $light-blue-opaque-2;
+                        box-shadow:inset 5px 0 0 $light-blue, inset 60px 0 80px -40px $light-blue-opaque-2, inset -40px 0 150px -40px rgba(255,255,255,0.3), inset 40px 0 150px -40px rgba(0,0,0,0.12);
 
                         * { color:#fff !important; }
                         background:$dark-blue;

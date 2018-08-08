@@ -15,13 +15,14 @@
                     <section class="info-box top">
 
                         <section style="overflow: hidden;">
-                            <swch style="float:left;" v-if="isNew" first="Generate" second="Import" :selected="importingKey ? 'Generate' : 'Import'" v-on:switched="importingKey = !importingKey"></swch>
+                            <swch style="float:left;" v-if="isNew" first="Generate" second="Import" :selected="importingKey ? 'Generate' : 'Import'" v-on:switched="toggleImporting"></swch>
                             <swch style="margin-left:5px; float:left;" v-if="isNew && importingKey" first="Desktop" second="Hardware" :selected="usingHardware ? 'Desktop' : 'Hardware'" v-on:switched="x => toggleExternalWallet()"></swch>
                             <btn v-if="isNew" v-on:clicked="saveKeyPair" text="Save Keypair" style="float:right;"></btn>
                         </section>
                         <br>
 
-                        <sel v-tooltip="'Select a Blockchain'" v-if="!usingHardware && isNew" :selected="keypair.blockchain.toUpperCase()"
+                        <br v-if="!usingHardware && isNew">
+                        <sel v-tooltip.top-start="'Select a Blockchain'" v-if="!usingHardware && isNew" :selected="keypair.blockchain.toUpperCase()"
                              :options="blockchains"
                              :parser="blockchain => blockchain.key.toUpperCase()"
                              v-on:changed="blockchainChanged" :key="1"></sel>
@@ -44,7 +45,7 @@
 
                         <section v-if="isNew && usingHardware">
                             <br><br>
-                            <sel v-tooltip="'Select a Blockchain'" :selected="keypair.external.type"
+                            <sel v-tooltip.top-start="'Select a Hardware Wallet'" :selected="keypair.external.type"
                                  :options="externalWalletTypes"
                                  v-on:changed="changedExternalWalletType" :key="'hardware_import'"></sel>
                             <btn v-on:clicked="importKeyFromHardware" text="Import Hardware Key"></btn>
@@ -97,10 +98,19 @@
                             <hr/>
                             <figure class="header">Linked Accounts / Keypairs</figure>
 
-                            <section class="list-item" v-for="item in linkedAccounts">
-                                <figure class="name">{{item.formatted()}}</figure>
-                                <figure class="date">{{item.network().name}}</figure>
-                                <figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(item)">
+                            <section class="list-item" v-for="account in linkedAccounts">
+                                <figure class="name">{{account.formatted()}}</figure>
+                                <figure class="date">{{account.network().name}}</figure>
+                                <!--<pre>{{accountData(account)}}</pre>-->
+
+                                <section v-if="account.blockchain() === blockchain.EOS && accountData(account)">
+                                    <p-bar color="blue" :used="accountData(account).cpu_limit.used" :total="accountData(account).cpu_limit.max" l-text="CPU" :r-text="accountData(account).total_resources.cpu_weight"></p-bar>
+                                    <p-bar color="yellow" :used="accountData(account).net_limit.used" :total="accountData(account).net_limit.max" l-text="NET" :r-text="accountData(account).total_resources.net_weight"></p-bar>
+                                    <p-bar color="red" :used="accountData(account).ram_usage" :total="accountData(account).ram_quota" l-text="RAM" :r-text="`${(accountData(account).ram_usage/1024).toFixed(2)}KB / ${(accountData(account).ram_quota/1024).toFixed(2)}KB`"></p-bar>
+                                </section>
+
+
+                                <figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(account)">
                                     <i class="fa fa-ban"></i>
                                 </figure>
                             </section>
@@ -145,6 +155,7 @@
             keypair:null,
             fetchedAccounts:false,
             qr:'',
+            accountDatum:[]
         }},
         computed: {
             ...mapState([
@@ -174,12 +185,34 @@
         mounted(){
             this.keypair = this.kp;
             this.selectedNetwork = this.availableNetworks[0];
+            this.setupAccountDatum();
         },
         destroyed(){
             clearTimeout(saveTimeout);
         },
         props:['kp'],
         methods: {
+            setupAccountDatum(){
+                const plugin = PluginRepository.plugin(Blockchains.EOS);
+                this.linkedAccounts.map(account => {
+                    if(this.accountDatum.find(x => x.name === account.name)) return;
+                    plugin.accountData(account, account.network()).then(data => {
+                        if(!data) return;
+                        this.accountDatum.push({name:account.name, data});
+                    })
+                });
+            },
+            accountData(account){
+                const data = this.accountDatum.find(x => x.name === account.name);
+                return !!data ? data.data : null;
+            },
+            toggleImporting(){
+                this.keypair.publicKey = '';
+                this.keypair.privateKey = '';
+
+                this.importingKey = !this.importingKey;
+                if(!this.importingKey) this.usingHardware = false;
+            },
             toggleExternalWallet(){
                 this.keypair.publicKey = '';
                 this.keypair.privateKey = '';

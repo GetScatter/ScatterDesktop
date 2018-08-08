@@ -51,6 +51,7 @@ import SelectComponent from './components/reusable/SelectComponent.vue'
 import SubMenuHead from './components/reusable/SubMenuHead.vue'
 import MenuSearch from './components/reusable/MenuSearch.vue'
 import SwitchComponent from './components/reusable/SwitchComponent.vue'
+import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
 
 
 import SocketService from './services/SocketService'
@@ -76,6 +77,7 @@ class Main {
             {tag:'sub-menu-head', vue:SubMenuHead},
             {tag:'menu-search', vue:MenuSearch},
             {tag:'swch', vue:SwitchComponent},
+            {tag:'p-bar', vue:PercentageBarComponent},
 
             // PANELS
             {tag:'identity', vue:Identity},
