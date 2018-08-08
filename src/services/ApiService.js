@@ -131,6 +131,7 @@ export default class ApiService {
      * @returns {Promise.<void>}
      */
     static async [Actions.REQUEST_SIGNATURE](request){
+
         return new Promise(async resolve => {
 
             const {payload} = request;
@@ -163,6 +164,7 @@ export default class ApiService {
             // Getting the identity for this transaction
             const identity = store.state.scatter.keychain.identities.find(x => x.publicKey === possibleId.publicKey);
 
+
             const signAndReturn = async (selectedLocation) => {
                 const signatures = await Promise.all(participants.map(x => plugin.signer(payload, x.publicKey)));
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
@@ -172,8 +174,9 @@ export default class ApiService {
                 resolve({id:request.id, result:{signatures, returnedFields}});
             };
 
+            const hasHardwareKeys = participants.some(x => KeyPairService.isHardware(x.publicKey));
             const needToSelectLocation = requiredFields.hasOwnProperty('location') && requiredFields.location.length && identity.locations.length > 1;
-            if(!needToSelectLocation && identity.locations.length === 1 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
+            if(!hasHardwareKeys && !needToSelectLocation && identity.locations.length === 1 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
                 return await signAndReturn(identity.locations[0]);
             }
 
