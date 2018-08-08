@@ -18,7 +18,7 @@ export default class ExternalWallet {
 }
 
 const get = async route => fetch(route).then(res => res.json());
-const post = async (route, data) => fetch('julia.php', {
+const post = async (route, data) => fetch(route, {
     method: "POST",
     headers: {
         'Accept': 'application/json, text/plain, */*',
