@@ -148,6 +148,7 @@
                 }
 
                 this.sending = false;
+                await this.setTokenBalance();
             },
 
             ...mapActions([

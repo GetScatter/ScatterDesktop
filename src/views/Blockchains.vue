@@ -20,7 +20,7 @@
                          v-for="keypair in filteredKeypairs" @click="selectedSubMenuItem = keypair">
                     <figure class="title">{{keypair.name}}</figure>
                     <figure class="description">
-                        {{linkedAccounts(keypair)}} linked account{{linkedAccounts(keypair) === 1 ? '' : 's'}}
+                        <b>{{keypair.blockchain.toUpperCase()}}</b> - {{linkedAccounts(keypair)}} account{{linkedAccounts(keypair) === 1 ? '' : 's'}}
                     </figure>
                 </section>
 
@@ -29,7 +29,7 @@
                          v-for="network in filteredNetworks" @click="selectedSubMenuItem = network">
                     <figure class="title">{{network.name}}</figure>
                     <figure class="description">
-                        Blockchain: {{network.blockchain.toUpperCase()}}<br>
+                        Blockchain: <b>{{network.blockchain.toUpperCase()}}</b>
                     </figure>
                 </section>
 

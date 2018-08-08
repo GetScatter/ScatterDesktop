@@ -130,7 +130,6 @@
     import PopupService from '../../services/PopupService';
     import {Popup} from '../../models/popups/Popup'
 
-    let canSave = false;
     let saveTimeout = null;
 
     export default {
@@ -175,11 +174,9 @@
         mounted(){
             this.keypair = this.kp;
             this.selectedNetwork = this.availableNetworks[0];
-            setTimeout(() => {canSave = true}, 1000);
         },
         destroyed(){
             clearTimeout(saveTimeout);
-            canSave = false;
         },
         props:['kp'],
         methods: {
@@ -311,18 +308,17 @@
             ])
         },
         watch:{
-            'keypair.name'(){
+            'keypair.name'(a,b){
+                if(!b) return;
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(() => {
-                    if(canSave) {
-                        if(this.isNew) return false;
-                        if(!this.keypair.name.length) return false;
-                        if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return false;
+                    if(this.isNew) return false;
+                    if(!this.keypair.name.length) return false;
+                    if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return false;
 
-                        KeyPairService.updateKeyPair(this.keypair, this, () => {
-                            PopupService.push(Popup.snackbar("Keypair Updated!", "check"));
-                        });
-                    }
+                    KeyPairService.updateKeyPair(this.keypair, this, () => {
+                        PopupService.push(Popup.snackbar("Keypair Updated!", "check"));
+                    });
                 }, 500);
 
             }
