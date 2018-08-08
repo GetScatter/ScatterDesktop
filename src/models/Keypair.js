@@ -1,6 +1,7 @@
 import AES from 'aes-oop';
 import {Blockchains} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
+import ExternalWallet from './ExternalWallet';
 
 export default class Keypair {
 
@@ -15,7 +16,11 @@ export default class Keypair {
     }
 
     static placeholder(){ return new Keypair(); }
-    static fromJson(json){ return Object.assign(this.placeholder(), json); }
+    static fromJson(json){
+        let p = Object.assign(this.placeholder(), json);
+        if(json.hasOwnProperty('external') && !!json.external) p.external = ExternalWallet.fromJson(json.external);
+        return p;
+    }
 
     unique(){ return `${this.blockchain}:${this.publicKey.toLowerCase()}`; }
     clone(){ return Keypair.fromJson(JSON.parse(JSON.stringify(this))) }

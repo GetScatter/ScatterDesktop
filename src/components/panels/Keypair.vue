@@ -201,14 +201,16 @@
         props:['kp'],
         methods: {
             setupAccountDatum(){
-                const plugin = PluginRepository.plugin(Blockchains.EOS);
-                this.linkedAccounts.map(account => {
-                    if(this.accountDatum.find(x => x.name === account.name)) return;
-                    plugin.accountData(account, account.network()).then(data => {
-                        if(!data) return;
-                        this.accountDatum.push({name:account.name, data});
-                    })
-                });
+                if(this.keypair.blockchain === Blockchains.EOS) {
+                    const plugin = PluginRepository.plugin(Blockchains.EOS);
+                    this.linkedAccounts.map(account => {
+                        if (this.accountDatum.find(x => x.name === account.name)) return;
+                        plugin.accountData(account, account.network()).then(data => {
+                            if (!data) return;
+                            this.accountDatum.push({name: account.name, data});
+                        })
+                    });
+                }
             },
             accountData(account){
                 const data = this.accountDatum.find(x => x.name === account.name);

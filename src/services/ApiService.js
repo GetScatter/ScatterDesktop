@@ -166,8 +166,15 @@ export default class ApiService {
 
 
             const signAndReturn = async (selectedLocation) => {
-                const signatures = await Promise.all(participants.map(x => plugin.signer(payload, x.publicKey)));
+                console.log('payload', payload);
+                const signatures = await Promise.all(participants.map(x => {
+                    if(KeyPairService.isHardware(x.publicKey)){
+                        const keypair = KeyPairService.getKeyPairFromPublicKey(x.publicKey);
+                        return keypair.external.interface.sign(x.publicKey, payload, payload.abi);
+                    } else return plugin.signer(payload, x.publicKey)
+                }));
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
+                if(signatures.some(x => !x)) return resolve({id:request.id, result:Error.signatureError('missing_sig', 'A signature for this request was missing')});
 
                 const returnedFields = Identity.asReturnedFields(requiredFields, identity, selectedLocation);
 
@@ -181,7 +188,6 @@ export default class ApiService {
             }
 
             PopupService.push(Popup.popout(request, async ({result}) => {
-                console.log('res', result);
                 if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
                 await PermissionService.addIdentityRequirementsPermission(origin, identity, requiredFields);

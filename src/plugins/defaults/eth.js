@@ -91,19 +91,13 @@ export default class ETH extends Plugin {
     }
 
     async signer(transaction, publicKey, arbitrary = false, isHash = false){
-        if(KeyPairService.isHardware(publicKey)){
-            const keypair = KeyPairService.getKeyPairFromPublicKey(publicKey);
-            return keypair.external.interface.sign(publicKey, payload, payload.abi);
-        } else {
-            const basePrivateKey = KeyPairService.publicToPrivate(publicKey);
-            if(!basePrivateKey) return;
+        const basePrivateKey = KeyPairService.publicToPrivate(publicKey);
+        if(!basePrivateKey) return;
 
-            const privateKey = ethUtil.addHexPrefix(basePrivateKey);
-            const tx = new EthTx(transaction);
-            tx.sign(ethUtil.toBuffer(privateKey));
-            return ethUtil.addHexPrefix(tx.serialize().toString('hex'));
-        }
-
+        const privateKey = ethUtil.addHexPrefix(basePrivateKey);
+        const tx = new EthTx(transaction);
+        tx.sign(ethUtil.toBuffer(privateKey));
+        return ethUtil.addHexPrefix(tx.serialize().toString('hex'));
     }
 
     async requestParser(transaction, abi){

@@ -132,46 +132,53 @@ export default class EOS extends Plugin {
     }
 
     async transfer(account, to, amount, network, tokenAccount, symbol, memo){
-        const signProvider = async payload => {
-            return new Promise(async resolve => {
-                payload.messages = await this.requestParser(payload, Network.fromJson(network));
-                payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
-                const request = {
-                    payload,
-                    origin:'Internal Scatter Transfer',
-                    blockchain:'eos',
-                    requiredFields:{},
-                    type:Actions.REQUEST_SIGNATURE,
-                    id:1,
-                }
+        return new Promise(async (resolveTransfer, rejectTransfer) => {
+            const signProvider = async payload => {
+                return new Promise(async resolve => {
+                    payload.messages = await this.requestParser(payload, Network.fromJson(network));
+                    payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+                    const request = {
+                        payload,
+                        origin:'Internal Scatter Transfer',
+                        blockchain:'eos',
+                        requiredFields:{},
+                        type:Actions.REQUEST_SIGNATURE,
+                        id:1,
+                    }
 
-                PopupService.push(Popup.popout(request, async ({result}) => {
-                    if(!result || (!result.accepted || false)) return resolve(null);
-                    resolve(this.signer({data:payload.buf}, account.publicKey, true));
-                }));
-            })
-        };
+                    PopupService.push(Popup.popout(request, async ({result}) => {
+                        if(!result || (!result.accepted || false)) return rejectTransfer({error:'Could not get signature'});
 
-        const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId, signProvider});
-        const contract = await eos.contract(tokenAccount);
-        const options = { authorization:[account.formatted()] };
-        return await contract.transfer(account.name, to, amount, memo, options)
-            .catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
-            .then(result => result);
+                        let signature = null;
+                        if(KeyPairService.isHardware(account.publicKey)){
+                            const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
+                            console.log(keypair);
+                            signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi);
+                        } else signature = await this.signer({data:payload.buf}, account.publicKey, true);
+
+                        if(!signature) return rejectTransfer({error:'Could not get signature'});
+
+                        resolve(signature);
+                    }));
+                })
+            };
+
+            const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId, signProvider});
+            const contract = await eos.contract(tokenAccount);
+            const options = { authorization:[account.formatted()] };
+            resolveTransfer(await contract.transfer(account.name, to, amount, memo, options)
+                .catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
+                .then(result => result));
+        })
     }
 
     async signer(payload, publicKey, arbitrary = false, isHash = false){
-        if(KeyPairService.isHardware(publicKey)){
-            const keypair = KeyPairService.getKeyPairFromPublicKey(publicKey);
-            return keypair.external.interface.sign(publicKey, payload, payload.abi);
-        } else {
-            const privateKey = KeyPairService.publicToPrivate(publicKey);
-            if (!privateKey) return;
+        const privateKey = KeyPairService.publicToPrivate(publicKey);
+        if (!privateKey) return;
 
-            let sig;
-            if (arbitrary && isHash) sig = ecc.Signature.signHash(payload.data, privateKey).toString();
-            return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);
-        }
+        let sig;
+        if (arbitrary && isHash) sig = ecc.Signature.signHash(payload.data, privateKey).toString();
+        return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);
     }
 
     async requestParser(signargs, network){

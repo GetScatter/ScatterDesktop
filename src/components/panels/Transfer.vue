@@ -141,7 +141,16 @@
 
 
                 const transfer = await PluginRepository.plugin(this.account.blockchain())
-                    .transfer(this.account, this.to, `${amount} ${this.token.symbol}`, this.network, this.token.account, this.token.symbol, this.memo);
+                    .transfer(
+                        this.account,
+                        this.to,
+                        `${amount} ${this.token.symbol}`,
+                        this.network,
+                        this.token.account,
+                        this.token.symbol,
+                        this.memo
+                    ).catch(x => x);
+
                 if(transfer !== null) {
                     if (transfer.hasOwnProperty('error')) PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
                     else PopupService.push(Popup.prompt("Success!", `Transaction ID: ${transfer.transaction_id}`, "check", "Okay"))

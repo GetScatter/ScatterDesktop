@@ -15,11 +15,19 @@ export default class ExternalWallet {
         this.interface = typeToInterface(_type);
     }
 
+    static placeholder(){ return new ExternalWallet(); }
+    static fromJson(json){
+        let p = Object.assign(this.placeholder(), json);
+        p.interface = typeToInterface(p.type);
+        console.log('t', p.type, p.interface);
+        return p;
+    }
+
 }
 
 const get = async route => {
     return Promise.race([
-        fetch(route).then(res => res.json()),
+        fetch(route).then(res => res.json()).catch(() => null),
         new Promise(resolve => setTimeout(() => resolve(null), 60000))
     ])
 }
@@ -32,7 +40,7 @@ const post = async (route, data) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
-        }).then(res => res.json()),
+        }).then(res => res.json()).catch(() => null),
         new Promise(resolve => setTimeout(() => resolve(null), 120000))
     ])
 };
@@ -67,7 +75,7 @@ export class ExternalWalletInterface {
 
     async getPublicKey(){
         // return new Promise(resolve => {
-        //     resolve('EOS7ffWP2VcC9nyBTaEtaCekNvFsfNEAtY7cJWU1eqTPds7Gq9fJB')
+        //     resolve('EOS5J8cV3ER6rEkFrGYL3SZr1YP3WiU7neqPEFnNfU4goEfX2PFpS')
         // });
         return await this.handler.getPublicKey();
     }
