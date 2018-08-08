@@ -20,7 +20,6 @@ import Network from '../models/Network'
 export default class ApiService {
 
     static async handler(request){
-        console.log('req', request);
         const action = Action.fromJson(request);
 
         // Only accept pre-defined messages.

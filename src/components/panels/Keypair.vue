@@ -16,17 +16,18 @@
 
                         <section style="overflow: hidden;">
                             <swch style="float:left;" v-if="isNew" first="Generate" second="Import" :selected="importingKey ? 'Generate' : 'Import'" v-on:switched="importingKey = !importingKey"></swch>
+                            <swch style="margin-left:5px; float:left;" v-if="isNew && importingKey" first="Desktop" second="Hardware" :selected="usingHardware ? 'Desktop' : 'Hardware'" v-on:switched="x => toggleExternalWallet()"></swch>
                             <btn v-if="isNew" v-on:clicked="saveKeyPair" text="Save Keypair" style="float:right;"></btn>
                         </section>
                         <br>
 
-                        <sel v-tooltip="'Select a Blockchain'" v-if="isNew" :selected="keypair.blockchain.toUpperCase()"
+                        <sel v-tooltip="'Select a Blockchain'" v-if="!usingHardware && isNew" :selected="keypair.blockchain.toUpperCase()"
                              :options="blockchains"
                              :parser="blockchain => blockchain.key.toUpperCase()"
                              v-on:changed="blockchainChanged" :key="1"></sel>
 
                         <section v-if="importingKey">
-                            <cin v-if="isNew" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                            <cin v-if="!usingHardware && isNew" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                         </section>
 
                         <swch v-if="!isNew" first="Show Key Data" second="Hide" :selected="qr === '' ? 'Show Key Data' : 'Hide'" v-on:switched="toggleQR"></swch>
@@ -36,6 +37,14 @@
 
                         <btn v-if="isNew && !importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
                         <btn v-if="isNew && keypair.publicKey.length" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
+
+                        <section v-if="isNew && usingHardware">
+                            <br><br>
+                            <sel v-tooltip="'Select a Blockchain'" :selected="keypair.external.type"
+                                 :options="externalWalletTypes"
+                                 v-on:changed="changedExternalWalletType" :key="'hardware_import'"></sel>
+                            <btn v-on:clicked="importKeyFromHardware" text="Import Hardware Key"></btn>
+                        </section>
 
 
 
@@ -111,6 +120,7 @@
     import AccountService from '../../services/AccountService';
     import QRService from '../../services/QRService';
     import PluginRepository from '../../plugins/PluginRepository'
+    import ExternalWallet, {EXT_WALLET_TYPES_ARR} from '../../models/ExternalWallet';
 
     import ElectronHelpers from '../../util/ElectronHelpers';
     import PopupService from '../../services/PopupService';
@@ -122,6 +132,8 @@
     export default {
         name: 'Keypair',
         data () {return {
+            externalWalletTypes:EXT_WALLET_TYPES_ARR,
+            usingHardware:false,
             importingKey:false,
             blockchain:Blockchains,
             blockchains:BlockchainsArray,
@@ -167,6 +179,18 @@
         },
         props:['kp'],
         methods: {
+            toggleExternalWallet(){
+                this.keypair.external = this.usingHardware ? null : new ExternalWallet();
+                this.usingHardware = !this.usingHardware;
+            },
+            changedExternalWalletType(newType){
+                this.keypair.external = new ExternalWallet(newType);
+            },
+            importKeyFromHardware(){
+                this.keypair.external.interface.getPublicKey().then(key => {
+                    this.keypair.publicKey = key;
+                });
+            },
             async toggleQR(){
                 if(this.qr === '') this.qr = await QRService.createQR(this.keypair.privateKey);
                 else this.qr = '';

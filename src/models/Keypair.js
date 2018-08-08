@@ -10,6 +10,8 @@ export default class Keypair {
         this.name = '';
         this.privateKey = '';
         this.publicKey = '';
+
+        this.external = null;
     }
 
     static placeholder(){ return new Keypair(); }

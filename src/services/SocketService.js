@@ -20,6 +20,7 @@ const socketHandler = (socket) => {
 
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async request => {
+        console.log('api req', request);
         socket.emit('api', await ApiService.handler(Object.assign(request.data, {plugin:request.plugin})));
     });
 
