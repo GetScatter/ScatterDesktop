@@ -9,7 +9,7 @@ export const EXT_WALLET_TYPES_ARR = Object.keys(EXT_WALLET_TYPES).map(x => EXT_W
 
 export default class ExternalWallet {
 
-    constructor(_type = EXT_WALLET_TYPES.TEST){
+    constructor(_type = EXT_WALLET_TYPES.DIY){
         this.id = IdGenerator.text(64);
         this.type = _type;
         this.interface = typeToInterface(_type);
@@ -17,7 +17,7 @@ export default class ExternalWallet {
 
 }
 
-const get = async route => fetch(route);
+const get = async route => fetch(route).then(res => res.json());
 const post = async (route, data) => fetch('julia.php', {
     method: "POST",
     headers: {
@@ -29,7 +29,7 @@ const post = async (route, data) => fetch('julia.php', {
 
 const typeToInterface = type => {
     switch(type){
-        case EXT_WALLET_TYPES.TEST:
+        case EXT_WALLET_TYPES.DIY:
             const url = 'http://raspberrypi.local:3000';
             return new ExternalWalletInterface({
                 sign(publicKey, trx, abi){ return post(url, {publicKey, trx, abi}) },

@@ -355,6 +355,7 @@ $speed:0.5s;
     margin-top:10px;
     cursor: pointer;
     border:2px solid transparent;
+    display: inline-block;
 
     transition: all 0.2s ease;
     transition-property: background, border, color;
@@ -364,6 +365,16 @@ $speed:0.5s;
       border:2px solid $red;
       color:$red;
       background:transparent;
+    }
+
+    &.blue {
+      background:$dark-blue;
+
+      &:hover {
+        border:2px solid $dark-blue;
+        color:$dark-blue;
+        background:transparent;
+      }
     }
   }
 }

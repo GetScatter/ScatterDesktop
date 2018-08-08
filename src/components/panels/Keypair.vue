@@ -113,6 +113,14 @@
                                 <figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(account)">
                                     <i class="fa fa-ban"></i>
                                 </figure>
+
+                                <!--<figure class="button blue" v-tooltip="'Buy or Sell Ram'" @click="unlinkAccount(account)">-->
+                                    <!--<i class="fa fa-microchip"></i>-->
+                                <!--</figure>-->
+
+                                <!--<figure class="button blue" v-tooltip="'Buy or Sell CPU/NET'" @click="unlinkAccount(account)">-->
+                                    <!--<i class="fa fa-globe"></i>-->
+                                <!--</figure>-->
                             </section>
                         </section>
                     </section>
