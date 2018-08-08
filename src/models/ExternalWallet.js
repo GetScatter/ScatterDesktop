@@ -17,15 +17,25 @@ export default class ExternalWallet {
 
 }
 
-const get = async route => fetch(route).then(res => res.json());
-const post = async (route, data) => fetch(route, {
-    method: "POST",
-    headers: {
-        'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-}).then(res => res.json());
+const get = async route => {
+    return Promise.race([
+        fetch(route).then(res => res.json()),
+        new Promise(resolve => setTimeout(() => resolve(null), 60000))
+    ])
+}
+const post = async (route, data) => {
+    return Promise.race([
+        fetch(route, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(res => res.json()),
+        new Promise(resolve => setTimeout(() => resolve(null), 120000))
+    ])
+};
 
 const typeToInterface = type => {
     switch(type){
@@ -33,7 +43,10 @@ const typeToInterface = type => {
             const url = 'http://raspberrypi.local:3000';
             return new ExternalWalletInterface({
                 sign(publicKey, trx, abi){ return post(url, {publicKey, trx, abi}) },
-                getPublicKey(){ return get(url) }
+                getPublicKey(){ return get(url).then(res => {
+                    if(!res) return null;
+                    return res.key
+                })}
             });
             break;
     }
