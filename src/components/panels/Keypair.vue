@@ -27,16 +27,20 @@
                              v-on:changed="blockchainChanged" :key="1"></sel>
 
                         <section v-if="importingKey">
-                            <cin v-if="!usingHardware && isNew" @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                            <cin v-if="!usingHardware && isNew" @changed="makePublicKey" placeholder="Private Key" type="password"
+                                 :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                         </section>
 
                         <swch v-if="!isNew" first="Show Key Data" second="Hide" :selected="qr === '' ? 'Show Key Data' : 'Hide'" v-on:switched="toggleQR"></swch>
 
-                        <cin v-if="isNew || qr !== ''" placeholder="Public Key" disabled="true" :text="keypair.publicKey" :copy="!isNew"></cin>
-
+                        <cin v-if="isNew || qr !== ''" :forced="usingHardware && keypair.publicKey.length"
+                             :placeholder="usingHardware && keypair.publicKey.length ? `Imported ${keypair.blockchain.toUpperCase()} Key` : 'Public Key'"
+                             disabled="true"
+                             :text="keypair.publicKey"
+                             :copy="!isNew"></cin>
 
                         <btn v-if="isNew && !importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
-                        <btn v-if="isNew && keypair.publicKey.length" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
+                        <btn v-if="isNew && keypair.publicKey.length && !usingHardware" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
 
                         <section v-if="isNew && usingHardware">
                             <br><br>
@@ -180,6 +184,9 @@
         props:['kp'],
         methods: {
             toggleExternalWallet(){
+                this.keypair.publicKey = '';
+                this.keypair.privateKey = '';
+
                 this.keypair.external = this.usingHardware ? null : new ExternalWallet();
                 this.usingHardware = !this.usingHardware;
             },
@@ -188,7 +195,17 @@
             },
             importKeyFromHardware(){
                 this.keypair.external.interface.getPublicKey().then(key => {
-                    this.keypair.publicKey = key;
+                    let isValid = false;
+
+                    BlockchainsArray.map(x => {
+                        if(isValid) return;
+                        if(PluginRepository.plugin(x.value).validPublicKey(key)){
+                            isValid = true;
+                            this.keypair.blockchain = x.value;
+                        }
+                    });
+
+                    if(isValid) this.keypair.publicKey = key;
                 });
             },
             async toggleQR(){

@@ -51,7 +51,7 @@ export default class ApiService {
             if(possibleId) return resolve({id:request.id, result:possibleId});
 
             PopupService.push(Popup.popout(request, ({result}) => {
-                if(!result) return resolve(Error.signatureError("identity_rejected", "User rejected the provision of an Identity"));
+                if(!result) return resolve({id:request.id, result:Error.signatureError("identity_rejected", "User rejected the provision of an Identity")});
 
                 const identity = Identity.fromJson(result.identity);
                 const accounts = (result.accounts || []).map(x => Account.fromJson(x));
@@ -106,7 +106,7 @@ export default class ApiService {
             request.payload.network.name = request.payload.origin;
 
             if(!request.payload.network.isValid())
-                return resolve(new Error("bad_network", "The network being suggested is invalid"));
+                return resolve({id:request.id, result:new Error("bad_network", "The network being suggested is invalid")});
 
             if(store.state.scatter.settings.networks.find(x => x.unique() === request.payload.network.unique()))
                 return resolve({id:request.id, result:true});
@@ -137,7 +137,7 @@ export default class ApiService {
             const {origin, requiredFields, blockchain} = request.payload;
 
             const possibleId = PermissionService.identityFromPermissions(origin, false);
-            if(!possibleId) return resolve(Error.identityMissing());
+            if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
             payload.identityKey = possibleId.publicKey;
 
             // Blockchain specific plugin
@@ -156,7 +156,7 @@ export default class ApiService {
                 .map(x => possibleId.accounts.find(acc => acc.formatted() === x));
 
             // Must have the proper account participants.
-            if(!participants.length) return resolve(Error.signatureAccountMissing());
+            if(!participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
             payload.participants = participants;
 
 
@@ -165,7 +165,7 @@ export default class ApiService {
 
             const signAndReturn = async (selectedLocation) => {
                 const signatures = await Promise.all(participants.map(x => plugin.signer(payload, x.publicKey)));
-                if(signatures.length !== participants.length) return resolve(Error.signatureAccountMissing());
+                if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
 
                 const returnedFields = Identity.asReturnedFields(requiredFields, identity, selectedLocation);
 
@@ -178,7 +178,8 @@ export default class ApiService {
             }
 
             PopupService.push(Popup.popout(request, async ({result}) => {
-                if(!result || (!result.accepted || false)) return resolve(Error.signatureError("signature_rejected", "User rejected the signature request"));
+                console.log('res', result);
+                if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
                 await PermissionService.addIdentityRequirementsPermission(origin, identity, requiredFields);
                 await PermissionService.addActionPermissions(origin, identity, participants, result.whitelists);
@@ -217,11 +218,11 @@ export default class ApiService {
             const {origin, publicKey, data, whatFor, isHash} = request.payload;
 
             const possibleId = PermissionService.identityFromPermissions(origin, false);
-            if(!possibleId) return resolve(Error.identityMissing());
+            if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
             payload.identityKey = possibleId.publicKey;
 
             const keypair = KeyPairService.getKeyPairFromPublicKey(publicKey);
-            if(!keypair) return resolve(Error.signatureError("signature_rejected", "User rejected the signature request"));
+            if(!keypair) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
             // Blockchain specific plugin
             const plugin = PluginRepository.plugin(keypair.blockchain);
@@ -236,7 +237,7 @@ export default class ApiService {
             }];
 
             PopupService.push(Popup.popout(Object.assign(request, {}), async ({result}) => {
-                if(!result || (!result.accepted || false)) return resolve(Error.signatureError("signature_rejected", "User rejected the signature request"));
+                if(!result || (!result.accepted || false)) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
                 resolve({id:request.id, result:await plugin.signer(payload, publicKey, true, isHash)});
             }));

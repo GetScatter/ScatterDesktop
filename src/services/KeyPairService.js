@@ -117,6 +117,12 @@ export default class KeyPairService {
         return null;
     }
 
+    static isHardware(publicKey){
+        const keypair = this.getKeyPairFromPublicKey(publicKey);
+        if(!keypair) throw new Error('Keypair doesnt exist on keychain');
+        return keypair.external !== null;
+    }
+
     static publicToPrivate(publicKey){
         const keypair = this.getKeyPairFromPublicKey(publicKey, true);
         if(keypair) return keypair.privateKey;

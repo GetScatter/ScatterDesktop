@@ -1,4 +1,5 @@
 import IdGenerator from '../util/IdGenerator';
+import ecc from 'eosjs-ecc'
 
 export const EXT_WALLET_TYPES = {
     DIY:'Scatter/LiquidEOS DIY Hardware Wallet'
@@ -45,10 +46,16 @@ export class ExternalWalletInterface {
     }
 
     async sign(publicKey, trx, abi){
+        // return new Promise(resolve => {
+        //     resolve(ecc.sign(trx.buf, '5KRg7HTvt98CSvrqsUqyH2TYm2agYZ1k6eWEWMpgg7WLRodMPWb'));
+        // });
         return await this.handler.sign(publicKey, trx, abi);
     }
 
     async getPublicKey(){
+        // return new Promise(resolve => {
+        //     resolve('EOS7ffWP2VcC9nyBTaEtaCekNvFsfNEAtY7cJWU1eqTPds7Gq9fJB')
+        // });
         return await this.handler.getPublicKey();
     }
 

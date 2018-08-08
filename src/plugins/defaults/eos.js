@@ -153,12 +153,17 @@ export default class EOS extends Plugin {
     }
 
     async signer(payload, publicKey, arbitrary = false, isHash = false){
-        const privateKey = KeyPairService.publicToPrivate(publicKey);
-        if(!privateKey) return;
+        if(KeyPairService.isHardware(publicKey)){
+            const keypair = KeyPairService.getKeyPairFromPublicKey(publicKey);
+            return keypair.external.interface.sign(publicKey, payload, payload.abi);
+        } else {
+            const privateKey = KeyPairService.publicToPrivate(publicKey);
+            if (!privateKey) return;
 
-        let sig;
-        if(arbitrary && isHash) sig = ecc.Signature.signHash(payload.data, privateKey).toString();
-        return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);
+            let sig;
+            if (arbitrary && isHash) sig = ecc.Signature.signHash(payload.data, privateKey).toString();
+            return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);
+        }
     }
 
     async requestParser(signargs, network){
