@@ -166,7 +166,6 @@ export default class ApiService {
 
 
             const signAndReturn = async (selectedLocation) => {
-                console.log('payload', payload);
                 const signatures = await Promise.all(participants.map(x => {
                     if(KeyPairService.isHardware(x.publicKey)){
                         const keypair = KeyPairService.getKeyPairFromPublicKey(x.publicKey);

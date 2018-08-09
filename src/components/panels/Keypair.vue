@@ -101,9 +101,15 @@
                             <section class="list-item" v-for="account in linkedAccounts">
                                 <figure class="name">{{account.formatted()}}</figure>
                                 <figure class="date">{{account.network().name}}</figure>
-                                <!--<pre>{{accountData(account)}}</pre>-->
 
                                 <section v-if="account.blockchain() === blockchain.EOS && accountData(account)">
+                                    <!--<pre>{{accountData(account)}}</pre>-->
+                                    <p-bar color="orange" v-if="accountData(account).refund_request"
+                                           :used="+new Date() - +new Date(accountData(account).refund_request.request_time)"
+                                           :total="(86400*3*1000)"
+                                           :l-text="`Refunding on ${new Date(+new Date(accountData(account).refund_request.request_time)+(86400*3*1000)).toLocaleString()}`"
+                                           :r-text="refundAmount(account)"></p-bar>
+
                                     <p-bar color="blue" :used="accountData(account).cpu_limit.used" :total="accountData(account).cpu_limit.max" l-text="CPU" :r-text="accountData(account).total_resources.cpu_weight"></p-bar>
                                     <p-bar color="yellow" :used="accountData(account).net_limit.used" :total="accountData(account).net_limit.max" l-text="NET" :r-text="accountData(account).total_resources.net_weight"></p-bar>
                                     <p-bar color="red" :used="accountData(account).ram_usage" :total="accountData(account).ram_quota" l-text="RAM" :r-text="`${(accountData(account).ram_usage/1024).toFixed(2)}KB / ${(accountData(account).ram_quota/1024).toFixed(2)}KB`"></p-bar>
@@ -114,12 +120,18 @@
                                     <i class="fa fa-ban"></i>
                                 </figure>
 
-                                <figure class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">
+                                <figure v-if="account.blockchain() === blockchain.EOS" class="separator"></figure>
+
+                                <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">
                                     <i class="fa fa-microchip"></i>
                                 </figure>
 
-                                <figure class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">
+                                <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">
                                     <i class="fa fa-globe"></i>
+                                </figure>
+
+                                <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">
+                                    <i class="fa fa-refresh"></i>
                                 </figure>
                             </section>
                         </section>
@@ -193,28 +205,49 @@
         mounted(){
             this.keypair = this.kp;
             this.selectedNetwork = this.availableNetworks[0];
-            this.setupAccountDatum();
+            this.fetchAccountDatum();
         },
         destroyed(){
             clearTimeout(saveTimeout);
         },
         props:['kp'],
         methods: {
-            moderateRAM(account){
-                PopupService.push(Popup.buySellRAM(account));
+            refundAmount(account){
+                const symbol = this.accountData(account).refund_request.cpu_amount.split(' ')[1];
+                const cpu = parseFloat(this.accountData(account).refund_request.cpu_amount.split(' ')[0]);
+                const net = parseFloat(this.accountData(account).refund_request.net_amount.split(' ')[0]);
+
+                return `${parseFloat(cpu+net).toFixed(4)} ${symbol}`
             },
-            moderateResources(account){},
-            setupAccountDatum(){
+            moderateRAM(account){
+                PopupService.push(Popup.buySellRAM(account, done => {
+                    this.fetchAccountData(account);
+                }));
+            },
+            moderateResources(account){
+                PopupService.push(Popup.delegateResources(account, done => {
+                    this.fetchAccountData(account);
+                }));
+            },
+            fetchAccountDatum(){
                 if(this.keypair.blockchain === Blockchains.EOS) {
-                    const plugin = PluginRepository.plugin(Blockchains.EOS);
                     this.linkedAccounts.map(account => {
-                        if (this.accountDatum.find(x => x.name === account.name)) return;
-                        plugin.accountData(account, account.network()).then(data => {
-                            if (!data) return;
-                            this.accountDatum.push({name: account.name, data});
-                        })
+                        this.fetchAccountData(account);
                     });
                 }
+            },
+            fetchAccountData(account, snack = false){
+                const plugin = PluginRepository.plugin(Blockchains.EOS);
+                plugin.accountData(account, account.network()).then(data => {
+                    if (!data) return;
+                    const found = this.accountDatum.find(x => x.name === account.name);
+                    if(!found) this.accountDatum.push({name: account.name, data});
+                    else found.data = data;
+
+                    if(snack){
+                        PopupService.push(Popup.snackbar(`Refreshed Account: ${account.formatted()}`, "check"))
+                    }
+                })
             },
             accountData(account){
                 const data = this.accountDatum.find(x => x.name === account.name);
@@ -375,4 +408,8 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
+
+    .separator {
+        width:1px; height:10px; background:rgba(0,0,0,0.1); margin:0 10px; display:inline-block;
+    }
 </style>

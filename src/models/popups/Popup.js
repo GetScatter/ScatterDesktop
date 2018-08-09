@@ -44,8 +44,12 @@ export class Popup {
         return new Popup(PopupDisplayTypes.SNACKBAR, new PopupData('', { message, icon, timeout }))
     }
 
-    static buySellRAM(account){
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.BUY_SELL_RAM, { account }))
+    static buySellRAM(account, callback){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.BUY_SELL_RAM, { account }, callback))
+    }
+
+    static delegateResources(account, callback){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DELEGATE_RESOURCES, { account }, callback))
     }
 
     static popout(data, callback){
@@ -75,6 +79,7 @@ export const PopupTypes = {
     TEXT_PROMPT:'textPrompt',
     SELECTOR:'selector',
     BUY_SELL_RAM:'buySellRAM',
+    DELEGATE_RESOURCES:'delegateResources',
 };
 
 export class PopupData {

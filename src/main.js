@@ -36,6 +36,7 @@ import Prompt from './components/popups/Prompt.vue'
 import Selector from './components/popups/Selector.vue'
 import Snackbar from './components/popups/Snackbar.vue'
 import TextPrompt from './components/popups/TextPrompt.vue'
+import DelegateResources from './components/popups/DelegateResources.vue'
 import BuySellRAM from './components/popups/BuySellRAM.vue'
 import PopInHead from './components/popups/fragments/PopInHead.vue'
 
@@ -102,6 +103,7 @@ class Main {
             {tag:'selector', vue:Selector},
             {tag:'snackbar', vue:Snackbar},
             {tag:'buy-sell-ram', vue:BuySellRAM},
+            {tag:'delegate-resources', vue:DelegateResources},
             {tag:'pop-in-head', vue:PopInHead},
 
             // POP OUTS
