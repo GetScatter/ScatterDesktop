@@ -20,7 +20,8 @@
                             <br>
                             <sel :selected="token"
                                  :options="tokens"
-                                 :parser="t => t.symbol"
+                                 :parser="t => t.name"
+                                 :img-parser="t => t.logo"
                                  v-on:changed="selectToken"></sel>
                         </section>
 

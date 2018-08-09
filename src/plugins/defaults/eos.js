@@ -124,7 +124,7 @@ export default class EOS extends Plugin {
     }
 
     async fetchTokens(tokens){
-        tokens.push({symbol:'EOS', account:'eosio.token'});
+        tokens.push({symbol:'EOS', account:'eosio.token', name:'EOS'});
         const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);
         eosTokens.map(token => {
             if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);

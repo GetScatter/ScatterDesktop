@@ -19,7 +19,6 @@ export default class ExternalWallet {
     static fromJson(json){
         let p = Object.assign(this.placeholder(), json);
         p.interface = typeToInterface(p.type);
-        console.log('t', p.type, p.interface);
         return p;
     }
 

@@ -220,13 +220,17 @@
                 return `${parseFloat(cpu+net).toFixed(4)} ${symbol}`
             },
             moderateRAM(account){
-                PopupService.push(Popup.buySellRAM(account, done => {
+                PopupService.push(Popup.buySellRAM(account, tx => {
+                    if(!tx) return;
                     this.fetchAccountData(account);
+                    PopupService.push(Popup.prompt("Success!", `Transaction ID: ${tx.transaction_id}`, "check", "Okay"))
                 }));
             },
             moderateResources(account){
-                PopupService.push(Popup.delegateResources(account, done => {
+                PopupService.push(Popup.delegateResources(account, tx => {
+                    if(!tx) return;
                     this.fetchAccountData(account);
+                    PopupService.push(Popup.prompt("Success!", `Transaction ID: ${tx.transaction_id}`, "check", "Okay"))
                 }));
             },
             fetchAccountDatum(){

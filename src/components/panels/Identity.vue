@@ -41,11 +41,6 @@
 
                         <btn v-on:clicked="addLocation" text="Add Another Location" secondary="true"></btn>
                         <btn v-if="identity.locations.length > 1" v-on:clicked="removeLocation" text="Remove Selected Location" red="true"></btn>
-                        <br>
-                        <cin class="half" placeholder="Phone" type="tel" :text="selectedLocation.phone" v-on:changed="changed => bind(changed, 'selectedLocation.phone')"></cin>
-                        <cin class="half" placeholder="Address" :text="selectedLocation.address" v-on:changed="changed => bind(changed, 'selectedLocation.address')"></cin>
-                        <cin class="half" placeholder="City" :text="selectedLocation.city" v-on:changed="changed => bind(changed, 'selectedLocation.city')"></cin>
-                        <cin class="half" placeholder="Postal Code" :text="selectedLocation.zipcode" v-on:changed="changed => bind(changed, 'selectedLocation.zipcode')"></cin>
 
                         <br><br>
 
@@ -55,7 +50,19 @@
                              :parser="(obj) => obj.name"
                              v-on:changed="changed => bind(changed, 'selectedLocation.country')"></sel>
 
-                        <cin placeholder="State" v-if="selectedLocation.country.code === 'US'" maxlength="2" :text="selectedLocation.state" v-on:changed="changed => bind(changed, 'selectedLocation.state')"></cin>
+                        <br>
+                        <figure style="clear:both;"></figure>
+
+                        <cin class="half" placeholder="Phone" type="tel" :text="selectedLocation.phone" v-on:changed="changed => bind(changed, 'selectedLocation.phone')"></cin>
+                        <cin class="half" placeholder="Address" :text="selectedLocation.address" v-on:changed="changed => bind(changed, 'selectedLocation.address')"></cin>
+                        <cin class="half" placeholder="City" :text="selectedLocation.city" v-on:changed="changed => bind(changed, 'selectedLocation.city')"></cin>
+                        <cin :class="selectedLocation.country.code === 'US' ? 'quarter' : 'half'" placeholder="Postal Code" :text="selectedLocation.zipcode" v-on:changed="changed => bind(changed, 'selectedLocation.zipcode')"></cin>
+                        <cin class="quarter" placeholder="State" v-if="selectedLocation.country.code === 'US'" maxlength="2" :text="selectedLocation.state" v-on:changed="changed => bind(changed, 'selectedLocation.state')"></cin>
+
+                        <br><br>
+
+
+
                     </section>
                 </section>
               </section>
@@ -178,6 +185,17 @@
 
         &:nth-child(odd){
             width: calc(50% - 20px);
+            margin-left: 15px;
+        }
+    }
+
+    .quarter {
+        width: calc(25% - 10px);
+        display: inline-block;
+        margin-left: 6px;
+
+        &:nth-child(odd){
+            width: calc(25% - 20px);
             margin-left: 15px;
         }
     }

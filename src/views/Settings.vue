@@ -20,7 +20,7 @@
 
         <section v-if="selectedOption">
             <settings-language v-if="selectedOption.name === settingsOptions.LANGUAGE.name"></settings-language>
-            <!--<settings-autolock v-if="selectedOption.name === settingsOptions.AUTO_LOCK.name"></settings-autolock>-->
+            <settings-explorer v-if="selectedOption.name === settingsOptions.EXPLORER.name"></settings-explorer>
             <settings-password v-if="selectedOption.name === settingsOptions.PASSWORD.name"></settings-password>
             <settings-backup v-if="selectedOption.name === settingsOptions.BACKUP.name"></settings-backup>
             <settings-destroy v-if="selectedOption.name === settingsOptions.DESTROY.name"></settings-destroy>
@@ -41,7 +41,7 @@
 
     const SettingsOptions = {
         LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
-//        AUTO_LOCK:{ flash:false, locked:false, name:'Auto Lock', description:'Automatically lock Scatter when idle.' },
+        EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
         PASSWORD:{ flash:false, locked:true, name:'Password', description:'Change your password or regenerate your Mnemonic.' },
         BACKUP:{ flash:false, locked:true, name:'Backup', description:'Create a backup of your Scatter.' },
         DESTROY:{ flash:false, locked:true, name:'Destroy', description:'Destroy your instance of Scatter.' },

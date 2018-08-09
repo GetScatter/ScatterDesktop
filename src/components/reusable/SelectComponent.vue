@@ -10,6 +10,7 @@
 
         <section class="options">
             <figure class="option" v-for="item in options" v-on:click="select(item)">
+                <img v-if="imgParser" :src="imgParser(item)" />
                 {{parse(item)}}
             </figure>
         </section>
@@ -41,7 +42,7 @@
                 this.$emit('changed', this.selectedOption)
             }
         },
-        props:['placeholder', 'options', 'selected', 'prop', 'parser', 'disabled'],
+        props:['placeholder', 'options', 'selected', 'prop', 'parser', 'disabled', 'imgParser'],
         watch:{
             input(){ this.emit(); },
             text(){ this.input = this.text; },
@@ -116,6 +117,13 @@
                 background:transparent;
                 transition:background 0.2s ease;
 
+                img {
+                    width:16px;
+                    height:16px;
+                    vertical-align: middle;
+                    margin-right:5px;
+                }
+
                 &:not(:last-child){
                     border-bottom:1px solid $light-grey;
                 }
@@ -135,7 +143,7 @@
                 box-shadow:0 8px 16px rgba(0,0,0,0.15);
                 visibility:visible;
                 opacity:1;
-                max-height:120px;
+                max-height:220px;
             }
 
             .arrow {

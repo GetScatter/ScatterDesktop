@@ -145,7 +145,7 @@
                 PluginRepository.plugin(Blockchains.EOS).buyOrSellRAM(this.account, bytes, this.account.network(), this.buying).then(res => {
                     if(!res || !res.hasOwnProperty('transaction_id')) return false;
                     PopupService.push(Popup.snackbar(`${this.buying ? 'Bought' : 'Sold'} RAM`));
-                    this.returnResult(true);
+                    this.returnResult(res);
                 }).catch(err => alert(err))
             },
             ...mapActions([

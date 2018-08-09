@@ -7,18 +7,25 @@
             </section>
 
             <section class="selected-item scrollable">
-                <figure class="name">Configure Auto Lock</figure>
-                <figure class="description">Scatter is available in multiple languages, because blockchain is all about communities from all around the world.</figure>
+                <figure class="name">Select a Block Explorer</figure>
+                <figure class="description">Block Explorers allow you to view transactions, accounts, and other details about blockchains.</figure>
+
+                <figure class="line"></figure>
 
                 <section class="info-box">
-
-
-                    <sel :placeholder="'Language'"
-                         :options="languages"
-                         :selected="selectedLanguage"
+                    <figure class="name">EOS</figure>
+                    <sel :options="['bloks', 'eosflare']"
+                         :selected="'bloks'"
                          :parser="x => x"
                          v-on:changed="selectLanguage"></sel>
+                </section>
 
+                <section class="info-box">
+                    <figure class="name">Ethereum</figure>
+                    <sel :options="['etherscan']"
+                         :selected="'etherscan'"
+                         :parser="x => x"
+                         v-on:changed="selectLanguage"></sel>
                 </section>
 
             </section>
@@ -30,14 +37,13 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
+    import {LANG} from '../../localization/locales';
 
-    const LanguageOptions = {
-        ENGLISH:'English'
-    }
+
 
     export default {
         data () {return {
-            languages:LanguageOptions
+            languages:LANG
         }},
         computed:{
             ...mapState([
@@ -47,7 +53,7 @@
                 'networks',
             ]),
             selectedLanguage(){
-                return LanguageOptions.ENGLISH
+                return LANG.ENGLISH
             }
         },
         mounted(){
@@ -66,5 +72,10 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
 
-
+    .line {
+        width:100%;
+        height:1px;
+        background:rgba(0,0,0,0.1);
+        margin-top:30px;
+    }
 </style>

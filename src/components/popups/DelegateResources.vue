@@ -102,7 +102,7 @@
                 PluginRepository.plugin(Blockchains.EOS).stakeOrUnstake(this.account, cpu, net, this.account.network(), this.delegating).then(res => {
                     if(!res || !res.hasOwnProperty('transaction_id')) return false;
                     PopupService.push(Popup.snackbar(`${this.delegating ? 'Staked' : 'Unstaked'} CPU & NET`));
-                    this.returnResult(true);
+                    this.returnResult(res);
                 }).catch(err => console.log(err))
 
             },

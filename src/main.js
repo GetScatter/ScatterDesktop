@@ -24,7 +24,7 @@ import NothingHere from './components/panels/NothingHere.vue'
 import Terms from './components/panels/Terms.vue'
 import OriginPermissions from './components/panels/OriginPermissions.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
-import SettingsAutoLock from './components/panels/SettingsAutoLock.vue'
+import SettingsExplorer from './components/panels/SettingsExplorer.vue'
 import SettingsBackup from './components/panels/SettingsBackup.vue'
 import SettingsDestroy from './components/panels/SettingsDestroy.vue'
 import SettingsPassword from './components/panels/SettingsPassword.vue'
@@ -90,9 +90,9 @@ class Main {
             {tag:'nothing-here', vue:NothingHere},
             {tag:'origin-perms', vue:OriginPermissions},
             {tag:'settings-language', vue:SettingsLanguage},
-            {tag:'settings-autolock', vue:SettingsAutoLock},
             {tag:'settings-backup', vue:SettingsBackup},
             {tag:'settings-destroy', vue:SettingsDestroy},
+            {tag:'settings-explorer', vue:SettingsExplorer},
             {tag:'settings-password', vue:SettingsPassword},
 
             // POPUPS
