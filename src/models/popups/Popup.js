@@ -44,6 +44,10 @@ export class Popup {
         return new Popup(PopupDisplayTypes.SNACKBAR, new PopupData('', { message, icon, timeout }))
     }
 
+    static buySellRAM(account){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.BUY_SELL_RAM, { account }))
+    }
+
     static popout(data, callback){
         return new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data, callback))
     }
@@ -69,7 +73,8 @@ export const PopupTypes = {
     MNEMONIC:'mnemonic',
     PROMPT:'prompt',
     TEXT_PROMPT:'textPrompt',
-    SELECTOR:'selector'
+    SELECTOR:'selector',
+    BUY_SELL_RAM:'buySellRAM',
 };
 
 export class PopupData {

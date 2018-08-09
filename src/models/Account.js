@@ -24,6 +24,10 @@ export default class Account {
         return store.state.scatter.settings.networks.find(x => x.unique() === this.networkUnique);
     }
 
+    keypair(){
+        return store.state.scatter.keychain.keypairs.find(x => x.unique() === this.keypairUnique);
+    }
+
     blockchain(){
         return this.keypairUnique.split(':')[0];
     }

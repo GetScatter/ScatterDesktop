@@ -10,6 +10,7 @@
                     <text-prompt v-if="nextPopIn.data.type === popupTypes.TEXT_PROMPT"></text-prompt>
                     <selector v-if="nextPopIn.data.type === popupTypes.SELECTOR"></selector>
                     <mnemonic v-if="nextPopIn.data.type === popupTypes.MNEMONIC"></mnemonic>
+                    <buy-sell-ram v-if="nextPopIn.data.type === popupTypes.BUY_SELL_RAM"></buy-sell-ram>
                 </section>
             </section>
 
@@ -62,6 +63,11 @@
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
+        },
+        watch:{
+            nextPopIn(){
+                console.log(this.nextPopIn);
+            }
         }
     }
 </script>

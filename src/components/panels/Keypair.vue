@@ -114,13 +114,13 @@
                                     <i class="fa fa-ban"></i>
                                 </figure>
 
-                                <!--<figure class="button blue" v-tooltip="'Buy or Sell Ram'" @click="unlinkAccount(account)">-->
-                                    <!--<i class="fa fa-microchip"></i>-->
-                                <!--</figure>-->
+                                <figure class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">
+                                    <i class="fa fa-microchip"></i>
+                                </figure>
 
-                                <!--<figure class="button blue" v-tooltip="'Buy or Sell CPU/NET'" @click="unlinkAccount(account)">-->
-                                    <!--<i class="fa fa-globe"></i>-->
-                                <!--</figure>-->
+                                <figure class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">
+                                    <i class="fa fa-globe"></i>
+                                </figure>
                             </section>
                         </section>
                     </section>
@@ -200,6 +200,10 @@
         },
         props:['kp'],
         methods: {
+            moderateRAM(account){
+                PopupService.push(Popup.buySellRAM(account));
+            },
+            moderateResources(account){},
             setupAccountDatum(){
                 if(this.keypair.blockchain === Blockchains.EOS) {
                     const plugin = PluginRepository.plugin(Blockchains.EOS);

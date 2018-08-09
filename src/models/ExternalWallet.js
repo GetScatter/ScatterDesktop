@@ -45,12 +45,17 @@ const post = async (route, data) => {
     ])
 };
 
+
+
 const typeToInterface = type => {
     switch(type){
         case EXT_WALLET_TYPES.DIY:
             const url = 'http://raspberrypi.local:3000';
             return new ExternalWalletInterface({
-                sign(publicKey, trx, abi){ return post(url, {publicKey, trx, abi}) },
+                sign(publicKey, trx, abi){ return post(url, {publicKey, trx, abi}).then(res => {
+                    if(!res || !res.hasOwnProperty('signature')) return null;
+                    return res.signature;
+                })},
                 getPublicKey(){ return get(url).then(res => {
                     if(!res) return null;
                     return res.key
