@@ -78,9 +78,9 @@ export class IdentityRequiredFields {
 
     static fromPermission(requirements){
         const p = IdentityRequiredFields.placeholder();
-        p.accounts = requirements.hasOwnProperty('accounts') ? requirements.accounts.map(x => Network.fromUnique(x.split('account:')[1])) : [];
-        p.personal = requirements.hasOwnProperty('personal') ? requirements.personal.map(x => x.split('personal:')[1]) : [];
-        p.location = requirements.hasOwnProperty('location') ? requirements.location.map(x => x.split('location:')[1]) : [];
+        p.accounts = requirements.filter(x => x.indexOf('account:') > -1).map(x => Network.fromUnique(x.split('account:')[1]));
+        p.personal = requirements.filter(x => x.indexOf('personal:') > -1).map(x => x.split('personal:')[1]);
+        p.location = requirements.filter(x => x.indexOf('location:') > -1).map(x => x.split('location:')[1]);
         return p;
 
     }

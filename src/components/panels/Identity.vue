@@ -20,8 +20,8 @@
 
                     <section class="info-box">
                         <figure class="header">Personal Information</figure>
-                        <cin placeholder="First Name" :text="identity.personal.firstname" v-on:changed="changed => bind(changed, 'identity.personal.firstname')"></cin>
-                        <cin placeholder="Last Name" :text="identity.personal.lastname" v-on:changed="changed => bind(changed, 'identity.personal.lastname')"></cin>
+                        <cin class="half" placeholder="First Name" :text="identity.personal.firstname" v-on:changed="changed => bind(changed, 'identity.personal.firstname')"></cin>
+                        <cin class="half" placeholder="Last Name" :text="identity.personal.lastname" v-on:changed="changed => bind(changed, 'identity.personal.lastname')"></cin>
                         <cin placeholder="Email" :text="identity.personal.email" v-on:changed="changed => bind(changed, 'identity.personal.email')"></cin>
                         <cin placeholder="Date of Birth" type="date" :text="identity.personal.birthdate" v-on:changed="changed => bind(changed, 'identity.personal.birthdate')"></cin>
                     </section>
@@ -41,11 +41,13 @@
 
                         <btn v-on:clicked="addLocation" text="Add Another Location" secondary="true"></btn>
                         <btn v-if="identity.locations.length > 1" v-on:clicked="removeLocation" text="Remove Selected Location" red="true"></btn>
+                        <br>
+                        <cin class="half" placeholder="Phone" type="tel" :text="selectedLocation.phone" v-on:changed="changed => bind(changed, 'selectedLocation.phone')"></cin>
+                        <cin class="half" placeholder="Address" :text="selectedLocation.address" v-on:changed="changed => bind(changed, 'selectedLocation.address')"></cin>
+                        <cin class="half" placeholder="City" :text="selectedLocation.city" v-on:changed="changed => bind(changed, 'selectedLocation.city')"></cin>
+                        <cin class="half" placeholder="Postal Code" :text="selectedLocation.zipcode" v-on:changed="changed => bind(changed, 'selectedLocation.zipcode')"></cin>
 
-                        <cin placeholder="Phone" type="tel" :text="selectedLocation.phone" v-on:changed="changed => bind(changed, 'selectedLocation.phone')"></cin>
-                        <cin placeholder="Address" :text="selectedLocation.address" v-on:changed="changed => bind(changed, 'selectedLocation.address')"></cin>
-                        <cin placeholder="City" :text="selectedLocation.city" v-on:changed="changed => bind(changed, 'selectedLocation.city')"></cin>
-                        <cin placeholder="Postal Code" :text="selectedLocation.zipcode" v-on:changed="changed => bind(changed, 'selectedLocation.zipcode')"></cin>
+                        <br><br>
 
                         <sel :placeholder="'Country'"
                              :options="countries"
@@ -169,4 +171,14 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
+
+    .half {
+        width:50%;
+        display:inline-block;
+
+        &:nth-child(odd){
+            width: calc(50% - 20px);
+            margin-left: 15px;
+        }
+    }
 </style>

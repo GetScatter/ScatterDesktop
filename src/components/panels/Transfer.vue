@@ -9,10 +9,7 @@
             <section class="selected-item scrollable" v-if="account && token">
 
                 <figure class="name">Transfer Tokens</figure>
-                <!--<figure class="description">-->
-                    <!--Transferring tokens between accounts is an irreversible action. Make sure you are transferring to the right person.-->
-                <!--</figure>-->
-                <!--<br>-->
+                <figure class="description">{{account.blockchain().toUpperCase()}} - {{account.formatted()}}</figure>
 
                 <section class="split-panels left">
                     <section class="info-box">

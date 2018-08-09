@@ -35,7 +35,7 @@ export default class ApiService {
      * @returns {Promise.<*>}
      */
     static async [Actions.IDENTITY_FROM_PERMISSIONS](request){
-        return {id:request.id, result:PermissionService.identityFromPermissions(request.payload.origin)};
+        return {id:request.id, result:PermissionService.identityFromPermissions(request.payload.origin, true)};
     }
 
     /***
