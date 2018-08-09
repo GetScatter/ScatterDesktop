@@ -151,7 +151,7 @@
 
                 if(transfer !== null) {
                     if (transfer.hasOwnProperty('error')) PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
-                    else PopupService.push(Popup.prompt("Success!", `Transaction ID: ${transfer.transaction_id}`, "check", "Okay"))
+                    else PopupService.push(Popup.transactionSuccess(Blockchains.EOS, transfer.transaction_id))
                 }
 
                 this.sending = false;

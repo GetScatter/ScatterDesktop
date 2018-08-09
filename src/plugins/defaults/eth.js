@@ -21,9 +21,20 @@ const web3 = new Web3();
 
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 
+
+const EXPLORERS = [
+    {
+        name:'Etherscan',
+        account:account => `https://etherscan.io/address/${account.formatted()}`,
+        transaction:id => `https://etherscan.io/tx/${id}`,
+        block:id => `https://etherscan.io/block/${id}`
+    },
+];
+
 export default class ETH extends Plugin {
 
     constructor(){ super(Blockchains.ETH, PluginTypes.BLOCKCHAIN_SUPPORT) }
+    explorers(){ return EXPLORERS; }
     accountFormatter(account){ return `${account.publicKey}` }
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.ETH }}
 

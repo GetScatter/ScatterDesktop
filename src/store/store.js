@@ -6,6 +6,7 @@ import {actions} from './actions';
 
 import {PopupDisplayTypes} from '../models/popups/Popup'
 import Scatter from '../models/Scatter';
+import PluginRepository from '../plugins/PluginRepository'
 
 Vue.use(Vuex);
 
@@ -36,6 +37,7 @@ const getters = {
     language:state =>       state.scatter.settings.language || [],
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
+    explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
 
     // Popups
     nextPopIn:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN)[0] || null,

@@ -31,6 +31,10 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
     }
 
+    static transactionSuccess(blockchain, tx, callback){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
+    }
+
     static textPrompt(title, description, icon, buttonText, input, callback){
         let params = { title, description, icon, buttonText, input };
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TEXT_PROMPT, params, callback))
@@ -80,6 +84,7 @@ export const PopupTypes = {
     SELECTOR:'selector',
     BUY_SELL_RAM:'buySellRAM',
     DELEGATE_RESOURCES:'delegateResources',
+    TX_SUCCESS:'txSuccess',
 };
 
 export class PopupData {

@@ -184,7 +184,8 @@
             ...mapGetters([
                 'keypairs',
                 'networks',
-                'accounts'
+                'accounts',
+                'explorers',
             ]),
             filteredFetchedAccounts(){
                 return this.availableAccounts.filter(account => !this.linkedAccounts.map(x => x.unique()).includes(account.unique()));
@@ -223,14 +224,14 @@
                 PopupService.push(Popup.buySellRAM(account, tx => {
                     if(!tx) return;
                     this.fetchAccountData(account);
-                    PopupService.push(Popup.prompt("Success!", `Transaction ID: ${tx.transaction_id}`, "check", "Okay"))
+                    PopupService.push(Popup.transactionSuccess(account.blockchain(), tx.transaction_id))
                 }));
             },
             moderateResources(account){
                 PopupService.push(Popup.delegateResources(account, tx => {
                     if(!tx) return;
                     this.fetchAccountData(account);
-                    PopupService.push(Popup.prompt("Success!", `Transaction ID: ${tx.transaction_id}`, "check", "Okay"))
+                    PopupService.push(Popup.transactionSuccess(account.blockchain(), tx.transaction_id))
                 }));
             },
             fetchAccountDatum(){

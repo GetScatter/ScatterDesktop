@@ -1,5 +1,6 @@
 import Network from './Network';
 import {LANG} from '../localization/locales';
+import PluginRepository from '../plugins/PluginRepository';
 
 export const BACKUP_STRATEGIES = {
     MANUAL:'manual',
@@ -14,12 +15,18 @@ export default class Settings {
         this.autoBackup = BACKUP_STRATEGIES.MANUAL;
         this.backupLocation = '';
         this.advancedMode = false;
+        this.explorers = PluginRepository.defaultExplorers();
     }
 
     static placeholder(){ return new Settings(); }
     static fromJson(json){
         let p = Object.assign(this.placeholder(), json);
         if(json.hasOwnProperty('networks')) p.networks = json.networks.map(x => Network.fromJson(x));
+        if(json.hasOwnProperty('explorers')) p.explorers = Object.keys(json.explorers).reduce((acc, blockchain) => {
+            console.log('blk', blockchain, PluginRepository.plugin(blockchain).explorers())
+            acc[blockchain] = PluginRepository.plugin(blockchain).explorers().find(x => x.name === json.explorers[blockchain].name);
+            return acc;
+        }, {});
         return p;
     }
 

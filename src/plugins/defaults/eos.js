@@ -36,12 +36,28 @@ const getAccountsFromPublicKey = (publicKey, network) => {
             }).catch(e => resolve([]));
         })
     ])
-}
+};
+
+const EXPLORERS = [
+    {
+        name:'Bloks',
+        account:account => `https://bloks.io/account/${account.formatted()}`,
+        transaction:id => `https://bloks.io/transaction/${id}`,
+        block:id => `https://bloks.io/block/${id}`
+    },
+    {
+        name:'EOSFlare',
+        account:account => `https://eosflare.io/account/${account.formatted()}`,
+        transaction:id => `https://eosflare.io/tx/${id}`,
+        block:id => `https://eosflare.io/block/${id}`
+    }
+];
 
 
 export default class EOS extends Plugin {
 
     constructor(){ super(Blockchains.EOS, PluginTypes.BLOCKCHAIN_SUPPORT) }
+    explorers(){ return EXPLORERS; }
     accountFormatter(account){ return `${account.name}@${account.authority}` }
     returnableAccount(account){ return { name:account.name, authority:account.authority, publicKey:account.publicKey, blockchain:Blockchains.EOS }}
 

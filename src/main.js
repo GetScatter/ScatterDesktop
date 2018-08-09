@@ -32,6 +32,7 @@ import SettingsPassword from './components/panels/SettingsPassword.vue'
 // POPUPS
 import Popups from './components/Popups.vue'
 import Mnemonic from './components/popups/Mnemonic.vue'
+import TransactionSuccess from './components/popups/TransactionSuccess.vue'
 import Prompt from './components/popups/Prompt.vue'
 import Selector from './components/popups/Selector.vue'
 import Snackbar from './components/popups/Snackbar.vue'
@@ -102,6 +103,7 @@ class Main {
             {tag:'text-prompt', vue:TextPrompt},
             {tag:'selector', vue:Selector},
             {tag:'snackbar', vue:Snackbar},
+            {tag:'tx-success', vue:TransactionSuccess},
             {tag:'buy-sell-ram', vue:BuySellRAM},
             {tag:'delegate-resources', vue:DelegateResources},
             {tag:'pop-in-head', vue:PopInHead},
