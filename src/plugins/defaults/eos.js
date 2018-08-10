@@ -41,13 +41,13 @@ const getAccountsFromPublicKey = (publicKey, network) => {
 const EXPLORERS = [
     {
         name:'Bloks',
-        account:account => `https://bloks.io/account/${account.formatted()}`,
+        account:account => `https://bloks.io/account/${account.name}`,
         transaction:id => `https://bloks.io/transaction/${id}`,
         block:id => `https://bloks.io/block/${id}`
     },
     {
         name:'EOSFlare',
-        account:account => `https://eosflare.io/account/${account.formatted()}`,
+        account:account => `https://eosflare.io/account/${account.name}`,
         transaction:id => `https://eosflare.io/tx/${id}`,
         block:id => `https://eosflare.io/block/${id}`
     }
@@ -291,7 +291,7 @@ export default class EOS extends Plugin {
         const actionOptions = { authorization:[`${account.name}@${account.authority}`] };
 
         const signProvider = x => {
-            tx.buf = {data:x.buf};
+            tx.buf = x.buf;
             tx.transaction = x.transaction;
             return [];
         };

@@ -23,7 +23,6 @@ export default class Settings {
         let p = Object.assign(this.placeholder(), json);
         if(json.hasOwnProperty('networks')) p.networks = json.networks.map(x => Network.fromJson(x));
         if(json.hasOwnProperty('explorers')) p.explorers = Object.keys(json.explorers).reduce((acc, blockchain) => {
-            console.log('blk', blockchain, PluginRepository.plugin(blockchain).explorers())
             acc[blockchain] = PluginRepository.plugin(blockchain).explorers().find(x => x.name === json.explorers[blockchain].name);
             return acc;
         }, {});

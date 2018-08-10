@@ -148,7 +148,7 @@
       "provider": "github"
     },
     "nsis": {
-      "deleteAppDataOnUninstall":true,
+      "deleteAppDataOnUninstall": true,
       "allowToChangeInstallationDirectory": true,
       "oneClick": false,
       "createDesktopShortcut": "always",

@@ -99,7 +99,9 @@
                             <figure class="header">Linked Accounts / Keypairs</figure>
 
                             <section class="list-item" v-for="account in linkedAccounts">
-                                <figure class="name">{{account.formatted()}}</figure>
+                                <figure v-if="isEndorsedNetwork(account)" class="name" @click="openAccountInExplorer(account)" style="cursor:pointer;"><u>{{account.formatted()}}</u></figure>
+                                <figure v-else class="name">{{account.formatted()}}</figure>
+
                                 <figure class="date">{{account.network().name}}</figure>
 
                                 <section v-if="account.blockchain() === blockchain.EOS && accountData(account)">
@@ -175,7 +177,8 @@
             keypair:null,
             fetchedAccounts:false,
             qr:'',
-            accountDatum:[]
+            accountDatum:[],
+            endorsedNetworks:[],
         }},
         computed: {
             ...mapState([
@@ -207,12 +210,25 @@
             this.keypair = this.kp;
             this.selectedNetwork = this.availableNetworks[0];
             this.fetchAccountDatum();
+
+            PluginRepository.signatureProviders().map(async plugin => {
+                const endorsed = await plugin.getEndorsedNetwork();
+                const net = this.networks.find(x => x.hostport() === endorsed.hostport());
+                if(net) this.endorsedNetworks.push(net.id);
+            })
+
         },
         destroyed(){
             clearTimeout(saveTimeout);
         },
         props:['kp'],
         methods: {
+            isEndorsedNetwork(account){
+                return this.endorsedNetworks.includes(account.network().id);
+            },
+            openAccountInExplorer(account){
+                ElectronHelpers.openLinkInBrowser(this.explorers[account.blockchain()].account(account))
+            },
             refundAmount(account){
                 const symbol = this.accountData(account).refund_request.cpu_amount.split(' ')[1];
                 const cpu = parseFloat(this.accountData(account).refund_request.cpu_amount.split(' ')[0]);
