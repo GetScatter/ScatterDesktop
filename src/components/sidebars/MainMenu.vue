@@ -87,6 +87,10 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
 
+    .icon-ridl {
+      margin-left:-5px;
+    }
+
     .main-menu {
         width:270px;
         background:#fff;
