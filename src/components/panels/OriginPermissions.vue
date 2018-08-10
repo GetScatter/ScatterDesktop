@@ -10,7 +10,8 @@
 
                 <figure class="name">{{origin}}</figure>
                 <figure class="description">
-                    Permissions are blah blah blah
+                    Below are permissions issued to {{origin}}.<br>
+                    <b class="red">NEVER CREATE CONTRACT ACTION PERMISSIONS WITH TOKEN TRANSFERS</b>
                 </figure>
 
                 <section class="split-panels left">

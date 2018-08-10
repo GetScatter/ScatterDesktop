@@ -20,7 +20,7 @@
                     <router-link :to="{name:link.disabled ? '' : link.route}" class="link" :class="{'disabled':link.disabled}">
 
                         <figure class="text">
-                            <i class="fa" :class="'fa-'+link.icon"></i>
+                            <i :class="link.icon"></i>
                             <span>{{link.name}}</span>
                         </figure>
                     </router-link>
@@ -54,17 +54,17 @@
     export default {
         name: 'MainMenu',
         data () {return {
-            lines:[1, 4],
+            lines:[1,3, 5],
             links:[
-                {route:RouteNames.TRANSFER, name:'Transfer', icon:'paper-plane'},
-                {route:RouteNames.IDENTITIES, name:'Identities', icon:'address-book'},
-                {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'key'},
-                // {route:RouteNames.LINKED_APPS, name:'Applications', icon:'plug'},
-                {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'shield'},
-                {route:RouteNames.HELP, name:'Help', icon:'question-circle', disabled:false},
-                {route:RouteNames.SETTINGS, name:'Settings', icon:'gear'},
+                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane'},
+                {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
+                {route:RouteNames.NOT_IDENTITIES, name:'Reputation', icon:'icon icon-ridl'},
+                {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
+                // {route:RouteNames.LINKED_APPS, name:'Applications', icon:'fa fa-plug'},
+                {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield'},
+                {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle', disabled:false},
+                {route:RouteNames.SETTINGS, name:'Settings', icon:'fa fa-gear'},
                 // {route:RouteNames.NOT_IDENTITIES, name:'Address Book', icon:'address-card', disabled:true},
-                // {route:RouteNames.NOT_IDENTITIES, name:'RIDL', icon:'star-half-o', disabled:true},
             ]
         }},
         methods:{

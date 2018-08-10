@@ -105,7 +105,6 @@
                                 <figure class="date">{{account.network().name}}</figure>
 
                                 <section v-if="account.blockchain() === blockchain.EOS && accountData(account)">
-                                    <!--<pre>{{accountData(account)}}</pre>-->
                                     <p-bar color="orange" v-if="accountData(account).refund_request"
                                            :used="+new Date() - +new Date(accountData(account).refund_request.request_time)"
                                            :total="(86400*3*1000)"
