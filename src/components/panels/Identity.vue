@@ -180,22 +180,22 @@
     @import "../../_variables";
 
     .half {
-        width:50%;
+        width:50% !important;
         display:inline-block;
 
         &:nth-child(odd){
-            width: calc(50% - 20px);
+            width: calc(50% - 20px) !important;
             margin-left: 15px;
         }
     }
 
     .quarter {
-        width: calc(25% - 10px);
+        width: calc(25% - 10px) !important;
         display: inline-block;
         margin-left: 6px;
 
         &:nth-child(odd){
-            width: calc(25% - 20px);
+            width: calc(25% - 20px) !important;
             margin-left: 15px;
         }
     }
