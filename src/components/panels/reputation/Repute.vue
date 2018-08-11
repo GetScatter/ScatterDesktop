@@ -72,7 +72,8 @@
                                 <section class="slider-container" :class="{'expand':fragments.length == 1}">
                                     <label :class="frag.quantity < 0 ? 'minus' : 'plus'"><i class="fa" :class="frag.quantity < 0 ? 'fa-minus' : 'fa-plus'"></i>REP</label>
                                     <cin placeholder="RIDL Used" :text="frag.quantity" type="number" v-on:changed="x => frag.quantity = parseFloat(x).toFixed(4)"></cin>
-                                    <slider :red="frag.quantity < 0" :min="-availableRIDL" :max="availableRIDL" step="0.0001" :value="frag.quantity" v-on:changed="x => frag.quantity = parseFloat(x).toFixed(4)"></slider>
+                                    <slider :red="frag.quantity < 0" :min="-availableRIDL" :max="availableRIDL" step="0.0001"
+                                            :value="frag.quantity" v-on:changed="x => frag.quantity = parseFloat(x).toFixed(4)"></slider>
                                 </section>
 
                             </section>
@@ -211,15 +212,6 @@
             &.red {
                 color:$red;
                 animation: glow 1.5s infinite;
-            }
-
-            @keyframes glow {
-                0% { color:$dark-grey; }
-                50% {
-                    transform: scale(0.95);
-                    color:$red;
-                }
-                100% { color:$dark-grey; }
             }
         }
     }

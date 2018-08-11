@@ -18,17 +18,49 @@
                 </section>
             </section>
 
-            <section class="buy-sell">
-                <swch first="Stake" second="Unstake" :selected="delegating ? 'Unstake' : 'Stake'" v-on:switched="delegating = !delegating"></swch>
+            <section class="buy-sell" :class="{'disabled':!fetchedBalance}">
+                <swch first="Stake" second="Unstake" :selected="delegating ? 'Unstake' : 'Stake'" v-on:switched="toggleDelegating"></swch>
 
                 <!--<figure class="title">Buy RAM</figure>-->
                 <figure v-if="delegating" class="description">Self staking CPU & NET for {{account.formatted()}} will let that account do more on the network.</figure>
                 <figure v-else class="description">Unstaking CPU & NET takes 3 days. Every time you Unstake the timer is reset.</figure>
 
-                <figure v-if="delegating" class="description"><b>You have {{balance}} available.</b></figure>
+                <section v-if="delegating">
+                    <br>
+                    <label style="float:left;">{{parseFloat(cpu).toFixed(4)}} CPU <span class="separator"></span> {{parseFloat(net).toFixed(4)}} NET</label>
+                    <label style="float:right;">{{parseFloat(balance.split(' ')[0] - net - cpu).toFixed(4)}} {{balance.split(' ')[1]}}</label>
+                    <br>
+                    <slider v-if="balance" :min="0" :max="balance.split(' ')[0] - this.net" step="0.0001" :value="cpu" v-on:changed="x => cpu = x"></slider>
+                    <slider v-if="balance" :min="0" :max="balance.split(' ')[0] - this.cpu" step="0.0001" :value="net" v-on:changed="x => net = x"></slider>
+                </section>
 
-                <cin :forced="parseFloat(cpu) > 0" placeholder="EOS to stake in CPU" :text="cpu" type="number" v-on:changed="changed => bind(changed, 'cpu')"></cin>
-                <cin :forced="parseFloat(net) > 0" placeholder="EOS to stake in NET" :text="net" type="number" v-on:changed="changed => bind(changed, 'net')"></cin>
+                <section v-if="!delegating">
+                    <br>
+                    <transition name="fade">
+                        <label v-if="lowCPU || lowNET">
+                        <span class="red">
+                            You are about to Unstake your resources dangerously. Always make sure you leave at least a few {{balance.split(' ')[1]}} on your account in both CPU and NET.
+                        </span>
+                            <br>
+                            <br>
+                        </label>
+                    </transition>
+                    <label style="float:left;">
+                        <span :class="{'red':lowCPU}">{{parseFloat(parseFloat(availableCPU) - parseFloat(cpu)).toFixed(4)}} CPU</span>
+                        <span class="separator"></span>
+                        <span :class="{'red':lowNET}">{{parseFloat(parseFloat(availableNET) - parseFloat(net)).toFixed(4)}} NET</span>
+                    </label>
+                    <label style="float:right;">{{parseFloat(parseFloat(net) + parseFloat(cpu)).toFixed(4)}} {{balance.split(' ')[1]}}</label>
+                    <br>
+                    <slider v-if="balance" :red="lowCPU" :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)"></slider>
+                    <slider v-if="balance" :red="lowNET" :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)"></slider>
+                </section>
+
+                <!--<cin :forced="parseFloat(cpu) > 0" placeholder="EOS to stake in CPU" :text="cpu" type="number" v-on:changed="changed => bind(changed, 'cpu')"></cin>-->
+                <!--<cin :forced="parseFloat(net) > 0" placeholder="EOS to stake in NET" :text="net" type="number" v-on:changed="changed => bind(changed, 'net')"></cin>-->
+
+
+
             </section>
 
         </section>
@@ -52,6 +84,7 @@
     export default {
         data(){ return {
             eos:null,
+            fetchedBalance:false,
             balance:'0.0000 EOS',
             accountData:null,
             delegating:true,
@@ -72,6 +105,18 @@
             account(){
                 return this.nextPopIn.data.props.account;
             },
+            availableCPU(){
+                return this.accountData.self_delegated_bandwidth.cpu_weight.split(' ')[0];
+            },
+            availableNET(){
+                return this.accountData.self_delegated_bandwidth.net_weight.split(' ')[0];
+            },
+            lowCPU(){
+                return parseFloat(this.availableCPU) - this.cpu <= 5
+            },
+            lowNET(){
+                return parseFloat(this.availableNET) - this.net <= 5
+            }
         },
         methods:{
             returnResult(bool){
@@ -81,14 +126,23 @@
             async init(){
 
                 PluginRepository.plugin(Blockchains.EOS).accountData(this.account, this.account.network()).then(data => {
+                    this.fetchedBalance = true;
+
                     if(!data || !data.hasOwnProperty('core_liquid_balance')) {
                         this.balance = null;
                         return null;
                     }
 
+                    console.log('data', data);
+                    this.accountData = data;
                     this.balance = data.core_liquid_balance;
                 });
 
+            },
+            toggleDelegating(){
+                this.delegating = !this.delegating;
+                this.cpu = 0;
+                this.net = 0;
             },
             stakeOrUnstake(){
                 if(this.cpu < 0 || this.net < 0) return null;
@@ -124,6 +178,13 @@
             min-height:150px;
             padding:30px;
 
+            opacity: 1;
+            transition: opacity 0.3s ease;
+
+            &.disabled {
+                opacity:0.2;
+            }
+
             .switcher {
                 margin-top:-10px;
             }
@@ -133,25 +194,23 @@
                 margin-top:10px;
             }
 
-            .inputs {
-                border-top:1px solid $light-grey;
-                margin-top:30px;
-                padding-top:30px;
-
-                .input {
-                    width: calc(70% - 25px);
-                    margin-right: 18px;
-                    display: inline-block;
-                    vertical-align: bottom;
-                    margin-top:0;
-                }
-
-                .select {
-                    width:30%;
-                    display:inline-block;
-                    margin-top:0;
-                }
+            label {
+                font-size: 13px;
+                font-family: 'Roboto', sans-serif;
+                font-weight: bold;
+                color:$dark-grey;
+                margin-bottom:10px;
             }
+        }
+    }
+
+    span {
+
+
+
+        &.red {
+            color:$red;
+            animation: glow 1.5s infinite;
         }
     }
 

@@ -38,14 +38,8 @@
             height: 15px;
             background: $light-grey;
             outline: none;
-            opacity: 0.4;
-            -webkit-transition: .2s;
-            transition: opacity .2s;
             border-radius: 20px;
 
-            &:hover {
-                opacity: 1; /* Fully shown on mouse-over */
-            }
 
             $slider-button:24px;
             $slider-button-w:44px;
@@ -58,7 +52,10 @@
                 background: $dark-blue;
                 cursor: pointer;
                 border-radius: 2px;
-                transition: background 0.4s ease;
+                transition: background 1s ease, opacity 0.4s ease;
+
+                opacity: 0.3;
+                &:hover { opacity: 1; }
             }
 
             &::-moz-range-thumb {
@@ -67,7 +64,10 @@
                 background: $dark-blue;
                 cursor: pointer;
                 border-radius: 2px;
-                transition: background 1s ease;
+                transition: background 1s ease, opacity 0.4s ease;
+
+                opacity: 0.3;
+                &:hover { opacity: 1; }
             }
 
             &.red {

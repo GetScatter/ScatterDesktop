@@ -18,20 +18,27 @@
                 </section>
             </section>
 
-            <section class="buy-sell">
-                <swch first="Buy" second="Sell" :selected="buying ? 'Sell' : 'Buy'" v-on:switched="buying = !buying"></swch>
+            <section class="buy-sell" :class="{'disabled':!fetchedBalance}">
+                <swch first="Buy" second="Sell" :selected="buying ? 'Sell' : 'Buy'" v-on:switched="toggleBuySell"></swch>
 
-                <!--<figure class="title">Buy RAM</figure>-->
                 <figure v-if="buying" class="description">Buying RAM for {{account.formatted()}} will let that account hold more data.</figure>
                 <figure v-else class="description">Selling RAM for {{account.formatted()}} return EOS to that account at the current price of RAM.</figure>
 
-                <figure v-if="buying" class="description"><b>You have {{balance}} available.</b></figure>
+
 
                 <section class="inputs">
-                    <cin :forced="parseFloat(ram.quantity) > 0" :placeholder="ram.quantity !== 0 ? `${price * ram.quantity} EOS` : `RAM to ${buying ? 'buy' : 'sell'} in ${ram.denom}`" :text="ram.quantity" type="number" v-on:changed="changed => bind(changed, 'ram.quantity')"></cin>
+
+                    <section class="slider-container">
+                        <label style="float:left;">{{ram.quantity}} {{ram.denom}}</label>
+                        <label v-if="buying" style="float:right;">{{parseFloat(balance.split(' ')[0] - (ram.quantity * price)).toFixed(4)}} {{balance.split(' ')[1]}}</label>
+                        <slider v-if="buying" :min="0" :max="parseFloat(balance.split(' ')[0]).toFixed(4) / price" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x"></slider>
+                        <slider v-if="!buying && accountData" :min="0" :max="availableRam" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x"></slider>
+                    </section>
+
+
                     <sel :selected="ram.denom"
                          :options="Object.keys(denom).map(x => denom[x])"
-                         v-on:changed="changed => bind(changed, 'ram.denom')"></sel>
+                         v-on:changed="changeRamDenom"></sel>
                 </section>
             </section>
 
@@ -65,6 +72,7 @@
             eos:null,
             pricePerByte:0,
             balance:'0.0000 EOS',
+            fetchedBalance:false,
             accountData:null,
             buying:true,
             denom:denom,
@@ -99,6 +107,14 @@
                     case denom.KB: return this.pricePerKB;
                     case denom.MB: return this.pricePerMB;
                 }
+            },
+            availableRam(){
+                const ram = this.accountData.ram_quota - this.accountData.ram_usage;
+                switch(this.ram.denom){
+                    case denom.BYTES: return ram;
+                    case denom.KB: return ram / 1024;
+                    case denom.MB: return (ram / 1024) / 1024;
+                }
             }
         },
         methods:{
@@ -122,14 +138,25 @@
                 this.pricePerByte = (ramInfo[0] / ramInfo[1]).toFixed(8);
 
                 PluginRepository.plugin(Blockchains.EOS).accountData(this.account, this.account.network()).then(data => {
+                    this.fetchedBalance = true;
                     if(!data) {
                         this.balance = 'Error getting balance';
                         return null;
                     }
 
+                    this.accountData = data;
                     this.balance = data.core_liquid_balance;
                 });
 
+            },
+            toggleBuySell(){
+                this.buying = !this.buying;
+                this.ram.denom = denom.BYTES;
+                this.ram.quantity = 0;
+            },
+            changeRamDenom(_denom){
+                this.ram.denom = _denom;
+                this.ram.quantity = 0;
             },
             buyOrSell(){
                 let bytes = 0;
@@ -165,6 +192,12 @@
             border-top:1px solid $light-grey;
             min-height:150px;
             padding:30px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+
+            &.disabled {
+                opacity:0.2;
+            }
 
             .switcher {
                 margin-top:-10px;
@@ -186,6 +219,27 @@
                     display: inline-block;
                     vertical-align: bottom;
                     margin-top:0;
+                }
+
+                .slider-container {
+                    width: calc(70% - 25px);
+                    margin-right: 18px;
+                    display: inline-block;
+
+                    margin-top: -47px;
+                    vertical-align: middle;
+
+                    label {
+                        font-size: 13px;
+                        font-family: 'Roboto', sans-serif;
+                        font-weight: bold;
+                        color:$dark-grey;
+                        margin-bottom:10px;
+                    }
+
+                    .slider {
+                        margin-top:15px;
+                    }
                 }
 
                 .select {
