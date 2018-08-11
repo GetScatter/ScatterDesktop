@@ -9,7 +9,8 @@
         </figure>
 
         <section class="options">
-            <figure class="option" v-for="item in options" v-on:click="select(item)">
+            <input ref="terms" placeholder="Search..." v-model="optionsTerms" />
+            <figure class="option" v-for="item in filteredOptions" v-on:click="select(item)">
                 <img v-if="imgParser" :src="imgParser(item)" />
                 {{parse(item)}}
             </figure>
@@ -20,13 +21,26 @@
 <script>
     export default {
         data(){ return {
+            optionsTerms:'',
             selectedOption:this.selected || this.placeholder || this.options[0],
             open:false,
         }},
+        computed:{
+            filteredOptions(){
+                return this.options.filter(x => this.parse(x).indexOf(this.optionsTerms) > -1);
+            }
+        },
         methods: {
             toggle(){
                 if(this.disabled) return false;
-                this.open = !this.open
+                this.open = !this.open;
+
+                if(this.open){
+                    this.optionsTerms = '';
+                    setTimeout(() => {
+                        this.$refs.terms.focus()
+                    }, 50);
+                }
             },
             parse(item){
                 if(typeof item === 'string') return item;
@@ -47,7 +61,7 @@
             input(){ this.emit(); },
             text(){ this.input = this.text; },
             disabled(isDisabled){ if(isDisabled) this.open = false; },
-            selected(){ this.selectedOption = this.selected; }
+            selected(){ this.selectedOption = this.selected; },
         }
     }
 </script>
@@ -65,6 +79,13 @@
         border-radius:4px;
         background:#fff;
         transition:background 0.2s ease;
+
+        input {
+            position: absolute;
+            top:-2000px;
+            left:-2000px;
+            opacity:0;
+        }
 
         &.disabled {
             background: #f5f5f5;

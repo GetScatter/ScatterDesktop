@@ -7,11 +7,11 @@ import PopOut from '../views/PopOut.vue'
 import Permissions from '../views/Permissions.vue'
 import Transfers from '../views/Transfers.vue'
 import Help from '../views/Help.vue'
+import Reputation from '../views/Reputation.vue'
 import SetupAnIdentity from '../views/wizards/SetupAnIdentity.vue'
 import LinkBlockchainAccount from '../views/wizards/LinkBlockchainAccount.vue'
 import AddBlockchainNetwork from '../views/wizards/AddBlockchainNetwork.vue'
 import ImportKeypair from '../views/wizards/ImportKeypair.vue'
-import GetWebExtensions from '../views/wizards/GetWebExtensions.vue'
 
 
 export const RouteNames = {
@@ -21,6 +21,7 @@ export const RouteNames = {
     IDENTITIES:'identities',
     BLOCKCHAINS:'blockchains',
     PERMISSIONS:'permissions',
+    REPUTATION:'reputation',
     HELP:'help',
     SETTINGS:'settings',
     NOT_IDENTITIES:'not_identities',
@@ -41,6 +42,7 @@ const RouteViews = {
     [RouteNames.ONBOARDING]:Onboarding,
     [RouteNames.TRANSFER]:Transfers,
     [RouteNames.IDENTITIES]:Identities,
+    [RouteNames.REPUTATION]:Reputation,
     [RouteNames.BLOCKCHAINS]:Blockchains,
     [RouteNames.PERMISSIONS]:Permissions,
     [RouteNames.HELP]:Help,
@@ -51,7 +53,6 @@ const RouteViews = {
     [RouteNames.WIZ_SETUP_KEYPAIR]:ImportKeypair,
     [RouteNames.WIZ_LINK_BLOCKCHAIN_ACCOUNT]:LinkBlockchainAccount,
     [RouteNames.WIZ_ADD_BLOCKCHAIN_NETWORK]:AddBlockchainNetwork,
-    [RouteNames.WIZ_WEB_EXTENSION]:GetWebExtensions,
 };
 
 export const RouteDepth = {

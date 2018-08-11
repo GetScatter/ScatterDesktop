@@ -22,6 +22,7 @@ import Network from './components/panels/Network.vue'
 import Transfer from './components/panels/Transfer.vue'
 import NothingHere from './components/panels/NothingHere.vue'
 import Terms from './components/panels/Terms.vue'
+import Repute from './components/panels/reputation/Repute.vue'
 import OriginPermissions from './components/panels/OriginPermissions.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
 import SettingsExplorer from './components/panels/SettingsExplorer.vue'
@@ -54,6 +55,7 @@ import SelectComponent from './components/reusable/SelectComponent.vue'
 import SubMenuHead from './components/reusable/SubMenuHead.vue'
 import MenuSearch from './components/reusable/MenuSearch.vue'
 import SwitchComponent from './components/reusable/SwitchComponent.vue'
+import SliderComponent from './components/reusable/SliderComponent.vue'
 import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
 
 
@@ -81,6 +83,7 @@ class Main {
             {tag:'menu-search', vue:MenuSearch},
             {tag:'swch', vue:SwitchComponent},
             {tag:'p-bar', vue:PercentageBarComponent},
+            {tag:'slider', vue:SliderComponent},
 
             // PANELS
             {tag:'identity', vue:Identity},
@@ -90,6 +93,7 @@ class Main {
             {tag:'terms', vue:Terms},
             {tag:'nothing-here', vue:NothingHere},
             {tag:'origin-perms', vue:OriginPermissions},
+            {tag:'rep-repute', vue:Repute},
             {tag:'settings-language', vue:SettingsLanguage},
             {tag:'settings-backup', vue:SettingsBackup},
             {tag:'settings-destroy', vue:SettingsDestroy},

@@ -16,7 +16,6 @@
 
     button {
         cursor: pointer;
-        /*width:100%;*/
         padding:0 20px;
         height:40px;
         line-height:39px;
@@ -35,6 +34,10 @@
         &:disabled {
             opacity:0.4;
             cursor: not-allowed;
+        }
+
+        &.head {
+            width:100%;
         }
 
         &.full {

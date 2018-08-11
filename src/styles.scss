@@ -232,6 +232,13 @@ a {
 
 }
 
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 $speed:0.5s;
 .slide-down-leave-active,
 .slide-down-enter-active,
@@ -379,6 +386,8 @@ $speed:0.5s;
   }
 }
 
+
+
 .pop-in-head {
 
   section {
@@ -431,4 +440,8 @@ $speed:0.5s;
       color:$dark-grey;
     }
   }
+}
+
+.separator {
+  width:1px; height:10px; background:rgba(0,0,0,0.1); margin:0 10px; display:inline-block;
 }

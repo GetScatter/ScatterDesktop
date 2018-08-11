@@ -58,7 +58,7 @@
             links:[
                 {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane'},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
-                {route:RouteNames.NOT_IDENTITIES, name:'Reputation', icon:'icon icon-ridl'},
+                {route:RouteNames.REPUTATION, name:'Reputation', icon:'icon icon-ridl'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
                 // {route:RouteNames.LINKED_APPS, name:'Applications', icon:'fa fa-plug'},
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield'},

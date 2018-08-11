@@ -429,7 +429,5 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
 
-    .separator {
-        width:1px; height:10px; background:rgba(0,0,0,0.1); margin:0 10px; display:inline-block;
-    }
+
 </style>
