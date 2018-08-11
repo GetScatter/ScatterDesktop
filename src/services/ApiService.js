@@ -148,6 +148,7 @@ export default class ApiService {
             switch(blockchain){
                 case Blockchains.EOS: payload.messages = await plugin.requestParser(payload, Network.fromJson(payload.network)); break;
                 case Blockchains.ETH: payload.messages = await plugin.requestParser(payload, payload.hasOwnProperty('abi') ? payload.abi : null); break;
+                case Blockchains.TLOS: payload.messages = await plugin.requestParser(payload, Network.fromJson(payload.network)); break;
             }
 
 

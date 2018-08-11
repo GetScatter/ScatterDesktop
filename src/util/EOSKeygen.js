@@ -6,12 +6,13 @@ export default class EOSKeygen {
 
     /***
      * Generates a Keypair
+     * @param blockchain_prefix - TELOS support changes: optional change to prefix for pubkey when generated. Defaults to EOS
      * @returns {Keypair}
      */
-    static generateKeys(){
+    static generateKeys(blockchain_prefix = 'EOS'){
         let [mnemonic, seed] = Mnemonic.generateDanglingMnemonic();
         let privateKey = EOSKeygen.generatePrivateKey(seed);
-        let publicKey = EOSKeygen.privateToPublic(privateKey);
+        let publicKey = EOSKeygen.privateToPublic(privateKey, blockchain_prefix);
         return Keypair.fromJson({publicKey, privateKey})
     }
 
@@ -27,9 +28,10 @@ export default class EOSKeygen {
     /***
      * Converts a private key to a public key
      * @param privateKey - The private key to convert
+     * @param blockchain_prefix - TELOS support changes: optional change to prefix for pubkey when generated. Defaults to EOS
      */
-    static privateToPublic(privateKey) {
-        return PrivateKey.fromWif(privateKey).toPublic().toString()
+    static privateToPublic(privateKey, blockchain_prefix) {
+        return PrivateKey.fromWif(privateKey).toPublic().toString(blockchain_prefix);
     }
 
     /***
