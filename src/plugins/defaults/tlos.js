@@ -66,7 +66,7 @@ export default class TLOS extends Plugin {
             resolve(new Network(
                 'TLOS Testnet', 'https',
                 'api.eos.miami',
-                443,
+                17441,
                 Blockchains.TLOS,
                 '9e46127b78e0a7f6906f549bba3d23b264c70ee6ec781aed9d4f1b72732f34fc'
             ));
