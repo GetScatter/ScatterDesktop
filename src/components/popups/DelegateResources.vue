@@ -13,8 +13,8 @@
                     <figure class="title">CPU & NET</figure>
                 </section>
                 <section>
-                    <btn text="Cancel" red="true" v-on:clicked="returnResult(false)"></btn>
-                    <btn :text="delegating ? 'Stake' : 'Unstake'" v-on:clicked="stakeOrUnstake"></btn>
+                    <btn :disabled="submitting" text="Cancel" red="true" v-on:clicked="returnResult(false)"></btn>
+                    <btn :disabled="submitting" :text="delegating ? 'Stake' : 'Unstake'" v-on:clicked="stakeOrUnstake"></btn>
                 </section>
             </section>
 
@@ -25,26 +25,31 @@
                 <figure v-if="delegating" class="description">Self staking CPU & NET for {{account.formatted()}} will let that account do more on the network.</figure>
                 <figure v-else class="description">Unstaking CPU & NET takes 3 days. Every time you Unstake the timer is reset.</figure>
 
-                <section v-if="delegating">
-                    <br>
-                    <label style="float:left;">{{parseFloat(cpu).toFixed(4)}} CPU <span class="separator"></span> {{parseFloat(net).toFixed(4)}} NET</label>
-                    <label style="float:right;">{{parseFloat(balance.split(' ')[0] - net - cpu).toFixed(4)}} {{balance.split(' ')[1]}}</label>
-                    <br>
-                    <slider v-if="balance" :min="0" :max="balance.split(' ')[0] - this.net" step="0.0001" :value="cpu" v-on:changed="x => cpu = x"></slider>
-                    <slider v-if="balance" :min="0" :max="balance.split(' ')[0] - this.cpu" step="0.0001" :value="net" v-on:changed="x => net = x"></slider>
-                </section>
-
-                <section v-if="!delegating">
-                    <br>
-                    <transition name="fade">
-                        <label v-if="lowCPU || lowNET">
+                <br>
+                <transition name="fade">
+                    <label v-if="(lowCPU || lowNET) && !delegating">
                         <span class="red">
                             You are about to Unstake your resources dangerously. Always make sure you leave at least a few {{balance.split(' ')[1]}} on your account in both CPU and NET.
                         </span>
-                            <br>
-                            <br>
-                        </label>
-                    </transition>
+                        <br>
+                        <br>
+                    </label>
+                </transition>
+
+                <figure class="toggle-inputs" @click="inputsOnly = !inputsOnly"><i class="fa " v-tooltip="inputsOnly ? 'Sliders' : 'Inputs'" :class="inputsOnly ? 'fa-sliders' : 'fa-keyboard-o'"></i></figure>
+                <figure style="float:left; margin-top:3px;" class="separator"></figure>
+
+                <section v-if="delegating">
+                    <section>
+                        <label style="float:left;">{{parseFloat(cpu).toFixed(4)}} CPU <span class="separator"></span> {{parseFloat(net).toFixed(4)}} NET</label>
+                        <label style="float:right;">{{parseFloat(balance.split(' ')[0] - net - cpu).toFixed(4)}} {{balance.split(' ')[1]}}</label>
+                        <br>
+                        <slider v-if="!inputsOnly && balance" :min="0" :max="balance.split(' ')[0] - this.net" step="0.0001" :value="cpu" v-on:changed="x => cpu = x"></slider>
+                        <slider v-if="!inputsOnly && balance" :min="0" :max="balance.split(' ')[0] - this.cpu" step="0.0001" :value="net" v-on:changed="x => net = x"></slider>
+                    </section>
+                </section>
+
+                <section v-if="!delegating">
                     <label style="float:left;">
                         <span :class="{'red':lowCPU}">{{parseFloat(parseFloat(availableCPU) - parseFloat(cpu)).toFixed(4)}} CPU</span>
                         <span class="separator"></span>
@@ -52,12 +57,18 @@
                     </label>
                     <label style="float:right;">{{parseFloat(parseFloat(net) + parseFloat(cpu)).toFixed(4)}} {{balance.split(' ')[1]}}</label>
                     <br>
-                    <slider v-if="balance" :red="lowCPU" :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)"></slider>
-                    <slider v-if="balance" :red="lowNET" :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)"></slider>
+                    <slider v-if="!inputsOnly && balance" :red="lowCPU" :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)"></slider>
+                    <slider v-if="!inputsOnly && balance" :red="lowNET" :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)"></slider>
                 </section>
 
-                <!--<cin :forced="parseFloat(cpu) > 0" placeholder="EOS to stake in CPU" :text="cpu" type="number" v-on:changed="changed => bind(changed, 'cpu')"></cin>-->
-                <!--<cin :forced="parseFloat(net) > 0" placeholder="EOS to stake in NET" :text="net" type="number" v-on:changed="changed => bind(changed, 'net')"></cin>-->
+
+
+                <section v-if="inputsOnly">
+                    <br>
+                    <cin :forced="parseFloat(cpu) > 0" :placeholder="`EOS to ${delegating ? 'stake' : 'unstake'} in CPU`" :text="cpu === 0 ? '' : cpu" type="number" v-on:changed="x => cpu = Math.abs(x)"></cin>
+                    <cin :forced="parseFloat(net) > 0" :placeholder="`EOS to ${delegating ? 'stake' : 'unstake'} in NET`" :text="net === 0 ? '' : net" type="number" v-on:changed="x => net = Math.abs(x)"></cin>
+                </section>
+
 
 
 
@@ -81,6 +92,8 @@
 
     import Eos from 'eosjs';
 
+    let keyTimer = null;
+
     export default {
         data(){ return {
             eos:null,
@@ -90,6 +103,8 @@
             delegating:true,
             cpu:0,
             net:0,
+            inputsOnly:false,
+            submitting:false,
         }},
         mounted(){
             this.eos = Eos({httpEndpoint:this.account.network().fullhost(), chainId:this.account.network().chainId});
@@ -106,9 +121,11 @@
                 return this.nextPopIn.data.props.account;
             },
             availableCPU(){
+                if(!this.accountData) return 0;
                 return this.accountData.self_delegated_bandwidth.cpu_weight.split(' ')[0];
             },
             availableNET(){
+                if(!this.accountData) return 0;
                 return this.accountData.self_delegated_bandwidth.net_weight.split(' ')[0];
             },
             lowCPU(){
@@ -134,8 +151,16 @@
                     }
 
                     console.log('data', data);
+
                     this.accountData = data;
                     this.balance = data.core_liquid_balance;
+                    if(data.hasOwnProperty('refund_request')){
+                        const refund = data.refund_request;
+                        const baseFunds = parseFloat(this.balance.split(' ')[0]);
+                        const cpuRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
+                        const netRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
+                        this.balance = `${parseFloat(baseFunds + cpuRefund + netRefund).toFixed(4)} ${this.balance.split(' ')[1]}`
+                    }
                 });
 
             },
@@ -148,16 +173,24 @@
                 if(this.cpu < 0 || this.net < 0) return null;
                 if(this.cpu <= 0 && this.net <= 0) return null;
 
+                this.submitting = true;
+
                 const symbol = this.balance ? this.balance.split(' ')[1] : 'EOS';
 
                 const cpu = `${parseFloat(this.cpu).toFixed(4)} ${symbol}`;
                 const net = `${parseFloat(this.net).toFixed(4)} ${symbol}`;
 
                 PluginRepository.plugin(Blockchains.EOS).stakeOrUnstake(this.account, cpu, net, this.account.network(), this.delegating).then(res => {
-                    if(!res || !res.hasOwnProperty('transaction_id')) return false;
+                    if(!res || !res.hasOwnProperty('transaction_id')) {
+                        this.submitting = false;
+                        return false;
+                    }
                     PopupService.push(Popup.snackbar(`${this.delegating ? 'Staked' : 'Unstaked'} CPU & NET`));
                     this.returnResult(res);
-                }).catch(err => console.log(err))
+                }).catch(err => {
+                    this.submitting = false;
+                    console.log(err)
+                })
 
             },
             ...mapActions([
@@ -200,6 +233,13 @@
                 font-weight: bold;
                 color:$dark-grey;
                 margin-bottom:10px;
+            }
+
+            .toggle-inputs {
+                float:left;
+                font-size: 18px;
+                margin-top:-3px;
+                cursor: pointer;
             }
         }
     }

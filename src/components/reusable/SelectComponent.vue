@@ -27,7 +27,7 @@
         }},
         computed:{
             filteredOptions(){
-                return this.options.filter(x => this.parse(x).indexOf(this.optionsTerms) > -1);
+                return this.options.filter(x => this.parse(x).toLowerCase().indexOf(this.optionsTerms.toLowerCase()) > -1);
             }
         },
         methods: {
@@ -82,8 +82,7 @@
 
         input {
             position: absolute;
-            top:-2000px;
-            left:-2000px;
+            top:-100px;
             opacity:0;
         }
 

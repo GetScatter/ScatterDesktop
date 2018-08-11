@@ -330,9 +330,6 @@
                 this.availableAccounts = await AccountService.getImportableAccounts(this.keypair, this.selectedNetwork);
                 this.fetchedAccounts = true;
             },
-            badKeypairName(){
-                return !this.keypair.name.length
-            },
             deleteKeyPair(){
                 PopupService.promptGuard(Popup.prompt(
                     "Deleting Keypair", "This will delete the keypair, it's accounts, and all associated permissions.",
@@ -420,6 +417,10 @@
                         PopupService.push(Popup.snackbar("Keypair Updated!", "check"));
                     });
                 }, 500);
+
+            },
+            'keypair.privateKey'(a,b){
+                this.keypair.privateKey = this.keypair.privateKey.trim();
 
             }
         }

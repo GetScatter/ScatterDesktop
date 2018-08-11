@@ -54,7 +54,7 @@
     export default {
         name: 'MainMenu',
         data () {return {
-            lines:[1,3, 5],
+            lines:[1,3,5],
             links:[
                 {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane'},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},

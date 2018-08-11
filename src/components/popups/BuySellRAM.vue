@@ -13,8 +13,8 @@
                     <figure class="title">RAM</figure>
                 </section>
                 <section>
-                    <btn text="Cancel" red="true" v-on:clicked="returnResult(false)"></btn>
-                    <btn :text="buying ? 'Buy RAM' : 'Sell RAM'" v-on:clicked="buyOrSell"></btn>
+                    <btn :disabled="submitting" text="Cancel" red="true" v-on:clicked="returnResult(false)"></btn>
+                    <btn :disabled="submitting" :text="buying ? 'Buy RAM' : 'Sell RAM'" v-on:clicked="buyOrSell"></btn>
                 </section>
             </section>
 
@@ -28,11 +28,16 @@
 
                 <section class="inputs">
 
+
+
                     <section class="slider-container">
+                        <figure class="toggle-inputs" @click="inputsOnly = !inputsOnly"><i class="fa " v-tooltip="inputsOnly ? 'Sliders' : 'Inputs'" :class="inputsOnly ? 'fa-sliders' : 'fa-keyboard-o'"></i></figure>
+                        <figure style="float:left; margin-top:3px;" class="separator"></figure>
                         <label style="float:left;">{{ram.quantity}} {{ram.denom}}</label>
                         <label v-if="buying" style="float:right;">{{parseFloat(balance.split(' ')[0] - (ram.quantity * price)).toFixed(4)}} {{balance.split(' ')[1]}}</label>
-                        <slider v-if="buying" :min="0" :max="parseFloat(balance.split(' ')[0]).toFixed(4) / price" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x"></slider>
-                        <slider v-if="!buying && accountData" :min="0" :max="availableRam" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x"></slider>
+                        <slider v-if="!inputsOnly && buying" :min="0" :max="parseFloat(balance.split(' ')[0]).toFixed(4) / price" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x"></slider>
+                        <slider v-if="!inputsOnly && !buying && accountData" :min="0" :max="availableRam" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x"></slider>
+                        <cin v-if="inputsOnly" :forced="parseFloat(ram.quantity) > 0" :placeholder="`${ram.denom} to ${buying ? 'Buy' : 'Sell'}`" :text="ram.quantity === 0 ? '' : ram.quantity" type="number" v-on:changed="x => ram.quantity = x"></cin>
                     </section>
 
 
@@ -69,6 +74,7 @@
 
     export default {
         data(){ return {
+            inputsOnly:false,
             eos:null,
             pricePerByte:0,
             balance:'0.0000 EOS',
@@ -80,6 +86,7 @@
                 denom:denom.BYTES,
                 quantity:0,
             },
+            submitting:false,
         }},
         mounted(){
             this.eos = Eos({httpEndpoint:this.account.network().fullhost(), chainId:this.account.network().chainId});
@@ -169,11 +176,19 @@
                 bytes = parseFloat(bytes);
                 if(bytes <= 15) return alert("Bytes must be over 15");
 
+                this.submitting = true;
+
                 PluginRepository.plugin(Blockchains.EOS).buyOrSellRAM(this.account, bytes, this.account.network(), this.buying).then(res => {
-                    if(!res || !res.hasOwnProperty('transaction_id')) return false;
+                    if(!res || !res.hasOwnProperty('transaction_id')) {
+                        this.submitting = false;
+                        return false;
+                    }
                     PopupService.push(Popup.snackbar(`${this.buying ? 'Bought' : 'Sold'} RAM`));
                     this.returnResult(res);
-                }).catch(err => alert(err))
+                }).catch(err => {
+                    this.submitting = false;
+                    alert(err)
+                })
             },
             ...mapActions([
                 Actions.RELEASE_POPUP
@@ -214,11 +229,11 @@
                 padding-top:30px;
 
                 .input {
-                    width: calc(70% - 25px);
+                    width:100%;
                     margin-right: 18px;
                     display: inline-block;
                     vertical-align: bottom;
-                    margin-top:0;
+                    margin-top:10px;
                 }
 
                 .slider-container {
@@ -238,7 +253,15 @@
                     }
 
                     .slider {
-                        margin-top:15px;
+                        margin-top:5px;
+                        float:left;
+                    }
+
+                    .toggle-inputs {
+                        float:left;
+                        font-size: 18px;
+                        margin-top:-3px;
+                        cursor: pointer;
                     }
                 }
 
