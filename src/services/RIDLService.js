@@ -145,12 +145,31 @@ export default class RIDLService {
         })
     }
 
+    static buildEntityName(type, entityName, user = null){
+        return `${type}::${entityName}${user && user.length ? '::'+user : ''}`.toLowerCase().trim();
+    }
+
     static async getReputableEntity(entity){
+        await ridl.init( ridlNetwork() );
         return ridl.reputation.getEntity(entity);
     }
 
     static async getReputation(entity){
+        await ridl.init( ridlNetwork() );
         return ridl.reputation.getEntityReputation(entity);
+    }
+
+    static async shouldWarn(entity){
+        await ridl.init( ridlNetwork() );
+        console.log('shouldWarn', entity);
+        const reputable = await this.getReputableEntity(entity);
+        if(!reputable) return false;
+
+        const reputation = await this.getReputation(entity);
+        if(!reputation || !reputation.hasOwnProperty('fragments')) return false;
+
+        const maliciousFragments = ['scam'];
+        return reputation.fragments.filter(x => maliciousFragments.includes(x.type)).filter(x => x.reputation < -0.01);
     }
 
 }

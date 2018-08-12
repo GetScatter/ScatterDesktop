@@ -8,10 +8,6 @@
 
             <section class="selected-item scrollable">
 
-
-
-
-
                 <section class="split-panels left">
                     <section class="info-box top">
 
@@ -28,14 +24,9 @@
                 </section>
 
 
-                <section class="split-panels" v-if="reputable">
+                <section class="split-panels" v-if="reputable && reputation">
 
                     <section class="info-box top">
-
-                        <!--<figure class="name">{{reputable.entity}}</figure>-->
-                        <!--<figure class="description capitalize">{{reputable.type}}</figure>-->
-
-                        <!--<br>-->
 
                         <section class="key-value">
                             <figure class="key">Mine Owner</figure>
@@ -43,21 +34,9 @@
                             <figure class="value">Until: {{new Date(reputable.miner_til).toLocaleString()}}</figure>
                         </section>
 
-                        <!--<section class="key-value">-->
-                            <!--<figure class="key">Last Reputer</figure>-->
-                            <!--<figure class="value">{{reputable.last_reputer.length ? reputable.last_reputer : 'None'}}</figure>-->
-                        <!--</section>-->
-
-                        <!--<br>-->
-                        <!--<br>-->
-
-                        <!--<figure class="name">Reputation</figure>-->
-
-                        <!--<br>-->
-
                         <section class="rep-box" v-for="fragment in reputation.fragments">
                             <section class="key-value">
-                                <figure class="key">Type</figure>
+                                <figure class="key">Fragment Type</figure>
                                 <figure class="value">{{fragment.type}}</figure>
                             </section>
                             <section class="key-value">
@@ -151,7 +130,7 @@
                 this.appUsername = '';
             },
             async getEntityReputation(){
-                const entity = `${this.entityType}::${this.entityName}${this.appUser ? '::'+this.appUsername : ''}`.toLowerCase();
+                const entity = RIDLService.buildEntityName(this.entityType, this.entityName, this.appUsername);
                 const reputable = await RIDLService.getReputableEntity(entity);
 
                 if(reputable) {

@@ -1,7 +1,7 @@
 <template>
     <section>
 
-        <section class="selector" v-if="nextPopIn">
+        <section class="selector" v-if="nextPopIn" :class="{'warning':nextPopIn.data.props.warning}" @click="nextPopIn.data.props.warning ? returnResult(true) : null">
             <pop-in-head></pop-in-head>
 
             <section class="list" v-if="nextPopIn.data.props.items.length">
@@ -95,6 +95,20 @@
 
                 &:active {
                     background:#fff;
+                }
+            }
+        }
+
+        &.warning {
+            cursor: pointer;
+
+            .item {
+                background: $red;
+                color:#fff;
+
+                &:hover, &:active {
+                    background: $red;
+                    color:#fff;
                 }
             }
         }

@@ -40,8 +40,8 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TEXT_PROMPT, params, callback))
     }
 
-    static selector(title, description, icon, items, parser, callback){
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECTOR, { title, description, icon, items, parser }, callback))
+    static selector(title, description, icon, items, parser, callback, warning = false){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECTOR, { title, description, icon, items, parser, warning }, callback))
     }
 
     static snackbar(message, icon, timeout = 3000){

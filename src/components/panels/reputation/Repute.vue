@@ -212,8 +212,7 @@
                 this.addFragment();
             },
             async reputeEntity(){
-                console.log('reputing')
-                const entity = `${this.entityType}::${this.entityName}${this.appUser ? '::'+this.appUsername : ''}`.toLowerCase();
+                const entity = RIDLService.buildEntityName(this.entityType, this.entityName, this.appUsername);
                 const reputed = await RIDLService.repute(this.selectedIdentity, entity, this.fragments);
                 if(!!reputed) {
                     PopupService.push(Popup.transactionSuccess(Blockchains.EOS, reputed));

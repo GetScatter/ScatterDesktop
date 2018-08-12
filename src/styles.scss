@@ -404,6 +404,10 @@ $speed:0.5s;
 
 .pop-in-head {
 
+  .no-third {
+    max-width:calc(100% - 110px) !important;
+  }
+
   section {
     vertical-align: middle;
     /*float:left;*/
@@ -418,7 +422,7 @@ $speed:0.5s;
 
     &:nth-child(2) {
       text-align:left;
-      max-width:350px;
+      max-width:calc(70% - 100px);
       padding-left:0;
     }
 
@@ -441,6 +445,11 @@ $speed:0.5s;
       border-radius:50%;
       color:$mid-dark-grey;
       font-size:14px;
+
+      &.red {
+        background:$red;
+        color:#fff;
+      }
     }
 
     .title {

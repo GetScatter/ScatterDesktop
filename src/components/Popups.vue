@@ -90,6 +90,8 @@
         background:#fff;
         border-radius:2px;
         box-shadow:0 10px 50px rgba(0,0,0,0.1), 0 0 250px rgba(0,0,0,0.1);
+        max-width:100%;
+        margin:0 40px;
     }
 
     .fader {

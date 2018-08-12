@@ -1,11 +1,11 @@
 <template>
     <section class="pop-in-head">
         <section>
-            <figure class="bubble-icon">
+            <figure class="bubble-icon" :class="{'red':nextPopIn.data.props.icon === 'exclamation-triangle'}">
                 <i class="fa " :class="`fa-${nextPopIn.data.props.icon}`"></i>
             </figure>
         </section>
-        <section>
+        <section :class="{'no-third':!nextPopIn.data.props.hasOwnProperty('buttonText')}">
             <figure class="title">{{nextPopIn.data.props.title}}</figure>
             <figure class="description">{{nextPopIn.data.props.description}}</figure>
         </section>

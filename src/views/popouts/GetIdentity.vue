@@ -84,6 +84,11 @@
     import Network from '../../models/Network'
     import {IdentityRequiredFields} from '../../models/Identity'
 
+    import RIDLService from '../../services/RIDLService';
+    import WindowService from '../../services/WindowService';
+    import PopupService from '../../services/PopupService';
+    import {Popup} from '../../models/popups/Popup';
+
     export default {
         data () {return {
             selectedIdentity:null,
@@ -127,9 +132,15 @@
             }
         },
         mounted(){
-
+            this.checkWarning();
         },
         methods: {
+            async checkWarning(){
+                const warn = await RIDLService.shouldWarn(RIDLService.buildEntityName('application', this.payload.origin));
+                if(warn.length)
+                    PopupService.push(Popup.selector('Warning', 'This entity has a negative reputation. Be careful interacting with it.',
+                        'exclamation-triangle', warn, x => `${x.type}: ${x.reputation}`, () => {}, true))
+            },
             returnResult(result){
                 this.$emit('returned', result);
             },
@@ -165,6 +176,10 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables.scss";
+
+    .pop-in {
+        width:200px;
+    }
 
     .popup {
         background:$very-light-blue;
