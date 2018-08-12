@@ -96,7 +96,7 @@
                                 <figure class="whitelister" v-if="!!getWhitelist(message)">
                                     <input type="checkbox" @change="toggleWhitelistProp(getWhitelist(message), key)" />
                                 </figure>
-                                <figure class="value">{{value}}</figure>
+                                <figure class="value"><pre>{{value}}</pre></figure>
                             </section>
                         </section>
                     </section>
@@ -324,6 +324,12 @@
             font-weight: 600;
             display:inline-block;
             vertical-align: top;
+
+            pre {
+                font-family: 'Roboto', sans-serif;
+                font-size: 13px;
+                margin-top:5px;
+            }
         }
     }
 

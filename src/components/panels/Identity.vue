@@ -10,13 +10,13 @@
 
                 <section class="split-panels left">
                     <section class="info-box top">
-                        <cin big="true" placeholder="Identity Name ( Username )" :text="identity.name" v-on:changed="changed => bind(changed, 'identity.name')"></cin>
+                        <cin :disabled="identity.ridl > 0" big="true" placeholder="Identity Name ( Username )" :text="identity.name" v-on:changed="changed => bind(changed, 'identity.name')"></cin>
 
-                        <btn v-if="isNew" v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show ID Proof`"></btn>
+                        <btn v-if="!isNew" v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show ID Proof`"></btn>
                         <cin v-show="showingPublicKey" disabled="true" copy="true" :text="identity.publicKey"></cin>
 
-                        <btn v-if="identity.ridl > 0" v-on:clicked="() => {}" text="Release RIDL Identity"></btn>
-                        <btn v-else v-on:clicked="registerWithRIDL" text="Register with RIDL"></btn>
+                        <btn v-if="identity.ridl > 0" v-on:clicked="releaseRIDLIdentity" text="Release RIDL Identity"></btn>
+                        <btn v-if="!isNew && identity.ridl <= 0" v-on:clicked="registerWithRIDL" text="Register with RIDL"></btn>
                     </section>
 
                     <section class="info-box">
@@ -82,8 +82,7 @@
 
     import {Popup} from '../../models/popups/Popup'
     import PopupService from '../../services/PopupService';
-
-    import ridl from '../../../../../Frameworks/ridl/src/ridl'
+    import RIDLService from '../../services/RIDLService';
 
     let saveTimeout = null;
 
@@ -94,6 +93,7 @@
             countries: Countries,
             selectedLocation:null,
             showingPublicKey:false,
+            ridlIdentity:null,
         }},
         computed:{
             ...mapState([
@@ -111,61 +111,23 @@
                 return this.permissions.filter(x => x.isIdentity && x.identity === this.identity.publicKey).length
             },
             isNew(){
-                return !!this.scatter.keychain.findIdentity(this.identity.publicKey);
+                return !this.scatter.keychain.findIdentity(this.identity.publicKey);
             }
         },
         mounted(){
             this.identity = this.id.clone();
             this.selectedLocation = this.identity.locations[0];
-
+            if(this.identity.ridl > 0) RIDLService.getIdentity(this.identity).then(id => {
+                if(id && id.key === this.identity.publicKey) this.ridlIdentity = id;
+                console.log('id', id);
+            })
         },
         methods: {
             async registerWithRIDL(){
-                const ridlNetwork = this.networks.find(x => x.name === 'RIDLTestnet');
-                ridl.init(
-                    ridlNetwork,
-                    null,
-                    buf => {
-                        console.log('buf?', buf);
-                    }
-                )
-
-                const existing = await ridl.identity.get(this.identity.name);
-
-                // Exists and is already registered
-                if(!!existing && parseInt(existing.registered) > 0){
-                    PopupService.push(Popup.prompt('Identity Exists!', 'Looks like someone else has this identity name', 'ban', 'Okay'))
-                    //TODO: Allow claiming if the user things they own this or
-                }
-
-                // Exists and is only seeded, allow to attempt claiming
-                else if (!!existing && parseInt(existing.registered) === 0){
-
-                }
-
-                // Name is free!
-                else if (!existing){
-                    const ridlNetworkAccounts = this.accounts.filter(x => x.networkUnique === ridlNetwork.unique());
-
-                    PopupService.push(Popup.selector('Select an Account', 'RIDL requires an EOS account to be able to send transactions. Please select one from below.',
-                        'ban', ridlNetworkAccounts, acc => acc.formatted(), async account => {
-
-                            ridl.init(
-                                ridlNetwork,
-                                account,
-                                buf => {
-                                    console.log('buf?', buf);
-                                }
-                            );
-
-                            const test = await ridl.identity.payAndIdentify(this.identity.name, this.identity.publicKey);
-                            console.log('test', test);
-
-                        console.log('selected', account);
-                    }))
-//                    console.log('paying for name');
-
-                }
+                RIDLService.identify(this.identity);
+            },
+            async releaseRIDLIdentity(){
+                RIDLService.release(this.identity);
             },
             addLocation(){
                 const location = LocationInformation.placeholder();

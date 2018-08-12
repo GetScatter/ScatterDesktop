@@ -23,6 +23,7 @@ import Transfer from './components/panels/Transfer.vue'
 import NothingHere from './components/panels/NothingHere.vue'
 import Terms from './components/panels/Terms.vue'
 import Repute from './components/panels/reputation/Repute.vue'
+import EntityReputation from './components/panels/reputation/EntityReputation.vue'
 import OriginPermissions from './components/panels/OriginPermissions.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
 import SettingsExplorer from './components/panels/SettingsExplorer.vue'
@@ -94,6 +95,7 @@ class Main {
             {tag:'nothing-here', vue:NothingHere},
             {tag:'origin-perms', vue:OriginPermissions},
             {tag:'rep-repute', vue:Repute},
+            {tag:'rep-entity', vue:EntityReputation},
             {tag:'settings-language', vue:SettingsLanguage},
             {tag:'settings-backup', vue:SettingsBackup},
             {tag:'settings-destroy', vue:SettingsDestroy},

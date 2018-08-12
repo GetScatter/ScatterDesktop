@@ -17,6 +17,7 @@
 
                 <section class="split-panels left">
                     <section class="info-box top">
+
                         <cin big="true" :placeholder="entityPlaceholder" :text="entityName" v-on:changed="x => entityName = x"></cin>
                         <cin v-if="appUser" placeholder="Enter a Username" :text="appUsername" v-on:changed="x => appUsername = x"></cin>
 
@@ -40,6 +41,15 @@
                 <section class="split-panels">
 
                     <section class="info-box top">
+                        <section v-if="ridlIdentities.length > 1">
+                            <sel :selected="selectedIdentity"
+                                 :options="ridlIdentities"
+                                 :parser="n => n.name"
+                                 v-on:changed="switchedSelectedIdentity"></sel>
+                            <br><br>
+                        </section>
+
+
                         <section class="list-item actions">
                             <section class="buttons">
                                 <figure class="button" v-tooltip="'Clear All'" @click="clearFragments">
@@ -96,21 +106,13 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
 
+    import {Blockchains} from '../../../models/Blockchains'
     import {Popup} from '../../../models/popups/Popup'
     import PopupService from '../../../services/PopupService';
+    import RIDLService from '../../../services/RIDLService';
 
     const ENTITY_TYPES = [
         "application", "contract", "identity"
-    ];
-
-    const FRAG_TYPES = [
-        'security',
-        'privacy',
-        'scam',
-        'abuse',
-        'solvency',
-        'social',
-        'likable',
     ];
 
     class Fragment {
@@ -122,10 +124,12 @@
 
     export default {
         data () {return {
+            selectedIdentity:null,
+            ridlIdentity:null,
             entityType:ENTITY_TYPES[0],
             entityName:'',
             entityTypes:ENTITY_TYPES,
-            fragTypes:FRAG_TYPES,
+            fragTypes:[],
             fragments:[],
             availableRIDL:0,
             appUser:false,
@@ -137,10 +141,11 @@
             ]),
             ...mapGetters([
                 'networks',
+                'identities',
             ]),
             availableFragTypes(){
                 const used = this.fragments.map(x => x.type);
-                return FRAG_TYPES.filter(x => !used.includes(x));
+                return this.fragTypes.filter(x => !used.includes(x));
             },
             entityPlaceholder(){
                 switch(this.entityType){
@@ -157,13 +162,37 @@
             },
             remainingRIDL(){
                 return parseFloat(this.availableRIDL - this.totalRIDLUsed).toFixed(4);
+            },
+            ridlIdentities(){
+                return this.identities.filter(x => x.ridl > -1);
             }
         },
         mounted(){
-            this.addFragment();
-            this.availableRIDL = parseFloat(5.4789).toFixed(4);
+//            this.availableRIDL = parseFloat(5.4789).toFixed(4);
+            this.selectedIdentity = this.ridlIdentities[0];
+            this.fetchRidlIdData();
+
+            RIDLService.getFragmentTypes().then(res => {
+                this.fragTypes = res.rows.map(x => x.type);
+                this.addFragment();
+            })
         },
         methods: {
+            fetchRidlIdData(){
+                RIDLService.getIdentity(this.selectedIdentity).then(id => {
+                    if(!id) {
+                        console.error('could not find ID')
+                        return;
+                    }
+
+                    this.ridlIdentity = id;
+                    this.availableRIDL = parseFloat(id.tokens.split(' ')[0]).toFixed(4);
+                })
+            },
+            switchedSelectedIdentity(identity){
+                this.selectedIdentity = identity;
+
+            },
             switchedEntityType(type){
                 this.entityType = type;
                 this.entityName = '';
@@ -182,8 +211,16 @@
                 this.fragments = [];
                 this.addFragment();
             },
-            reputeEntity(){
+            async reputeEntity(){
                 console.log('reputing')
+                const entity = `${this.entityType}::${this.entityName}${this.appUser ? '::'+this.appUsername : ''}`.toLowerCase();
+                const reputed = await RIDLService.repute(this.selectedIdentity, entity, this.fragments);
+                if(!!reputed) {
+                    PopupService.push(Popup.transactionSuccess(Blockchains.EOS, reputed));
+                    this.fetchRidlIdData();
+                }
+                else PopupService.push(Popup.prompt('Error sending Repute', 'Looks like something went wrong, please try again', 'ban', 'Okay'));
+
             },
             ...mapActions([
                 Actions.SET_SCATTER

@@ -217,17 +217,22 @@ export default class ApiService {
     /***
      * Requests an arbitrary signature of data.
      * @param request
+     * @param identityKey
      * @returns {Promise.<void>}
      */
-    static async [Actions.REQUEST_ARBITRARY_SIGNATURE](request){
+    static async [Actions.REQUEST_ARBITRARY_SIGNATURE](request, identityKey = null){
         return new Promise(async resolve => {
 
             const {payload} = request;
             const {origin, publicKey, data, whatFor, isHash} = request.payload;
+            console.log('pl', request.payload);
 
-            const possibleId = PermissionService.identityFromPermissions(origin, false);
-            if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
-            payload.identityKey = possibleId.publicKey;
+            if(identityKey) payload.identityKey = identityKey;
+            else {
+                const possibleId = PermissionService.identityFromPermissions(origin, false);
+                if (!possibleId) return resolve({id: request.id, result: Error.identityMissing()});
+                payload.identityKey = possibleId.publicKey;
+            }
 
             const keypair = KeyPairService.getKeyPairFromPublicKey(publicKey);
             if(!keypair) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});

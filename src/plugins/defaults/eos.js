@@ -225,8 +225,7 @@ export default class EOS extends Plugin {
         const privateKey = KeyPairService.publicToPrivate(publicKey);
         if (!privateKey) return;
 
-        let sig;
-        if (arbitrary && isHash) sig = ecc.Signature.signHash(payload.data, privateKey).toString();
+        if (arbitrary && isHash) return ecc.Signature.signHash(payload.data, privateKey).toString();
         return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);
     }
 

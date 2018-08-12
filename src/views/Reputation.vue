@@ -19,6 +19,7 @@
         <section class="panel display">
             <transition name="slide-right">
                 <rep-repute v-if="selectedMenu === repMenu.REPUTE.name"></rep-repute>
+                <rep-entity v-if="selectedMenu === repMenu.ENTITY_REPUTATION.name"></rep-entity>
             </transition>
         </section>
 
@@ -36,13 +37,17 @@
     import PopupService from '../services/PopupService';
 
     const REP_MENU = {
+        ENTITY_REPUTATION:{
+            name:'Entity Reputation',
+            description:'View the reputation an Entity has right now.'
+        },
         REPUTE:{
             name:'Repute Entity',
             description:'Repute entities and help define their Reputation.'
         },
-        REPUTATIONS:{
-            name:'Reputations',
-            description:'View entity Reputations.'
+        LOAD_TOKENS:{
+            name:'Load Tokens',
+            description:'Load some RIDL tokens into an Identity from a Blockchain Account.'
         },
         SUGGEST_TYPES:{
             name:'Suggest Types',

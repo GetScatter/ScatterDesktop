@@ -33,6 +33,10 @@ a {
   height:calc(100vh - 70px);
 }
 
+.capitalize {
+  text-transform: capitalize;
+}
+
 .panel {
   min-height: 100vh;
 
