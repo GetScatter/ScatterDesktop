@@ -16,7 +16,7 @@
 
                 <section v-for="(link, index) in links" :key="index">
 
-                    <router-link :to="{name:link.disabled ? '' : link.route}" class="link" :class="{'disabled':link.disabled}">
+                    <router-link :to="{name:link.disabled ? '' : link.route}" class="link" :class="{'disabled':link.disabled || link.onlyIfHasAccounts && !hasAccounts}">
 
                         <figure class="text">
                             <i :class="link.icon"></i>
@@ -61,11 +61,11 @@
         data () {return {
             lines:[1,5],
             links:[
-//                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane'},
+                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane', onlyIfHasAccounts:true, separates:true},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield', separates:true},
-                {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle', disabled:false},
+                {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle'},
                 {route:RouteNames.SETTINGS, name:'Settings', icon:'fa fa-gear'},
             ]
         }},
@@ -81,6 +81,10 @@
                 if(typeof this.scatter === 'string') return true;
                 if(typeof this.scatter.isEncrypted !== 'function') return true;
                 return this.scatter.isEncrypted();
+            },
+            hasAccounts(){
+                if(this.isEncrypted) return false;
+                return !!this.accounts.length;
             }
         },
         mounted(){
@@ -104,15 +108,6 @@
             scatter(){
                 if(!loaded && this.scatter instanceof Scatter){
                     loaded = true;
-
-                    if(this.accounts.length) {
-                        this.links.splice(0, 0, {
-                            route: RouteNames.TRANSFER,
-                            name: 'Transfer',
-                            icon: 'fa fa-paper-plane',
-                            separates: true
-                        });
-                    }
 
 
                     RIDLService.canConnect().then(bool => {
@@ -196,7 +191,7 @@
 
                 &.disabled {
                     cursor:not-allowed;
-                    background:$light-grey;
+                    background:rgba(0,0,0,0.02);
                     * { color:$mid-light-grey; }
                 }
 
