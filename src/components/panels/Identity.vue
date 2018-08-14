@@ -1,12 +1,12 @@
 <template>
     <section>
 
-        <section>
+        <section v-if="identity">
             <section class="head">
-                <i class="fa fa-trash-o" @click="removeIdentity" v-tooltip="'Delete Identity'"></i>
+                <i class="fa fa-trash-o" v-if="!isNew && identity.ridl === -1" @click="removeIdentity" v-tooltip="'Delete Identity'"></i>
             </section>
 
-            <section class="selected-item scrollable" v-if="identity">
+            <section class="selected-item scrollable">
 
                 <section class="split-panels left">
                     <section class="info-box top">
@@ -15,8 +15,8 @@
                         <btn v-if="!isNew" v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show ID Proof`"></btn>
                         <cin v-show="showingPublicKey" disabled="true" copy="true" :text="identity.publicKey"></cin>
 
-                        <btn v-if="identity.ridl > 0" v-on:clicked="releaseRIDLIdentity" text="Release RIDL Identity"></btn>
-                        <btn v-if="!isNew && identity.ridl <= 0" v-on:clicked="registerWithRIDL" text="Register with RIDL"></btn>
+                        <btn v-if="ridlActive && identity.ridl > 0" red="true" v-on:clicked="releaseRIDLIdentity" text="Release RIDL Identity"></btn>
+                        <btn v-if="ridlActive && !isNew && identity.ridl <= 0" secondary="true" v-on:clicked="registerWithRIDL" text="Register / Claim RIDL Identity"></btn>
                     </section>
 
                     <section class="info-box">
@@ -89,6 +89,7 @@
     export default {
         name: 'Identity',
         data () {return {
+            ridlActive:false,
             identity:null,
             countries: Countries,
             selectedLocation:null,
@@ -117,9 +118,16 @@
         mounted(){
             this.identity = this.id.clone();
             this.selectedLocation = this.identity.locations[0];
-            if(this.identity.ridl > 0) RIDLService.getIdentity(this.identity).then(id => {
-                if(id && id.key === this.identity.publicKey) this.ridlIdentity = id;
-                console.log('id', id);
+
+            RIDLService.canConnect().then(bool => {
+                if(bool) {
+                    this.ridlActive = true;
+                    if(this.identity.ridl > 0) RIDLService.getIdentity(this.identity).then(id => {
+                        if(id && id.key === this.identity.publicKey) this.ridlIdentity = id;
+                        console.log('id', id);
+                    })
+                }
+
             })
         },
         methods: {
@@ -145,6 +153,7 @@
                 ), async accepted => {
                     if(!accepted) return;
 
+                    // TODO: Remove Origin Permissions
 
                     const scatter = this.scatter.clone();
                     scatter.keychain.removeIdentity(this.identity);

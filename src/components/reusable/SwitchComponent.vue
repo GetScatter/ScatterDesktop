@@ -1,9 +1,9 @@
 <template>
     <section class="switcher">
-        <button v-on:click="toggle" :class="{'secondary':selected === first}">
+        <button :disabled="disabled" v-on:click="toggle" :class="{'secondary':selected === first}">
             {{first}}
         </button>
-        <button v-on:click="toggle" :class="{'secondary':selected === second}">
+        <button :disabled="disabled" v-on:click="toggle" :class="{'secondary':selected === second}">
             {{second}}
         </button>
     </section>
@@ -16,7 +16,7 @@
                 this.$emit('switched', this.selected === this.first ? this.second : this.first);
             }
         },
-        props:['first', 'second', 'selected']
+        props:['first', 'second', 'selected', 'disabled']
     }
 </script>
 
@@ -40,6 +40,10 @@
 
         transition: all 0.15s ease;
         transition-property: background, color, border;
+
+        &:disabled {
+            opacity:0.2;
+        }
 
         &.secondary {
             background:transparent;

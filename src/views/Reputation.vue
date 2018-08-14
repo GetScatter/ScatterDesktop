@@ -8,7 +8,7 @@
             </section>
 
             <section class="items-list scrollable">
-                <section class="item" :class="{'active':selectedMenu === value.name}" v-for="(value, key) in repMenu" @click="selectedMenu = value.name">
+                <section class="item" v-if="value.alwaysVisible || ridlEnabledIdentities.length" :class="{'active':selectedMenu === value.name}" v-for="(value, key) in repMenu" @click="selectedMenu = value.name">
                     <figure class="title">{{value.name}}</figure>
                     <figure class="description">{{value.description}}</figure>
                 </section>
@@ -18,8 +18,9 @@
 
         <section class="panel display">
             <transition name="slide-right">
-                <rep-repute v-if="selectedMenu === repMenu.REPUTE.name"></rep-repute>
+                <rep-repute v-if="ridlEnabledIdentities.length && selectedMenu === repMenu.REPUTE.name"></rep-repute>
                 <rep-entity v-if="selectedMenu === repMenu.ENTITY_REPUTATION.name"></rep-entity>
+                <rep-load-tokens v-if="selectedMenu === repMenu.LOAD_TOKENS.name"></rep-load-tokens>
             </transition>
         </section>
 
@@ -39,7 +40,8 @@
     const REP_MENU = {
         ENTITY_REPUTATION:{
             name:'Entity Reputation',
-            description:'View the reputation an Entity has right now.'
+            description:'View the reputation an Entity has right now.',
+            alwaysVisible:true,
         },
         REPUTE:{
             name:'Repute Entity',
@@ -59,7 +61,7 @@
         name: 'Identities',
         data () {return {
             repMenu:REP_MENU,
-            selectedMenu:REP_MENU.REPUTE.name,
+            selectedMenu:REP_MENU.ENTITY_REPUTATION.name,
         }},
         computed: {
             ...mapState([
@@ -67,12 +69,15 @@
                 'searchTerms'
             ]),
             ...mapGetters([
-                'permissions'
+                'permissions',
+                'identities',
             ]),
-
+            ridlEnabledIdentities(){
+                return this.identities.filter(x => x.ridl > 0);
+            }
         },
         mounted(){
-
+            if(this.ridlEnabledIdentities.length) this.selectedMenu = REP_MENU.REPUTE.name;
         },
         methods: {
 

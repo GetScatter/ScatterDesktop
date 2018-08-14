@@ -39,6 +39,7 @@ export default class Keychain {
     }
     removeIdentity(identity){
         this.identities = this.identities.filter(id => id.publicKey !== identity.publicKey);
+        this.permissions = this.permissions.filter(perm => perm.identity !== identity.publicKey);
     }
 
     getKeyPair(keypair){

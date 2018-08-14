@@ -1,7 +1,7 @@
 <template>
-    <section class="text-prompt">
+    <section class="pop-in-head">
         <section>
-            <figure class="bubble-icon">
+            <figure class="bubble-icon" :class="{'red':nextPopIn.data.props.icon === 'exclamation-triangle'}">
                 <i class="fa " :class="`fa-${nextPopIn.data.props.icon}`"></i>
             </figure>
         </section>
@@ -51,28 +51,9 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
 
-    .text-prompt {
+    .pop-in-head {
 
         section {
-            vertical-align: middle;
-            display:inline-block;
-            text-align:center;
-            padding:30px;
-
-            &:nth-child(1) {
-                width:100px;
-                //border-right:1px solid $light-grey;
-            }
-
-            &:nth-child(2) {
-                text-align:left;
-                max-width:350px;
-                padding-left:0;
-            }
-
-            &:nth-child(3) {
-                padding-left:0;
-            }
 
             &:nth-child(4) {
                 display:block;
@@ -86,32 +67,6 @@
                 }
             }
 
-            button {
-                margin:0;
-            }
-
-            .bubble-icon {
-                display:inline-block;
-                height:40px;
-                width:40px;
-                line-height:40px;
-                text-align:center;
-                background:$light-grey;
-                border-radius:50%;
-                color:$mid-dark-grey;
-                font-size:14px;
-            }
-
-            .title {
-                font-size:14px;
-                font-weight: bold;
-            }
-
-            .description {
-                margin-top:8px;
-                font-size:12px;
-                color:$dark-grey;
-            }
         }
     }
 

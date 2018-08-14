@@ -1,9 +1,9 @@
 <template>
     <section>
 
-        <section>
+        <section v-if="network">
             <section class="head">
-                <i class="fa fa-trash-o" @click="deleteNetwork" v-tooltip="'Delete Network'"></i>
+                <i class="fa fa-trash-o" v-if="!isRIDLNetwork" @click="deleteNetwork" v-tooltip="'Delete Network'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="network">
@@ -18,8 +18,6 @@
                     to interact with proprietary blockchains. You do not have to fear them as Scatter still protects you and they will never be able to
                     get your private keys.
                 </figure>
-
-
 
                 <section class="split-panels left">
                     <section class="info-box" v-if="isNew && restorableNetworks.length">
@@ -46,12 +44,12 @@
                         <cin :disabled="isEndorsed" placeholder="Host ( domain.com or IP )" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
                         <cin :disabled="isEndorsed" placeholder="Port" type="number" :text="network.port" v-on:changed="changed => bind(changed, 'network.port')"></cin>
 
-                        <btn text="http" :disabled="isEndorsed" :secondary="network.protocol !== 'http'" v-on:clicked="network.protocol = 'http'"></btn>
-                        <btn text="https" :disabled="isEndorsed" :secondary="network.protocol !== 'https'" v-on:clicked="network.protocol = 'https'"></btn>
+                        <swch :disabled="isEndorsed" first="http"
+                              second="https" :selected="network.protocol === 'http' ? 'https' : 'http'"
+                              v-on:switched="network.protocol = network.protocol === 'http' ? 'https' : 'http'"></swch>
 
                         <cin :disabled="isEndorsed" placeholder="Chain ID" :text="network.chainId"
                              :dynamic-button="isEndorsed ? null : 'chain'" dynamic-tooltip="Fetch Chain ID" v-on:dynamic="fetchChainId" v-on:changed="changed => bind(changed, 'network.chainId')"></cin>
-
                     </section>
 
 
@@ -98,11 +96,17 @@
             },
             isNew(){
                 return !this.networks.map(x => x.unique()).includes(this.network.unique());
+            },
+            isRIDLNetwork(){
+                return this.network.name === 'RIDL'
             }
         },
         mounted(){
             this.network = this.net.clone();
-            PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network).then(x => this.isEndorsed = x);
+
+            if(this.network.name === 'RIDL') this.isEndorsed = true;
+            else PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network).then(x => this.isEndorsed = x);
+
             BlockchainsArray.map(async blockchain => {
                 this.endorsedNetworks.push(await PluginRepository.plugin(blockchain.value).getEndorsedNetwork());
             })

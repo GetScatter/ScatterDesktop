@@ -6,16 +6,15 @@ import PopupService from '../services/PopupService';
 import * as Actions from '../store/constants';
 import * as ApiActions from '../models/api/ApiActions';
 import ApiService from '../services/ApiService';
-import KeyPairService from '../services/KeyPairService';
+import Network from '../models/Network';
 import ecc from 'eosjs-ecc';
 
+import ridl from '../../../../Frameworks/ridl/src/ridl'
+// import ridl from 'ridl'
 
-// import ridl from '../../../../Frameworks/ridl/src/ridl'
-import ridl from 'ridl'
 
-
-const ridlNetwork = () => store.state.scatter.settings.networks.find(x => x.name === 'RIDLTestnet');
-
+const ridlNetwork = () => store.state.scatter.settings ? store.state.scatter.settings.networks.find(x => x.name === 'RIDL') : null;
+const fallbackNetwork = Network.fromJson({host:'192.168.1.3', port:8888, protocol:'http', chainId:'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f'});
 
 const updateIdentity = identity => {
     const scatter = store.state.scatter.clone();
@@ -47,6 +46,19 @@ export default class RIDLService {
 
     }
 
+    static validName(name){
+        return ridl.identity.validName(name);
+    }
+
+    static getNetwork(){
+        return ridlNetwork() ? ridlNetwork() : fallbackNetwork;
+    }
+
+    static async canConnect(){
+        await ridl.init( this.getNetwork() );
+        return ridl.canConnect();
+    }
+
     static async getIdentity(identity){
         await ridl.init( ridlNetwork() );
         return ridl.identity.get(identity.name);
@@ -59,39 +71,68 @@ export default class RIDLService {
     static async identify(identity){
         return new Promise(async (resolve, reject) => {
             const existing = await ridl.identity.get(identity.name);
+            console.log('existing', existing);
 
             // Exists and is already registered
-            if(!!existing && parseInt(existing.expires) > 0){
+            if(!!existing && existing.account !== 'ridlridlridl'){
                 console.log('exists!', existing)
                 PopupService.push(Popup.prompt('Identity Exists!', 'Looks like someone else has this identity name', 'ban', 'Okay'))
                 //TODO: Allow claiming if the user things they own this or
             }
 
             // Exists and is only seeded, allow to attempt claiming
-            else if (!!existing && parseInt(existing.expires) === 0){
-                console.log('seeded, can claim', existing)
-            }
+            else if (!!existing && existing.account === 'ridlridlridl'){
 
-            // Name is free!
-            else if (!existing){
-                const ridlNetworkAccounts = store.state.scatter.keychain.accounts.filter(x => x.networkUnique === ridlNetwork().unique());
+                PopupService.push(Popup.ridlRegister(async account => {
+                    if(!account) return reject(false);
 
-                PopupService.push(Popup.selector('Select an Account', 'RIDL requires an EOS account to be able to send transactions. Please select one from below.',
-                    'ban', ridlNetworkAccounts, acc => acc.formatted(), async account => {
+                    PopupService.push(Popup.textPrompt('Claim RIDL Identity',
+                    `This Identity name is waiting to be claimed by it's owner. If you own it put in the private key linked to it to claim it.`,
+                    'exclamation-triangle', 'Okay', {placeholder:'Private Key', type:'password'}, async key => {
+                        if(!key) return reject(false);
 
                         const signProvider = payload => PluginRepository.plugin(Blockchains.EOS).passThroughProvider(payload, account, account.network(), reject);
                         await ridl.init( ridlNetwork(), account, signProvider );
 
-                        await ridl.identity.payAndIdentify(identity.name, identity.publicKey);
-                        const paid = await ridl.identity.get(identity.name);
-                        if(!paid) return console.error('Did not register ID');
+                        const signedHash = ecc.Signature.signHash(existing.hash, key).toString();
+                        if(!signedHash) return reject(false);
 
-                        console.log('paid', paid);
+                        const claimed = await ridl.identity.claim(identity.name, identity.publicKey, signedHash);
 
-                        identity.ridl = paid.expires;
+                        if(!claimed) return reject(false);
+                        identity.ridl = existing.expires;
                         updateIdentity(identity);
-                        resolve(true);
+
+                        //5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3
                     }))
+
+
+                }));
+
+            }
+
+            // Name is free!
+            else if (!existing){
+
+                PopupService.push(Popup.ridlRegister(async account => {
+                    if(!account) return reject(false);
+
+                    const signProvider = payload => PluginRepository.plugin(Blockchains.EOS).passThroughProvider(payload, account, account.network(), reject);
+                    await ridl.init( ridlNetwork(), account, signProvider );
+
+                    await ridl.identity.payAndIdentify(identity.name, identity.publicKey);
+                    const paid = await ridl.identity.get(identity.name);
+                    if(!paid) return console.error('Did not register ID');
+
+                    console.log('paid', paid);
+
+                    identity.ridl = paid.expires;
+                    updateIdentity(identity);
+
+                    PopupService.push(Popup.prompt('RIDL Identity Registered', 'You have registered this Identity with RIDL.', 'check', 'Okay'));
+
+                    resolve(true);
+                }));
 
             }
         })
@@ -126,6 +167,9 @@ export default class RIDLService {
 
             identity.ridl = -1;
             updateIdentity(identity);
+
+            PopupService.push(Popup.prompt('RIDL Identity Released', 'You have released this Identity from RIDL, others may now claim it.', 'check', 'Okay'));
+
             resolve(true);
         })
     }
@@ -145,6 +189,17 @@ export default class RIDLService {
         })
     }
 
+    static async loadTokens(account, identityName, quantity){
+        return new Promise(async (resolve, reject) => {
+            const signProvider = payload => PluginRepository.plugin(Blockchains.EOS).passThroughProvider(payload, account, account.network(), reject);
+            await ridl.init( ridlNetwork(), account, signProvider );
+
+            const loaded = await ridl.identity.loadTokens(identityName, quantity);
+            if(!loaded.hasOwnProperty('transaction_id')) return reject(false);
+            resolve(loaded.transaction_id);
+        })
+    }
+
     static buildEntityName(type, entityName, user = null){
         return `${type}::${entityName}${user && user.length ? '::'+user : ''}`.toLowerCase().trim();
     }
@@ -161,15 +216,17 @@ export default class RIDLService {
 
     static async shouldWarn(entity){
         await ridl.init( ridlNetwork() );
-        console.log('shouldWarn', entity);
         const reputable = await this.getReputableEntity(entity);
         if(!reputable) return false;
 
         const reputation = await this.getReputation(entity);
         if(!reputation || !reputation.hasOwnProperty('fragments')) return false;
 
-        const maliciousFragments = ['scam'];
-        return reputation.fragments.filter(x => maliciousFragments.includes(x.type)).filter(x => x.reputation < -0.01);
+        const maliciousFragments = ['scam', 'privacy', 'security'];
+        return reputation.fragments
+            .filter(x => maliciousFragments.includes(x.type))
+            .filter(x => x.reputation < -0.01)
+            .map(x => {x.total_reputes = reputation.total_reputes; return x;});
     }
 
 }

@@ -13,6 +13,7 @@
                     <buy-sell-ram v-if="nextPopIn.data.type === popupTypes.BUY_SELL_RAM"></buy-sell-ram>
                     <delegate-resources v-if="nextPopIn.data.type === popupTypes.DELEGATE_RESOURCES"></delegate-resources>
                     <tx-success v-if="nextPopIn.data.type === popupTypes.TX_SUCCESS"></tx-success>
+                    <ridl-register v-if="nextPopIn.data.type === popupTypes.RIDL_REGISTER"></ridl-register>
                 </section>
             </section>
 

@@ -34,6 +34,11 @@
                             <figure class="value">Until: {{new Date(reputable.miner_til).toLocaleString()}}</figure>
                         </section>
 
+                        <section class="key-value">
+                            <figure class="key">Total Reputes</figure>
+                            <figure class="value">{{reputation.total_reputes}}</figure>
+                        </section>
+
                         <section class="rep-box" v-for="fragment in reputation.fragments">
                             <section class="key-value">
                                 <figure class="key">Fragment Type</figure>

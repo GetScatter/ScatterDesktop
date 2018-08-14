@@ -24,6 +24,7 @@ import NothingHere from './components/panels/NothingHere.vue'
 import Terms from './components/panels/Terms.vue'
 import Repute from './components/panels/reputation/Repute.vue'
 import EntityReputation from './components/panels/reputation/EntityReputation.vue'
+import LoadTokens from './components/panels/reputation/LoadTokens.vue'
 import OriginPermissions from './components/panels/OriginPermissions.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
 import SettingsExplorer from './components/panels/SettingsExplorer.vue'
@@ -41,6 +42,7 @@ import Snackbar from './components/popups/Snackbar.vue'
 import TextPrompt from './components/popups/TextPrompt.vue'
 import DelegateResources from './components/popups/DelegateResources.vue'
 import BuySellRAM from './components/popups/BuySellRAM.vue'
+import RegisterWithRIDL from './components/popups/RegisterWithRIDL.vue'
 import PopInHead from './components/popups/fragments/PopInHead.vue'
 
 // POP OUTS
@@ -96,6 +98,7 @@ class Main {
             {tag:'origin-perms', vue:OriginPermissions},
             {tag:'rep-repute', vue:Repute},
             {tag:'rep-entity', vue:EntityReputation},
+            {tag:'rep-load-tokens', vue:LoadTokens},
             {tag:'settings-language', vue:SettingsLanguage},
             {tag:'settings-backup', vue:SettingsBackup},
             {tag:'settings-destroy', vue:SettingsDestroy},
@@ -112,6 +115,7 @@ class Main {
             {tag:'tx-success', vue:TransactionSuccess},
             {tag:'buy-sell-ram', vue:BuySellRAM},
             {tag:'delegate-resources', vue:DelegateResources},
+            {tag:'ridl-register', vue:RegisterWithRIDL},
             {tag:'pop-in-head', vue:PopInHead},
 
             // POP OUTS

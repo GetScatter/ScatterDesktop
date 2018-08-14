@@ -1,11 +1,25 @@
 <template>
     <section>
 
-        <section class="selector" :class="{'warning':nextPopIn.data.props.warning}" @click="nextPopIn && nextPopIn.data.props.warning ? returnResult(true) : null">
-            <pop-in-head></pop-in-head>
+        <section class="selector" :class="{'warning':!ridlAccounts.length}" @click="!ridlAccounts.length ? returnResult(null) : null">
+            <section class="pop-in-head">
+                <section>
+                    <figure class="bubble-icon red">
+                        <i class="icon icon-ridl" style="font-size: 20px;"></i>
+                    </figure>
+                </section>
+                <section class="no-third">
+                    <figure class="title">Register Identity with RIDL</figure>
+                    <figure class="description">
+                        RIDL is Scatter's Reputation and Identity Layer. It is a <b>premium</b> paid add-on which allows your Identities to become unique across all applications and get reputation.
+                        <br><br>
+                        For more information about RIDL check out <u @click="openLinkToRIDL">https://ridl.get-scatter.com</u>.
+                    </figure>
+                </section>
+            </section>
 
-            <section class="list" v-if="nextPopIn.data.props.items.length">
-                <section class="item" v-for="item in nextPopIn.data.props.items" @click="returnResult(item)">
+            <section class="list" v-if="ridlAccounts.length">
+                <section class="item" v-for="item in ridlAccounts" @click="returnResult(item)">
                     <!--<figure class="fa" :class="`fa-${nextPopIn.data.props.icon}`"></figure>-->
                     <figure>{{parse(item)}}</figure>
                 </section>
@@ -13,7 +27,7 @@
 
             <section class="list" v-else>
                 <section class="item" style="text-align:center;">
-                    <figure>There doesn't seem to be anything here.</figure>
+                    <figure>You don't have any Blockchain Accounts on the RIDL network.</figure>
                 </section>
             </section>
 
@@ -27,34 +41,42 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
     import {PopupDisplayTypes} from '../../models/popups/Popup'
+    import ElectronHelpers from '../../util/ElectronHelpers'
+    import RIDLService from '../../services/RIDLService'
 
     export default {
         data(){ return {
 
         }},
-        mounted(){
-
-        },
         computed:{
             ...mapState([
                 'popups'
             ]),
             ...mapGetters([
-                'nextPopIn'
-            ])
+                'nextPopIn',
+                'accounts',
+                'networks',
+            ]),
+            ridlNetwork(){
+                return RIDLService.getNetwork();
+            },
+            ridlAccounts(){
+                return this.accounts.filter(x => x.networkUnique === this.ridlNetwork.unique())
+            }
+        },
+        mounted(){
+
         },
         methods:{
-            returnResult(item){
-                this.nextPopIn.data.callback(item);
+            returnResult(truthy){
+                this.nextPopIn.data.callback(truthy);
                 this[Actions.RELEASE_POPUP](this.nextPopIn);
             },
-            parse(item){
-                if(typeof item === 'string') return item;
-                if(this.nextPopIn.data.props.parser) return this.nextPopIn.data.props.parser(item);
-
-                let props = this.prop.split(".");
-                const lastKey = props.pop();
-                return props.reduce((obj,key)=> obj[key], item)[lastKey];
+            parse(account){
+                return account.formatted();
+            },
+            openLinkToRIDL(){
+                ElectronHelpers.openLinkInBrowser('https://ridl.get-scatter.com')
             },
             ...mapActions([
                 Actions.RELEASE_POPUP

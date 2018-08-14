@@ -56,6 +56,10 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DELEGATE_RESOURCES, { account }, callback))
     }
 
+    static ridlRegister(callback){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.RIDL_REGISTER, {}, callback))
+    }
+
     static popout(data, callback){
         return new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data, callback))
     }
@@ -85,6 +89,7 @@ export const PopupTypes = {
     BUY_SELL_RAM:'buySellRAM',
     DELEGATE_RESOURCES:'delegateResources',
     TX_SUCCESS:'txSuccess',
+    RIDL_REGISTER:'ridlRegister',
 };
 
 export class PopupData {

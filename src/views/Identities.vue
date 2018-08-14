@@ -54,8 +54,10 @@
                 this.selectedIdentity = id;
             },
             async nextIdentity(){
-                if(this.identities.length) this.selectedIdentity = this.identities[0].clone();
-                else this.newIdentity();
+                setTimeout(() => {
+                    if(this.identities.length) this.selectedIdentity = this.identities[0].clone();
+                    else this.newIdentity();
+                }, 100)
             },
             connectedApps(identity){
                 return this.permissions.filter(x => x.isIdentity && x.identity === identity.publicKey).length

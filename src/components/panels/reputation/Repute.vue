@@ -168,7 +168,6 @@
             }
         },
         mounted(){
-//            this.availableRIDL = parseFloat(5.4789).toFixed(4);
             this.selectedIdentity = this.ridlIdentities[0];
             this.fetchRidlIdData();
 
@@ -212,6 +211,20 @@
                 this.addFragment();
             },
             async reputeEntity(){
+
+                if(!this.entityName.length){
+                    PopupService.push(Popup.prompt('No Entity Specified', `You must enter an Entity to repute.`, 'exclamation-triangle', 'Okay'))
+                    return false;
+                }
+
+                const usedFragments = this.fragments.filter(x => x.quantity !== 0);
+                if(!usedFragments.length){
+                    PopupService.push(Popup.prompt('No RIDL Spent', `You must put some RIDL into reputation fragments to repute.`, 'exclamation-triangle', 'Okay'))
+                    return false;
+                }
+                this.fragments = usedFragments;
+
+
                 const entity = RIDLService.buildEntityName(this.entityType, this.entityName, this.appUsername);
                 const reputed = await RIDLService.repute(this.selectedIdentity, entity, this.fragments);
                 if(!!reputed) {

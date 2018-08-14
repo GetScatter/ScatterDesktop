@@ -47,6 +47,7 @@
     import {RouteNames} from '../../vue/Routing'
 
     import WindowService from '../../services/WindowService'
+    import RIDLService from '../../services/RIDLService'
 
     const { remote } = window.require('electron');
 
@@ -54,19 +55,31 @@
     export default {
         name: 'MainMenu',
         data () {return {
-            lines:[1,3,5],
+            lines:[1,5],
             links:[
                 {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane'},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
-                {route:RouteNames.REPUTATION, name:'Reputation', icon:'icon icon-ridl'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
-                // {route:RouteNames.LINKED_APPS, name:'Applications', icon:'fa fa-plug'},
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield'},
                 {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle', disabled:false},
                 {route:RouteNames.SETTINGS, name:'Settings', icon:'fa fa-gear'},
-                // {route:RouteNames.NOT_IDENTITIES, name:'Address Book', icon:'address-card', disabled:true},
             ]
         }},
+        computed:{
+            ...mapState([
+                'scatter'
+            ])
+        },
+        mounted(){
+            RIDLService.canConnect().then(bool => {
+                if(bool) {
+                    this.links.splice(2, 0, {route:RouteNames.REPUTATION, name:'Reputation', icon:'icon icon-ridl'});
+                    this.lines.push(3);
+                } else {
+                    this.lines.push(2);
+                }
+            })
+        },
         methods:{
             minimize(){
                 remote.BrowserWindow.getFocusedWindow().hide();
@@ -80,7 +93,7 @@
             ...mapActions([
 
             ])
-        }
+        },
     }
 </script>
 

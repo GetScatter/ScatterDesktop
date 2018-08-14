@@ -144,6 +144,8 @@
     import PopupService from '../../services/PopupService'
     import {Popup} from '../../models/popups/Popup'
     import PermissionService from '../../services/PermissionService'
+    import RIDLService from '../../services/RIDLService'
+    import WindowService from '../../services/WindowService'
 
     let foldInterval = null;
 
@@ -184,6 +186,8 @@
             },
         },
         mounted(){
+            this.checkWarning();
+
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
             if(!id) return this.returnResult(Error.identityMissing());
             this.identity = Identity.fromJson(id);
@@ -230,6 +234,31 @@
             }, 200);
         },
         methods: {
+            async checkWarning(){
+
+                const contracts = this.payload.messages.map(x => x.code).reduce((acc, x) => {
+                    if(!acc.includes(x)) acc.push(x);
+                    return acc;
+                }, []);
+
+                const warnings = (await Promise.all(contracts.map(contract => RIDLService.shouldWarn(RIDLService.buildEntityName('contract', contract)).then(x => {
+                    if(x && x.length) return x.map(y => {
+                        y.contract = contract;
+                        return y;
+                    });
+                    return false;
+                })))).filter(x => !!x)
+                    .reduce((acc,x) => {
+                        x.map(y => acc.push(y));
+                        return x;
+                    },[]);
+
+                if(warnings.length)
+                    PopupService.push(Popup.selector('Warning',
+                        `The contract you are interacting with has been given a bad reputation by the users of RIDL.
+                        If you decide to interact with this contract make sure you read the parameters and fully understand your liability.`,
+                        'exclamation-triangle', warnings, x => `${x.contract} -> ${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
+            },
             checkScroll(e){
                 this.scrollTop = e.target.scrollTop;
             },
