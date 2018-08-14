@@ -55,8 +55,9 @@ export default class RIDLService {
     }
 
     static async canConnect(){
-        await ridl.init( this.getNetwork() );
-        return ridl.canConnect();
+        return false;
+        // await ridl.init( this.getNetwork() );
+        // return ridl.canConnect();
     }
 
     static async getIdentity(identity){

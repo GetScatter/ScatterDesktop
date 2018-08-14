@@ -15,7 +15,6 @@
             <section class="links">
 
                 <section v-for="(link, index) in links" :key="index">
-                    <figure class="line" v-if="lines.includes(index)"></figure>
 
                     <router-link :to="{name:link.disabled ? '' : link.route}" class="link" :class="{'disabled':link.disabled}">
 
@@ -24,6 +23,8 @@
                             <span>{{link.name}}</span>
                         </figure>
                     </router-link>
+
+                    <figure class="line" v-if="link.separates"></figure>
                 </section>
 
                 <figure class="line"></figure>
@@ -45,6 +46,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
     import {RouteNames} from '../../vue/Routing'
+    import Scatter from '../../models/Scatter'
 
     import WindowService from '../../services/WindowService'
     import RIDLService from '../../services/RIDLService'
@@ -52,15 +54,17 @@
     const { remote } = window.require('electron');
 
 
+    let loaded = false;
+
     export default {
         name: 'MainMenu',
         data () {return {
             lines:[1,5],
             links:[
-                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane'},
+//                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane'},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
-                {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield'},
+                {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield', separates:true},
                 {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle', disabled:false},
                 {route:RouteNames.SETTINGS, name:'Settings', icon:'fa fa-gear'},
             ]
@@ -68,17 +72,19 @@
         computed:{
             ...mapState([
                 'scatter'
-            ])
+            ]),
+            ...mapGetters([
+                'accounts',
+            ]),
+            isEncrypted(){
+                if(!this.scatter) return true;
+                if(typeof this.scatter === 'string') return true;
+                if(typeof this.scatter.isEncrypted !== 'function') return true;
+                return this.scatter.isEncrypted();
+            }
         },
         mounted(){
-            RIDLService.canConnect().then(bool => {
-                if(bool) {
-                    this.links.splice(2, 0, {route:RouteNames.REPUTATION, name:'Reputation', icon:'icon icon-ridl'});
-                    this.lines.push(3);
-                } else {
-                    this.lines.push(2);
-                }
-            })
+
         },
         methods:{
             minimize(){
@@ -94,6 +100,34 @@
 
             ])
         },
+        watch:{
+            scatter(){
+                if(!loaded && this.scatter instanceof Scatter){
+                    loaded = true;
+
+                    if(this.accounts.length) {
+                        this.links.splice(0, 0, {
+                            route: RouteNames.TRANSFER,
+                            name: 'Transfer',
+                            icon: 'fa fa-paper-plane',
+                            separates: true
+                        });
+                    }
+
+
+                    RIDLService.canConnect().then(bool => {
+                        if(bool) {
+                            this.links.splice(3, 0, {
+                                route: RouteNames.REPUTATION,
+                                name: 'Reputation',
+                                icon: 'icon icon-ridl'
+                            });
+                        }
+
+                    })
+                }
+            },
+        }
     }
 </script>
 

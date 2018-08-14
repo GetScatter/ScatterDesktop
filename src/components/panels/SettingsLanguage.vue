@@ -14,7 +14,7 @@
 
 
                     <sel :placeholder="'Language'"
-                         :options="languages"
+                         :options="Object.keys(languages).map(x => languages[x])"
                          :selected="selectedLanguage"
                          :parser="x => x"
                          v-on:changed="selectLanguage"></sel>

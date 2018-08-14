@@ -8,7 +8,7 @@
             </section>
 
             <section class="items-list scrollable">
-                <section class="item"
+                <section class="item" :key="key"
                          :class="{'active':selectedMenu === item.name, 'disabled':item.disabled}"
                          v-for="(item, key) in repMenu"
                          @click="item.disabled ? null : selectedMenu = item.name">
@@ -47,11 +47,13 @@
         },
         REPUTE:{
             name:'Repute Entity',
-            description:'Repute entities and help define their Reputation.'
+            description:'Repute entities and help define their Reputation.',
+            disabled:true,
         },
         LOAD_TOKENS:{
             name:'Load Tokens',
-            description:'Load some RIDL tokens into an Identity from a Blockchain Account.'
+            description:'Load some RIDL tokens into an Identity from a Blockchain Account.',
+            disabled:true,
         },
         SUGGEST_TYPES:{
             name:'Suggest Types',
@@ -81,15 +83,17 @@
                 'identities',
             ]),
             ridlEnabledIdentities(){
-                return this.identities.filter(x => x.ridl > 0);
+                return this.identities.filter(x => parseInt(x.ridl) > 0);
             }
         },
         mounted(){
-            if(this.ridlEnabledIdentities.length) this.selectedMenu = REP_MENU.REPUTE.name;
-            else {
-                this.repMenu.LOAD_TOKENS.disabled = true;
-                this.repMenu.REPUTE.disabled = true;
-            }
+            this.repMenu.LOAD_TOKENS.disabled = !this.ridlEnabledIdentities.length;
+            this.repMenu.REPUTE.disabled = !this.ridlEnabledIdentities.length;
+
+            this.selectedMenu = this.ridlEnabledIdentities.length
+                ? REP_MENU.REPUTE.name
+                : REP_MENU.ENTITY_REPUTATION.name;
+
         },
         methods: {
 
