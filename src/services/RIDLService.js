@@ -9,8 +9,8 @@ import ApiService from '../services/ApiService';
 import Network from '../models/Network';
 import ecc from 'eosjs-ecc';
 
-import ridl from '../../../../Frameworks/ridl/src/ridl'
-// import ridl from 'ridl'
+// import ridl from '../../../../Frameworks/ridl/src/ridl'
+import ridl from 'ridl'
 
 
 const ridlNetwork = () => store.state.scatter.settings ? store.state.scatter.settings.networks.find(x => x.name === 'RIDL') : null;
