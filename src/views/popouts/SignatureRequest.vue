@@ -274,7 +274,7 @@
                         plugin.accountData(account, account.network()).then(data => {
                             if (!data) return;
 
-                            if(data.cpu_limit.available <= (data.cpu_limit.max)){
+                            if(data.cpu_limit.available <= (data.cpu_limit.max * 0.1)){
                                 PopupService.push(Popup.prompt("Running low on Resources",
                                     `The ${account.formatted()} account is running low on CPU, You should delegate some resources before continuing to use it.`, 'exclamation-triangle', 'Okay'));
                             }
