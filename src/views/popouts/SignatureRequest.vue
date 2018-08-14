@@ -264,21 +264,17 @@
                         'exclamation-triangle', warnings, x => `${x.contract} -> ${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
             },
             async checkResources(){
+                const accounts = this.payload.participants;
                 const plugin = PluginRepository.plugin(this.payload.blockchain);
-                if(this.payload.blockchain === Blockchains.EOS){
-                    // TODO: Check if the user is about to use their last remaining CPU/RAM
-                    WindowService.openTools();
 
-                    const accounts = this.payload.participants;
-                    console.log('accounts', this.payload);
+                if(this.payload.blockchain === Blockchains.EOS){
 
                     await Promise.all(accounts.map(account => {
                         account = Account.fromJson(account);
                         plugin.accountData(account, account.network()).then(data => {
                             if (!data) return;
 
-                            console.log('data', data);
-                            if(data.cpu_limit.available <= (data.cpu_limit.max * 0.25)){
+                            if(data.cpu_limit.available <= (data.cpu_limit.max)){
                                 PopupService.push(Popup.prompt("Running low on Resources",
                                     `The ${account.formatted()} account is running low on CPU, You should delegate some resources before continuing to use it.`, 'exclamation-triangle', 'Okay'));
                             }
