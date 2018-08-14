@@ -124,7 +124,6 @@
                     this.ridlActive = true;
                     if(this.identity.ridl > 0) RIDLService.getIdentity(this.identity).then(id => {
                         if(id && id.key === this.identity.publicKey) this.ridlIdentity = id;
-                        console.log('id', id);
                     })
                 }
 

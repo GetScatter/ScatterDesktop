@@ -8,9 +8,12 @@
             </section>
 
             <section class="items-list scrollable">
-                <section class="item" v-if="value.alwaysVisible || ridlEnabledIdentities.length" :class="{'active':selectedMenu === value.name}" v-for="(value, key) in repMenu" @click="selectedMenu = value.name">
-                    <figure class="title">{{value.name}}</figure>
-                    <figure class="description">{{value.description}}</figure>
+                <section class="item"
+                         :class="{'active':selectedMenu === item.name, 'disabled':item.disabled}"
+                         v-for="(item, key) in repMenu"
+                         @click="item.disabled ? null : selectedMenu = item.name">
+                    <figure class="title">{{item.name}}</figure>
+                    <figure class="description">{{item.description}}</figure>
                 </section>
             </section>
 
@@ -41,7 +44,6 @@
         ENTITY_REPUTATION:{
             name:'Entity Reputation',
             description:'View the reputation an Entity has right now.',
-            alwaysVisible:true,
         },
         REPUTE:{
             name:'Repute Entity',
@@ -53,7 +55,13 @@
         },
         SUGGEST_TYPES:{
             name:'Suggest Types',
-            description:'Suggest a new fragment type to be added to RIDL.'
+            description:'Suggest a new fragment type to be added to RIDL.',
+            disabled:true,
+        },
+        IDENTITY_AUCTION:{
+            name:'Identity Auction',
+            description:'View the bids on your Identities and bid on other Identities.',
+            disabled:true,
         }
     };
 
@@ -78,6 +86,10 @@
         },
         mounted(){
             if(this.ridlEnabledIdentities.length) this.selectedMenu = REP_MENU.REPUTE.name;
+            else {
+                this.repMenu.LOAD_TOKENS.disabled = true;
+                this.repMenu.REPUTE.disabled = true;
+            }
         },
         methods: {
 

@@ -225,7 +225,6 @@ export default class ApiService {
 
             const {payload} = request;
             const {origin, publicKey, data, whatFor, isHash} = request.payload;
-            console.log('pl', request.payload);
 
             if(identityKey) payload.identityKey = identityKey;
             else {

@@ -143,9 +143,11 @@
     import Error from '../../models/errors/Error'
     import PopupService from '../../services/PopupService'
     import {Popup} from '../../models/popups/Popup'
+    import {Blockchains} from '../../models/Blockchains'
     import PermissionService from '../../services/PermissionService'
     import RIDLService from '../../services/RIDLService'
     import WindowService from '../../services/WindowService'
+    import PluginRepository from '../../plugins/PluginRepository'
 
     let foldInterval = null;
 
@@ -187,6 +189,7 @@
         },
         mounted(){
             this.checkWarning();
+            this.checkResources();
 
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
             if(!id) return this.returnResult(Error.identityMissing());
@@ -232,6 +235,7 @@
                 });
 
             }, 200);
+
         },
         methods: {
             async checkWarning(){
@@ -258,6 +262,30 @@
                         `The contract you are interacting with has been given a bad reputation by the users of RIDL.
                         If you decide to interact with this contract make sure you read the parameters and fully understand your liability.`,
                         'exclamation-triangle', warnings, x => `${x.contract} -> ${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
+            },
+            async checkResources(){
+                const plugin = PluginRepository.plugin(this.payload.blockchain);
+                if(this.payload.blockchain === Blockchains.EOS){
+                    // TODO: Check if the user is about to use their last remaining CPU/RAM
+                    WindowService.openTools();
+
+                    const accounts = this.payload.participants;
+                    console.log('accounts', this.payload);
+
+                    await Promise.all(accounts.map(account => {
+                        account = Account.fromJson(account);
+                        plugin.accountData(account, account.network()).then(data => {
+                            if (!data) return;
+
+                            console.log('data', data);
+                            if(data.cpu_limit.available <= (data.cpu_limit.max * 0.25)){
+                                PopupService.push(Popup.prompt("Running low on Resources",
+                                    `The ${account.formatted()} account is running low on CPU, You should delegate some resources before continuing to use it.`, 'exclamation-triangle', 'Okay'));
+                            }
+                        })
+                    }));
+
+                }
             },
             checkScroll(e){
                 this.scrollTop = e.target.scrollTop;

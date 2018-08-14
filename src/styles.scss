@@ -166,6 +166,10 @@ a {
         color:$dark-blue;
       }
     }
+
+    &.disabled {
+      opacity:0.2;
+    }
   }
 
 }
