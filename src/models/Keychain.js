@@ -88,14 +88,4 @@ export default class Keychain {
         this.permissions = this.permissions.filter(x => !x.accounts.some(a => accountsToRemove.includes(a)));
         this.accounts = this.accounts.filter(a => a.unique() !== account.unique());
     }
-
-    updateOrPushAppLink(appLink){
-        this.linkedApps.find(app => app.id === appLink.id)
-            ? this.linkedApps = this.linkedApps.map(app => app.id === appLink.id ? appLink : app)
-            : this.linkedApps.unshift(appLink);
-    }
-
-    removeAppLink(appLink){
-        this.linkedApps = this.linkedApps.filter(a => a.id !== appLink.id);
-    }
 }

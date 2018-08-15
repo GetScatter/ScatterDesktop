@@ -36,7 +36,7 @@
     "dist": "electron-builder",
     "devpack": "npm run build && npm run pack",
     "release-win": "npm run build && electron-builder --win",
-    "release-linux": "npm run build && electron-builder --linux",
+    "release-linux": "electron-builder --linux",
     "release-mac": "npm run build && electron-builder --mac"
   },
   "dependencies": {
