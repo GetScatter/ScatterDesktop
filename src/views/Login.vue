@@ -7,13 +7,6 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
 
-    import {Popup, PopupDisplayTypes, PopupData, PopupTypes} from '../models/popups/Popup'
-    import PopupService from '../services/PopupService';
-    import SocketService from '../services/SocketService';
-
-    import Account from '../models/Account'
-    import AppLink from '../models/AppLink'
-
     export default {
         name: 'Login',
         data () {return {

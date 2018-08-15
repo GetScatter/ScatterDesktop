@@ -30,6 +30,7 @@ const getters = {
     keypairs:state =>       state.scatter.keychain.keypairs || [],
     accounts:state =>       state.scatter.keychain.accounts || [],
     permissions:state =>    state.scatter.keychain.permissions || [],
+    apps:state =>           state.scatter.keychain.apps || [],
     linkedApps:state =>     state.scatter.keychain.linkedApps || [],
 
     // Settings

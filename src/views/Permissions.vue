@@ -50,15 +50,26 @@
                 'searchTerms'
             ]),
             ...mapGetters([
-                'permissions'
+                'permissions',
+                'apps'
             ]),
             origins(){
-                return this.permissions.reduce((acc, p) => {
-                    if(p.origin.toString().toLowerCase().indexOf(this.searchTerms.toLowerCase()) === -1)
-                        return acc;
+                const origins = {};
 
-                    if(!Object.keys(acc).includes(p.origin)) acc[p.origin] = 1;
-                    else acc[p.origin] += 1;
+                this.apps.map(p => {
+                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
+                    else origins[p.origin] += 1;
+                });
+
+                this.permissions.map(p => {
+                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
+                    else origins[p.origin] += 1;
+                });
+
+                return Object.keys(origins).reduce((acc, origin) => {
+                    if(origin.toString().toLowerCase().indexOf(this.searchTerms.toLowerCase()) !== -1)
+                        acc[origin] = origins[origin];
+
                     return acc;
                 }, {});
             },

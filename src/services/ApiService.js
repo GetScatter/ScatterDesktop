@@ -35,6 +35,7 @@ export default class ApiService {
      * @returns {Promise.<*>}
      */
     static async [Actions.IDENTITY_FROM_PERMISSIONS](request){
+        const perm = PermissionService.identityFromPermissions(request.payload.origin, true);
         return {id:request.id, result:PermissionService.identityFromPermissions(request.payload.origin, true)};
     }
 
@@ -180,9 +181,12 @@ export default class ApiService {
                 resolve({id:request.id, result:{signatures, returnedFields}});
             };
 
+            // Only allowing whitelist permissions for origin authed apps
+            const existingApp = store.state.scatter.keychain.findApp(origin);
+
             const hasHardwareKeys = participants.some(x => KeyPairService.isHardware(x.publicKey));
             const needToSelectLocation = requiredFields.hasOwnProperty('location') && requiredFields.location.length && identity.locations.length > 1;
-            if(!hasHardwareKeys && !needToSelectLocation && identity.locations.length === 1 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
+            if(existingApp && !hasHardwareKeys && !needToSelectLocation && identity.locations.length === 1 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
                 return await signAndReturn(identity.locations[0]);
             }
 

@@ -6,15 +6,38 @@
                 <i class="fa fa-trash-o" @click="removeAllPermissions" v-tooltip="'Delete All Origin Permissions'"></i>
             </section>
 
-            <section class="selected-item scrollable" v-if="perms.length">
+            <section class="selected-item scrollable">
 
                 <figure class="name">{{origin}}</figure>
                 <figure class="description">
-                    Below are permissions issued to {{origin}}.<br>
+                    Below are permissions issued to {{origin}}.<br><br>
                     <b class="red">NEVER CREATE CONTRACT ACTION PERMISSIONS WITH TOKEN TRANSFERS</b>
                 </figure>
 
                 <section class="split-panels left">
+                    <section class="info-box" v-if="app">
+                        <figure class="header">Authorized Application Access</figure>
+
+                        <section class="contract-permissions">
+                            <section class="permission" @click="removeApp()">
+                                <section class="kv">
+                                    <figure class="key">Origin</figure>
+                                    <figure class="value">{{app.origin}}</figure>
+                                </section>
+                                <section class="kv">
+                                    <figure class="key">Authorized On: </figure>
+                                    <figure class="value">{{new Date(app.createdAt).toLocaleString()}}</figure>
+                                </section>
+                                <section class="kv">
+                                    <figure class="key">Hashed App Key: </figure>
+                                    <figure class="value">{{app.hashed()}}</figure>
+                                </section>
+                            </section>
+                        </section>
+                    </section>
+
+
+
                     <section class="info-box" v-if="identityPermission || identityRequirementPermissions.length">
                         <figure class="header">Identity / Account Permission</figure>
 
@@ -78,6 +101,10 @@
                                     <figure class="value">{{perm.getIdentity().name}}</figure>
                                 </section>
                                 <section class="kv">
+                                    <figure class="key">Accounts</figure>
+                                    <figure class="value">{{perm.getAccounts().map(x => x.formatted()).join(',')}}</figure>
+                                </section>
+                                <section class="kv">
                                     <figure class="key">Contract</figure>
                                     <figure class="value">{{perm.contract}}</figure>
                                 </section>
@@ -125,6 +152,7 @@
             ]),
             ...mapGetters([
                 'permissions',
+                'apps',
             ]),
             identityPermission(){
                 return this.perms.find(x => x.isIdentity);
@@ -135,6 +163,9 @@
             identityRequirementPermissions(){
                 return this.perms.filter(x => x.isIdentityRequirements);
             },
+            app(){
+                return this.apps.find(x => x.origin === this.origin);
+            },
             perms(){
                 return this.permissions.filter(x => x.origin === this.origin);
             }
@@ -143,14 +174,24 @@
 
         },
         methods: {
+            async deleteAllPermissions(){
+                const scatter = this.scatter.clone();
+                scatter.keychain.removeApp(this.app);
+                scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.origin !== this.origin);
+                await this[Actions.SET_SCATTER](scatter);
+                this.backToMenu();
+                PopupService.push(Popup.snackbar("All Origin Permissions Removed!", "check"));
+            },
+            async removeApp(){
+                PopupService.push(Popup.prompt("Removing App Access and Permissions", "Are you sure?", "trash-o", "Yes", async accepted => {
+                    if(!accepted) return;
+                    this.deleteAllPermissions();
+                }, "Cancel"))
+            },
             async removeAllPermissions(){
                 PopupService.push(Popup.prompt("Removing All Origin Permissions", "Are you sure?", "trash-o", "Yes", async accepted => {
                     if(!accepted) return;
-                    const scatter = this.scatter.clone();
-                    scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.origin !== this.origin);
-                    await this[Actions.SET_SCATTER](scatter);
-                    this.backToMenu();
-                    PopupService.push(Popup.snackbar("All Origin Permissions Removed!", "check"));
+                    this.deleteAllPermissions();
                 }, "Cancel"))
             },
             async removePermission(permission){
@@ -159,7 +200,6 @@
                     const scatter = this.scatter.clone();
                     scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.checksum() !== permission.checksum());
                     await this[Actions.SET_SCATTER](scatter);
-                    this.backToMenu();
                     PopupService.push(Popup.snackbar("Permission Removed!", "check"));
                 }, "Cancel"))
             },

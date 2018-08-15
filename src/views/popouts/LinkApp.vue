@@ -27,10 +27,8 @@
 
                     <section class="item">
                         <!--{{payload}}-->
-                        <figure class="title">{{payload.plugin}}</figure>
-                        <figure class="sub-title">Origin: <b>{{payload.origin}}</b></figure>
-                        <br>
-                        <figure class="sub-title">{{payload.pin}}</figure>
+                        <figure class="title">{{app.origin}}</figure>
+                        <figure class="sub-title">{{app.appkey}}</figure>
                     </section>
                 </section>
 
@@ -45,9 +43,7 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
-    import Account from '../../models/Account'
-    import Network from '../../models/Network'
-    import {IdentityRequiredFields} from '../../models/Identity'
+    import AuthorizedApp from '../../models/AuthorizedApp'
 
     export default {
         data () {return {
@@ -61,6 +57,9 @@
                 'identities',
                 'accounts',
             ]),
+            app(){
+                return AuthorizedApp.fromJson(this.payload);
+            }
         },
         mounted(){
 

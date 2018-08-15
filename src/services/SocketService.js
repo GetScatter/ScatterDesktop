@@ -1,6 +1,20 @@
 import ApiService from '../services/ApiService';
+import AuthorizedApp from '../models/AuthorizedApp';
+import {store} from '../store/store';
+import * as Actions from '../store/constants';
+import Hasher from '../util/Hasher';
+import Error from '../models/errors/Error';
+
+import {Popup} from '../models/popups/Popup'
+import PopupService from '../services/PopupService';
 
 let io = null;
+
+let rekeyPromise;
+const getNewKey = socket => new Promise((resolve, reject) => {
+    rekeyPromise = {resolve, reject};
+    socket.emit('rekey');
+});
 
 const socketHandler = (socket) => {
 
@@ -20,8 +34,62 @@ const socketHandler = (socket) => {
 
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async request => {
-        console.log('api req', request);
+        if(request.data.hasOwnProperty('appkey')){
+            const existingApp = store.state.scatter.keychain.findApp(request.data.payload.origin);
+            if(!existingApp) return;
+            if(!existingApp.checkKey(request.data.appkey)) return;
+        }
+
         socket.emit('api', await ApiService.handler(Object.assign(request.data, {plugin:request.plugin})));
+    });
+
+    socket.on('rekeyed', async request => {
+        rekeyPromise.resolve(request);
+    });
+
+    socket.on('pair', async request => {
+        const scatter = store.state.scatter;
+        const existingApp = scatter.keychain.findApp(request.data.origin);
+        const linkApp = {
+            type:'linkApp',
+            payload:request.data
+        };
+
+        const addAuthorizedApp = (newKey = null) => {
+            const authedApp = new AuthorizedApp(request.data.origin, newKey ? newKey : request.data.appkey);
+            const clone = scatter.clone();
+            clone.keychain.updateOrPushApp(authedApp);
+            store.dispatch(Actions.SET_SCATTER, clone);
+            socket.emit('paired', true);
+        };
+
+        if(existingApp){
+            if(request.data.appkey.indexOf('appkey:') > -1){
+                PopupService.push(Popup.popout(linkApp, ({result}) => {
+                    if(result) addAuthorizedApp(null);
+                    else socket.emit('paired', false);
+                }))
+            } else {
+                if(!existingApp) return socket.emit('paired', false);
+                return socket.emit('paired', existingApp.checkKey(request.data.appkey));
+            }
+        }
+
+        else {
+            PopupService.push(Popup.popout(linkApp, async ({result}) => {
+                if(result) {
+                    if(request.data.appkey.indexOf('appkey:') === -1) {
+                        const newKey = await getNewKey(socket);
+                        if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return socket.emit('paired', false);
+                        addAuthorizedApp(newKey.data.appkey)
+                    } else {
+                        addAuthorizedApp();
+                    }
+                }
+                else socket.emit('paired', false);
+            }))
+
+        }
     });
 
     socket.on('disconnect', () => {
@@ -39,9 +107,7 @@ export default class SocketService {
 
     static open(){
         const namespace = io.of(`/scatter`);
-        namespace.on('connection', socket => {
-            socketHandler(socket);
-        })
+        namespace.on('connection', socket => socketHandler(socket))
     }
 
     static close(){

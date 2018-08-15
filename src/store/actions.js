@@ -10,7 +10,6 @@ import Mnemonic from '../util/Mnemonic'
 
 import Identity from '../models/Identity';
 import Scatter from '../models/Scatter';
-import AppLink from '../models/AppLink';
 
 import AES from 'aes-oop';
 import PopupService from "../services/PopupService";
@@ -53,9 +52,6 @@ export const actions = {
             firstIdentity.name = 'MyFirstIdentity';
             scatter.keychain.updateOrPushIdentity(firstIdentity);
 
-            const catchAllAppLink = AppLink.defaultAppLink();
-
-            scatter.keychain.linkedApps.push(catchAllAppLink);
             SocketService.initialize();
             SocketService.open();
 
