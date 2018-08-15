@@ -5,6 +5,7 @@ export default class AuthorizedApp {
     constructor(_origin, _appkey){
         this.origin = _origin;
         this.appkey = _appkey;
+        this.nextNonce = '';
         this.createdAt = +new Date();
     }
 
@@ -12,4 +13,5 @@ export default class AuthorizedApp {
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
     checkKey(hashed){ return hashed === this.hashed(); }
     hashed(){ return Hasher.insecureHash(this.appkey); }
+    checkNonce(nonce){ return this.nextNonce === Hasher.insecureHash(nonce) }
 }

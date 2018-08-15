@@ -34,10 +34,29 @@ const socketHandler = (socket) => {
 
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async request => {
+
+        // 2 way authentication
         if(request.data.hasOwnProperty('appkey')){
             const existingApp = store.state.scatter.keychain.findApp(request.data.payload.origin);
+
+            const updateNonce = async () => {
+                const clone = store.state.scatter.clone();
+                existingApp.nextNonce = request.data.nextNonce;
+                clone.keychain.updateOrPushApp(existingApp);
+                return store.dispatch(Actions.SET_SCATTER, clone);
+            };
+
+            const removeAppPermissions = async () => {
+                const clone = store.state.scatter.clone();
+                clone.keychain.removeApp(existingApp);
+                return store.dispatch(Actions.SET_SCATTER, clone);
+            };
+
+
             if(!existingApp) return;
             if(!existingApp.checkKey(request.data.appkey)) return;
+            if(existingApp.nextNonce.length && !existingApp.checkNonce(request.data.nonce)) await removeAppPermissions();
+            else await updateNonce();
         }
 
         socket.emit('api', await ApiService.handler(Object.assign(request.data, {plugin:request.plugin})));
@@ -62,6 +81,9 @@ const socketHandler = (socket) => {
             store.dispatch(Actions.SET_SCATTER, clone);
             socket.emit('paired', true);
         };
+
+        if(request.data.passthrough)
+            return socket.emit('paired', existingApp && existingApp.checkKey(request.data.appkey));
 
         if(existingApp){
             if(request.data.appkey.indexOf('appkey:') > -1){

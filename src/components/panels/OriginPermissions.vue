@@ -32,6 +32,10 @@
                                     <figure class="key">Hashed App Key: </figure>
                                     <figure class="value">{{app.hashed()}}</figure>
                                 </section>
+                                <section class="kv">
+                                    <figure class="key">Nonce: </figure>
+                                    <figure class="value">{{app.nextNonce}}</figure>
+                                </section>
                             </section>
                         </section>
                     </section>
