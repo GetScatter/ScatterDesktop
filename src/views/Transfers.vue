@@ -12,7 +12,7 @@
                 <section class="item" :class="{'active':selectedAccount && selectedAccount.unique() === account.unique()}" v-for="account in eosAccounts" @click="selectedAccount = account">
                     <figure class="title">{{account.name}}</figure>
                     <figure class="description">Account: <b>{{account.keypair().name}}</b></figure>
-                    <figure class="description">{{account.formattedWithNetwork(networks)}}</figure>
+                    <figure class="description">{{account.formattedWithNetwork()}}</figure>
                 </section>
             </section>
 

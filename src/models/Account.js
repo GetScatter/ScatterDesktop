@@ -15,8 +15,8 @@ export default class Account {
         return PluginRepository.plugin(this.blockchain()).accountFormatter(this);
     }
 
-    formattedWithNetwork(networks){
-        const networkName = networks.find(x => x.unique() === this.networkUnique).name;
+    formattedWithNetwork(){
+        const networkName = store.state.scatter.settings.networks.find(x => x.unique() === this.networkUnique).name;
         return `${networkName} - ${this.formatted()}`;
     }
 

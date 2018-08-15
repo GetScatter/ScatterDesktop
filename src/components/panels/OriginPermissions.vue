@@ -44,17 +44,13 @@
                         <section class="contract-permissions" v-if="identityPermission">
                             <section class="permission" @click="removePermission(identityPermission)">
                                 <section class="kv">
-                                    <figure class="key">Origin</figure>
-                                    <figure class="value">{{identityPermission.origin}}</figure>
-                                </section>
-                                <section class="kv">
                                     <figure class="key">Identity</figure>
                                     <figure class="value">{{identityPermission.getIdentity().name}}</figure>
                                 </section>
                                 <section v-if="identityPermission.getAccounts().length">
                                     <section class="kv" v-for="account in identityPermission.getAccounts()">
                                         <figure class="key">Account</figure>
-                                        <figure class="value">{{account.formatted()}}</figure>
+                                        <figure class="value">{{account.formattedWithNetwork()}}</figure>
                                     </section>
                                 </section>
                             </section>
@@ -66,10 +62,6 @@
 
                             <section class="contract-permissions">
                                 <section class="permission" v-for="perm in identityRequirementPermissions" @click="removePermission(perm)">
-                                    <section class="kv">
-                                        <figure class="key">Origin</figure>
-                                        <figure class="value">{{perm.origin}}</figure>
-                                    </section>
                                     <section class="kv">
                                         <figure class="key">Identity</figure>
                                         <figure class="value">{{perm.getIdentity().name}}</figure>
@@ -93,16 +85,12 @@
                         <section class="contract-permissions">
                             <section class="permission" v-for="perm in contractPermissions" @click="removePermission(perm)">
                                 <section class="kv">
-                                    <figure class="key">Origin</figure>
-                                    <figure class="value">{{perm.origin}}</figure>
-                                </section>
-                                <section class="kv">
                                     <figure class="key">Identity</figure>
                                     <figure class="value">{{perm.getIdentity().name}}</figure>
                                 </section>
                                 <section class="kv">
                                     <figure class="key">Accounts</figure>
-                                    <figure class="value">{{perm.getAccounts().map(x => x.formatted()).join(',')}}</figure>
+                                    <figure class="value">{{perm.getAccounts().map(x => x.formattedWithNetwork()).join(',')}}</figure>
                                 </section>
                                 <section class="kv">
                                     <figure class="key">Contract</figure>
@@ -231,11 +219,11 @@
 
             .kv {
                 font-size:13px;
-                border-bottom:1px solid rgba(0,0,0,0.1);
-                padding-bottom:5px;
 
                 &:not(:last-child){
                     margin-bottom:5px;
+                    border-bottom:1px solid rgba(0,0,0,0.1);
+                    padding-bottom:5px;
                 }
 
                 .key {

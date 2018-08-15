@@ -87,6 +87,7 @@
                     if(!accepted) return;
                     const scatter = this.scatter.clone();
                     scatter.keychain.permissions = [];
+                    scatter.keychain.apps = [];
                     await this[Actions.SET_SCATTER](scatter);
                     PopupService.push(Popup.snackbar("All Permissions Removed!", "check"));
                     this.selectedOrigin = null;
