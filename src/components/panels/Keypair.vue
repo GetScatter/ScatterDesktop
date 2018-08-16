@@ -102,7 +102,7 @@
                                 <figure v-if="isEndorsedNetwork(account)" class="name" @click="openAccountInExplorer(account)" style="cursor:pointer;"><u>{{account.formatted()}}</u></figure>
                                 <figure v-else class="name">{{account.formatted()}}</figure>
 
-                                <figure class="date">{{account.network().name}}</figure>
+                                <figure class="date" v-if="account.network()">{{account.network().name}}</figure>
 
                                 <section v-if="account.blockchain() === blockchain.EOS && accountData(account)">
                                     <p-bar color="orange" v-if="accountData(account).refund_request"
@@ -223,6 +223,7 @@
         props:['kp'],
         methods: {
             isEndorsedNetwork(account){
+                if(!account.network()) return false;
                 return this.endorsedNetworks.includes(account.network().id);
             },
             openAccountInExplorer(account){
@@ -310,10 +311,10 @@
                 else this.qr = '';
             },
             async linkKeypairToNetwork(){
-                await AccountService.addAccountFromKeypair(this.keypair, this.selectedNetwork, this);
+                await AccountService.addAccountFromKeypair(this.keypair, this.selectedNetwork);
             },
             async linkAccount(account){
-                await AccountService.addAccount(account, this);
+                await AccountService.addAccount(account);
             },
             async unlinkAccount(account){
 
@@ -321,7 +322,7 @@
                     "Removing Account Link", "This will remove this account link from the keypair and all associated permissions.",
                     "trash-o", "Unlink Account"
                 ), async accepted => {
-                    if(accepted) await AccountService.removeAccount(account, this);
+                    if(accepted) await AccountService.removeAccount(account);
                 });
 
             },
@@ -390,13 +391,13 @@
                     "Yes",
                     accepted => {
                         if(!accepted) return;
-                        KeyPairService.saveKeyPair(this.keypair, this, () => {
+                        KeyPairService.saveKeyPair(this.keypair, () => {
                             PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
                             this.$emit('selected', this.keypair.clone());
                         });
                     },
                     "Go Back"));
-                else KeyPairService.updateKeyPair(this.keypair, this, () => {
+                else KeyPairService.updateKeyPair(this.keypair, () => {
                     PopupService.push(Popup.snackbar("Keypair Updated!", "check"));
                 });
             },
@@ -413,7 +414,7 @@
                     if(!this.keypair.name.length) return false;
                     if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return false;
 
-                    KeyPairService.updateKeyPair(this.keypair, this, () => {
+                    KeyPairService.updateKeyPair(this.keypair, () => {
                         PopupService.push(Popup.snackbar("Keypair Updated!", "check"));
                     });
                 }, 500);

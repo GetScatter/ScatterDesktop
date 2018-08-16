@@ -66,8 +66,8 @@ export default class KeyPairService {
         return true;
     }
 
-    static saveKeyPair(keypair, context, callback){
-        const scatter = context.scatter.clone();
+    static saveKeyPair(keypair, callback){
+        const scatter = store.state.scatter.clone();
 
         if(!keypair.name.length)
             return PopupService.push(Popup.prompt('Invalid Keypair Name', 'The keypair name you have entered is invalid', 'ban', 'Okay'));
@@ -76,18 +76,18 @@ export default class KeyPairService {
         if(scatter.keychain.getKeyPairByName(keypair.name))
             return PopupService.push(Popup.prompt('Keypair Exists', 'There is already a keypair with the key', 'ban', 'Okay'));
 
-        scatter.keychain.keypairs.push(keypair);
-        context[Actions.SET_SCATTER](scatter).then(() => callback());
+        scatter.keychain.keypairs.push(Keypair.fromJson(keypair));
+        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
     }
 
-    static updateKeyPair(keypair, context, callback){
-        const scatter = context.scatter.clone();
+    static updateKeyPair(keypair, callback){
+        const scatter = store.state.scatter.clone();
 
         if(!keypair.name.length)
             return PopupService.push(Popup.prompt('Invalid Keypair Name', 'The keypair name you have entered is invalid', 'ban', 'Okay'));
 
         scatter.keychain.keypairs.find(x => x.unique() === keypair.unique()).name = keypair.name;
-        context[Actions.SET_SCATTER](scatter).then(() => callback());
+        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
     }
 
     static removeKeyPair(keypair, callback){

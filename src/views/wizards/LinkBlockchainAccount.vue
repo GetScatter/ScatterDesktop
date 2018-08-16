@@ -187,10 +187,10 @@
                 this.selectedNetwork = this.availableNetworks[0];
             },
             async linkKeypairToNetwork(){
-                await AccountService.addAccountFromKeypair(this.keypair, this.selectedNetwork, this);
+                await AccountService.addAccountFromKeypair(this.keypair, this.selectedNetwork);
             },
             async linkAccount(account){
-                await AccountService.addAccount(account, this);
+                await AccountService.addAccount(account);
             },
             async unlinkAccount(account){
 
@@ -198,7 +198,7 @@
                     "Removing Account Link", "This will remove this account link from the keypair and all associated permissions.",
                     "trash-o", "Unlink Account"
                 ), async accepted => {
-                    if(accepted) await AccountService.removeAccount(account, this);
+                    if(accepted) await AccountService.removeAccount(account);
                 });
 
             },

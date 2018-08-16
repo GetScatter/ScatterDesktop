@@ -20,6 +20,8 @@ export class Popup {
         if(this.data.type === ApiActions.GET_OR_REQUEST_IDENTITY)   return {width:440, height:560};
         if(this.data.type === ApiActions.REQUEST_SIGNATURE)         return {width:1024, height:800};
         if(this.data.type === ApiActions.REQUEST_ADD_NETWORK)       return {width:440, height:360};
+        if(this.data.type === ApiActions.LINK_ACCOUNT)              return {width:440, height:360};
+        if(this.data.type === ApiActions.GET_PUBLIC_KEY)            return {width:440, height:600};
         if(this.data.type === 'linkApp')                            return {width:440, height:360};
 
         return {width:800, height:600};

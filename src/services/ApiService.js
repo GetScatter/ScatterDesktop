@@ -6,6 +6,7 @@ import ObjectHelpers from '../util/ObjectHelpers'
 
 import {Popup} from '../models/popups/Popup';
 import PopupService from '../services/PopupService';
+import AccountService from '../services/AccountService';
 import PermissionService from '../services/PermissionService';
 import KeyPairService from '../services/KeyPairService';
 import PluginRepository from '../plugins/PluginRepository';
@@ -93,6 +94,72 @@ export default class ApiService {
     static async [Actions.FORGET_IDENTITY](request){
         await PermissionService.removeIdentityPermission(request.payload.origin);
         return {id:request.id, result:true};
+    }
+
+    /***
+     * Allows apps to request that the user provide a user-selected Public Key
+     * to the app. ( ONBOARDING HELPER )
+     * @param request
+     * @returns {Promise.<*>}
+     */
+    static async [Actions.GET_PUBLIC_KEY](request){
+        return new Promise((resolve, reject) => {
+            PopupService.push(Popup.popout(request, ({result}) => {
+                if(!result) return resolve({id:request.id, result:null});
+
+                if(result.isNew){
+                    KeyPairService.saveKeyPair(result.keypair, () => {
+                        resolve({id:request.id, result:result.keypair.publicKey});
+                    });
+                }
+
+                else {
+                    resolve({id:request.id, result:result.keypair.publicKey});
+                }
+            }));
+        })
+    }
+
+    /***
+     * Allows the app to suggest that the user link new accounts on top of
+     * public keys ( ONBOARDING HELPER )
+     * @param request
+     * @returns {Promise.<*>}
+     */
+    static async [Actions.LINK_ACCOUNT](request){
+        return new Promise(async (resolve, reject) => {
+            PopupService.push(Popup.popout(request, async ({result}) => {
+                if(!result) return resolve({id:request.id, result:null});
+
+                const scatter = store.state.scatter;
+                let {publicKey, account, network, origin} = request.payload;
+
+                network = Network.fromJson(Object.assign(network, {name:origin}));
+                if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
+
+                const keypair = scatter.keychain.keypairs.find(x => x.publicKey === publicKey);
+                if(!keypair) return resolve({id:request.id, result:Error.noKeypair()});
+
+                let existingNetwork = scatter.settings.networks.find(x => x.unique() === network.unique());
+                if(!existingNetwork){
+                    const clone = scatter.clone();
+                    clone.settings.updateOrPushNetwork(network);
+                    await store.dispatch(StoreActions.SET_SCATTER, clone);
+                    existingNetwork = network;
+                }
+
+                account = Account.fromJson({
+                    name:account.hasOwnProperty('name') ? account.name : '',
+                    publicKey,
+                    authority:account.hasOwnProperty('authority') ? account.authority : '',
+                    networkUnique:existingNetwork.unique(),
+                    keypairUnique:keypair.unique(),
+                });
+
+                await AccountService.addAccount(account);
+                return resolve({id:request.id, result:true});
+            }));
+        })
     }
 
     /***

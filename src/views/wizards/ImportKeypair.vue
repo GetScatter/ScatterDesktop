@@ -206,7 +206,7 @@
                     "Yes",
                     accepted => {
                         if(!accepted) return;
-                        KeyPairService.saveKeyPair(this.keypair, this, () => {
+                        KeyPairService.saveKeyPair(this.keypair, () => {
                             PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
                             this.$router.push({name:RouteNames.BLOCKCHAINS});
                         });

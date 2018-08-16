@@ -42,6 +42,14 @@ export default class Error {
         return this.signatureError("identity_missing", "Identity no longer exists on the user's keychain");
     }
 
+    static badNetwork(){
+        return this.signatureError("bad_network", "The network you provided is malformed.");
+    }
+
+    static noKeypair(){
+        return this.signatureError("no_keypair", "The public key you provided does not exist on the user's keychain.");
+    }
+
     static signatureAccountMissing(){
         return this.signatureError("account_missing", "You are trying to sign a request with an account that isn't currently linked or doesn't exist in the user's Scatter");
     }

@@ -128,17 +128,17 @@
                             return false;
                         }
                         const account = availableAccounts[0];
-                        await AccountService.addAccount(account, this);
+                        await AccountService.addAccount(account);
                         this.finish();
                     } else {
-                        await AccountService.addAccountFromKeypair(this.keypair, network, this);
+                        await AccountService.addAccountFromKeypair(this.keypair, network);
                         this.finish();
                     }
                 };
 
                 if(!this.keypairSaved) {
                     this.keypair.name = 'Imported From Setup Wizard';
-                    KeyPairService.saveKeyPair(this.keypair, this, async () => {
+                    KeyPairService.saveKeyPair(this.keypair, async () => {
                         this.keypairSaved = true;
                         await importAccount();
                     });

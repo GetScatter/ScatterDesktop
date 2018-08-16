@@ -50,6 +50,8 @@ import GetIdentity from './views/popouts/GetIdentity.vue'
 import SignatureRequest from './views/popouts/SignatureRequest.vue'
 import SuggestNetwork from './views/popouts/SuggestNetwork.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
+import GetPublicKey from './views/popouts/GetPublicKey.vue'
+import LinkAccount from './views/popouts/LinkAccount.vue'
 
 // Reusable components
 import InputComponent from './components/reusable/InputComponent.vue'
@@ -124,6 +126,8 @@ class Main {
             {tag:'signature-request', vue:SignatureRequest},
             {tag:'suggest-network', vue:SuggestNetwork},
             {tag:'link-app', vue:LinkApp},
+            {tag:'get-public-key', vue:GetPublicKey},
+            {tag:'link-account', vue:LinkAccount},
 
             // GLOBALS
             {tag:'view-base', vue:ViewBase},

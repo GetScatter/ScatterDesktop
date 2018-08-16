@@ -1,6 +1,7 @@
 import Account from '../models/Account'
 import PluginRepository from '../plugins/PluginRepository'
 import * as Actions from '../store/constants'
+import {store} from '../store/store'
 
 export default class AccountService {
 
@@ -13,26 +14,26 @@ export default class AccountService {
             return await PluginRepository.plugin(keypair.blockchain).getImportableAccounts(keypair, network);
     }
 
-    static async addAccountFromKeypair(keypair, network, context){
+    static async addAccountFromKeypair(keypair, network){
         const account = Account.fromJson({
             keypairUnique:keypair.unique(),
             networkUnique:network.unique(),
             publicKey:keypair.publicKey
         });
-        const scatter = context.scatter.clone();
+        const scatter = store.state.scatter.clone();
         scatter.keychain.addAccount(account);
-        return context[Actions.SET_SCATTER](scatter);
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static async addAccount(account, context){
-        const scatter = context.scatter.clone();
+    static async addAccount(account){
+        const scatter = store.state.scatter.clone();
         scatter.keychain.addAccount(account);
-        return context[Actions.SET_SCATTER](scatter);
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static async removeAccount(account, context){
-        const scatter = context.scatter.clone();
+    static async removeAccount(account){
+        const scatter = store.state.scatter.clone();
         scatter.keychain.removeAccount(account);
-        return context[Actions.SET_SCATTER](scatter);
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 }

@@ -14,6 +14,10 @@
 
             <link-app v-if="popupType === 'linkApp'" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></link-app>
 
+            <get-public-key v-if="popupType === apiActions.GET_PUBLIC_KEY" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></get-public-key>
+
+            <link-account v-if="popupType === apiActions.LINK_ACCOUNT" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></link-account>
+
         </section>
 
 
