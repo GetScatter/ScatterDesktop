@@ -2,7 +2,6 @@ const {remote} = window.require('electron');
 import * as Actions from '../store/constants';
 const fs = window.require('fs');
 
-const getLocation = () => remote.dialog.showOpenDialog({properties: ['openDirectory']});
 const saveFile = (data, _filename) => {
     return new Promise(resolve => {
         const date = new Date();
@@ -23,10 +22,14 @@ const saveFile = (data, _filename) => {
 
 export default class ExportService {
 
-    static exportData(data, _filename){
-        const location = getLocation();
-        if(! location) return false;
-        const filename = `${location[0]}/${_filename}`;
+    static getLocation(){
+        const location = remote.dialog.showOpenDialog({properties: ['openDirectory']});
+        if(!location) return false;
+        return location[0];
+    }
+
+    static exportData(data, _filename, location = this.getLocation()){
+        const filename = `${location}/${_filename}`;
 
         return saveFile(data, filename);
     }
