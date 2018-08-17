@@ -134,6 +134,10 @@
                                 <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">
                                     <i class="fa fa-refresh"></i>
                                 </figure>
+
+                                <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Export Keypair'" @click="exportKeypair(account)">
+                                    <i class="fa fa-floppy-o"></i>
+                                </figure>
                             </section>
                         </section>
                     </section>
@@ -269,6 +273,13 @@
                         PopupService.push(Popup.snackbar(`Refreshed Account: ${account.formatted()}`, "check"))
                     }
                 })
+            },
+            exportKeypair(account){
+                KeyPairService.exportKeyPairWithSeed(this.keypair, (success) => {
+                  if (success) {
+                    PopupService.push(Popup.snackbar(`Exported Keypair for Account: ${account.formatted()}`, "check"));
+                  }
+                });
             },
             accountData(account){
                 const data = this.accountDatum.find(x => x.name === account.name);

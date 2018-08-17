@@ -3,11 +3,13 @@ import PluginRepository from '../plugins/PluginRepository'
 import * as Actions from '../store/constants';
 
 import Alert from '../models/alerts/Alert'
-import PopupService from '../services/PopupService'
+import PopupService from './PopupService'
 import {Popup} from '../models/popups/Popup'
 
 import {store} from '../store/store';
 import Keypair from '../models/Keypair';
+
+import ExportService from './ExportService';
 
 export default class KeyPairService {
 
@@ -96,6 +98,13 @@ export default class KeyPairService {
         store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
     }
 
+    static exportKeyPairWithSeed(keypair, callback){
+        const data = JSON.stringify(keypair) + '|SEED|' + store.state.seed;
+        const filename = `scatter_keypair_${keypair.id}`;
+
+        ExportService.exportData(data, filename).then((success) => callback(success));
+    }
+
     static getKeyPairFromPublicKey(publicKey, decrypt = false){
         const keypair = store.state.scatter.keychain.keypairs.find(x => x.publicKey === publicKey);
         if(keypair) {
@@ -128,5 +137,5 @@ export default class KeyPairService {
         if(keypair) return keypair.privateKey;
         return null;
     }
-    
+
 }
