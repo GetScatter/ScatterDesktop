@@ -98,6 +98,16 @@ export default class KeyPairService {
         store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
     }
 
+    static importKeyPairWithSeed(callback){
+        FileService.importData().then((data) => {
+            const keypairAndSeed = data.split(/\|[A-Z]+\|/);
+            const keypair = Keypair.fromJson(JSON.parse(keypairAndSeed[0]));
+            const seed = keypairAndSeed[1];
+            keypair.decrypt(seed);
+            this.saveKeyPair(keypair, () => callback(keypair));
+        });
+    }
+
     static exportKeyPairWithSeed(keypair, callback){
         const data = JSON.stringify(keypair) + '|SEED|' + store.state.seed;
         const filename = `scatter_keypair_${keypair.id}`;

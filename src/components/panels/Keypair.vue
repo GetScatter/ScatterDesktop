@@ -41,6 +41,7 @@
                              :copy="!isNew"></cin>
 
                         <btn v-if="isNew && !importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
+                        <btn v-if="isNew && importingKey" v-on:clicked="importKeypair" text="Import Keypair from File" secondary="true"></btn>
                         <btn v-if="isNew && keypair.publicKey.length && !usingHardware" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
 
                         <section v-if="isNew && usingHardware">
@@ -273,6 +274,14 @@
                         PopupService.push(Popup.snackbar(`Refreshed Account: ${account.formatted()}`, "check"))
                     }
                 })
+            },
+            importKeypair(){
+              KeyPairService.importKeyPairWithSeed((keypair) => {
+                if (keypair) {
+                  PopupService.push(Popup.snackbar(`Imported Keypair!`, "check"));
+                  this.keypair = keypair;
+                }
+              });
             },
             exportKeypair(account){
                 KeyPairService.exportKeyPairWithSeed(this.keypair, (success) => {
