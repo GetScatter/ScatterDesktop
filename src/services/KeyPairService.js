@@ -9,7 +9,7 @@ import {Popup} from '../models/popups/Popup'
 import {store} from '../store/store';
 import Keypair from '../models/Keypair';
 
-import ExportService from './ExportService';
+import FileService from './FileService';
 
 export default class KeyPairService {
 
@@ -102,7 +102,7 @@ export default class KeyPairService {
         const data = JSON.stringify(keypair) + '|SEED|' + store.state.seed;
         const filename = `scatter_keypair_${keypair.id}`;
 
-        ExportService.exportData(data, filename).then((success) => callback(success));
+        FileService.exportData(data, filename).then((success) => callback(success));
     }
 
     static getKeyPairFromPublicKey(publicKey, decrypt = false){

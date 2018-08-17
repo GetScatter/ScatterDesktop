@@ -20,7 +20,7 @@ const saveFile = (data, _filename) => {
     })
 };
 
-export default class ExportService {
+export default class FileService {
 
     static getLocation(){
         const location = remote.dialog.showOpenDialog({properties: ['openDirectory']});
