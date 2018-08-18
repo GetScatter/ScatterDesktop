@@ -69,6 +69,7 @@
 
     import {Popup} from '../../models/popups/Popup'
     import PopupService from '../../services/PopupService';
+    import AccountService from '../../services/AccountService';
 
     import PluginRepository from '../../plugins/PluginRepository';
     import {BlockchainsArray} from '../../models/Blockchains';
@@ -150,6 +151,8 @@
                     if(accepted) {
                         //TODO: Remove accounts, and permissions.
                         const scatter = this.scatter.clone();
+                        const accounts = scatter.keychain.accounts.filter(x => x.networkUnique === this.network.unique());
+                        accounts.map(account => scatter.keychain.removeAccount(account));
                         scatter.settings.removeNetwork(this.network);
                         await this[Actions.SET_SCATTER](scatter);
                         this.network = Network.placeholder();
