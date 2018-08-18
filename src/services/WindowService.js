@@ -1,6 +1,8 @@
 const { ipcRenderer, remote } = window.require('electron');
 const path = window.require("path");
 const url = window.require("url");
+import {store} from '../store/store'
+import * as Actions from '../store/constants'
 
 import WindowMessage from '../models/popups/WindowMessage';
 import * as WindowMessageTypes from '../models/popups/WindowMessageTypes'
@@ -58,6 +60,10 @@ export default class WindowService {
 
     static openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600){
 
+        const clone = store.state.scatter.clone();
+        clone.nonce++;
+        store.dispatch(Actions.SET_SCATTER, clone);
+
         let win = new remote.BrowserWindow({
             width,
             height,
@@ -69,7 +75,6 @@ export default class WindowService {
 
         win.once('ready-to-show', () => {
             onReady(win);
-
             win.show();
             win.setAlwaysOnTop(true);
             win.focus();
@@ -78,7 +83,9 @@ export default class WindowService {
 
         win.once('closed', () => {
             onClosed(win);
-            win = null
+            win = null;
+            // remote.getCurrentWindow().hide();
+            // remote.getCurrentWindow().show();
         });
 
         if(remote.process.mainModule.filename.indexOf('app.asar') === -1){

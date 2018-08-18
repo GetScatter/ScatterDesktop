@@ -24,6 +24,7 @@
             <settings-password v-if="selectedOption.name === settingsOptions.PASSWORD.name"></settings-password>
             <settings-backup v-if="selectedOption.name === settingsOptions.BACKUP.name"></settings-backup>
             <settings-destroy v-if="selectedOption.name === settingsOptions.DESTROY.name"></settings-destroy>
+            <settings-nonce v-if="selectedOption.name === settingsOptions.NONCE.name"></settings-nonce>
         </section>
 
 
@@ -42,6 +43,7 @@
     const SettingsOptions = {
         LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
         EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
+        NONCE:{ flash:false, locked:true, name:'Nonce', description:'Configure the popup nonce prefix.' },
         PASSWORD:{ flash:false, locked:true, name:'Password', description:'Change your password or regenerate your Mnemonic.' },
         BACKUP:{ flash:false, locked:true, name:'Backup', description:'Create a backup of your Scatter.' },
         DESTROY:{ flash:false, locked:true, name:'Destroy', description:'Destroy your instance of Scatter.' },

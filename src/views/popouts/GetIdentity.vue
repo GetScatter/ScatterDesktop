@@ -97,7 +97,8 @@
         }},
         computed:{
             ...mapState([
-                'state'
+                'state',
+                'scatter'
             ]),
             ...mapGetters([
                 'identities',

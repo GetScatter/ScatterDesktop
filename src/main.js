@@ -31,6 +31,7 @@ import SettingsExplorer from './components/panels/SettingsExplorer.vue'
 import SettingsBackup from './components/panels/SettingsBackup.vue'
 import SettingsDestroy from './components/panels/SettingsDestroy.vue'
 import SettingsPassword from './components/panels/SettingsPassword.vue'
+import SettingsNonce from './components/panels/SettingsNonce.vue'
 
 // POPUPS
 import Popups from './components/Popups.vue'
@@ -107,6 +108,7 @@ class Main {
             {tag:'settings-destroy', vue:SettingsDestroy},
             {tag:'settings-explorer', vue:SettingsExplorer},
             {tag:'settings-password', vue:SettingsPassword},
+            {tag:'settings-nonce', vue:SettingsNonce},
 
             // POPUPS
             {tag:'popups', vue:Popups},

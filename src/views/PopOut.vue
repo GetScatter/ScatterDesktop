@@ -1,6 +1,8 @@
 <template>
     <section class="popout">
 
+        <figure class="nonce" v-if="scatter && scatter.noncePrefix">{{`${scatter.noncePrefix}:${scatter.nonce}`}}</figure>
+
         <section v-if="windowMessage">
 
             <get-identity v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"
@@ -47,6 +49,9 @@
             });
         },
         computed:{
+            ...mapState([
+                'scatter',
+            ]),
             pluginOrigin(){ return this.windowMessage.data.popup.data.props.plugin },
             payload(){ return this.windowMessage.data.popup.data.props.payload },
             popupType(){ return this.windowMessage.data.popup.data.type },

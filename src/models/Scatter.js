@@ -12,6 +12,9 @@ export default class Scatter {
         this.keychain = Keychain.placeholder();
         this.settings = Settings.placeholder();
         this.hash = Hasher.insecureHash(IdGenerator.text(2048));
+
+        this.nonce = 0;
+        this.noncePrefix = 'nonce';
     }
 
     static placeholder(){ return new Scatter(); }

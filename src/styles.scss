@@ -474,3 +474,17 @@ $speed:0.5s;
 .separator {
   width:1px; height:10px; background:rgba(0,0,0,0.1); margin:0 10px; display:inline-block;
 }
+
+.popout {
+  .nonce {
+    position:fixed;
+    bottom:10px;
+    left:10px;
+    border-radius:4px;
+    padding:2px 4px;
+    font-size: 11px;
+    background:$red;
+    color:#fff;
+    font-weight: bold;
+  }
+}
