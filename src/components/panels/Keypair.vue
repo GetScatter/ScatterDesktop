@@ -450,7 +450,6 @@
 
             },
             'keypair.fork'(){
-                console.log(this.keypair.fork);
                 if(!this.keypair.fork || this.keypair.fork.length)
                 KeyPairService.makePublicKey(this.keypair);
             }
