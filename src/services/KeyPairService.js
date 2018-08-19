@@ -3,11 +3,13 @@ import PluginRepository from '../plugins/PluginRepository'
 import * as Actions from '../store/constants';
 
 import Alert from '../models/alerts/Alert'
-import PopupService from '../services/PopupService'
+import PopupService from './PopupService'
 import {Popup} from '../models/popups/Popup'
 
 import {store} from '../store/store';
 import Keypair from '../models/Keypair';
+
+import FileService from './FileService';
 
 export default class KeyPairService {
 
@@ -96,6 +98,23 @@ export default class KeyPairService {
         store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
     }
 
+    static importKeyPairWithSeed(callback){
+        FileService.importData().then((data) => {
+            const keypairAndSeed = data.split(/\|[A-Z]+\|/);
+            const keypair = Keypair.fromJson(JSON.parse(keypairAndSeed[0]));
+            const seed = keypairAndSeed[1];
+            keypair.decrypt(seed);
+            this.saveKeyPair(keypair, () => callback(keypair));
+        });
+    }
+
+    static exportKeyPairWithSeed(keypair, callback){
+        const data = JSON.stringify(keypair) + '|SEED|' + store.state.seed;
+        const filename = `scatter_keypair_${keypair.id}`;
+
+        FileService.exportData(data, filename).then((success) => callback(success));
+    }
+
     static getKeyPairFromPublicKey(publicKey, decrypt = false){
         const keypair = store.state.scatter.keychain.keypairs.find(x => x.publicKey === publicKey);
         if(keypair) {
@@ -128,5 +147,5 @@ export default class KeyPairService {
         if(keypair) return keypair.privateKey;
         return null;
     }
-    
+
 }

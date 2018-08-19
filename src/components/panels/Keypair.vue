@@ -55,6 +55,7 @@
                              :copy="!isNew"></cin>
 
                         <btn v-if="isNew && !importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
+                        <btn v-if="isNew && importingKey" v-on:clicked="importKeypair" text="Import Keypair from File" secondary="true"></btn>
                         <btn v-if="isNew && keypair.publicKey.length && !usingHardware" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
 
                         <section v-if="isNew && usingHardware">
@@ -147,6 +148,10 @@
 
                                 <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">
                                     <i class="fa fa-refresh"></i>
+                                </figure>
+
+                                <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Export Keypair'" @click="exportKeypair(account)">
+                                    <i class="fa fa-floppy-o"></i>
                                 </figure>
                             </section>
                         </section>
@@ -291,6 +296,21 @@
                         PopupService.push(Popup.snackbar(`Refreshed Account: ${account.formatted()}`, "check"))
                     }
                 })
+            },
+            importKeypair(){
+              KeyPairService.importKeyPairWithSeed((keypair) => {
+                if (keypair) {
+                  PopupService.push(Popup.snackbar(`Imported Keypair!`, "check"));
+                  this.keypair = keypair;
+                }
+              });
+            },
+            exportKeypair(account){
+                KeyPairService.exportKeyPairWithSeed(this.keypair, (success) => {
+                  if (success) {
+                    PopupService.push(Popup.snackbar(`Exported Keypair for Account: ${account.formatted()}`, "check"));
+                  }
+                });
             },
             accountData(account){
                 const data = this.accountDatum.find(x => x.name === account.name);
