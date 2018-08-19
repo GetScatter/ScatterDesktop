@@ -31,7 +31,7 @@ Click the "Help" menu from the sidebar to get started.
 - clone the repo
 - run `npm i` to install the dependencies
 - run `npm start` to start the local server with hot-reloading
-- run `electron .` from the directory to start electron.
+- run `electron .` or `./node_modules/bin/electron .` from the directory to start electron.
 
 
 
