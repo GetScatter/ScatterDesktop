@@ -57,7 +57,6 @@ export default class KeyPairService {
 
         plugin.randomPrivateKey().then(privateKey => {
             const publicKey = plugin.privateToPublic(privateKey, prefix);
-            console.log('kp', keypair, prefix, publicKey);
             if(plugin.validPublicKey(publicKey, prefix) && plugin.validPrivateKey(privateKey)){
                 keypair.publicKey = publicKey;
                 keypair.privateKey = privateKey;
