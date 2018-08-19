@@ -56,10 +56,14 @@ const EXPLORERS = [
 
 export default class EOS extends Plugin {
 
-    constructor(){ super(Blockchains.EOS, PluginTypes.BLOCKCHAIN_SUPPORT) }
+    constructor(){ super(Blockchains.EOSIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
     explorers(){ return EXPLORERS; }
     accountFormatter(account){ return `${account.name}@${account.authority}` }
-    returnableAccount(account){ return { name:account.name, authority:account.authority, publicKey:account.publicKey, blockchain:Blockchains.EOS }}
+    returnableAccount(account){ return { name:account.name, authority:account.authority, publicKey:account.publicKey, blockchain:Blockchains.EOSIO }}
+
+    forkSupport(){
+        return true;
+    }
 
     async getEndorsedNetwork(){
         return new Promise((resolve, reject) => {
@@ -67,7 +71,7 @@ export default class EOS extends Plugin {
                 'EOS Mainnet', 'https',
                 'nodes.get-scatter.com',
                 443,
-                Blockchains.EOS,
+                Blockchains.EOSIO,
                 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906'
             ));
         });
@@ -98,9 +102,9 @@ export default class EOS extends Plugin {
         })
     }
 
-    privateToPublic(privateKey){ return ecc.privateToPublic(privateKey); }
+    privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
     validPrivateKey(privateKey){ return ecc.isValidPrivate(privateKey); }
-    validPublicKey(publicKey){   return ecc.isValidPublic(publicKey); }
+    validPublicKey(publicKey, prefix = null){ return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
     randomPrivateKey(){ return ecc.randomKey(); }
     conformPrivateKey(privateKey){ return privateKey.trim(); }
     convertsTo(){ return []; }

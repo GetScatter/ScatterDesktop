@@ -155,7 +155,7 @@
         },
         mounted(){
             this.keypair = Keypair.placeholder();
-            this.keypair.blockchain = Blockchains.EOS;
+            this.keypair.blockchain = Blockchains.EOSIO;
         },
         methods: {
             copyKeyPair(){

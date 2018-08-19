@@ -22,10 +22,18 @@
                         <br>
 
                         <br v-if="!usingHardware && isNew">
-                        <sel v-tooltip.top-start="'Select a Blockchain'" v-if="!usingHardware && isNew" :selected="keypair.blockchain.toUpperCase()"
-                             :options="blockchains"
-                             :parser="blockchain => blockchain.key.toUpperCase()"
-                             v-on:changed="blockchainChanged" :key="1"></sel>
+                        <section class="blockchain-selector" :class="{'fork-support':forkSupport}">
+                            <sel v-tooltip.top-start="'Select a Blockchain'" v-if="!usingHardware && isNew" :selected="keypair.blockchain.toUpperCase()"
+                                 :options="blockchains"
+                                 :parser="blockchain => blockchain.value.toUpperCase()"
+                                 v-on:changed="blockchainChanged" :key="1"></sel>
+
+                            <figure v-if="isNew" class="fork-button">
+                                <section class="button" v-tooltip="'Use Fork'" @click="toggleFork">
+                                    <i class="fa fa-code-fork"></i>
+                                </section>
+                            </figure>
+                        </section>
 
                         <section v-if="importingKey">
                             <cin v-if="!usingHardware && isNew" @changed="makePublicKey" placeholder="Private Key" type="password"
@@ -33,6 +41,12 @@
                         </section>
 
                         <swch v-if="!isNew" first="Show Key Data" second="Hide" :selected="qr === '' ? 'Show Key Data' : 'Hide'" v-on:switched="toggleQR"></swch>
+
+                        <transition name="fade">
+                            <cin v-if="isNew && ((keypair.fork && keypair.fork.length) || useFork)" :forced="keypair.fork.length"
+                                 placeholder="Enter the fork prefix"
+                                 :text="keypair.fork" v-on:changed="changed => bind(changed, 'keypair.fork')"></cin>
+                        </transition>
 
                         <cin v-if="isNew || qr !== ''" :forced="usingHardware && keypair.publicKey.length"
                              :placeholder="usingHardware && keypair.publicKey.length ? `Imported ${keypair.blockchain.toUpperCase()} Key` : 'Public Key'"
@@ -104,7 +118,7 @@
 
                                 <figure class="date" v-if="account.network()">{{account.network().name}}</figure>
 
-                                <section v-if="account.blockchain() === blockchain.EOS && accountData(account)">
+                                <section v-if="account.blockchain() === blockchain.EOSIO && accountData(account)">
                                     <p-bar color="orange" v-if="accountData(account).refund_request"
                                            :used="+new Date() - +new Date(accountData(account).refund_request.request_time)"
                                            :total="(86400*3*1000)"
@@ -121,17 +135,17 @@
                                     <i class="fa fa-ban"></i>
                                 </figure>
 
-                                <figure v-if="account.blockchain() === blockchain.EOS" class="separator"></figure>
+                                <figure v-if="account.blockchain() === blockchain.EOSIO" class="separator"></figure>
 
-                                <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">
+                                <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">
                                     <i class="fa fa-microchip"></i>
                                 </figure>
 
-                                <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">
+                                <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">
                                     <i class="fa fa-globe"></i>
                                 </figure>
 
-                                <figure v-if="account.blockchain() === blockchain.EOS" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">
+                                <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">
                                     <i class="fa fa-refresh"></i>
                                 </figure>
                             </section>
@@ -166,6 +180,7 @@
     export default {
         name: 'Keypair',
         data () {return {
+            useFork:false,
             externalWalletTypes:EXT_WALLET_TYPES_ARR,
             usingHardware:false,
             importingKey:false,
@@ -204,6 +219,9 @@
             isNew(){
                 return !this.keypairs.find(x => x.publicKey === this.keypair.publicKey);
             },
+            forkSupport(){
+                return PluginRepository.plugin(this.keypair.blockchain).forkSupport();
+            },
         },
         mounted(){
             this.keypair = this.kp;
@@ -222,6 +240,10 @@
         },
         props:['kp'],
         methods: {
+            toggleFork(){
+                this.keypair.fork = '';
+                this.useFork = !this.useFork;
+            },
             isEndorsedNetwork(account){
                 if(!account.network()) return false;
                 return this.endorsedNetworks.includes(account.network().id);
@@ -251,14 +273,14 @@
                 }));
             },
             fetchAccountDatum(){
-                if(this.keypair.blockchain === Blockchains.EOS) {
+                if(this.keypair.blockchain === Blockchains.EOSIO) {
                     this.linkedAccounts.map(account => {
                         this.fetchAccountData(account);
                     });
                 }
             },
             fetchAccountData(account, snack = false){
-                const plugin = PluginRepository.plugin(Blockchains.EOS);
+                const plugin = PluginRepository.plugin(Blockchains.EOSIO);
                 plugin.accountData(account, account.network()).then(data => {
                     if (!data) return;
                     const found = this.accountDatum.find(x => x.name === account.name);
@@ -275,6 +297,7 @@
                 return !!data ? data.data : null;
             },
             toggleImporting(){
+                this.keypair.fork = '';
                 this.keypair.publicKey = '';
                 this.keypair.privateKey = '';
 
@@ -282,6 +305,7 @@
                 if(!this.importingKey) this.usingHardware = false;
             },
             toggleExternalWallet(){
+                this.keypair.fork = '';
                 this.keypair.publicKey = '';
                 this.keypair.privateKey = '';
 
@@ -345,6 +369,7 @@
             blockchainChanged(blockchainObject){
                 const blockchain = blockchainObject.value;
                 const clearAndChange = () => {
+                    this.keypair.fork = '';
                     this.keypair.blockchain = blockchain;
                     this.keypair.privateKey = '';
                     this.keypair.publicKey = '';
@@ -380,7 +405,7 @@
                 this.keypair.publicKey = '';
                 this.keypair.privateKey = '';
 
-                await KeyPairService.generateKeyPair(this.keypair);
+                await KeyPairService.generateKeyPair(this.keypair, this.keypair.fork);
                 PopupService.push(Popup.snackbar("A new keypair was generated."));
             },
             saveKeyPair(){
@@ -423,6 +448,11 @@
             'keypair.privateKey'(a,b){
                 this.keypair.privateKey = this.keypair.privateKey.trim();
 
+            },
+            'keypair.fork'(){
+                console.log(this.keypair.fork);
+                if(!this.keypair.fork || this.keypair.fork.length)
+                KeyPairService.makePublicKey(this.keypair);
             }
         }
     }
@@ -431,5 +461,54 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
 
+    .blockchain-selector {
+        .select {
+            display:inline-block;
+            max-width:100%;
+            transition: max-width 0.3s ease;
+        }
+        .fork-button {
+            max-width:0;
+            overflow: hidden;
+            width:100%;
+            display:inline-block;
+            float:right;
+            transition: max-width 0.3s ease;
+            .button {
+                width:50px;
+                height:50px;
+                line-height:49px;
+                text-align:center;
+                cursor: pointer;
+                border:1px solid $dark-blue;
+                outline:0;
+                background:$light-blue;
+                border-radius:2px;
+                color:#fff;
+                font-size:24px;
+                font-weight: bold;
+                transition: all 0.15s ease;
+                transition-property: background, color, border;
+                &:hover {
+                    background:transparent;
+                    border:1px solid $dark-blue;
+                    color:$dark-blue;
+                }
+                &:active {
+                    background:$dark-blue;
+                    border:1px solid transparent;
+                    color:#fff;
+                }
+            }
+        }
+        &.fork-support {
+            .select {
+                max-width:calc(100% - 60px);
+            }
+            .fork-button {
+                max-width:50px;
+            }
+        }
+    }
 
 </style>

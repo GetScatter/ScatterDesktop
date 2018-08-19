@@ -38,7 +38,7 @@ export default class KeyPairService {
 
                             const plugin = PluginRepository.plugin(blockchain);
                             if (plugin && plugin.validPrivateKey(keypair.privateKey)) {
-                                publicKey = plugin.privateToPublic(keypair.privateKey);
+                                publicKey = plugin.privateToPublic(keypair.privateKey, keypair.fork);
                                 keypair.blockchain = blockchain;
                             }
                         }
@@ -51,13 +51,14 @@ export default class KeyPairService {
         })
     }
 
-    static async generateKeyPair(keypair){
+    static async generateKeyPair(keypair, prefix = null){
         const plugin = PluginRepository.plugin(keypair.blockchain);
         if(!plugin) return false;
 
         plugin.randomPrivateKey().then(privateKey => {
-            const publicKey = plugin.privateToPublic(privateKey);
-            if(plugin.validPublicKey(publicKey) && plugin.validPrivateKey(privateKey)){
+            const publicKey = plugin.privateToPublic(privateKey, prefix);
+            console.log('kp', keypair, prefix, publicKey);
+            if(plugin.validPublicKey(publicKey, prefix) && plugin.validPrivateKey(privateKey)){
                 keypair.publicKey = publicKey;
                 keypair.privateKey = privateKey;
             }

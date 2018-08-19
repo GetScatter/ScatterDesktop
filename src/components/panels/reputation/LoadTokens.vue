@@ -118,7 +118,7 @@
         },
         methods: {
             async getBalance(){
-                const balance = await PluginRepository.plugin(Blockchains.EOS).balanceFor(this.selectedAccount, this.ridlNetwork, 'ridlridlcoin', 'RIDL');
+                const balance = await PluginRepository.plugin(Blockchains.EOSIO).balanceFor(this.selectedAccount, this.ridlNetwork, 'ridlridlcoin', 'RIDL');
                 this.availableRIDL = balance ? balance : 0;
             },
             toggleSelectingIdentity(){
@@ -138,7 +138,7 @@
 
                 const sent = await RIDLService.loadTokens(this.selectedAccount, this.identityName, quantity);
                 if(!sent) return PopupService.push(Popup.prompt('Error!', 'Could not sent RIDL to the given Identity', 'exclamation-triangle', 'Okay'));
-                else PopupService.push(Popup.transactionSuccess(Blockchains.EOS, sent));
+                else PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, sent));
 
                 this.getBalance();
             },

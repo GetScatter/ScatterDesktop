@@ -108,7 +108,7 @@
             async initTokens(){
                 await PluginRepository.plugin(this.account.blockchain()).fetchTokens(this.tokens);
                 switch(this.account.blockchain()){
-                    case Blockchains.EOS: this.token = this.tokens.find(x => x.symbol === 'EOS'); break;
+                    case Blockchains.EOSIO: this.token = this.tokens.find(x => x.symbol === 'EOS'); break;
                     case Blockchains.ETH: this.token = this.tokens.find(x => x.symbol === 'ETH'); break;
                 }
                 if(!this.token) this.token = this.tokens[0];
@@ -129,7 +129,7 @@
                 if(!this.to.trim().length) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "ban", "Okay"));
 
                 this.sending = true;
-                if(this.account.blockchain() === Blockchains.EOS) this.sendEosTokens();
+                if(this.account.blockchain() === Blockchains.EOSIO) this.sendEosTokens();
             },
 
             async sendEosTokens(){
@@ -151,7 +151,7 @@
 
                 if(transfer !== null) {
                     if (transfer.hasOwnProperty('error')) PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
-                    else PopupService.push(Popup.transactionSuccess(Blockchains.EOS, transfer.transaction_id))
+                    else PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, transfer.transaction_id))
                 }
 
                 this.sending = false;

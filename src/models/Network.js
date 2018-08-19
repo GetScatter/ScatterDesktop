@@ -2,7 +2,7 @@ import {Blockchains} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
 
 export default class Network {
-    constructor(_name = '', _protocol = 'https', _host = '', _port = 0, blockchain = Blockchains.EOS, chainId = ''){
+    constructor(_name = '', _protocol = 'https', _host = '', _port = 0, blockchain = Blockchains.EOSIO, chainId = ''){
         this.id = IdGenerator.numeric(12);
         this.name = _name;
         this.protocol = _protocol;

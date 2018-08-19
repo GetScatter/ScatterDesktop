@@ -267,7 +267,7 @@
                 const accounts = this.payload.participants;
                 const plugin = PluginRepository.plugin(this.payload.blockchain);
 
-                if(this.payload.blockchain === Blockchains.EOS){
+                if(this.payload.blockchain === Blockchains.EOSIO){
 
                     await Promise.all(accounts.map(account => {
                         account = Account.fromJson(account);

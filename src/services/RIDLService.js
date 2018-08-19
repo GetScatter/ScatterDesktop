@@ -92,7 +92,7 @@ export default class RIDLService {
                     'exclamation-triangle', 'Okay', {placeholder:'Private Key', type:'password'}, async key => {
                         if(!key) return reject(false);
 
-                        const signProvider = payload => PluginRepository.plugin(Blockchains.EOS).passThroughProvider(payload, account, account.network(), reject);
+                        const signProvider = payload => PluginRepository.plugin(Blockchains.EOSIO).passThroughProvider(payload, account, account.network(), reject);
                         await ridl.init( ridlNetwork(), account, signProvider );
 
                         const signedHash = ecc.Signature.signHash(existing.hash, key).toString();
@@ -118,7 +118,7 @@ export default class RIDLService {
                 PopupService.push(Popup.ridlRegister(async account => {
                     if(!account) return reject(false);
 
-                    const signProvider = payload => PluginRepository.plugin(Blockchains.EOS).passThroughProvider(payload, account, account.network(), reject);
+                    const signProvider = payload => PluginRepository.plugin(Blockchains.EOSIO).passThroughProvider(payload, account, account.network(), reject);
                     await ridl.init( ridlNetwork(), account, signProvider );
 
                     await ridl.identity.payAndIdentify(identity.name, identity.publicKey);
@@ -143,7 +143,7 @@ export default class RIDLService {
         return new Promise(async (resolve, reject) => {
             const {ridlId, account} = await getIdAndAccount(identity, reject);
 
-            const signProvider = payload => PluginRepository.plugin(Blockchains.EOS).passThroughProvider(payload, account, account.network(), reject);
+            const signProvider = payload => PluginRepository.plugin(Blockchains.EOSIO).passThroughProvider(payload, account, account.network(), reject);
             await ridl.init( ridlNetwork(), account, signProvider );
 
             const signedHash = await ApiService[ApiActions.REQUEST_ARBITRARY_SIGNATURE]({
@@ -181,7 +181,7 @@ export default class RIDLService {
 
             const formattedFragments = ridl.reputation.formatFragments(fragments);
 
-            const signProvider = payload => PluginRepository.plugin(Blockchains.EOS).passThroughProvider(payload, account, account.network(), reject);
+            const signProvider = payload => PluginRepository.plugin(Blockchains.EOSIO).passThroughProvider(payload, account, account.network(), reject);
             await ridl.init( ridlNetwork(), account, signProvider );
 
             const reputed = await ridl.reputation.repute(identity.name, entity, formattedFragments);
@@ -192,7 +192,7 @@ export default class RIDLService {
 
     static async loadTokens(account, identityName, quantity){
         return new Promise(async (resolve, reject) => {
-            const signProvider = payload => PluginRepository.plugin(Blockchains.EOS).passThroughProvider(payload, account, account.network(), reject);
+            const signProvider = payload => PluginRepository.plugin(Blockchains.EOSIO).passThroughProvider(payload, account, account.network(), reject);
             await ridl.init( ridlNetwork(), account, signProvider );
 
             const loaded = await ridl.identity.loadTokens(identityName, quantity);

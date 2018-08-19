@@ -228,7 +228,7 @@
                 const entity = RIDLService.buildEntityName(this.entityType, this.entityName, this.appUsername);
                 const reputed = await RIDLService.repute(this.selectedIdentity, entity, this.fragments);
                 if(!!reputed) {
-                    PopupService.push(Popup.transactionSuccess(Blockchains.EOS, reputed));
+                    PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, reputed));
                     this.fetchRidlIdData();
                 }
                 else PopupService.push(Popup.prompt('Error sending Repute', 'Looks like something went wrong, please try again', 'ban', 'Okay'));

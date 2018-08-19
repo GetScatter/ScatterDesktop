@@ -142,7 +142,7 @@
             },
             async init(){
 
-                PluginRepository.plugin(Blockchains.EOS).accountData(this.account, this.account.network()).then(data => {
+                PluginRepository.plugin(Blockchains.EOSIO).accountData(this.account, this.account.network()).then(data => {
                     this.fetchedBalance = true;
 
                     if(!data || !data.hasOwnProperty('core_liquid_balance')) {
@@ -180,7 +180,7 @@
                 const cpu = `${parseFloat(this.cpu).toFixed(4)} ${symbol}`;
                 const net = `${parseFloat(this.net).toFixed(4)} ${symbol}`;
 
-                PluginRepository.plugin(Blockchains.EOS).stakeOrUnstake(this.account, cpu, net, this.account.network(), this.delegating).then(res => {
+                PluginRepository.plugin(Blockchains.EOSIO).stakeOrUnstake(this.account, cpu, net, this.account.network(), this.delegating).then(res => {
                     if(!res || !res.hasOwnProperty('transaction_id')) {
                         this.submitting = false;
                         return false;

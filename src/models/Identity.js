@@ -37,7 +37,7 @@ export const AccountFields = {
 scatter.getIdentity({
     personal:['email'],
     accounts:[
-        {blockchain:Blockchains.EOS,network:{chainId:1}},
+        {blockchain:Blockchains.EOSIO,network:{chainId:1}},
         {blockchain:Blockchains.ETH,network:{chainId:1}}
     ],
     location:['country']

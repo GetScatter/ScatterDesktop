@@ -144,7 +144,7 @@
 
                 this.pricePerByte = (ramInfo[0] / ramInfo[1]).toFixed(8);
 
-                PluginRepository.plugin(Blockchains.EOS).accountData(this.account, this.account.network()).then(data => {
+                PluginRepository.plugin(Blockchains.EOSIO).accountData(this.account, this.account.network()).then(data => {
                     this.fetchedBalance = true;
                     if(!data) {
                         this.balance = 'Error getting balance';
@@ -178,7 +178,7 @@
 
                 this.submitting = true;
 
-                PluginRepository.plugin(Blockchains.EOS).buyOrSellRAM(this.account, bytes, this.account.network(), this.buying).then(res => {
+                PluginRepository.plugin(Blockchains.EOSIO).buyOrSellRAM(this.account, bytes, this.account.network(), this.buying).then(res => {
                     if(!res || !res.hasOwnProperty('transaction_id')) {
                         this.submitting = false;
                         return false;

@@ -38,6 +38,10 @@ export default class ETH extends Plugin {
     accountFormatter(account){ return `${account.publicKey}` }
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.ETH }}
 
+    forkSupport(){
+        return false;
+    }
+
     async getEndorsedNetwork(){
         return new Promise((resolve, reject) => {
             resolve(new Network('ETH Mainnet', 'https', 'ethereum.com', 8080, Blockchains.ETH, '1'));
@@ -75,7 +79,7 @@ export default class ETH extends Plugin {
         return privateKey;
     }
     convertsTo(){
-        return [Blockchains.EOS];
+        return [Blockchains.EOSIO];
     }
 
     async balanceFor(account, network, tokenAccount, symbol){
