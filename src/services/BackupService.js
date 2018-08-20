@@ -1,29 +1,15 @@
-const {remote} = window.require('electron');
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
 import {BACKUP_STRATEGIES} from '../models/Settings';
-import StorageService from '../services/StorageService';
-const fs = window.require('fs');
+import StorageService from './StorageService';
+import FileService from './FileService';
 
-const getLocation = () => remote.dialog.showOpenDialog({properties: ['openDirectory']});
 const getLatestScatter = () => StorageService.getScatter();
-const saveFile = (filepath) => {
-    return new Promise(resolve => {
-        const scatter = getLatestScatter();
-        const date = new Date();
-        const month = date.getUTCMonth();
-        const year = date.getUTCFullYear();
-        const salt = StorageService.getSalt();
-        const file = scatter + '|SLT|' + salt;
-        try {
-            fs.writeFileSync(`${filepath}/scatter_${month}-${year}.txt`, file, 'utf-8');
-            resolve(true);
-        }
-        catch(e) {
-            console.error('Error saving file', e);
-            resolve(false);
-        }
-    })
+const exportFile = (filepath = undefined) => {
+      const scatter = getLatestScatter();
+      const salt = StorageService.getSalt();
+      const file = scatter + '|SLT|' + salt;
+      return FileService.exportData(file, 'scatter_backup', filepath);
 };
 
 export default class BackupService {
@@ -35,17 +21,12 @@ export default class BackupService {
     }
 
     static async createBackup(){
-        const location = getLocation();
-        if(! location) return false;
-
-        await saveFile(location[0]);
+        await exportFile();
     }
 
     static async setBackupLocation(){
-        const location = getLocation();
-        if(!location) return false;
         const scatter = store.state.scatter.clone();
-        scatter.settings.backupLocation = location[0];
+        scatter.settings.backupLocation = FileService.getLocation();
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
@@ -57,7 +38,7 @@ export default class BackupService {
         const backupLocation = store.state.scatter.settings.backupLocation;
         if(!backupLocation || !backupLocation.length) return false;
 
-        await saveFile(backupLocation);
+        await exportFile(backupLocation);
     }
 
 }
