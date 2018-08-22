@@ -2,7 +2,6 @@ import {BlockchainsArray, Blockchains} from '../models/Blockchains';
 import PluginRepository from '../plugins/PluginRepository'
 import * as Actions from '../store/constants';
 
-import Alert from '../models/alerts/Alert'
 import PopupService from '../services/PopupService'
 import {Popup} from '../models/popups/Popup'
 
