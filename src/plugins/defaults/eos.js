@@ -40,6 +40,12 @@ const getAccountsFromPublicKey = (publicKey, network) => {
 
 const EXPLORERS = [
     {
+        name:'MyEOSKit',
+        account:account => `https://www.myeoskit.com/#/tx/${account.name}`,
+        transaction:id => `https://www.myeoskit.com/#/tx/${id}`,
+        block:id => `https://www.myeoskit.com/#/tx/${id}`
+    },
+    {
         name:'Bloks',
         account:account => `https://bloks.io/account/${account.name}`,
         transaction:id => `https://bloks.io/transaction/${id}`,
