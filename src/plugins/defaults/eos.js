@@ -27,8 +27,9 @@ const getAccountsFromPublicKey = (publicKey, network) => {
                 Promise.all(res.account_names.map(name => eos.getAccount(name).catch(e => resolve([])))).then(multires => {
                     let accounts = [];
                     multires.map(account => {
-                        account.permissions.map(permission => {
-                            accounts.push({name:account.account_name, authority:permission.perm_name});
+                        account.permissions.map(perm => {
+                            if(!!perm.required_auth.keys.find(x => x.key === publicKey))
+                                accounts.push({name:account.account_name, authority:perm.perm_name})
                         });
                     });
                     resolve(accounts)

@@ -16,10 +16,11 @@ export default class Hasher {
     /***
      * Hashes a cleartext using scrypt.
      * @param cleartext
+     * @param salt
      */
-    static async secureHash(cleartext) {
+    static async secureHash(cleartext, salt = null) {
         return new Promise(async resolve => {
-            const salt = await StorageService.getSalt();
+            if(!salt) salt = await StorageService.getSalt();
             scrypt(cleartext, salt, {
                 N: 16384,
                 r: 8,
