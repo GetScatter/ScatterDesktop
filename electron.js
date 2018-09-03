@@ -98,9 +98,7 @@ app.on('ready', function () {
 // });
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-    const isLocal =
-        url.startsWith('https://localhost') ||
-        url.startsWith('https://127.0.0.1');
+    const isLocal = url.startsWith('https://127.0.0.1');
     if (isLocal) {
         event.preventDefault()
         callback(true)
