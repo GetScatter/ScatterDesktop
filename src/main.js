@@ -53,6 +53,7 @@ import SuggestNetwork from './views/popouts/SuggestNetwork.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
 import GetPublicKey from './views/popouts/GetPublicKey.vue'
 import LinkAccount from './views/popouts/LinkAccount.vue'
+import TransferRequest from './views/popouts/TransferRequest.vue'
 
 // Reusable components
 import InputComponent from './components/reusable/InputComponent.vue'
@@ -130,6 +131,7 @@ class Main {
             {tag:'link-app', vue:LinkApp},
             {tag:'get-public-key', vue:GetPublicKey},
             {tag:'link-account', vue:LinkAccount},
+            {tag:'transfer-request', vue:TransferRequest},
 
             // GLOBALS
             {tag:'view-base', vue:ViewBase},

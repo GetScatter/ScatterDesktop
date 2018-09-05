@@ -18,29 +18,27 @@ const getNewKey = socket => new Promise((resolve, reject) => {
 
 const socketHandler = (socket) => {
 
+    // const testers = [
+    //     'connect_error',
+    //     'connect_timeout',
+    //     'error',
+    //     'disconnect',
+    //     'reconnect',
+    //     'reconnect_attempt',
+    //     'reconnecting',
+    //     'reconnect_error',
+    //     'reconnect_failed',
+    //     'ping',
+    //     'pong',
+    // ];
+    //
+    // testers.map(x => {
+    //     socket.on(x, e => console.error(x, e))
+    // });
 
-    console.log('socket', socket);
-
-    const testers = [
-        'connect_error',
-        'connect_timeout',
-        'error',
-        'disconnect',
-        'reconnect',
-        'reconnect_attempt',
-        'reconnecting',
-        'reconnect_error',
-        'reconnect_failed',
-        'ping',
-        'pong',
-    ];
-
-    testers.map(x => {
-        socket.on(x, e => console.error(x, e))
-    });
 
     // TODO: Testing the event system.
-    // Events are sent to the plugins to notify them of changes
+    // Events are sent to the applications to notify them of changes
     // such as identity changes, key removals, account un-linking
     // and scatter being locked.
     // setInterval(() => {

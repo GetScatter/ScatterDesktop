@@ -20,6 +20,8 @@
 
             <link-account v-if="popupType === apiActions.LINK_ACCOUNT" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></link-account>
 
+            <transfer-request v-if="popupType === apiActions.REQUEST_TRANSFER" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></transfer-request>
+
         </section>
 
 

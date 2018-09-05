@@ -192,6 +192,53 @@ export default class ApiService {
         })
     }
 
+    static async [Actions.REQUEST_TRANSFER](request){
+        return new Promise(resolve => {
+            console.log('request', request);
+
+            let {to, network, amount, options} = request.payload;
+            if(!options) options = {};
+
+            network = Network.fromJson(network);
+            if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
+
+            let symbol = '';
+            if(options.hasOwnProperty('symbol')) symbol = options.symbol;
+            else {
+                // TODO: Support fork chains
+                switch(network.blockchain){
+                    case Blockchains.EOSIO: symbol = 'EOS';
+                }
+            }
+
+            let contract = '';
+            if(options.hasOwnProperty('contract')) contract = options.contract;
+            else {
+                // TODO: Support fork chains
+                switch(network.blockchain){
+                    case Blockchains.EOSIO: contract = 'eosio.token';
+                }
+            }
+
+            request.payload.memo = network.blockchain === 'eos'
+                ? options.hasOwnProperty('memo') ? options.memo : ''
+                : '';
+
+            request.payload.symbol = symbol;
+            request.payload.contract = contract;
+
+
+
+            PopupService.push(Popup.popout(request, async ({result}) => {
+                if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the transfer request")});
+                const account = Account.fromJson(result.account);
+                const plugin = PluginRepository.plugin(network.blockchain);
+                const sent = await PluginRepository.plugin(network.blockchain).transfer(account, to, result.amount, network, contract, symbol, request.payload.memo, false);
+                resolve({id:request.id, result:sent})
+            }));
+        })
+    }
+
     /***
      * Requests a signature, prompts the user to confirm but signing happens
      * within the base application and not the popup itself.

@@ -130,7 +130,7 @@ export default class EOS extends Plugin {
     }
 
     async balanceFor(account, network, tokenAccount, symbol){
-        const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId});
+        const eos = Eos({httpEndpoint:`${network.fullhost()}`, chainId:network.chainId});
 
         const balances = await eos.getTableRows({
             json:true,
@@ -214,14 +214,20 @@ export default class EOS extends Plugin {
         })
     }
 
-    async transfer(account, to, amount, network, tokenAccount, symbol, memo){
+    async transfer(account, to, amount, network, tokenAccount, symbol, memo, promptForSignature = true){
         return new Promise(async (resolve, reject) => {
-            const signProvider = payload => this.passThroughProvider(payload, account, network, reject);
+            const signProvider = promptForSignature
+                ? payload => this.passThroughProvider(payload, account, network, reject)
+                : payload => this.signer(payload, account.publicKey);
 
             const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
             const contract = await eos.contract(tokenAccount);
-            resolve(await contract.transfer(account.name, to, amount, memo, { authorization:[account.formatted()] })
-                .catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
+            const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
+            resolve(await contract.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
+                .catch(error => {
+                    console.log('error', error);
+                    return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}
+                })
                 .then(result => result));
         })
     }

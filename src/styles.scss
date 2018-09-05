@@ -478,6 +478,7 @@ $speed:0.5s;
 .popout {
   .nonce {
     position:fixed;
+    z-index: 999999;
     bottom:10px;
     left:10px;
     border-radius:4px;
