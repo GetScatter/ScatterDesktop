@@ -51,10 +51,6 @@
                     <btn v-if="hasBackupLocation" text="Continue" large="true" v-on:clicked="nextStep()"></btn>
                     <btn v-if="!hasBackupLocation" text="Choose Automatic Backup Location" secondary="true" large="true" v-on:clicked="setBackupLocation()"></btn>
                 </section>
-
-
-                <!--<btn text="Import Account" secondary="1" v-on:clicked="importBlockchainAccount"></btn>-->
-                <!--<i class="name-terms">{{keypair.publicKey.length ? keypair.publicKey : 'Once you enter a valid private key you will see the public key here.'}}</i>-->
             </section>
 
 
@@ -134,8 +130,7 @@
             }
         },
         mounted(){
-//            this.step = STEPS.EXTENSION;
-//            this.nextStep();
+
         },
         methods: {
             nextStep(){
@@ -150,11 +145,11 @@
             setIdentityName(){
                 if(!Identity.nameIsValid(this.identityName)) return PopupService.push(Popup.invalidIdentityName());
 
-//                const scatter = this.scatter.clone();
-//                const identity = scatter.keychain.identities[0];
-//                identity.name = this.identityName;
-//                scatter.keychain.updateOrPushIdentity(identity);
-//                this[Actions.SET_SCATTER](scatter);
+                const scatter = this.scatter.clone();
+                const identity = scatter.keychain.identities[0];
+                identity.name = this.identityName;
+                scatter.keychain.updateOrPushIdentity(identity);
+                this[Actions.SET_SCATTER](scatter);
                 this.nextStep();
             },
             async makePublicKey(){
