@@ -5,8 +5,10 @@ import {BACKUP_STRATEGIES} from '../models/Settings';
 import StorageService from '../services/StorageService';
 const fs = window.require('fs');
 
-const getLocation = () => remote.dialog.showOpenDialog({properties: ['openDirectory']});
+export const getFileLocation = () => remote.dialog.showOpenDialog();
+export const getFolderLocation = () => remote.dialog.showOpenDialog({properties: ['openDirectory']});
 const getLatestScatter = () => StorageService.getScatter();
+
 const saveFile = (filepath) => {
     return new Promise(resolve => {
         const scatter = getLatestScatter();
@@ -35,14 +37,14 @@ export default class BackupService {
     }
 
     static async createBackup(){
-        const location = getLocation();
+        const location = getFolderLocation();
         if(! location) return false;
 
         await saveFile(location[0]);
     }
 
     static async setBackupLocation(){
-        const location = getLocation();
+        const location = getFolderLocation();
         if(!location) return false;
         const scatter = store.state.scatter.clone();
         scatter.settings.backupLocation = location[0];

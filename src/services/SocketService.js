@@ -138,7 +138,7 @@ export default class SocketService {
 
     static initialize(){
         const server = window.require('http').createServer();
-        server.listen(50005, 'localhost');
+        server.listen(50005, '127.0.0.1');
         io = window.require('socket.io').listen(server, {
             pingTimeout:100000000000000000
         });

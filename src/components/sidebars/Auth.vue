@@ -11,7 +11,7 @@
                 <cin placeholder="Password" type="password" v-on:enter="create" :text="password" v-on:changed="changed => bind(changed, 'password')"></cin>
                 <cin placeholder="Confirm Password" type="password" v-on:enter="create" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
                 <btn class="dropped" v-on:clicked="create" text="Create new Scatter" full="true" large="true"></btn>
-                <btn disabled="true" text="Import from Backup" full="true"></btn>
+                <btn text="Import from Backup" v-on:clicked="importBackup" full="true"></btn>
             </section>
 
             <section class="inputs" v-else>
@@ -30,9 +30,12 @@
     import {RouteNames} from '../../vue/Routing'
 
     import SocketService from '../../services/SocketService'
+    import BackupService, {getFileLocation} from '../../services/BackupService'
     import PasswordService from '../../services/PasswordService'
+    import StorageService from '../../services/StorageService'
     import PopupService from "../../services/PopupService";
     import {Popup} from '../../models/popups/Popup'
+    const fs = window.require('fs');
 
     export default {
         name: 'Auth',
@@ -74,6 +77,21 @@
                 } else {
                     failed();
                 }
+            },
+            importBackup(){
+                const file = getFileLocation()[0];
+                if(!file) return;
+
+                fs.readFile(file, 'utf-8', (err, data) => {
+                    if(err) return alert("Could not read the backup file.");
+
+                    const [obj, salt] = data.split('|SLT|');
+                    if(!obj || !salt) return alert("Error parsing backup");
+
+                    StorageService.setSalt(salt);
+                    StorageService.setScatter(obj);
+                    location.reload();
+                });
             },
             ...mapActions([
                 Actions.SET_SEED,
