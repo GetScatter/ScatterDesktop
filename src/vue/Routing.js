@@ -6,6 +6,7 @@ import Settings from '../views/Settings.vue'
 import PopOut from '../views/PopOut.vue'
 import Permissions from '../views/Permissions.vue'
 import Transfers from '../views/Transfers.vue'
+import Dashboard from '../views/Dashboard.vue'
 import Help from '../views/Help.vue'
 import Reputation from '../views/Reputation.vue'
 import SetupAnIdentity from '../views/wizards/SetupAnIdentity.vue'
@@ -17,6 +18,7 @@ import ImportKeypair from '../views/wizards/ImportKeypair.vue'
 export const RouteNames = {
     LOGIN:'login',
     ONBOARDING:'onboarding',
+    DASHBOARD:'dashboard',
     TRANSFER:'transfer',
     IDENTITIES:'identities',
     BLOCKCHAINS:'blockchains',
@@ -40,6 +42,7 @@ export const RouteNames = {
 const RouteViews = {
     [RouteNames.LOGIN]:Login,
     [RouteNames.ONBOARDING]:Onboarding,
+    [RouteNames.DASHBOARD]:Dashboard,
     [RouteNames.TRANSFER]:Transfers,
     [RouteNames.IDENTITIES]:Identities,
     [RouteNames.REPUTATION]:Reputation,
@@ -58,6 +61,7 @@ const RouteViews = {
 export const RouteDepth = {
     [RouteNames.LOGIN]:-2,
     [RouteNames.ONBOARDING]:-1,
+    [RouteNames.DASHBOARD]:0,
     [RouteNames.TRANSFER]:1,
     [RouteNames.IDENTITIES]:2,
     [RouteNames.BLOCKCHAINS]:3,

@@ -1,10 +1,10 @@
 <template>
-    <aside class="main-menu">
+    <aside class="main-menu" :class="{'collapsed':collapsed}">
         <section class="panel">
 
             <section class="head">
                 <section class="logo">
-                    <figure class="grand-hotel">Scatter</figure>
+                    <figure class="grand-hotel">{{collapsed ? 'S' : 'Scatter'}}</figure>
                 </section>
                 <section class="window-actions">
                     <i class="fa fa-code" v-tooltip="'Open Console'" @click="openConsole"></i>
@@ -15,26 +15,27 @@
             <section class="links">
 
                 <section v-for="(link, index) in links" :key="index">
-
-                    <router-link :to="{name:link.disabled ? '' : link.route}" class="link" :class="{'disabled':link.disabled || link.onlyIfHasAccounts && !hasAccounts}">
-
+                    <router-link :to="{name:link.disabled ? '' : link.route}" class="link" v-if="!(link.disabled || link.onlyIfHasAccounts && !hasAccounts)"
+                                 :class="{'small':link.small, 'first-small':link.firstSmall}">
                         <figure class="text">
                             <i :class="link.icon"></i>
                             <span>{{link.name}}</span>
                         </figure>
                     </router-link>
-
-                    <figure class="line" v-if="link.separates"></figure>
                 </section>
 
-                <figure class="line"></figure>
-                <figure class="link" @click="quit">
+                <figure class="link small" @click="quit">
                     <figure class="text">
                         <i class="fa fa-power-off"></i>
                         <span>Quit</span>
                     </figure>
                 </figure>
 
+            </section>
+
+            <section class="collapser" @click="$emit('toggled')">
+                <i v-if="collapsed" class="fa fa-expand"></i>
+                <i v-if="!collapsed" class="fa fa-compress"></i>
             </section>
 
 
@@ -61,12 +62,13 @@
         data () {return {
             lines:[1,5],
             links:[
-                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane', onlyIfHasAccounts:true, separates:true},
+                {route:RouteNames.DASHBOARD, name:'Dashboard', icon:'fa fa-dashboard'},
+                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane', onlyIfHasAccounts:true},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
-                {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield', separates:true},
-                {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle'},
-                {route:RouteNames.SETTINGS, name:'Settings', icon:'fa fa-gear'},
+                {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield'},
+                {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle', small:true, firstSmall:true},
+                {route:RouteNames.SETTINGS, name:'Settings', icon:'fa fa-gear', small:true},
             ]
         }},
         computed:{
@@ -122,7 +124,8 @@
                     })
                 }
             },
-        }
+        },
+        props:['collapsed']
     }
 </script>
 
@@ -134,9 +137,25 @@
     }
 
     .main-menu {
-        width:270px;
+        width:100%;
+        max-width:270px;
         background:#fff;
         z-index:2;
+        position: relative;
+
+        .collapser {
+            position:absolute;
+            bottom:20px;
+            left:20px;
+            text-align:center;
+            color:$mid-light-grey;
+            transition: color 0.2s ease;
+            padding:10px;
+
+            &:hover {
+                color:$dark-blue;
+            }
+        }
 
         .head {
             .logo {
@@ -150,6 +169,8 @@
                 width:calc(100% - 80px);
                 float:right;
                 font-size:16px;
+                opacity:1;
+                visibility:visible;
 
                 i {
                     padding:10px;
@@ -168,7 +189,8 @@
                 box-shadow:inset 0 0 0 transparent, inset 0 0 0 transparent, inset 0 0 0 transparent, inset 0 0 0 transparent;
                 font-size:16px;
                 background:transparent;
-                transition: background 0.9s ease, padding 0.3s ease, box-shadow 0.5s ease, color 0.5s ease, border 0.4s ease;
+                transition: background 0.9s ease, padding 0.3s ease, box-shadow 0.5s ease, color 0.5s ease, border 0.4s ease, opacity 0.2s ease, font-size 0.2s ease;
+                visibility:visible;
 
                 &:hover, &.active, &.router-link-active {
                     &:not(.disabled){
@@ -207,6 +229,17 @@
                         margin-left:10px;
                     }
                 }
+
+                &.first-small {
+                    margin-top:80px;
+                }
+
+                &.small {
+                    padding:0;
+                    font-size:14px;
+                    height:40px;
+                    line-height:40px;
+                }
             }
 
             .line {
@@ -214,6 +247,63 @@
               height:10px;
               background:rgba(0,0,0,0.04);
               box-shadow:inset 0 1px 1px rgba(0,0,0,0.04);
+            }
+        }
+
+
+
+        &.collapsed {
+            max-width:70px;
+
+            .head {
+                .logo {
+                    color:$mid-light-grey;
+                    margin-left:-30px;
+                    margin-top:-1px;
+                    width:70px;
+                    height:70px;
+                    text-align:center;
+                    line-height:71px;
+                }
+
+                .window-actions {
+                    opacity:0;
+                    visibility:hidden;
+                }
+            }
+
+            .links {
+                overflow:hidden;
+                width:100%;
+                position: absolute;
+                top:60px;
+
+                .link {
+                    float:left;
+                    font-size:18px;
+                    width:100%;
+
+                    &:hover, &.active, &.router-link-active {
+                        &:not(.disabled){
+                            padding-left:0;
+                            box-shadow:inset 4px 0 0 $light-blue, inset 0 0 0 transparent;
+                        }
+                    }
+
+                    .text {
+                        text-align: center;
+                        padding:0;
+
+                        span {
+                            display:none;
+                            width:0;
+                        }
+                    }
+
+                    &.small {
+                        font-size:14px;
+                    }
+                }
             }
         }
     }

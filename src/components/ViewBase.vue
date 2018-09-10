@@ -6,10 +6,10 @@
             <section v-if="!onboarding">
                 <section v-if="hasSidebar()">
                     <auth class="sidebar" :class="{'hidden':routeNames.LOGIN !== $route.name}"></auth>
-                    <main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}"></main-menu>
+                    <main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}" :collapsed="collapsedMenu" v-on:toggled="toggleMenu"></main-menu>
                 </section>
 
-                <main :class="{'expanded':routeNames.LOGIN === $route.name, 'no-sidebar':!hasSidebar()}">
+                <main :class="{'expanded':routeNames.LOGIN === $route.name, 'no-sidebar':!hasSidebar(), 'collapsed-menu':collapsedMenu}">
 
                     <section style="background:red;"></section>
                     <transition :name="transitionName">
@@ -39,6 +39,7 @@
             transitionName:'',
             menuTransitionName:'',
             loggingIn:false,
+            collapsedMenu:false,
         }},
         computed:{
             ...mapState([
@@ -54,6 +55,9 @@
         methods:{
             hasSidebar(){
                 return Routing.hasSidebar(this.$route.name)
+            },
+            toggleMenu(){
+                this.collapsedMenu = !this.collapsedMenu;
             }
         },
         watch: {
@@ -100,6 +104,10 @@
 
         &.no-sidebar {
             width:100%;
+        }
+
+        &.collapsed-menu {
+            width:calc(100% - 70px);
         }
     }
 
