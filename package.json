@@ -137,7 +137,7 @@
     "not ie <= 8"
   ],
   "build": {
-    "productName": "Scatter Desktop",
+    "productName": "scatter",
     "appId": "com.get-scatter.server",
     "artifactName": "${os}-${productName}-${version}-${arch}.${ext}",
     "asar": true,
