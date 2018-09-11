@@ -84,19 +84,30 @@
 
                             <section class="right">
                                 <section class="switcher">
-                                    <figure class="switch">json</figure>
-                                    <figure class="switch active">human</figure>
+                                    <figure class="switch" :class="{'active':isShowingJson(message)}" @click="toggleJsonDisplay(message)">json</figure>
+                                    <figure class="switch" :class="{'active':!isShowingJson(message)}" @click="toggleJsonDisplay(message)">human</figure>
                                 </section>
                             </section>
                         </section>
 
-                        <section class="padded">
+                        <section class="padded" v-if="!isShowingJson(message)">
                             <section class="key-value" v-for="(value,key) in message.data">
-                                <figure class="key">{{key}}</figure>
+                                <figure class="key"><b>{{key}}</b></figure>
                                 <figure class="whitelister" v-if="!!getWhitelist(message)">
                                     <input type="checkbox" @change="toggleWhitelistProp(getWhitelist(message), key)" />
                                 </figure>
-                                <figure class="value"><pre>{{value}}</pre></figure>
+                                <figure class="value" v-if="typeof value === 'object'">
+                                    <section class="dark" :ref="key + hash(value)">
+                                        <div :v-html="formatJson(value, key)"></div>
+                                    </section>
+                                </figure>
+                                <figure class="value" v-else><span class="bubbler">{{value}}</span></figure>
+                            </section>
+                        </section>
+
+                        <section class="padded" v-if="isShowingJson(message)">
+                            <section class="dark" :ref="hash(message)">
+                                <div :v-html="formatJson(message)"></div>
                             </section>
                         </section>
                     </section>
@@ -148,11 +159,14 @@
     import RIDLService from '../../services/RIDLService'
     import WindowService from '../../services/WindowService'
     import PluginRepository from '../../plugins/PluginRepository'
+    import Hasher from '../../util/Hasher'
+    import JSONFormatter from 'json-formatter-js'
 
     let foldInterval = null;
 
     export default {
         data () {return {
+            showingJson:[],
             showRicardians:false,
             identity:null,
             returnedFields:null,
@@ -238,6 +252,39 @@
 
         },
         methods: {
+            isShowingJson(message){
+                return this.showingJson.find(x => x === this.hash(message));
+            },
+            toggleJsonDisplay(message){
+                const hash = this.hash(message);
+                if(this.showingJson.includes(hash)) {
+                    const elem = this.$refs[hash][0];
+                    elem.removeChild(elem.children[1])
+                    this.showingJson = this.showingJson.filter(x => x !== hash);
+                }
+                else this.showingJson.push(hash);
+            },
+            hash(json){
+                return Hasher.insecureHash(JSON.stringify(json));
+            },
+            formatJson(json, key = null){
+                this.$nextTick(() => {
+                    const refKey = (key ? key : '') + this.hash(json);
+
+                    const formatter = new JSONFormatter(json, 99999, {
+                        hoverPreviewEnabled: true,
+                        hoverPreviewArrayCount: 10,
+                        hoverPreviewFieldCount: 5,
+                        theme: 'dark',
+                        animateOpen: true,
+                        animateClose: true,
+                        useToJSON: true
+                    });
+                    const elem = this.$refs[refKey][0];
+                    if(elem.children.length > 1) return false;
+                    elem.appendChild(formatter.render());
+                });
+            },
             async checkWarning(){
 
                 const contracts = this.payload.messages.map(x => x.code).reduce((acc, x) => {
@@ -342,6 +389,26 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables.scss";
+
+    .dark {
+        padding:20px;
+        width:100%;
+        background:#333;
+        border-radius:4px;
+        box-shadow:0 1px 0 #fff, 0 -1px 0 #000;
+        font-size: 13px;
+        font-weight: 400;
+        margin-top:4px;
+    }
+
+    .bubbler {
+        padding:6px 10px;
+        background:#fff;
+        display:block;
+        border-radius:4px;
+        box-shadow:0 1px 3px rgba(0,0,0,0.1);
+        margin-top:4px;
+    }
 
     .location-selector {
         width:300px;
