@@ -489,3 +489,28 @@ $speed:0.5s;
     font-weight: bold;
   }
 }
+
+.panel-shifter {
+
+  .options {
+    overflow: hidden;
+
+    .option {
+      cursor: pointer;
+      float:left;
+      border-bottom:2px solid transparent;
+      font-size: 18px;
+      padding-bottom:3px;
+
+      &.active, &:hover {
+        border-bottom:2px solid $dark-blue;
+        color:$dark-blue;
+      }
+
+      &:not(:last-child){
+        margin-right:20px;
+      }
+    }
+  }
+
+}

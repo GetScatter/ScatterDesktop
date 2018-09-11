@@ -8,64 +8,73 @@
 
             <section class="selected-item scrollable">
 
-                <section class="split-panels left">
-                    <section class="info-box top">
+                <section class="panel-shifter">
+                    <section class="info-box top" style="margin-bottom:10px;">
                         <cin :disabled="identity.ridl > 0" big="true" placeholder="Identity Name ( Username )" :text="identity.name" v-on:changed="changed => bind(changed, 'identity.name')"></cin>
-
-                        <btn v-if="!isNew" v-show="!showingPublicKey" v-on:clicked="showingPublicKey = !showingPublicKey" :text="`Show ID Proof`"></btn>
-                        <cin v-show="showingPublicKey" disabled="true" copy="true" :text="identity.publicKey"></cin>
 
                         <btn v-if="ridlActive && identity.ridl > 0" red="true" v-on:clicked="releaseRIDLIdentity" text="Release RIDL Identity"></btn>
                         <btn v-if="ridlActive && !isNew && identity.ridl <= 0" secondary="true" v-on:clicked="registerWithRIDL" text="Register / Claim RIDL Identity"></btn>
                     </section>
 
-                    <section class="info-box">
-                        <figure class="header">Personal Information</figure>
-                        <cin class="half" placeholder="First Name" :text="identity.personal.firstname" v-on:changed="changed => bind(changed, 'identity.personal.firstname')"></cin>
-                        <cin class="half" placeholder="Last Name" :text="identity.personal.lastname" v-on:changed="changed => bind(changed, 'identity.personal.lastname')"></cin>
-                        <cin placeholder="Email" :text="identity.personal.email" v-on:changed="changed => bind(changed, 'identity.personal.email')"></cin>
-                        <cin placeholder="Date of Birth" type="date" :text="identity.personal.birthdate" v-on:changed="changed => bind(changed, 'identity.personal.birthdate')"></cin>
+                    <section class="options">
+                        <figure class="option" v-for="p in PANELS" @click="panel = p" :class="{'active':panel === p}">{{p}}</figure>
                     </section>
+
+                    <section class="shited-panel" v-if="panel === PANELS.PROOFS">
+                        <section class="info-box">
+                            <cin disabled="true" copy="true" :text="identity.publicKey"></cin>
+                            <btn v-if="!isNew" v-on:clicked="generateQr" :text="`Generate Encrypted QR`"></btn>
+                            <section style="width:100%; margin-left:-15px;"><img :src="qr" /></section>
+                        </section>
+                    </section>
+
+                    <section class="shited-panel" v-if="panel === PANELS.PERSONAL">
+                        <section class="info-box">
+                            <cin placeholder="First Name" :text="identity.personal.firstname" v-on:changed="changed => bind(changed, 'identity.personal.firstname')"></cin>
+                            <cin placeholder="Last Name" :text="identity.personal.lastname" v-on:changed="changed => bind(changed, 'identity.personal.lastname')"></cin>
+                            <cin placeholder="Email" :text="identity.personal.email" v-on:changed="changed => bind(changed, 'identity.personal.email')"></cin>
+                            <cin placeholder="Date of Birth" type="date" :text="identity.personal.birthdate" v-on:changed="changed => bind(changed, 'identity.personal.birthdate')"></cin>
+                        </section>
+                    </section>
+
+                    <section class="shited-panel" v-if="panel === PANELS.LOCATION">
+                        <section class="info-box">
+
+                            <sel :selected="selectedLocation"
+                                 :options="identity.locations"
+                                 :parser="(location) => location.name.length ? location.name : 'Unnamed Location'"
+                                 v-on:changed="changed => bind(changed, 'selectedLocation')"></sel>
+
+                            <cin placeholder="Location Name" :text="selectedLocation.name" v-on:changed="changed => bind(changed, 'selectedLocation.name')"></cin>
+
+                            <btn v-on:clicked="addLocation" text="Add Another Location" secondary="true"></btn>
+                            <btn v-if="identity.locations.length > 1" v-on:clicked="removeLocation" text="Remove Selected Location" red="true"></btn>
+
+                            <br><br>
+
+                            <sel :placeholder="'Country'"
+                                 :options="countries"
+                                 :selected="selectedLocation.country"
+                                 :parser="(obj) => obj.name"
+                                 v-on:changed="changed => bind(changed, 'selectedLocation.country')"></sel>
+
+                            <br>
+                            <figure style="clear:both;"></figure>
+
+                            <cin placeholder="Phone" type="tel" :text="selectedLocation.phone" v-on:changed="changed => bind(changed, 'selectedLocation.phone')"></cin>
+                            <cin placeholder="Address" :text="selectedLocation.address" v-on:changed="changed => bind(changed, 'selectedLocation.address')"></cin>
+                            <cin placeholder="City" :text="selectedLocation.city" v-on:changed="changed => bind(changed, 'selectedLocation.city')"></cin>
+                            <cin :class="selectedLocation.country.code === 'US' ? 'quarter' : 'half'" placeholder="Postal Code" :text="selectedLocation.zipcode" v-on:changed="changed => bind(changed, 'selectedLocation.zipcode')"></cin>
+                            <cin class="quarter" placeholder="State" v-if="selectedLocation.country.code === 'US'" maxlength="2" :text="selectedLocation.state" v-on:changed="changed => bind(changed, 'selectedLocation.state')"></cin>
+
+                            <br><br>
+                        </section>
+                    </section>
+
                 </section>
 
-                <section class="split-panels">
-
-                    <section class="info-box">
-                        <figure class="header">Location Information</figure>
-
-                        <sel :selected="selectedLocation"
-                             :options="identity.locations"
-                             :parser="(location) => location.name.length ? location.name : 'Unnamed Location'"
-                             v-on:changed="changed => bind(changed, 'selectedLocation')"></sel>
-
-                        <cin placeholder="Location Name" :text="selectedLocation.name" v-on:changed="changed => bind(changed, 'selectedLocation.name')"></cin>
-
-                        <btn v-on:clicked="addLocation" text="Add Another Location" secondary="true"></btn>
-                        <btn v-if="identity.locations.length > 1" v-on:clicked="removeLocation" text="Remove Selected Location" red="true"></btn>
-
-                        <br><br>
-
-                        <sel :placeholder="'Country'"
-                             :options="countries"
-                             :selected="selectedLocation.country"
-                             :parser="(obj) => obj.name"
-                             v-on:changed="changed => bind(changed, 'selectedLocation.country')"></sel>
-
-                        <br>
-                        <figure style="clear:both;"></figure>
-
-                        <cin class="half" placeholder="Phone" type="tel" :text="selectedLocation.phone" v-on:changed="changed => bind(changed, 'selectedLocation.phone')"></cin>
-                        <cin class="half" placeholder="Address" :text="selectedLocation.address" v-on:changed="changed => bind(changed, 'selectedLocation.address')"></cin>
-                        <cin class="half" placeholder="City" :text="selectedLocation.city" v-on:changed="changed => bind(changed, 'selectedLocation.city')"></cin>
-                        <cin :class="selectedLocation.country.code === 'US' ? 'quarter' : 'half'" placeholder="Postal Code" :text="selectedLocation.zipcode" v-on:changed="changed => bind(changed, 'selectedLocation.zipcode')"></cin>
-                        <cin class="quarter" placeholder="State" v-if="selectedLocation.country.code === 'US'" maxlength="2" :text="selectedLocation.state" v-on:changed="changed => bind(changed, 'selectedLocation.state')"></cin>
-
-                        <br><br>
 
 
-
-                    </section>
-                </section>
               </section>
         </section>
 
@@ -83,18 +92,27 @@
     import {Popup} from '../../models/popups/Popup'
     import PopupService from '../../services/PopupService';
     import RIDLService from '../../services/RIDLService';
+    import QRService from '../../services/QRService';
 
     let saveTimeout = null;
+
+    const PANELS = {
+        PERSONAL:'Personal',
+        LOCATION:'Locations',
+        PROOFS:'Proofs'
+    }
 
     export default {
         name: 'Identity',
         data () {return {
+            panel:PANELS.PERSONAL,
+            PANELS:PANELS,
             ridlActive:false,
             identity:null,
             countries: Countries,
             selectedLocation:null,
-            showingPublicKey:false,
             ridlIdentity:null,
+            qr:'',
         }},
         computed:{
             ...mapState([
@@ -130,6 +148,9 @@
             })
         },
         methods: {
+            async generateQr(){
+                this.qr = await QRService.createQR(this.identity.privateKey)
+            },
             async registerWithRIDL(){
                 RIDLService.identify(this.identity);
             },

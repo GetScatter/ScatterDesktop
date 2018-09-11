@@ -62,8 +62,8 @@
         data () {return {
             lines:[1,5],
             links:[
-                {route:RouteNames.DASHBOARD, name:'Dashboard', icon:'fa fa-dashboard'},
-                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane', onlyIfHasAccounts:true},
+                {route:RouteNames.DASHBOARD, name:'Dashboard', icon:'fa fa-bar-chart-o'},
+//                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane', onlyIfHasAccounts:true},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield'},
@@ -144,6 +144,7 @@
         position: relative;
 
         .collapser {
+            cursor: pointer;
             position:absolute;
             bottom:20px;
             left:20px;
@@ -264,6 +265,8 @@
                     height:70px;
                     text-align:center;
                     line-height:71px;
+                    cursor: pointer !important;
+
                 }
 
                 .window-actions {
@@ -276,7 +279,7 @@
                 overflow:hidden;
                 width:100%;
                 position: absolute;
-                top:60px;
+                top:70px;
 
                 .link {
                     float:left;

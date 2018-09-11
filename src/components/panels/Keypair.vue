@@ -10,152 +10,170 @@
 
                 <cin big="true" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
 
-
-                <section class="split-panels left">
-                    <section class="info-box top">
-
-                        <section style="overflow: hidden;">
-                            <swch style="float:left;" v-if="isNew" first="Generate" second="Import" :selected="importingKey ? 'Generate' : 'Import'" v-on:switched="toggleImporting"></swch>
-                            <swch style="margin-left:5px; float:left;" v-if="isNew && importingKey" first="Desktop" second="Hardware" :selected="usingHardware ? 'Desktop' : 'Hardware'" v-on:switched="x => toggleExternalWallet()"></swch>
-                            <btn v-if="isNew" v-on:clicked="saveKeyPair" text="Save Keypair" style="float:right;"></btn>
-                        </section>
-                        <br>
-
-                        <br v-if="!usingHardware && isNew">
-                        <section class="blockchain-selector" :class="{'fork-support':forkSupport}">
-                            <sel v-tooltip.top-start="'Select a Blockchain'" v-if="!usingHardware && isNew" :selected="keypair.blockchain.toUpperCase()"
-                                 :options="blockchains"
-                                 :parser="blockchain => blockchain.value.toUpperCase()"
-                                 v-on:changed="blockchainChanged" :key="1"></sel>
-
-                            <figure v-if="isNew" class="fork-button">
-                                <section class="button" v-tooltip="'Use Fork'" @click="toggleFork">
-                                    <i class="fa fa-code-fork"></i>
-                                </section>
-                            </figure>
-                        </section>
-
-                        <section v-if="importingKey">
-                            <cin v-if="!usingHardware && isNew" @changed="makePublicKey" placeholder="Private Key" type="password"
-                                 :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
-                        </section>
-
-                        <swch v-if="!isNew" first="Show Key Data" second="Hide" :selected="qr === '' ? 'Show Key Data' : 'Hide'" v-on:switched="toggleQR"></swch>
-
-                        <transition name="fade">
-                            <cin v-if="isNew && ((keypair.fork && keypair.fork.length) || useFork)" :forced="keypair.fork.length"
-                                 placeholder="Enter the fork prefix"
-                                 :text="keypair.fork" v-on:changed="changed => bind(changed, 'keypair.fork')"></cin>
-                        </transition>
-
-                        <cin v-if="isNew || qr !== ''" :forced="usingHardware && keypair.publicKey.length"
-                             :placeholder="usingHardware && keypair.publicKey.length ? `Imported ${keypair.blockchain.toUpperCase()} Key` : 'Public Key'"
-                             disabled="true"
-                             :text="keypair.publicKey"
-                             :copy="!isNew"></cin>
-
-                        <btn v-if="isNew && !importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
-                        <btn v-if="isNew && keypair.publicKey.length && !usingHardware" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
-
-                        <section v-if="isNew && usingHardware">
-                            <br><br>
-                            <sel v-tooltip.top-start="'Select a Hardware Wallet'" :selected="keypair.external.type"
-                                 :options="externalWalletTypes"
-                                 v-on:changed="changedExternalWalletType" :key="'hardware_import'"></sel>
-                            <btn v-on:clicked="importKeyFromHardware" text="Import Hardware Key"></btn>
-                        </section>
+                <section class="panel-shifter" v-if="!isNew">
 
 
-
-                        <section style="width:100%; margin-left:-15px;">
-                            <img :src="qr" />
-                        </section>
-
+                    <section class="options" style="margin-top:30px;">
+                        <figure class="option" v-for="p in PANELS" @click="panel = p" :class="{'active':panel === p}">{{p}}</figure>
                     </section>
-                </section>
 
-                <section class="split-panels" v-if="!isNew">
-                    <section class="info-box top">
-                        <figure class="header">Import Accounts</figure>
+                    <section class="shited-panel" v-if="panel === PANELS.ACCOUNTS">
+                        <section class="split-panels">
+                            <section class="info-box top">
+                                <br><br>
 
-                        <sel :selected="selectedNetwork.name"
-                             :options="availableNetworks"
-                             :parser="network => network.name"
-                             v-on:changed="changed => bind(changed, 'selectedNetwork')" :key="1"></sel>
+                                <sel :selected="selectedNetwork.name"
+                                     :options="availableNetworks"
+                                     :parser="network => network.name"
+                                     v-on:changed="changed => bind(changed, 'selectedNetwork')" :key="1"></sel>
 
-                        <section v-if="isImportable">
-                            <br>
-                            <btn v-on:clicked="fetchAccounts" text="Fetch Accounts"></btn>
+                                <section v-if="isImportable">
+                                    <btn v-on:clicked="fetchAccounts" text="Fetch Accounts"></btn>
+                                    <btn v-if="availableAccounts.length" v-on:clicked="availableAccounts = []; fetchedAccounts = false;" text="Clear Fetched" secondary="1"></btn>
 
-                            <section v-if="fetchedAccounts">
-                                <br>
-                                <hr/>
-                                <figure class="header">Available Accounts</figure>
-                                <tags adder="true" v-if="filteredFetchedAccounts.length"
-                                      :items="filteredFetchedAccounts"
-                                      :parser="item => `${item.name}@${item.authority}`"
-                                      v-on:clicked="linkAccount"></tags>
-                                <figure v-else>
-                                    Either there are no accounts connected to this network for this public key, or the network could not be reached.
-                                </figure>
-                            </section>
-                        </section>
-
-                        <section v-if="!isImportable">
-                            <br>
-                            <btn v-on:clicked="linkKeypairToNetwork" text="Link to Network"></btn>
-                        </section>
-
-                        <section v-if="linkedAccounts.length">
-                            <br>
-                            <br>
-                            <hr/>
-                            <figure class="header">Linked Accounts / Keypairs</figure>
-
-                            <section class="list-item" v-for="account in linkedAccounts">
-                                <figure v-if="isEndorsedNetwork(account)" class="name" @click="openAccountInExplorer(account)" style="cursor:pointer;"><u>{{account.formatted()}}</u></figure>
-                                <figure v-else class="name">{{account.formatted()}}</figure>
-
-                                <figure class="date" v-if="account.network()">{{account.network().name}}</figure>
-
-                                <section v-if="account.blockchain() === blockchain.EOSIO && accountData(account)">
-                                    <p-bar color="orange" v-if="accountData(account).refund_request"
-                                           :used="+new Date() - +new Date(accountData(account).refund_request.request_time)"
-                                           :total="(86400*3*1000)"
-                                           :l-text="`Refunding on ${new Date(+new Date(accountData(account).refund_request.request_time)+(86400*3*1000)).toLocaleString()}`"
-                                           :r-text="refundAmount(account)"></p-bar>
-
-                                    <section v-if="accountData(account).total_resources">
-                                        <p-bar color="blue" :used="accountData(account).cpu_limit.used" :total="accountData(account).cpu_limit.max" l-text="CPU" :r-text="accountData(account).total_resources.cpu_weight"></p-bar>
-                                        <p-bar color="yellow" :used="accountData(account).net_limit.used" :total="accountData(account).net_limit.max" l-text="NET" :r-text="accountData(account).total_resources.net_weight"></p-bar>
-                                        <p-bar color="red" :used="accountData(account).ram_usage" :total="accountData(account).ram_quota" l-text="RAM"
-                                               :r-text="`${(accountData(account).ram_usage/1024).toFixed(2)}KB / ${(accountData(account).ram_quota/1024).toFixed(2)}KB`"></p-bar>
+                                    <section v-if="fetchedAccounts">
+                                        <br>
+                                        <hr/>
+                                        <figure class="header">Available Accounts</figure>
+                                        <tags adder="true" v-if="filteredFetchedAccounts.length"
+                                              :items="filteredFetchedAccounts"
+                                              :parser="item => `${item.name}@${item.authority}`"
+                                              v-on:clicked="linkAccount"></tags>
+                                        <figure v-else>
+                                            Either there are no accounts connected to this network for this public key, or the network could not be reached.
+                                        </figure>
                                     </section>
-
                                 </section>
 
+                                <section v-if="!isImportable">
+                                    <br>
+                                    <btn v-on:clicked="linkKeypairToNetwork" text="Link to Network"></btn>
+                                </section>
 
-                                <figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(account)">
-                                    <i class="fa fa-ban"></i>
-                                </figure>
+                                <section v-if="linkedAccounts.length">
+                                    <br>
+                                    <br>
+                                    <hr/>
+                                    <figure class="header">Linked Accounts / Keypairs</figure>
 
-                                <figure v-if="account.blockchain() === blockchain.EOSIO" class="separator"></figure>
+                                    <section class="list-item" v-for="account in linkedAccounts">
+                                        <figure v-if="isEndorsedNetwork(account)" class="name" @click="openAccountInExplorer(account)" style="cursor:pointer;"><u>{{account.formatted()}}</u></figure>
+                                        <figure v-else class="name">{{account.formatted()}}</figure>
 
-                                <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">
-                                    <i class="fa fa-microchip"></i>
-                                </figure>
+                                        <figure class="date" v-if="account.network()">{{account.network().name}}</figure>
 
-                                <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">
-                                    <i class="fa fa-globe"></i>
-                                </figure>
+                                        <section v-if="account.blockchain() === blockchain.EOSIO && accountData(account)">
+                                            <p-bar color="orange" v-if="accountData(account).refund_request"
+                                                   :used="+new Date() - +new Date(accountData(account).refund_request.request_time)"
+                                                   :total="(86400*3*1000)"
+                                                   :l-text="`Refunding on ${new Date(+new Date(accountData(account).refund_request.request_time)+(86400*3*1000)).toLocaleString()}`"
+                                                   :r-text="refundAmount(account)"></p-bar>
 
-                                <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">
-                                    <i class="fa fa-refresh"></i>
-                                </figure>
+                                            <section v-if="accountData(account).total_resources">
+                                                <p-bar color="blue" :used="accountData(account).cpu_limit.used" :total="accountData(account).cpu_limit.max" l-text="CPU" :r-text="accountData(account).total_resources.cpu_weight"></p-bar>
+                                                <p-bar color="yellow" :used="accountData(account).net_limit.used" :total="accountData(account).net_limit.max" l-text="NET" :r-text="accountData(account).total_resources.net_weight"></p-bar>
+                                                <p-bar color="red" :used="accountData(account).ram_usage" :total="accountData(account).ram_quota" l-text="RAM"
+                                                       :r-text="`${(accountData(account).ram_usage/1024).toFixed(2)}KB / ${(accountData(account).ram_quota/1024).toFixed(2)}KB`"></p-bar>
+                                            </section>
+
+                                        </section>
+
+
+                                        <figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(account)">
+                                            <i class="fa fa-ban"></i>
+                                        </figure>
+
+                                        <figure v-if="account.blockchain() === blockchain.EOSIO" class="separator"></figure>
+
+                                        <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">
+                                            <i class="fa fa-microchip"></i>
+                                        </figure>
+
+                                        <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">
+                                            <i class="fa fa-globe"></i>
+                                        </figure>
+
+                                        <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">
+                                            <i class="fa fa-refresh"></i>
+                                        </figure>
+                                    </section>
+                                </section>
                             </section>
                         </section>
                     </section>
+
+
+                    <section class="shited-panel" v-if="panel === PANELS.PROOFS">
+                        <section class="info-box">
+                            <cin forced="1" placeholder="Public Key" disabled="true" :text="keypair.publicKey" :copy="true"></cin>
+                            <btn v-on:clicked="generateQR" text="Generate Encrypted QR"></btn>
+                            <section style="width:100%; margin-left:-15px;"><img :src="qr" /></section>
+                        </section>
+                    </section>
+
                 </section>
+
+                <section v-else>
+                    <section class="split-panels left">
+                        <section class="info-box top">
+
+                            <section style="overflow: hidden;">
+                                <swch style="float:left;" first="Generate" second="Import" :selected="importingKey ? 'Generate' : 'Import'" v-on:switched="toggleImporting"></swch>
+                                <swch style="margin-left:5px; float:left;" v-if="importingKey" first="Desktop" second="Hardware" :selected="usingHardware ? 'Desktop' : 'Hardware'" v-on:switched="x => toggleExternalWallet()"></swch>
+                                <btn v-on:clicked="saveKeyPair" text="Save Keypair" style="float:right;"></btn>
+                            </section>
+                            <br>
+
+                            <br v-if="!usingHardware">
+                            <section class="blockchain-selector" :class="{'fork-support':forkSupport}">
+                                <sel v-tooltip.top-start="'Select a Blockchain'" v-if="!usingHardware" :selected="keypair.blockchain.toUpperCase()"
+                                     :options="blockchains"
+                                     :parser="blockchain => blockchain.value.toUpperCase()"
+                                     v-on:changed="blockchainChanged" :key="1"></sel>
+
+                                <figure v-if="!usingHardware" class="fork-button">
+                                    <section class="button" v-tooltip="'Use Fork'" @click="toggleFork">
+                                        <i class="fa fa-code-fork"></i>
+                                    </section>
+                                </figure>
+                            </section>
+
+                            <section v-if="importingKey">
+                                <cin v-if="!usingHardware" @changed="makePublicKey" placeholder="Private Key" type="password"
+                                     :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                            </section>
+
+
+                            <transition name="fade">
+                                <cin v-if="((keypair.fork && keypair.fork.length) || useFork)" :forced="keypair.fork.length"
+                                     placeholder="Enter the fork prefix"
+                                     :text="keypair.fork" v-on:changed="changed => bind(changed, 'keypair.fork')"></cin>
+                            </transition>
+
+                            <cin :forced="usingHardware && keypair.publicKey.length"
+                                 :placeholder="usingHardware && keypair.publicKey.length ? `Imported ${keypair.blockchain.toUpperCase()} Key` : 'Public Key'"
+                                 disabled="true" :text="keypair.publicKey"></cin>
+
+                            <btn v-if="!importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
+                            <btn v-if="keypair.publicKey.length && !usingHardware" v-on:clicked="copyKeyPair" :red="keypair.publicKey.length" text="Copy Private Key" :secondary="!keypair.publicKey.length"></btn>
+
+                            <section v-if="usingHardware">
+                                <br><br>
+                                <sel v-tooltip.top-start="'Select a Hardware Wallet'" :selected="keypair.external.type"
+                                     :options="externalWalletTypes"
+                                     v-on:changed="changedExternalWalletType" :key="'hardware_import'"></sel>
+                                <btn v-on:clicked="importKeyFromHardware" text="Import Hardware Key"></btn>
+                            </section>
+
+                        </section>
+                    </section>
+                </section>
+
+
+
+
+
+
             </section>
         </section>
 
@@ -181,9 +199,16 @@
 
     let saveTimeout = null;
 
+    const PANELS = {
+        ACCOUNTS:'Accounts',
+        PROOFS:'Proofs'
+    }
+
     export default {
         name: 'Keypair',
         data () {return {
+            panel:PANELS.ACCOUNTS,
+            PANELS:PANELS,
             useFork:false,
             externalWalletTypes:EXT_WALLET_TYPES_ARR,
             usingHardware:false,
@@ -334,9 +359,8 @@
                     if(isValid) this.keypair.publicKey = key;
                 });
             },
-            async toggleQR(){
-                if(this.qr === '') this.qr = await QRService.createQR(this.keypair.privateKey);
-                else this.qr = '';
+            async generateQR(){
+                this.qr = await QRService.createQR(this.keypair.privateKey);
             },
             async linkKeypairToNetwork(){
                 await AccountService.addAccountFromKeypair(this.keypair, this.selectedNetwork);
