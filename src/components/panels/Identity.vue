@@ -16,8 +16,8 @@
                         <btn v-if="ridlActive && !isNew && identity.ridl <= 0" secondary="true" v-on:clicked="registerWithRIDL" text="Register / Claim RIDL Identity"></btn>
                     </section>
 
-                    <section class="options">
-                        <figure class="option" v-for="p in PANELS" @click="panel = p" :class="{'active':panel === p}">{{p}}</figure>
+                    <section class="shifter-options">
+                        <figure class="shifter-option" v-for="p in PANELS" @click="panel = p" :class="{'active':panel === p}">{{p}}</figure>
                     </section>
 
                     <section class="shited-panel" v-if="panel === PANELS.PROOFS">

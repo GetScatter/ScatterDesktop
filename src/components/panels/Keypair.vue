@@ -1,7 +1,7 @@
 <template>
     <section>
 
-        <section>
+        <section v-if="selectedNetwork">
             <section class="head">
                 <i class="fa fa-trash-o" @click="deleteKeyPair" v-tooltip="'Delete Keypair'"></i>
             </section>
@@ -13,8 +13,8 @@
                 <section class="panel-shifter" v-if="!isNew">
 
 
-                    <section class="options" style="margin-top:30px;">
-                        <figure class="option" v-for="p in PANELS" @click="panel = p" :class="{'active':panel === p}">{{p}}</figure>
+                    <section class="shifter-options" style="margin-top:30px;">
+                        <figure class="shifter-option" v-for="p in PANELS" @click="panel = p" :class="{'active':panel === p}">{{p}}</figure>
                     </section>
 
                     <section class="shited-panel" v-if="panel === PANELS.ACCOUNTS">
@@ -212,7 +212,7 @@
             useFork:false,
             externalWalletTypes:EXT_WALLET_TYPES_ARR,
             usingHardware:false,
-            importingKey:false,
+            importingKey:true,
             blockchain:Blockchains,
             blockchains:BlockchainsArray,
             selectedNetwork:null,
@@ -254,9 +254,8 @@
         },
         mounted(){
             this.keypair = this.kp;
-            this.selectedNetwork = this.availableNetworks[0];
+            this.setDefaultSelectedNetwork();
             this.fetchAccountDatum();
-
             PluginRepository.signatureProviders().map(async plugin => {
                 const endorsed = await plugin.getEndorsedNetwork();
                 const net = this.networks.find(x => x.hostport() === endorsed.hostport());
@@ -269,6 +268,11 @@
         },
         props:['kp'],
         methods: {
+            async setDefaultSelectedNetwork(){
+                const endorsed = await PluginRepository.plugin(this.keypair.blockchain).getEndorsedNetwork();
+                this.selectedNetwork = this.networks.find(x => x.unique() === endorsed.unique()) || this.availableNetworks[0];
+                return true;
+            },
             toggleFork(){
                 this.keypair.fork = '';
                 this.useFork = !this.useFork;
@@ -380,8 +384,11 @@
             },
             async fetchAccounts(){
                 this.fetchedAccounts = false;
-                this.availableAccounts = await AccountService.getImportableAccounts(this.keypair, this.selectedNetwork);
+                this.availableAccounts = await this.fetchAccountsWithoutBinding();
                 this.fetchedAccounts = true;
+            },
+            async fetchAccountsWithoutBinding(){
+                return await AccountService.getImportableAccounts(this.keypair, this.selectedNetwork);
             },
             deleteKeyPair(){
                 PopupService.promptGuard(Popup.prompt(
@@ -444,9 +451,23 @@
                     "Yes",
                     accepted => {
                         if(!accepted) return;
-                        KeyPairService.saveKeyPair(this.keypair, () => {
+                        KeyPairService.saveKeyPair(this.keypair, async () => {
                             PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
                             this.$emit('selected', this.keypair.clone());
+                            await this.setDefaultSelectedNetwork();
+                            if(this.isImportable) {
+                                const accounts = await this.fetchAccountsWithoutBinding();
+                                PopupService.push(Popup.selector('Select Account', 'Select an Account to import', 'address-book', accounts, x => x.formatted(), selected => {
+                                    this.linkAccount(selected);
+                                }))
+                            } else {
+                                const account = Account.fromJson({
+                                    keypairUnique:this.keypair.unique(),
+                                    networkUnique:this.selectedNetwork.unique(),
+                                    publicKey:this.keypair.publicKey,
+                                })
+                                this.linkAccount(account)
+                            }
                         });
                     },
                     "Go Back"));
