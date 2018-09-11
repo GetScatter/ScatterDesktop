@@ -11,6 +11,10 @@ export default class Account {
         this.authority = '';
     }
 
+    sendable(){
+        return PluginRepository.plugin(this.blockchain()).accountsAreImported() ? this.name : this.publicKey;
+    }
+
     formatted(){
         return PluginRepository.plugin(this.blockchain()).accountFormatter(this);
     }

@@ -6,7 +6,7 @@
             <section class="selected-item scrollable" style="height:100vh">
 
                 <figure class="name" style="padding-bottom:10px; border-bottom:1px solid rgba(0,0,0,0.1); margin-bottom:20px;">
-                    Transfer Tokens
+                    Receive Tokens
                 </figure>
 
                 <section>
@@ -16,10 +16,29 @@
                          v-on:changed="selectAccount"></sel>
                 </section>
 
-                <section v-if="account && token">
+                <section class="account-info">
+                    <figure class="line"></figure>
 
-                    <section class="split-panels left">
-                        <section class="info-box">
+                    <b>You can accept tokens at this address</b>
+                    <figure style="margin-top:-10px">
+                        <cin :text="account.sendable()" placeholder="" disabled="true" copy="true"></cin>
+                    </figure>
+
+                    <figure class="line"></figure>
+
+                    <b>Or Create a Reusable QR</b>
+
+                    <section v-if="account && token">
+
+                        <section v-if="qr">
+                            <btn text="Clear QR Code" large="true" v-on:clicked="clearQR"></btn>
+                            <section style="width:200px; margin-left:-15px;">
+                                <img :src="qr" />
+                            </section>
+                        </section>
+
+
+                        <section class="info-box" v-if="!qr" style="margin-top:0;">
 
                             <swch first="Token Selector" second="Custom Token" :selected="customToken ? 'Token Selector' : 'Custom Token'" v-on:switched="toggleCustomToken"></swch>
 
@@ -37,24 +56,12 @@
                                 <cin placeholder="Custom Token Account" :text="token.account" v-on:changed="changed => bind(changed, 'token.account')"></cin>
                             </section>
 
-                            <br>
-                            <cin disabled="true" forced="true" placeholder="Transferable Tokens" :text="`${tokenBalance} ${token.symbol}`"></cin>
-
-                        </section>
-                    </section>
-
-                    <section class="split-panels">
-                        <section class="info-box top">
-
-                            <section v-if="tokenBalance > 0">
-                                <section style="overflow:hidden;">
-                                    <cin class="half-input" placeholder="Recipient Account" :text="to" v-on:changed="changed => bind(changed, 'to')"></cin>
-                                    <cin class="half-input" placeholder="Quantity" type="number" :text="amount" v-on:changed="changed => bind(changed, 'amount')"></cin>
-                                </section>
-                                <cin placeholder="Memo" :text="memo" v-on:changed="changed => bind(changed, 'memo')"></cin>
-                                <br>
-                                <btn :disabled="sending" style="float:right;" text="Send Tokens" :red="true" large="true" v-on:clicked="send"></btn>
+                            <section style="overflow:hidden;">
+                                <cin class="half-input" placeholder="Quantity ( Optional )" type="number" :text="amount" v-on:changed="changed => bind(changed, 'amount')"></cin>
+                                <cin class="half-input" placeholder="Memo ( Optional )" :text="memo" v-on:changed="changed => bind(changed, 'memo')"></cin>
                             </section>
+                            <br>
+                            <btn style="float:right;" text="Create QR Code" large="true" v-on:clicked="generateQR"></btn>
 
                         </section>
                     </section>
@@ -77,6 +84,7 @@
 
     import {Popup} from '../../models/popups/Popup'
     import PopupService from '../../services/PopupService';
+    import QRService from '../../services/QRService';
 
     import PluginRepository from '../../plugins/PluginRepository';
     import {Blockchains} from '../../models/Blockchains';
@@ -87,7 +95,6 @@
         data () {return {
             account:null,
 
-            to:'',
             amount:0,
             memo:'',
 
@@ -95,9 +102,9 @@
 
             token:null,
             tokens:[],
-            tokenBalance:0,
 
             customToken:false,
+            qr:null,
         }},
         computed:{
             ...mapState([
@@ -119,13 +126,6 @@
             this.initTokens();
         },
         methods: {
-            selectAccount(account){
-                this.account = account;
-                this.initTokens();
-            },
-            toggleCustomToken(){
-                this.customToken = !this.customToken;
-            },
             async initTokens(){
                 this.token = null;
                 await PluginRepository.plugin(this.account.blockchain()).fetchTokens(this.tokens);
@@ -134,52 +134,35 @@
                     case Blockchains.ETH: this.token = this.tokens.find(x => x.symbol === 'ETH'); break;
                 }
                 if(!this.token) this.token = this.tokens[0];
-                this.setTokenBalance();
+            },
+            selectAccount(account){
+                this.account = account;
+                this.initTokens();
+            },
+            toggleCustomToken(){
+                this.customToken = !this.customToken;
             },
 
             selectToken(token){
                 this.token = token;
                 this.setTokenBalance();
             },
-
-            async setTokenBalance(){
-                this.tokenBalance = await PluginRepository.plugin(this.account.blockchain()).balanceFor(this.account, this.network, this.token.account, this.token.symbol);
+            async generateQR(){
+                this.qr = await QRService.createUnEncryptedQR({
+                    blockchain:this.account.blockchain(),
+                    chainId:this.account.network.chainId,
+                    account:this.account.sendable(),
+                    token:{
+                        symbol:this.token.symbol,
+                        account:this.token.account
+                    },
+                    amount:this.amount,
+                    memo:this.memo
+                });
             },
-
-            async send(){
-                if(parseFloat(this.amount) <= 0) return PopupService.push(Popup.prompt("Invalid Amount", "You must send an amount greater than 0", "ban", "Okay"));
-                if(!this.to.trim().length) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "ban", "Okay"));
-
-                this.sending = true;
-                if(this.account.blockchain() === Blockchains.EOSIO) this.sendEosTokens();
+            clearQR(){
+                this.qr = null;
             },
-
-            async sendEosTokens(){
-                const decimals = this.tokenBalance.toString().split('.')[1].length || 4;
-                const amount = parseFloat(this.amount).toFixed(decimals);
-                this.amount = amount;
-
-
-                const transfer = await PluginRepository.plugin(this.account.blockchain())
-                    .transfer(
-                        this.account,
-                        this.to,
-                        `${amount} ${this.token.symbol}`,
-                        this.network,
-                        this.token.account,
-                        this.token.symbol,
-                        this.memo
-                    ).catch(x => x);
-
-                if(transfer !== null) {
-                    if (transfer.hasOwnProperty('error')) PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
-                    else PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, transfer.transaction_id))
-                }
-
-                this.sending = false;
-                await this.setTokenBalance();
-            },
-
             ...mapActions([
                 Actions.SET_SCATTER
             ])
@@ -197,6 +180,12 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
+
+    .line {
+        height:1px; width:100%;
+        background:rgba(0,0,0,0.1);
+        margin:30px 0;
+    }
 
     .half-input {
         width:calc(50% - 10px);

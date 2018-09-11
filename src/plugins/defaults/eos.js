@@ -144,6 +144,25 @@ export default class EOS extends Plugin {
         return row ? row.balance.split(" ")[0] : 0;
     }
 
+    async historyFor(account, network){
+        const eos = Eos({httpEndpoint:`${network.fullhost()}`, chainId:network.chainId});
+        return await eos.getActions(account.name).then(histories => {
+            return histories.actions.map(x => {
+                return {
+                    blockchain:Blockchains.EOSIO,
+                    account:account.unique(),
+                    timestamp:+new Date(x.block_time),
+                    trx:x.action_trace.trx_id,
+                    data:{
+                        contract:x.action_trace.act.account,
+                        action:x.action_trace.act.name,
+                        params:x.action_trace.act.data
+                    }
+                }
+            });
+        });
+    }
+
     async fetchTokens(tokens){
         tokens.push({symbol:'EOS', account:'eosio.token', name:'EOS'});
         const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);

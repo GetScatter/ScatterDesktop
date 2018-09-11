@@ -31,4 +31,8 @@ export default class QRService {
         })
     }
 
+    static async createUnEncryptedQR(data){
+        return QRCode.toDataURL(JSON.stringify(data), {errorCorrectionLevel: 'L'});
+    }
+
 }

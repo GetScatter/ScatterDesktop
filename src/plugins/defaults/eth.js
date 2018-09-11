@@ -86,6 +86,10 @@ export default class ETH extends Plugin {
         return 0;
     }
 
+    async historyFor(account, network){
+        return [];
+    }
+
     actionParticipants(payload){
         return ObjectHelpers.flatten(
             payload.messages

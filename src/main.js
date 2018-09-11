@@ -19,6 +19,7 @@ import Auth from './components/sidebars/Auth.vue'
 import Identity from './components/panels/Identity.vue'
 import Keypair from './components/panels/Keypair.vue'
 import Network from './components/panels/Network.vue'
+import Receive from './components/panels/Receive.vue'
 import Transfer from './components/panels/Transfer.vue'
 import NothingHere from './components/panels/NothingHere.vue'
 import Terms from './components/panels/Terms.vue'
@@ -98,6 +99,7 @@ class Main {
             {tag:'keypair', vue:Keypair},
             {tag:'network', vue:Network},
             {tag:'transfer', vue:Transfer},
+            {tag:'receive', vue:Receive},
             {tag:'terms', vue:Terms},
             {tag:'nothing-here', vue:NothingHere},
             {tag:'origin-perms', vue:OriginPermissions},
