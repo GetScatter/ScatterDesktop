@@ -16,7 +16,7 @@
                          v-on:changed="selectAccount"></sel>
                 </section>
 
-                <section class="account-info">
+                <section class="account-info" v-if="account">
                     <figure class="line"></figure>
 
                     <b>You can accept tokens at this address</b>
@@ -150,15 +150,19 @@
             async generateQR(){
                 this.qr = await QRService.createUnEncryptedQR({
                     blockchain:this.account.blockchain(),
-                    chainId:this.account.network.chainId,
-                    account:this.account.sendable(),
-                    token:{
-                        symbol:this.token.symbol,
-                        account:this.token.account
-                    },
-                    amount:this.amount,
-                    memo:this.memo
+                    chainId:this.account.network().chainId,
+                    network:this.account.network().fullhost(),
+                    transfer:{
+                        token:{
+                            symbol:this.token.symbol,
+                            account:this.token.account
+                        },
+                        to:this.account.sendable(),
+                        quantity:this.amount,
+                        memo:this.memo
+                    }
                 });
+                console.log(this.qr);
             },
             clearQR(){
                 this.qr = null;

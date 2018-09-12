@@ -5,6 +5,7 @@
             <section class="head">
                 <section class="logo">
                     <figure class="grand-hotel">{{collapsed ? 'S' : 'Scatter'}}</figure>
+                    <figure class="version" v-if="!collapsed">{{scatter.meta.getVersion()}}</figure>
                 </section>
                 <section class="window-actions">
                     <i class="fa fa-code" v-tooltip="'Open Console'" @click="openConsole"></i>
@@ -163,6 +164,16 @@
                 color:$mid-light-grey;
                 width:80px;
                 float:left;
+                position: relative;
+
+                .version {
+                    font-size:11px;
+                    position: absolute;
+                    top:-10px;
+                    right:0;
+                    font-weight: bold;
+                    font-family: 'Roboto',sans-serif;
+                }
             }
 
             .window-actions {

@@ -8,6 +8,10 @@ export default class Meta {
         this.acceptedTerms = false;
     }
 
+    getVersion(){
+        return app.getVersion();
+    }
+
     regenerateVersion(){
         this.version = app.getVersion();
     }

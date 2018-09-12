@@ -28,6 +28,10 @@
                             <figure class="icon receive"><i class="fa fa-arrow-down"></i></figure>
                             <figure class="label">Receive</figure>
                         </figure>
+                        <figure class="action-button" @click="refresh">
+                            <figure class="icon outline send"><i class="fa fa-refresh"></i></figure>
+                            <figure class="label">Refresh</figure>
+                        </figure>
                     </section>
                 </section>
             </section>
@@ -42,7 +46,7 @@
                     <section v-if="panel === PANELS.RECENT">
                         <section class="list-header"></section>
                         <section class="list-items">
-                            <figure class="list-item" v-for="history in histories">
+                            <figure class="list-item" v-for="history in filterWithTerms(histories)">
                                 <figure class="button blue" v-tooltip.left="'Open Transaction with '+explorerName(history.blockchain)" @click="openTransaction(history.blockchain, history.trx)">
                                     <i class="fa fa-link"></i>
                                 </figure>
@@ -73,7 +77,7 @@
                                     {{getAccount(accountUnique).network().name}}
                                 </figure>
                                 <figure class="date" style="margin-top:5px;">
-                                    <figure class="token-balance" v-for="t in bals">
+                                    <figure class="token-balance" v-for="t in filterWithTerms(bals)">
                                         <b class="token-symbol">{{t.symbol}}</b> {{t.balance}} <b v-if="prices.hasOwnProperty(t.symbol)">(${{parseFloat(prices[t.symbol]*t.balance).toFixed(2)}})</b>
                                     </figure>
                                 </figure>
@@ -148,11 +152,20 @@
             },
         },
         mounted(){
-            this.getRecentActivity();
-            this.getBalances();
-            this.getPrices();
+            this.refresh();
         },
         methods: {
+            refresh(){
+                this.getRecentActivity();
+                this.getBalances();
+                this.getPrices();
+            },
+            filterWithTerms(arrayOfAnything){
+                return arrayOfAnything.filter(x => {
+                    if(typeof x === 'object') return JSON.stringify(x).toLowerCase().indexOf(this.terms.toLowerCase()) > -1
+                    else return x.toString().toLowerCase().indexOf(this.terms.toLowerCase()) > -1
+                })
+            },
             async setTotalBalance(){
                 const totals = {};
                 Object.keys(this.balances).map(acc => {
@@ -207,11 +220,6 @@
             },
             explorerName(blockchain){
                 return this.explorers[blockchain].name;
-            }
-        },
-        watch:{
-            terms(){
-                this[Actions.SET_SEARCH_TERMS](this.terms);
             }
         }
     }
@@ -340,6 +348,14 @@
                         line-height:50px;
                         transition: all 0.2s ease;
                         transition-property: transform;
+                        font-size: 22px;
+
+                        &.outline {
+                            background:transparent;
+                            border:3px solid $dark-blue;
+                            color:$dark-blue;
+                            line-height:45px;
+                        }
 
                         &.send{
                             transform:rotate(45deg);
