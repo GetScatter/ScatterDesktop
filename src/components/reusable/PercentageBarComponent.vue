@@ -39,22 +39,22 @@
 
             &.red {
                 background:$red;
-                box-shadow:inset 0 2px 8px 5px $red, inset 0 10px 15px rgba(255,255,255,0.5), inset 0 -5px 10px rgba(0,0,0,0.2), 30px 0 50px rgba(0,0,0,0.2);
+                box-shadow:inset 0 2px 8px 5px $red, inset 0 10px 15px rgba(255,255,255,0.5), inset 0 -5px 10px rgba(0,0,0,0.2), 30px 0 50px rgba(0,0,0,0.2), 5px 0 10px rgba(0,0,0,0.2);
             }
 
             &.blue {
                 background:$light-blue;
-                box-shadow:inset 0 2px 8px 5px $light-blue, inset 0 10px 15px rgba(255,255,255,0.5), inset 0 -5px 10px rgba(0,0,0,0.2), 30px 0 50px rgba(0,0,0,0.2);
+                box-shadow:inset 0 2px 8px 5px $light-blue, inset 0 10px 15px rgba(255,255,255,0.5), inset 0 -5px 10px rgba(0,0,0,0.2), 30px 0 50px rgba(0,0,0,0.2), 5px 0 10px rgba(0,0,0,0.2);
             }
 
             &.yellow {
                 background:yellow;
-                box-shadow:inset 0 2px 8px 5px yellow, inset 0 10px 15px rgba(255,255,255,0.5), inset 0 -5px 10px rgba(0,0,0,0.2), 30px 0 50px rgba(0,0,0,0.2);
+                box-shadow:inset 0 2px 8px 5px yellow, inset 0 10px 15px rgba(255,255,255,0.5), inset 0 -5px 10px rgba(0,0,0,0.2), 30px 0 50px rgba(0,0,0,0.2), 5px 0 10px rgba(0,0,0,0.2);
             }
 
             &.orange {
                 background:orange;
-                box-shadow:inset 0 2px 8px 5px orange, inset 0 10px 15px rgba(255,255,255,0.5), inset 0 -5px 10px rgba(0,0,0,0.2), 30px 0 50px rgba(0,0,0,0.2);
+                box-shadow:inset 0 2px 8px 5px orange, inset 0 10px 15px rgba(255,255,255,0.5), inset 0 -5px 10px rgba(0,0,0,0.2), 30px 0 50px rgba(0,0,0,0.2), 5px 0 10px rgba(0,0,0,0.2);
             }
         }
 
