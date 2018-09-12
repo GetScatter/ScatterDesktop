@@ -93,7 +93,7 @@
             <figure class="background" @click="transfer = null"></figure>
 
             <section class="transfer-box">
-                <transfer v-if="transfer === TRANSFER_TYPES.SEND"></transfer>
+                <transfer v-show="transfer === TRANSFER_TYPES.SEND"></transfer>
                 <receive v-if="transfer === TRANSFER_TYPES.RECEIVE"></receive>
             </section>
 
