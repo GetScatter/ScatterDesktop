@@ -1,8 +1,4 @@
 # Scatter Desktop
-### Open Beta is now Live!
-
-----------------
-
 
 ## Installation
 
