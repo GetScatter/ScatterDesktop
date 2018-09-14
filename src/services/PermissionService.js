@@ -83,11 +83,6 @@ export default class PermissionService {
 
     static createActionPermission(origin, identity, accounts, whitelistData){
 
-        // const immutableActionFields = Hasher.insecureHash(Object.keys(whitelistData.fields).map(key => {
-        //     if(!whitelistData.props.includes(key)) return whitelistData.fields;
-        //     else return null;
-        // }).filter(x => x).join(','));
-
         const immutableActionFields = Permission.createImmutableFieldsHash(whitelistData.fields, whitelistData.props);
 
         const permission = Permission.fromAction(origin, identity, accounts, {
@@ -151,6 +146,7 @@ export default class PermissionService {
         const whitelistedActions = messages.every(message =>
             PermissionService.hasActionPermission(origin, identity, accounts, message)
         );
+
 
         // Not all actions are whitelisted
         if(!whitelistedActions) return false;

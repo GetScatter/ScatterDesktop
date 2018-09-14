@@ -197,12 +197,13 @@ a {
 
   .split-panels {
     width:100%;
-    max-width:620px;
+    max-width:100%;
     display: inline-block;
     vertical-align: top;
 
     &.left {
       @media (min-width:1380px){
+        max-width:620px;
         padding-right: 20px;
         border-right: 1px solid $light-grey;
         margin-right: 20px;

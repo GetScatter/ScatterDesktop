@@ -76,8 +76,11 @@
                                                     'already-whitelisted':isPreviouslyWhitelisted(message)}">
 
                         <section class="breadcrumbs">
-                            <figure class="breadcrumb button" v-if="!isArbitrarySignature" :class="{'whitelisted':!!getWhitelist(message) || isPreviouslyWhitelisted(message)}" @click="addWhitelist(message)">
-                                <i class="fa fa-floppy-o"></i>
+                            <figure class="breadcrumb button whitelist"
+                                    v-if="!isArbitrarySignature"
+                                    :class="{'whitelisted':!!getWhitelist(message) || isPreviouslyWhitelisted(message)}"
+                                    @click="addWhitelist(message)">
+                                <b style="">{{!!getWhitelist(message) || isPreviouslyWhitelisted(message) ? 'whitelisted' : 'whitelist'}}</b>
                             </figure>
 
                             <figure class="breadcrumb">{{message.code}} -> <u>{{message.type}}</u></figure>
@@ -406,7 +409,7 @@
         background:#fff;
         display:block;
         border-radius:4px;
-        box-shadow:0 1px 3px rgba(0,0,0,0.1);
+        box-shadow:0 1px 3px rgba(0,0,0,0.1), 0 3px 8px rgba(0,0,0,0.1);
         margin-top:4px;
     }
 
@@ -654,6 +657,12 @@
                             transform:translateY(0px);
                             transition: box-shadow 0.1s ease, transform 0.1s ease;
 
+
+                            &.whitelist {
+                                background:$dark-blue;
+                                color:#fff;
+                            }
+
                             &:hover {
                                 transform:translateY(-1px);
                                 box-shadow:0 3px 7px rgba(0,0,0,0.08);
@@ -665,7 +674,7 @@
                             }
 
                             &.whitelisted {
-                                background:$dark-blue;
+                                background:$red;
                                 color:#fff;
                             }
                         }

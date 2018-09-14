@@ -8,7 +8,12 @@
 
             <section class="selected-item scrollable" v-if="keypair">
 
-                <cin big="true" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
+                <cin style="margin-top:-10px;" big="true" placeholder="Enter a Name" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
+                <section v-if="isNew">
+                    <p style="font-size:13px;">Each Keypair must have a name to uniquely identify it. This is for organizational purposes only and the actual name makes no difference.</p>
+                    <div style="background:rgba(0,0,0,0.1); width:100%; height:1px; margin:40px 0 30px;"></div>
+                </section>
+
 
                 <section class="panel-shifter" v-if="!isNew">
 

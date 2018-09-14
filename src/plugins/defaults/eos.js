@@ -16,11 +16,22 @@ import * as Actions from '../../models/api/ApiActions';
 import {store} from '../../store/store'
 
 
+let cachedInstances = {};
+const getCachedInstance = network => {
+    if(cachedInstances.hasOwnProperty(network.unique())) return cachedInstances[network.unique()];
+    else {
+        const eos = Eos({httpEndpoint:`${network.fullhost()}`, chainId:network.chainId});
+        cachedInstances[network.unique()] = eos;
+        return eos;
+    }
+}
+
+
 const getAccountsFromPublicKey = (publicKey, network) => {
     return Promise.race([
         new Promise(resolve => setTimeout(() => resolve([]), 10000)),
         new Promise((resolve, reject) => {
-            const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId});
+            const eos = getCachedInstance(network);
             eos.getKeyAccounts(publicKey).then(res => {
                 if(!res || !res.hasOwnProperty('account_names')){ resolve([]); return false; }
 
@@ -53,6 +64,8 @@ const EXPLORERS = [
         block:id => `https://eosflare.io/block/${id}`
     }
 ];
+
+
 
 
 export default class EOS extends Plugin {
@@ -122,7 +135,7 @@ export default class EOS extends Plugin {
     }
 
     async accountData(account, network){
-        const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId});
+        const eos = getCachedInstance(network);
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(null), 2000)),
             eos.getAccount(account.name)
@@ -130,7 +143,7 @@ export default class EOS extends Plugin {
     }
 
     async balanceFor(account, network, tokenAccount, symbol){
-        const eos = Eos({httpEndpoint:`${network.fullhost()}`, chainId:network.chainId});
+        const eos = getCachedInstance(network);
 
         const balances = await eos.getTableRows({
             json:true,
@@ -145,7 +158,7 @@ export default class EOS extends Plugin {
     }
 
     async historyFor(account, network){
-        const eos = Eos({httpEndpoint:`${network.fullhost()}`, chainId:network.chainId});
+        const eos = getCachedInstance(network);
         return await eos.getActions(account.name).then(histories => {
             return histories.actions.map(x => {
                 return {
@@ -260,7 +273,7 @@ export default class EOS extends Plugin {
     }
 
     async requestParser(signargs, network){
-        const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId});
+        const eos = getCachedInstance(network);
 
         const contracts = signargs.transaction.actions.map(action => action.account)
             .reduce((acc, contract) => {
