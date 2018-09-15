@@ -56,7 +56,7 @@ app.on('ready', function () {
         icon:'assets/icon.png'
     });
 
-    win.openDevTools();
+    // win.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';

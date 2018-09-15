@@ -353,9 +353,9 @@
             changedExternalWalletType(newType){
                 this.keypair.external = new ExternalWallet(newType);
             },
-            importKeyFromHardware(){
-                if(!this.keypair.external.interface.canConnect())
-                    return null;
+            async importKeyFromHardware(){
+                if(!await this.keypair.external.interface.canConnect())
+                    return this.toggleExternalWallet();
 
                 this.keypair.external.interface.getPublicKey().then(key => {
                     let isValid = false;
@@ -464,6 +464,23 @@
                             if(accounts.length) PopupService.push(Popup.selector('Select Account', 'Select an Account to import', 'address-book', accounts, x => x.formatted(), selected => {
                                 this.linkAccount(selected);
                             }))
+
+                            // TODO: Ledger doesn't support batched transactions for account creation yet.
+//                            else {
+//                                if(this.keypair.external){
+//                                    const availableAccounts = this.accounts.filter(x => x.blockchain() === this.keypair.blockchain);
+//                                    if(availableAccounts.length) PopupService.push(Popup.prompt(
+//                                        'No accounts found!',
+//                                        'Do you want to create an account on top of this keypair or move another account to it?',
+//                                        'question-circle',
+//                                        'Yes',
+//                                        res => {
+//                                            console.log('res', res);
+//                                        },
+//                                        'No'
+//                                    ))
+//                                }
+//                            }
                         } else {
                             const account = Account.fromJson({
                                 keypairUnique:this.keypair.unique(),
