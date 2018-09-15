@@ -20,8 +20,7 @@ Click the "Help" menu from the sidebar to get started.
 - run `electron .` or `./node_modules/bin/electron .` from the directory to start electron.
 
 ## Creating Apps for Scatter 
-
-Check out the [Documentation](https://get-scatter.com/docs/dev/examples-interaction-flow)
+### Check out the [Documentation](https://get-scatter.com/docs/dev/examples-interaction-flow)
 
 
 
