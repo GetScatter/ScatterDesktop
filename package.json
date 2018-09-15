@@ -1,6 +1,6 @@
 {
   "name": "scatter",
-  "version": "8.8.0",
+  "version": "8.9.0",
   "description": "Scatter Desktop Companion",
   "private": true,
   "main": "electron.js",
