@@ -40,6 +40,7 @@ export default class LedgerWallet {
     async init(){
         this.getPublicKey = async () => { return throwErr(); };
         this.sign = async () => { return throwErr(); };
+        this.canConnect = async () => { return throwErr(); };
 
         const handleEvents = ({type, device}) => this[type](device);
         const setHardware = async () => {

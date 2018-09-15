@@ -430,6 +430,7 @@ $speed:0.5s;
     &:nth-child(2) {
       text-align:left;
       max-width:calc(70% - 150px);
+      min-width:200px;
       padding-left:0;
     }
 

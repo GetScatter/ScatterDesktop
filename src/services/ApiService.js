@@ -285,7 +285,9 @@ export default class ApiService {
                         return keypair.external.interface.sign(x.publicKey, payload, payload.abi, network);
                     } else return plugin.signer(payload, x.publicKey)
                 }));
+
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
+                if(signatures.length === 1 && signatures[0] === null) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
                 if(signatures.some(x => !x)) return resolve({id:request.id, result:Error.signatureError('missing_sig', 'A signature for this request was missing')});
 
                 const returnedFields = Identity.asReturnedFields(requiredFields, identity, selectedLocation);
