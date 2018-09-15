@@ -111,7 +111,7 @@
                     <section class="shited-panel" v-if="panel === PANELS.PROOFS">
                         <section class="info-box">
                             <cin forced="1" placeholder="Public Key" disabled="true" :text="keypair.publicKey" :copy="true"></cin>
-                            <btn v-on:clicked="generateQR" text="Generate Encrypted QR"></btn>
+                            <btn v-if="!keypair.external" v-on:clicked="generateQR" text="Generate Encrypted QR"></btn>
                             <section style="width:100%; margin-left:-15px;"><img :src="qr" /></section>
                         </section>
                     </section>
@@ -354,6 +354,7 @@
                 this.keypair.external = new ExternalWallet(newType);
             },
             importKeyFromHardware(){
+                let popup = null;
                 this.keypair.external.interface.getPublicKey().then(key => {
                     let isValid = false;
 
@@ -366,7 +367,9 @@
                     });
 
                     if(isValid) this.keypair.publicKey = key;
-                });
+                }).catch(() => {
+                    this.keypair.publicKey = '';
+                })
             },
             async generateQR(){
                 this.qr = await QRService.createQR(this.keypair.privateKey);
@@ -462,7 +465,7 @@
                             await this.setDefaultSelectedNetwork();
                             if(this.isImportable) {
                                 const accounts = await this.fetchAccountsWithoutBinding();
-                                PopupService.push(Popup.selector('Select Account', 'Select an Account to import', 'address-book', accounts, x => x.formatted(), selected => {
+                                if(accounts.length) PopupService.push(Popup.selector('Select Account', 'Select an Account to import', 'address-book', accounts, x => x.formatted(), selected => {
                                     this.linkAccount(selected);
                                 }))
                             } else {

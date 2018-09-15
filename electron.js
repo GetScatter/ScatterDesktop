@@ -1,6 +1,9 @@
-const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron')
+const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron');
 const path = require("path");
 const url = require("url");
+
+const Transport = require('@ledgerhq/hw-transport-node-hid');
+global.appShared = { Transport };
 
 let tray = null;
 let win = null;
@@ -53,7 +56,7 @@ app.on('ready', function () {
         icon:'assets/icon.png'
     });
 
-    // win.openDevTools();
+    win.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';

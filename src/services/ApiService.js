@@ -227,8 +227,6 @@ export default class ApiService {
             request.payload.symbol = symbol;
             request.payload.contract = contract;
 
-
-
             PopupService.push(Popup.popout(request, async ({result}) => {
                 if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the transfer request")});
                 const account = Account.fromJson(result.account);
@@ -259,9 +257,11 @@ export default class ApiService {
             // Blockchain specific plugin
             const plugin = PluginRepository.plugin(blockchain);
 
+            const network = Network.fromJson(payload.network);
+
             // Convert buf and abi to messages
             switch(blockchain){
-                case Blockchains.EOSIO: payload.messages = await plugin.requestParser(payload, Network.fromJson(payload.network)); break;
+                case Blockchains.EOSIO: payload.messages = await plugin.requestParser(payload, network); break;
                 case Blockchains.ETH: payload.messages = await plugin.requestParser(payload, payload.hasOwnProperty('abi') ? payload.abi : null); break;
             }
 
@@ -284,7 +284,7 @@ export default class ApiService {
                 const signatures = await Promise.all(participants.map(x => {
                     if(KeyPairService.isHardware(x.publicKey)){
                         const keypair = KeyPairService.getKeyPairFromPublicKey(x.publicKey);
-                        return keypair.external.interface.sign(x.publicKey, payload, payload.abi);
+                        return keypair.external.interface.sign(x.publicKey, payload, payload.abi, network.chainId);
                     } else return plugin.signer(payload, x.publicKey)
                 }));
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});

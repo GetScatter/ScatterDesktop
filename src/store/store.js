@@ -8,6 +8,8 @@ import {PopupDisplayTypes} from '../models/popups/Popup'
 import Scatter from '../models/Scatter';
 import PluginRepository from '../plugins/PluginRepository'
 
+import * as HARDWARE_STATES from '../models/hardware/constants';
+
 Vue.use(Vuex);
 
 const state = {
@@ -19,6 +21,9 @@ const state = {
     scatter:null,
 
     popups:[],
+
+    hardwareState:HARDWARE_STATES.DISCONNECTED,
+    hardware:null,
 };
 
 const getters = {

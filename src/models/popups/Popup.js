@@ -29,9 +29,14 @@ export class Popup {
     }
 
     static prompt(title, description, icon, buttonText, callback, denyButtonText = null){
-        let params = { title, description, icon, buttonText };
-        if(denyButtonText) params = Object.assign(params, {denyButtonText});
+        let params = { title, description, icon };
+        if(buttonText) params.buttonText = buttonText;
+        if(denyButtonText) params.denyButtonText = denyButtonText;
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
+    }
+
+    static checkHardwareWalletScreen(){
+        return Popup.prompt('Check Hardware Wallet', 'Please check your hardware wallet screen.', 'exclamation-triangle');
     }
 
     static transactionSuccess(blockchain, tx, callback){

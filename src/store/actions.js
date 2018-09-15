@@ -86,4 +86,7 @@ export const actions = {
     [Actions.PUSH_POPUP]:({commit}, popup) => commit(Actions.PUSH_POPUP, popup),
     [Actions.RELEASE_POPUP]:({commit}, popup) => commit(Actions.RELEASE_POPUP, popup),
 
+    [Actions.SET_HARDWARE]:({commit}, hardware) => commit(Actions.SET_HARDWARE, hardware),
+    [Actions.SET_HW_STATE]:({commit}, hwState) => commit(Actions.SET_HW_STATE, hwState),
+
 };

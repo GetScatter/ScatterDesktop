@@ -9,6 +9,10 @@ let popouts = [];
 
 export default class PopupService {
 
+    static remove(popup){
+        store.dispatch(Actions.RELEASE_POPUP, popup);
+    }
+
     static push(popup){
 
         if(store.state.popups.find(x => JSON.stringify(x.data) === JSON.stringify(popup.data)))

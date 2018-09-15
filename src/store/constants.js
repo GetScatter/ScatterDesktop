@@ -10,3 +10,6 @@ export const HOLD_SCATTER =     'holdScatter';
 
 export const PUSH_POPUP =       'pushPopup';
 export const RELEASE_POPUP =    'releasePopup';
+
+export const SET_HARDWARE =     'setHardware';
+export const SET_HW_STATE =     'setHardwareState';

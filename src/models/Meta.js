@@ -9,7 +9,7 @@ export default class Meta {
     }
 
     getVersion(){
-        return app.getVersion();
+        return app.getVersion()
     }
 
     regenerateVersion(){

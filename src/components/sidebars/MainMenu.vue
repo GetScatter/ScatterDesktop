@@ -5,7 +5,9 @@
             <section class="head">
                 <section class="logo">
                     <figure class="grand-hotel">{{collapsed ? 'S' : 'Scatter'}}</figure>
-                    <figure class="version" v-if="!collapsed">{{scatter.meta.getVersion()}}</figure>
+                    <figure class="version" v-if="!collapsed && scatter && scatter.hasOwnProperty('meta') && typeof scatter.meta.getVersion !== 'undefined'">
+                        {{scatter.meta.getVersion()}}
+                    </figure>
                 </section>
                 <section class="window-actions">
                     <i class="fa fa-code" v-tooltip="'Open Console'" @click="openConsole"></i>
