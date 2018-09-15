@@ -1,3 +1,4 @@
+import WindowService from '../../services/WindowService'
 import * as Actions from '../../store/constants';
 import {store} from '../../store/store';
 import * as HARDWARE_STATES from './constants';
@@ -172,6 +173,7 @@ class LedgerAPI {
         try {
             b = serialize(network.chainId, rawTxHex.transaction, fc.types).toString('hex');
         } catch(e){
+            WindowService.flashWindow();
             PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App', 'exclamation-triangle', 'Okay'));
             return null;
         }
@@ -199,7 +201,6 @@ class LedgerAPI {
             toSend.push(buffer);
             offset += chunkSize;
         }
-
 
         const popup = Popup.checkHardwareWalletScreen();
         PopupService.push(popup);

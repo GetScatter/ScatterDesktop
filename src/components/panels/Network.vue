@@ -14,7 +14,7 @@
                     <b><u>This is a Scatter endorsed network which makes it easier to use Scatter. It can not be modified.</u></b>
                     <br><br>
                 </section>
-                <figure class="description">
+                <figure class="description" v-if="isNew">
                     Networks allow you to define where your blockchain keys and accounts exist. Some websites use testing networks or non-standard networks
                     to interact with proprietary blockchains. You do not have to fear them as Scatter still protects you and they will never be able to
                     get your private keys.

@@ -50,20 +50,20 @@ export default class PasswordService {
         })
     }
 
-    static async verifyPassword(password = null){
+    static async verifyPassword(password = null, setToState = true){
         return new Promise(async resolve => {
             if(password) await this.seedPassword(password);
 
             try {
                 let scatter = StorageService.getScatter();
                 scatter = AES.decrypt(scatter, store.state.seed);
-                store.commit(Actions.SET_SCATTER, scatter);
+                if(setToState) store.commit(Actions.SET_SCATTER, scatter);
 
                 if(!scatter.hasOwnProperty('keychain')) throw new Error();
 
                 scatter = Scatter.fromJson(scatter);
                 scatter.decrypt(store.state.seed);
-                store.dispatch(Actions.SET_SCATTER, scatter);
+                if(setToState) store.dispatch(Actions.SET_SCATTER, scatter);
                 resolve(true);
             } catch(e) {
                 resolve(false);

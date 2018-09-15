@@ -1,6 +1,7 @@
 import QRCode from 'qrcode';
 import StorageService from '../services/StorageService';
 import PopupService from '../services/PopupService';
+import PasswordService from '../services/PasswordService';
 import {Popup} from '../models/popups/Popup'
 import AES from 'aes-oop';
 import {store} from '../store/store'
@@ -15,18 +16,29 @@ export default class QRService {
                 'You can either leave this blank to use your existing password as the encryption key or enter a new one to re-encrypt it with.',
                 'key',
                 'Okay', {placeholder:'Enter a Password or PIN', type:'password'}, async pass => {
-                    let qrData = null;
-
                     if(!pass || !pass.length) {
-                        qrData = JSON.stringify({data, salt: StorageService.getSalt()});
+                        resolve(QRCode.toDataURL(JSON.stringify({data, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
                     } else {
-                        const oldSeed = store.state.seed;
-                        const newSeed = (await Mnemonic.generateMnemonic(pass, StorageService.getSalt()))[1];
-                        const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);
-                        qrData = JSON.stringify({data:dData, salt: StorageService.getSalt()});
+
+                        PopupService.push(Popup.textPrompt(
+                            'Confirm Password',
+                            'Since you want to use a different PIN, you must confirm your password first.',
+                            'lock',
+                            'Okay', {placeholder:'Confirm your current Password', type:'password'}, async confirm => {
+                                const confirmed = await PasswordService.verifyPassword(confirm, false);
+                                if(!confirmed) return resolve(null);
+
+                                const oldSeed = store.state.seed;
+                                const newSeed = (await Mnemonic.generateMnemonic(pass, StorageService.getSalt()))[1];
+                                const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);
+                                resolve(QRCode.toDataURL(JSON.stringify({data:dData, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
+                            }))
+
+
+
+
                     }
 
-                    resolve(QRCode.toDataURL(qrData, {errorCorrectionLevel: 'L'}));
             }))
         })
     }

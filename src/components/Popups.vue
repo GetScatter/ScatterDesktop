@@ -7,7 +7,7 @@
             <section v-if="nextPopIn">
                 <section class="pop-in">
                     <prompt v-if="nextPopIn.data.type === popupTypes.PROMPT"></prompt>
-                    <text-prompt v-if="nextPopIn.data.type === popupTypes.TEXT_PROMPT"></text-prompt>
+                    <text-prompt v-if="nextPopIn.data.type === popupTypes.TEXT_PROMPT" :key="nextPopIn.id"></text-prompt>
                     <selector v-if="nextPopIn.data.type === popupTypes.SELECTOR"></selector>
                     <mnemonic v-if="nextPopIn.data.type === popupTypes.MNEMONIC"></mnemonic>
                     <buy-sell-ram v-if="nextPopIn.data.type === popupTypes.BUY_SELL_RAM"></buy-sell-ram>
