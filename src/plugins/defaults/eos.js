@@ -351,7 +351,6 @@ export default class EOS extends Plugin {
 
         await eos.transaction(contractNames, contracts => {
             actions.map(action => {
-                console.log('hi', formatContract(action.contract), action.action, ...action.params);
                 try {
                     contracts[formatContract(action.contract)][action.action](...action.params, actionOptions);
                 } catch(e){

@@ -28,6 +28,9 @@ export default class LiquidEOS {
                 if(!res) return null;
                 return res.key
             })},
+            async canConnect(){
+                return true;
+            }
         });
     };
 

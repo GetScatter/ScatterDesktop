@@ -4,7 +4,6 @@ import ecc from 'eosjs-ecc'
 import {Blockchains} from './Blockchains'
 import LedgerWallet from './hardware/LedgerWallet';
 import LiquidEOS from './hardware/LiquidEOS';
-// const test = new LedgerWallet(Blockchains.EOSIO);
 
 export const EXT_WALLET_TYPES = {
     LEDGER:'Ledger Nano S',
@@ -51,8 +50,8 @@ export class ExternalWalletInterface {
         return await this.handler.getPublicKey();
     }
 
-    showsKeypairOnScreen(){
-        return this.handler.showsKeypairOnScreen();
+    canConnect(){
+        return this.handler.canConnect();
     }
 
 }

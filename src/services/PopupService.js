@@ -14,7 +14,6 @@ export default class PopupService {
     }
 
     static push(popup){
-
         if(store.state.popups.find(x => JSON.stringify(x.data) === JSON.stringify(popup.data)))
             return false;
 

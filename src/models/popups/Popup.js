@@ -36,7 +36,7 @@ export class Popup {
     }
 
     static checkHardwareWalletScreen(){
-        return Popup.prompt('Check Hardware Wallet', 'Please check your hardware wallet screen.', 'exclamation-triangle');
+        return Popup.prompt('Check Hardware Wallet', 'Please check your hardware wallet screen.', 'eye');
     }
 
     static transactionSuccess(blockchain, tx, callback){

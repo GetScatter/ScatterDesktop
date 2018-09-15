@@ -354,7 +354,9 @@
                 this.keypair.external = new ExternalWallet(newType);
             },
             importKeyFromHardware(){
-                let popup = null;
+                if(!this.keypair.external.interface.canConnect())
+                    return null;
+
                 this.keypair.external.interface.getPublicKey().then(key => {
                     let isValid = false;
 
@@ -452,33 +454,41 @@
                 PopupService.push(Popup.snackbar("A new keypair was generated."));
             },
             saveKeyPair(){
-                if(this.isNew) PopupService.push(Popup.prompt(
-                    "Have you copied the private key?",
-                    "You will not be able to copy the private key again once you save this keypair.",
-                    "exclamation-triangle",
-                    "Yes",
-                    accepted => {
-                        if(!accepted) return;
-                        KeyPairService.saveKeyPair(this.keypair, async () => {
-                            PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
-                            this.$emit('selected', this.keypair.clone());
-                            await this.setDefaultSelectedNetwork();
-                            if(this.isImportable) {
-                                const accounts = await this.fetchAccountsWithoutBinding();
-                                if(accounts.length) PopupService.push(Popup.selector('Select Account', 'Select an Account to import', 'address-book', accounts, x => x.formatted(), selected => {
-                                    this.linkAccount(selected);
-                                }))
-                            } else {
-                                const account = Account.fromJson({
-                                    keypairUnique:this.keypair.unique(),
-                                    networkUnique:this.selectedNetwork.unique(),
-                                    publicKey:this.keypair.publicKey,
-                                })
-                                this.linkAccount(account)
-                            }
-                        });
-                    },
-                    "Go Back"));
+                const save = () => {
+                    KeyPairService.saveKeyPair(this.keypair, async () => {
+                        PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
+                        this.$emit('selected', this.keypair.clone());
+                        await this.setDefaultSelectedNetwork();
+                        if(this.isImportable) {
+                            const accounts = await this.fetchAccountsWithoutBinding();
+                            if(accounts.length) PopupService.push(Popup.selector('Select Account', 'Select an Account to import', 'address-book', accounts, x => x.formatted(), selected => {
+                                this.linkAccount(selected);
+                            }))
+                        } else {
+                            const account = Account.fromJson({
+                                keypairUnique:this.keypair.unique(),
+                                networkUnique:this.selectedNetwork.unique(),
+                                publicKey:this.keypair.publicKey,
+                            })
+                            this.linkAccount(account)
+                        }
+                    });
+                }
+                if(this.isNew) {
+                    if(this.keypair.external) save();
+                    else {
+                        PopupService.push(Popup.prompt(
+                            "Have you copied the private key?",
+                            "You will not be able to copy the private key again once you save this keypair.",
+                            "exclamation-triangle",
+                            "Yes",
+                            accepted => {
+                                if(!accepted) return;
+                                save();
+                            },
+                            "Go Back"));
+                    }
+                }
                 else KeyPairService.updateKeyPair(this.keypair, () => {
                     PopupService.push(Popup.snackbar("Keypair Updated!", "check"));
                 });

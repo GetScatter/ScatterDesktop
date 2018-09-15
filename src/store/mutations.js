@@ -11,5 +11,4 @@ export const mutations = {
     [Mutations.RELEASE_POPUP]:(state, popup) => state.popups = state.popups.filter(p => p.id !== popup.id),
 
     [Mutations.SET_HARDWARE]:(state, hardware) => state.hardware = hardware,
-    [Mutations.SET_HW_STATE]:(state, hwState) => state.hardwareState = hwState,
 };

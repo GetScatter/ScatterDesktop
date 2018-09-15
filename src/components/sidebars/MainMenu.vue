@@ -65,7 +65,7 @@
         data () {return {
             lines:[1,5],
             links:[
-                {route:RouteNames.DASHBOARD, name:'Dashboard', icon:'fa fa-bar-chart-o'},
+                {route:RouteNames.DASHBOARD, name:'Dashboard', icon:'fa fa-bar-chart-o', onlyIfHasAccounts:true},
 //                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane', onlyIfHasAccounts:true},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},

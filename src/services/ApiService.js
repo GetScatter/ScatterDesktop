@@ -194,8 +194,6 @@ export default class ApiService {
 
     static async [Actions.REQUEST_TRANSFER](request){
         return new Promise(resolve => {
-            console.log('request', request);
-
             let {to, network, amount, options} = request.payload;
             if(!options) options = {};
 
@@ -284,7 +282,7 @@ export default class ApiService {
                 const signatures = await Promise.all(participants.map(x => {
                     if(KeyPairService.isHardware(x.publicKey)){
                         const keypair = KeyPairService.getKeyPairFromPublicKey(x.publicKey);
-                        return keypair.external.interface.sign(x.publicKey, payload, payload.abi, network.chainId);
+                        return keypair.external.interface.sign(x.publicKey, payload, payload.abi, network);
                     } else return plugin.signer(payload, x.publicKey)
                 }));
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});

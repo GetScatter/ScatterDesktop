@@ -22,7 +22,6 @@ const state = {
 
     popups:[],
 
-    hardwareState:HARDWARE_STATES.DISCONNECTED,
     hardware:null,
 };
 
