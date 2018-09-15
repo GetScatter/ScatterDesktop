@@ -26,6 +26,8 @@ export const LEDGER_PATHS = {
     [Blockchains.EOSIO]:"44'/194'/0'/0/0",
 }
 
+const cache = {};
+
 export default class LedgerWallet {
 
     constructor(blockchain){
@@ -34,7 +36,8 @@ export default class LedgerWallet {
     }
 
     static typeToInterface(blockchain){
-        return new LedgerWallet(blockchain);
+        if(!cache.hasOwnProperty(blockchain)) cache[blockchain] = new LedgerWallet(blockchain);
+        return cache[blockchain];
     };
 
     async init(){
@@ -54,6 +57,7 @@ export default class LedgerWallet {
                     if(store.state.hardware.subscriber)
                         await store.state.hardware.subscriber.unsubscribe();
                     store.dispatch(Actions.SET_HARDWARE, null);
+                    delete cache[this.blockchain];
                 }
             }
             store.dispatch(Actions.SET_HARDWARE, hardware);
@@ -68,8 +72,9 @@ export default class LedgerWallet {
     async add(device){
         const {path} = device;
 
-        const clone = Object.assign(store.state.hardware, {transport: await Transport.open(path)});
+        const clone = Object.assign(store.state.hardware, {transport:await Transport.open(path)});
         store.dispatch(Actions.SET_HARDWARE, clone);
+
 
         this.api = new LedgerAPI(store.state.hardware.transport, this.blockchain);
         this.getPublicKey = this.api.getPublicKey;
@@ -235,6 +240,7 @@ class LedgerAPI {
                 'exclamation-triangle',
                 'Okay'
             ));
+            delete cache[this.blockchain];
             return false;
         })
     }
