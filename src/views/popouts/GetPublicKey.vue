@@ -25,25 +25,24 @@
             <section class="lists">
 
                 <section class="list" v-if="selectingKeypair">
-                    <section class="breadcrumbs">
-                        <!--<figure class="breadcrumb">Generate New Key Pair</figure>-->
+
+                    <section style="overflow: hidden; margin-top:20px;">
+                        <section class="item short" @click="toggleGenerateKeypair">
+                            <figure class="title">Generate</figure>
+                            <figure class="chevron">
+                                <i class="fa fa-plus"></i>
+                            </figure>
+                        </section>
+
+                        <section class="item short" @click="toggleImportKeypair">
+                            <figure class="title">Import</figure>
+                            <figure class="chevron">
+                                <i class="fa fa-pencil"></i>
+                            </figure>
+                        </section>
                     </section>
 
-                    <section class="item short" @click="toggleGenerateKeypair">
-                        <figure class="title">Generate New Keypair</figure>
-                        <figure class="sub-title">Do you need to generate a keypair?</figure>
-                        <figure class="chevron">
-                            <i class="fa fa-chevron-right"></i>
-                        </figure>
-                    </section>
 
-                    <section class="item short" @click="toggleImportKeypair">
-                        <figure class="title">Import Keypair</figure>
-                        <figure class="sub-title">Do you want to import a keypair?</figure>
-                        <figure class="chevron">
-                            <i class="fa fa-chevron-right"></i>
-                        </figure>
-                    </section>
 
                     <section v-if="validPublicKeys.length">
                         <div style="margin:20px 0; background:rgba(0,0,0,0.1); width:100%; height:1px;"></div>
@@ -65,26 +64,24 @@
                 <section class="list" v-if="generatingNewKeypair">
                     <section class="breadcrumbs">
                         <figure class="breadcrumb button" @click="toggleGenerateKeypair">Back</figure>
-                        <figure class="breadcrumb">Generate New Key Pair</figure>
+                        <figure class="breadcrumb">Generate</figure>
                     </section>
 
                     <section style="padding:20px;">
-                        <!--<cin :forced="keypair.name.length" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>-->
-                        <cin disabled="true" :text="keypair.publicKey.substr(0,32)+'...'" copy="true"></cin>
-                        <btn style="float:left;" large="true" v-on:clicked="copyKeyPair" :red="true" text="Copy Private Key"></btn>
-                        <btn style="float:right;" large="true" v-on:clicked="returnResult({keypair, isNew:true})" text="Continue"></btn>
+                        <figure class="existing-key">You should copy this account down and paste it somewhere safe.</figure>
+                        <btn style="float:left;" full="true" large="true" v-on:clicked="copyKeyPair" :red="true" text="Copy"></btn>
+                        <btn style="float:right;" full="true" v-on:clicked="returnResult({keypair, isNew:true})" text="Continue"></btn>
                     </section>
                 </section>
 
                 <section class="list" v-if="importingKeypair">
                     <section class="breadcrumbs">
                         <figure class="breadcrumb button" @click="toggleImportKeypair">Back</figure>
-                        <figure class="breadcrumb">Import Key Pair</figure>
+                        <figure class="breadcrumb">Import</figure>
                     </section>
 
                     <section style="padding:20px;">
-                        <!--<cin :forced="keypair.name.length" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>-->
-                        <cin :key="id" type="password" placeholder="Private Key" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                        <cin :key="id" type="password" placeholder="Account Secret" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                         <figure class="existing-key" v-if="keyExists">This key already exists in your keychain under the name "{{keyExists.name}}".</figure>
                         <btn :disabled="!keypair.publicKey.length || keyExists" full="true" large="true" v-on:clicked="importKeypair()" text="Import and Continue"></btn>
                     </section>
@@ -379,6 +376,12 @@
 
                     &.short {
                         padding:15px 30px;
+                        float:left;
+                        width:calc(50% - 30px);
+
+                        &:last-child {
+                            margin-left:0;
+                        }
                     }
 
                     .title {
