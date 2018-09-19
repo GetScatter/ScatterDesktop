@@ -32,7 +32,7 @@
                     </section>
                 </section>
 
-                <section class="search-bar">
+                <section class="search-bar" v-if="shouldShowSearchbar">
                     <figure class="icon"><i class="fa fa-search"></i></figure>
                     <input placeholder="Search" v-model="searchTerms" />
                 </section>
@@ -41,17 +41,37 @@
             <section class="lists">
 
                 <section class="list" v-if="!selectedIdentity || !accountRequirements.length">
-                    <section class="breadcrumbs">
-                        <figure class="breadcrumb">Select an Identity</figure>
+
+
+                    <section class="big-login" v-if="validIdentities.length === 1">
+                        <section>
+                            <figure class="title">Logging into <b>{{payload.origin}}</b> with <b>{{validIdentities[0].name}}</b></figure>
+                            <section class="item" @click="selectIdentity(validIdentities[0])" style="margin-top:20px;">
+                                <figure class="title" :style="{'text-align':validAccounts.length === 1 ? 'center' : 'left'}">Sign In</figure>
+                                <figure class="sub-title" v-if="validAccounts.length === 1">Only one account available, it will automatically be used.</figure>
+                                <figure class="sub-title" style="text-align:left;" v-if="validAccounts.length > 1">Continue to account selection.</figure>
+                                <figure class="chevron" v-if="validAccounts.length > 1">
+                                    <i class="fa fa-chevron-right"></i>
+                                </figure>
+                            </section>
+                        </section>
                     </section>
 
-                    <section class="item" v-for="identity in validIdentities" @click="selectIdentity(identity)">
-                        <figure class="title">{{identity.name}}</figure>
-                        <figure class="sub-title">{{neededProperties(identity)}}</figure>
-                        <figure class="chevron">
-                            <i class="fa fa-chevron-right"></i>
-                        </figure>
+                    <section v-else>
+                        <section class="breadcrumbs">
+                            <figure class="breadcrumb">Select an Identity</figure>
+                        </section>
+
+                        <section class="item" v-for="identity in validIdentities" @click="selectIdentity(identity)">
+                            <figure class="title">{{identity.name}}</figure>
+                            <figure class="sub-title">{{neededProperties(identity)}}</figure>
+                            <figure class="chevron">
+                                <i class="fa fa-chevron-right"></i>
+                            </figure>
+                        </section>
                     </section>
+
+
                 </section>
 
                 <section class="list" v-if="selectedIdentity && accountRequirements.length">
@@ -130,6 +150,9 @@
             },
             printableAccountRequirements(){
                 return this.accountRequirements.map(x => `${Network.fromJson(x).unique().replace('chain:','').substr(0, 14)}...`).join(' / ')
+            },
+            shouldShowSearchbar(){
+                return (!this.selectedIdentity && this.validIdentities.length > 1) || (this.selectedIdentity && this.validAccounts.length > 1);
             }
         },
         mounted(){
@@ -190,6 +213,19 @@
         height:560px;
         display: flex;
         flex-flow: column;
+
+        .big-login {
+            display:flex;
+            justify-content: center;
+            align-items: center;
+
+            padding:40px;
+            text-align:center;
+
+            .title {
+                font-size: 24px;
+            }
+        }
 
         .top-section {
             flex: 0 1 auto;
