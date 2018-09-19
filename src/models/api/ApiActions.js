@@ -1,6 +1,7 @@
 export const GET_VERSION =                      'getVersion';
 export const GET_PUBLIC_KEY =                   'getPublicKey';
 export const LINK_ACCOUNT =                     'linkAccount';
+export const HAS_ACCOUNT_FOR =                  'hasAccountFor';
 export const GET_OR_REQUEST_IDENTITY =          'getOrRequestIdentity';
 export const IDENTITY_FROM_PERMISSIONS =        'identityFromPermissions';
 export const FORGET_IDENTITY =                  'forgetIdentity';

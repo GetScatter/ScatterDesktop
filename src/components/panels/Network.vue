@@ -3,7 +3,7 @@
 
         <section v-if="network">
             <section class="head">
-                <i class="fa fa-trash-o" v-if="!isRIDLNetwork" @click="deleteNetwork" v-tooltip="'Delete Network'"></i>
+                <i class="fa fa-trash-o" @click="deleteNetwork" v-tooltip="'Delete Network'"></i>
                 <!--<i class="fa fa-trash-o" @click="deleteNetwork" v-tooltip="'Delete Network'"></i>-->
             </section>
 

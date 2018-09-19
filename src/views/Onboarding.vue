@@ -135,6 +135,7 @@
         methods: {
             nextStep(){
                 this.step = STEPS[Object.keys(STEPS)[Object.keys(STEPS).indexOf(this.step.toUpperCase())+1]];
+                if(!this.step) this.finish();
             },
             async setBackupStrategy(strategy){
                 await BackupService.setBackupStrategy(strategy);

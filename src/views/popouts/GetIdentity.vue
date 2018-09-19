@@ -151,6 +151,8 @@
 
                 this.searchTerms = '';
                 this.selectedIdentity = identity;
+
+                if(this.validAccounts.length === 1) this.selectAccount(this.validAccounts[0]);
             },
             selectAccount(account){
                 this.selectedAccounts.push(account);

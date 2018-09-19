@@ -192,6 +192,22 @@ export default class ApiService {
         })
     }
 
+    /***
+     * Allows dapps to see if a user has an account for a specific blockchain.
+     * DOES NOT PROMPT and does not return an actual account, just a boolean.
+     * @param request
+     * @returns {Promise.<void>}
+     */
+    static async [Actions.HAS_ACCOUNT_FOR](request){
+        return new Promise(resolve => {
+            request.payload.network = Network.fromJson(request.payload.network);
+            if(!request.payload.network.isValid()) return resolve({id:request.id, result:new Error("bad_network", "The network provided is invalid")});
+            const existingNetwork = store.state.scatter.settings.networks.find(x => x.unique() === request.payload.network.unique());
+            if(!existingNetwork) return resolve({id:request.id, result:new Error("no_network", "The user doesn't have this network in their Scatter.")});
+            resolve({id:request.id, result:!!store.state.scatter.keychain.accounts.find(x => x.networkUnique === existingNetwork.unique())});
+        })
+    }
+
     static async [Actions.REQUEST_TRANSFER](request){
         return new Promise(resolve => {
             let {to, network, amount, options} = request.payload;

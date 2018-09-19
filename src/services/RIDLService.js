@@ -14,7 +14,8 @@ import ridl from 'ridl'
 
 
 const ridlNetwork = () => store.state.scatter.settings ? store.state.scatter.settings.networks.find(x => x.name === 'RIDL') : null;
-const fallbackNetwork = Network.fromJson({host:'192.168.1.3', port:8888, protocol:'http', chainId:'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f'});
+
+let connectionAttempts = 0;
 
 const updateIdentity = identity => {
     const scatter = store.state.scatter.clone();
@@ -46,18 +47,55 @@ export default class RIDLService {
 
     }
 
-    static validName(name){
-        return ridl.identity.validName(name);
+    static bindNetwork(){
+        fetch('https://raw.githubusercontent.com/GetScatter/Endpoints/master/ridl.json').then(res => res.json()).then(async network => {
+            network = Network.fromJson(network.testnet);
+
+            const plugin = PluginRepository.plugin(network.blockchain);
+            network.chainId = await plugin.getChainId(network);
+            network.name = 'RIDL';
+
+            const scatter = store.state.scatter.clone();
+
+            const oldNetwork = scatter.settings.networks.find(x => x.name === 'RIDL');
+            if(oldNetwork) network.id = oldNetwork.id;
+
+            scatter.settings.updateOrPushNetwork(network);
+            await store.dispatch(Actions.SET_SCATTER, scatter);
+
+            return true;
+        });
     }
 
     static getNetwork(){
-        return ridlNetwork() ? ridlNetwork() : fallbackNetwork;
+        return ridlNetwork();
     }
 
-    static async canConnect(){
-        return false;
-        // await ridl.init( this.getNetwork() );
-        // return ridl.canConnect();
+    static async canConnect(type = null){
+        if(connectionAttempts > 3) return false;
+        connectionAttempts++;
+
+        if(type === 'refreshing'){
+            await this.bindNetwork();
+            return await this.canConnect();
+        }
+
+        if(!ridlNetwork()){
+            await this.bindNetwork();
+        }
+
+        console.log('net', ridlNetwork());
+        if(!ridlNetwork()) return false;
+
+        await ridl.init( ridlNetwork() );
+        const connected = await ridl.canConnect();
+        if(!connected){
+            return await this.canConnect('refreshing');
+        } else return connected;
+    }
+
+    static validName(name){
+        return ridl.identity.validName(name);
     }
 
     static async getIdentity(identity){

@@ -24,14 +24,22 @@
 
             <section class="lists">
 
-                <section class="list" v-if="!generatingNewKeypair">
+                <section class="list" v-if="selectingKeypair">
                     <section class="breadcrumbs">
                         <!--<figure class="breadcrumb">Generate New Key Pair</figure>-->
                     </section>
 
-                    <section class="item" @click="toggleGenerateKeypair">
+                    <section class="item short" @click="toggleGenerateKeypair">
                         <figure class="title">Generate New Keypair</figure>
-                        <!--<figure class="sub-title">If you want to create a new keypair to provide to {{payload.origin}} click here.</figure>-->
+                        <figure class="sub-title">Do you need to generate a keypair?</figure>
+                        <figure class="chevron">
+                            <i class="fa fa-chevron-right"></i>
+                        </figure>
+                    </section>
+
+                    <section class="item short" @click="toggleImportKeypair">
+                        <figure class="title">Import Keypair</figure>
+                        <figure class="sub-title">Do you want to import a keypair?</figure>
                         <figure class="chevron">
                             <i class="fa fa-chevron-right"></i>
                         </figure>
@@ -61,26 +69,27 @@
                     </section>
 
                     <section style="padding:20px;">
-                        <cin :forced="keypair.name.length" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
-                        <btn style="float:left;" large="true" v-on:clicked="copyKeyPair" :red="true" text="Copy Key"></btn>
-                        <btn style="float:right;" large="true" v-on:clicked="returnResult({keypair, isNew:true})" text="Send Back Key"></btn>
+                        <!--<cin :forced="keypair.name.length" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>-->
+                        <cin disabled="true" :text="keypair.publicKey.substr(0,32)+'...'" copy="true"></cin>
+                        <btn style="float:left;" large="true" v-on:clicked="copyKeyPair" :red="true" text="Copy Private Key"></btn>
+                        <btn style="float:right;" large="true" v-on:clicked="returnResult({keypair, isNew:true})" text="Continue"></btn>
                     </section>
                 </section>
 
-                <!--<section class="list" v-if="selectedIdentity && accountRequirements.length">-->
-                    <!--<section class="breadcrumbs">-->
-                        <!--<figure class="breadcrumb button" @click="backToIdentities">Back</figure>-->
-                        <!--<figure class="breadcrumb">Select an Account</figure>-->
-                    <!--</section>-->
+                <section class="list" v-if="importingKeypair">
+                    <section class="breadcrumbs">
+                        <figure class="breadcrumb button" @click="toggleImportKeypair">Back</figure>
+                        <figure class="breadcrumb">Import Key Pair</figure>
+                    </section>
 
-                    <!--<section class="item" v-for="account in validAccounts" @click="selectAccount(account)">-->
-                        <!--<figure class="title">{{account.formatted()}}</figure>-->
-                        <!--<figure class="sub-title">{{account.networkUnique}}</figure>-->
-                        <!--<figure class="chevron">-->
-                            <!--<i class="fa fa-chevron-right"></i>-->
-                        <!--</figure>-->
-                    <!--</section>-->
-                <!--</section>-->
+                    <section style="padding:20px;">
+                        <!--<cin :forced="keypair.name.length" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>-->
+                        <cin :key="id" type="password" placeholder="Private Key" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                        <figure class="existing-key" v-if="keyExists">This key already exists in your keychain under the name "{{keyExists.name}}".</figure>
+                        <btn :disabled="!keypair.publicKey.length || keyExists" full="true" large="true" v-on:clicked="importKeypair()" text="Import and Continue"></btn>
+                    </section>
+                </section>
+
 
             </section>
         </section>
@@ -98,12 +107,16 @@
     import ElectronHelpers from '../../util/ElectronHelpers'
     import PopupService from '../../services/PopupService';
     import {Popup} from '../../models/popups/Popup'
+    import PluginRepository from '../../plugins/PluginRepository'
+    import RIDLService from '../../services/RIDLService'
 
     export default {
         data () {return {
             keypair:Keypair.placeholder(),
             generatingNewKeypair:false,
+            importingKeypair:false,
             searchTerms:'',
+            id:Math.random()*99999 + 1
         }},
         computed:{
             ...mapState([
@@ -117,6 +130,12 @@
             validPublicKeys(){
                 return this.keypairs.filter(x => this.payload.blockchain === x.blockchain);
             },
+            selectingKeypair(){
+                return !this.generatingNewKeypair && !this.importingKeypair
+            },
+            keyExists(){
+                return this.keypairs.find(x => x.publicKey === this.keypair.publicKey);
+            }
         },
         mounted(){
             this.keypair.name = `Key For ${this.payload.origin}`;
@@ -141,12 +160,29 @@
                     await KeyPairService.generateKeyPair(this.keypair);
                 }
             },
+            async toggleImportKeypair(){
+                this.importingKeypair = !this.importingKeypair;
+            },
+            importKeypair(){
+                this.returnResult({keypair:this.keypair, isNew:true});
+            },
+            async makePublicKey(){
+                setTimeout(async () => {
+                    await KeyPairService.makePublicKey(this.keypair);
+                }, 100)
+            },
             copyKeyPair(){
                 ElectronHelpers.copy(this.keypair.privateKey);
                 PopupService.push(Popup.snackbar("Keypair copied to clipboard!", "key"))
             },
         },
-        props:['payload', 'pluginOrigin']
+        props:['payload', 'pluginOrigin'],
+        watch:{
+            ['keypair.privateKey'](){
+                this.keypair.publicKey = '';
+                this.makePublicKey();
+            }
+        }
     }
 </script>
 
@@ -155,6 +191,14 @@
 
     .pop-in {
         width:200px;
+    }
+
+    .existing-key {
+        width:100%;
+        padding:10px 0;
+        color:$red;
+        font-weight: bold;
+        font-size: 13px;
     }
 
     .popup {
@@ -332,6 +376,10 @@
                     transition: box-shadow 0.2s ease, transform 0.2s ease;
                     margin-bottom:10px;
                     padding-right:50px;
+
+                    &.short {
+                        padding:15px 30px;
+                    }
 
                     .title {
                         font-size:18px;

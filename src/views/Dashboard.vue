@@ -197,6 +197,10 @@
                 const tokens = [];
                 await this.eosPlugin.fetchTokens(tokens);
                 await Promise.all(this.eosAccounts.map(async account => {
+
+                    // Only get from endorsed networks
+                    if(!await PluginRepository.plugin(account.blockchain()).isEndorsedNetwork(account.network())) return false;
+
                     this.balances[account.unique()] = [];
 
                     return await Promise.all(tokens.map(async token => {

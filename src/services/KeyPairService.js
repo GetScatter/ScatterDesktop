@@ -11,6 +11,10 @@ import Keypair from '../models/Keypair';
 export default class KeyPairService {
 
     static isValidPrivateKey(keypair){
+
+        PluginRepository.signatureProviders().map(provider => {
+
+        });
         const plugin = PluginRepository.plugin(keypair.blockchain);
         return plugin.validPrivateKey(keypair.privateKey);
     }

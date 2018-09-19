@@ -66,7 +66,6 @@
             lines:[1,5],
             links:[
                 {route:RouteNames.DASHBOARD, name:'Dashboard', icon:'fa fa-bar-chart-o', onlyIfHasAccounts:true},
-//                {route:RouteNames.TRANSFER, name:'Transfer', icon:'fa fa-paper-plane', onlyIfHasAccounts:true},
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield'},
@@ -116,6 +115,7 @@
 
 
                     RIDLService.canConnect().then(bool => {
+                        console.log('bool', bool);
                         if(bool) {
                             this.links.splice(3, 0, {
                                 route: RouteNames.REPUTATION,
