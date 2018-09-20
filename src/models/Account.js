@@ -6,13 +6,14 @@ export default class Account {
     constructor(){
         this.keypairUnique = '';
         this.networkUnique = '';
-        this.publicKey = '';
         this.name = '';
         this.authority = '';
     }
 
     sendable(){
-        return PluginRepository.plugin(this.blockchain()).accountsAreImported() ? this.name : this.publicKey;
+        //TODO:
+        // return PluginRepository.plugin(this.blockchain()).accountsAreImported() ? this.name : this.publicKey;
+        return '';
     }
 
     formatted(){

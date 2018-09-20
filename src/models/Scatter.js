@@ -12,6 +12,7 @@ export default class Scatter {
         this.keychain = Keychain.placeholder();
         this.settings = Settings.placeholder();
         this.hash = Hasher.insecureHash(IdGenerator.text(2048));
+        this.bufferKeys = false;
 
         this.nonce = 0;
         this.noncePrefix = 'nonce';

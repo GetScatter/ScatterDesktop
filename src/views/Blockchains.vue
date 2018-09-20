@@ -16,12 +16,9 @@
                 <menu-search></menu-search>
 
                 <section class="item" v-if="subMenuType === subMenuTypes.KEYS"
-                         :class="{'active':selectedSubMenuItem && selectedSubMenuItem.publicKey === keypair.publicKey}"
+                         :class="{'active':selectedSubMenuItem && selectedSubMenuItem.id === keypair.id}"
                          v-for="keypair in filteredKeypairs" @click="selectedSubMenuItem = keypair">
                     <figure class="title">{{keypair.name}}</figure>
-                    <figure class="description">
-                        <b>{{keypair.blockchain.toUpperCase()}}</b> - {{linkedAccounts(keypair)}} account{{linkedAccounts(keypair) === 1 ? '' : 's'}}
-                    </figure>
                 </section>
 
                 <section class="item" v-if="subMenuType === subMenuTypes.NETWORKS"
@@ -81,8 +78,7 @@
             ]),
             filteredKeypairs(){
                 return this.keypairs.filter(x => (this.selectedSubMenuItem !== null && x.id === this.selectedSubMenuItem.id) ||
-                                                 x.name.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1 ||
-                                                 x.publicKey.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
+                                                 x.name.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
             },
             filteredNetworks(){
                 return this.networks.filter(x => (this.selectedSubMenuItem !== null && x.id === this.selectedSubMenuItem.id) ||

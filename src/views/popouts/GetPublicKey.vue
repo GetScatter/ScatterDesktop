@@ -165,7 +165,7 @@
             },
             async makePublicKey(){
                 setTimeout(async () => {
-                    await KeyPairService.makePublicKey(this.keypair);
+                    await KeyPairService.makePublicKeys(this.keypair);
                 }, 100)
             },
             copyKeyPair(){
@@ -177,7 +177,7 @@
         watch:{
             ['keypair.privateKey'](){
                 this.keypair.publicKey = '';
-                this.makePublicKey();
+                this.makePublicKeys();
             }
         }
     }

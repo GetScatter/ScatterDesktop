@@ -11,10 +11,6 @@ import Keypair from '../models/Keypair';
 export default class KeyPairService {
 
     static isValidPrivateKey(keypair){
-
-        PluginRepository.signatureProviders().map(provider => {
-
-        });
         const plugin = PluginRepository.plugin(keypair.blockchain);
         return plugin.validPrivateKey(keypair.privateKey);
     }
@@ -24,15 +20,13 @@ export default class KeyPairService {
      * @param keypair
      * @returns {Promise.<void>}
      */
-    static async makePublicKey(keypair){
+    static async makePublicKeys(keypair){
         return new Promise((resolve) => {
             setTimeout(() => {
                 if(keypair.privateKey.length < 50) {
                     resolve(false);
                     return false;
                 }
-
-                let publicKey = '';
 
                 BlockchainsArray.map(blockchainKV => {
                     try {
@@ -41,14 +35,13 @@ export default class KeyPairService {
 
                             const plugin = PluginRepository.plugin(blockchain);
                             if (plugin && plugin.validPrivateKey(keypair.privateKey)) {
-                                publicKey = plugin.privateToPublic(keypair.privateKey, keypair.fork);
+                                keypair.publicKeys.push(plugin.privateToPublic(keypair.privateKey, keypair.fork));
                                 keypair.blockchain = blockchain;
                             }
                         }
                     } catch(e){}
                 });
 
-                if(publicKey) keypair.publicKey = publicKey;
                 resolve(true);
             },100)
         })

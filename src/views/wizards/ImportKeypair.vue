@@ -64,7 +64,7 @@
                         you have selected Scatter will automatically select the blockchain for you.
                     </section>
 
-                    <cin @changed="makePublicKey" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                    <cin @changed="makePublicKeys" placeholder="Private Key" type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                     <cin placeholder="Public Key" disabled="true" :text="keypair.publicKey"></cin>
                 </section>
 
@@ -186,7 +186,7 @@
                     // Conforming private key to standard input
                     this.keypair.privateKey = PluginRepository.plugin(this.keypair.blockchain).conformPrivateKey(this.keypair.privateKey);
 
-                    await KeyPairService.makePublicKey(this.keypair);
+                    await KeyPairService.makePublicKeys(this.keypair);
 
                 }, 100)
             },

@@ -110,22 +110,22 @@
         },
         watch:{
             scatter(){
-                if(!loaded && this.scatter instanceof Scatter){
-                    loaded = true;
-
-
-                    RIDLService.canConnect().then(bool => {
-                        console.log('bool', bool);
-                        if(bool) {
-                            this.links.splice(3, 0, {
-                                route: RouteNames.REPUTATION,
-                                name: 'Reputation',
-                                icon: 'icon icon-ridl'
-                            });
-                        }
-
-                    })
-                }
+//                if(!loaded && this.scatter instanceof Scatter){
+//                    loaded = true;
+//
+//
+//                    RIDLService.canConnect().then(bool => {
+//                        console.log('bool', bool);
+//                        if(bool) {
+//                            this.links.splice(3, 0, {
+//                                route: RouteNames.REPUTATION,
+//                                name: 'Reputation',
+//                                icon: 'icon icon-ridl'
+//                            });
+//                        }
+//
+//                    })
+//                }
             },
         },
         props:['collapsed']

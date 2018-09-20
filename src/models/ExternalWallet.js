@@ -18,6 +18,7 @@ export default class ExternalWallet {
         this.id = IdGenerator.text(64);
         this.type = _type;
         this.blockchain = _blockchain;
+        this.publicKey = '';
         this.interface = getInterface(_type, _blockchain);
     }
 

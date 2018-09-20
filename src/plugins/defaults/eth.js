@@ -70,6 +70,12 @@ export default class ETH extends Plugin {
             resolve(privateKey.toString('hex'));
         })
     }
+    bufferToHexPrivate(buffer){
+        return new Buffer(buffer).toString('hex')
+    }
+    hexPrivateToBuffer(privateKey){
+        return Buffer.from(privateKey, 'hex');
+    }
     conformPrivateKey(privateKey){
         privateKey = privateKey.trim();
 

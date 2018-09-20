@@ -84,7 +84,6 @@ export default class RIDLService {
             await this.bindNetwork();
         }
 
-        console.log('net', ridlNetwork());
         if(!ridlNetwork()) return false;
 
         await ridl.init( ridlNetwork() );
@@ -110,11 +109,9 @@ export default class RIDLService {
     static async identify(identity){
         return new Promise(async (resolve, reject) => {
             const existing = await ridl.identity.get(identity.name);
-            console.log('existing', existing);
 
             // Exists and is already registered
             if(!!existing && existing.account !== 'ridlridlridl'){
-                console.log('exists!', existing)
                 PopupService.push(Popup.prompt('Identity Exists!', 'Looks like someone else has this identity name', 'ban', 'Okay'))
                 //TODO: Allow claiming if the user things they own this or
             }
@@ -162,8 +159,6 @@ export default class RIDLService {
                     await ridl.identity.payAndIdentify(identity.name, identity.publicKey);
                     const paid = await ridl.identity.get(identity.name);
                     if(!paid) return console.error('Did not register ID');
-
-                    console.log('paid', paid);
 
                     identity.ridl = paid.expires;
                     updateIdentity(identity);

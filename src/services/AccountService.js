@@ -17,8 +17,7 @@ export default class AccountService {
     static async addAccountFromKeypair(keypair, network){
         const account = Account.fromJson({
             keypairUnique:keypair.unique(),
-            networkUnique:network.unique(),
-            publicKey:keypair.publicKey
+            networkUnique:network.unique()
         });
         const scatter = store.state.scatter.clone();
         scatter.keychain.addAccount(account);

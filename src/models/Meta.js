@@ -1,4 +1,5 @@
-const {app} = window.require('electron').remote;
+const { remote } = window.require('electron');
+const { app } = remote;
 
 export default class Meta {
 

@@ -119,11 +119,18 @@ export default class EOS extends Plugin {
     privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
     validPrivateKey(privateKey){ return ecc.isValidPrivate(privateKey); }
     validPublicKey(publicKey, prefix = null){ return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
+
     randomPrivateKey(){ return ecc.randomKey(); }
     conformPrivateKey(privateKey){ return privateKey.trim(); }
     convertsTo(){ return []; }
     from_eth(privateKey){
         return ecc.PrivateKey.fromHex(Buffer.from(privateKey, 'hex')).toString();
+    }
+    bufferToHexPrivate(buffer){
+        return ecc.PrivateKey.fromBuffer(buffer).toString()
+    }
+    hexPrivateToBuffer(privateKey){
+        return new ecc.PrivateKey(privateKey).toBuffer();
     }
 
     actionParticipants(payload){

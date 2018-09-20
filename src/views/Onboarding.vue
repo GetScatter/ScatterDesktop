@@ -68,7 +68,7 @@
 
                 <section class="input-container">
                     <section class="input">
-                        <cin @changed="makePublicKey" placeholder="Enter a Private Key" key="blockchain" v-on:enter="importBlockchainAccount"
+                        <cin @changed="makePublicKeys" placeholder="Enter a Private Key" key="blockchain" v-on:enter="importBlockchainAccount"
                              type="password" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                     </section>
                     <section class="button">
@@ -162,7 +162,7 @@
                     // Conforming private key to standard input
                     this.keypair.privateKey = PluginRepository.plugin(this.keypair.blockchain).conformPrivateKey(this.keypair.privateKey);
 
-                    await KeyPairService.makePublicKey(this.keypair);
+                    await KeyPairService.makePublicKeys(this.keypair);
                 }, 100)
             },
             async importBlockchainAccount(){

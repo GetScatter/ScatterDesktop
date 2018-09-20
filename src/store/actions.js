@@ -7,6 +7,7 @@ import PluginRepository from '../plugins/PluginRepository';
 import Hasher from '../util/Hasher'
 import IdGenerator from '../util/IdGenerator'
 import Mnemonic from '../util/Mnemonic'
+import {store} from '../store/store';
 
 import Identity from '../models/Identity';
 import Scatter from '../models/Scatter';
@@ -14,6 +15,7 @@ import Scatter from '../models/Scatter';
 import AES from 'aes-oop';
 import PopupService from "../services/PopupService";
 import {Popup} from '../models/popups/Popup'
+import migrate from '../migrations/migrator'
 
 export const actions = {
     [Actions.SET_SEARCH_TERMS]:({commit}, terms) => commit(Actions.SET_SEARCH_TERMS, terms),
@@ -25,7 +27,7 @@ export const actions = {
         })
     },
 
-    [Actions.LOAD_SCATTER]:async ({commit, state}) => {
+    [Actions.LOAD_SCATTER]:async ({commit, state, dispatch}) => {
 
         if(!state.scatter) {
             let scatter = StorageService.getScatter();
@@ -33,7 +35,12 @@ export const actions = {
             return commit(Actions.SET_SCATTER, scatter);
         }
 
-        await PasswordService.verifyPassword();
+        if(await PasswordService.verifyPassword()){
+            const scatter = state.scatter.clone();
+            if(await migrate(scatter))
+                // return;
+                await dispatch(Actions.SET_SCATTER, scatter);
+        }
     },
 
     [Actions.CREATE_SCATTER]:({state, commit, dispatch}, password) => {
