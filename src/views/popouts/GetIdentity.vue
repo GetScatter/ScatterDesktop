@@ -17,7 +17,7 @@
                 </section>
 
                 <!-- REQUIREMENTS -->
-                <section class="requirements">
+                <section class="requirements" v-if="(!selectedIdentity && identityRequirements.length) || (selectedIdentity && printableAccountRequirements.length)">
                     <section v-if="!selectedIdentity">
                         <figure class="title">Identity Requirements</figure>
                         <section class="requirement">
@@ -45,9 +45,9 @@
 
                     <section class="big-login" v-if="validIdentities.length === 1">
                         <section>
-                            <figure class="title">Logging into <b>{{payload.origin}}</b> with <b>{{validIdentities[0].name}}</b></figure>
-                            <section class="item" @click="selectIdentity(validIdentities[0])" style="margin-top:20px;">
-                                <figure class="title" :style="{'text-align':validAccounts.length === 1 ? 'center' : 'left'}">Sign In</figure>
+                            <figure class="title">Do you want to log into <b>{{payload.origin}}</b> with <b>{{validIdentities[0].name}}</b></figure>
+                            <section class="item" @click="selectIdentity(validIdentities[0])" style="margin:20px 0 0 0;">
+                                <figure class="title" :style="{'text-align':validAccounts.length === 1 ? 'center' : 'left'}">Login</figure>
                                 <figure class="sub-title" v-if="validAccounts.length === 1">Only one account available, it will automatically be used.</figure>
                                 <figure class="sub-title" style="text-align:left;" v-if="validAccounts.length > 1">Continue to account selection.</figure>
                                 <figure class="chevron" v-if="validAccounts.length > 1">
@@ -214,25 +214,14 @@
         display: flex;
         flex-flow: column;
 
-        .big-login {
-            display:flex;
-            justify-content: center;
-            align-items: center;
 
-            padding:40px;
-            text-align:center;
-
-            .title {
-                font-size: 24px;
-            }
-        }
 
         .top-section {
             flex: 0 1 auto;
         }
 
         .head, .requirements, .search-bar {
-            background:#fff;
+            background: #fff;
             margin-bottom:1px;
         }
 
@@ -341,12 +330,33 @@
             position:relative;
             flex: 1 1 auto;
             overflow-y:auto;
+            display: flex;
+            flex-direction: column;
+
+            .big-login {
+                flex:1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+
+                padding:40px;
+                text-align:center;
+
+                .title {
+                    font-size: 24px;
+                }
+            }
 
             .list {
                 padding-bottom:30px;
                 overflow-y:auto;
                 position: relative;
                 height:100%;
+                display: flex;
+                flex-direction: column;
+                flex:1;
 
                 .breadcrumbs {
                     padding:10px 20px;
