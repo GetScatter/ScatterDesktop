@@ -6,14 +6,13 @@ export default class Account {
     constructor(){
         this.keypairUnique = '';
         this.networkUnique = '';
+        this.publicKey = '';
         this.name = '';
         this.authority = '';
     }
 
     sendable(){
-        //TODO:
-        // return PluginRepository.plugin(this.blockchain()).accountsAreImported() ? this.name : this.publicKey;
-        return '';
+        return PluginRepository.plugin(this.blockchain()).accountsAreImported() ? this.name : this.publicKey;
     }
 
     formatted(){
@@ -21,8 +20,7 @@ export default class Account {
     }
 
     formattedWithNetwork(){
-        const networkName = store.state.scatter.settings.networks.find(x => x.unique() === this.networkUnique).name;
-        return `${networkName} - ${this.formatted()}`;
+        return `${this.network().name} - ${this.formatted()}`;
     }
 
     network(){
@@ -34,7 +32,7 @@ export default class Account {
     }
 
     blockchain(){
-        return this.keypairUnique.split(':')[0];
+        return this.keypair().publicKeys.find(x => x.key === this.publicKey).blockchain;
     }
 
     static placeholder(){ return new Account(); }

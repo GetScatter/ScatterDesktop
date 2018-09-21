@@ -58,17 +58,12 @@ export default class Keychain {
         this.permissions = this.permissions.filter(perm => perm.identity !== identity.publicKey);
     }
 
-    getKeyPair(keypair){
-        return this.getKeyPairByPublicKey(keypair.publicKey);
-        // return this.keypairs.find(key => key.publicKey.toLowerCase() === keypair.publicKey.toLowerCase())
-    }
-
     getKeyPairByName(name){
         return this.keypairs.find(key => key.name.toLowerCase() === name.toLowerCase())
     }
 
     getKeyPairByPublicKey(publicKey){
-        return this.keypairs.find(key => key.publicKey.toLowerCase() === publicKey.toLowerCase())
+        return this.keypairs.find(key => key.publicKeys.find(x => x.key.toLowerCase() === publicKey.toLowerCase()))
     }
 
     removeKeyPair(keypair){

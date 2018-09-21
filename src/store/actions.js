@@ -59,6 +59,8 @@ export const actions = {
             firstIdentity.name = 'MyFirstIdentity';
             scatter.keychain.updateOrPushIdentity(firstIdentity);
 
+            //TODO: Add first automatic keypair
+
             SocketService.initialize();
             SocketService.open();
 

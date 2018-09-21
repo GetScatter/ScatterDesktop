@@ -76,7 +76,7 @@
                         <btn text="Skip" red="1" v-on:clicked="skipBlockchain"></btn>
                     </section>
                 </section>
-                <i class="name-terms">{{keypair.publicKey.length ? keypair.publicKey : 'Once you enter a valid private key you will see the public key here.'}}</i>
+                <!--<i class="name-terms">{{keypair.publicKeys.length ? keypair.publicKeys : 'Once you enter a valid private key you will see the public key here.'}}</i>-->
             </section>
 
         </section>
@@ -153,20 +153,18 @@
                 this[Actions.SET_SCATTER](scatter);
                 this.nextStep();
             },
-            async makePublicKey(){
+            async makePublicKeys(){
                 setTimeout(async () => {
-                    if(!KeyPairService.isValidPrivateKey(this.keypair))
-                        this.keypair.publicKey = '';
-                    if(this.keypair.privateKey.length < 50) return false;
-
                     // Conforming private key to standard input
-                    this.keypair.privateKey = PluginRepository.plugin(this.keypair.blockchain).conformPrivateKey(this.keypair.privateKey);
+                    if(typeof this.keypair.privateKey === 'string'){
+                        KeyPairService.convertHexPrivateToBuffer(this.keypair);
+                    }
 
                     await KeyPairService.makePublicKeys(this.keypair);
                 }, 100)
             },
             async importBlockchainAccount(){
-                if(!this.keypair.publicKey.length) return PopupService.push(Popup.snackbar("Invalid Private Key", "ban"));
+                if(!this.keypairs.publicKey.length) return PopupService.push(Popup.snackbar("Invalid Private Key", "ban"));
                 this.importingAccount = true;
 
                 const network = await PluginRepository.plugin(this.keypair.blockchain).getEndorsedNetwork();

@@ -107,15 +107,12 @@ export default class ApiService {
             PopupService.push(Popup.popout(request, ({result}) => {
                 if(!result) return resolve({id:request.id, result:null});
 
-                if(result.isNew){
-                    KeyPairService.saveKeyPair(result.keypair, () => {
-                        resolve({id:request.id, result:result.keypair.publicKey});
-                    });
-                }
+                const publicKey = result.keypair.publicKeys.find(x => x.blockchain === request.payload.blockchain).key;
 
-                else {
-                    resolve({id:request.id, result:result.keypair.publicKey});
-                }
+                if(result.isNew) KeyPairService.saveKeyPair(result.keypair, () => {
+                    resolve({id:request.id, result:publicKey});
+                });
+                else resolve({id:request.id, result:publicKey});
             }));
         })
     }

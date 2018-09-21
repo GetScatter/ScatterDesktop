@@ -10,10 +10,10 @@ export const m8_10_0 = async scatter => {
         x.decrypt(store.state.seed);
         if(!x.external) {
             x.privateKey = Crypto.privateKeyToBuffer(x.privateKey, x.blockchain);
-
-            x.publicKeys = BlockchainsArray.map(x => {
-                return {blockchain:x.value, key:PluginRepository.plugin(x.value).privateToPublic(x.privateKey)};
-            });
+            x.keyHash = Crypto.bufferToHash(x.privateKey);
+            x.publicKeys = BlockchainsArray.map(b => (
+                {blockchain:b.value, key:PluginRepository.plugin(b.value).privateToPublic(x.privateKey)}
+            ));
         } else {
             x.publicKeys = [{blockchain:x.blockchain, key:x.publicKey}];
         }
@@ -30,10 +30,10 @@ export const m8_10_0 = async scatter => {
         });
 
         x.encrypt(store.state.seed);
-    })
+    });
 
     // Wiping out permissions
     scatter.keychain.permissions = [];
 
-    return true;
+    return false;
 };

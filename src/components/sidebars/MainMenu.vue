@@ -69,8 +69,9 @@
                 {route:RouteNames.IDENTITIES, name:'Identities', icon:'fa fa-address-book'},
                 {route:RouteNames.BLOCKCHAINS, name:'Blockchains', icon:'fa fa-key'},
                 {route:RouteNames.PERMISSIONS, name:'Permissions', icon:'fa fa-shield'},
-                {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle', small:true, firstSmall:true},
-                {route:RouteNames.SETTINGS, name:'Settings', icon:'fa fa-gear', small:true},
+                {route:RouteNames.SETTINGS, name:'Advanced Mode', icon:'fa fa-sliders', small:true, firstSmall:true},
+//                {route:RouteNames.HELP, name:'Help', icon:'fa fa-question-circle', small:true, firstSmall:true},
+//                {route:RouteNames.SETTINGS, name:'Settings', icon:'fa fa-gear', small:true},
             ]
         }},
         computed:{

@@ -29,7 +29,7 @@ const getCachedInstance = network => {
 
 const getAccountsFromPublicKey = (publicKey, network) => {
     return Promise.race([
-        new Promise(resolve => setTimeout(() => resolve([]), 10000)),
+        new Promise(resolve => setTimeout(() => resolve([]), 2500)),
         new Promise((resolve, reject) => {
             const eos = getCachedInstance(network);
             eos.getKeyAccounts(publicKey).then(res => {
@@ -104,11 +104,12 @@ export default class EOS extends Plugin {
     accountsAreImported(){ return true; }
     getImportableAccounts(keypair, network){
         return new Promise((resolve, reject) => {
-            getAccountsFromPublicKey(keypair.publicKey, network).then(accounts => {
+            const publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
+            getAccountsFromPublicKey(publicKey, network).then(accounts => {
                 resolve(accounts.map(account => Account.fromJson({
                     name:account.name,
                     authority:account.authority,
-                    publicKey:keypair.publicKey,
+                    publicKey,
                     keypairUnique:keypair.unique(),
                     networkUnique:network.unique(),
                 })))

@@ -1,31 +1,26 @@
 <template>
     <section>
 
-        <section>
+        <section v-if="keypair">
             <section class="head">
-                <i class="fa fa-trash-o" @click="deleteKeyPair" v-tooltip="'Delete Keypair'"></i>
+                <i class="fa fa-trash-o" v-if="!isNew" @click="deleteKeyPair" v-tooltip="'Delete Keypair'"></i>
             </section>
 
             <section class="selected-item scrollable" v-if="keypair">
 
                 <cin style="margin-top:-10px;" big="true" placeholder="Enter a Name" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
-                <section v-if="isNew">
-                    <p style="font-size:13px;">Each Keypair must have a name to uniquely identify it. This is for organizational purposes only and the actual name makes no difference.</p>
-                    <div style="background:rgba(0,0,0,0.1); width:100%; height:1px; margin:40px 0 30px;"></div>
-                </section>
-
 
                 <section class="panel-shifter" v-if="!isNew">
 
 
-                    <!--<section class="shifter-options" style="margin-top:30px;">-->
-                        <!--<figure class="shifter-option" v-for="p in PANELS" @click="panel = p" :class="{'active':panel === p}">{{p}}</figure>-->
-                    <!--</section>-->
+                    <section class="shifter-options" style="margin-top:30px;">
+                        <figure class="shifter-option" v-for="p in PANELS" @click="panel = p" :class="{'active':panel === p}">{{p}}</figure>
+                    </section>
 
-                    <!--<section class="shited-panel" v-if="panel === PANELS.ACCOUNTS">-->
-                        <!--<section class="split-panels">-->
-                            <!--<section class="info-box top">-->
-                                <!--<br><br>-->
+                    <section class="shited-panel" v-if="panel === PANELS.ACCOUNTS">
+                        <section class="split-panels">
+                            <section class="info-box top">
+                                <br><br>
 
                                 <!--<sel :selected="selectedNetwork.name"-->
                                      <!--:options="availableNetworks"-->
@@ -55,66 +50,66 @@
                                     <!--<btn v-on:clicked="linkKeypairToNetwork" text="Link to Network"></btn>-->
                                 <!--</section>-->
 
-                                <!--<section v-if="linkedAccounts.length">-->
-                                    <!--<br>-->
-                                    <!--<br>-->
-                                    <!--<hr/>-->
-                                    <!--<figure class="header">Linked Accounts / Keypairs</figure>-->
+                                <section v-if="linkedAccounts.length">
+                                    <br>
+                                    <br>
+                                    <hr/>
+                                    <figure class="header">Linked Accounts / Keypairs</figure>
 
-                                    <!--<section class="list-item" v-for="account in linkedAccounts">-->
-                                        <!--<figure v-if="isEndorsedNetwork(account)" class="name" @click="openAccountInExplorer(account)" style="cursor:pointer;"><u>{{account.formatted()}}</u></figure>-->
-                                        <!--<figure v-else class="name">{{account.formatted()}}</figure>-->
+                                    <section class="list-item" v-for="account in linkedAccounts">
+                                        <figure v-if="isEndorsedNetwork(account)" class="name" @click="openAccountInExplorer(account)" style="cursor:pointer;"><u>{{account.formatted()}}</u></figure>
+                                        <figure v-else class="name">{{account.formatted()}}</figure>
 
-                                        <!--<figure class="date" v-if="account.network()">{{account.network().name}}</figure>-->
+                                        <figure class="date" v-if="account.network()">{{account.network().name}}</figure>
 
-                                        <!--<section v-if="account.blockchain() === blockchain.EOSIO && accountData(account)">-->
-                                            <!--<p-bar color="orange" v-if="accountData(account).refund_request"-->
-                                                   <!--:used="+new Date() - +new Date(accountData(account).refund_request.request_time)"-->
-                                                   <!--:total="(86400*3*1000)"-->
-                                                   <!--:l-text="`Refunding on ${new Date(+new Date(accountData(account).refund_request.request_time)+(86400*3*1000)).toLocaleString()}`"-->
-                                                   <!--:r-text="refundAmount(account)"></p-bar>-->
+                                        <section v-if="account.blockchain() === blockchain.EOSIO && accountData(account)">
+                                            <p-bar color="orange" v-if="accountData(account).refund_request"
+                                                   :used="+new Date() - +new Date(accountData(account).refund_request.request_time)"
+                                                   :total="(86400*3*1000)"
+                                                   :l-text="`Refunding on ${new Date(+new Date(accountData(account).refund_request.request_time)+(86400*3*1000)).toLocaleString()}`"
+                                                   :r-text="refundAmount(account)"></p-bar>
 
-                                            <!--<section v-if="accountData(account).total_resources">-->
-                                                <!--<p-bar color="blue" :used="accountData(account).cpu_limit.used" :total="accountData(account).cpu_limit.max" l-text="CPU" :r-text="accountData(account).total_resources.cpu_weight"></p-bar>-->
-                                                <!--<p-bar color="yellow" :used="accountData(account).net_limit.used" :total="accountData(account).net_limit.max" l-text="NET" :r-text="accountData(account).total_resources.net_weight"></p-bar>-->
-                                                <!--<p-bar color="red" :used="accountData(account).ram_usage" :total="accountData(account).ram_quota" l-text="RAM"-->
-                                                       <!--:r-text="`${(accountData(account).ram_usage/1024).toFixed(2)}KB / ${(accountData(account).ram_quota/1024).toFixed(2)}KB`"></p-bar>-->
-                                            <!--</section>-->
+                                            <section v-if="accountData(account).total_resources">
+                                                <p-bar color="blue" :used="accountData(account).cpu_limit.used" :total="accountData(account).cpu_limit.max" l-text="CPU" :r-text="accountData(account).total_resources.cpu_weight"></p-bar>
+                                                <p-bar color="yellow" :used="accountData(account).net_limit.used" :total="accountData(account).net_limit.max" l-text="NET" :r-text="accountData(account).total_resources.net_weight"></p-bar>
+                                                <p-bar color="red" :used="accountData(account).ram_usage" :total="accountData(account).ram_quota" l-text="RAM"
+                                                       :r-text="`${(accountData(account).ram_usage/1024).toFixed(2)}KB / ${(accountData(account).ram_quota/1024).toFixed(2)}KB`"></p-bar>
+                                            </section>
 
-                                        <!--</section>-->
-
-
-                                        <!--<figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(account)">-->
-                                            <!--<i class="fa fa-ban"></i>-->
-                                        <!--</figure>-->
-
-                                        <!--<figure v-if="account.blockchain() === blockchain.EOSIO" class="separator"></figure>-->
-
-                                        <!--<figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">-->
-                                            <!--<i class="fa fa-microchip"></i>-->
-                                        <!--</figure>-->
-
-                                        <!--<figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">-->
-                                            <!--<i class="fa fa-globe"></i>-->
-                                        <!--</figure>-->
-
-                                        <!--<figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">-->
-                                            <!--<i class="fa fa-refresh"></i>-->
-                                        <!--</figure>-->
-                                    <!--</section>-->
-                                <!--</section>-->
-                            <!--</section>-->
-                        <!--</section>-->
-                    <!--</section>-->
+                                        </section>
 
 
-                    <!--<section class="shited-panel" v-if="panel === PANELS.PROOFS">-->
-                        <!--<section class="info-box">-->
-                            <!--<cin forced="1" placeholder="Public Key" disabled="true" :text="keypair.publicKey" :copy="true"></cin>-->
-                            <!--<btn v-if="!keypair.external" v-on:clicked="generateQR" text="Generate Encrypted QR"></btn>-->
-                            <!--<section style="width:100%; margin-left:-15px;"><img :src="qr" /></section>-->
-                        <!--</section>-->
-                    <!--</section>-->
+                                        <figure class="button" v-tooltip="'Unlink'" @click="unlinkAccount(account)">
+                                            <i class="fa fa-ban"></i>
+                                        </figure>
+
+                                        <figure v-if="account.blockchain() === blockchain.EOSIO" class="separator"></figure>
+
+                                        <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Buy/Sell Ram'" @click="moderateRAM(account)">
+                                            <i class="fa fa-microchip"></i>
+                                        </figure>
+
+                                        <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Stake/Unstake CPU & NET'" @click="moderateResources(account)">
+                                            <i class="fa fa-globe"></i>
+                                        </figure>
+
+                                        <figure v-if="account.blockchain() === blockchain.EOSIO" class="button blue" v-tooltip="'Refresh Resources'" @click="fetchAccountData(account, true)">
+                                            <i class="fa fa-refresh"></i>
+                                        </figure>
+                                    </section>
+                                </section>
+                            </section>
+                        </section>
+                    </section>
+
+
+                    <section class="shited-panel" v-if="panel === PANELS.PROOFS">
+                        <section class="info-box">
+                            <cin :key="key.key" v-for="key in keypair.publicKeys" forced="true" disabled="true" :placeholder="key.blockchain.toUpperCase()" :text="key.key" copy="true"></cin>
+                            <btn v-if="!keypair.external" v-on:clicked="generateQR" text="Generate Encrypted QR"></btn>
+                            <section style="width:100%; margin-left:-15px;"><img :src="qr" /></section>
+                        </section>
+                    </section>
 
                 </section>
 
@@ -129,38 +124,38 @@
                             </section>
                             <br>
 
-                            <br v-if="!usingHardware">
-                            <section class="blockchain-selector" :class="{'fork-support':forkSupport}">
-                                <!--<sel v-tooltip.top-start="'Select a Blockchain'" v-if="!usingHardware" :selected="keypair.blockchain.toUpperCase()"-->
-                                     <!--:options="blockchains"-->
-                                     <!--:parser="blockchain => blockchain.value.toUpperCase()"-->
-                                     <!--v-on:changed="blockchainChanged" :key="1"></sel>-->
 
-                                <figure v-if="!usingHardware" class="fork-button">
-                                    <section class="button" v-tooltip="'Use Fork'" @click="toggleFork">
-                                        <i class="fa fa-code-fork"></i>
-                                    </section>
-                                </figure>
+                            <!-- GENERATE KEYPAIR -->
+                            <section v-if="!importingKey" style="margin-bottom:40px;">
+                                <btn v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
+                                <btn v-if="keypair.publicKeys.length && !usingHardware" v-on:clicked="copyPrivateKey" :red="true" text="Copy Private Key"></btn>
                             </section>
 
-                            <section v-if="importingKey">
-                                <cin v-if="!usingHardware" @changed="makePublicKeys" placeholder="Private Key" type="password"
+
+
+
+                            <!-- ENTER A PRIVATE KEY ( IMPORT ) -->
+                            <section v-if="importingKey && !keypair.publicKeys.length">
+                                <cin v-if="!usingHardware" @changed="makePublicKeys" :forced="keypair.publicKeys.length" placeholder="Private Key" type="password"
                                      :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                             </section>
 
 
-                            <transition name="fade">
-                                <cin v-if="((keypair.fork && keypair.fork.length) || useFork)" :forced="keypair.fork.length"
-                                     placeholder="Enter the fork prefix"
-                                     :text="keypair.fork" v-on:changed="changed => bind(changed, 'keypair.fork')"></cin>
-                            </transition>
+                            <!-- SHOW PUBLIC KEYS / ADDRESSES -->
+                            <section v-if="keypair.publicKeys.length">
+                                <cin :key="key.key" disabled="true" v-for="key in keypair.publicKeys" forced="true" :placeholder="key.blockchain.toUpperCase()" :text="key.key" copy="true"></cin>
+                            </section>
 
-                            <cin :forced="usingHardware && keypair.external && keypair.external.publicKey.length"
-                                 :placeholder="usingHardware && keypair.external && keypair.external.publicKey.length ? `Imported ${keypair.blockchain.toUpperCase()} Key` : 'Public Key'"
-                                 disabled="true" :text="keypair.external.publicKey"></cin>
 
-                            <btn v-if="!importingKey" v-on:clicked="generateKeyPair" text="Generate New Keypair" secondary="true"></btn>
-                            <btn v-if="keypair.publicKeys.length && !usingHardware" v-on:clicked="copyKeyPair" :red="true" text="Copy Private Key"></btn>
+
+
+                            <!--<transition name="fade">-->
+                                <!--<cin v-if="((keypair.fork && keypair.fork.length) || useFork)" :forced="keypair.fork.length"-->
+                                     <!--placeholder="Enter the fork prefix"-->
+                                     <!--:text="keypair.fork" v-on:changed="changed => bind(changed, 'keypair.fork')"></cin>-->
+                            <!--</transition>-->
+
+
 
                             <section v-if="usingHardware">
                                 <br><br>
@@ -201,6 +196,7 @@
     import ElectronHelpers from '../../util/ElectronHelpers';
     import PopupService from '../../services/PopupService';
     import {Popup} from '../../models/popups/Popup'
+    import IdGenerator from '../../util/IdGenerator'
 
     let saveTimeout = null;
 
@@ -260,13 +256,8 @@
         },
         mounted(){
             this.keypair = this.kp;
-//            this.setDefaultSelectedNetwork();
             this.fetchAccountDatum();
-//            PluginRepository.signatureProviders().map(async plugin => {
-//                const endorsed = await plugin.getEndorsedNetwork();
-//                const net = this.networks.find(x => x.hostport() === endorsed.hostport());
-//                if(net) this.endorsedNetworks.push(net.id);
-//            })
+            if(this.isNew) this.keypair.name = `NewKey-${IdGenerator.text(10)}`
 
         },
         destroyed(){
@@ -336,7 +327,7 @@
                 return !!data ? data.data : null;
             },
             toggleImporting(){
-                this.publicKeys = [];
+                this.keypair.publicKeys = [];
                 this.keypair.fork = '';
                 this.keypair.privateKey = '';
 
@@ -344,7 +335,7 @@
                 if(!this.importingKey) this.usingHardware = false;
             },
             toggleExternalWallet(){
-                this.publicKeys = [];
+                this.keypair.publicKeys = [];
                 this.keypair.fork = '';
                 this.keypair.privateKey = '';
 
@@ -393,14 +384,6 @@
                 });
 
             },
-            async fetchAccounts(){
-                this.fetchedAccounts = false;
-                this.availableAccounts = await this.fetchAccountsWithoutBinding();
-                this.fetchedAccounts = true;
-            },
-            async fetchAccountsWithoutBinding(){
-                return await AccountService.getImportableAccounts(this.keypair, this.selectedNetwork);
-            },
             deleteKeyPair(){
                 PopupService.promptGuard(Popup.prompt(
                     "Deleting Keypair", "This will delete the keypair, it's accounts, and all associated permissions.",
@@ -412,15 +395,17 @@
                     });
                 });
             },
-            copyKeyPair(){
-                ElectronHelpers.copy(this.keypair.privateKey);
+            copyPrivateKey(){
+                ElectronHelpers.copy(this.keypair.privateKey.toString('hex'));
                 PopupService.push(Popup.snackbar("Keypair copied to clipboard!", "key"))
             },
             async makePublicKeys(){
                 setTimeout(async () => {
-                    this.publicKeys = [];
                     // Conforming private key to standard input
-                    this.keypair.privateKey = PluginRepository.plugin(this.keypair.blockchain).conformPrivateKey(this.keypair.privateKey);
+                    if(typeof this.keypair.privateKey === 'string'){
+                        KeyPairService.convertHexPrivateToBuffer(this.keypair);
+                    }
+
                     await KeyPairService.makePublicKeys(this.keypair);
                 }, 100)
             },
@@ -428,27 +413,16 @@
                 this.keypair.publicKeys = [];
                 this.keypair.privateKey = '';
 
-                await KeyPairService.generateKeyPair(this.keypair, this.keypair.fork);
+                await KeyPairService.generateKeyPair(this.keypair);
+                await KeyPairService.makePublicKeys(this.keypair);
                 PopupService.push(Popup.snackbar("A new keypair was generated."));
             },
             saveKeyPair(){
                 const save = () => {
                     KeyPairService.saveKeyPair(this.keypair, async () => {
+                        await AccountService.importAllAccounts(this.keypair);
                         PopupService.push(Popup.snackbar("Keypair Saved!", "check"));
                         this.$emit('selected', this.keypair.clone());
-                        await this.setDefaultSelectedNetwork();
-                        if(this.isImportable) {
-                            const accounts = await this.fetchAccountsWithoutBinding();
-                            if(accounts.length) PopupService.push(Popup.selector('Select Account', 'Select an Account to import', 'address-book', accounts, x => x.formatted(), selected => {
-                                this.linkAccount(selected);
-                            }))
-                        } else {
-                            const account = Account.fromJson({
-                                keypairUnique:this.keypair.unique(),
-                                networkUnique:this.selectedNetwork.unique(),
-                            })
-                            this.linkAccount(account)
-                        }
                     });
                 }
                 if(this.isNew) {
@@ -490,12 +464,14 @@
 
             },
             'keypair.privateKey'(a,b){
-                this.keypair.privateKey = this.keypair.privateKey.trim();
+                if(typeof this.keypair.privateKey === 'string') {
+                    this.keypair.privateKey = this.keypair.privateKey.trim();
+                }
 
             },
             'keypair.fork'(){
                 if(!this.keypair.fork || this.keypair.fork.length)
-                KeyPairService.makePublicKeys(this.keypair);
+                    KeyPairService.makePublicKeys(this.keypair);
             }
         }
     }

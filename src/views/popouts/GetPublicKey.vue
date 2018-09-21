@@ -53,7 +53,7 @@
 
                         <section class="item" v-for="kp in validPublicKeys" @click="returnResult({keypair:kp, isNew:false})">
                             <figure class="title">{{kp.name}}</figure>
-                            <figure class="sub-title">{{kp.publicKey}}</figure>
+                            <figure class="sub-title">{{kp.publicKeys.find(x => x.blockchain === blockchain).key}}</figure>
                             <figure class="chevron">
                                 <i class="fa fa-check"></i>
                             </figure>
@@ -83,7 +83,7 @@
                     <section style="padding:20px;">
                         <cin :key="id" type="password" placeholder="Account Secret" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
                         <figure class="existing-key" v-if="keyExists">This key already exists in your keychain under the name "{{keyExists.name}}".</figure>
-                        <btn :disabled="!keypair.publicKey.length || keyExists" full="true" large="true" v-on:clicked="importKeypair()" text="Import and Continue"></btn>
+                        <btn :disabled="!keypair.publicKeys.length || keyExists" full="true" large="true" v-on:clicked="importKeypair()" text="Import and Continue"></btn>
                     </section>
                 </section>
 
@@ -131,7 +131,10 @@
                 return !this.generatingNewKeypair && !this.importingKeypair
             },
             keyExists(){
-                return this.keypairs.find(x => x.publicKey === this.keypair.publicKey);
+                return this.keypairs.find(x => x.keyHash === this.keypair.keyHash);
+            },
+            blockchain(){
+                return this.payload.blockchain;
             }
         },
         mounted(){
@@ -163,20 +166,19 @@
             importKeypair(){
                 this.returnResult({keypair:this.keypair, isNew:true});
             },
-            async makePublicKey(){
+            async makePublicKeys(){
                 setTimeout(async () => {
                     await KeyPairService.makePublicKeys(this.keypair);
                 }, 100)
             },
             copyKeyPair(){
-                ElectronHelpers.copy(this.keypair.privateKey);
+                ElectronHelpers.copy(this.keypair.privateKey.toString('hex'));
                 PopupService.push(Popup.snackbar("Keypair copied to clipboard!", "key"))
             },
         },
         props:['payload', 'pluginOrigin'],
         watch:{
             ['keypair.privateKey'](){
-                this.keypair.publicKey = '';
                 this.makePublicKeys();
             }
         }

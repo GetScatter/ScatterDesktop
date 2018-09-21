@@ -9,6 +9,7 @@ export default class Keypair {
         this.id = IdGenerator.text(24);
         this.name = '';
         this.privateKey = '';
+        this.keyHash = '';
 
         this.external = null;
         this.fork = null;
@@ -37,7 +38,7 @@ export default class Keypair {
      * @returns {boolean}
      */
     isEncrypted(){
-        return typeof this.privateKey === 'string'
+        return typeof this.privateKey === 'string' && this.privateKey.length > 100;
     }
 
     /***
