@@ -6,6 +6,7 @@ import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
 import * as Actions from './store/constants'
 import {RouteNames} from './vue/Routing'
+import { QrcodeReader } from 'vue-qrcode-reader'
 
 
 
@@ -34,6 +35,9 @@ import SettingsDestroy from './components/panels/SettingsDestroy.vue'
 import SettingsPassword from './components/panels/SettingsPassword.vue'
 import SettingsNonce from './components/panels/SettingsNonce.vue'
 
+
+import Overhead from './components/panels/Overhead.vue'
+
 // POPUPS
 import Popups from './components/Popups.vue'
 import Mnemonic from './components/popups/Mnemonic.vue'
@@ -46,6 +50,7 @@ import DelegateResources from './components/popups/DelegateResources.vue'
 import BuySellRAM from './components/popups/BuySellRAM.vue'
 import RegisterWithRIDL from './components/popups/RegisterWithRIDL.vue'
 import PopInHead from './components/popups/fragments/PopInHead.vue'
+import Vault from './components/popups/Vault.vue'
 
 // POP OUTS
 import GetIdentity from './views/popouts/GetIdentity.vue'
@@ -93,6 +98,7 @@ class Main {
             {tag:'swch', vue:SwitchComponent},
             {tag:'p-bar', vue:PercentageBarComponent},
             {tag:'slider', vue:SliderComponent},
+            {tag:'qr-reader', vue:QrcodeReader},
 
             // PANELS
             {tag:'identity', vue:Identity},
@@ -112,6 +118,7 @@ class Main {
             {tag:'settings-explorer', vue:SettingsExplorer},
             {tag:'settings-password', vue:SettingsPassword},
             {tag:'settings-nonce', vue:SettingsNonce},
+            {tag:'overhead', vue:Overhead},
 
             // POPUPS
             {tag:'popups', vue:Popups},
@@ -125,6 +132,7 @@ class Main {
             {tag:'delegate-resources', vue:DelegateResources},
             {tag:'ridl-register', vue:RegisterWithRIDL},
             {tag:'pop-in-head', vue:PopInHead},
+            {tag:'vault', vue:Vault},
 
             // POP OUTS
             {tag:'get-identity', vue:GetIdentity},

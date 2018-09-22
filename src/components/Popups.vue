@@ -2,18 +2,16 @@
     <section>
 
         <section class="fader" :class="{'show':showFader}">
-            <figure class="bg" @click="clickedFader"></figure>
 
-            <section v-if="nextPopIn">
+            <section v-for="popIn in popIns" style="position:absolute;">
+                <figure class="bg" @click="clickedFader"></figure>
                 <section class="pop-in">
-                    <prompt v-if="nextPopIn.data.type === popupTypes.PROMPT"></prompt>
-                    <text-prompt v-if="nextPopIn.data.type === popupTypes.TEXT_PROMPT" :key="nextPopIn.id"></text-prompt>
-                    <selector v-if="nextPopIn.data.type === popupTypes.SELECTOR"></selector>
-                    <mnemonic v-if="nextPopIn.data.type === popupTypes.MNEMONIC"></mnemonic>
-                    <buy-sell-ram v-if="nextPopIn.data.type === popupTypes.BUY_SELL_RAM"></buy-sell-ram>
-                    <delegate-resources v-if="nextPopIn.data.type === popupTypes.DELEGATE_RESOURCES"></delegate-resources>
-                    <tx-success v-if="nextPopIn.data.type === popupTypes.TX_SUCCESS"></tx-success>
-                    <ridl-register v-if="nextPopIn.data.type === popupTypes.RIDL_REGISTER"></ridl-register>
+                    <prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.PROMPT"></prompt>
+                    <text-prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id"></text-prompt>
+                    <selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR"></selector>
+                    <mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC"></mnemonic>
+
+                    <vault :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.VAULT"></vault>
                 </section>
             </section>
 
@@ -36,7 +34,7 @@
 </template>
 
 <script>
-    import {RouteNames, RouteDepth} from '../vue/Routing'
+    import {RouteNames} from '../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
     import {PopupDisplayTypes, PopupTypes} from '../models/popups/Popup'
@@ -51,6 +49,7 @@
                 'popups'
             ]),
             ...mapGetters([
+                'popIns',
                 'nextPopIn',
                 'snackbars',
             ]),
@@ -60,8 +59,8 @@
         },
         methods:{
             clickedFader(){
-                if(this.nextPopIn && this.nextPopIn.displayType === PopupDisplayTypes.POP_IN)
-                    this[Actions.RELEASE_POPUP](this.nextPopIn);
+                if(this.nextPopIn)
+                    this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length-1]);
             },
             ...mapActions([
                 Actions.RELEASE_POPUP
@@ -93,6 +92,7 @@
         box-shadow:0 10px 50px rgba(0,0,0,0.1), 0 0 250px rgba(0,0,0,0.1);
         max-width:100%;
         margin:0 40px;
+        position: relative;
     }
 
     .fader {
@@ -127,7 +127,7 @@
             left:0;
             right:0;
             background:rgba(255,255,255,0.8);
-            z-index: -1;
+            z-index: 0;
         }
     }
 

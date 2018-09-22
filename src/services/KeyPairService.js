@@ -47,8 +47,12 @@ export default class KeyPairService {
                     try {
                         const blockchain = blockchainKV.value;
                         const plugin = PluginRepository.plugin(blockchain);
-                        keypair.publicKeys.push({blockchain, key:plugin.privateToPublic(keypair.privateKey, keypair.fork)});
-                    } catch(e){}
+                        let p = keypair.privateKey;
+                        if(typeof p !== 'string') p = plugin.bufferToHexPrivate(p);
+                        keypair.publicKeys.push({blockchain, key:plugin.privateToPublic(p, keypair.fork)});
+                    } catch(e){
+                        console.log('err', e, keypair.privateKey);
+                    }
                 });
 
                 resolve(true);
@@ -58,38 +62,26 @@ export default class KeyPairService {
 
     static async generateKeyPair(keypair){
         keypair.privateKey = await Crypto.generatePrivateKey();
-        keypair.keyHash = Crypto.bufferToHash(keypair.privateKey);
+        keypair.hash();
         return true;
     }
 
-    static saveKeyPair(keypair, callback){
+    static async saveKeyPair(keypair){
         const scatter = store.state.scatter.clone();
-
-        if(!keypair.name.length)
-            return PopupService.push(Popup.prompt('Invalid Name', 'The name you have entered is invalid', 'ban', 'Okay'));
-        if(scatter.keychain.keypairs.find(x => x.keyHash === keypair.keyHash))
-            return PopupService.push(Popup.prompt('Key Exists', 'This key already exists', 'ban', 'Okay'));
-        if(scatter.keychain.getKeyPairByName(keypair.name))
-            return PopupService.push(Popup.prompt('Name Exists', 'There is already a key with this name', 'ban', 'Okay'));
-
         scatter.keychain.keypairs.push(Keypair.fromJson(keypair));
-        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static updateKeyPair(keypair, callback){
+    static updateKeyPair(keypair){
         const scatter = store.state.scatter.clone();
-
-        if(!keypair.name.length)
-            return PopupService.push(Popup.prompt('Invalid Keypair Name', 'The keypair name you have entered is invalid', 'ban', 'Okay'));
-
         scatter.keychain.keypairs.find(x => x.unique() === keypair.unique()).name = keypair.name;
-        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static removeKeyPair(keypair, callback){
+    static async removeKeyPair(keypair){
         const scatter = store.state.scatter.clone();
         scatter.keychain.removeKeyPair(keypair);
-        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
     static getKeyPairFromPublicKey(publicKey, decrypt = false){

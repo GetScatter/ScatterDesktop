@@ -29,7 +29,7 @@ export default class PasswordService {
         return true;
     }
 
-    static async seedPassword(password){
+    static async seedPassword(password, setToState = true){
         return new Promise(async (resolve, reject) => {
             try {
                 let seed, mnemonic;
@@ -42,7 +42,7 @@ export default class PasswordService {
                     mnemonic = m;
                 }
 
-                await store.commit(Actions.SET_SEED, seed);
+                if(setToState) await store.commit(Actions.SET_SEED, seed);
                 resolve([mnemonic, seed]);
             } catch(e){
                 resolve([null, null]);

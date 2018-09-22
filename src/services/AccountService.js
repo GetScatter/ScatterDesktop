@@ -37,7 +37,7 @@ export default class AccountService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static async importAllAccounts(keypair){
+    static importAllAccounts(keypair){
         return new Promise(async resolve => {
             const scatter = store.state.scatter.clone();
             let accounts = [];
@@ -65,8 +65,6 @@ export default class AccountService {
                         }));
                     });
                 }
-
-
             }));
 
             accounts.map(account => scatter.keychain.addAccount(account));

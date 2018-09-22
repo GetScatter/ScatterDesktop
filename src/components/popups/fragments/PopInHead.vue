@@ -23,7 +23,6 @@
     export default {
         computed:{
             ...mapGetters([
-                'nextPopIn'
             ])
         },
         methods:{
@@ -34,7 +33,8 @@
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
-        }
+        },
+        props:['nextPopIn']
     }
 </script>
 

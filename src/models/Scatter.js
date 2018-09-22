@@ -53,9 +53,12 @@ export default class Scatter {
     }
 
     savable(seed){
+        this.keychain.keypairs.map(keypair => keypair.encrypt(seed));
+
         const clone = this.clone();
-        clone.keychain.keypairs.map(keypair => keypair.encrypt(seed));
         clone.keychain.identities.map(id => id.encrypt(seed));
+
+        console.log('keypairs', clone.keychain.keypairs.map(x => x.privateKey))
 
         // Keychain is always stored encrypted.
         clone.encrypt(seed);

@@ -13,9 +13,19 @@ import LinkBlockchainAccount from '../views/wizards/LinkBlockchainAccount.vue'
 import AddBlockchainNetwork from '../views/wizards/AddBlockchainNetwork.vue'
 import ImportKeypair from '../views/wizards/ImportKeypair.vue'
 
+import Home from '../views/Home.vue'
+import Transfer from '../components/panels/Transfer.vue'
+import Receive from '../components/panels/Receive.vue'
+
+
+
 
 export const RouteNames = {
     LOGIN:'login',
+    HOME:'home',
+    TRANSFER:'transfer',
+    RECEIVE:'receive',
+
     ONBOARDING:'onboarding',
     DASHBOARD:'dashboard',
     IDENTITIES:'identities',
@@ -40,6 +50,10 @@ export const RouteNames = {
 const RouteViews = {
     [RouteNames.LOGIN]:Login,
     [RouteNames.ONBOARDING]:Onboarding,
+    [RouteNames.HOME]:Home,
+    [RouteNames.TRANSFER]:Transfer,
+    [RouteNames.RECEIVE]:Receive,
+
     [RouteNames.DASHBOARD]:Dashboard,
     [RouteNames.IDENTITIES]:Identities,
     [RouteNames.REPUTATION]:Reputation,
@@ -53,18 +67,6 @@ const RouteViews = {
     [RouteNames.WIZ_SETUP_KEYPAIR]:ImportKeypair,
     [RouteNames.WIZ_LINK_BLOCKCHAIN_ACCOUNT]:LinkBlockchainAccount,
     [RouteNames.WIZ_ADD_BLOCKCHAIN_NETWORK]:AddBlockchainNetwork,
-};
-
-export const RouteDepth = {
-    [RouteNames.LOGIN]:-2,
-    [RouteNames.ONBOARDING]:-1,
-    [RouteNames.DASHBOARD]:1,
-    [RouteNames.IDENTITIES]:2,
-    [RouteNames.BLOCKCHAINS]:3,
-    [RouteNames.PERMISSIONS]:4,
-    [RouteNames.HELP]:5,
-    [RouteNames.SETTINGS]:6,
-    [RouteNames.NOT_IDENTITIES]:0,
 };
 
 export class Routing {

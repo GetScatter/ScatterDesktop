@@ -1,7 +1,9 @@
 import AES from 'aes-oop';
 import {Blockchains} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
+import Crypto from '../util/Crypto';
 import ExternalWallet from './ExternalWallet';
+import {store} from '../store/store';
 
 export default class Keypair {
 
@@ -22,6 +24,14 @@ export default class Keypair {
         let p = Object.assign(this.placeholder(), json);
         if(json.hasOwnProperty('external') && !!json.external) p.external = ExternalWallet.fromJson(json.external);
         return p;
+    }
+
+    hash(){
+        this.keyHash = Crypto.bufferToHash(this.privateKey);
+    }
+
+    accounts(){
+        return store.state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique())
     }
 
     unique(){ return this.id; }

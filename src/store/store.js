@@ -30,6 +30,7 @@ const getters = {
     unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && state.scatter instanceof Scatter && !state.scatter.isEncrypted(),
 
     // Keychain centric
+    identity:state =>     state.scatter.keychain.identities[0],
     identities:state =>     state.scatter.keychain.identities || [],
     keypairs:state =>       state.scatter.keychain.keypairs || [],
     accounts:state =>       state.scatter.keychain.accounts || [],
@@ -45,6 +46,7 @@ const getters = {
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
 
     // Popups
+    popIns:state =>         state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN) || [],
     nextPopIn:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN)[0] || null,
     snackbars:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.SNACKBAR) || [],
 };

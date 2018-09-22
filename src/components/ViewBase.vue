@@ -3,24 +3,48 @@
         <section class="router-base">
 
 
-            <section v-if="!onboarding">
-                <section v-if="hasSidebar()">
-                    <auth class="sidebar" :class="{'hidden':routeNames.LOGIN !== $route.name}"></auth>
-                    <main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}" :collapsed="collapsedMenu" v-on:toggled="toggleMenu"></main-menu>
-                </section>
 
-                <main :class="{'expanded':routeNames.LOGIN === $route.name, 'no-sidebar':!hasSidebar(), 'collapsed-menu':collapsedMenu}">
+            <section class="main" v-if="unlocked">
 
-                    <section style="background:red;"></section>
-                    <transition :name="transitionName">
+                <overhead></overhead>
+
+
+
+                <section class="shifter">
+                    <transition name="slide-left" mode="out-in">
                         <router-view></router-view>
                     </transition>
-                </main>
+                </section>
+
             </section>
 
-            <section v-else>
-                <terms></terms>
+            <section v-if="!unlocked">
+                <auth></auth>
             </section>
+
+            <section v-if="unlocked">
+                <!--<section v-if="!onboarding">-->
+                    <!--<section v-if="hasSidebar()">-->
+                        <!--<auth class="sidebar" :class="{'hidden':routeNames.LOGIN !== $route.name}"></auth>-->
+                        <!--&lt;!&ndash;<main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}" :collapsed="collapsedMenu" v-on:toggled="toggleMenu"></main-menu>&ndash;&gt;-->
+                    <!--</section>-->
+
+                    <!--<main class="expanded">-->
+
+                        <!--<section style="background:red;"></section>-->
+                        <!--<transition :name="transitionName">-->
+                            <!--<router-view></router-view>-->
+                        <!--</transition>-->
+                    <!--</main>-->
+                <!--</section>-->
+
+                <!--<section v-else>-->
+                    <!--<terms></terms>-->
+                <!--</section>-->
+            </section>
+
+
+
 
             <popups></popups>
         </section>
@@ -31,13 +55,12 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-    import {RouteNames, RouteDepth, Routing} from '../vue/Routing'
+    import {RouteNames, Routing} from '../vue/Routing'
+    import WindowService from '../services/WindowService'
 
     export default {
         data(){ return {
             routeNames:RouteNames,
-            transitionName:'',
-            menuTransitionName:'',
             loggingIn:false,
             collapsedMenu:false,
         }},
@@ -49,26 +72,32 @@
                 'unlocked',
             ]),
             onboarding(){
-                return this.unlocked && !this.scatter.meta.acceptedTerms;
+                return !this.scatter.meta.acceptedTerms;
             }
+        },
+        mounted(){
+            WindowService.openTools();
         },
         methods:{
-            hasSidebar(){
-                return Routing.hasSidebar(this.$route.name)
-            },
-            toggleMenu(){
-                this.collapsedMenu = !this.collapsedMenu;
-            }
-        },
-        watch: {
-            '$route' (to, from) {
-                this.transitionName = RouteDepth[to.name] < RouteDepth[from.name] ? 'slide-up' : 'slide-down'
-            }
+
         }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+    @import '../_variables.scss';
+
+    .main {
+        background:#f8f8f8;
+        max-height:100vh;
+        position: relative;
+    }
+
+    .shifter {
+        position: relative;
+    }
+
+
 
     .view-base {
 

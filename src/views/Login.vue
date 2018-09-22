@@ -1,6 +1,6 @@
 <template>
     <section class="login">
-        <figure class="bg"></figure>
+        <!--<figure class="bg"></figure>-->
     </section>
 </template>
 
@@ -31,10 +31,10 @@
     @import "../_variables.scss";
 
     .login {
-        position: relative;
-        height:100vh;
-        width:100%;
-        -webkit-app-region: drag;
+        /*position: relative;*/
+        /*height:100vh;*/
+        /*width:100%;*/
+        /*-webkit-app-region: drag;*/
 
         .bg {
             position:absolute;

@@ -258,13 +258,16 @@ a {
   100% { color:$dark-grey; }
 }
 
-$speed:0.5s;
+@keyframes pulsate {
+  50%{ opacity:0.2; }
+  0%{ opacity:1; }
+}
+
+$speed:0.4s;
 .slide-down-leave-active,
 .slide-down-enter-active,
 .slide-up-leave-active,
 .slide-up-enter-active {
-  position:absolute;
-  top:0; left:0; right:0;
   transition: $speed;
 }
 
@@ -277,26 +280,37 @@ $speed:0.5s;
 .slide-left-enter-active,
 .slide-right-leave-active,
 .slide-right-enter-active {
-  position:absolute;
-  top:0; right:0; left:0;
+
   transition: $speed;
 }
 
-.slide-left-enter {         transform: translate(100%, 0);  opacity:0; }
-.slide-left-leave-to {      transform: translate(-100%, 0); opacity:0; }
-.slide-right-enter {        transform: translate(100%, 0); opacity:0;  }
-.slide-right-leave-to {     transform: translate(100%, 0); opacity:0;  }
+.slide-left-enter {         transform: translate(50%, 0);  opacity:0; }
+.slide-left-leave-to {  transform: translate(-50%, 0); opacity:0; }
+.slide-right-enter {        transform: translate(50%, 0); opacity:0;  }
+.slide-right-leave-to {  transform: translate(50%, 0); opacity:0;  }
 
 
 .tooltip {
   z-index: 10000;
   padding:5px 10px;
-  background:$dark-grey;
+  background:$dark-blue;
   border-radius:4px;
   color:#fff;
 
+
   .left-start {
     margin-right:10px;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform:translateY(0px);
+    text-shadow:0 20px 20px rgba(0,0,0,0.03);
+  }
+  50% {
+    transform:translateY(5px);
+    text-shadow:0 10px 2px rgba(0,0,0,0.06);
   }
 }
 

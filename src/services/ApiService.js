@@ -109,7 +109,7 @@ export default class ApiService {
 
                 const publicKey = result.keypair.publicKeys.find(x => x.blockchain === request.payload.blockchain).key;
 
-                if(result.isNew) KeyPairService.saveKeyPair(result.keypair, () => {
+                if(result.isNew) KeyPairService.saveKeyPair(result.keypair).then(() => {
                     resolve({id:request.id, result:publicKey});
                 });
                 else resolve({id:request.id, result:publicKey});

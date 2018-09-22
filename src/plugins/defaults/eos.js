@@ -128,7 +128,7 @@ export default class EOS extends Plugin {
         return ecc.PrivateKey.fromHex(Buffer.from(privateKey, 'hex')).toString();
     }
     bufferToHexPrivate(buffer){
-        return ecc.PrivateKey.fromBuffer(buffer).toString()
+        return ecc.PrivateKey.fromBuffer(new Buffer(buffer)).toString()
     }
     hexPrivateToBuffer(privateKey){
         return new ecc.PrivateKey(privateKey).toBuffer();

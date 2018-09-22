@@ -1,6 +1,6 @@
 <template>
     <aside class="auth">
-        <section class="panel">
+        <section>
 
             <section class="logo-container">
                 <figure class="grand-hotel logo">Scatter</figure>
@@ -73,7 +73,7 @@
                 if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
                     SocketService.initialize();
                     SocketService.open();
-                    this.$router.push({name:RouteNames.IDENTITIES});
+                    this.$router.push({name:RouteNames.HOME});
                 } else {
                     failed();
                 }
@@ -106,26 +106,36 @@
     @import "../../_variables";
 
     .auth {
-        width:450px;
-        float:left;
+        width:100%;
+        height:100vh;
+        display:flex;
+        justify-content: center;
+        align-items: center;
 
         .logo-container {
-            padding:120px 80px;
+            padding:0 80px 50px;
+            text-align:center;
 
             .logo {
-                font-size:68px;
-                line-height:60px;
+                font-size:140px;
+                line-height:140px;
                 color:$light-blue;
+
+                animation: float 2s ease-out;
+                animation-iteration-count: infinite;
             }
 
+
+
             .tagline {
-                font-size:13px;
-                color:$mid-dark-grey;
+                font-size:24px;
+                color:rgba(0,0,0,0.2);
             }
         }
 
         .inputs {
-            padding:0 80px;
+            max-width:350px;
+            margin:0 auto;
 
             .auth-text {
                 font-size:13px;
