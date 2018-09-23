@@ -2,33 +2,49 @@
     <section>
 
         <!-- IDENTITY -->
-        <section class="identity">
+        <transition name="slide-right" mode="out-in">
+            <section key="idenabled" v-if="identity.enabled" class="identity">
+                <!-- INFO -->
+                <section class="info">
+                    <figure class="name">{{identity.name}}</figure>
+                    <figure class="description">Your Identity is <b>{{identity.ridl >0 ? '' : 'not'}}</b> RIDL Enabled</figure>
+                </section>
 
-            <!-- INFO -->
-            <section class="info">
-
-                <figure class="name">{{identity.name}}</figure>
-                <figure class="description">Your Identity is <b>{{identity.ridl >0 ? '' : 'not'}}</b> RIDL Enabled</figure>
-
+                <!-- ACTIONS -->
+                <section class="actions">
+                    <figure class="action" v-tooltip="'Edit'">
+                        <i class="fa fa-pencil"></i>
+                    </figure>
+                    <figure class="action padded" v-tooltip="'Disable Identity'" @click="identity.enabled = false;">
+                        Disable
+                    </figure>
+                </section>
             </section>
 
-            <!-- ACTIONS -->
-            <section class="actions">
+            <section key="iddisabled" v-else class="identity">
+                <!-- INFO -->
+                <section class="info">
+                    <figure class="name">Identity <b>Disabled</b></figure>
+                    <figure class="description">Enabling your Identity gives you a bit more protection.</figure>
+                </section>
 
-                <!-- EDIT -->
-                <figure class="action" v-tooltip="'Edit'">
-                    <i class="fa fa-pencil"></i>
-                </figure>
-
+                <!-- ACTIONS -->
+                <section class="actions">
+                    <figure class="action red padded" v-tooltip="'Enable Identity'" @click="identity.enabled = true;">
+                        Enable
+                    </figure>
+                </section>
             </section>
+        </transition>
 
-        </section>
+
+
 
         <!-- PERMISSIONS -->
         <section class="permissions">
 
             <!-- SEARCH -->
-            <section class="search">
+            <section class="search" v-if="Object.keys(origins).length">
 
                 <!-- INPUT -->
                 <section class="input">
@@ -47,10 +63,23 @@
             <!-- PERMISSIONS LIST -->
             <section class="permissions-list">
 
-                <section class="permission" v-for="i in [1,1,1,1,1,1,1,1]">
+                <section v-if="!Object.keys(origins).length" class="no-permissions">
+                    <section class="container">
+                        <figure class="title">No Permissions</figure>
+                        <figure class="description">
+                            You haven't interacted with any Applications yet. Once you do you will
+                            see your permissions here and be able to remove or modify them.
+                        </figure>
+                    </section>
+                </section>
+
+                <section class="permission" v-for="(permCount, origin) in origins">
                     <section class="info">
-                        <figure class="name">Bloks.io</figure>
-                        <figure class="description"><b>Link Permission</b> and <b>1 Action Permission</b></figure>
+                        <figure class="name">{{origin}}</figure>
+                        <figure class="description"><b>Link Permission</b>
+                            <span v-if="permCount - 2 > 0"> and <b>{{permCount - 2}} Action Permission</b></span>
+                            <span v-else>only</span>
+                        </figure>
                     </section>
 
                     <section class="actions">
@@ -80,7 +109,7 @@
 
     export default {
         data () {return {
-
+            searchTerms:'',
         }},
         computed:{
             ...mapState([
@@ -88,7 +117,29 @@
             ]),
             ...mapGetters([
                 'identity',
+                'permissions',
+                'apps',
             ]),
+            origins(){
+                const origins = {};
+
+                this.apps.map(p => {
+                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
+                    else origins[p.origin] += 1;
+                });
+
+                this.permissions.map(p => {
+                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
+                    else origins[p.origin] += 1;
+                });
+
+                return Object.keys(origins).reduce((acc, origin) => {
+                    if(origin.toString().toLowerCase().indexOf(this.searchTerms.toLowerCase()) !== -1)
+                        acc[origin] = origins[origin];
+
+                    return acc;
+                }, {});
+            },
         },
         methods:{
 
@@ -123,7 +174,7 @@
         }
 
         .actions {
-            width:110px;
+            width:150px;
             float:left;
 
             .action {
@@ -142,16 +193,31 @@
                 transition:all 0.2s ease;
                 transition-property: background, border, color;
 
+                &.red {
+                    background:$red;
+                    border:1px solid $red;
+                    color:#fff;
+                }
+
                 &:hover {
                     background:$light-blue;
                     border:1px solid $light-blue;
                     color:#fff;
+                }
+
+                &.padded {
+                    width:auto;
+                    padding:0 10px;
                 }
             }
         }
     }
 
     .permissions {
+        width:100%;
+        flex:1;
+        display:flex;
+        flex-direction: column;
 
         .search {
             padding:0 50px;
@@ -174,7 +240,7 @@
 
                 input {
                     margin-left:10px;
-                    font-size: 13px;
+                    font-size: 11px;
                     float:left;
                     outline:0;
                     border:0;
@@ -201,9 +267,36 @@
         }
 
         .permissions-list {
+            flex:1;
+            display:flex;
+            flex-direction: column;
             padding:0 40px 50px 50px;
-            overflow-y:scroll;
-            max-height:calc(100vh - 380px);
+            overflow-y:auto;
+
+            .no-permissions {
+                flex:1;
+                display:flex;
+                text-align:center;
+                justify-content:center;
+                align-items: center;
+                padding:50px;
+                border-top:1px solid rgba(0,0,0,0.1);
+
+                .container {
+                    max-width:500px;
+                    margin:0 auto;
+                }
+
+                .title {
+                    font-size: 24px;
+                    font-weight: 500;
+                    margin-bottom:10px;
+                }
+
+                .description {
+                    font-size: 16px;
+                }
+            }
 
 
 

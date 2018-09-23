@@ -3,18 +3,15 @@
         <section class="router-base">
 
 
+            <!--<router-view></router-view>-->
 
             <section class="main" v-if="unlocked">
 
                 <overhead></overhead>
 
-
-
-                <section class="shifter">
-                    <transition name="slide-left" mode="out-in">
-                        <router-view></router-view>
-                    </transition>
-                </section>
+                <transition name="slide-left" mode="out-in">
+                    <router-view class="shifter"></router-view>
+                </transition>
 
             </section>
 
@@ -89,12 +86,17 @@
 
     .main {
         background:#f8f8f8;
-        max-height:100vh;
+        height:100vh;
         position: relative;
+        display:flex;
+        flex-direction: column;
     }
 
     .shifter {
         position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
     }
 
 
@@ -142,6 +144,10 @@
 
     .router-base {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: 100vh;
     }
 
 

@@ -259,7 +259,7 @@ a {
 }
 
 @keyframes pulsate {
-  50%{ opacity:0.2; }
+  50%{ opacity:0.4; }
   0%{ opacity:1; }
 }
 
@@ -271,10 +271,10 @@ $speed:0.4s;
   transition: $speed;
 }
 
-.slide-down-enter {         transform: translate(0, 100%);      }
-.slide-down-leave-to {      transform: translate(0, -100%);     }
-.slide-up-enter {        transform: translate(0, -100%);     }
-.slide-up-leave-to {     transform: translate(0, 100%);      }
+.slide-down-enter {         transform: translate(0, 50%);  opacity:0;      }
+.slide-down-leave-to {      transform: translate(0, -50%);  opacity:0;     }
+.slide-up-enter {        transform: translate(0, -50%);   opacity:0;    }
+.slide-up-leave-to {     transform: translate(0, 50%);   opacity:0;     }
 
 .slide-left-leave-active,
 .slide-left-enter-active,

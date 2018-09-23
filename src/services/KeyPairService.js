@@ -13,8 +13,15 @@ import Account from '../models/Account'
 export default class KeyPairService {
 
     static isValidPrivateKey(keypair){
-        const plugin = PluginRepository.plugin(keypair.blockchain);
-        return plugin.validPrivateKey(keypair.privateKey);
+        let valid = false;
+        BlockchainsArray.map(blockchainKV => {
+            if(valid) return;
+            try {
+                const plugin = PluginRepository.plugin(blockchainKV.value);
+                valid = plugin.validPrivateKey(keypair.privateKey);
+            } catch(e){}
+        });
+        return valid;
     }
 
     static convertHexPrivateToBuffer(keypair){

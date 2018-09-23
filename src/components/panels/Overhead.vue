@@ -13,9 +13,9 @@
                 </figure>
 
                 <!-- SETTINGS -->
-                <figure class="action" v-tooltip="'Settings'">
+                <router-link :to="{name:'settings'}"  class="action" v-tooltip="'Settings'">
                     <i class="fa fa-cog"></i>
-                </figure>
+                </router-link>
 
                 <!-- VAULT -->
                 <figure class="action" v-tooltip="'Vault'" @click="openVault">
@@ -111,7 +111,7 @@
                 return this.$route.name === 'home'
             }
         },
-        mounted(){
+        created(){
             this.refresh();
         },
         methods:{
@@ -231,6 +231,7 @@
         overflow: hidden;
         padding:0 50px;
         position: relative;
+        box-shadow:inset 0 10px 25px rgba(0,0,0,0.05), inset 0 1px 2px rgba(0,0,0,0.1);
 
         .value {
             line-height:150px;

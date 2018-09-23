@@ -14,8 +14,8 @@ import AddBlockchainNetwork from '../views/wizards/AddBlockchainNetwork.vue'
 import ImportKeypair from '../views/wizards/ImportKeypair.vue'
 
 import Home from '../views/Home.vue'
-import Transfer from '../components/panels/Transfer.vue'
-import Receive from '../components/panels/Receive.vue'
+import Transfer from '../views/Transfer.vue'
+import Receive from '../views/Receive.vue'
 
 
 

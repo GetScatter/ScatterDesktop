@@ -42,8 +42,12 @@
                     <i class="fa fa-save"></i>
                 </figure>
 
-                <figure class="show-cam" :class="{'show':importType === IMPORT_TYPES.TEXT && !status}" v-tooltip="'Enable Camera'" @click="camera = !camera">
-                    <i class="fa fa-camera"></i>
+                <figure class="show-cam" :class="{'show':importType === IMPORT_TYPES.TEXT && !status && !camera}" v-tooltip="'Scan QR Code'" @click="camera = true">
+                    <i class="fa fa-qrcode"></i>
+                </figure>
+
+                <figure class="show-cam" :class="{'show':importType === IMPORT_TYPES.TEXT && !status && camera}" v-tooltip="'Enter Manually'" @click="camera = false">
+                    <i class="fa fa-asterisk"></i>
                 </figure>
             </section>
 
@@ -77,6 +81,7 @@
 
                         <!-- EXPORTING ( QR ) -->
                         <section key="exporting" class="export" v-if="exporting">
+                            <figure class="name">{{selected.name}}</figure>
                             <section class="qr">
                                 <img :src="exporting.qr" />
                             </section>
@@ -149,8 +154,17 @@
                                 </section>
 
                                 <!-- IMPORTING TEXT OR QR -->
-                                <section key="import-text" v-if="importType === IMPORT_TYPES.TEXT" class="">
-                                    <qr-reader v-if="camera" @decode="qrScanned"></qr-reader>
+                                <section key="import-text" v-if="importType === IMPORT_TYPES.TEXT" class="scroller">
+                                    <transition name="slide-right" mode="out-in">
+                                        <qr-reader key="qrreader" v-if="camera" @decode="qrScanned"></qr-reader>
+
+                                        <section v-if="!camera" key="inputsecret" class="input-keypair">
+                                            <section class="inputs">
+                                                <label>Enter a Secret</label>
+                                                <input v-model="selected.privateKey" type="password" />
+                                            </section>
+                                        </section>
+                                    </transition>
                                 </section>
 
                                 <!-- IMPORTING HARDWARE -->
@@ -197,6 +211,7 @@
     }
 
     let saveTimeout;
+    let keyTimeout;
 
     export default {
         data(){ return {
@@ -215,7 +230,7 @@
             camera:false,
         }},
         mounted(){
-            console.log('kps', this.keypairs);
+
         },
         computed:{
             ...mapState([
@@ -250,14 +265,13 @@
                             {placeholder:'Enter Password/PIN', type:'password'},
                             async pass => {
                                 this.status = 'Decrypting Secure Secret';
-                                const privateKey = await QRService.decryptQR(data, salt, pass);
-                                if(typeof privateKey !== 'object' || !privateKey.hasOwnProperty('data')){
+                                const privateKey = await QRService.decryptQR(data, salt, pass).catch(() => null);
+                                if(!privateKey || typeof privateKey !== 'object' || !privateKey.hasOwnProperty('data')){
                                     return tryDecryption();
                                 }
 
                                 this.selected.privateKey = privateKey.data;
                                 this.selected.hash();
-                                if(this.keyNameError) this.selected.name = `Secret-${IdGenerator.text(10)}`;
 
                                 setTimeout(async () => {
                                     await KeyPairService.makePublicKeys(this.selected);
@@ -313,14 +327,6 @@
 
             },
             async generateKey(){
-                if(this.keyNameError) {
-                    this.flashingNameError = true;
-                    this.error = 'You must enter a name before generating a key.';
-                    return setTimeout(() => {
-                        this.flashingNameError = false;
-                    }, 400);
-                }
-
                 this.status = 'Generating Secure Secret';
                 setTimeout(async () => {
                     await KeyPairService.generateKeyPair(this.selected);
@@ -328,17 +334,47 @@
                 }, 1000);
             },
             async keyImported(snackbar){
+                const existing = this.keypairs.find(x => x.keyHash === this.selected.keyHash && x.id !== this.selected.id);
+                if(existing){
+                    this.status = null;
+                    this.error = `This Secret already exists under the name ${existing.name}`;
+                    return false;
+                }
+
+                if(this.keyNameError) this.selected.name = `Secret-${IdGenerator.text(10)}`;
                 await KeyPairService.makePublicKeys(this.selected);
+                if(!this.selected.publicKeys.length) return false;
                 await KeyPairService.saveKeyPair(this.selected);
                 this.status = 'Linking multiple blockchain accounts. Please wait.';
                 await AccountService.importAllAccounts(this.selected);
                 PopupService.push(Popup.snackbar(snackbar));
+
                 this.isNew = false;
                 this.status = null;
                 this.exporting = null;
                 this.importType = null;
                 this.importing = false;
                 this.selected = this.keypairs.find(x => x.id === this.selected.id).clone();
+
+            },
+            async testKey(){
+                if(this.status) return false;
+                this.status = 'Checking if Secret is valid.';
+
+                if(typeof this.selected.privateKey === 'string'){
+                    this.selected.privateKey = this.selected.privateKey.trim();
+                }
+
+                if(!KeyPairService.isValidPrivateKey(this.selected)) return this.status = null;
+
+                setTimeout(async () => {
+                    this.status = 'Converting secret to all Blockchains';
+                    setTimeout(async() => {
+                        await KeyPairService.convertHexPrivateToBuffer(this.selected);
+                        this.selected.hash();
+                        this.keyImported('A Secret was imported.')
+                    }, 2000);
+                }, 2000);
             },
             ...mapActions([
                 Actions.RELEASE_POPUP
@@ -353,6 +389,13 @@
                     if(!this.keyNameError && this.selected.name !== this.keypairs.find(x => x.id === this.selected.id).name) {
                         await KeyPairService.updateKeyPair(this.selected);
                     }
+                }, 500);
+            },
+            ['selected.privateKey'](){
+                if(!this.isNew) return false;
+                clearTimeout(keyTimeout);
+                keyTimeout = setTimeout(async () => {
+                    this.testKey();
                 }, 500);
             }
         }
@@ -551,6 +594,7 @@
             display:flex;
             flex-direction: column;
             overflow-y:auto;
+            overflow-x:hidden;
         }
 
         .accounts {
@@ -656,6 +700,13 @@
             padding:30px;
             width:100%;
 
+            .name {
+                width:100%;
+                text-align:center;
+                font-size: 18px;
+                color:$dark-grey;
+            }
+
             .qr {
                 width:100%;
                 display:flex;
@@ -705,18 +756,10 @@
                         transition-property: border;
 
                         $placeholdercolor:#fff;
-                        &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-                            color: $placeholdercolor;
-                        }
-                        &::-moz-placeholder { /* Firefox 19+ */
-                            color: $placeholdercolor;
-                        }
-                        &:-ms-input-placeholder { /* IE 10+ */
-                            color: $placeholdercolor;
-                        }
-                        &:-moz-placeholder { /* Firefox 18- */
-                            color: $placeholdercolor;
-                        }
+                        &::-webkit-input-placeholder { color: $placeholdercolor; }
+                        &::-moz-placeholder { color: $placeholdercolor; }
+                        &:-ms-input-placeholder { color: $placeholdercolor; }
+                        &:-moz-placeholder { color: $placeholdercolor; }
 
                     }
                 }
@@ -790,6 +833,30 @@
                     &:active {
                         transform:translateY(0px);
                         box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 4px 9px rgba(0,0,0,0.1);
+                    }
+                }
+            }
+
+            .input-keypair {
+                flex:1;
+                background:rgba(0,0,0,0.05);
+                padding:40px;
+
+                .inputs {
+
+                    label {
+                        font-size: 13px;
+                        color:$dark-grey;
+                    }
+
+                    input {
+                        width:100%;
+                        border:0;
+                        outline:0;
+                        background:transparent;
+                        border-bottom:1px dashed rgba(0,0,0,0.2);
+                        font-size: 18px;
+                        margin-top:10px;
                     }
                 }
             }

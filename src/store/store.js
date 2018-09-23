@@ -29,8 +29,10 @@ const getters = {
     // App State
     unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && state.scatter instanceof Scatter && !state.scatter.isEncrypted(),
 
+    contacts:state =>       state.scatter.contacts || [],
+
     // Keychain centric
-    identity:state =>     state.scatter.keychain.identities[0],
+    identity:state =>       state.scatter.keychain.identities[0],
     identities:state =>     state.scatter.keychain.identities || [],
     keypairs:state =>       state.scatter.keychain.keypairs || [],
     accounts:state =>       state.scatter.keychain.accounts || [],

@@ -11,6 +11,7 @@ export default class Scatter {
         this.meta = Meta.placeholder();
         this.keychain = Keychain.placeholder();
         this.settings = Settings.placeholder();
+        this.contacts = [];
         this.hash = Hasher.insecureHash(IdGenerator.text(2048));
         this.bufferKeys = false;
 
@@ -57,8 +58,6 @@ export default class Scatter {
 
         const clone = this.clone();
         clone.keychain.identities.map(id => id.encrypt(seed));
-
-        console.log('keypairs', clone.keychain.keypairs.map(x => x.privateKey))
 
         // Keychain is always stored encrypted.
         clone.encrypt(seed);

@@ -67,7 +67,10 @@ export default class AccountService {
                 }
             }));
 
-            accounts.map(account => scatter.keychain.addAccount(account));
+            accounts.map(account => {
+                console.log('account', account);
+                scatter.keychain.addAccount(account)
+            });
             await store.dispatch(Actions.SET_SCATTER, scatter);
             resolve(true);
         })
