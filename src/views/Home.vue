@@ -63,9 +63,9 @@
                     </section>
 
                     <section class="actions">
-                        <figure class="action" v-tooltip="'Edit'">
+                        <router-link :to="{name:'permission', params: { origin }}" class="action" v-tooltip="'Edit'">
                             <i class="fa fa-pencil"></i>
-                        </figure>
+                        </router-link>
                         <figure class="action red" v-tooltip="'Remove'" @click="removePermissions(origin)">
                             <i class="fa fa-ban"></i>
                         </figure>
