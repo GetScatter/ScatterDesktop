@@ -2,12 +2,13 @@
     <aside class="auth">
         <section>
 
-            <section class="logo-container">
-                <figure class="grand-hotel logo">Scatter</figure>
-                <figure class="tagline">Discovering infinite possibilities</figure>
-            </section>
 
             <section class="fader" :class="{'hide-all':leaving}">
+                <section class="logo-container">
+                    <figure class="grand-hotel logo">Scatter</figure>
+                    <figure class="tagline">Discovering infinite possibilities</figure>
+                </section>
+
                 <section class="inputs" v-if="isNewScatter">
                     <cin placeholder="Password" type="password" v-on:enter="create" :text="password" v-on:changed="changed => bind(changed, 'password')"></cin>
                     <cin placeholder="Confirm Password" type="password" v-on:enter="create" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>

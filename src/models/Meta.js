@@ -7,6 +7,7 @@ export default class Meta {
         this.version = app.getVersion();
         this.lastVersion = '0';
         this.acceptedTerms = false;
+        this.lastSuggestedVersion = null;
     }
 
     getVersion(){

@@ -40,7 +40,7 @@ export default class AccountService {
             const uniques = accounts.map(x => x.unique());
             const accountsToRemove = scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique() && !uniques.includes(x.unique()));
 
-            accountsToRemove.map(account => scatter.keychain.remove(account));
+            accountsToRemove.map(account => scatter.keychain.removeAccount(account));
             accounts.map(account => scatter.keychain.addAccount(account));
 
             await store.dispatch(Actions.SET_SCATTER, scatter);

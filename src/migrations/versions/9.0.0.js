@@ -7,10 +7,11 @@ import {BlockchainsArray} from '../../models/Blockchains';
 export const m9_0_0 = async scatter => {
 
     scatter.keychain.keypairs.map(x => {
-        console.log('mig?')
+        console.log('mig')
         if(x.hasOwnProperty('publicKeys') && x.publicKeys.length) return false;
 
         x.decrypt(store.state.seed);
+
         if(!x.external) {
             x.privateKey = Crypto.privateKeyToBuffer(x.privateKey, x.blockchain);
             x.keyHash = Crypto.bufferToHash(x.privateKey);
@@ -27,10 +28,11 @@ export const m9_0_0 = async scatter => {
 
         scatter.keychain.accounts.map(account => {
             if(account.keypairUnique === oldUnique) {
-                delete account.publicKey;
                 account.keypairUnique = x.id;
             }
         });
+
+        console.log('scmig', scatter.keychain);
 
         x.encrypt(store.state.seed);
     });

@@ -80,6 +80,7 @@
     import {Blockchains} from '../../models/Blockchains';
     import PriceService from '../../services/PriceService'
     import PopupService from '../../services/PopupService'
+    import UpdateService from '../../services/UpdateService'
     import {Popup} from '../../models/popups/Popup';
     const { remote } = window.require('electron');
 
@@ -117,6 +118,7 @@
         },
         created(){
             this.init();
+            UpdateService.needsUpdate()
         },
         methods:{
             async init(){

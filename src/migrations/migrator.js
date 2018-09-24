@@ -1,6 +1,6 @@
 import * as migrators from './versions/version';
 
-const mathematicalVersion = version => {
+export const mathematicalVersion = version => {
     if(version === '0') return 0;
     const parts = version.replace(/[.]/g,'_').replace(/[m]/g, '').split('_');
     if(parts.length !== 3) throw new Error("Migration error, invalid version");
