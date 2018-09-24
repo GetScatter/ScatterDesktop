@@ -151,6 +151,7 @@
             flex:1;
             overflow-y:auto;
             overflow-x:hidden;
+          box-shadow:inset 1px 0 3px rgba(0, 0, 0, 0.1);
         }
     }
 
