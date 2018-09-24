@@ -151,8 +151,6 @@ export default class Identity {
         // KYC
         this.kyc = false;
         this.ridl = -1;
-
-        this.enabled = false;
     }
 
     initialize(hash){

@@ -2,40 +2,20 @@
     <section>
 
         <!-- IDENTITY -->
-        <transition name="slide-right" mode="out-in">
-            <section key="idenabled" v-if="identity.enabled" class="identity">
-                <!-- INFO -->
-                <section class="info">
-                    <figure class="name">{{identity.name}}</figure>
-                    <figure class="description">Your Identity is <b>{{identity.ridl >0 ? '' : 'not'}}</b> RIDL Enabled</figure>
-                </section>
-
-                <!-- ACTIONS -->
-                <section class="actions">
-                    <router-link :to="{name:'identity'}"  class="action" v-tooltip="'Edit'">
-                        <i class="fa fa-pencil"></i>
-                    </router-link>
-                    <figure class="action padded" v-tooltip="'Disable Identity'" @click="identity.enabled = false;">
-                        Disable
-                    </figure>
-                </section>
+        <section class="identity">
+            <!-- INFO -->
+            <section class="info">
+                <figure class="name">{{identity.name}}</figure>
+                <figure class="description">This is your Identity.</figure>
             </section>
 
-            <section key="iddisabled" v-else class="identity">
-                <!-- INFO -->
-                <section class="info">
-                    <figure class="name">Identity <b>Disabled</b></figure>
-                    <figure class="description">Using a default randomized identity</figure>
-                </section>
-
-                <!-- ACTIONS -->
-                <section class="actions">
-                    <figure class="action red padded" v-tooltip="'Enable Identity'" @click="identity.enabled = true;">
-                        Enable
-                    </figure>
-                </section>
+            <!-- ACTIONS -->
+            <section class="actions">
+                <router-link :to="{name:'identity'}"  class="action" v-tooltip="'Edit'">
+                    <i class="fa fa-pencil"></i>
+                </router-link>
             </section>
-        </transition>
+        </section>
 
 
 

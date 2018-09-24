@@ -35,8 +35,11 @@
                 <figure class="action" @click="isSimple = !isSimple">
                     {{isSimple ? 'Customize' : 'Simple'}}
                 </figure>
-                <figure class="action" @click="send">
-                    Send
+                <figure class="action" @click="sending ? null : send()">
+                    <span v-if="!sending">Send</span>
+                    <span v-else>
+                        <i class="fa fa-circle-o-notch fa-spin"></i>
+                    </span>
                 </figure>
             </section>
 
@@ -233,7 +236,7 @@
                     amount:tokensToSend,
                     memo:this.memo,
                     token:this.token,
-                });
+                }).catch(() => {});
                 this.sending = false;
             },
 
