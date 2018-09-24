@@ -195,8 +195,6 @@
                     if(presuffix) [prefix, suffix] = presuffix.split('-');
                 }
 
-                console.log('area', area);
-
                 this.phone = {
                     area,
                     prefix,

@@ -86,17 +86,17 @@
 
     export default {
         data () {return {
-            balances:{},
-            totalBalance:0,
+
         }},
         computed:{
             ...mapState([
                 'scatter',
-                'prices',
             ]),
             ...mapGetters([
                 'identity',
                 'accounts',
+                'totalBalance',
+                'totalTokenBalance',
             ]),
             eosAccounts(){
                 return this.accounts.filter(x => x.blockchain() === 'eos');
@@ -116,51 +116,15 @@
         },
         methods:{
             async init(){
-//                await PriceService.watchPrices();
+                await PriceService.watchPrices();
+                await PriceService.getAllTokens();
                 this.refresh();
+            },
+            async refresh(){
+                await PriceService.getBalances();
             },
             openVault(){
                 PopupService.push(Popup.vault());
-            },
-            refresh(){
-                this.getBalances();
-            },
-            async getBalances(){
-                const tokens = [];
-                await this.eosPlugin.fetchTokens(tokens);
-                await Promise.all(this.eosAccounts.map(async account => {
-
-                    // Only get from endorsed networks
-                    if(!await PluginRepository.plugin(account.blockchain()).isEndorsedNetwork(account.network())) return false;
-
-                    this.balances[account.unique()] = [];
-
-                    return await Promise.all(tokens.map(async token => {
-                        const balance = await this.eosPlugin.balanceFor(account, account.network(), token.account, token.symbol);
-                        if(parseFloat(balance) > 0){
-                            this.balances[account.unique()].push({symbol:token.symbol, balance});
-                        }
-                        this.setTotalBalance();
-                        return true;
-                    }));
-                }));
-            },
-            async setTotalBalance(){
-                const totals = {};
-                Object.keys(this.balances).map(acc => {
-                    this.balances[acc].map(t => {
-                        totals[t.symbol] = (totals[t.symbol] || 0) + parseFloat(t.balance)
-                    })
-                });
-
-                let total = 0;
-                Object.keys(totals).map(key => {
-                    if(this.prices.hasOwnProperty(key)){
-                        total += this.prices[key].price * totals[key];
-                    }
-                });
-
-                this.totalBalance = parseFloat(total).toFixed(2);
             },
         }
     }

@@ -8,5 +8,7 @@ export const mutations = {
     [Mutations.PUSH_POPUP]:(state, popup) => state.popups.push(popup),
     [Mutations.RELEASE_POPUP]:(state, popup) => state.popups = state.popups.filter(p => p.id !== popup.id),
     [Mutations.SET_HARDWARE]:(state, hardware) => state.hardware = hardware,
+    [Mutations.SET_TOKENS]:(state, tokens) => state.tokens = tokens,
+    [Mutations.SET_BALANCES]:(state, balances) => state.balances = balances,
     [Mutations.SET_PRICES]:(state, prices) => state.prices = prices,
 };

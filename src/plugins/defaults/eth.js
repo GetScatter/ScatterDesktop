@@ -60,6 +60,7 @@ export default class ETH extends Plugin {
     }
 
     accountsAreImported(){ return false; }
+    isValidRecipient(address){ return this.validPublicKey(address); }
     privateToPublic(privateKey){ return ethUtil.addHexPrefix(ethUtil.privateToAddress(toBuffer(privateKey)).toString('hex')); }
     validPrivateKey(privateKey){ return ethUtil.isValidPrivate(toBuffer(privateKey)); }
     validPublicKey(publicKey){   return ethUtil.isValidAddress(publicKey); }
@@ -92,6 +93,9 @@ export default class ETH extends Plugin {
         return 0;
     }
 
+    defaultDecimals(){ return 18; }
+    defaultToken(){ return {account:'eth', symbol:'ETH', name:'ETH', blockchain:Blockchains.ETH}; }
+
     async historyFor(account, network){
         return [];
     }
@@ -104,8 +108,9 @@ export default class ETH extends Plugin {
     }
 
     async fetchTokens(tokens){
-        const ethTokens = [{account:'eth', symbol:'ETH'}];
+        const ethTokens = [this.defaultToken()];
         ethTokens.map(token => {
+            token.blockchain = Blockchains.ETH;
             if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
         });
     }

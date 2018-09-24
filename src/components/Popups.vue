@@ -10,6 +10,7 @@
                     <text-prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id"></text-prompt>
                     <selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR"></selector>
                     <mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC"></mnemonic>
+                    <tx-success v-if="nextPopIn.data.type === popupTypes.TX_SUCCESS"></tx-success>
 
                     <vault :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.VAULT"></vault>
                 </section>

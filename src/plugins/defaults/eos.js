@@ -117,6 +117,7 @@ export default class EOS extends Plugin {
         })
     }
 
+    isValidRecipient(name){ return /(^[a-z1-5.]{1,11}[a-z1-5]$)|(^[a-z1-5.]{12}[a-j1-5]$)/g.test(name); }
     privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
     validPrivateKey(privateKey){ return ecc.isValidPrivate(privateKey); }
     validPublicKey(publicKey, prefix = null){ return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
@@ -165,6 +166,9 @@ export default class EOS extends Plugin {
         return row ? row.balance.split(" ")[0] : 0;
     }
 
+    defaultDecimals(){ return 4; }
+    defaultToken(){ return {symbol:'EOS', account:'eosio.token', name:'EOS', blockchain:Blockchains.EOSIO}; }
+
     async historyFor(account, network){
         const eos = getCachedInstance(network);
         return await eos.getActions(account.name).then(histories => {
@@ -185,9 +189,10 @@ export default class EOS extends Plugin {
     }
 
     async fetchTokens(tokens){
-        tokens.push({symbol:'EOS', account:'eosio.token', name:'EOS'});
+        tokens.push(this.defaultToken());
         const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);
         eosTokens.map(token => {
+            token.blockchain = Blockchains.EOSIO;
             if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
         });
     }
@@ -273,8 +278,10 @@ export default class EOS extends Plugin {
     }
 
     async signer(payload, publicKey, arbitrary = false, isHash = false){
-        const privateKey = KeyPairService.publicToPrivate(publicKey);
+        let privateKey = KeyPairService.publicToPrivate(publicKey);
         if (!privateKey) return;
+
+        if(typeof privateKey !== 'string') privateKey = this.bufferToHexPrivate(privateKey);
 
         if (arbitrary && isHash) return ecc.Signature.signHash(payload.data, privateKey).toString();
         return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);

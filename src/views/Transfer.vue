@@ -35,7 +35,7 @@
                 <figure class="action" @click="isSimple = !isSimple">
                     {{isSimple ? 'Customize' : 'Simple'}}
                 </figure>
-                <figure class="action">
+                <figure class="action" @click="send">
                     Send
                 </figure>
             </section>
@@ -99,7 +99,7 @@
                     <section v-if="!isSimple && token.blockchain === Blockchains.EOSIO">
                         <div class="breaker"></div>
                         <section class="inputs">
-                            <input placeholder="Memo" />
+                            <input placeholder="Memo" v-model="memo" />
                         </section>
                     </section>
 
@@ -118,6 +118,9 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
 
+    import PriceService from '../services/PriceService'
+    import PluginRepository from '../plugins/PluginRepository'
+    import TransferService from '../services/TransferService'
     import ContactService from '../services/ContactService'
     import {Blockchains} from '../models/Blockchains'
     import PopupService from '../services/PopupService'
@@ -127,20 +130,19 @@
         data () {return {
             Blockchains:Blockchains,
             isSimple:true,
-
-            tokens:[
-                {name:'EOS', logo:'', blockchain:'eos'},
-                {name:'ETH', logo:'', blockchain:'eth'}
-            ],
+            sending:false,
             token:null,
 
             account:null,
             recipient:'',
-            amount:1,
+            amount:0,
+            memo:'',
         }},
         computed:{
             ...mapState([
-                'scatter'
+                'scatter',
+                'balances',
+                'tokens',
             ]),
             ...mapGetters([
                 'accounts',
@@ -152,7 +154,7 @@
             },
             isAlreadyContact(){
                 return this.contacts.find(x => x.recipient.toLowerCase() === this.recipient.toLowerCase())
-            }
+            },
         },
         mounted(){
             this.token = this.tokens[0];
@@ -179,6 +181,60 @@
             },
             async removeContact(contact){
                 await ContactService.remove(contact);
+            },
+
+            /***
+             * Returns an account if pre-selected,
+             * If not then gets any account based on tokens needed or null if none found with
+             * sufficient value/token balance.
+             * @param tokensToSend
+             * @returns {*}
+             */
+            sendingAccount(tokensToSend){
+                if(this.account) return this.account;
+
+                let blockchain;
+                if(this.isSimple) {
+                    blockchain = TransferService.blockchainFromRecipient(this.recipient);
+                    if (!blockchain) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "ban", "Okay"));
+                } else {
+                    blockchain = this.token.blockchain;
+                }
+
+                const plugin = PluginRepository.plugin(blockchain);
+                if(this.isSimple) this.token = plugin.defaultToken();
+
+                let account;
+                this.accounts.filter(x => x.blockchain() === blockchain).map(acc => {
+                    if(account) return;
+                    const balance = this.balances.hasOwnProperty(acc.unique()) ? this.balances[acc.unique()].find(x => x.symbol === this.token.symbol) : null;
+                    if(balance && parseFloat(balance.balance) > tokensToSend) account = acc;
+                })
+
+                return account;
+            },
+
+            async send(){
+                if(parseFloat(this.amount) <= 0) return PopupService.push(Popup.prompt("Invalid Amount", "You must send an amount greater than 0", "ban", "Okay"));
+                if(!this.recipient.trim().length) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "ban", "Okay"));
+
+                const tokensToSend = this.isSimple ? await PriceService.valueToTokens(this.token, this.amount) : this.amount;
+                if(parseFloat(tokensToSend) <= 0) return PopupService.push(Popup.prompt("Could not calculate tokens from value.",
+                    "Scatter most likely couldn't fetch the token price from the server due to rate limiting or congestion. Please try again later.", "ban", "Okay"));
+
+                const account = this.sendingAccount(tokensToSend);
+                if(!account) return PopupService.push(Popup.prompt("Overspending balance.", "You don't have any account that has enough balance to make this transfer in it's base token.", "ban", "Okay"));
+                if(account.blockchain() !== Blockchains.EOSIO) return PopupService.push(Popup.prompt("Okay, this one is on us.", "Only EOSIO internal token transfers are supported right now.", "ban", "Okay"));
+
+                this.sending = true;
+                await TransferService[account.blockchain()]({
+                    account,
+                    recipient:this.recipient,
+                    amount:tokensToSend,
+                    memo:this.memo,
+                    token:this.token,
+                });
+                this.sending = false;
             },
 
         }

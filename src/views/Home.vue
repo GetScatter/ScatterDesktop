@@ -54,7 +54,7 @@
 
                 <!-- ACTIONS -->
                 <section class="actions">
-                    <figure class="action">Clear All</figure>
+                    <figure class="action" @click="removeAllPermissions">Clear All</figure>
                 </section>
 
             </section>
@@ -86,7 +86,7 @@
                         <figure class="action" v-tooltip="'Edit'">
                             <i class="fa fa-pencil"></i>
                         </figure>
-                        <figure class="action red" v-tooltip="'Remove'">
+                        <figure class="action red" v-tooltip="'Remove'" @click="removePermissions(origin)">
                             <i class="fa fa-ban"></i>
                         </figure>
                     </section>
@@ -104,6 +104,8 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
+
+    import PermissionService from '../services/PermissionService';
 
     let saveTimeout = null;
 
@@ -123,10 +125,10 @@
             origins(){
                 const origins = {};
 
-                this.apps.map(p => {
-                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
-                    else origins[p.origin] += 1;
-                });
+//                this.apps.map(p => {
+//                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
+//                    else origins[p.origin] += 1;
+//                });
 
                 this.permissions.map(p => {
                     if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
@@ -143,6 +145,12 @@
         },
         methods:{
 
+            removePermissions(origin){
+                PermissionService.removeAllPermissionsFor(origin);
+            },
+            removeAllPermissions(){
+                PermissionService.removeAllPermissions();
+            }
         }
     }
 </script>
@@ -302,7 +310,8 @@
 
 
             .permission {
-                padding:30px 0;
+                flex:0 0 auto;
+                padding:20px 0;
                 overflow: hidden;
                 display:flex;
                 justify-content: center;

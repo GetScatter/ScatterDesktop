@@ -45,7 +45,7 @@ export default class AccountService {
             await Promise.all(BlockchainsArray.map(async ({value}) => {
                 const plugin = PluginRepository.plugin(value);
                 const networks = scatter.settings.networks.filter(x => x.blockchain === value);
-                return AccountService.createAccountsFor(plugin, networks, accounts, keypair);
+                return AccountService.accountsFrom(plugin, networks, accounts, keypair);
             }));
 
             const uniques = accounts.map(x => x.unique());
@@ -68,7 +68,7 @@ export default class AccountService {
             const plugin = PluginRepository.plugin(network.blockchain);
 
             await Promise.all(keypairs.map(async keypair => {
-                return AccountService.createAccountsFor(plugin, [network], accounts, keypair);
+                return AccountService.accountsFrom(plugin, [network], accounts, keypair);
             }));
 
             accounts.map(account => scatter.keychain.addAccount(account));
@@ -77,7 +77,7 @@ export default class AccountService {
         })
     }
 
-    static async createAccountsFor(plugin, networks, accounts, keypair){
+    static async accountsFrom(plugin, networks, accounts, keypair){
         return new Promise(async resolve => {
             if(plugin.accountsAreImported()){
                 (await Promise.all(networks.map(async network => {
