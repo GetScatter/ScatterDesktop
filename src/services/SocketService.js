@@ -117,18 +117,19 @@ const socketHandler = (socket) => {
         }
 
         else {
-            PopupService.push(Popup.popout(linkApp, async ({result}) => {
-                if(result) {
-                    if(request.data.appkey.indexOf('appkey:') === -1) {
-                        const newKey = await getNewKey(socket);
-                        if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return socket.emit('paired', false);
-                        addAuthorizedApp(newKey.data.appkey)
-                    } else {
-                        addAuthorizedApp();
-                    }
-                }
-                else socket.emit('paired', false);
-            }))
+            if(request.data.appkey.indexOf('appkey:') === -1){
+                const newKey = await getNewKey(socket);
+                if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return socket.emit('paired', false);
+                addAuthorizedApp(newKey.data.appkey)
+            } else {
+                PopupService.push(Popup.popout(linkApp, async ({result}) => {
+                    if(result) addAuthorizedApp();
+                    else socket.emit('paired', false);
+                }))
+            }
+
+
+
 
         }
     });

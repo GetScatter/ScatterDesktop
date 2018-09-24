@@ -17,19 +17,9 @@ import MainMenu from './components/sidebars/MainMenu.vue'
 import Auth from './components/sidebars/Auth.vue'
 
 // Panels
-import Identity from './components/panels/Identity.vue'
-import Keypair from './components/panels/Keypair.vue'
-import Network from './components/panels/Network.vue'
-import Receive from './components/panels/Receive.vue'
-import Transfer from './components/panels/Transfer.vue'
-import NothingHere from './components/panels/NothingHere.vue'
-import Terms from './components/panels/Terms.vue'
-import Repute from './components/panels/reputation/Repute.vue'
-import EntityReputation from './components/panels/reputation/EntityReputation.vue'
-import LoadTokens from './components/panels/reputation/LoadTokens.vue'
-import OriginPermissions from './components/panels/OriginPermissions.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
 import SettingsExplorer from './components/panels/SettingsExplorer.vue'
+import SettingsNetworks from './components/panels/SettingsNetworks.vue'
 import SettingsBackup from './components/panels/SettingsBackup.vue'
 import SettingsDestroy from './components/panels/SettingsDestroy.vue'
 import SettingsPassword from './components/panels/SettingsPassword.vue'
@@ -101,19 +91,9 @@ class Main {
             {tag:'qr-reader', vue:QrcodeReader},
 
             // PANELS
-            {tag:'identity', vue:Identity},
-            {tag:'keypair', vue:Keypair},
-            {tag:'network', vue:Network},
-            {tag:'transfer', vue:Transfer},
-            {tag:'receive', vue:Receive},
-            {tag:'terms', vue:Terms},
-            {tag:'nothing-here', vue:NothingHere},
-            {tag:'origin-perms', vue:OriginPermissions},
-            {tag:'rep-repute', vue:Repute},
-            {tag:'rep-entity', vue:EntityReputation},
-            {tag:'rep-load-tokens', vue:LoadTokens},
             {tag:'settings-language', vue:SettingsLanguage},
             {tag:'settings-backup', vue:SettingsBackup},
+            {tag:'settings-networks', vue:SettingsNetworks},
             {tag:'settings-destroy', vue:SettingsDestroy},
             {tag:'settings-explorer', vue:SettingsExplorer},
             {tag:'settings-password', vue:SettingsPassword},

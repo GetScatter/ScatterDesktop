@@ -59,7 +59,7 @@ export default class Error {
     }
 
     static noNetwork(){
-        return this.signatureError("no_network", "You must bind a network first");
+        return this.signatureError("no_network", "This user does not have this network in their Scatter.");
     }
 
     static usedKeyProvider(){

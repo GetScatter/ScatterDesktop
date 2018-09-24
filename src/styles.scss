@@ -38,58 +38,11 @@ a {
 }
 
 .panel {
-  min-height: 100vh;
+  display:flex;
+  flex-direction: row;
+  flex:1;
 
-  &.sub-menu {
-    width:270px;
-    background:$very-light-blue;
-    float:left;
-    box-shadow:inset -2px 0 10px rgba(0,0,0,0.02), inset 2px 0 10px rgba(0,0,0,0.02);
-  }
-
-  &.display {
-    width:calc(100% - 270px);
-    float:left;
-    position: relative;
-  }
-
-  &.sub-menu {
-    .head {
-      text-align:right;
-      i {
-        margin-left:20px;
-      }
-    }
-  }
-
-  &.display {
-    .head {
-      text-align:left;
-    }
-  }
-
-  .head {
-    height:70px;
-    line-height:70px;
-    padding:0 30px;
-    font-size:24px;
-    border-bottom:1px solid rgba(0,0,0,0.05);
-    -webkit-app-region: drag;
-
-    i {
-      cursor: pointer;
-      -webkit-app-region: no-drag;
-      color:$mid-light-grey;
-
-      &:hover {
-        color:$dark-blue;
-      }
-
-      &.blue {
-        color:$dark-blue;
-      }
-    }
-  }
+  max-width:600px;
 
 }
 
@@ -134,7 +87,6 @@ a {
     cursor: pointer;
     padding:25px 20px;
     background:transparent;
-    box-shadow:0 0 0 0 rgba(0,0,0,0), inset 0 0 0 0 rgba(0,0,0,0), inset 0 0 0 0 rgba(0,0,0,0), inset 0 0 0 0 rgba(0,0,0,0), inset 0 0 0 0 rgba(0,0,0,0);
 
     transition: background 0.9s ease, box-shadow 1.8s ease;
 
@@ -144,8 +96,6 @@ a {
 
     &:hover, &.active {
       transition: background 0.2s ease, box-shadow 0.4s ease;
-      box-shadow:0 5px 12px rgba(0,0,0,0.05), inset 15px 0 20px -10px rgba(0,0,0,0.03), inset -15px 0 20px -10px rgba(0,0,0,0.03),
-                                              inset 5px 0 3px -2px rgba(0,0,0,0.02), inset -5px 0 3px -2px rgba(0,0,0,0.02);
       background:#fff;
 
     }

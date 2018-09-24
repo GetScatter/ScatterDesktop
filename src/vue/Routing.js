@@ -14,6 +14,7 @@ import AddBlockchainNetwork from '../views/wizards/AddBlockchainNetwork.vue'
 import ImportKeypair from '../views/wizards/ImportKeypair.vue'
 
 import Home from '../views/Home.vue'
+import Identity from '../views/Identity.vue'
 import Transfer from '../views/Transfer.vue'
 import Receive from '../views/Receive.vue'
 
@@ -23,6 +24,7 @@ import Receive from '../views/Receive.vue'
 export const RouteNames = {
     LOGIN:'login',
     HOME:'home',
+    IDENTITY:'identity',
     TRANSFER:'transfer',
     RECEIVE:'receive',
 
@@ -51,6 +53,7 @@ const RouteViews = {
     [RouteNames.LOGIN]:Login,
     [RouteNames.ONBOARDING]:Onboarding,
     [RouteNames.HOME]:Home,
+    [RouteNames.IDENTITY]:Identity,
     [RouteNames.TRANSFER]:Transfer,
     [RouteNames.RECEIVE]:Receive,
 

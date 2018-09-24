@@ -30,15 +30,19 @@
                     <i class="fa fa-plus"></i>
                 </figure>
 
-                <figure class="remove-keypair" :class="{'show':selected && !isNew && !exporting}" v-tooltip="'Remove'" @click="removeKeypair">
+                <figure class="remove-keypair" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Remove'" @click="removeKeypair">
                     <i class="fa fa-ban"></i>
                 </figure>
 
-                <figure class="show-qr" :class="{'show':selected && !isNew && !exporting}" v-tooltip="'Export Secret'" @click="exportKeypair">
+                <figure class="refresh-accounts" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Refresh Linked Accounts'" @click="refreshAccounts">
+                    <i class="fa fa-refresh"></i>
+                </figure>
+
+                <figure class="show-qr" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Export Secret'" @click="exportKeypair">
                     <i class="fa fa-qrcode"></i>
                 </figure>
 
-                <figure class="show-qr" :class="{'show':selected && !isNew && exporting}" v-tooltip="'Save QR'" @click="saveQR">
+                <figure class="show-qr" :class="{'show':selected && !isNew && exporting && !status}" v-tooltip="'Save QR'" @click="saveQR">
                     <i class="fa fa-save"></i>
                 </figure>
 
@@ -168,8 +172,21 @@
                                 </section>
 
                                 <!-- IMPORTING HARDWARE -->
-                                <section key="import-text" v-if="importType === IMPORT_TYPES.HARDWARE" class="new-keypair">
-                                    Hardware
+                                <section key="import-text" v-if="importType === IMPORT_TYPES.HARDWARE" class="import-hardware">
+                                    <sel :selected="selected.external.type" v-if="selected.external"
+                                         :options="EXT_WALLET_TYPES" v-on:changed="(x) => hardwareType = x"></sel>
+
+                                    <transition name="slide-left" mode="out-in">
+                                        <section key="getpublickey" v-if="hardwareReady" class="button wide" @click="importKeyFromHardware">
+                                            <figure class="name">Link Hardware</figure>
+                                            <figure class="description">This will link this hardware account to you Scatter.</figure>
+                                        </section>
+
+                                        <section key="loadinghardware" class="loading" v-else>
+                                            <i class="fa fa-hourglass-o fa-spin"></i>
+                                        </section>
+                                    </transition>
+
                                 </section>
                             </transition>
                         </section>
@@ -205,6 +222,8 @@
     import ElectronHelpers from '../../util/ElectronHelpers';
     import IdGenerator from '../../util/IdGenerator';
 
+    import ExternalWallet, {EXT_WALLET_TYPES, EXT_WALLET_TYPES_ARR} from '../../models/ExternalWallet';
+
     const IMPORT_TYPES = {
         TEXT:'Text',
         HARDWARE:'Hardware',
@@ -212,6 +231,7 @@
 
     let saveTimeout;
     let keyTimeout;
+    let hardwareTimeout;
 
     export default {
         data(){ return {
@@ -225,12 +245,18 @@
             exporting:null,
 
             IMPORT_TYPES:IMPORT_TYPES,
+            EXT_WALLET_TYPES:EXT_WALLET_TYPES_ARR,
             importing:false,
             importType:null,
             camera:false,
+            hardwareReady:false,
+            hardwareType:EXT_WALLET_TYPES.LEDGER,
         }},
         mounted(){
 
+        },
+        destroyed(){
+            clearInterval(hardwareTimeout);
         },
         computed:{
             ...mapState([
@@ -291,6 +317,9 @@
 
             },
             addOrBack(){
+                if(this.error) this.error = null;
+                if(this.status) this.status = null;
+
                 if(this.exporting)  return this.exporting = null;
                 if(this.importType) return this.importType = null;
                 if(this.importing)  return this.importing = false;
@@ -334,7 +363,12 @@
                 }, 1000);
             },
             async keyImported(snackbar){
-                const existing = this.keypairs.find(x => x.keyHash === this.selected.keyHash && x.id !== this.selected.id);
+                const isHardware = !!this.selected.external;
+                const existing = this.keypairs.find(x => {
+                    const existingHardware = isHardware && x.external && this.selected.external.publicKey === x.external.publicKey;
+                    return existingHardware || (x.keyHash === this.selected.keyHash && x.id !== this.selected.id)
+                });
+
                 if(existing){
                     this.status = null;
                     this.error = `This Secret already exists under the name ${existing.name}`;
@@ -342,10 +376,12 @@
                 }
 
                 if(this.keyNameError) this.selected.name = `Secret-${IdGenerator.text(10)}`;
-                await KeyPairService.makePublicKeys(this.selected);
+
+                if(!isHardware) await KeyPairService.makePublicKeys(this.selected);
                 if(!this.selected.publicKeys.length) return false;
+
                 await KeyPairService.saveKeyPair(this.selected);
-                this.status = 'Linking multiple blockchain accounts. Please wait.';
+                this.status = 'Linking available accounts. Please wait.';
                 await AccountService.importAllAccounts(this.selected);
                 PopupService.push(Popup.snackbar(snackbar));
 
@@ -376,6 +412,47 @@
                     }, 2000);
                 }, 2000);
             },
+
+            async refreshAccounts(){
+                this.status = 'Refreshing Links';
+                setTimeout(async() => {
+                    await AccountService.importAllAccounts(this.selected);
+                    this.status = null;
+                }, 1000);
+            },
+
+            async watchHardware(){
+                if(this.hardwareReady) return;
+
+                await this.setupHardware();
+                await new Promise(r => setTimeout(() => r(true), 500));
+
+                const connectedOrError = await this.selected.external.interface.canConnect();
+
+                if(connectedOrError === null) {
+                    this.error = 'Error connecting to hardware';
+                    this.setupHardware();
+                    return false;
+                }
+
+                if(typeof connectedOrError === 'string'){
+                    this.hardwareReady = false;
+                    this.error = connectedOrError;
+                    return false;
+                }
+
+                this.error = null;
+                this.hardwareReady = true;
+            },
+            setupHardware(){
+                this.selected.external = new ExternalWallet(this.hardwareType);
+                this.hardwareReady = false;
+            },
+            async importKeyFromHardware(){
+                if(await KeyPairService.loadFromHardware(this.selected)) {
+                    await this.keyImported('Hardware Linked');
+                }
+            },
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
@@ -397,6 +474,19 @@
                 keyTimeout = setTimeout(async () => {
                     this.testKey();
                 }, 500);
+            },
+            ['importType'](){
+                if(hardwareTimeout) clearInterval(hardwareTimeout);
+                if(this.importType === IMPORT_TYPES.HARDWARE){
+                    this.selected.external = new ExternalWallet();
+                    hardwareTimeout = setInterval(() => this.watchHardware(), 800);
+                } else {
+                    this.hardwareReady = false;
+                    this.selected.external = null;
+                }
+            },
+            ['hardwareType'](){
+                this.setupHardware();
             }
         }
     }
@@ -412,6 +502,20 @@
         flex-direction: column;
         overflow: hidden;
 
+        .loading {
+            width:100%;
+            height:150px;
+            flex:1;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            color:$mid-light-grey;
+            text-align:center;
+
+            /*animation: pulsate 1s ease-out;*/
+            /*animation-iteration-count: infinite;*/
+        }
 
         .head {
             padding:40px 80px;
@@ -449,7 +553,7 @@
                 }
             }
 
-            .add-keypair, .remove-keypair, .show-qr, .show-cam {
+            .add-keypair, .remove-keypair, .refresh-accounts, .show-qr, .show-cam {
                 position: absolute;
                 opacity:1;
                 top:20px;
@@ -519,8 +623,7 @@
                 top:-20px;
                 visibility: hidden;
 
-
-                right:65px;
+                right:110px;
 
                 &:hover {
                     border:1px solid $red;
@@ -535,7 +638,23 @@
                 }
             }
 
+            .refresh-accounts {
+                transition-delay: 0.1s;
+                opacity:0;
+                top:-20px;
+                visibility: hidden;
+
+                right:65px;
+
+                &.show {
+                    opacity:1;
+                    top:20px;
+                    visibility: visible;
+                }
+            }
+
             .show-qr {
+                transition-delay: 0.2s;
                 opacity:0;
                 top:-20px;
                 visibility: hidden;
@@ -727,6 +846,8 @@
             display:flex;
             flex-direction: column;
             position: relative;
+            opacity:1;
+            transition: opacity 0.4s ease;
 
             &.disabled {
                 opacity:0.2;
@@ -786,55 +907,12 @@
                 overflow-y:auto;
 
                 padding:50px;
+            }
 
-                .button {
-                    float:left;
-                    cursor: pointer;
-                    width:calc(50% - 10px);
-                    padding:20px 30px;
-                    background:#fff;
-                    text-align:center;
-                    border:1px solid rgba(0,0,0,0.1);
-                    box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 4px 9px rgba(0,0,0,0.1);
-                    border-radius:4px;
-                    height:150px;
-                    display:flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items:center;
-
-                    transition:all 0.15s ease;
-                    transition-property: transform, box-shadow;
-
-                    &:not(:last-child){
-                        margin-bottom:20px;
-                        margin-right:20px;
-                    }
-
-                    .name {
-                        font-weight: bold;
-                        color:$black;
-                        font-size: 18px;
-                        padding-bottom:10px;
-                        border-bottom:1px solid rgba(0,0,0,0.1);
-                        margin-bottom:10px;
-                    }
-
-                    .description {
-                        font-size: 13px;
-                        color:$dark-grey;
-                    }
-
-                    &:hover {
-                        transform:translateY(-3px);
-                        box-shadow:0 5px 8px rgba(0,0,0,0.1), 0 20px 8px -5px rgba(0,0,0,0.1);
-                    }
-
-                    &:active {
-                        transform:translateY(0px);
-                        box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 4px 9px rgba(0,0,0,0.1);
-                    }
-                }
+            .import-hardware {
+                flex:1;
+                background:rgba(0,0,0,0.05);
+                padding:40px;
             }
 
             .input-keypair {
@@ -858,6 +936,61 @@
                         font-size: 18px;
                         margin-top:10px;
                     }
+                }
+            }
+
+            .button {
+                float:left;
+                cursor: pointer;
+                width:calc(50% - 10px);
+                padding:20px 30px;
+                background:#fff;
+                text-align:center;
+                border:1px solid rgba(0,0,0,0.1);
+                box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 4px 9px rgba(0,0,0,0.1);
+                border-radius:4px;
+                height:150px;
+                display:flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items:center;
+
+                transition:all 0.15s ease;
+                transition-property: transform, box-shadow;
+
+                &.wide {
+                    width:100%;
+                    margin-top:10px;
+                    height:auto;
+                }
+
+                &:not(:last-child){
+                    margin-bottom:20px;
+                    margin-right:20px;
+                }
+
+                .name {
+                    font-weight: bold;
+                    color:$black;
+                    font-size: 18px;
+                    padding-bottom:10px;
+                    border-bottom:1px solid rgba(0,0,0,0.1);
+                    margin-bottom:10px;
+                }
+
+                .description {
+                    font-size: 13px;
+                    color:$dark-grey;
+                }
+
+                &:hover {
+                    transform:translateY(-3px);
+                    box-shadow:0 5px 8px rgba(0,0,0,0.1), 0 20px 8px -5px rgba(0,0,0,0.1);
+                }
+
+                &:active {
+                    transform:translateY(0px);
+                    box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 4px 9px rgba(0,0,0,0.1);
                 }
             }
         }

@@ -45,34 +45,64 @@ export default class AccountService {
             await Promise.all(BlockchainsArray.map(async ({value}) => {
                 const plugin = PluginRepository.plugin(value);
                 const networks = scatter.settings.networks.filter(x => x.blockchain === value);
+                return AccountService.createAccountsFor(plugin, networks, accounts, keypair);
+            }));
 
-                if(plugin.accountsAreImported()){
-                    (await Promise.all(networks.map(async network => {
-                        const availableAccounts = await plugin.getImportableAccounts(keypair, network);
-                        return await plugin.getImportableAccounts(keypair, network);
-                    }))).reduce((acc, arr) => {
-                        arr.map(account => {
-                            accounts.push(account)
-                        });
-                        return acc;
-                    }, []);
-                } else {
-                    networks.map(network => {
+            const uniques = accounts.map(x => x.unique());
+            const accountsToRemove = scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique() && !uniques.includes(x.unique()));
+
+            accountsToRemove.map(account => scatter.keychain.remove(account));
+            accounts.map(account => scatter.keychain.addAccount(account));
+
+            await store.dispatch(Actions.SET_SCATTER, scatter);
+            resolve(true);
+        })
+    }
+
+    static async importAllAccountsForNetwork(network){
+        return new Promise(async resolve => {
+            const scatter = store.state.scatter.clone();
+            const keypairs = scatter.keychain.keypairs;
+            let accounts = [];
+
+            const plugin = PluginRepository.plugin(network.blockchain);
+
+            await Promise.all(keypairs.map(async keypair => {
+                return AccountService.createAccountsFor(plugin, [network], accounts, keypair);
+            }));
+
+            accounts.map(account => scatter.keychain.addAccount(account));
+            await store.dispatch(Actions.SET_SCATTER, scatter);
+            resolve(true);
+        })
+    }
+
+    static async createAccountsFor(plugin, networks, accounts, keypair){
+        return new Promise(async resolve => {
+            if(plugin.accountsAreImported()){
+                (await Promise.all(networks.map(async network => {
+                    const availableAccounts = await plugin.getImportableAccounts(keypair, network);
+                    return await plugin.getImportableAccounts(keypair, network);
+                }))).reduce((acc, arr) => {
+                    arr.map(account => {
+                        accounts.push(account)
+                    });
+                    return acc;
+                }, []);
+                resolve(true);
+            } else {
+                networks.map(network => {
+                    const key = keypair.publicKeys.find(x => x.blockchain === network.blockchain);
+                    if(key){
                         accounts.push(Account.fromJson({
                             keypairUnique:keypair.unique(),
                             networkUnique:network.unique(),
-                            publicKey:keypair.publicKeys.find(x => x.blockchain === value).key
+                            publicKey:key.key
                         }));
-                    });
-                }
-            }));
-
-            accounts.map(account => {
-                console.log('account', account);
-                scatter.keychain.addAccount(account)
-            });
-            await store.dispatch(Actions.SET_SCATTER, scatter);
-            resolve(true);
+                    }
+                });
+                resolve(true);
+            }
         })
     }
 }

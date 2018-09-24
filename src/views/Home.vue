@@ -12,9 +12,9 @@
 
                 <!-- ACTIONS -->
                 <section class="actions">
-                    <figure class="action" v-tooltip="'Edit'">
+                    <router-link :to="{name:'identity'}"  class="action" v-tooltip="'Edit'">
                         <i class="fa fa-pencil"></i>
-                    </figure>
+                    </router-link>
                     <figure class="action padded" v-tooltip="'Disable Identity'" @click="identity.enabled = false;">
                         Disable
                     </figure>
@@ -25,7 +25,7 @@
                 <!-- INFO -->
                 <section class="info">
                     <figure class="name">Identity <b>Disabled</b></figure>
-                    <figure class="description">Enabling your Identity gives you a bit more protection.</figure>
+                    <figure class="description">Using a default randomized identity</figure>
                 </section>
 
                 <!-- ACTIONS -->
@@ -160,7 +160,7 @@
         align-items: center;
 
         .info {
-            width:calc(100% - 110px);
+            width:calc(100% - 160px);
             float:left;
 
             .name {
@@ -174,7 +174,7 @@
         }
 
         .actions {
-            width:150px;
+            width:160px;
             float:left;
 
             .action {

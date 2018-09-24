@@ -43,10 +43,10 @@
                 <section class="list" v-if="!selectedIdentity || !accountRequirements.length">
 
 
-                    <section class="big-login" v-if="validIdentities.length === 1">
-                        <section>
-                            <figure class="title">Do you want to log into <b>{{payload.origin}}</b> with <b>{{validIdentities[0].name}}</b></figure>
-                            <section class="item" @click="selectIdentity(validIdentities[0])" style="margin:20px 0 0 0;">
+                    <section class="big-login">
+                        <section v-if="isValidIdentity">
+                            <figure class="title">Do you want to log into <b>{{payload.origin}}</b> with <b>{{identity.name}}</b></figure>
+                            <section class="item" @click="selectIdentity(identity)" style="margin:20px 0 0 0;">
                                 <figure class="title" :style="{'text-align':validAccounts.length === 1 ? 'center' : 'left'}">Login</figure>
                                 <figure class="sub-title" v-if="validAccounts.length === 1">Only one account available, it will automatically be used.</figure>
                                 <figure class="sub-title" style="text-align:left;" v-if="validAccounts.length > 1">Continue to account selection.</figure>
@@ -55,34 +55,27 @@
                                 </figure>
                             </section>
                         </section>
-                    </section>
 
-                    <section v-else>
-                        <section class="breadcrumbs">
-                            <figure class="breadcrumb">Select an Identity</figure>
-                        </section>
-
-                        <section class="item" v-for="identity in validIdentities" @click="selectIdentity(identity)">
-                            <figure class="title">{{identity.name}}</figure>
-                            <figure class="sub-title">{{neededProperties(identity)}}</figure>
-                            <figure class="chevron">
-                                <i class="fa fa-chevron-right"></i>
-                            </figure>
+                        <!-- TODO: Allow to add properties to an identity from this popup -->
+                        <section v-else>
+                            <figure class="title">Your Identity doesn't have all the requirements.</figure>
+                            <p style="font-size: 13px;">Check the panel above to see all the fields that this application is requiring.</p>
                         </section>
                     </section>
+
+
 
 
                 </section>
 
                 <section class="list" v-if="selectedIdentity && accountRequirements.length">
                     <section class="breadcrumbs">
-                        <figure class="breadcrumb button" @click="backToIdentities">Back</figure>
-                        <figure class="breadcrumb">Select an Account</figure>
+
                     </section>
 
                     <section class="item" v-for="account in validAccounts" @click="selectAccount(account)">
                         <figure class="title">{{account.formatted()}}</figure>
-                        <figure class="sub-title">{{account.networkUnique}}</figure>
+                        <figure class="sub-title">{{account.keypair().name}}</figure>
                         <figure class="chevron">
                             <i class="fa fa-chevron-right"></i>
                         </figure>
@@ -121,8 +114,10 @@
                 'scatter'
             ]),
             ...mapGetters([
+                'identity',
                 'identities',
                 'accounts',
+                'networks',
             ]),
             validAccounts(){
                 const neededBlockchains = this.accountRequirements.map(x => x.blockchain.toLowerCase());
@@ -134,10 +129,8 @@
                     .filter(x => !alreadySelectedUniques.includes(x.unique()))
                     .filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1);
             },
-            validIdentities(){
-                return this.identities
-                    .filter(id => id.hasRequiredFields(this.fields))
-                    .filter(id => id.name.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1);
+            isValidIdentity(){
+                return this.identity.hasRequiredFields(this.fields);
             },
             fields(){
                 return IdentityRequiredFields.fromJson(this.payload.fields);
@@ -149,10 +142,10 @@
                 return this.fields.accounts || [];
             },
             printableAccountRequirements(){
-                return this.accountRequirements.map(x => `${Network.fromJson(x).unique().replace('chain:','').substr(0, 14)}...`).join(' / ')
+                return this.accountRequirements.map(x => this.networks.find(x => x.chainId === x.chainId).name).join(' / ')
             },
             shouldShowSearchbar(){
-                return (!this.selectedIdentity && this.validIdentities.length > 1) || (this.selectedIdentity && this.validAccounts.length > 1);
+                return this.selectedIdentity && this.validAccounts.length > 1;
             }
         },
         mounted(){

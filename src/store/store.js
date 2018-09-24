@@ -23,6 +23,8 @@ const state = {
     popups:[],
 
     hardware:null,
+
+    prices:{},
 };
 
 const getters = {

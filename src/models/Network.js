@@ -10,6 +10,9 @@ export default class Network {
         this.port = _port;
         this.blockchain = blockchain;
         this.chainId = chainId.toString();
+
+        this.fromOrigin = null;
+        this.createdAt = +new Date();
     }
 
     static placeholder(){ return new Network(); }

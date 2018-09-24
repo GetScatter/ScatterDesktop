@@ -3,44 +3,25 @@
         <section class="router-base">
 
 
-            <!--<router-view></router-view>-->
-
-            <section class="main" v-if="unlocked">
-
-                <overhead></overhead>
-
-                <transition name="slide-left" mode="out-in">
-                    <router-view class="shifter"></router-view>
-                </transition>
-
+            <section v-if="isPopout">
+                <router-view></router-view>
             </section>
 
-            <section v-if="!unlocked">
-                <auth></auth>
+            <section v-else>
+                <section class="main" v-if="unlocked">
+
+                    <overhead></overhead>
+
+                    <transition name="slide-left" mode="out-in">
+                        <router-view class="shifter"></router-view>
+                    </transition>
+
+                </section>
+
+                <section v-if="!unlocked">
+                    <auth></auth>
+                </section>
             </section>
-
-            <section v-if="unlocked">
-                <!--<section v-if="!onboarding">-->
-                    <!--<section v-if="hasSidebar()">-->
-                        <!--<auth class="sidebar" :class="{'hidden':routeNames.LOGIN !== $route.name}"></auth>-->
-                        <!--&lt;!&ndash;<main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}" :collapsed="collapsedMenu" v-on:toggled="toggleMenu"></main-menu>&ndash;&gt;-->
-                    <!--</section>-->
-
-                    <!--<main class="expanded">-->
-
-                        <!--<section style="background:red;"></section>-->
-                        <!--<transition :name="transitionName">-->
-                            <!--<router-view></router-view>-->
-                        <!--</transition>-->
-                    <!--</main>-->
-                <!--</section>-->
-
-                <!--<section v-else>-->
-                    <!--<terms></terms>-->
-                <!--</section>-->
-            </section>
-
-
 
 
             <popups></popups>
@@ -70,6 +51,9 @@
             ]),
             onboarding(){
                 return !this.scatter.meta.acceptedTerms;
+            },
+            isPopout(){
+                return this.$route.name === 'popout';
             }
         },
         mounted(){

@@ -1,9 +1,11 @@
 <template>
-    <section>
+    <section class="settings">
 
-        <section class="panel sub-menu">
+        <section class="menu" style="flex:1;">
             <section class="head">
-                <i v-if="!unlocked" v-tooltip="'Unlock Sensitive Settings'" class="fa fa-unlock" @click="unlock"></i>
+                <figure class="description">
+                    If you don't know what a setting does don't change it.
+                </figure>
             </section>
 
             <section class="items-list scrollable" v-if="selectedOption">
@@ -18,13 +20,20 @@
             </section>
         </section>
 
-        <section v-if="selectedOption">
-            <settings-language v-if="selectedOption.name === settingsOptions.LANGUAGE.name"></settings-language>
-            <settings-explorer v-if="selectedOption.name === settingsOptions.EXPLORER.name"></settings-explorer>
-            <settings-password v-if="selectedOption.name === settingsOptions.PASSWORD.name"></settings-password>
-            <settings-backup v-if="selectedOption.name === settingsOptions.BACKUP.name"></settings-backup>
-            <settings-destroy v-if="selectedOption.name === settingsOptions.DESTROY.name"></settings-destroy>
-            <settings-nonce v-if="selectedOption.name === settingsOptions.NONCE.name"></settings-nonce>
+        <section v-if="selectedOption" style="flex:3; overflow:hidden; display:flex; flex-direction: column;">
+            <figure class="panel-head"></figure>
+            <section class="transitioner">
+                <transition name="slide-left" mode="out-in">
+                    <settings-language v-if="selectedOption.name === settingsOptions.LANGUAGE.name"></settings-language>
+                    <settings-explorer v-if="selectedOption.name === settingsOptions.EXPLORER.name"></settings-explorer>
+                    <settings-networks v-if="selectedOption.name === settingsOptions.NETWORKS.name"></settings-networks>
+                    <settings-password v-if="selectedOption.name === settingsOptions.PASSWORD.name"></settings-password>
+                    <settings-backup v-if="selectedOption.name === settingsOptions.BACKUP.name"></settings-backup>
+                    <settings-destroy v-if="selectedOption.name === settingsOptions.DESTROY.name"></settings-destroy>
+                    <settings-nonce v-if="selectedOption.name === settingsOptions.NONCE.name"></settings-nonce>
+                </transition>
+            </section>
+
         </section>
 
 
@@ -43,7 +52,8 @@
     const SettingsOptions = {
         LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
         EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
-        NONCE:{ flash:false, locked:true, name:'Nonce', description:'Configure the popup nonce prefix.' },
+        NONCE:{ flash:false, locked:false, name:'Nonce', description:'Configure the popup nonce prefix.' },
+        NETWORKS:{ flash:false, locked:false, name:'Networks', description:'Add or Remove Networks.' },
         PASSWORD:{ flash:false, locked:true, name:'Password', description:'Change your password or regenerate your Mnemonic.' },
         BACKUP:{ flash:false, locked:true, name:'Backup', description:'Create a backup of your Scatter.' },
         DESTROY:{ flash:false, locked:true, name:'Destroy', description:'Destroy your instance of Scatter.' },
@@ -69,12 +79,7 @@
         methods: {
             selectOption(option){
                 if((option.locked || false) && !this.unlocked) {
-                    option.flash = true;
-                    setTimeout(() => option.flash = false, 300);
-                    setTimeout(() => {
-                        PopupService.push(Popup.prompt("Unlock Sensitive Settings", "You have to unlock sensitive settings first by clicking the unlock icon on the top of the sub-menu", "unlock", "Okay"))
-                    }, 500);
-                    return false;
+                    return this.unlock();
                 }
                 this.selectedOption = option;
             },
@@ -100,7 +105,66 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables.scss";
 
+    .settings {
+        display:flex;
+        flex-direction: row;
+
+        .panel-head {
+            height:50px;
+            width:100%;
+            background:$light-blue;
+            flex: 0 0 auto;
+        }
+
+        .transitioner {
+            display:flex;
+            flex-direction:row;
+            flex:1;
+            overflow-y:auto;
+            overflow-x:hidden;
+        }
+    }
+
+    .menu {
+        flex:1;
+        display:flex;
+        flex-direction: column;
+        background:$light-blue;
+        position: relative;
+        z-index:2;
+
+        .bg {
+            position:absolute;
+            top:10px; bottom:0; left:0; right:0;
+            background:#fff;
+            z-index:-1;
+        }
+
+
+        .head {
+            padding:40px;
+            background:#fff;
+            border-top-right-radius:8px;
+            box-shadow:10px -10px 20px rgba(0,0,0,0.01);
+            border-bottom:1px solid rgba(0,0,0,0.1);
+
+            .title {
+                font-size: 28px;
+                font-weight: 600;
+                margin-bottom:5px;
+                color:$black;
+            }
+
+            .description {
+                font-size: 16px;
+                color:$dark-grey;
+            }
+        }
+    }
+
     .items-list {
+        background: #f8f8f8;
+
         .locked {
             color:$red;
         }

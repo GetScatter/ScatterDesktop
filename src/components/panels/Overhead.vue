@@ -87,12 +87,12 @@
     export default {
         data () {return {
             balances:{},
-            prices:{},
             totalBalance:0,
         }},
         computed:{
             ...mapState([
-                'scatter'
+                'scatter',
+                'prices',
             ]),
             ...mapGetters([
                 'identity',
@@ -112,20 +112,18 @@
             }
         },
         created(){
-            this.refresh();
+            this.init();
         },
         methods:{
-
-
+            async init(){
+//                await PriceService.watchPrices();
+                this.refresh();
+            },
             openVault(){
                 PopupService.push(Popup.vault());
             },
-
-
-
             refresh(){
                 this.getBalances();
-                this.getPrices();
             },
             async getBalances(){
                 const tokens = [];
@@ -147,10 +145,6 @@
                     }));
                 }));
             },
-            async getPrices(){
-                this.prices['EOS'] = await PriceService.getPriceFor('EOS');
-                this.setTotalBalance();
-            },
             async setTotalBalance(){
                 const totals = {};
                 Object.keys(this.balances).map(acc => {
@@ -162,7 +156,7 @@
                 let total = 0;
                 Object.keys(totals).map(key => {
                     if(this.prices.hasOwnProperty(key)){
-                        total += this.prices[key] * totals[key];
+                        total += this.prices[key].price * totals[key];
                     }
                 });
 

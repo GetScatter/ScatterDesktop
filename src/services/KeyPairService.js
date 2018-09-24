@@ -57,9 +57,7 @@ export default class KeyPairService {
                         let p = keypair.privateKey;
                         if(typeof p !== 'string') p = plugin.bufferToHexPrivate(p);
                         keypair.publicKeys.push({blockchain, key:plugin.privateToPublic(p, keypair.fork)});
-                    } catch(e){
-                        console.log('err', e, keypair.privateKey);
-                    }
+                    } catch(e){}
                 });
 
                 resolve(true);
@@ -112,16 +110,37 @@ export default class KeyPairService {
         return null;
     }
 
+    static publicToPrivate(publicKey){
+        const keypair = this.getKeyPairFromPublicKey(publicKey, true);
+        console.log('pk', keypair);
+        if(keypair) return keypair.privateKey;
+        return null;
+    }
+
     static isHardware(publicKey){
         const keypair = this.getKeyPairFromPublicKey(publicKey);
         if(!keypair) throw new Error('Keypair doesnt exist on keychain');
         return keypair.external !== null;
     }
 
-    static publicToPrivate(publicKey){
-        const keypair = this.getKeyPairFromPublicKey(publicKey, true);
-        if(keypair) return keypair.privateKey;
-        return null;
+    static async loadFromHardware(keypair){
+        return keypair.external.interface.getPublicKey().then(key => {
+            let isValid = false;
+
+            BlockchainsArray.map(x => {
+                if(isValid) return;
+                if(PluginRepository.plugin(x.value).validPublicKey(key)){
+                    isValid = true;
+                    keypair.external.blockchain = x.value;
+                    keypair.external.publicKey = key;
+                    keypair.publicKeys.push({blockchain:x.value, key})
+                }
+            });
+
+            return true;
+        }).catch(() => {
+            return false;
+        })
     }
     
 }

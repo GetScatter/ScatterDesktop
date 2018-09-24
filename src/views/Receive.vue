@@ -43,11 +43,15 @@
                         <section class="inline-inputs">
                             <section class="inputs half">
                                 <label>To Account</label>
-                                <sel :selected="account"
+                                <sel style="width:calc(100% - 60px)" :selected="account"
                                      :options="accounts"
                                      :parser="accountFormatter"
                                      :grouper="grouper"
                                      v-on:changed="selectAccount"></sel>
+
+                                <figure class="action large" @click="copyAccount" v-tooltip="'Copy Account'">
+                                    <i class="fa fa-copy"></i>
+                                </figure>
                             </section>
 
                             <section class="inputs third">
@@ -89,6 +93,9 @@
 
     import {Blockchains} from '../models/Blockchains';
     import QRService from '../services/QRService';
+    import PopupService from '../services/PopupService';
+    import {Popup} from '../models/popups/Popup'
+    import ElectronHelpers from '../util/ElectronHelpers';
 
     class TransactionData {
         constructor(){
@@ -124,8 +131,8 @@
             qr:'',
 
             tokens:[
-                {name:'EOS', logo:'', blockchain:'eos'},
-                {name:'ETH', logo:'', blockchain:'eth'}
+                {name:'EOS', logo:'', blockchain:'eos', symbol:'EOS'},
+                {name:'ETH', logo:'', blockchain:'eth', symbol:'ETH'}
             ],
             token:null,
         }},
@@ -147,6 +154,10 @@
             this.setQR();
         },
         methods:{
+            copyAccount(){
+                ElectronHelpers.copy(this.account.sendable());
+                PopupService.push(Popup.snackbar('Copied Account to Clipboard.'))
+            },
             async setQR(){
                 this.qr = await QRService.createUnEncryptedQR(this.transaction);
             },
@@ -337,6 +348,14 @@
                         border:1px solid rgba(0,0,0,0.2);
                         color:rgba(0,0,0,0.3);
                         border-radius:2px;
+
+                        &.large {
+                            width:50px;
+                            height:50px;
+                            line-height: 48px;
+                            top:29px;
+                            font-size: 18px;
+                        }
 
                         transition: all 0.2s ease;
                         transition-property: color, background, border;

@@ -67,6 +67,7 @@ export default class Keypair {
     decrypt(seed){
         if(this.isEncrypted()) {
             this.privateKey = AES.decrypt(this.privateKey, seed);
+            console.log('priv', this.privateKey);
             if(typeof this.privateKey === 'object') this.privateKey = this.privateKey.data;
         }
     }

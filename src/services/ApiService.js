@@ -12,6 +12,7 @@ import KeyPairService from '../services/KeyPairService';
 import PluginRepository from '../plugins/PluginRepository';
 import {Blockchains} from '../models/Blockchains';
 
+import Keypair from '../models/Keypair';
 import Identity from '../models/Identity';
 import {IdentityRequiredFields} from '../models/Identity';
 import Account from '../models/Account';
@@ -104,14 +105,18 @@ export default class ApiService {
      */
     static async [Actions.GET_PUBLIC_KEY](request){
         return new Promise((resolve, reject) => {
-            PopupService.push(Popup.popout(request, ({result}) => {
+            PopupService.push(Popup.popout(request, async ({result}) => {
                 if(!result) return resolve({id:request.id, result:null});
 
-                const publicKey = result.keypair.publicKeys.find(x => x.blockchain === request.payload.blockchain).key;
+                console.log('result', result);
+                const keypair = Keypair.fromJson(result.keypair);
+                const publicKey = keypair.publicKeys.find(x => x.blockchain === request.payload.blockchain).key;
 
-                if(result.isNew) KeyPairService.saveKeyPair(result.keypair).then(() => {
+                if(result.isNew) {
+                    await KeyPairService.saveKeyPair(keypair);
+                    await AccountService.importAllAccounts(keypair);
                     resolve({id:request.id, result:publicKey});
-                });
+                }
                 else resolve({id:request.id, result:publicKey});
             }));
         })
@@ -125,37 +130,20 @@ export default class ApiService {
      */
     static async [Actions.LINK_ACCOUNT](request){
         return new Promise(async (resolve, reject) => {
-            PopupService.push(Popup.popout(request, async ({result}) => {
-                if(!result) return resolve({id:request.id, result:null});
+            const scatter = store.state.scatter;
+            let {publicKey, network, origin} = request.payload;
 
-                const scatter = store.state.scatter;
-                let {publicKey, account, network, origin} = request.payload;
+            network = Network.fromJson(Object.assign(network, {name:origin}));
+            if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
 
-                network = Network.fromJson(Object.assign(network, {name:origin}));
-                if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
+            const keypair = scatter.keychain.keypairs.find(x => x.publicKeys.map(x => x.key).includes(publicKey));
+            if(!keypair) return resolve({id:request.id, result:Error.noKeypair()});
 
-                const keypair = scatter.keychain.keypairs.find(x => x.publicKey === publicKey);
-                if(!keypair) return resolve({id:request.id, result:Error.noKeypair()});
+            let existingNetwork = scatter.settings.networks.find(x => x.unique() === network.unique());
+            if(!existingNetwork) return resolve({id:request.id, result:Error.noNetwork()});
 
-                let existingNetwork = scatter.settings.networks.find(x => x.unique() === network.unique());
-                if(!existingNetwork){
-                    const clone = scatter.clone();
-                    clone.settings.updateOrPushNetwork(network);
-                    await store.dispatch(StoreActions.SET_SCATTER, clone);
-                    existingNetwork = network;
-                }
-
-                account = Account.fromJson({
-                    name:account.hasOwnProperty('name') ? account.name : '',
-                    publicKey,
-                    authority:account.hasOwnProperty('authority') ? account.authority : '',
-                    networkUnique:existingNetwork.unique(),
-                    keypairUnique:keypair.unique(),
-                });
-
-                await AccountService.addAccount(account);
-                return resolve({id:request.id, result:true});
-            }));
+            await AccountService.importAllAccountsForNetwork(network);
+            return resolve({id:request.id, result:true});
         })
     }
 
@@ -165,27 +153,30 @@ export default class ApiService {
      * @returns {Promise.<void>}
      */
     static async [Actions.REQUEST_ADD_NETWORK](request){
-        return new Promise(resolve => {
+        return new Promise(async resolve => {
 
-            request.payload.network = Network.fromJson(request.payload.network);
-            request.payload.network.name = request.payload.origin;
+            let {network} = request.payload;
 
-            if(!request.payload.network.isValid())
+            network = Network.fromJson(network);
+            network.name = request.payload.origin;
+
+            if(!network.isValid())
                 return resolve({id:request.id, result:new Error("bad_network", "The network being suggested is invalid")});
 
-            if(store.state.scatter.settings.networks.find(x => x.unique() === request.payload.network.unique()))
+            if(store.state.scatter.settings.networks.find(x => x.unique() === network.unique()))
                 return resolve({id:request.id, result:true});
 
-            PopupService.push(Popup.popout(request, async ({result}) => {
-                if(!result) return resolve({id:request.id, result:false});
+            // Applications can only add one network every 24 hours.
+            if(store.state.scatter.settings.networks.find(x => x.fromOrigin === request.payload.origin && x.createdAt > (+new Date() - ((3600 * 12)*1000))))
+                return resolve({id:request.id, result:new Error("network_timeout", "You can only add 1 network every 24 hours.")});
 
+            network.fromOrigin = request.payload.origin;
+            const scatter = store.state.scatter.clone();
+            scatter.settings.networks.push(network);
+            await store.dispatch(StoreActions.SET_SCATTER, scatter);
+            await AccountService.importAllAccountsForNetwork(network);
 
-                const scatter = store.state.scatter.clone();
-                scatter.settings.networks.push(request.payload.network);
-                store.dispatch(StoreActions.SET_SCATTER, scatter);
-
-                resolve({id:request.id, result:true});
-            }));
+            resolve({id:request.id, result:true});
         })
     }
 
@@ -198,10 +189,15 @@ export default class ApiService {
     static async [Actions.HAS_ACCOUNT_FOR](request){
         return new Promise(resolve => {
             request.payload.network = Network.fromJson(request.payload.network);
-            if(!request.payload.network.isValid()) return resolve({id:request.id, result:new Error("bad_network", "The network provided is invalid")});
-            const existingNetwork = store.state.scatter.settings.networks.find(x => x.unique() === request.payload.network.unique());
-            if(!existingNetwork) return resolve({id:request.id, result:new Error("no_network", "The user doesn't have this network in their Scatter.")});
-            resolve({id:request.id, result:!!store.state.scatter.keychain.accounts.find(x => x.networkUnique === existingNetwork.unique())});
+            const {network} = request.payload;
+            const {blockchain} = network;
+
+            if(!network.isValid()) return resolve({id:request.id, result:new Error("bad_network", "The network provided is invalid")});
+
+            const existingNetwork = store.state.scatter.settings.networks.find(x => x.unique() === network.unique());
+            if(!existingNetwork) return resolve({id:request.id, result:Error.noNetwork()});
+
+            resolve({id:request.id, result:!!store.state.scatter.keychain.accounts.find(x => x.blockchain() === blockchain && x.networkUnique === existingNetwork.unique())});
         })
     }
 
@@ -301,6 +297,7 @@ export default class ApiService {
 
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
                 if(signatures.length === 1 && signatures[0] === null) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
+                console.log('signatures', signatures, participants);
                 if(signatures.some(x => !x)) return resolve({id:request.id, result:Error.signatureError('missing_sig', 'A signature for this request was missing')});
 
                 const returnedFields = Identity.asReturnedFields(requiredFields, identity, selectedLocation);
@@ -385,16 +382,6 @@ export default class ApiService {
                 resolve({id:request.id, result:await plugin.signer(payload, publicKey, true, isHash)});
             }));
         });
-    }
-
-    /***
-     * Tells the user that they need to update their Scatter in order to
-     * use the origin.
-     * @param request
-     * @returns {Promise.<void>}
-     */
-    static async [Actions.REQUEST_VERSION_UPDATE](request){
-
     }
 
     /***
