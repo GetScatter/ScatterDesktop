@@ -17,7 +17,7 @@
                     <overhead></overhead>
 
                     <transition name="slide-left" mode="out-in">
-                        <router-view class="shifter"></router-view>
+                        <router-view class="shifter" :class="{'home':route === 'home'}"></router-view>
                     </transition>
 
                 </section>
@@ -58,6 +58,9 @@
             },
             isPopout(){
                 return this.$route.name === 'popout';
+            },
+            route(){
+                return this.$route.name
             }
         },
         mounted(){
@@ -84,7 +87,11 @@
         position: relative;
         flex: 1;
         display: flex;
-        flex-direction: column;
+
+
+        &.home {
+            flex-direction: column;
+        }
     }
 
 

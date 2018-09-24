@@ -39,7 +39,7 @@
     "devpack": "npm run build && npm run pack",
     "release-win": "electron-builder --win",
     "release-linux": "electron-builder --linux",
-    "release-mac": "npm run build && electron-builder --mac",
+    "release-mac": "electron-builder --mac",
     "postinstall": "electron-rebuild --force"
   },
   "dependencies": {
