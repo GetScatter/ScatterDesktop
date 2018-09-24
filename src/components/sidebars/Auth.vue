@@ -6,7 +6,6 @@
             <section class="fader" :class="{'hide-all':leaving}">
                 <section class="logo-container">
                     <figure class="grand-hotel logo">Scatter</figure>
-                    <figure class="tagline">Discovering infinite possibilities</figure>
                 </section>
 
                 <section class="inputs" v-if="isNewScatter">
