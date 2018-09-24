@@ -183,7 +183,7 @@
         },
         mounted(){
             this.identity = this.identities[0].clone();
-            this.fullname = `${this.identity.personal.firstname} ${this.identity.personal.lastname}`;
+            this.fullname = [this.identity.personal.firstname, this.identity.personal.lastname].filter(x => x && x.length).join(' ');
             this.location = this.identity.locations[0];
         },
         methods:{

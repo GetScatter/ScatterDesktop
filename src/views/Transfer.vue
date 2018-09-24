@@ -121,6 +121,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
 
+    import ResourceService from '../services/ResourceService'
     import PriceService from '../services/PriceService'
     import PluginRepository from '../plugins/PluginRepository'
     import TransferService from '../services/TransferService'
@@ -238,6 +239,8 @@
                     token:this.token,
                 }).catch(() => {});
                 this.sending = false;
+
+                await PriceService.getBalances();
             },
 
         }

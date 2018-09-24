@@ -21,7 +21,10 @@
         </section>
 
         <section v-if="selectedOption" style="flex:3; overflow:hidden; display:flex; flex-direction: column;">
-            <figure class="panel-head"></figure>
+            <figure class="panel-head">
+                <span class="version">Scatter Desktop v{{version}}</span>
+                <span class="console fa fa-code" @click="openConsole"></span>
+            </figure>
             <section class="transitioner">
                 <transition name="slide-left" mode="out-in">
                     <settings-language v-if="selectedOption.name === settingsOptions.LANGUAGE.name"></settings-language>
@@ -48,6 +51,7 @@
     import {Popup} from '../models/popups/Popup'
     import PopupService from '../services/PopupService'
     import PasswordService from '../services/PasswordService'
+    import WindowService from '../services/WindowService'
 
     const SettingsOptions = {
         LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
@@ -70,13 +74,14 @@
                 'scatter'
             ]),
             ...mapGetters([
-
+                'version'
             ])
         },
         mounted(){
             this.selectedOption = SettingsOptions.LANGUAGE;
         },
         methods: {
+            openConsole(){ WindowService.openTools(); },
             selectOption(option){
                 if((option.locked || false) && !this.unlocked) {
                     return this.unlock();
@@ -105,6 +110,8 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables.scss";
 
+
+
     .settings {
         display:flex;
         flex-direction: row;
@@ -114,6 +121,28 @@
             width:100%;
             background:$light-blue;
             flex: 0 0 auto;
+            position: relative;
+
+            .version {
+                font-size: 13px;
+                color:#fff;
+                position:absolute;
+                bottom:15px;
+                left:15px;
+                font-family: 'Open Sans', sans-serif;
+            }
+
+            .console {
+                font-size: 11px;
+                color:#fff;
+                position:absolute;
+                bottom:10px;
+                right:10px;
+                cursor: pointer;
+                padding:5px;
+                border:1px solid #fff;
+                border-radius:2px;
+            }
         }
 
         .transitioner {

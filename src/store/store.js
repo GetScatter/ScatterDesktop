@@ -46,6 +46,7 @@ const getters = {
     linkedApps:state =>     state.scatter.keychain.linkedApps || [],
 
     // Settings
+    version:state =>        state.scatter.meta.version,
     networks:state =>       state.scatter.settings.networks || [],
     language:state =>       state.scatter.settings.language || [],
     autoBackup:state =>     state.scatter.settings.autoBackup || null,

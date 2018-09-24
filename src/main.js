@@ -17,6 +17,7 @@ import MainMenu from './components/sidebars/MainMenu.vue'
 import Auth from './components/sidebars/Auth.vue'
 
 // Panels
+import Terms from './components/panels/Terms.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
 import SettingsExplorer from './components/panels/SettingsExplorer.vue'
 import SettingsNetworks from './components/panels/SettingsNetworks.vue'
@@ -99,6 +100,7 @@ class Main {
             {tag:'settings-password', vue:SettingsPassword},
             {tag:'settings-nonce', vue:SettingsNonce},
             {tag:'overhead', vue:Overhead},
+            {tag:'terms', vue:Terms},
 
             // POPUPS
             {tag:'popups', vue:Popups},

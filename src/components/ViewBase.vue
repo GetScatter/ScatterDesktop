@@ -3,7 +3,11 @@
         <section class="router-base">
 
 
-            <section v-if="isPopout">
+            <section v-if="onboarding">
+                <terms></terms>
+            </section>
+
+            <section v-else-if="isPopout">
                 <router-view></router-view>
             </section>
 
@@ -50,14 +54,14 @@
                 'unlocked',
             ]),
             onboarding(){
-                return !this.scatter.meta.acceptedTerms;
+                return this.scatter && this.scatter.meta && !this.scatter.meta.acceptedTerms;
             },
             isPopout(){
                 return this.$route.name === 'popout';
             }
         },
         mounted(){
-            WindowService.openTools();
+
         },
         methods:{
 

@@ -8,7 +8,7 @@
                     <figure class="logo">S</figure>
                     <figure class="info">
                         <figure>Sign {{isArbitrarySignature ? 'an Arbitrary' : 'a' }} Transaction</figure>
-                        <figure>{{pluginOrigin}} : {{payload.origin}} {{isArbitrarySignature ? '' : `on ${network.unique().substr(0,15)}...`}}</figure>
+                        <figure>{{pluginOrigin}} : {{payload.origin}} {{isArbitrarySignature ? '' : `on ${network.name}`}}</figure>
                     </figure>
                     <section class="buttons">
                         <btn text="Accept" v-on:clicked="accepted"></btn>
@@ -156,6 +156,7 @@
     import {LocationFields} from '../../models/Identity'
     import Error from '../../models/errors/Error'
     import PopupService from '../../services/PopupService'
+    import ResourceService from '../../services/ResourceService'
     import {Popup} from '../../models/popups/Popup'
     import {Blockchains} from '../../models/Blockchains'
     import PermissionService from '../../services/PermissionService'
@@ -187,6 +188,7 @@
             ...mapGetters([
                 'identities',
                 'accounts',
+                'networks',
             ]),
             messages(){
                 return this.payload.messages;
@@ -198,7 +200,7 @@
                 return this.identityRequirements.hasOwnProperty('location') && this.identityRequirements.location.length;
             },
             network(){
-                return Network.fromJson(this.payload.network);
+                return this.networks.find(x => x.unique() === Network.fromJson(this.payload.network).unique());
             },
             isArbitrarySignature(){
                 return !this.payload.hasOwnProperty('participants');
@@ -206,7 +208,6 @@
         },
         mounted(){
             this.checkWarning();
-            this.checkResources();
 
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
             if(!id) return this.returnResult(Error.identityMissing());
@@ -313,38 +314,20 @@
                         If you decide to interact with this contract make sure you read the parameters and fully understand your liability.`,
                         'exclamation-triangle', warnings, x => `${x.contract} -> ${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
             },
-            async checkResources(){
-                const accounts = this.payload.participants;
-                const plugin = PluginRepository.plugin(this.payload.blockchain);
-
-                if(this.payload.blockchain === Blockchains.EOSIO){
-
-                    await Promise.all(accounts.map(account => {
-                        account = Account.fromJson(account);
-                        plugin.accountData(account, account.network()).then(data => {
-                            if (!data) return;
-
-                            if(data.cpu_limit.available <= (data.cpu_limit.max * 0.1)){
-                                PopupService.push(Popup.prompt("Running low on Resources",
-                                    `The ${account.formatted()} account is running low on CPU, You should stake some before continuing to use it.`, 'exclamation-triangle', 'Okay'));
-                            }
-                        })
-                    }));
-
-                }
-            },
             checkScroll(e){
                 this.scrollTop = e.target.scrollTop;
             },
             returnResult(result){
                 this.$emit('returned', result);
             },
-            accepted(){
+            async accepted(){
                 //TODO: Return with whitelist and selected location
+                const needResources = await ResourceService.transactionNeedsResources(this.payload.participants);
                 this.returnResult({
                     whitelists:this.whitelists,
                     selectedLocation:this.selectedLocation,
                     accepted:true,
+                    needResources,
                 });
             },
             hasRicardianContract(message){

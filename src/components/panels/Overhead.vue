@@ -1,14 +1,14 @@
 <template>
-    <section>
+    <section class="overhead" :class="{'hide-all':this.route === 'login' || this.route === 'onboarding'}">
 
         <!-- HEAD -->
-        <section class="head">
+        <section class="head" v-if="notOnboarding">
             <figure class="bg"></figure>
             <router-link :to="{name:'home'}" class="logo">Scatter</router-link>
             <figure class="actions">
 
                 <!-- EXIT / QUIT -->
-                <figure class="action" v-tooltip="'Quit'">
+                <figure class="action" v-tooltip="'Quit'" @click="quit">
                     <i class="fa fa-power-off"></i>
                 </figure>
 
@@ -18,7 +18,7 @@
                 </router-link>
 
                 <!-- VAULT -->
-                <figure class="action" v-tooltip="'Vault'" @click="openVault">
+                <figure class="action" :class="{'glow':!accounts.length}" v-tooltip="'Vault'" @click="openVault">
                     <div style="margin-top:4px;">
                         <img src="../../assets/vault.png" />
                     </div>
@@ -29,15 +29,15 @@
 
 
         <!-- DASHBOARD -->
-        <section class="dashboard">
+        <section class="dashboard" v-if="notOnboarding">
 
             <!-- VALUE -->
             <transition name="slide-right" mode="out-in">
-                <section key="balance" v-if="route.name === 'home'" class="value">
+                <section key="balance" v-if="route === 'home'" class="value">
                     {{totalBalance}} <b>USD</b>
                 </section>
                 <section key="othername" v-else class="value">
-                    {{route.name}}
+                    {{route}}
                 </section>
             </transition>
 
@@ -45,7 +45,7 @@
             <!-- ACTIONS -->
             <section class="actions">
                 <transition name="slide-left" mode="out-in">
-                    <section key="ishome" v-if="isHome">
+                    <section key="ishome" v-if="isHome && accounts.length">
                         <!-- RECEIVE TOKENS -->
                         <router-link :to="{name:'receive'}"  class="action" v-tooltip="'Receive'">
                             <i class="icon receive fa fa-arrow-down"></i>
@@ -57,7 +57,7 @@
                         </router-link>
                     </section>
 
-                    <section key="nothome" v-else>
+                    <section key="nothome" v-if="!isHome">
                         <!-- GO HOME -->
                         <router-link :to="{name:'home'}"  class="action" v-tooltip="'Go Home'">
                             <i class="icon fa fa-times"></i>
@@ -81,6 +81,7 @@
     import PriceService from '../../services/PriceService'
     import PopupService from '../../services/PopupService'
     import {Popup} from '../../models/popups/Popup';
+    const { remote } = window.require('electron');
 
     let saveTimeout = null;
 
@@ -98,6 +99,9 @@
                 'totalBalance',
                 'totalTokenBalance',
             ]),
+            notOnboarding(){
+                return this.route !== 'onboarding'
+            },
             eosAccounts(){
                 return this.accounts.filter(x => x.blockchain() === 'eos');
             },
@@ -105,11 +109,11 @@
                 return PluginRepository.plugin(Blockchains.EOSIO);
             },
             route(){
-                return this.$route
+                return this.$route.name
             },
             isHome(){
-                return this.$route.name === 'home'
-            }
+                return this.route === 'home'
+            },
         },
         created(){
             this.init();
@@ -126,12 +130,26 @@
             openVault(){
                 PopupService.push(Popup.vault());
             },
+            quit(){
+                remote.app.quit();
+            },
         }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
+
+
+    .overhead {
+        opacity:1;
+        transition: opacity 0.5s ease;
+
+        &.hide-all {
+            opacity:0;
+        }
+    }
+
 
     .head {
         background:#fff;
@@ -169,6 +187,7 @@
                 transition-property: transform;
                 padding:0 15px;
 
+
                 transform:scale(1);
 
                 &:hover { transform:scale(1.3); }
@@ -177,6 +196,10 @@
                 img {
                     width:24px;
                     height:24px;
+                }
+
+                &.glow {
+                    filter: sepia(100%) saturate(300%) brightness(20%) hue-rotate(45deg);
                 }
             }
         }

@@ -76,7 +76,7 @@ export default class PriceService {
             balances[account.unique()] = [];
 
             return await Promise.all(tokens.map(async token => {
-                const balance = await plugin.balanceFor(account, account.network(), token.account, token.symbol);
+                const balance = await plugin.balanceFor(account, token.account, token.symbol);
                 if(parseFloat(balance) > 0){
                     balances[account.unique()].push({symbol:token.symbol, balance, account:token.account, blockchain:account.blockchain()});
                 }

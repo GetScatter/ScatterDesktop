@@ -9,6 +9,7 @@ import PopupService from '../services/PopupService';
 import AccountService from '../services/AccountService';
 import PermissionService from '../services/PermissionService';
 import KeyPairService from '../services/KeyPairService';
+import ResourceService from '../services/ResourceService';
 import PluginRepository from '../plugins/PluginRepository';
 import {Blockchains} from '../models/Blockchains';
 
@@ -297,7 +298,6 @@ export default class ApiService {
 
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
                 if(signatures.length === 1 && signatures[0] === null) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
-                console.log('signatures', signatures, participants);
                 if(signatures.some(x => !x)) return resolve({id:request.id, result:Error.signatureError('missing_sig', 'A signature for this request was missing')});
 
                 const returnedFields = Identity.asReturnedFields(requiredFields, identity, selectedLocation);
@@ -317,6 +317,7 @@ export default class ApiService {
             PopupService.push(Popup.popout(request, async ({result}) => {
                 if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
+                if(result.needResources) await Promise.all(result.needResources.map(async account => await ResourceService.addResources(account)));
                 await PermissionService.addIdentityRequirementsPermission(origin, identity, requiredFields);
                 await PermissionService.addActionPermissions(origin, identity, participants, result.whitelists);
                 await signAndReturn(result.selectedLocation);

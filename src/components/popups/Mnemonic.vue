@@ -2,7 +2,7 @@
     <section>
 
         <section class="mnemonic" v-if="nextPopIn">
-            <pop-in-head></pop-in-head>
+            <pop-in-head :next-pop-in="nextPopIn"></pop-in-head>
 
             <section class="phrase-box">
               <section class="word" v-for="(word, index) in phraseArray">
@@ -28,7 +28,7 @@
 
         }},
         mounted(){
-
+            console.log(this.nextPopIn);
         },
         computed:{
             ...mapState([
@@ -38,6 +38,7 @@
                 'nextPopIn'
             ]),
           phraseArray(){
+                if(!this.nextPopIn) return false;
               return this.nextPopIn.data.props.phrase.split(' ');
           }
         },

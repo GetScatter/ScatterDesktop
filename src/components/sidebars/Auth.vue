@@ -7,16 +7,18 @@
                 <figure class="tagline">Discovering infinite possibilities</figure>
             </section>
 
-            <section class="inputs" v-if="isNewScatter">
-                <cin placeholder="Password" type="password" v-on:enter="create" :text="password" v-on:changed="changed => bind(changed, 'password')"></cin>
-                <cin placeholder="Confirm Password" type="password" v-on:enter="create" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
-                <btn class="dropped" v-on:clicked="create" text="Create new Scatter" full="true" large="true"></btn>
-                <btn text="Import from Backup" v-on:clicked="importBackup" full="true"></btn>
-            </section>
+            <section class="fader" :class="{'hide-all':leaving}">
+                <section class="inputs" v-if="isNewScatter">
+                    <cin placeholder="Password" type="password" v-on:enter="create" :text="password" v-on:changed="changed => bind(changed, 'password')"></cin>
+                    <cin placeholder="Confirm Password" type="password" v-on:enter="create" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
+                    <btn class="dropped" v-on:clicked="create" text="Create new Scatter" full="true" large="true"></btn>
+                    <btn text="Import from Backup" v-on:clicked="importBackup" full="true"></btn>
+                </section>
 
-            <section class="inputs" v-else>
-                <cin placeholder="Password" type="password" :text="password" v-on:enter="unlock" v-on:changed="changed => bind(changed, 'password')"></cin>
-                <btn v-on:clicked="unlock" text="Unlock Scatter" full="true" large="true"></btn>
+                <section class="inputs" v-else>
+                    <cin placeholder="Password" type="password" :text="password" v-on:enter="unlock" v-on:changed="changed => bind(changed, 'password')"></cin>
+                    <btn v-on:clicked="unlock" text="Unlock Scatter" full="true" large="true"></btn>
+                </section>
             </section>
 
 
@@ -42,6 +44,7 @@
         data () {return {
             password:'',
             confirmPassword:'',
+            leaving:false,
         }},
         computed: {
             isNewScatter(){
@@ -56,27 +59,30 @@
             this.confirmPassword = '';
         },
         methods:{
+            pushTo(route){
+                this.$router.push({name:route});
+            },
             async create(){
                 if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) return false;
                 await this[Actions.CREATE_SCATTER](this.password);
-                this.$router.push({name:RouteNames.ONBOARDING});
+                this.pushTo(RouteNames.ONBOARDING);
             },
             async unlock(){
-                await this[Actions.SET_SEED](this.password);
-                await this[Actions.LOAD_SCATTER]();
+                this.leaving = true;
+                setTimeout(async () => {
+                    await this[Actions.SET_SEED](this.password);
+                    await this[Actions.LOAD_SCATTER]();
 
-                const failed = () => {
-                    console.log('failed');
-                    PopupService.push(Popup.snackbar("Bad Password", "ban"))
-                };
+                    if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
+                        SocketService.initialize();
+                        SocketService.open();
 
-                if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-                    SocketService.initialize();
-                    SocketService.open();
-                    this.$router.push({name:RouteNames.HOME});
-                } else {
-                    failed();
-                }
+                        this.pushTo(RouteNames.HOME);
+                    } else {
+                        this.leaving = false;
+                        PopupService.push(Popup.snackbar("Bad Password", "ban"))
+                    }
+                }, 400)
             },
             importBackup(){
                 const file = getFileLocation()[0];
@@ -104,6 +110,15 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
+
+    .fader {
+        opacity:1;
+        transition:opacity 0.4s ease;
+
+        &.hide-all {
+            opacity:0;
+        }
+    }
 
     .auth {
         width:100%;

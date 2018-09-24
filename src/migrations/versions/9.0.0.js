@@ -4,9 +4,12 @@ import {store} from '../../store/store'
 import Crypto from '../../util/Crypto';
 import {BlockchainsArray} from '../../models/Blockchains';
 
-export const m8_10_0 = async scatter => {
+export const m9_0_0 = async scatter => {
 
     scatter.keychain.keypairs.map(x => {
+        console.log('mig?')
+        if(x.hasOwnProperty('publicKeys') && x.publicKeys.length) return false;
+
         x.decrypt(store.state.seed);
         if(!x.external) {
             x.privateKey = Crypto.privateKeyToBuffer(x.privateKey, x.blockchain);

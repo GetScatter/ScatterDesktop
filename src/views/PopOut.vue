@@ -1,7 +1,7 @@
 <template>
     <section class="popout">
 
-        <figure class="nonce" v-if="scatter && scatter.noncePrefix">{{`${scatter.noncePrefix}:${scatter.nonce}`}}</figure>
+        <figure class="nonce" v-if="scatter && scatter.noncePrefix && showNonce">{{`${scatter.noncePrefix}:${scatter.nonce}`}}</figure>
 
         <section v-if="windowMessage">
 
@@ -57,6 +57,10 @@
             pluginOrigin(){ return this.windowMessage.data.popup.data.props.plugin },
             payload(){ return this.windowMessage.data.popup.data.props.payload },
             popupType(){ return this.windowMessage.data.popup.data.type },
+            showNonce(){
+                return this.popupType === ApiActions.REQUEST_SIGNATURE ||
+                       this.popupType === ApiActions.REQUEST_ARBITRARY_SIGNATURE
+            }
         },
         methods: {
             returnResult(result){

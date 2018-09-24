@@ -18,7 +18,7 @@ const saveFile = (filepath) => {
         const salt = StorageService.getSalt();
         const file = scatter + '|SLT|' + salt;
         try {
-            fs.writeFileSync(`${filepath}/scatter_${month}-${year}.txt`, file, 'utf-8');
+            fs.writeFileSync(`${filepath}/scatter_${month}-${year}.json`, file, 'utf-8');
             resolve(true);
         }
         catch(e) {
@@ -52,12 +52,13 @@ export default class BackupService {
     }
 
     static async createAutoBackup(){
-        if(!store.state.scatter || store.state.scatter.settings) return;
+        if(!store.state.scatter || !store.state.scatter.settings) return;
         const strategy = store.state.scatter.settings.autoBackup;
         if(!strategy || !strategy.length || strategy === BACKUP_STRATEGIES.MANUAL) return;
 
         const backupLocation = store.state.scatter.settings.backupLocation;
         if(!backupLocation || !backupLocation.length) return false;
+
 
         await saveFile(backupLocation);
     }

@@ -10,6 +10,7 @@ import ObjectHelpers from '../../util/ObjectHelpers'
 import * as ricardianParser from 'eos-rc-parser';
 import {Popup} from '../../models/popups/Popup'
 import PopupService from '../../services/PopupService'
+import ResourceService from '../../services/ResourceService'
 import StorageService from '../../services/StorageService'
 import ApiService from '../../services/ApiService'
 import * as Actions from '../../models/api/ApiActions';
@@ -101,6 +102,25 @@ export default class EOS extends Plugin {
         return eos.getInfo({}).then(x => x.chain_id || '').catch(() => '');
     }
 
+    usesResources(){ return true; }
+    async needsResources(account){
+        const data = await this.accountData(account, account.network());
+
+        // Older chains wont have this.
+        if(!data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return false;
+        return data.cpu_limit.available < 6000;
+    }
+
+    async addResources(account){
+        console.log('adding resources');
+        const signProvider = payload => this.signer(payload, account.publicKey);
+        const network = account.network();
+        const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+        return await eos.delegatebw(account.name, account.name, '0.0000 EOS', '0.1000 EOS', 0, { authorization:[account.formatted()] })
+            .catch(error => console.error(error))
+            .then(res => res);
+    }
+
     accountsAreImported(){ return true; }
     getImportableAccounts(keypair, network){
         return new Promise((resolve, reject) => {
@@ -143,16 +163,16 @@ export default class EOS extends Plugin {
         );
     }
 
-    async accountData(account, network){
-        const eos = getCachedInstance(network);
+    async accountData(account){
+        const eos = getCachedInstance(account.network());
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(null), 2000)),
             eos.getAccount(account.name)
         ])
     }
 
-    async balanceFor(account, network, tokenAccount, symbol){
-        const eos = getCachedInstance(network);
+    async balanceFor(account, tokenAccount, symbol){
+        const eos = getCachedInstance(account.network());
 
         const balances = await eos.getTableRows({
             json:true,
@@ -169,25 +189,6 @@ export default class EOS extends Plugin {
     defaultDecimals(){ return 4; }
     defaultToken(){ return {symbol:'EOS', account:'eosio.token', name:'EOS', blockchain:Blockchains.EOSIO}; }
 
-    async historyFor(account, network){
-        const eos = getCachedInstance(network);
-        return await eos.getActions(account.name).then(histories => {
-            return histories.actions.map(x => {
-                return {
-                    blockchain:Blockchains.EOSIO,
-                    account:account.unique(),
-                    timestamp:+new Date(x.block_time),
-                    trx:x.action_trace.trx_id,
-                    data:{
-                        contract:x.action_trace.act.account,
-                        action:x.action_trace.act.name,
-                        params:x.action_trace.act.data
-                    }
-                }
-            });
-        });
-    }
-
     async fetchTokens(tokens){
         tokens.push(this.defaultToken());
         const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);
@@ -203,9 +204,12 @@ export default class EOS extends Plugin {
         return new Promise(async resolve => {
             payload.messages = await this.requestParser(payload, Network.fromJson(network));
             payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+            payload.participants = [account];
+            payload.network = network;
+            payload.origin = 'Internal Scatter Transfer';
             const request = {
                 payload,
-                origin:'Internal Scatter Transfer',
+                origin:payload.origin,
                 blockchain:'eos',
                 requiredFields:{},
                 type:Actions.REQUEST_SIGNATURE,
@@ -222,6 +226,8 @@ export default class EOS extends Plugin {
                 } else signature = await this.signer({data:payload.buf}, account.publicKey, true);
 
                 if(!signature) return rejector({error:'Could not get signature'});
+
+                if(result.needResources) await await ResourceService.addResources(account);
 
                 resolve(signature);
             }));

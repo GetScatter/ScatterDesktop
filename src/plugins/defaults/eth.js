@@ -59,6 +59,8 @@ export default class ETH extends Plugin {
         return 1;
     }
 
+    usesResources(){ return false; }
+
     accountsAreImported(){ return false; }
     isValidRecipient(address){ return this.validPublicKey(address); }
     privateToPublic(privateKey){ return ethUtil.addHexPrefix(ethUtil.privateToAddress(toBuffer(privateKey)).toString('hex')); }
@@ -89,16 +91,12 @@ export default class ETH extends Plugin {
         return [Blockchains.EOSIO];
     }
 
-    async balanceFor(account, network, tokenAccount, symbol){
+    async balanceFor(account, tokenAccount, symbol){
         return 0;
     }
 
     defaultDecimals(){ return 18; }
     defaultToken(){ return {account:'eth', symbol:'ETH', name:'ETH', blockchain:Blockchains.ETH}; }
-
-    async historyFor(account, network){
-        return [];
-    }
 
     actionParticipants(payload){
         return ObjectHelpers.flatten(

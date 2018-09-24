@@ -112,7 +112,6 @@ export default class KeyPairService {
 
     static publicToPrivate(publicKey){
         const keypair = this.getKeyPairFromPublicKey(publicKey, true);
-        console.log('pk', keypair);
         if(keypair) return keypair.privateKey;
         return null;
     }

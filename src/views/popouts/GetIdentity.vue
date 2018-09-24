@@ -6,10 +6,10 @@
             <section class="top-section">
                 <!-- HEADER -->
                 <section class="head">
-                    <figure class="logo">S</figure>
-                    <figure class="info">
+                    <figure class="logo" v-if="selectedIdentity">S</figure>
+                    <figure class="info" v-if="selectedIdentity">
                         <figure>Login with Scatter</figure>
-                        <figure>{{pluginOrigin}} - {{payload.origin}}</figure>
+                        <figure>{{payload.origin}}</figure>
                     </figure>
                     <figure class="close" @click="returnResult(null)">
                         <i class="fa fa-times"></i>
@@ -45,7 +45,8 @@
 
                     <section class="big-login">
                         <section v-if="isValidIdentity">
-                            <figure class="title">Do you want to log into <b>{{payload.origin}}</b> with <b>{{identity.name}}</b></figure>
+                            <figure class="logo">S</figure>
+                            <figure class="title">Do you want to log into <br><b>{{payload.origin}}</b>?</figure>
                             <section class="item" @click="selectIdentity(identity)" style="margin:20px 0 0 0;">
                                 <figure class="title" :style="{'text-align':validAccounts.length === 1 ? 'center' : 'left'}">Login</figure>
                                 <figure class="sub-title" v-if="validAccounts.length === 1">Only one account available, it will automatically be used.</figure>
@@ -58,6 +59,7 @@
 
                         <!-- TODO: Allow to add properties to an identity from this popup -->
                         <section v-else>
+                            <figure class="logo">S</figure>
                             <figure class="title">Your Identity doesn't have all the requirements.</figure>
                             <p style="font-size: 13px;">Check the panel above to see all the fields that this application is requiring.</p>
                         </section>
@@ -201,7 +203,7 @@
     }
 
     .popup {
-        background:$very-light-blue;
+        background:#fff;
         width:440px;
         height:560px;
         display: flex;
@@ -218,23 +220,35 @@
             margin-bottom:1px;
         }
 
+        .logo {
+            line-height: 85px;
+            height:80px;
+            width:80px;
+            background:$light-blue;
+            color:#fff;
+            font-family: 'Grand Hotel', sans-serif;
+            font-size:60px;
+            border-radius:50%;
+            text-align:center;
+            padding-right: 1px;
+            display:inline-block;
+            margin-bottom:40px;
+        }
+
         .head {
             -webkit-app-region: drag;
             padding:20px;
             overflow: hidden;
 
+
+
             .logo {
                 line-height: 40px;
-                height:36px;
-                width:36px;
-                background:$light-blue;
-                color:#fff;
-                font-family: 'Grand Hotel', sans-serif;
-                font-size:24px;
-                border-radius:50%;
-                text-align:center;
+                height:35px;
+                width:35px;
+                margin-bottom:0;
+                font-size: 28px;
                 float:left;
-                padding-right: 1px;
             }
 
             .info {
@@ -279,18 +293,19 @@
 
         .requirements {
             padding:15px 20px;
+            background:$light-blue;
 
             .title {
                 font-size:11px;
                 font-style: italic;
                 font-weight: 600;
-                color:$medium-grey;
+                color:#fff;
             }
 
             .requirement {
                 font-size:13px;
                 font-weight: 600;
-                color:$dark-grey;
+                color:#fff;
                 margin-top:5px;
             }
         }
@@ -298,13 +313,16 @@
         .search-bar {
             padding:10px 20px;
             overflow: hidden;
+            background:$light-blue;
+            margin-top:-1px;
+            border-top:1px solid rgba(0,0,0,0.1);
 
             .icon {
                 width:20px;
                 float:left;
                 font-size:11px;
-                color:$medium-grey;
                 padding-top:2px;
+                color:#fff;
             }
 
             input {
@@ -314,7 +332,14 @@
                 outline:0;
                 border:0;
                 font-size:11px;
-                color:$medium-grey;
+                background:transparent;
+                color:#fff;
+
+                $placeholdercolor:#fff;
+                &::-webkit-input-placeholder { color: $placeholdercolor; }
+                &::-moz-placeholder { color: $placeholdercolor; }
+                &:-ms-input-placeholder { color: $placeholdercolor; }
+                &:-moz-placeholder { color: $placeholdercolor; }
             }
 
         }
@@ -394,6 +419,7 @@
                     color:$dark-grey;
                     border-radius:4px;
                     box-shadow:0 1px 2px rgba(0,0,0,0.1);
+                    border:1px solid rgba(0,0,0,0.1);
                     transform:translateY(0px);
                     transition: box-shadow 0.2s ease, transform 0.2s ease;
                     margin-bottom:10px;

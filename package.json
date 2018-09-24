@@ -62,6 +62,7 @@
     "qrcode": "^1.2.2",
     "ridl": "^1.1.1",
     "scrypt-async": "^2.0.1",
+    "selfsigned": "^1.10.3",
     "socket.io": "^2.1.1",
     "typeface-grand-hotel": "0.0.54",
     "typeface-roboto": "0.0.54",

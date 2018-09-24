@@ -199,13 +199,17 @@ a {
 }
 
 
-@keyframes glow {
-  0% { color:$dark-grey; }
-  50% {
-    transform: scale(0.95);
-    color:$red;
+.glow {
+  animation: attention 1s ease-out;
+  animation-iteration-count: infinite;
+}
+@keyframes attention {
+  0%, 100% {
+    transform:scale(1);
   }
-  100% { color:$dark-grey; }
+  50% {
+    transform: scale(1.5);
+  }
 }
 
 @keyframes pulsate {

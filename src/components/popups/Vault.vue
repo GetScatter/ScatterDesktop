@@ -26,7 +26,7 @@
                     </section>
                 </transition>
 
-                <figure class="add-keypair" :class="{'cancel':selected, 'hide':status}" v-tooltip="selected ? 'Go Back' : 'Add New Secret'" @click="addOrBack">
+                <figure class="add-keypair" :class="{'cancel':selected, 'hide':status, 'glow':!accounts.length}" v-tooltip="selected ? 'Go Back' : 'Add New Secret'" @click="addOrBack">
                     <i class="fa fa-plus"></i>
                 </figure>
 
@@ -218,6 +218,7 @@
     import PopupService from '../../services/PopupService'
     import QRService from '../../services/QRService'
     import PasswordService from '../../services/PasswordService'
+    import PriceService from '../../services/PriceService'
 
     import ElectronHelpers from '../../util/ElectronHelpers';
     import IdGenerator from '../../util/IdGenerator';
@@ -265,6 +266,7 @@
             ...mapGetters([
                 'nextPopIn',
                 'keypairs',
+                'accounts',
             ]),
             keyNameError(){
                 if(this.flashingNameError) return false;
@@ -391,6 +393,7 @@
                 this.importType = null;
                 this.importing = false;
                 this.selected = this.keypairs.find(x => x.id === this.selected.id).clone();
+                await PriceService.getBalances();
 
             },
             async testKey(){

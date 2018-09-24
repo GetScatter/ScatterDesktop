@@ -158,7 +158,7 @@
             },
             async getBalance(account){
                 return await PluginRepository.plugin(this.network.blockchain)
-                    .balanceFor(account, this.network, this.contract, this.symbol);
+                    .balanceFor(account, this.contract, this.symbol);
             },
             balance(account){
                 const bal = this.balances.find(x => x.account === account.unique());
