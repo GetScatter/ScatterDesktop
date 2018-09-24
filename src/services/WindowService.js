@@ -5,7 +5,6 @@ import {store} from '../store/store'
 import * as Actions from '../store/constants'
 
 import WindowMessage from '../models/popups/WindowMessage';
-import * as WindowMessageTypes from '../models/popups/WindowMessageTypes'
 
 let pendingMessages = [];
 const getPending = msg => pendingMessages.find(x => x.id === msg.id);
@@ -38,10 +37,6 @@ export default class WindowService {
 
     static flashWindow(){
         remote.getCurrentWindow().flashFrame(true);
-    }
-
-    static send(toWindowId, type, data = {}){
-        sendMessage(toWindowId, type, data);
     }
 
     static sendAndWait(toWindowId, type, data = {}){

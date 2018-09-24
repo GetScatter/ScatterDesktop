@@ -57,7 +57,7 @@
                     <section class="info">
                         <figure class="name">{{origin}}</figure>
                         <figure class="description"><b>Link Permission</b>
-                            <span v-if="permCount - 2 > 0"> and <b>{{permCount - 2}} Action Permission</b></span>
+                            <span v-if="permCount - 1 > 0"> and <b>{{permCount - 1}} Action Permission{{permCount -1 > 0 ? 's' : ''}}</b></span>
                             <span v-else>only</span>
                         </figure>
                     </section>

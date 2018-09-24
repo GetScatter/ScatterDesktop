@@ -9,17 +9,15 @@
             <section class="selected-item scrollable">
                 <figure class="name">Scatter Backup Settings</figure>
                 <figure class="description">
-                    Configure auto backup or manually backup your Scatter.<br>
-                    <b>If using automatic backup your Scatter will be backed up with every change.</b>
+                    Configure your automatic backups.
                 </figure>
 
                 <section class="split-panels left">
                     <section class="info-box">
-                        <figure class="header">Backup Strategy</figure>
 
-                        <swch first="Automatic Backups" second="Manual Backups Only"
-                              :selected="autoBackup !== strategies.AUTOMATIC ? 'Automatic Backups' : 'Manual Backups Only'"
-                              v-on:switched="setBackupStrategy(autoBackup === strategies.AUTOMATIC ? strategies.MANUAL : strategies.AUTOMATIC)"></swch>
+                        <!--<swch first="Automatic Backups" second="Manual Backups Only"-->
+                              <!--:selected="autoBackup !== strategies.AUTOMATIC ? 'Automatic Backups' : 'Manual Backups Only'"-->
+                              <!--v-on:switched="setBackupStrategy(autoBackup === strategies.AUTOMATIC ? strategies.MANUAL : strategies.AUTOMATIC)"></swch>-->
 
                         <section v-if="autoBackup === strategies.AUTOMATIC">
                             <btn text="Choose Automatic Backup Location" secondary="true" large="true" v-on:clicked="setBackupLocation()"></btn>
@@ -56,11 +54,9 @@
             ])
         },
         mounted(){
+            BackupService.setBackupStrategy(BACKUP_STRATEGIES.AUTOMATIC);
         },
         methods: {
-            async setBackupStrategy(strategy){
-                await BackupService.setBackupStrategy(strategy);
-            },
             async setBackupLocation(){
                 await BackupService.setBackupLocation();
             },

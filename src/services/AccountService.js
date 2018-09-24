@@ -14,17 +14,6 @@ export default class AccountService {
         return await PluginRepository.plugin(blockchain).getImportableAccounts(keypair, network);
     }
 
-    static async addAccountFromKeypair(keypair, network){
-        const account = Account.fromJson({
-            keypairUnique:keypair.unique(),
-            networkUnique:network.unique(),
-            publicKey:keypair.publicKeys.find(x => x.blockchain === network.blockchain)
-        });
-        const scatter = store.state.scatter.clone();
-        scatter.keychain.addAccount(account);
-        return store.dispatch(Actions.SET_SCATTER, scatter);
-    }
-
     static async addAccount(account){
         const scatter = store.state.scatter.clone();
         scatter.keychain.addAccount(account);

@@ -18,15 +18,6 @@ export class Mnemonic {
     static async mnemonicToSeed(mnemonic){
         return bip39.mnemonicToSeedHex(mnemonic);
     }
-
-    /***
-     * Generates a random mnemonic
-     * @returns {[string,string]}
-     */
-    static generateDanglingMnemonic() {
-        let mnemonic = bip39.generateMnemonic();
-        return [mnemonic, bip39.mnemonicToSeedHex(mnemonic)];
-    }
 }
 
 export default Mnemonic;

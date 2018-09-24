@@ -36,7 +36,6 @@
 
     const { remote } = window.require('electron');
     import WindowService from '../services/WindowService'
-    import * as WindowMessageTypes from '../models/popups/WindowMessageTypes'
     import * as ApiActions from '../models/api/ApiActions';
 
     export default {
@@ -45,7 +44,7 @@
             windowMessage:null,
         }},
         mounted(){
-            WindowService.watch(WindowMessageTypes.POPUP, windowMessage => {
+            WindowService.watch('popup', windowMessage => {
                 this.windowMessage = windowMessage;
                 this[Actions.HOLD_SCATTER](Scatter.fromJson(this.windowMessage.data.scatter));
             });

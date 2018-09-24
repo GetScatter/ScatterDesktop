@@ -9,11 +9,8 @@ import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
 
 
-
-
 // Globals
 import ViewBase from './components/ViewBase.vue'
-import MainMenu from './components/sidebars/MainMenu.vue'
 import Auth from './components/sidebars/Auth.vue'
 
 // Panels
@@ -63,13 +60,7 @@ import SwitchComponent from './components/reusable/SwitchComponent.vue'
 import SliderComponent from './components/reusable/SliderComponent.vue'
 import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
 
-
-import SocketService from './services/SocketService'
-import {Popup} from './models/popups/Popup';
-import PopupService from './services/PopupService';
-import MnemonicUtil from './util/Mnemonic'
-
-const {remote, BrowserWindow} = window.require('electron');
+const {remote} = window.require('electron');
 const app = remote.app;
 console.log(app.getPath('userData'));
 
@@ -128,7 +119,6 @@ class Main {
             // GLOBALS
             {tag:'view-base', vue:ViewBase},
             {tag:'auth', vue:Auth},
-            {tag:'main-menu', vue:MainMenu},
         ];
 
         const routes = Routing.routes();
