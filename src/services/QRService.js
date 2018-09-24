@@ -2,6 +2,7 @@ import QRCode from 'qrcode';
 import StorageService from '../services/StorageService';
 import PopupService from '../services/PopupService';
 import PasswordService from '../services/PasswordService';
+import KeyPairService from '../services/KeyPairService';
 import {Popup} from '../models/popups/Popup'
 import AES from 'aes-oop';
 import {store} from '../store/store'
@@ -45,6 +46,11 @@ export default class QRService {
 
     static async createUnEncryptedQR(data){
         return QRCode.toDataURL(JSON.stringify(data), {errorCorrectionLevel: 'L'});
+    }
+
+    static async decryptQR(data, salt, password){
+        const [mnemonic, seed] = await Mnemonic.generateMnemonic(password, salt);
+        return AES.decrypt(data, seed);
     }
 
 }

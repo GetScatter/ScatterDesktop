@@ -43,6 +43,10 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
     }
 
+    static vault(){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VAULT, {}, () => {}))
+    }
+
     static textPrompt(title, description, icon, buttonText, input, callback){
         let params = { title, description, icon, buttonText, input };
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TEXT_PROMPT, params, callback))
@@ -94,6 +98,11 @@ export const PopupTypes = {
     PROMPT:'prompt',
     TEXT_PROMPT:'textPrompt',
     SELECTOR:'selector',
+    VAULT:'vault',
+
+
+
+
     BUY_SELL_RAM:'buySellRAM',
     DELEGATE_RESOURCES:'delegateResources',
     TX_SUCCESS:'txSuccess',

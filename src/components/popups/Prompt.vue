@@ -2,14 +2,14 @@
     <section>
 
         <section class="prompt" v-if="nextPopIn">
-            <pop-in-head></pop-in-head>
+            <pop-in-head :next-pop-in="nextPopIn"></pop-in-head>
         </section>
 
     </section>
 </template>
 
 <script>
-    import {RouteNames, RouteDepth} from '../../vue/Routing'
+    import {RouteNames} from '../../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
     import {PopupDisplayTypes} from '../../models/popups/Popup'
@@ -26,14 +26,15 @@
                 'popups'
             ]),
             ...mapGetters([
-                'nextPopIn'
+
             ])
         },
         methods:{
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
-        }
+        },
+        props:['nextPopIn']
     }
 </script>
 

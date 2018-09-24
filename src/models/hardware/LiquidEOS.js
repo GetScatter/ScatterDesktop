@@ -30,7 +30,7 @@ export default class LiquidEOS {
             })},
             async canConnect(){
                 return true;
-            }
+            },
         });
     };
 

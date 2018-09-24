@@ -5,7 +5,7 @@ import {BACKUP_STRATEGIES} from '../models/Settings';
 import StorageService from '../services/StorageService';
 const fs = window.require('fs');
 
-export const getFileLocation = () => remote.dialog.showOpenDialog();
+export const getFileLocation = () => remote.dialog.showOpenDialog({ filters: [ { name: 'JSON', extensions: ['json'] } ] });
 export const getFolderLocation = () => remote.dialog.showOpenDialog({properties: ['openDirectory']});
 const getLatestScatter = () => StorageService.getScatter();
 
@@ -18,7 +18,7 @@ const saveFile = (filepath) => {
         const salt = StorageService.getSalt();
         const file = scatter + '|SLT|' + salt;
         try {
-            fs.writeFileSync(`${filepath}/scatter_${month}-${year}.txt`, file, 'utf-8');
+            fs.writeFileSync(`${filepath}/scatter_${month}-${year}.json`, file, 'utf-8');
             resolve(true);
         }
         catch(e) {
@@ -52,12 +52,13 @@ export default class BackupService {
     }
 
     static async createAutoBackup(){
-        if(!store.state.scatter || store.state.scatter.settings) return;
+        if(!store.state.scatter || !store.state.scatter.settings) return;
         const strategy = store.state.scatter.settings.autoBackup;
         if(!strategy || !strategy.length || strategy === BACKUP_STRATEGIES.MANUAL) return;
 
         const backupLocation = store.state.scatter.settings.backupLocation;
         if(!backupLocation || !backupLocation.length) return false;
+
 
         await saveFile(backupLocation);
     }

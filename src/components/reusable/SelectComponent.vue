@@ -10,9 +10,13 @@
 
         <section class="options">
             <input ref="terms" placeholder="Search..." v-model="optionsTerms" />
-            <figure class="option" v-for="item in filteredOptions" v-on:click="select(item)">
-                <img v-if="imgParser" :src="imgParser(item)" />
-                {{parse(item)}}
+            <figure :class="isGrouped(item) ? 'group-title' : 'option'" v-for="item in filteredOptions" v-on:click="isGrouped(item) ? null : select(item)">
+                <figure v-if="isGrouped(item) && !optionsTerms.length">{{item}}</figure>
+                <section v-else>
+                    <img v-if="imgParser" :src="imgParser(item)" />
+                    {{parse(item)}}
+                </section>
+
             </figure>
         </section>
     </section>
@@ -24,13 +28,38 @@
             optionsTerms:'',
             selectedOption:this.selected || this.placeholder || this.options[0],
             open:false,
+            groups:[],
         }},
         computed:{
+            groupedOptions(){
+                if(!this.grouper) return this.options;
+                else {
+                    this.groups = [];
+                    let options = [];
+                    this.options.map(x => {
+                        const group = this.grouper(x);
+                        if(!this.groups.includes(group)){
+                            this.groups.push(group)
+                            options.push(group);
+                        }
+
+                        options.push(x);
+                    })
+                    return options;
+                }
+            },
             filteredOptions(){
-                return this.options.filter(x => this.parse(x).toLowerCase().indexOf(this.optionsTerms.toLowerCase()) > -1);
+                return this.groupedOptions.filter(x => {
+                    const parsed = this.parse(x);
+                    return !parsed || parsed.toLowerCase().indexOf(this.optionsTerms.toLowerCase()) > -1
+                });
             }
         },
         methods: {
+            isGrouped(item){
+                if(!item) return false;
+                return this.groups.includes(item);
+            },
             toggle(){
                 if(this.disabled) return false;
                 this.open = !this.open;
@@ -56,7 +85,7 @@
                 this.$emit('changed', this.selectedOption)
             }
         },
-        props:['placeholder', 'options', 'selected', 'prop', 'parser', 'disabled', 'imgParser'],
+        props:['placeholder', 'options', 'selected', 'prop', 'parser', 'disabled', 'imgParser', 'grouper'],
         watch:{
             input(){ this.emit(); },
             text(){ this.input = this.text; },
@@ -112,6 +141,16 @@
             width:100%;
             padding:0 35px 0 15px;
             overflow: hidden;
+            word-break: break-all;
+        }
+
+        .group-title {
+            padding:4px 10px;
+            background:rgba(0,0,0,0.03);
+            border-bottom:1px solid rgba(0,0,0,0.1);
+            color:rgba(0,0,0,0.5);
+            font-size:11px;
+            font-weight: bold;
         }
 
         .options {
@@ -132,10 +171,11 @@
             z-index:2;
 
             .option {
-                padding:10px;
-                font-size:11px;
+                padding:15px 10px;
+                font-size:14px;
                 background:transparent;
-                transition:background 0.2s ease;
+                transition:background 0.2s ease, padding 0.3s ease;
+                word-break: break-all;
 
                 img {
                     width:16px;
@@ -149,7 +189,8 @@
                 }
 
                 &:hover {
-                    background:$light-grey;
+                    background:rgba(0,0,0,0.05);
+                    padding-left:15px;
                 }
             }
         }
@@ -163,7 +204,7 @@
                 box-shadow:0 8px 16px rgba(0,0,0,0.15);
                 visibility:visible;
                 opacity:1;
-                max-height:220px;
+                max-height:180px;
             }
 
             .arrow {

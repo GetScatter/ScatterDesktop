@@ -1,7 +1,7 @@
 <template>
     <section>
 
-        <section class="panel">
+        <section class="">
             <section class="head">
                 <figure class="logo">S</figure>
                 <figure class="info">
@@ -368,7 +368,7 @@
             async acceptTerms(accepted){
                 if(!accepted){
                     await StorageService.removeScatter();
-                    this.$router.push('/')
+                    this.$router.push('/');
                     return false;
                 }
 

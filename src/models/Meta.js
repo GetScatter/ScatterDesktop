@@ -1,4 +1,5 @@
-const {app} = window.require('electron').remote;
+const { remote } = window.require('electron');
+const { app } = remote;
 
 export default class Meta {
 
@@ -6,6 +7,7 @@ export default class Meta {
         this.version = app.getVersion();
         this.lastVersion = '0';
         this.acceptedTerms = false;
+        this.lastSuggestedVersion = null;
     }
 
     getVersion(){

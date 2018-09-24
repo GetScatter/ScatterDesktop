@@ -37,7 +37,7 @@
 </template>
 
 <script>
-    import {RouteNames, RouteDepth} from '../../vue/Routing'
+    import {RouteNames} from '../../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
     import {PopupDisplayTypes} from '../../models/popups/Popup'

@@ -3,24 +3,30 @@
         <section class="router-base">
 
 
-            <section v-if="!onboarding">
-                <section v-if="hasSidebar()">
-                    <auth class="sidebar" :class="{'hidden':routeNames.LOGIN !== $route.name}"></auth>
-                    <main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}" :collapsed="collapsedMenu" v-on:toggled="toggleMenu"></main-menu>
-                </section>
+            <section v-if="onboarding">
+                <terms></terms>
+            </section>
 
-                <main :class="{'expanded':routeNames.LOGIN === $route.name, 'no-sidebar':!hasSidebar(), 'collapsed-menu':collapsedMenu}">
-
-                    <section style="background:red;"></section>
-                    <transition :name="transitionName">
-                        <router-view></router-view>
-                    </transition>
-                </main>
+            <section v-else-if="isPopout">
+                <router-view></router-view>
             </section>
 
             <section v-else>
-                <terms></terms>
+                <section class="main" v-if="unlocked">
+
+                    <overhead></overhead>
+
+                    <transition name="slide-left" mode="out-in">
+                        <router-view class="shifter"></router-view>
+                    </transition>
+
+                </section>
+
+                <section v-if="!unlocked">
+                    <auth></auth>
+                </section>
             </section>
+
 
             <popups></popups>
         </section>
@@ -31,13 +37,12 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-    import {RouteNames, RouteDepth, Routing} from '../vue/Routing'
+    import {RouteNames, Routing} from '../vue/Routing'
+    import WindowService from '../services/WindowService'
 
     export default {
         data(){ return {
             routeNames:RouteNames,
-            transitionName:'',
-            menuTransitionName:'',
             loggingIn:false,
             collapsedMenu:false,
         }},
@@ -49,26 +54,40 @@
                 'unlocked',
             ]),
             onboarding(){
-                return this.unlocked && !this.scatter.meta.acceptedTerms;
+                return this.scatter && this.scatter.meta && !this.scatter.meta.acceptedTerms;
+            },
+            isPopout(){
+                return this.$route.name === 'popout';
             }
+        },
+        mounted(){
+
         },
         methods:{
-            hasSidebar(){
-                return Routing.hasSidebar(this.$route.name)
-            },
-            toggleMenu(){
-                this.collapsedMenu = !this.collapsedMenu;
-            }
-        },
-        watch: {
-            '$route' (to, from) {
-                this.transitionName = RouteDepth[to.name] < RouteDepth[from.name] ? 'slide-up' : 'slide-down'
-            }
+
         }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+    @import '../_variables.scss';
+
+    .main {
+        background:#f8f8f8;
+        height:100vh;
+        position: relative;
+        display:flex;
+        flex-direction: column;
+    }
+
+    .shifter {
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+
 
     .view-base {
 
@@ -113,6 +132,10 @@
 
     .router-base {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: 100vh;
     }
 
 

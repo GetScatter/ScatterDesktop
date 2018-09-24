@@ -6,33 +6,25 @@ import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
 import * as Actions from './store/constants'
 import {RouteNames} from './vue/Routing'
-
-
+import { QrcodeReader } from 'vue-qrcode-reader'
 
 
 // Globals
 import ViewBase from './components/ViewBase.vue'
-import MainMenu from './components/sidebars/MainMenu.vue'
 import Auth from './components/sidebars/Auth.vue'
 
 // Panels
-import Identity from './components/panels/Identity.vue'
-import Keypair from './components/panels/Keypair.vue'
-import Network from './components/panels/Network.vue'
-import Receive from './components/panels/Receive.vue'
-import Transfer from './components/panels/Transfer.vue'
-import NothingHere from './components/panels/NothingHere.vue'
 import Terms from './components/panels/Terms.vue'
-import Repute from './components/panels/reputation/Repute.vue'
-import EntityReputation from './components/panels/reputation/EntityReputation.vue'
-import LoadTokens from './components/panels/reputation/LoadTokens.vue'
-import OriginPermissions from './components/panels/OriginPermissions.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
 import SettingsExplorer from './components/panels/SettingsExplorer.vue'
+import SettingsNetworks from './components/panels/SettingsNetworks.vue'
 import SettingsBackup from './components/panels/SettingsBackup.vue'
 import SettingsDestroy from './components/panels/SettingsDestroy.vue'
 import SettingsPassword from './components/panels/SettingsPassword.vue'
 import SettingsNonce from './components/panels/SettingsNonce.vue'
+
+
+import Overhead from './components/panels/Overhead.vue'
 
 // POPUPS
 import Popups from './components/Popups.vue'
@@ -46,6 +38,7 @@ import DelegateResources from './components/popups/DelegateResources.vue'
 import BuySellRAM from './components/popups/BuySellRAM.vue'
 import RegisterWithRIDL from './components/popups/RegisterWithRIDL.vue'
 import PopInHead from './components/popups/fragments/PopInHead.vue'
+import Vault from './components/popups/Vault.vue'
 
 // POP OUTS
 import GetIdentity from './views/popouts/GetIdentity.vue'
@@ -67,13 +60,7 @@ import SwitchComponent from './components/reusable/SwitchComponent.vue'
 import SliderComponent from './components/reusable/SliderComponent.vue'
 import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
 
-
-import SocketService from './services/SocketService'
-import {Popup} from './models/popups/Popup';
-import PopupService from './services/PopupService';
-import MnemonicUtil from './util/Mnemonic'
-
-const {remote, BrowserWindow} = window.require('electron');
+const {remote} = window.require('electron');
 const app = remote.app;
 console.log(app.getPath('userData'));
 
@@ -93,25 +80,18 @@ class Main {
             {tag:'swch', vue:SwitchComponent},
             {tag:'p-bar', vue:PercentageBarComponent},
             {tag:'slider', vue:SliderComponent},
+            {tag:'qr-reader', vue:QrcodeReader},
 
             // PANELS
-            {tag:'identity', vue:Identity},
-            {tag:'keypair', vue:Keypair},
-            {tag:'network', vue:Network},
-            {tag:'transfer', vue:Transfer},
-            {tag:'receive', vue:Receive},
-            {tag:'terms', vue:Terms},
-            {tag:'nothing-here', vue:NothingHere},
-            {tag:'origin-perms', vue:OriginPermissions},
-            {tag:'rep-repute', vue:Repute},
-            {tag:'rep-entity', vue:EntityReputation},
-            {tag:'rep-load-tokens', vue:LoadTokens},
             {tag:'settings-language', vue:SettingsLanguage},
             {tag:'settings-backup', vue:SettingsBackup},
+            {tag:'settings-networks', vue:SettingsNetworks},
             {tag:'settings-destroy', vue:SettingsDestroy},
             {tag:'settings-explorer', vue:SettingsExplorer},
             {tag:'settings-password', vue:SettingsPassword},
             {tag:'settings-nonce', vue:SettingsNonce},
+            {tag:'overhead', vue:Overhead},
+            {tag:'terms', vue:Terms},
 
             // POPUPS
             {tag:'popups', vue:Popups},
@@ -125,6 +105,7 @@ class Main {
             {tag:'delegate-resources', vue:DelegateResources},
             {tag:'ridl-register', vue:RegisterWithRIDL},
             {tag:'pop-in-head', vue:PopInHead},
+            {tag:'vault', vue:Vault},
 
             // POP OUTS
             {tag:'get-identity', vue:GetIdentity},
@@ -138,7 +119,6 @@ class Main {
             // GLOBALS
             {tag:'view-base', vue:ViewBase},
             {tag:'auth', vue:Auth},
-            {tag:'main-menu', vue:MainMenu},
         ];
 
         const routes = Routing.routes();

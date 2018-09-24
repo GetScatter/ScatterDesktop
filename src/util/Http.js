@@ -1,3 +1,8 @@
+/***
+ * THIS HTTP SERVICE IS ONLY USED FOR HARDWARE WALLET CONNECTIONS
+ *
+ */
+
 export const get = async route => {
     return Promise.race([
         fetch(route).then(res => res.json()).catch(() => null),

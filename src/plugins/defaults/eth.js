@@ -59,7 +59,10 @@ export default class ETH extends Plugin {
         return 1;
     }
 
+    usesResources(){ return false; }
+
     accountsAreImported(){ return false; }
+    isValidRecipient(address){ return this.validPublicKey(address); }
     privateToPublic(privateKey){ return ethUtil.addHexPrefix(ethUtil.privateToAddress(toBuffer(privateKey)).toString('hex')); }
     validPrivateKey(privateKey){ return ethUtil.isValidPrivate(toBuffer(privateKey)); }
     validPublicKey(publicKey){   return ethUtil.isValidAddress(publicKey); }
@@ -69,6 +72,12 @@ export default class ETH extends Plugin {
             const privateKey = new Buffer(byteArray);
             resolve(privateKey.toString('hex'));
         })
+    }
+    bufferToHexPrivate(buffer){
+        return new Buffer(buffer).toString('hex')
+    }
+    hexPrivateToBuffer(privateKey){
+        return Buffer.from(privateKey, 'hex');
     }
     conformPrivateKey(privateKey){
         privateKey = privateKey.trim();
@@ -82,13 +91,12 @@ export default class ETH extends Plugin {
         return [Blockchains.EOSIO];
     }
 
-    async balanceFor(account, network, tokenAccount, symbol){
+    async balanceFor(account, tokenAccount, symbol){
         return 0;
     }
 
-    async historyFor(account, network){
-        return [];
-    }
+    defaultDecimals(){ return 18; }
+    defaultToken(){ return {account:'eth', symbol:'ETH', name:'ETH', blockchain:Blockchains.ETH}; }
 
     actionParticipants(payload){
         return ObjectHelpers.flatten(
@@ -98,8 +106,9 @@ export default class ETH extends Plugin {
     }
 
     async fetchTokens(tokens){
-        const ethTokens = [{account:'eth', symbol:'ETH'}];
+        const ethTokens = [this.defaultToken()];
         ethTokens.map(token => {
+            token.blockchain = Blockchains.ETH;
             if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
         });
     }

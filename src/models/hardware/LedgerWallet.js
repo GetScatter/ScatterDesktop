@@ -43,7 +43,7 @@ export default class LedgerWallet {
     async init(){
         this.getPublicKey = async () => { return throwErr(); };
         this.sign = async () => { return throwErr(); };
-        this.canConnect = async () => { return throwErr(); };
+        this.canConnect = async () => { return 'Open and unlock your Ledger.'; };
 
         const handleEvents = ({type, device}) => this[type](device);
         const setHardware = async () => {
@@ -60,13 +60,13 @@ export default class LedgerWallet {
                     delete cache[this.blockchain];
                 }
             }
-            store.dispatch(Actions.SET_HARDWARE, hardware);
+            return store.dispatch(Actions.SET_HARDWARE, hardware);
         }
 
         if(store.state.hardware){
             await store.state.hardware.disconnect();
-            await setHardware();
-        } else await setHardware();
+            return await setHardware();
+        } else return await setHardware();
     }
 
     async add(device){
@@ -76,14 +76,13 @@ export default class LedgerWallet {
         store.dispatch(Actions.SET_HARDWARE, clone);
 
 
-        this.api = new LedgerAPI(store.state.hardware.transport, this.blockchain);
+        this.api = new LedgerAPI(store.state.hardware.transport, this.blockchain, this);
         this.getPublicKey = this.api.getPublicKey;
         this.sign = this.api.signTransaction;
         this.canConnect = this.api.getAppConfiguration;
     }
 
     async remove(device){
-        console.log('removing');
         const {path} = device;
         await store.state.hardware.disconnect();
         store.dispatch(Actions.SET_HARDWARE, null);
@@ -108,8 +107,9 @@ const CODE = {
 
 class LedgerAPI {
 
-    constructor(blockchain){
+    constructor(blockchain, parent){
         this.blockchain = blockchain;
+        this.parent = parent;
 
         store.state.hardware.transport.decorateAppAPIMethods(
             this,
@@ -231,17 +231,13 @@ class LedgerAPI {
     }
 
     getAppConfiguration(){
+        if(!store.state.hardware) return 'Hardware wallet disconnected';
+
         return store.state.hardware.transport.send(CODE.CLA, CODE.INFO, CODE.NO, CODE.NO).then(res => {
             return true;
         }).catch(err => {
-            PopupService.push(Popup.prompt(
-                `Open ${this.blockchain.toUpperCase()} Ledger App`,
-                'You must open the Ledger App in order to use it with Scatter',
-                'exclamation-triangle',
-                'Okay'
-            ));
             delete cache[this.blockchain];
-            return false;
+            return `You must open the ${this.blockchain.toUpperCase()} Ledger App in order to use it with Scatter`;
         })
     }
 

@@ -12,7 +12,7 @@ export default class Settings {
     constructor(){
         this.networks = [];
         this.language = LANG.ENGLISH;
-        this.autoBackup = BACKUP_STRATEGIES.MANUAL;
+        this.autoBackup = BACKUP_STRATEGIES.AUTOMATIC;
         this.backupLocation = '';
         this.advancedMode = false;
         this.explorers = PluginRepository.defaultExplorers();
