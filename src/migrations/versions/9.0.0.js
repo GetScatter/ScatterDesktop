@@ -7,7 +7,6 @@ import {BlockchainsArray} from '../../models/Blockchains';
 export const m9_0_0 = async scatter => {
 
     scatter.keychain.keypairs.map(x => {
-        console.log('mig')
         if(x.hasOwnProperty('publicKeys') && x.publicKeys.length) return false;
 
         x.decrypt(store.state.seed);
@@ -32,13 +31,11 @@ export const m9_0_0 = async scatter => {
             }
         });
 
-        console.log('scmig', scatter.keychain);
-
         x.encrypt(store.state.seed);
     });
 
     // Wiping out permissions
     scatter.keychain.permissions = [];
 
-    return false;
+    return true;
 };

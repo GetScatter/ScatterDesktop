@@ -109,7 +109,6 @@ export default class ApiService {
             PopupService.push(Popup.popout(request, async ({result}) => {
                 if(!result) return resolve({id:request.id, result:null});
 
-                console.log('result', result);
                 const keypair = Keypair.fromJson(result.keypair);
                 const publicKey = keypair.publicKeys.find(x => x.blockchain === request.payload.blockchain).key;
 

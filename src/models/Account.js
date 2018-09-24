@@ -33,7 +33,6 @@ export default class Account {
 
     blockchain(){
         if(!this.keypair()) return;
-        console.log(this.keypair(), this.publicKey);
         return this.keypair().publicKeys.find(x => x.key === this.publicKey).blockchain;
     }
 

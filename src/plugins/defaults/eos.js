@@ -112,7 +112,6 @@ export default class EOS extends Plugin {
     }
 
     async addResources(account){
-        console.log('adding resources');
         const signProvider = payload => this.signer(payload, account.publicKey);
         const network = account.network();
         const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});

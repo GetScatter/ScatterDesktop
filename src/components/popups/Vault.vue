@@ -309,8 +309,6 @@
                     };
 
                     tryDecryption();
-                    console.log('data', data);
-                    console.log('salt', salt);
                 } catch(e){
                     this.error = 'Could not scan encrypted QR code.';
                 }
