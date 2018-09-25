@@ -18,11 +18,19 @@
                 </router-link>
 
                 <!-- VAULT -->
+                <figure class="action" v-tooltip="'Minimize to Tray'" @click="tray">
+                    <i class="fa fa-window-minimize"></i>
+                </figure>
+
+                <figure class="breaker"></figure>
+
+                <!-- VAULT -->
                 <figure class="action" :class="{'glow':!accounts.length}" v-tooltip="'Vault'" @click="openVault">
                     <div style="margin-top:4px;">
                         <img src="../../assets/vault.png" />
                     </div>
                 </figure>
+
             </figure>
         </section>
 
@@ -33,10 +41,14 @@
 
             <!-- VALUE -->
             <transition name="slide-right" mode="out-in">
-                <section key="balance" v-if="route === 'home'" class="value">
-                    {{totalBalance}} <b>USD</b>
-                </section>
-                <section key="othername" v-else class="value">
+                <router-link v-if="route === 'home'" key="balance" :to="{name:'tokens'}">
+                    <section class="value tokens">
+                        {{totalBalance}} <b>USD</b>
+                        <span>View as <b>Tokens</b></span>
+                    </section>
+                </router-link>
+
+                <section key="othername" class="value" v-else>
                     {{route}}
                 </section>
             </transition>
@@ -132,6 +144,9 @@
             openVault(){
                 PopupService.push(Popup.vault());
             },
+            tray(){
+                remote.BrowserWindow.getFocusedWindow().hide();
+            },
             quit(){
                 remote.app.quit();
             },
@@ -180,6 +195,14 @@
         .actions {
             float:right;
 
+            .breaker {
+                float:right;
+                width:1px;
+                height:20px;
+                background:rgba(0,0,0,0.1);
+                margin:30px 15px;
+            }
+
             .action {
                 float:right;
                 font-size: 24px;
@@ -215,19 +238,44 @@
         padding:0 50px;
         position: relative;
         box-shadow:inset 0 10px 25px rgba(0,0,0,0.05), inset 0 1px 2px rgba(0,0,0,0.1);
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
 
         .value {
-            line-height:150px;
-            float:left;
             font-size: 48px;
             font-family: 'Open Sans', sans-serif;
             font-weight: 300;
             text-transform: capitalize;
+            transition: all 0.3s ease;
+            transition-property: font-size, opacity, transform;
+
+            &.tokens {
+                cursor: pointer;
+
+                span {
+                    font-size: 13px;
+                    display:block;
+                    margin-top:-10px;
+                    padding-left:0;
+                    transition: all 0.3s ease;
+                    transition-property: font-size, opacity;
+                }
+
+                &:hover {
+                    font-size: 13px;
+
+                    span {
+                        font-size:48px;
+                    }
+                }
+            }
         }
 
         .actions {
             float:right;
-            line-height:170px;
+            /*line-height:170px;*/
             position: relative;
 
             .action {

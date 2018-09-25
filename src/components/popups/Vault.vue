@@ -9,7 +9,7 @@
                     <section key="noerror" v-if="!status && !error">
                         <figure class="title">Vault</figure>
                         <figure class="description">
-                            Welcome to your vault. This is where you can view and manage all of your secrets.
+                            View and manage all your Secrets
                         </figure>
                     </section>
                     <section key="error" v-if="!status && error" class="error">
@@ -100,7 +100,7 @@
                                 </figure>
 
                                 <transition name="slide-left" mode="out-in">
-                                    <figure key="named" class="description" v-if="!keyNameError">Names are just for organization.</figure>
+                                    <figure key="named" class="description" v-if="!keyNameError">Click name to change it.</figure>
                                     <figure key="noname" class="description" v-else>{{keyNameError}}</figure>
                                 </transition>
                             </section>
@@ -114,20 +114,20 @@
                                         <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied ${pkey.blockchain.toUpperCase()} Share-Safe Key to Clipboard.`)">
                                             <section class="info">
                                                 <figure class="name">{{pkey.blockchain.toUpperCase()}}</figure>
-                                                <figure class="description">{{pkey.key}}</figure>
+                                                <figure class="description"><i class="fa fa-user"></i> {{pkey.key}}</figure>
                                             </section>
                                         </section>
                                     </section>
 
                                     <section class="breaker" @click="showingSecrets = !showingSecrets">
-                                        {{showingSecrets ? 'Hide' : 'Show'}} Share-Safe Keys
+                                        {{showingSecrets ? 'Collapse' : 'Expand'}}
                                     </section>
 
                                     <section class="accounts">
-                                        <section class="account static" v-for="account in selected.accounts()">
+                                        <section class="account" v-for="account in selected.accounts()">
                                             <section class="info">
-                                                <figure class="name">{{account.formattedWithNetwork()}}</figure>
-                                                <figure class="description">{{account.publicKey}}</figure>
+                                                <figure class="name">{{account.formatted()}}</figure>
+                                                <figure class="description"><i class="fa fa-globe"></i> {{account.network().name}}</figure>
                                             </section>
                                         </section>
                                     </section>
@@ -164,7 +164,7 @@
 
                                         <section v-if="!camera" key="inputsecret" class="input-keypair">
                                             <section class="inputs">
-                                                <label>Enter a Secret</label>
+                                                <label><i class="fa fa-key"></i> Enter a Secret</label>
                                                 <input v-model="selected.privateKey" type="password" />
                                             </section>
                                         </section>
@@ -405,7 +405,7 @@
                 if(!KeyPairService.isValidPrivateKey(this.selected)) return this.status = null;
 
                 setTimeout(async () => {
-                    this.status = 'Converting secret to all Blockchains';
+                    this.status = 'Creating multi-blockchain profile from Secret.';
                     setTimeout(async() => {
                         await KeyPairService.convertHexPrivateToBuffer(this.selected);
                         this.selected.hash();
@@ -764,6 +764,11 @@
                     .description {
                         margin-top:3px;
                         font-size: 11px;
+
+                        i {
+                            color:$dark-grey;
+                            margin-right:3px;
+                        }
                     }
                 }
 
@@ -792,10 +797,10 @@
 
         .breaker {
             flex:0 0 auto;
-            border-top:1px solid rgba(0,0,0,0.05);
+            border-top:1px solid rgba(0,0,0,0.4);
             border-bottom:1px solid rgba(0,0,0,0.05);
-            height:25px;
-            line-height:25px;
+            height:40px;
+            line-height:40px;
             background:rgba(0,0,0,0.03);
             overflow: hidden;
             padding:0 30px;
@@ -883,6 +888,10 @@
                         &:-ms-input-placeholder { color: $placeholdercolor; }
                         &:-moz-placeholder { color: $placeholdercolor; }
 
+                        &:focus {
+                            border-bottom:1px dashed rgba(255,255,255,0.5);
+
+                        }
                     }
                 }
 

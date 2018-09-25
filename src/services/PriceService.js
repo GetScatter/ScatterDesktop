@@ -99,4 +99,24 @@ export default class PriceService {
         return parseFloat(value / prices[token.symbol].price).toFixed(this.tokenDecimals(token));
     }
 
+    static async getTokenInfo(token){
+        const plugin = PluginRepository.plugin(token.blockchain);
+        return plugin.tokenInfo(token);
+    }
+
+    static accountBalancesFor(token){
+        let accountBalances = [];
+        Object.keys(store.state.balances).map(accountUnique => {
+            const account = store.state.scatter.keychain.accounts.find(x => x.unique() === accountUnique);
+            const foundToken = store.state.balances[accountUnique].find(x => x.blockchain === token.blockchain && x.symbol === token.symbol);
+            if(foundToken){
+                accountBalances.push({
+                    account,
+                    balance:foundToken.balance,
+                });
+            }
+        });
+        return accountBalances;
+    }
+
 }

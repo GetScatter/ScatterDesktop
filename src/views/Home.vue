@@ -45,17 +45,14 @@
 
                 <section v-if="!Object.keys(origins).length" class="no-permissions">
                     <section class="container">
-                        <figure class="title">No Permissions</figure>
-                        <figure class="description">
-                            You haven't interacted with any Applications yet. Once you do you will
-                            see your permissions here and be able to remove or modify them.
-                        </figure>
+                        <figure class="title">No Apps</figure>
+                        <figure class="link" @click="openApps">Click here to find some</figure>
                     </section>
                 </section>
 
                 <section class="permission" v-for="(permCount, origin) in origins">
                     <section class="info">
-                        <figure class="name">{{origin}}</figure>
+                        <figure class="name" @click="openApp(origin)">{{origin}}</figure>
                         <figure class="description"><b>Link Permission</b>
                             <span v-if="permCount - 1 > 0"> and <b>{{permCount - 1}} Action Permission{{permCount -1 > 0 ? 's' : ''}}</b></span>
                             <span v-else>only</span>
@@ -86,6 +83,7 @@
     import * as Actions from '../store/constants';
 
     import PermissionService from '../services/PermissionService';
+    import ElectronHelpers from '../util/ElectronHelpers';
 
     let saveTimeout = null;
 
@@ -124,7 +122,13 @@
             },
         },
         methods:{
-
+            openApps(){
+                ElectronHelpers.openLinkInBrowser('https://github.com/GetScatter/ScatterApps/')
+            },
+            openApp(origin){
+                if(origin.indexOf('://') === -1) origin = `https://${origin}`
+                ElectronHelpers.openLinkInBrowser(origin);
+            },
             removePermissions(origin){
                 PermissionService.removeAllPermissionsFor(origin);
             },
@@ -276,13 +280,39 @@
                 }
 
                 .title {
-                    font-size: 24px;
+                    font-size: 46px;
                     font-weight: 500;
                     margin-bottom:10px;
+                    color:$black;
                 }
 
-                .description {
-                    font-size: 16px;
+                .link {
+                    font-size: 22px;
+                    cursor: pointer;
+                    color:$dark-blue;
+                    font-weight: bold;
+                    padding:10px 20px;
+                    border:2px solid $dark-blue;
+                    border-radius:4px;
+                    transform:translateY(0px);
+                    box-shadow:0 100px 50px rgba(0,0,0,0);
+                    opacity:1;
+
+                    transition: all 0.2s ease;
+                    transition-property: background, color, transform, box-shadow, opacity;
+
+                    &:hover {
+                        color:#fff;
+                        background:$light-blue;
+                        transform:translateY(-2px);
+                        box-shadow:0 3px 1px rgba(0,0,0,0.2);
+                    }
+
+                    &:active {
+                        transform:scale(1.05);
+                        opacity:0;
+                        box-shadow:0 0 500px rgba(0,0,0,0.5);
+                    }
                 }
             }
 
@@ -301,6 +331,17 @@
                     border-bottom:1px solid #d9d9d9;
                 }
 
+                &:hover {
+                    .info {
+                        .name {
+                            color:$dark-blue;
+                            animation: pulsate 1s ease-out;
+                            animation-iteration-count: infinite;
+                        }
+                    }
+
+                }
+
                 .info {
                     width:calc(100% - 100px);
                     float:left;
@@ -308,6 +349,17 @@
                     .name {
                         font-weight: 600;
                         font-size: 18px;
+                        cursor: pointer;
+                        display: inline-block;
+                        border-bottom:2px solid rgba(0,0,0,0);
+                        color:$black;
+                        transition: all 0.2s ease;
+                        transition-property: border-bottom, color;
+
+                        &:hover {
+                            border-bottom:2px solid $dark-blue;
+                            color:$dark-blue;
+                        }
                     }
 
                     .description {
