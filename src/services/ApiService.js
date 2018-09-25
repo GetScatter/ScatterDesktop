@@ -3,6 +3,7 @@ import Action from '../models/api/Action'
 import {store} from '../store/store'
 import * as StoreActions from '../store/constants'
 import ObjectHelpers from '../util/ObjectHelpers'
+import Hasher from '../util/Hasher'
 
 import {Popup} from '../models/popups/Popup';
 import PopupService from '../services/PopupService';
@@ -81,8 +82,14 @@ export default class ApiService {
             const identity = PermissionService.identityFromPermissions(request.payload.origin);
             if(!identity) return resolve({id:request.id, result:Error.identityMissing()});
 
+            const nonceError = new Error('invalid_nonce', 'You must provide a 12 character nonce for authentication');
+            if(!request.payload.hasOwnProperty('nonce')) return resolve({id:request, result:nonceError});
+            if(request.payload.nonce.length !== 12) return resolve({id:request, result:nonceError});
+
+            const data = Hasher.insecureHash(Hasher.insecureHash(request.payload.origin) + Hasher.insecureHash(request.payload.nonce));
+
             const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-            const signed = await plugin.signer({data:request.payload.origin}, identity.publicKey, true);
+            const signed = await plugin.signer({data}, identity.publicKey, true);
             resolve({id:request.id, result:signed});
         })
     }
