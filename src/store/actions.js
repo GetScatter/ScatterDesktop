@@ -64,7 +64,7 @@ export const actions = {
             SocketService.initialize();
             SocketService.open();
 
-            await StorageService.setSalt(Hasher.insecureHash(IdGenerator.text(32)));
+            await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 
             dispatch(Actions.SET_SEED, password).then(mnemonic => {
                 dispatch(Actions.SET_SCATTER, scatter).then(_scatter => {

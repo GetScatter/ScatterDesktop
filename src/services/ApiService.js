@@ -90,9 +90,9 @@ export default class ApiService {
             // Prevention of origins being able to send data buffers to be
             // signed by the identity which could change to a real balance holding
             // key in the future.
-            const data = Hasher.insecureHash(
-                Hasher.insecureHash(request.payload.origin) +
-                Hasher.insecureHash(request.payload.nonce)
+            const data = Hasher.unsaltedQuickHash(
+                Hasher.unsaltedQuickHash(request.payload.origin) +
+                Hasher.unsaltedQuickHash(request.payload.nonce)
             );
 
             const plugin = PluginRepository.plugin(Blockchains.EOSIO);

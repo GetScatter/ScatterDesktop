@@ -116,7 +116,7 @@
             route(){
                 this.checkTour();
             }
-        }
+        },
     }
 </script>
 

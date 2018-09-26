@@ -34,6 +34,7 @@
                     <settings-backup v-if="selectedOption.name === settingsOptions.BACKUP.name"></settings-backup>
                     <settings-destroy v-if="selectedOption.name === settingsOptions.DESTROY.name"></settings-destroy>
                     <settings-nonce v-if="selectedOption.name === settingsOptions.NONCE.name"></settings-nonce>
+                    <settings-pin v-if="selectedOption.name === settingsOptions.PIN.name"></settings-pin>
                 </transition>
             </section>
 
@@ -56,8 +57,9 @@
     const SettingsOptions = {
         LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
         EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
-        NETWORKS:{ flash:false, locked:false, name:'Networks', description:'Add or Remove Networks.' },
-        NONCE:{ flash:false, locked:false, name:'Nonce', description:'Configure the popup nonce prefix.' },
+        PIN:{ flash:false, locked:true, name:'PIN', description:'Set or disabled your secondary PIN.' },
+        NETWORKS:{ flash:false, locked:true, name:'Networks', description:'Add or Remove Networks.' },
+        NONCE:{ flash:false, locked:true, name:'Nonce', description:'Configure the popup nonce prefix.' },
         PASSWORD:{ flash:false, locked:true, name:'Password', description:'Change your password or regenerate your Mnemonic.' },
         BACKUP:{ flash:false, locked:true, name:'Backup', description:'Create a backup of your Scatter.' },
         DESTROY:{ flash:false, locked:true, name:'Destroy', description:'Destroy your instance of Scatter.' },
@@ -84,11 +86,11 @@
             openConsole(){ WindowService.openTools(); },
             selectOption(option){
                 if((option.locked || false) && !this.unlocked) {
-                    return this.unlock();
+                    return this.unlock(option);
                 }
                 this.selectedOption = option;
             },
-            unlock(){
+            unlock(option){
                 PopupService.push(
                     Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
                         placeholder:'Enter Password',
@@ -101,6 +103,7 @@
                         }
 
                         this.unlocked = true;
+                        this.selectOption(option);
                     }))
             }
         }

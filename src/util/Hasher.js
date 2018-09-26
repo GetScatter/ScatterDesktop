@@ -9,7 +9,7 @@ export default class Hasher {
      * This is INSECURE and should only be used for fingerprinting.
      * @param cleartext
      */
-    static insecureHash(cleartext) {
+    static unsaltedQuickHash(cleartext) {
         return ecc.sha256(cleartext);
     }
 

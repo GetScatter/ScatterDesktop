@@ -22,6 +22,7 @@ import SettingsNetworks from './components/panels/SettingsNetworks.vue'
 import SettingsBackup from './components/panels/SettingsBackup.vue'
 import SettingsDestroy from './components/panels/SettingsDestroy.vue'
 import SettingsPassword from './components/panels/SettingsPassword.vue'
+import SettingsPIN from './components/panels/SettingsPIN.vue'
 import SettingsNonce from './components/panels/SettingsNonce.vue'
 
 
@@ -91,6 +92,7 @@ class Main {
             {tag:'settings-explorer', vue:SettingsExplorer},
             {tag:'settings-password', vue:SettingsPassword},
             {tag:'settings-nonce', vue:SettingsNonce},
+            {tag:'settings-pin', vue:SettingsPIN},
             {tag:'overhead', vue:Overhead},
             {tag:'terms', vue:Terms},
 

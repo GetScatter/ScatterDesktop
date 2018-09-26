@@ -12,6 +12,6 @@ export default class AuthorizedApp {
     static placeholder(){ return new AuthorizedApp(); }
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
     checkKey(hashed){ return hashed === this.hashed(); }
-    hashed(){ return Hasher.insecureHash(this.appkey); }
-    checkNonce(nonce){ return this.nextNonce === Hasher.insecureHash(nonce) }
+    hashed(){ return Hasher.unsaltedQuickHash(this.appkey); }
+    checkNonce(nonce){ return this.nextNonce === Hasher.unsaltedQuickHash(nonce) }
 }

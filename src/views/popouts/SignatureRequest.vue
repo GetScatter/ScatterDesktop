@@ -269,7 +269,7 @@
                 else this.showingJson.push(hash);
             },
             hash(json){
-                return Hasher.insecureHash(JSON.stringify(json));
+                return Hasher.unsaltedQuickHash(JSON.stringify(json));
             },
             formatJson(json, key = null){
                 this.$nextTick(() => {

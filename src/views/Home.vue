@@ -283,8 +283,8 @@
                     font-size: 46px;
                     font-weight: 500;
                     margin-bottom:10px;
-                    color: #e5e5e5;
-                    text-shadow:0 -1px 0 rgba(0,0,0,0.4), 0 1px 0 #fff;
+                    color: #d6d6d6;
+                    text-shadow:0 -1px 1px rgba(0,0,0,0.6), 0 1px 0 #fff;
                 }
 
                 .link {

@@ -42,7 +42,7 @@ export default class Permission {
     }
 
     checksum(){
-        return Hasher.insecureHash(
+        return Hasher.unsaltedQuickHash(
             this.origin+
             this.identity+
             (this.accounts||[]).join(',')+
@@ -68,7 +68,7 @@ export default class Permission {
     }
 
     static createImmutableFieldsHash(allFields, mutableFields){
-        return Hasher.insecureHash(Object.keys(allFields).map(key => {
+        return Hasher.unsaltedQuickHash(Object.keys(allFields).map(key => {
             if(!mutableFields.includes(key)) return allFields[key];
             else return null;
         }).filter(x => x).sort().join(','));

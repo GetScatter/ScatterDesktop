@@ -12,12 +12,15 @@ export default class Scatter {
         this.keychain = Keychain.placeholder();
         this.settings = Settings.placeholder();
         this.contacts = [];
-        this.hash = Hasher.insecureHash(IdGenerator.text(2048));
+        this.hash = Hasher.unsaltedQuickHash(IdGenerator.text(2048));
         this.bufferKeys = false;
 
         this.nonce = 0;
         this.noncePrefix = 'nonce';
+
         this.toured = false;
+
+        this.pin = null;
     }
 
     static placeholder(){ return new Scatter(); }
