@@ -8,7 +8,7 @@ const saveFile = (data, _filename) => {
         const month = date.getUTCMonth();
         const year = date.getUTCFullYear();
         const file = JSON.stringify(data);
-        const filename = `${_filename}_${month}-${year}.txt`
+        const filename = `${_filename}_${month}-${year}.json`
         try {
             fs.writeFileSync(filename, file, 'utf-8');
             resolve(true);
@@ -20,23 +20,25 @@ const saveFile = (data, _filename) => {
     });
 };
 
-const getFilename = () => {
-    const filename = remote.dialog.showOpenDialog({properties: ['openFile']});
-    if(!filename) return false;
-    return filename[0];
+const getLocation = (location) => {
+    if(!location) return false;
+    return location[0];
 }
 
 export default class FileService {
 
-    static getLocation(){
-        const location = remote.dialog.showOpenDialog({properties: ['openDirectory']});
-        if(!location) return false;
-        return location[0];
+    static getFileLocation(){
+        const location = remote.dialog.showOpenDialog({ filters: [ { name: 'JSON', extensions: ['json'] } ] });
+        return getLocation(location);
     }
 
-    static exportData(data, _filename, location = this.getLocation()){
-        const filename = `${location}/${_filename}`;
+    static getFolderLocation(){
+        const location = remote.dialog.showOpenDialog({properties: ['openDirectory']});
+        return getLocation(location);
+    }
 
+    static exportData(data, _filename, location = this.getFolderLocation()){
+        const filename = `${location}/${_filename}`;
         return saveFile(data, filename);
     }
 

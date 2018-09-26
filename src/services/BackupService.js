@@ -26,7 +26,7 @@ export default class BackupService {
 
     static async setBackupLocation(){
         const scatter = store.state.scatter.clone();
-        scatter.settings.backupLocation = FileService.getLocation();
+        scatter.settings.backupLocation = FileService.getFolderLocation();
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
