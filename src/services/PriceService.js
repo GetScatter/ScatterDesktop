@@ -104,7 +104,7 @@ export default class PriceService {
         return plugin.tokenInfo(token);
     }
 
-    static accountBalancesFor(token){
+    static tokensFor(token){
         let accountBalances = [];
         Object.keys(store.state.balances).map(accountUnique => {
             const account = store.state.scatter.keychain.accounts.find(x => x.unique() === accountUnique);
@@ -117,6 +117,13 @@ export default class PriceService {
             }
         });
         return accountBalances;
+    }
+
+    static toggleDisplayToken(token){
+        const scatter = store.state.scatter.clone();
+        if(!scatter.settings.displayToken) scatter.settings.displayToken = token;
+        else scatter.settings.displayToken = scatter.settings.displayToken.symbol !== token.symbol ? token : null;
+        store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
 }

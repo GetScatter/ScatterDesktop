@@ -16,6 +16,7 @@ export default class Settings {
         this.backupLocation = '';
         this.advancedMode = false;
         this.explorers = PluginRepository.defaultExplorers();
+        this.displayToken = null;
     }
 
     static placeholder(){ return new Settings(); }

@@ -43,8 +43,8 @@
             <transition name="slide-right" mode="out-in">
                 <router-link v-if="route === 'home'" key="balance" :to="{name:'tokens'}">
                     <section class="value tokens">
-                        {{totalBalance}} <b>USD</b>
-                        <span>View as <b>Tokens</b></span>
+                        {{totalBalance[0]}} <b>{{totalBalance[1]}}</b>
+                        <span>View <b>Tokens</b></span>
                     </section>
                 </router-link>
 

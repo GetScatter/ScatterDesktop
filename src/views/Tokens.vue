@@ -26,13 +26,13 @@
 
                 <transition name="slide-left" mode="out-in">
                     <section key="tokens" v-if="displayType === DISPLAY_TYPE.TOKENS">
-                        <section class="address" :class="{'active':name === token.name}" v-for="token in filteredTokens" @click="selected = token">
+                        <section class="address" :class="{'active':name === token.name}" v-for="token in filteredTokens" @click="select(token)">
                             <figure class="name">{{token.name}} ( {{token.symbol}} )</figure>
                             <figure class="description">{{token.blockchain.toUpperCase()}}</figure>
                         </section>
                     </section>
                     <section key="accounts" v-if="displayType === DISPLAY_TYPE.ACCOUNTS">
-                        <section class="address" :class="{'active':name === account.formatted()}" v-for="account in filteredAccounts" @click="selected = account">
+                        <section class="address" :class="{'active':name === account.formatted()}" v-for="account in filteredAccounts" @click="select(account)">
                             <figure class="name">{{account.formatted()}}</figure>
                             <figure class="description"><i class="fa fa-globe"></i> {{account.network().name}}</figure>
                         </section>
@@ -46,56 +46,102 @@
 
         <!-- TRANSFER DETAILS -->
         <section class="details">
-            <section class="actions"></section>
+            <section class="actions">
+                <figure class="action" style="font-size:16px;" @click="setAsDisplayToken">
+                    {{isDisplayToken ? 'Remove as Display Token' : 'Set as Display Token'}}
+                </figure>
+            </section>
 
             <section class="data">
 
                 <transition name="slide-left" mode="out-in">
 
+                    <section v-if="!selected" key="notselected">
+                        <section class="token">
 
-
-
-
-
-                    <!-- TOKEN -->
-                    <section key="token" class="token" v-if="isToken">
-
-                        <section class="basic-info">
-                            <section class="icon" :class="{'placeholder':!selected.logo}">
-                                <img :src="selected.logo" />
+                            <section class="basic-info">
+                                <section class="info" style="margin-left:-30px;">
+                                    <section>
+                                        <figure class="name">Total Token Balances</figure>
+                                    </section>
+                                </section>
                             </section>
 
-                            <section class="info">
-                                <section>
-                                    <figure class="name">{{selected.name}}</figure>
-                                    <figure class="description">{{selected.blockchain.toUpperCase()}} - {{selected.account}}</figure>
-                                    <figure class="description small" v-if="tokenInfo">Total Supply - {{formatNumber(tokenInfo.supply)}}</figure>
+                            <section class="balance-table">
+                                <section class="head">
+                                    <figure>Token</figure>
+                                    <figure>Balance</figure>
+                                </section>
+                                <section class="body">
+                                    <figure class="row" v-for="(balance, symbol) in allBalances">
+                                        <figure>{{symbol}}</figure>
+                                        <figure class="number">{{formatNumber(balance, true)}}</figure>
+                                    </figure>
                                 </section>
                             </section>
                         </section>
-
-                        <section class="">
-                            {{accountsWithToken.length}}
-                            <figure class="" v-for="accountBalance in accountsWithToken">
-                                {{accountBalance.account.formatted()}}
-                                {{accountBalance.balance}}
-                            </figure>
-                        </section>
-
-
-
                     </section>
 
+                    <section key="selected" v-if="selected">
+                        <transition name="slide-left" mode="out-in">
+                            <!-- TOKEN -->
+                            <section key="token" class="token" v-if="isToken">
+
+                                <section class="basic-info">
+                                    <section class="icon" :class="{'placeholder':!selected.logo}">
+                                        <img :src="selected.logo" />
+                                    </section>
+
+                                    <section class="info">
+                                        <section>
+                                            <figure class="name">{{selected.name}}</figure>
+                                            <figure class="description">{{selected.blockchain.toUpperCase()}} - {{selected.account}}</figure>
+                                            <figure class="description small" v-if="tokenInfo">Total Supply - {{formatNumber(tokenInfo.supply)}}</figure>
+                                        </section>
+                                    </section>
+                                </section>
+
+                                <section class="balance-table">
+                                    <section class="head">
+                                        <figure>Account</figure>
+                                        <figure>Balance</figure>
+                                    </section>
+                                    <section class="body">
+                                        <figure class="row" v-for="accountBalance in accountsWithToken">
+                                            <figure>{{accountBalance.account.sendable()}}</figure>
+                                            <figure class="number">{{formatNumber(accountBalance.balance, true)}}</figure>
+                                        </figure>
+                                    </section>
+                                </section>
+
+
+
+                            </section>
 
 
 
 
 
-                    <!-- ACCOUNT -->
-                    <section key="account" class="account" v-if="isAccount">
-                        Accounts {{selected.formatted()}}
+
+                            <!-- ACCOUNT -->
+                            <section key="account" class="account" v-if="isAccount">
+
+                                <section class="balance-table">
+                                    <section class="head">
+                                        <figure>Token</figure>
+                                        <figure>Balance</figure>
+                                    </section>
+                                    <section class="body">
+                                        <figure class="row" v-for="token in balances[selected.unique()]">
+                                            <figure>{{token.symbol}}</figure>
+                                            <figure class="number">{{formatNumber(token.balance, true)}}</figure>
+                                        </figure>
+                                    </section>
+                                </section>
+
+                            </section>
+                        </transition>
                     </section>
-
 
 
                 </transition>
@@ -136,9 +182,11 @@
                 'scatter',
                 'tokens',
                 'balances',
+                'prices',
             ]),
             ...mapGetters([
                 'accounts',
+                'allBalances',
             ]),
             name(){
                 if(!this.selected) return;
@@ -149,39 +197,69 @@
             isAccount(){ return this.displayType === DISPLAY_TYPE.ACCOUNTS && this.selected },
             filteredTokens(){
                 const terms = this.terms.trim().toLowerCase();
-                if(!terms.length) return this.tokens;
                 return this.tokens
-                    .filter(x => PriceService.accountBalancesFor(x).length)
+                    .filter(x => PriceService.tokensFor(x).length)
                     .filter(x => x.name.toLowerCase().indexOf(terms) > -1 || x.symbol.toLowerCase().indexOf(terms) > -1)
             },
             filteredAccounts(){
                 const terms = this.terms.toLowerCase();
-                if(!terms.length) return this.accounts;
-                return this.accounts.filter(x => x.name.toLowerCase().indexOf(terms) > -1 || x.keypair().name.toLowerCase().indexOf(terms) > -1)
+                return this.accounts
+                    .filter(x => this.balances.hasOwnProperty(x.unique()) && this.balances[x.unique()].length)
+                    .filter(x => x.name.toLowerCase().indexOf(terms) > -1 || x.keypair().name.toLowerCase().indexOf(terms) > -1)
+                    .reduce((acc,x) => {
+                        if(!acc.map(y => y.sendable()).includes(x.sendable())) acc.push(x);
+                        return acc;
+                    }, [])
             },
             accountsWithToken(){
                 if(!this.selected) return [];
                 if(this.displayType !== DISPLAY_TYPE.TOKENS) return [];
-                return PriceService.accountBalancesFor(this.selected);
+                return PriceService.tokensFor(this.selected).reduce((acc,x) => {
+                    if(!acc.map(y => y.account.sendable()).includes(x.account.sendable())) acc.push(x);
+                    return acc;
+                }, []);
+            },
+            tokenHasPrice(){
+                if(!this.selected) return false;
+                if(this.displayType !== DISPLAY_TYPE.TOKENS) return false;
+                return this.prices.hasOwnProperty(this.selected.symbol);
+            },
+            isDisplayToken(){
+                if(!this.selected) return false;
+                if(!this.scatter.settings.displayToken) return false;
+                if(this.displayType !== DISPLAY_TYPE.TOKENS) return false;
+                return this.selected.symbol === this.scatter.settings.displayToken.symbol;
             }
         },
         created(){
             this.displayType = DISPLAY_TYPE.TOKENS;
+            console.log('this', this.prices);
         },
         methods:{
-            formatNumber(num){
-                const toComma = x => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            formatNumber(num, commaOnly = false){
+                const toComma = x => {
+                    const [whole, decimal] = x.toString().split('.');
+                    return whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimal ? `.${decimal}` : '').toString();
+                }
+                if(commaOnly) return toComma(num);
                 return num > 999999999 ? toComma((num/1000000000).toFixed(1)) + ' Billion' :
                        num > 999999 ? toComma((num/1000000).toFixed(1)) + ' Million' :
                        num > 999 ? toComma((num/1000).toFixed(1)) + ' Thousand' : num
+            },
+            select(x){
+                if(JSON.stringify(x) === JSON.stringify(this.selected)) this.selected = null;
+                else this.selected = x;
+            },
+            setAsDisplayToken(){
+                PriceService.toggleDisplayToken(this.selected);
             }
         },
         watch:{
             displayType(){
                 this.selected = null;
                 this.selected = this.displayType === DISPLAY_TYPE.ACCOUNTS
-                    ? this.accounts[0]
-                    : this.tokens[0];
+                    ? this.filteredAccounts[0]
+                    : this.filteredTokens[0];
             },
             async selected(){
                 if(!this.selected) return;
@@ -201,6 +279,10 @@
         display:flex;
         flex-direction: row;
         background:rgba(255,255,255,0.5);
+
+        .number {
+            font-family: "Open Sans", sans-serif;
+        }
 
         .address-book {
             flex:1;
@@ -338,6 +420,35 @@
                 float:left;
                 width:100%;
 
+                .action {
+                    margin-left:10px;
+                    cursor: pointer;
+                    border-radius: 2px;
+                    border:1px solid #fff;
+                    height:50px;
+                    line-height:48px;
+                    padding:0 20px;
+                    text-align:center;
+                    font-size: 24px;
+                    color:#fff;
+                    opacity:1;
+                    visibility: visible;
+
+                    transition:all 0.2s ease;
+                    transition-property: background, border, color, opacity, margin, visibility;
+
+                    &:hover {
+                        background:#fff;
+                        border:1px solid #fff;
+                        color:$light-blue;
+                    }
+
+                    &.hide {
+                        visibility: hidden;
+                        opacity:0;
+                        margin-left:100px;
+                    }
+                }
             }
 
             .data {
@@ -346,6 +457,48 @@
                 overflow-y:auto;
                 overflow-x:hidden;
 
+                .balance-table {
+                    display:flex;
+                    flex-direction: column;
+
+                    .head, .row {
+                        flex:1;
+                        display: flex;
+                        flex-direction: row;
+
+                        figure {
+                            flex:1;
+
+                            &:not(:first-child){
+                                padding-left:10px;
+                                border-left:1px solid rgba(0,0,0,0.1);
+                            }
+                        }
+                    }
+
+                    .head {
+                        border-radius:4px;
+                        padding:7px 10px;
+                        background:rgba(0,0,0,0.05);
+                        color:rgba(0,0,0,0.5);
+                        margin-bottom:8px;
+                        font-size: 11px;
+                        font-weight: bold;
+                    }
+
+                    .row {
+                        padding:7px 10px;
+                        box-shadow:0 1px 1px rgba(0,0,0,0.3);
+                        background:#fff;
+                        margin-bottom:8px;
+                        border-radius:4px;
+                        font-size: 13px;
+                    }
+
+                    .head, .row {
+                    }
+                }
+
                 .token {
 
                     .basic-info {
@@ -353,7 +506,7 @@
                         flex-direction: row;
                         padding-bottom:20px;
                         border-bottom:1px solid rgba(0,0,0,0.1);
-                        margin-bottom:40px;
+                        margin-bottom:20px;
 
                         .icon {
                             height:80px;
