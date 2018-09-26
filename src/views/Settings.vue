@@ -56,8 +56,8 @@
     const SettingsOptions = {
         LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
         EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
-        NONCE:{ flash:false, locked:false, name:'Nonce', description:'Configure the popup nonce prefix.' },
         NETWORKS:{ flash:false, locked:false, name:'Networks', description:'Add or Remove Networks.' },
+        NONCE:{ flash:false, locked:false, name:'Nonce', description:'Configure the popup nonce prefix.' },
         PASSWORD:{ flash:false, locked:true, name:'Password', description:'Change your password or regenerate your Mnemonic.' },
         BACKUP:{ flash:false, locked:true, name:'Backup', description:'Create a backup of your Scatter.' },
         DESTROY:{ flash:false, locked:true, name:'Destroy', description:'Destroy your instance of Scatter.' },

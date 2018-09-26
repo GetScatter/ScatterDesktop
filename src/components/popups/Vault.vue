@@ -38,11 +38,11 @@
                     <i class="fa fa-refresh"></i>
                 </figure>
 
-                <figure class="show-qr" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Export Secret'" @click="exportKeypair">
+                <figure class="show-qr" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Export Secret'" @click="exporting = true">
                     <i class="fa fa-qrcode"></i>
                 </figure>
 
-                <figure class="show-qr" :class="{'show':selected && !isNew && exporting && !status}" v-tooltip="'Save QR'" @click="saveQR">
+                <figure class="show-qr" :class="{'show':selected && !isNew && exporting && exportType === EXPORT_TYPES.QR && !status}" v-tooltip="'Save QR'" @click="saveQR">
                     <i class="fa fa-save"></i>
                 </figure>
 
@@ -84,11 +84,58 @@
                     <transition name="slide-right" mode="out-in">
 
                         <!-- EXPORTING ( QR ) -->
-                        <section key="exporting" class="export" v-if="exporting">
-                            <figure class="name">{{selected.name}}</figure>
-                            <section class="qr">
-                                <img :src="exporting.qr" />
-                            </section>
+                        <section key="exporting" class="keypair" v-if="exporting">
+                            <transition name="slide-left" mode="out-in">
+                                <section key="exportselect" class="new-keypair" v-if="!exportType">
+                                    <section class="button" @click="exportType = EXPORT_TYPES.KEY;">
+                                        <figure class="name">Key</figure>
+                                        <figure class="description">Export this Secret in Key format.</figure>
+                                    </section>
+                                    <section class="button" @click="createQR">
+                                        <figure class="name">QR Code</figure>
+                                        <figure class="description">Export this Secret as an encrypted QR.</figure>
+                                    </section>
+                                </section>
+
+                                <section key="exportqr" v-if="exportType === EXPORT_TYPES.QR">
+                                    <section key="exporting" class="export">
+                                        <figure class="name">{{selected.name}}</figure>
+                                        <section class="qr">
+                                            <img :src="qr" />
+                                        </section>
+                                    </section>
+                                </section>
+
+                                <section key="exportkey" style="border-top:1px solid rgba(0,0,0,0.05); display:flex; flex:1;" v-if="exportType === EXPORT_TYPES.KEY">
+
+
+                                    <transition name="slide-left" mode="out-in">
+                                        <section key="selectkeyformat" class="keypair" v-if="!exposedPrivateKey">
+                                            <section key="exporting" class="export">
+                                                <figure class="name">Select a Key Format</figure>
+                                            </section>
+                                            <section class="accounts" style="border-top:1px solid rgba(0,0,0,0.05);">
+                                                <section class="account" v-for="(value, key) in Blockchains" @click="exportKeyFor(value)">
+                                                    <section class="info">
+                                                        <figure class="name">{{key}}</figure>
+                                                        <figure class="description">Select the {{key}} format if you want to use it for other {{key}} wallets.</figure>
+                                                    </section>
+                                                </section>
+                                            </section>
+
+                                        </section>
+
+                                        <section class="new-keypair" key="exposedkey" v-else>
+                                            <section class="button wide" @click="copyKey">
+                                                <figure class="name">Click to Copy</figure>
+                                                <figure class="description">When you click this button your key will be copied to your clipboard.</figure>
+                                            </section>
+                                        </section>
+                                    </transition>
+
+
+                                </section>
+                            </transition>
                         </section>
 
                         <!-- NOT EXPORTING -->
@@ -210,6 +257,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
 
+    import {Blockchains} from '../../models/Blockchains'
     import Keypair from '../../models/Keypair'
     import {Popup} from '../../models/popups/Popup'
 
@@ -222,6 +270,7 @@
 
     import ElectronHelpers from '../../util/ElectronHelpers';
     import IdGenerator from '../../util/IdGenerator';
+    import Crypto from '../../util/Crypto';
 
     import ExternalWallet, {EXT_WALLET_TYPES, EXT_WALLET_TYPES_ARR} from '../../models/ExternalWallet';
 
@@ -230,12 +279,18 @@
         HARDWARE:'Hardware',
     }
 
+    const EXPORT_TYPES = {
+        QR:'QR Code',
+        KEY:'Key',
+    }
+
     let saveTimeout;
     let keyTimeout;
     let hardwareTimeout;
 
     export default {
         data(){ return {
+            Blockchains:Blockchains,
             selected:null,
             publicKey:null,
             error:null,
@@ -243,7 +298,12 @@
             isNew:false,
             showingSecrets:false,
             flashingNameError:false,
+
+            EXPORT_TYPES:EXPORT_TYPES,
             exporting:null,
+            exportType:null,
+            qr:null,
+            exposedPrivateKey:null,
 
             IMPORT_TYPES:IMPORT_TYPES,
             EXT_WALLET_TYPES:EXT_WALLET_TYPES_ARR,
@@ -261,7 +321,8 @@
         },
         computed:{
             ...mapState([
-                'popups'
+                'popups',
+                'seed'
             ]),
             ...mapGetters([
                 'nextPopIn',
@@ -320,6 +381,8 @@
                 if(this.error) this.error = null;
                 if(this.status) this.status = null;
 
+                if(this.exposedPrivateKey)  return this.exposedPrivateKey = null;
+                if(this.exportType)  return this.exportType = null;
                 if(this.exporting)  return this.exporting = null;
                 if(this.importType) return this.importType = null;
                 if(this.importing)  return this.importing = false;
@@ -331,6 +394,7 @@
             },
             selectKeypair(keypair){
                 this.exporting = false;
+                this.exportType = null;
                 this.isNew = false;
                 this.selected = keypair ? keypair.clone() : null;
             },
@@ -338,10 +402,31 @@
                 this.selected = Keypair.placeholder();
                 this.isNew = true;
             },
-            async exportKeypair(){
-                this.exporting = {
-                    qr:await QRService.createQR(this.selected.privateKey)
-                };
+            async createQR(){
+                this.qr = await QRService.createQR(this.selected.privateKey);
+                this.exportType = EXPORT_TYPES.QR;
+            },
+            exportKeyFor(blockchain){
+                PopupService.push(
+                    Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
+                        placeholder:'Enter Password',
+                        type:'password'
+                    }, async password => {
+                        if(!password || !password.length) return;
+                        if(!await PasswordService.verifyPassword(password)){
+                            this.close();
+                            this.$router.push('/');
+                            return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "ban", "Okay"));
+                        }
+
+                        this.selected.decrypt(this.seed);
+                        this.exposedPrivateKey = Crypto.bufferToPrivateKey(this.selected.privateKey, blockchain);
+                    }))
+            },
+            copyKey(){
+                ElectronHelpers.copy(this.exposedPrivateKey);
+                PopupService.push(Popup.snackbar('Key copied to clipboard.'))
+                this.exposedPrivateKey = null;
             },
             async removeKeypair(){
                 PopupService.promptGuard(Popup.prompt(
@@ -388,6 +473,7 @@
                 this.isNew = false;
                 this.status = null;
                 this.exporting = null;
+                this.exportType = null;
                 this.importType = null;
                 this.importing = false;
                 this.selected = this.keypairs.find(x => x.id === this.selected.id).clone();
