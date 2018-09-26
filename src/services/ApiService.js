@@ -4,6 +4,7 @@ import {store} from '../store/store'
 import * as StoreActions from '../store/constants'
 import ObjectHelpers from '../util/ObjectHelpers'
 import Hasher from '../util/Hasher'
+import IdGenerator from '../util/IdGenerator'
 
 import {Popup} from '../models/popups/Popup';
 import PopupService from '../services/PopupService';
@@ -86,7 +87,13 @@ export default class ApiService {
             if(!request.payload.hasOwnProperty('nonce')) return resolve({id:request, result:nonceError});
             if(request.payload.nonce.length !== 12) return resolve({id:request, result:nonceError});
 
-            const data = Hasher.insecureHash(Hasher.insecureHash(request.payload.origin) + Hasher.insecureHash(request.payload.nonce));
+            // Prevention of origins being able to send data buffers to be
+            // signed by the identity which could change to a real balance holding
+            // key in the future.
+            const data = Hasher.insecureHash(
+                Hasher.insecureHash(request.payload.origin) +
+                Hasher.insecureHash(request.payload.nonce)
+            );
 
             const plugin = PluginRepository.plugin(Blockchains.EOSIO);
             const signed = await plugin.signer({data}, identity.publicKey, true);
@@ -165,7 +172,7 @@ export default class ApiService {
             let {network} = request.payload;
 
             network = Network.fromJson(network);
-            network.name = request.payload.origin;
+            network.name = request.payload.origin + IdGenerator.text(4);
 
             if(!network.isValid())
                 return resolve({id:request.id, result:new Error("bad_network", "The network being suggested is invalid")});

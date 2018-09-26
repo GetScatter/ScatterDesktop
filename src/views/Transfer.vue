@@ -79,7 +79,7 @@
                             <section class="inputs half">
                                 <label>From Account</label>
                                 <sel :selected="account"
-                                     :options="[null].concat(accounts)"
+                                     :options="[null].concat(filteredAccounts)"
                                      :parser="accountFormatter"
                                      :grouper="grouper"
                                      v-on:changed="selectAccount"></sel>
@@ -87,12 +87,19 @@
 
                             <section class="inputs third">
                                 <label>Token Type</label>
-                                <sel :selected="token"
+                                <sel :selected="token" style="width:calc(100% - 55px);"
                                      :options="filteredTokens"
-                                     :parser="t => t.name"
+                                     :parser="t => showingAll ? t.name : `${t.name} (${availableBalance(t)})`"
                                      :img-parser="t => t.logo"
                                      v-on:changed="selectToken"></sel>
+
+                                <section class="action" style="top:30px; height:49px; width:49px; line-height:48px; font-size: 24px;"
+                                         v-tooltip="showingAll ? 'Show Mainnet' : 'Show All'" @click="showingAll = !showingAll">
+                                    <i v-if="!showingAll" class="fa fa-eye"></i>
+                                    <i v-else class="fa fa-eye-slash"></i>
+                                </section>
                             </section>
+
                         </section>
                     </section>
                 </transition>
@@ -136,6 +143,7 @@
             isSimple:true,
             sending:false,
             token:null,
+            showingAll:false,
 
             account:null,
             recipient:'',
@@ -153,8 +161,21 @@
                 'contacts',
             ]),
             filteredTokens(){
-                if(!this.account) return this.tokens;
-                return this.tokens.filter(x => x.blockchain === this.account.blockchain())
+                if(this.showingAll) return this.tokens;
+                if(!this.account) return this.tokens
+                    .filter(x => PriceService.tokensFor(x).length);
+                return this.tokens
+                    .filter(x => PriceService.tokensFor(x).some(y => y.account.unique() === this.account.unique()))
+                    .filter(x => x.blockchain === this.account.blockchain())
+            },
+            filteredAccounts(){
+                if(this.showingAll) return this.accounts;
+                return this.accounts
+                    .filter(x => this.balances.hasOwnProperty(x.unique()) && this.balances[x.unique()].length)
+                    .reduce((acc,x) => {
+                        if(!acc.map(y => y.sendable()).includes(x.sendable())) acc.push(x);
+                        return acc;
+                    }, [])
             },
             isAlreadyContact(){
                 return this.contacts.find(x => x.recipient.toLowerCase() === this.recipient.toLowerCase())
@@ -165,7 +186,7 @@
         },
         methods:{
             accountFormatter(account){
-                if(account) return account.formattedWithNetwork();
+                if(account) return `${account.network().name} - ${account.sendable()}`;
                 else return 'Any account with sufficient balance'
             },
             grouper(account){
@@ -185,6 +206,11 @@
             },
             async removeContact(contact){
                 await ContactService.remove(contact);
+            },
+            availableBalance(token){
+                if(!this.account) return PriceService.tokensFor(token).reduce((acc, x) => acc += parseFloat(x.balance), 0);
+                const bal = this.balances[this.account.unique()].find(x => x.symbol === token.symbol);
+                return bal ? bal.balance : 0;
             },
 
             /***
@@ -397,7 +423,7 @@
                     transition:all 0.2s ease;
                     transition-property: background, border, color;
 
-                    &:hover {
+                    &:hover, &.active {
                         background:#fff;
                         border:1px solid #fff;
                         color:$light-blue;

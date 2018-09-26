@@ -1,6 +1,7 @@
 import 'typeface-roboto'
 import 'typeface-grand-hotel'
 import './styles.scss'
+import './tour.scss';
 
 import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';

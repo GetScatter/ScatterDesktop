@@ -197,6 +197,27 @@ export default class EOS extends Plugin {
         });
     }
 
+    async tokenInfo(token){
+        const network = await this.getEndorsedNetwork();
+        const eos = getCachedInstance(network);
+        return Promise.race([
+            new Promise(resolve => setTimeout(() => resolve(null), 500)),
+            eos.getTableRows({
+                json:true,
+                code:token.account,
+                scope:token.symbol,
+                table:'stat',
+                limit:1
+            }).then(({rows}) => {
+                if(!rows.length) return null;
+                return {
+                    maxSupply:rows[0].max_supply[0],
+                    supply:rows[0].supply.split(' ')[0],
+                };
+            }).catch(() => null)
+        ])
+    }
+
 
 
     async passThroughProvider(payload, account, network, rejector){

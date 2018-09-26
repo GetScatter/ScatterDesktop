@@ -68,23 +68,49 @@ const getters = {
         return total;
     },
 
-    totalBalance:state =>   {
+    allBalances(){
         const totals = {};
-
         Object.keys(state.balances).map(acc => {
             state.balances[acc].map(t => {
                 totals[t.symbol] = (totals[t.symbol] || 0) + parseFloat(t.balance)
             })
         });
+        return totals;
+    },
 
+    totalBalance:state =>   {
+        const displayToken = state.scatter.settings.displayToken;
+        const symbol = displayToken ? displayToken.symbol : 'USD';
+
+        const totals = {};
         let total = 0;
-        Object.keys(totals).map(key => {
-            if(state.prices.hasOwnProperty(key)){
-                total += state.prices[key].price * totals[key];
-            }
-        });
 
-        return parseFloat(total).toFixed(2);
+        if(!displayToken){
+            Object.keys(state.balances).map(acc => {
+                state.balances[acc].map(t => {
+                    totals[t.symbol] = (totals[t.symbol] || 0) + parseFloat(t.balance)
+                })
+            });
+
+            Object.keys(totals).map(key => {
+                if(state.prices.hasOwnProperty(key)){
+                    total += state.prices[key].price * totals[key];
+                }
+            });
+        }
+
+        else {
+            Object.keys(state.balances).map(acc => {
+                state.balances[acc].filter(t => t.symbol === displayToken.symbol).map(t => {
+                    total += parseFloat(t.balance)
+                    // totals[t.symbol] = (totals[t.symbol] || 0) + parseFloat(t.balance)
+                })
+            });
+        }
+
+
+
+        return [parseFloat(total).toFixed(2).toString(), symbol];
     }
 };
 

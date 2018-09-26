@@ -8,6 +8,7 @@ import Identity from '../views/Identity.vue'
 import Transfer from '../views/Transfer.vue'
 import Receive from '../views/Receive.vue'
 import Permission from '../views/Permission.vue'
+import Tokens from '../views/Tokens.vue'
 
 
 
@@ -18,6 +19,7 @@ export const RouteNames = {
     IDENTITY:'identity',
     TRANSFER:'transfer',
     RECEIVE:'receive',
+    TOKENS:'tokens',
     PERMISSION:'permission',
     ONBOARDING:'onboarding',
     SETTINGS:'settings',
@@ -32,6 +34,7 @@ const RouteViews = {
     [RouteNames.HOME]:Home,
     [RouteNames.IDENTITY]:Identity,
     [RouteNames.TRANSFER]:Transfer,
+    [RouteNames.TOKENS]:Tokens,
     [RouteNames.RECEIVE]:Receive,
     [RouteNames.PERMISSION]:Permission,
 

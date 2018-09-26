@@ -138,7 +138,7 @@
             margin-bottom: 10px;
 
             input {
-                font-size: 26px;
+                font-size: 36px;
 
                 &:focus {
                   ~ label {

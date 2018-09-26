@@ -29,6 +29,8 @@
 
 
             <popups></popups>
+
+            <v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>
         </section>
 
     </section>
@@ -39,12 +41,31 @@
     import * as Actions from '../store/constants';
     import {RouteNames, Routing} from '../vue/Routing'
     import WindowService from '../services/WindowService'
+    import PopupService from '../services/PopupService'
+    import {Popup} from '../models/popups/Popup'
 
     export default {
         data(){ return {
             routeNames:RouteNames,
             loggingIn:false,
             collapsedMenu:false,
+
+            steps: [
+                {
+                    target: '#tour1',
+                    content: `This is your <b>Vault</b> <br><b>Open it.</b>`,
+                    params: {
+                        placement: 'bottom'
+                    }
+                },
+                {
+                    target: '#tour2',
+                    content: `Now click here to add a <b>Secret</b>`,
+                    params: {
+                        placement: 'left'
+                    }
+                },
+            ],
         }},
         computed:{
             ...mapState([
@@ -61,13 +82,40 @@
             },
             route(){
                 return this.$route.name
-            }
+            },
+        },
+        created(){
+
         },
         mounted(){
 
         },
         methods:{
+            onStop(){
+                const scatter = this.scatter.clone();
+                scatter.toured = true;
+                this[Actions.SET_SCATTER](scatter);
+            },
+            checkTour(){
+                if(!this.scatter.toured && !this.onboarding && this.unlocked && this.route === 'home'){
+                    this.$tours['scatter'].start();
+                }
+            },
+            ...mapActions([
+                Actions.SET_SCATTER
+            ])
 
+        },
+        watch:{
+            unlocked(){
+                this.checkTour()
+            },
+            onboarding(){
+                this.checkTour();
+            },
+            route(){
+                this.checkTour();
+            }
         }
     }
 </script>
