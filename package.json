@@ -71,6 +71,7 @@
     "vue": "^2.5.17",
     "vue-qrcode-reader": "^1.2.2",
     "vue-router": "^3.0.1",
+    "vue-tour": "^1.0.1",
     "vuex": "^3.0.1",
     "web3": "^1.0.0-beta.36",
     "web3-provider-engine": "^14.0.6",

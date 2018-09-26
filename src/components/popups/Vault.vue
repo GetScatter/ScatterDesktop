@@ -26,7 +26,7 @@
                     </section>
                 </transition>
 
-                <figure class="add-keypair" :class="{'cancel':selected, 'hide':status, 'glow':!accounts.length}" v-tooltip="selected ? 'Go Back' : 'Add New Secret'" @click="addOrBack">
+                <figure id="tour2" class="add-keypair" :class="{'cancel':selected, 'hide':status}" v-tooltip="selected ? 'Go Back' : 'Add New Secret'" @click="addOrBack">
                     <i class="fa fa-plus"></i>
                 </figure>
 
@@ -392,6 +392,8 @@
 
             },
             addOrBack(){
+                if(this.$tours['scatter']) this.$tours['scatter'].stop();
+
                 if(this.error) this.error = null;
                 if(this.status) this.status = null;
 

@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VTooltip from 'v-tooltip'
 import VueQrcodeReader from 'vue-qrcode-reader'
+import VueTour from 'vue-tour'
+
+
 
 import VueRouter from 'vue-router'
 import {Routing} from './Routing';
@@ -65,6 +68,7 @@ export default class VueInitializer {
             defaultOffset:5
         });
         Vue.use(VueQrcodeReader);
+        Vue.use(VueTour);
     }
 
     registerComponents(components){

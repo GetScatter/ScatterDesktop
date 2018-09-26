@@ -10,7 +10,7 @@
 
                 <section class="inputs" v-if="isNewScatter">
                     <cin big="1" placeholder="Password" type="password" v-on:enter="create" :text="password" v-on:changed="changed => bind(changed, 'password')"></cin>
-                    <cin big="1" placeholder="Confirm Password" type="password" v-on:enter="create" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
+                    <cin style="margin-top:35px;" big="1" placeholder="Confirm Password" type="password" v-on:enter="create" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
                     <btn class="dropped" v-on:clicked="create" text="Create new Scatter" full="true" large="true"></btn>
                     <btn text="Import from Backup" v-on:clicked="importBackup" full="true"></btn>
                 </section>

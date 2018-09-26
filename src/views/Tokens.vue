@@ -47,7 +47,7 @@
         <!-- TRANSFER DETAILS -->
         <section class="details">
             <section class="actions">
-                <figure class="action" style="font-size:16px;" @click="setAsDisplayToken">
+                <figure class="action" :class="{'hide':!isToken}" style="font-size:16px;" @click="setAsDisplayToken">
                     {{isDisplayToken ? 'Remove as Display Token' : 'Set as Display Token'}}
                 </figure>
             </section>

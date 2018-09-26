@@ -17,6 +17,7 @@ export default class Scatter {
 
         this.nonce = 0;
         this.noncePrefix = 'nonce';
+        this.toured = false;
     }
 
     static placeholder(){ return new Scatter(); }

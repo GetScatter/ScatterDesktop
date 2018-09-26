@@ -25,7 +25,7 @@
                 <figure class="breaker"></figure>
 
                 <!-- VAULT -->
-                <figure class="action" :class="{'glow':!accounts.length}" v-tooltip="'Vault'" @click="openVault">
+                <figure id="tour1" class="action" v-tooltip="'Vault'" @click="openVault">
                     <div style="margin-top:4px;">
                         <img src="../../assets/vault.png" />
                     </div>
@@ -142,6 +142,7 @@
                 await PriceService.getBalances();
             },
             openVault(){
+                if(this.$tours['scatter']) this.$tours['scatter'].nextStep();
                 PopupService.push(Popup.vault());
             },
             tray(){
@@ -221,10 +222,6 @@
                 img {
                     width:24px;
                     height:24px;
-                }
-
-                &.glow {
-                    filter: sepia(100%) saturate(300%) brightness(20%) hue-rotate(45deg);
                 }
             }
         }
