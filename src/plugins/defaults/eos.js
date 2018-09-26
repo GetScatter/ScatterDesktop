@@ -103,12 +103,33 @@ export default class EOS extends Plugin {
     }
 
     usesResources(){ return true; }
-    async needsResources(account){
-        const data = await this.accountData(account, account.network());
 
-        // Older chains wont have this.
-        if(!data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return false;
-        return data.cpu_limit.available < 6000;
+    async getResourcesFor(account){
+        const data = await this.accountData(account, account.network());
+        if(!data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return [];
+        return [{
+            name:'CPU',
+            available:data.cpu_limit.available,
+            max:data.cpu_limit.max,
+            percentage:(data.cpu_limit.used * 100) / data.cpu_limit.max
+        },{
+            name:'NET',
+            available:data.net_limit.available,
+            max:data.net_limit.max,
+            percentage:(data.net_limit.used * 100) / data.net_limit.max
+        },{
+            name:'RAM',
+            available:data.ram_usage,
+            max:data.ram_quota,
+            percentage:((data.ram_quota - data.ram_usage) * 100) / data.ram_quota
+        }]
+    }
+
+    async needsResources(account){
+        const resources = await this.getResourcesFor(account);
+        if(!resources.length) return false;
+
+        return resources.find(x => x.name === 'CPU').available < 6000;
     }
 
     async addResources(account){

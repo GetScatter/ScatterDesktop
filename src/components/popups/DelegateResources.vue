@@ -150,8 +150,6 @@
                         return null;
                     }
 
-                    console.log('data', data);
-
                     this.accountData = data;
                     this.balance = data.core_liquid_balance;
                     if(data.hasOwnProperty('refund_request')){

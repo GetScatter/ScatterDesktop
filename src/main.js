@@ -8,6 +8,7 @@ import {Routing} from './vue/Routing';
 import * as Actions from './store/constants'
 import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
+import RadialProgressBar from 'vue-radial-progress'
 
 
 // Globals
@@ -83,6 +84,7 @@ class Main {
             {tag:'p-bar', vue:PercentageBarComponent},
             {tag:'slider', vue:SliderComponent},
             {tag:'qr-reader', vue:QrcodeReader},
+            {tag:'radial-progress', vue:RadialProgressBar},
 
             // PANELS
             {tag:'settings-language', vue:SettingsLanguage},

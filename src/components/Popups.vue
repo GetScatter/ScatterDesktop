@@ -60,8 +60,10 @@
         },
         methods:{
             clickedFader(){
-                if(this.nextPopIn)
-                    this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length-1]);
+                if(this.nextPopIn) {
+                    this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length - 1]);
+                    if(this.$tours['scatter']) this.$tours['scatter'].previousStep();
+                }
             },
             ...mapActions([
                 Actions.RELEASE_POPUP
