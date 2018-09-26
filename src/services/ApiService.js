@@ -3,15 +3,19 @@ import Action from '../models/api/Action'
 import {store} from '../store/store'
 import * as StoreActions from '../store/constants'
 import ObjectHelpers from '../util/ObjectHelpers'
+import Hasher from '../util/Hasher'
+import IdGenerator from '../util/IdGenerator'
 
 import {Popup} from '../models/popups/Popup';
 import PopupService from '../services/PopupService';
 import AccountService from '../services/AccountService';
 import PermissionService from '../services/PermissionService';
 import KeyPairService from '../services/KeyPairService';
+import ResourceService from '../services/ResourceService';
 import PluginRepository from '../plugins/PluginRepository';
 import {Blockchains} from '../models/Blockchains';
 
+import Keypair from '../models/Keypair';
 import Identity from '../models/Identity';
 import {IdentityRequiredFields} from '../models/Identity';
 import Account from '../models/Account';
@@ -79,8 +83,20 @@ export default class ApiService {
             const identity = PermissionService.identityFromPermissions(request.payload.origin);
             if(!identity) return resolve({id:request.id, result:Error.identityMissing()});
 
+            const nonceError = new Error('invalid_nonce', 'You must provide a 12 character nonce for authentication');
+            if(!request.payload.hasOwnProperty('nonce')) return resolve({id:request, result:nonceError});
+            if(request.payload.nonce.length !== 12) return resolve({id:request, result:nonceError});
+
+            // Prevention of origins being able to send data buffers to be
+            // signed by the identity which could change to a real balance holding
+            // key in the future.
+            const data = Hasher.insecureHash(
+                Hasher.insecureHash(request.payload.origin) +
+                Hasher.insecureHash(request.payload.nonce)
+            );
+
             const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-            const signed = await plugin.signer({data:request.payload.origin}, identity.publicKey, true);
+            const signed = await plugin.signer({data}, identity.publicKey, true);
             resolve({id:request.id, result:signed});
         })
     }
@@ -104,18 +120,18 @@ export default class ApiService {
      */
     static async [Actions.GET_PUBLIC_KEY](request){
         return new Promise((resolve, reject) => {
-            PopupService.push(Popup.popout(request, ({result}) => {
+            PopupService.push(Popup.popout(request, async ({result}) => {
                 if(!result) return resolve({id:request.id, result:null});
 
-                if(result.isNew){
-                    KeyPairService.saveKeyPair(result.keypair, () => {
-                        resolve({id:request.id, result:result.keypair.publicKey});
-                    });
-                }
+                const keypair = Keypair.fromJson(result.keypair);
+                const publicKey = keypair.publicKeys.find(x => x.blockchain === request.payload.blockchain).key;
 
-                else {
-                    resolve({id:request.id, result:result.keypair.publicKey});
+                if(result.isNew) {
+                    await KeyPairService.saveKeyPair(keypair);
+                    await AccountService.importAllAccounts(keypair);
+                    resolve({id:request.id, result:publicKey});
                 }
+                else resolve({id:request.id, result:publicKey});
             }));
         })
     }
@@ -128,37 +144,20 @@ export default class ApiService {
      */
     static async [Actions.LINK_ACCOUNT](request){
         return new Promise(async (resolve, reject) => {
-            PopupService.push(Popup.popout(request, async ({result}) => {
-                if(!result) return resolve({id:request.id, result:null});
+            const scatter = store.state.scatter;
+            let {publicKey, network, origin} = request.payload;
 
-                const scatter = store.state.scatter;
-                let {publicKey, account, network, origin} = request.payload;
+            network = Network.fromJson(Object.assign(network, {name:origin}));
+            if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
 
-                network = Network.fromJson(Object.assign(network, {name:origin}));
-                if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
+            const keypair = scatter.keychain.keypairs.find(x => x.publicKeys.map(x => x.key).includes(publicKey));
+            if(!keypair) return resolve({id:request.id, result:Error.noKeypair()});
 
-                const keypair = scatter.keychain.keypairs.find(x => x.publicKey === publicKey);
-                if(!keypair) return resolve({id:request.id, result:Error.noKeypair()});
+            let existingNetwork = scatter.settings.networks.find(x => x.unique() === network.unique());
+            if(!existingNetwork) return resolve({id:request.id, result:Error.noNetwork()});
 
-                let existingNetwork = scatter.settings.networks.find(x => x.unique() === network.unique());
-                if(!existingNetwork){
-                    const clone = scatter.clone();
-                    clone.settings.updateOrPushNetwork(network);
-                    await store.dispatch(StoreActions.SET_SCATTER, clone);
-                    existingNetwork = network;
-                }
-
-                account = Account.fromJson({
-                    name:account.hasOwnProperty('name') ? account.name : '',
-                    publicKey,
-                    authority:account.hasOwnProperty('authority') ? account.authority : '',
-                    networkUnique:existingNetwork.unique(),
-                    keypairUnique:keypair.unique(),
-                });
-
-                await AccountService.addAccount(account);
-                return resolve({id:request.id, result:true});
-            }));
+            await AccountService.importAllAccountsForNetwork(network);
+            return resolve({id:request.id, result:true});
         })
     }
 
@@ -168,26 +167,93 @@ export default class ApiService {
      * @returns {Promise.<void>}
      */
     static async [Actions.REQUEST_ADD_NETWORK](request){
-        return new Promise(resolve => {
+        return new Promise(async resolve => {
 
-            request.payload.network = Network.fromJson(request.payload.network);
-            request.payload.network.name = request.payload.origin;
+            let {network} = request.payload;
 
-            if(!request.payload.network.isValid())
+            network = Network.fromJson(network);
+            network.name = request.payload.origin + IdGenerator.text(4);
+
+            if(!network.isValid())
                 return resolve({id:request.id, result:new Error("bad_network", "The network being suggested is invalid")});
 
-            if(store.state.scatter.settings.networks.find(x => x.unique() === request.payload.network.unique()))
+            if(store.state.scatter.settings.networks.find(x => x.unique() === network.unique()))
                 return resolve({id:request.id, result:true});
 
+            // Applications can only add one network every 24 hours.
+            if(store.state.scatter.settings.networks.find(x => x.fromOrigin === request.payload.origin && x.createdAt > (+new Date() - ((3600 * 12)*1000))))
+                return resolve({id:request.id, result:new Error("network_timeout", "You can only add 1 network every 24 hours.")});
+
+            network.fromOrigin = request.payload.origin;
+            const scatter = store.state.scatter.clone();
+            scatter.settings.networks.push(network);
+            await store.dispatch(StoreActions.SET_SCATTER, scatter);
+            await AccountService.importAllAccountsForNetwork(network);
+
+            resolve({id:request.id, result:true});
+        })
+    }
+
+    /***
+     * Allows dapps to see if a user has an account for a specific blockchain.
+     * DOES NOT PROMPT and does not return an actual account, just a boolean.
+     * @param request
+     * @returns {Promise.<void>}
+     */
+    static async [Actions.HAS_ACCOUNT_FOR](request){
+        return new Promise(resolve => {
+            request.payload.network = Network.fromJson(request.payload.network);
+            const {network} = request.payload;
+            const {blockchain} = network;
+
+            if(!network.isValid()) return resolve({id:request.id, result:new Error("bad_network", "The network provided is invalid")});
+
+            const existingNetwork = store.state.scatter.settings.networks.find(x => x.unique() === network.unique());
+            if(!existingNetwork) return resolve({id:request.id, result:Error.noNetwork()});
+
+            resolve({id:request.id, result:!!store.state.scatter.keychain.accounts.find(x => x.blockchain() === blockchain && x.networkUnique === existingNetwork.unique())});
+        })
+    }
+
+    static async [Actions.REQUEST_TRANSFER](request){
+        return new Promise(resolve => {
+            let {to, network, amount, options} = request.payload;
+            if(!options) options = {};
+
+            network = Network.fromJson(network);
+            if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
+
+            let symbol = '';
+            if(options.hasOwnProperty('symbol')) symbol = options.symbol;
+            else {
+                // TODO: Support fork chains
+                switch(network.blockchain){
+                    case Blockchains.EOSIO: symbol = 'EOS';
+                }
+            }
+
+            let contract = '';
+            if(options.hasOwnProperty('contract')) contract = options.contract;
+            else {
+                // TODO: Support fork chains
+                switch(network.blockchain){
+                    case Blockchains.EOSIO: contract = 'eosio.token';
+                }
+            }
+
+            request.payload.memo = network.blockchain === 'eos'
+                ? options.hasOwnProperty('memo') ? options.memo : ''
+                : '';
+
+            request.payload.symbol = symbol;
+            request.payload.contract = contract;
+
             PopupService.push(Popup.popout(request, async ({result}) => {
-                if(!result) return resolve({id:request.id, result:false});
-
-
-                const scatter = store.state.scatter.clone();
-                scatter.settings.networks.push(request.payload.network);
-                store.dispatch(StoreActions.SET_SCATTER, scatter);
-
-                resolve({id:request.id, result:true});
+                if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the transfer request")});
+                const account = Account.fromJson(result.account);
+                const plugin = PluginRepository.plugin(network.blockchain);
+                const sent = await PluginRepository.plugin(network.blockchain).transfer(account, to, result.amount, network, contract, symbol, request.payload.memo, false);
+                resolve({id:request.id, result:sent})
             }));
         })
     }
@@ -212,9 +278,11 @@ export default class ApiService {
             // Blockchain specific plugin
             const plugin = PluginRepository.plugin(blockchain);
 
+            const network = Network.fromJson(payload.network);
+
             // Convert buf and abi to messages
             switch(blockchain){
-                case Blockchains.EOSIO: payload.messages = await plugin.requestParser(payload, Network.fromJson(payload.network)); break;
+                case Blockchains.EOSIO: payload.messages = await plugin.requestParser(payload, network); break;
                 case Blockchains.ETH: payload.messages = await plugin.requestParser(payload, payload.hasOwnProperty('abi') ? payload.abi : null); break;
             }
 
@@ -237,10 +305,12 @@ export default class ApiService {
                 const signatures = await Promise.all(participants.map(x => {
                     if(KeyPairService.isHardware(x.publicKey)){
                         const keypair = KeyPairService.getKeyPairFromPublicKey(x.publicKey);
-                        return keypair.external.interface.sign(x.publicKey, payload, payload.abi);
+                        return keypair.external.interface.sign(x.publicKey, payload, payload.abi, network);
                     } else return plugin.signer(payload, x.publicKey)
                 }));
+
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
+                if(signatures.length === 1 && signatures[0] === null) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
                 if(signatures.some(x => !x)) return resolve({id:request.id, result:Error.signatureError('missing_sig', 'A signature for this request was missing')});
 
                 const returnedFields = Identity.asReturnedFields(requiredFields, identity, selectedLocation);
@@ -260,6 +330,7 @@ export default class ApiService {
             PopupService.push(Popup.popout(request, async ({result}) => {
                 if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
+                if(result.needResources) await Promise.all(result.needResources.map(async account => await ResourceService.addResources(account)));
                 await PermissionService.addIdentityRequirementsPermission(origin, identity, requiredFields);
                 await PermissionService.addActionPermissions(origin, identity, participants, result.whitelists);
                 await signAndReturn(result.selectedLocation);
@@ -325,16 +396,6 @@ export default class ApiService {
                 resolve({id:request.id, result:await plugin.signer(payload, publicKey, true, isHash)});
             }));
         });
-    }
-
-    /***
-     * Tells the user that they need to update their Scatter in order to
-     * use the origin.
-     * @param request
-     * @returns {Promise.<void>}
-     */
-    static async [Actions.REQUEST_VERSION_UPDATE](request){
-
     }
 
     /***

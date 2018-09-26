@@ -10,25 +10,38 @@ import ObjectHelpers from '../../util/ObjectHelpers'
 import * as ricardianParser from 'eos-rc-parser';
 import {Popup} from '../../models/popups/Popup'
 import PopupService from '../../services/PopupService'
+import ResourceService from '../../services/ResourceService'
 import StorageService from '../../services/StorageService'
 import ApiService from '../../services/ApiService'
 import * as Actions from '../../models/api/ApiActions';
 import {store} from '../../store/store'
 
 
+let cachedInstances = {};
+const getCachedInstance = network => {
+    if(cachedInstances.hasOwnProperty(network.unique())) return cachedInstances[network.unique()];
+    else {
+        const eos = Eos({httpEndpoint:`${network.fullhost()}`, chainId:network.chainId});
+        cachedInstances[network.unique()] = eos;
+        return eos;
+    }
+}
+
+
 const getAccountsFromPublicKey = (publicKey, network) => {
     return Promise.race([
-        new Promise(resolve => setTimeout(() => resolve([]), 10000)),
+        new Promise(resolve => setTimeout(() => resolve([]), 2500)),
         new Promise((resolve, reject) => {
-            const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId});
+            const eos = getCachedInstance(network);
             eos.getKeyAccounts(publicKey).then(res => {
                 if(!res || !res.hasOwnProperty('account_names')){ resolve([]); return false; }
 
                 Promise.all(res.account_names.map(name => eos.getAccount(name).catch(e => resolve([])))).then(multires => {
                     let accounts = [];
                     multires.map(account => {
-                        account.permissions.map(permission => {
-                            accounts.push({name:account.account_name, authority:permission.perm_name});
+                        account.permissions.map(perm => {
+                            if(!!perm.required_auth.keys.find(x => x.key === publicKey))
+                                accounts.push({name:account.account_name, authority:perm.perm_name})
                         });
                     });
                     resolve(accounts)
@@ -52,6 +65,8 @@ const EXPLORERS = [
         block:id => `https://eosflare.io/block/${id}`
     }
 ];
+
+
 
 
 export default class EOS extends Plugin {
@@ -87,14 +102,33 @@ export default class EOS extends Plugin {
         return eos.getInfo({}).then(x => x.chain_id || '').catch(() => '');
     }
 
+    usesResources(){ return true; }
+    async needsResources(account){
+        const data = await this.accountData(account, account.network());
+
+        // Older chains wont have this.
+        if(!data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return false;
+        return data.cpu_limit.available < 6000;
+    }
+
+    async addResources(account){
+        const signProvider = payload => this.signer(payload, account.publicKey);
+        const network = account.network();
+        const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+        return await eos.delegatebw(account.name, account.name, '0.0000 EOS', '0.1000 EOS', 0, { authorization:[account.formatted()] })
+            .catch(error => console.error(error))
+            .then(res => res);
+    }
+
     accountsAreImported(){ return true; }
     getImportableAccounts(keypair, network){
         return new Promise((resolve, reject) => {
-            getAccountsFromPublicKey(keypair.publicKey, network).then(accounts => {
+            const publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
+            getAccountsFromPublicKey(publicKey, network).then(accounts => {
                 resolve(accounts.map(account => Account.fromJson({
                     name:account.name,
                     authority:account.authority,
-                    publicKey:keypair.publicKey,
+                    publicKey,
                     keypairUnique:keypair.unique(),
                     networkUnique:network.unique(),
                 })))
@@ -102,14 +136,22 @@ export default class EOS extends Plugin {
         })
     }
 
+    isValidRecipient(name){ return /(^[a-z1-5.]{1,11}[a-z1-5]$)|(^[a-z1-5.]{12}[a-j1-5]$)/g.test(name); }
     privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
     validPrivateKey(privateKey){ return ecc.isValidPrivate(privateKey); }
     validPublicKey(publicKey, prefix = null){ return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
+
     randomPrivateKey(){ return ecc.randomKey(); }
     conformPrivateKey(privateKey){ return privateKey.trim(); }
     convertsTo(){ return []; }
     from_eth(privateKey){
         return ecc.PrivateKey.fromHex(Buffer.from(privateKey, 'hex')).toString();
+    }
+    bufferToHexPrivate(buffer){
+        return ecc.PrivateKey.fromBuffer(new Buffer(buffer)).toString()
+    }
+    hexPrivateToBuffer(privateKey){
+        return new ecc.PrivateKey(privateKey).toBuffer();
     }
 
     actionParticipants(payload){
@@ -120,16 +162,16 @@ export default class EOS extends Plugin {
         );
     }
 
-    async accountData(account, network){
-        const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId});
+    async accountData(account){
+        const eos = getCachedInstance(account.network());
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(null), 2000)),
             eos.getAccount(account.name)
         ])
     }
 
-    async balanceFor(account, network, tokenAccount, symbol){
-        const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`, chainId:network.chainId});
+    async balanceFor(account, tokenAccount, symbol){
+        const eos = getCachedInstance(account.network());
 
         const balances = await eos.getTableRows({
             json:true,
@@ -143,12 +185,37 @@ export default class EOS extends Plugin {
         return row ? row.balance.split(" ")[0] : 0;
     }
 
+    defaultDecimals(){ return 4; }
+    defaultToken(){ return {symbol:'EOS', account:'eosio.token', name:'EOS', blockchain:Blockchains.EOSIO}; }
+
     async fetchTokens(tokens){
-        tokens.push({symbol:'EOS', account:'eosio.token', name:'EOS'});
+        tokens.push(this.defaultToken());
         const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);
         eosTokens.map(token => {
+            token.blockchain = Blockchains.EOSIO;
             if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
         });
+    }
+
+    async tokenInfo(token){
+        const network = await this.getEndorsedNetwork();
+        const eos = getCachedInstance(network);
+        return Promise.race([
+            new Promise(resolve => setTimeout(() => resolve(null), 500)),
+            eos.getTableRows({
+                json:true,
+                code:token.account,
+                scope:token.symbol,
+                table:'stat',
+                limit:1
+            }).then(({rows}) => {
+                if(!rows.length) return null;
+                return {
+                    maxSupply:rows[0].max_supply[0],
+                    supply:rows[0].supply.split(' ')[0],
+                };
+            }).catch(() => null)
+        ])
     }
 
 
@@ -157,9 +224,12 @@ export default class EOS extends Plugin {
         return new Promise(async resolve => {
             payload.messages = await this.requestParser(payload, Network.fromJson(network));
             payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+            payload.participants = [account];
+            payload.network = network;
+            payload.origin = 'Internal Scatter Transfer';
             const request = {
                 payload,
-                origin:'Internal Scatter Transfer',
+                origin:payload.origin,
                 blockchain:'eos',
                 requiredFields:{},
                 type:Actions.REQUEST_SIGNATURE,
@@ -172,10 +242,12 @@ export default class EOS extends Plugin {
                 let signature = null;
                 if(KeyPairService.isHardware(account.publicKey)){
                     const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
-                    signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi);
+                    signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi, network);
                 } else signature = await this.signer({data:payload.buf}, account.publicKey, true);
 
                 if(!signature) return rejector({error:'Could not get signature'});
+
+                if(result.needResources) await await ResourceService.addResources(account);
 
                 resolve(signature);
             }));
@@ -213,28 +285,36 @@ export default class EOS extends Plugin {
         })
     }
 
-    async transfer(account, to, amount, network, tokenAccount, symbol, memo){
+    async transfer(account, to, amount, network, tokenAccount, symbol, memo, promptForSignature = true){
         return new Promise(async (resolve, reject) => {
-            const signProvider = payload => this.passThroughProvider(payload, account, network, reject);
+            const signProvider = promptForSignature
+                ? payload => this.passThroughProvider(payload, account, network, reject)
+                : payload => this.signer(payload, account.publicKey);
 
             const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
             const contract = await eos.contract(tokenAccount);
-            resolve(await contract.transfer(account.name, to, amount, memo, { authorization:[account.formatted()] })
-                .catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
+            const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
+            resolve(await contract.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
+                .catch(error => {
+                    console.log('error', error);
+                    return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}
+                })
                 .then(result => result));
         })
     }
 
     async signer(payload, publicKey, arbitrary = false, isHash = false){
-        const privateKey = KeyPairService.publicToPrivate(publicKey);
+        let privateKey = KeyPairService.publicToPrivate(publicKey);
         if (!privateKey) return;
+
+        if(typeof privateKey !== 'string') privateKey = this.bufferToHexPrivate(privateKey);
 
         if (arbitrary && isHash) return ecc.Signature.signHash(payload.data, privateKey).toString();
         return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);
     }
 
     async requestParser(signargs, network){
-        const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId});
+        const eos = getCachedInstance(network);
 
         const contracts = signargs.transaction.actions.map(action => action.account)
             .reduce((acc, contract) => {
@@ -268,7 +348,8 @@ export default class EOS extends Plugin {
 
             let abi = abis[contractAccountName];
 
-            const data = abi.fromBuffer(action.name, action.data);
+            const typeName = abi.abi.actions.find(x => x.name === action.name).type;
+            const data = abi.fromBuffer(typeName, action.data);
             const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
             let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
 
@@ -312,7 +393,6 @@ export default class EOS extends Plugin {
 
         await eos.transaction(contractNames, contracts => {
             actions.map(action => {
-                console.log('hi', formatContract(action.contract), action.action, ...action.params);
                 try {
                     contracts[formatContract(action.contract)][action.action](...action.params, actionOptions);
                 } catch(e){

@@ -2,15 +2,17 @@ import {store} from '../store/store'
 import * as Actions from '../store/constants'
 const {remote, BrowserWindow, ipcMain, ipcRenderer} = window.require('electron');
 import WindowService from '../services/WindowService';
-import * as WindowMessageTypes from '../models/popups/WindowMessageTypes'
 import {PopupDisplayTypes, Popup} from '../models/popups/Popup';
 
 let popouts = [];
 
 export default class PopupService {
 
-    static push(popup){
+    static remove(popup){
+        store.dispatch(Actions.RELEASE_POPUP, popup);
+    }
 
+    static push(popup){
         if(store.state.popups.find(x => JSON.stringify(x.data) === JSON.stringify(popup.data)))
             return false;
 
@@ -41,7 +43,7 @@ export default class PopupService {
         popouts.push(popup);
 
         WindowService.openPopOut(
-            readyWindow => WindowService.sendAndWait(readyWindow.id, WindowMessageTypes.POPUP, {scatter, popup}).then(result => {
+            readyWindow => WindowService.sendAndWait(readyWindow.id, 'popup', {scatter, popup}).then(result => {
                 responded = true;
                 respond(result);
             }),

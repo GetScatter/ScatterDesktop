@@ -6,10 +6,10 @@
             <section class="top-section">
                 <!-- HEADER -->
                 <section class="head">
-                    <figure class="logo">S</figure>
-                    <figure class="info">
+                    <figure class="logo" v-if="selectedIdentity">S</figure>
+                    <figure class="info" v-if="selectedIdentity">
                         <figure>Login with Scatter</figure>
-                        <figure>{{pluginOrigin}} - {{payload.origin}}</figure>
+                        <figure>{{payload.origin}}</figure>
                     </figure>
                     <figure class="close" @click="returnResult(null)">
                         <i class="fa fa-times"></i>
@@ -17,7 +17,7 @@
                 </section>
 
                 <!-- REQUIREMENTS -->
-                <section class="requirements">
+                <section class="requirements" v-if="(!selectedIdentity && identityRequirements.length) || (selectedIdentity && printableAccountRequirements.length)">
                     <section v-if="!selectedIdentity">
                         <figure class="title">Identity Requirements</figure>
                         <section class="requirement">
@@ -32,7 +32,7 @@
                     </section>
                 </section>
 
-                <section class="search-bar">
+                <section class="search-bar" v-if="shouldShowSearchbar">
                     <figure class="icon"><i class="fa fa-search"></i></figure>
                     <input placeholder="Search" v-model="searchTerms" />
                 </section>
@@ -41,28 +41,43 @@
             <section class="lists">
 
                 <section class="list" v-if="!selectedIdentity || !accountRequirements.length">
-                    <section class="breadcrumbs">
-                        <figure class="breadcrumb">Select an Identity</figure>
+
+
+                    <section class="big-login">
+                        <section v-if="isValidIdentity">
+                            <figure class="logo">S</figure>
+                            <figure class="title">Do you want to log into <br><b>{{payload.origin}}</b>?</figure>
+                            <section class="item" @click="selectIdentity(identity)" style="margin:20px 0 0 0;">
+                                <figure class="title" :style="{'text-align':validAccounts.length === 1 ? 'center' : 'left'}">Login</figure>
+                                <figure class="sub-title" v-if="validAccounts.length === 1">Only one account available, it will automatically be used.</figure>
+                                <figure class="sub-title" style="text-align:left;" v-if="validAccounts.length > 1">Continue to account selection.</figure>
+                                <figure class="chevron" v-if="validAccounts.length > 1">
+                                    <i class="fa fa-chevron-right"></i>
+                                </figure>
+                            </section>
+                        </section>
+
+                        <!-- TODO: Allow to add properties to an identity from this popup -->
+                        <section v-else>
+                            <figure class="logo">S</figure>
+                            <figure class="title">Your Identity doesn't have all the requirements.</figure>
+                            <p style="font-size: 13px;">Check the panel above to see all the fields that this application is requiring.</p>
+                        </section>
                     </section>
 
-                    <section class="item" v-for="identity in validIdentities" @click="selectIdentity(identity)">
-                        <figure class="title">{{identity.name}}</figure>
-                        <figure class="sub-title">{{neededProperties(identity)}}</figure>
-                        <figure class="chevron">
-                            <i class="fa fa-chevron-right"></i>
-                        </figure>
-                    </section>
+
+
+
                 </section>
 
                 <section class="list" v-if="selectedIdentity && accountRequirements.length">
                     <section class="breadcrumbs">
-                        <figure class="breadcrumb button" @click="backToIdentities">Back</figure>
-                        <figure class="breadcrumb">Select an Account</figure>
+
                     </section>
 
                     <section class="item" v-for="account in validAccounts" @click="selectAccount(account)">
                         <figure class="title">{{account.formatted()}}</figure>
-                        <figure class="sub-title">{{account.networkUnique}}</figure>
+                        <figure class="sub-title">{{account.keypair().name}}</figure>
                         <figure class="chevron">
                             <i class="fa fa-chevron-right"></i>
                         </figure>
@@ -101,8 +116,10 @@
                 'scatter'
             ]),
             ...mapGetters([
+                'identity',
                 'identities',
                 'accounts',
+                'networks',
             ]),
             validAccounts(){
                 const neededBlockchains = this.accountRequirements.map(x => x.blockchain.toLowerCase());
@@ -114,10 +131,8 @@
                     .filter(x => !alreadySelectedUniques.includes(x.unique()))
                     .filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1);
             },
-            validIdentities(){
-                return this.identities
-                    .filter(id => id.hasRequiredFields(this.fields))
-                    .filter(id => id.name.toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1);
+            isValidIdentity(){
+                return this.identity.hasRequiredFields(this.fields);
             },
             fields(){
                 return IdentityRequiredFields.fromJson(this.payload.fields);
@@ -129,7 +144,10 @@
                 return this.fields.accounts || [];
             },
             printableAccountRequirements(){
-                return this.accountRequirements.map(x => `${Network.fromJson(x).unique().replace('chain:','').substr(0, 14)}...`).join(' / ')
+                return this.accountRequirements.map(x => this.networks.find(x => x.chainId === x.chainId).name).join(' / ')
+            },
+            shouldShowSearchbar(){
+                return this.selectedIdentity && this.validAccounts.length > 1;
             }
         },
         mounted(){
@@ -151,6 +169,8 @@
 
                 this.searchTerms = '';
                 this.selectedIdentity = identity;
+
+                if(this.validAccounts.length === 1) this.selectAccount(this.validAccounts[0]);
             },
             selectAccount(account){
                 this.selectedAccounts.push(account);
@@ -183,19 +203,36 @@
     }
 
     .popup {
-        background:$very-light-blue;
+        background:#fff;
         width:440px;
         height:560px;
         display: flex;
         flex-flow: column;
+
+
 
         .top-section {
             flex: 0 1 auto;
         }
 
         .head, .requirements, .search-bar {
-            background:#fff;
+            background: #fff;
             margin-bottom:1px;
+        }
+
+        .logo {
+            line-height: 85px;
+            height:80px;
+            width:80px;
+            background:$light-blue;
+            color:#fff;
+            font-family: 'Grand Hotel', sans-serif;
+            font-size:60px;
+            border-radius:50%;
+            text-align:center;
+            padding-right: 1px;
+            display:inline-block;
+            margin-bottom:40px;
         }
 
         .head {
@@ -203,18 +240,15 @@
             padding:20px;
             overflow: hidden;
 
+
+
             .logo {
                 line-height: 40px;
-                height:36px;
-                width:36px;
-                background:$light-blue;
-                color:#fff;
-                font-family: 'Grand Hotel', sans-serif;
-                font-size:24px;
-                border-radius:50%;
-                text-align:center;
+                height:35px;
+                width:35px;
+                margin-bottom:0;
+                font-size: 28px;
                 float:left;
-                padding-right: 1px;
             }
 
             .info {
@@ -259,18 +293,19 @@
 
         .requirements {
             padding:15px 20px;
+            background:$light-blue;
 
             .title {
                 font-size:11px;
                 font-style: italic;
                 font-weight: 600;
-                color:$medium-grey;
+                color:#fff;
             }
 
             .requirement {
                 font-size:13px;
                 font-weight: 600;
-                color:$dark-grey;
+                color:#fff;
                 margin-top:5px;
             }
         }
@@ -278,13 +313,16 @@
         .search-bar {
             padding:10px 20px;
             overflow: hidden;
+            background:$light-blue;
+            margin-top:-1px;
+            border-top:1px solid rgba(0,0,0,0.1);
 
             .icon {
                 width:20px;
                 float:left;
                 font-size:11px;
-                color:$medium-grey;
                 padding-top:2px;
+                color:#fff;
             }
 
             input {
@@ -294,7 +332,14 @@
                 outline:0;
                 border:0;
                 font-size:11px;
-                color:$medium-grey;
+                background:transparent;
+                color:#fff;
+
+                $placeholdercolor:#fff;
+                &::-webkit-input-placeholder { color: $placeholdercolor; }
+                &::-moz-placeholder { color: $placeholdercolor; }
+                &:-ms-input-placeholder { color: $placeholdercolor; }
+                &:-moz-placeholder { color: $placeholdercolor; }
             }
 
         }
@@ -303,12 +348,33 @@
             position:relative;
             flex: 1 1 auto;
             overflow-y:auto;
+            display: flex;
+            flex-direction: column;
+
+            .big-login {
+                flex:1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+
+
+                padding:40px;
+                text-align:center;
+
+                .title {
+                    font-size: 24px;
+                }
+            }
 
             .list {
                 padding-bottom:30px;
                 overflow-y:auto;
                 position: relative;
                 height:100%;
+                display: flex;
+                flex-direction: column;
+                flex:1;
 
                 .breadcrumbs {
                     padding:10px 20px;
@@ -353,6 +419,7 @@
                     color:$dark-grey;
                     border-radius:4px;
                     box-shadow:0 1px 2px rgba(0,0,0,0.1);
+                    border:1px solid rgba(0,0,0,0.1);
                     transform:translateY(0px);
                     transition: box-shadow 0.2s ease, transform 0.2s ease;
                     margin-bottom:10px;

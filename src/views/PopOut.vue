@@ -1,7 +1,7 @@
 <template>
     <section class="popout">
 
-        <figure class="nonce" v-if="scatter && scatter.noncePrefix">{{`${scatter.noncePrefix}:${scatter.nonce}`}}</figure>
+        <figure class="nonce" v-if="scatter && scatter.noncePrefix && showNonce">{{`${scatter.noncePrefix}:${scatter.nonce}`}}</figure>
 
         <section v-if="windowMessage">
 
@@ -20,6 +20,8 @@
 
             <link-account v-if="popupType === apiActions.LINK_ACCOUNT" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></link-account>
 
+            <transfer-request v-if="popupType === apiActions.REQUEST_TRANSFER" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></transfer-request>
+
         </section>
 
 
@@ -34,7 +36,6 @@
 
     const { remote } = window.require('electron');
     import WindowService from '../services/WindowService'
-    import * as WindowMessageTypes from '../models/popups/WindowMessageTypes'
     import * as ApiActions from '../models/api/ApiActions';
 
     export default {
@@ -43,7 +44,7 @@
             windowMessage:null,
         }},
         mounted(){
-            WindowService.watch(WindowMessageTypes.POPUP, windowMessage => {
+            WindowService.watch('popup', windowMessage => {
                 this.windowMessage = windowMessage;
                 this[Actions.HOLD_SCATTER](Scatter.fromJson(this.windowMessage.data.scatter));
             });
@@ -55,6 +56,10 @@
             pluginOrigin(){ return this.windowMessage.data.popup.data.props.plugin },
             payload(){ return this.windowMessage.data.popup.data.props.payload },
             popupType(){ return this.windowMessage.data.popup.data.type },
+            showNonce(){
+                return this.popupType === ApiActions.REQUEST_SIGNATURE ||
+                       this.popupType === ApiActions.REQUEST_ARBITRARY_SIGNATURE
+            }
         },
         methods: {
             returnResult(result){

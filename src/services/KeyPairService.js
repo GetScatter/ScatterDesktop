@@ -2,18 +2,41 @@ import {BlockchainsArray, Blockchains} from '../models/Blockchains';
 import PluginRepository from '../plugins/PluginRepository'
 import * as Actions from '../store/constants';
 
-import Alert from '../models/alerts/Alert'
 import PopupService from '../services/PopupService'
 import {Popup} from '../models/popups/Popup'
 
+import Crypto from '../util/Crypto';
 import {store} from '../store/store';
 import Keypair from '../models/Keypair';
+import Account from '../models/Account'
 
 export default class KeyPairService {
 
     static isValidPrivateKey(keypair){
-        const plugin = PluginRepository.plugin(keypair.blockchain);
-        return plugin.validPrivateKey(keypair.privateKey);
+        let valid = false;
+        BlockchainsArray.map(blockchainKV => {
+            if(valid) return;
+            try {
+                const plugin = PluginRepository.plugin(blockchainKV.value);
+                valid = plugin.validPrivateKey(keypair.privateKey);
+            } catch(e){}
+        });
+        return valid;
+    }
+
+    static convertHexPrivateToBuffer(keypair){
+        if(typeof keypair.privateKey !== 'string') return false;
+        let buffered = false;
+        BlockchainsArray.map(blockchainKV => {
+            if(buffered) return;
+            try {
+                const plugin = PluginRepository.plugin(blockchainKV.value);
+                if(plugin.validPrivateKey(keypair.privateKey)){
+                    keypair.privateKey = plugin.hexPrivateToBuffer(keypair.privateKey);
+                    buffered = true;
+                }
+            } catch(e){}
+        });
     }
 
     /***
@@ -21,83 +44,53 @@ export default class KeyPairService {
      * @param keypair
      * @returns {Promise.<void>}
      */
-    static async makePublicKey(keypair){
+    static async makePublicKeys(keypair){
         return new Promise((resolve) => {
             setTimeout(() => {
-                if(keypair.privateKey.length < 50) {
-                    resolve(false);
-                    return false;
-                }
-
-                let publicKey = '';
+                if(keypair.isEncrypted()) return;
+                keypair.publicKeys = [];
 
                 BlockchainsArray.map(blockchainKV => {
                     try {
-                        if(!publicKey.length) {
-                            const blockchain = blockchainKV.value;
-
-                            const plugin = PluginRepository.plugin(blockchain);
-                            if (plugin && plugin.validPrivateKey(keypair.privateKey)) {
-                                publicKey = plugin.privateToPublic(keypair.privateKey, keypair.fork);
-                                keypair.blockchain = blockchain;
-                            }
-                        }
+                        const blockchain = blockchainKV.value;
+                        const plugin = PluginRepository.plugin(blockchain);
+                        let p = keypair.privateKey;
+                        if(typeof p !== 'string') p = plugin.bufferToHexPrivate(p);
+                        keypair.publicKeys.push({blockchain, key:plugin.privateToPublic(p, keypair.fork)});
                     } catch(e){}
                 });
 
-                if(publicKey) keypair.publicKey = publicKey;
                 resolve(true);
             },100)
         })
     }
 
-    static async generateKeyPair(keypair, prefix = null){
-        const plugin = PluginRepository.plugin(keypair.blockchain);
-        if(!plugin) return false;
-
-        plugin.randomPrivateKey().then(privateKey => {
-            const publicKey = plugin.privateToPublic(privateKey, prefix);
-            if(plugin.validPublicKey(publicKey, prefix) && plugin.validPrivateKey(privateKey)){
-                keypair.publicKey = publicKey;
-                keypair.privateKey = privateKey;
-            }
-        });
-
+    static async generateKeyPair(keypair){
+        keypair.privateKey = await Crypto.generatePrivateKey();
+        keypair.hash();
         return true;
     }
 
-    static saveKeyPair(keypair, callback){
+    static async saveKeyPair(keypair){
         const scatter = store.state.scatter.clone();
-
-        if(!keypair.name.length)
-            return PopupService.push(Popup.prompt('Invalid Keypair Name', 'The keypair name you have entered is invalid', 'ban', 'Okay'));
-        if(scatter.keychain.getKeyPair(keypair))
-            return PopupService.push(Popup.prompt('Keypair Exists', 'There is already a keypair with the key', 'ban', 'Okay'));
-        if(scatter.keychain.getKeyPairByName(keypair.name))
-            return PopupService.push(Popup.prompt('Keypair Exists', 'There is already a keypair with the key', 'ban', 'Okay'));
-
         scatter.keychain.keypairs.push(Keypair.fromJson(keypair));
-        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static updateKeyPair(keypair, callback){
+    static updateKeyPair(keypair){
         const scatter = store.state.scatter.clone();
-
-        if(!keypair.name.length)
-            return PopupService.push(Popup.prompt('Invalid Keypair Name', 'The keypair name you have entered is invalid', 'ban', 'Okay'));
-
         scatter.keychain.keypairs.find(x => x.unique() === keypair.unique()).name = keypair.name;
-        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static removeKeyPair(keypair, callback){
+    static async removeKeyPair(keypair){
         const scatter = store.state.scatter.clone();
         scatter.keychain.removeKeyPair(keypair);
-        store.dispatch(Actions.SET_SCATTER, scatter).then(() => callback());
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
     static getKeyPairFromPublicKey(publicKey, decrypt = false){
-        const keypair = store.state.scatter.keychain.keypairs.find(x => x.publicKey === publicKey);
+        const keypair = store.state.scatter.keychain.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
         if(keypair) {
             if(decrypt) keypair.decrypt(store.state.seed);
             return keypair;
@@ -117,16 +110,36 @@ export default class KeyPairService {
         return null;
     }
 
+    static publicToPrivate(publicKey){
+        const keypair = this.getKeyPairFromPublicKey(publicKey, true);
+        if(keypair) return keypair.privateKey;
+        return null;
+    }
+
     static isHardware(publicKey){
         const keypair = this.getKeyPairFromPublicKey(publicKey);
         if(!keypair) throw new Error('Keypair doesnt exist on keychain');
         return keypair.external !== null;
     }
 
-    static publicToPrivate(publicKey){
-        const keypair = this.getKeyPairFromPublicKey(publicKey, true);
-        if(keypair) return keypair.privateKey;
-        return null;
+    static async loadFromHardware(keypair){
+        return keypair.external.interface.getPublicKey().then(key => {
+            let isValid = false;
+
+            BlockchainsArray.map(x => {
+                if(isValid) return;
+                if(PluginRepository.plugin(x.value).validPublicKey(key)){
+                    isValid = true;
+                    keypair.external.blockchain = x.value;
+                    keypair.external.publicKey = key;
+                    keypair.publicKeys.push({blockchain:x.value, key})
+                }
+            });
+
+            return true;
+        }).catch(() => {
+            return false;
+        })
     }
     
 }

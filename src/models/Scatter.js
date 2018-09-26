@@ -11,10 +11,13 @@ export default class Scatter {
         this.meta = Meta.placeholder();
         this.keychain = Keychain.placeholder();
         this.settings = Settings.placeholder();
+        this.contacts = [];
         this.hash = Hasher.insecureHash(IdGenerator.text(2048));
+        this.bufferKeys = false;
 
         this.nonce = 0;
         this.noncePrefix = 'nonce';
+        this.toured = false;
     }
 
     static placeholder(){ return new Scatter(); }
@@ -52,8 +55,9 @@ export default class Scatter {
     }
 
     savable(seed){
+        this.keychain.keypairs.map(keypair => keypair.encrypt(seed));
+
         const clone = this.clone();
-        clone.keychain.keypairs.map(keypair => keypair.encrypt(seed));
         clone.keychain.identities.map(id => id.encrypt(seed));
 
         // Keychain is always stored encrypted.

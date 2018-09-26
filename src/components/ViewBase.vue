@@ -3,26 +3,34 @@
         <section class="router-base">
 
 
-            <section v-if="!onboarding">
-                <section v-if="hasSidebar()">
-                    <auth class="sidebar" :class="{'hidden':routeNames.LOGIN !== $route.name}"></auth>
-                    <main-menu class="sidebar" :class="{'hidden':routeNames.LOGIN === $route.name}"></main-menu>
-                </section>
-
-                <main :class="{'expanded':routeNames.LOGIN === $route.name, 'no-sidebar':!hasSidebar()}">
-
-                    <section style="background:red;"></section>
-                    <transition :name="transitionName">
-                        <router-view></router-view>
-                    </transition>
-                </main>
-            </section>
-
-            <section v-else>
+            <section v-if="onboarding">
                 <terms></terms>
             </section>
 
+            <section v-else-if="isPopout">
+                <router-view></router-view>
+            </section>
+
+            <section v-else>
+                <section class="main" v-if="unlocked">
+
+                    <overhead></overhead>
+
+                    <transition name="slide-left" mode="out-in">
+                        <router-view class="shifter" :class="{'home':route === 'home'}"></router-view>
+                    </transition>
+
+                </section>
+
+                <section v-if="!unlocked">
+                    <auth></auth>
+                </section>
+            </section>
+
+
             <popups></popups>
+
+            <v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>
         </section>
 
     </section>
@@ -31,14 +39,33 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-    import {RouteNames, RouteDepth, Routing} from '../vue/Routing'
+    import {RouteNames, Routing} from '../vue/Routing'
+    import WindowService from '../services/WindowService'
+    import PopupService from '../services/PopupService'
+    import {Popup} from '../models/popups/Popup'
 
     export default {
         data(){ return {
             routeNames:RouteNames,
-            transitionName:'',
-            menuTransitionName:'',
             loggingIn:false,
+            collapsedMenu:false,
+
+            steps: [
+                {
+                    target: '#tour1',
+                    content: `This is your <b>Vault</b> <br><b>Open it.</b>`,
+                    params: {
+                        placement: 'bottom'
+                    }
+                },
+                {
+                    target: '#tour2',
+                    content: `Now click here to add a <b>Secret</b>`,
+                    params: {
+                        placement: 'left'
+                    }
+                },
+            ],
         }},
         computed:{
             ...mapState([
@@ -48,23 +75,74 @@
                 'unlocked',
             ]),
             onboarding(){
-                return this.unlocked && !this.scatter.meta.acceptedTerms;
-            }
+                return this.scatter && this.scatter.meta && !this.scatter.meta.acceptedTerms;
+            },
+            isPopout(){
+                return this.$route.name === 'popout';
+            },
+            route(){
+                return this.$route.name
+            },
+        },
+        created(){
+
+        },
+        mounted(){
+
         },
         methods:{
-            hasSidebar(){
-                return Routing.hasSidebar(this.$route.name)
-            }
+            onStop(){
+                const scatter = this.scatter.clone();
+                scatter.toured = true;
+                this[Actions.SET_SCATTER](scatter);
+            },
+            checkTour(){
+                if(!this.scatter.toured && !this.onboarding && this.unlocked && this.route === 'home'){
+                    this.$tours['scatter'].start();
+                }
+            },
+            ...mapActions([
+                Actions.SET_SCATTER
+            ])
+
         },
-        watch: {
-            '$route' (to, from) {
-                this.transitionName = RouteDepth[to.name] < RouteDepth[from.name] ? 'slide-up' : 'slide-down'
+        watch:{
+            unlocked(){
+                this.checkTour()
+            },
+            onboarding(){
+                this.checkTour();
+            },
+            route(){
+                this.checkTour();
             }
         }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+    @import '../_variables.scss';
+
+    .main {
+        background:#f8f8f8;
+        height:100vh;
+        position: relative;
+        display:flex;
+        flex-direction: column;
+    }
+
+    .shifter {
+        position: relative;
+        flex: 1;
+        display: flex;
+
+
+        &.home {
+            flex-direction: column;
+        }
+    }
+
+
 
     .view-base {
 
@@ -101,10 +179,18 @@
         &.no-sidebar {
             width:100%;
         }
+
+        &.collapsed-menu {
+            width:calc(100% - 70px);
+        }
     }
 
     .router-base {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: 100vh;
     }
 
 

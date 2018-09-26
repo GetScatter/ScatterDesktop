@@ -1,4 +1,4 @@
-import {Blockchains} from './Blockchains';
+import {Blockchains, BlockchainsArray} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
 
 export default class Network {
@@ -10,6 +10,9 @@ export default class Network {
         this.port = _port;
         this.blockchain = blockchain;
         this.chainId = chainId.toString();
+
+        this.fromOrigin = null;
+        this.createdAt = +new Date();
     }
 
     static placeholder(){ return new Network(); }
@@ -34,7 +37,10 @@ export default class Network {
     fullhost(){ return `${this.protocol}://${this.host}${this.port ? ':' : ''}${this.port}` }
     clone(){ return Network.fromJson(JSON.parse(JSON.stringify(this))) }
     isEmpty(){ return !this.host.length; }
-    isValid(){ return (this.host.length && this.port) || this.chainId.length }
+    isValid(){
+        if(!BlockchainsArray.map(x => x.value).includes(this.blockchain)) return false;
+        return (this.host.length && this.port) || this.chainId.length
+    }
     setPort(){
         if(!this.port) this.port = 80;
         if(![80,443].includes(parseInt(this.port))) return;

@@ -1,6 +1,8 @@
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
 
+import PopupService from './PopupService';
+import {Popup} from '../models/popups/Popup'
 import Permission from '../models/Permission'
 import {IdentityRequiredFields} from '../models/Identity'
 import Error from '../models/errors/Error'
@@ -83,11 +85,6 @@ export default class PermissionService {
 
     static createActionPermission(origin, identity, accounts, whitelistData){
 
-        // const immutableActionFields = Hasher.insecureHash(Object.keys(whitelistData.fields).map(key => {
-        //     if(!whitelistData.props.includes(key)) return whitelistData.fields;
-        //     else return null;
-        // }).filter(x => x).join(','));
-
         const immutableActionFields = Permission.createImmutableFieldsHash(whitelistData.fields, whitelistData.props);
 
         const permission = Permission.fromAction(origin, identity, accounts, {
@@ -152,6 +149,7 @@ export default class PermissionService {
             PermissionService.hasActionPermission(origin, identity, accounts, message)
         );
 
+
         // Not all actions are whitelisted
         if(!whitelistedActions) return false;
 
@@ -159,6 +157,48 @@ export default class PermissionService {
         if(requiredFields.isEmpty()) return true;
 
         return PermissionService.hasIdentityRequirementsPermission(origin, identity, requiredFields);
+    }
+
+    static removeAllPermissionsFor(origin){
+        return new Promise(resolve => {
+            PopupService.push(Popup.prompt("Removing All Origin Permissions", "Are you sure?", "trash-o", "Yes", async accepted => {
+                if(!accepted) return resolve(false);
+                const scatter = store.state.scatter.clone();
+
+                const app = scatter.keychain.apps.find(x => x.origin === origin);
+                if(app) scatter.keychain.removeApp(app);
+
+                scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.origin !== origin);
+                await store.dispatch(Actions.SET_SCATTER, scatter);
+                resolve(true);
+            }, "No"))
+        })
+    }
+
+    static removeAllPermissions(){
+        return new Promise(resolve => {
+            PopupService.push(Popup.prompt("Removing All Permissions", "Are you sure?", "trash-o", "Yes", async accepted => {
+                if(!accepted) return resolve(false);
+                const scatter = store.state.scatter.clone();
+
+                scatter.keychain.apps.map(app => scatter.keychain.removeApp(app));
+                scatter.keychain.permissions = [];
+                await store.dispatch(Actions.SET_SCATTER, scatter);
+                resolve(true);
+            }, "No"))
+        })
+    }
+
+    static removePermission(permission){
+        return new Promise(resolve => {
+            PopupService.push(Popup.prompt("Removing Permission", "Are you sure?", "trash-o", "Yes", async accepted => {
+                if(!accepted) return resolve(false);
+                const scatter = store.state.scatter.clone();
+                scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.id !== permission.id);
+                await store.dispatch(Actions.SET_SCATTER, scatter);
+                resolve(true)
+            }, "No"));
+        })
     }
 
 }

@@ -6,25 +6,17 @@ export class Mnemonic {
     /***
      * Generates a mnemonic from a password
      * @param password
+     * @param salt
      * @returns {[string,string]}
      */
-    static async generateMnemonic(password) {
-        const hash = await Hasher.secureHash(password);
+    static async generateMnemonic(password, salt = null) {
+        const hash = await Hasher.secureHash(password, salt);
         let mnemonic = bip39.entropyToMnemonic(hash);
         return [mnemonic, bip39.mnemonicToSeedHex(mnemonic)];
     }
 
     static async mnemonicToSeed(mnemonic){
         return bip39.mnemonicToSeedHex(mnemonic);
-    }
-
-    /***
-     * Generates a random mnemonic
-     * @returns {[string,string]}
-     */
-    static generateDanglingMnemonic() {
-        let mnemonic = bip39.generateMnemonic();
-        return [mnemonic, bip39.mnemonicToSeedHex(mnemonic)];
     }
 }
 

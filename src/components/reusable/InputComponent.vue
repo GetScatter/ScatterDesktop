@@ -105,7 +105,7 @@
             border:0;
             height:30px;
             width:100%;
-            border-bottom:1px solid rgba(0,0,0,0.08);
+            border-bottom:1px solid rgba(0,0,0,0.2);
             position: relative;
             background:transparent;
             z-index:1;
@@ -138,7 +138,7 @@
             margin-bottom: 10px;
 
             input {
-                font-size: 26px;
+                font-size: 36px;
 
                 &:focus {
                   ~ label {

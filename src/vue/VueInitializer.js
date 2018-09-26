@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import VTooltip from 'v-tooltip'
+import VueQrcodeReader from 'vue-qrcode-reader'
+import VueTour from 'vue-tour'
+
+
 
 import VueRouter from 'vue-router'
 import {Routing} from './Routing';
@@ -8,6 +12,7 @@ import * as Actions from '../store/constants'
 import {localized} from '../localization/locales'
 import * as LANG_KEYS from '../localization/keys'
 import ElectronHelpers from '../util/ElectronHelpers'
+import PriceService from '../services/PriceService';
 
 /***
  * Sets up an instance of Vue.
@@ -23,7 +28,9 @@ export default class VueInitializer {
         this.registerComponents(components);
         const router = this.setupRouting(routes, middleware);
 
-        store.dispatch(Actions.LOAD_SCATTER).then(() => {
+        store.dispatch(Actions.LOAD_SCATTER).then(async () => {
+
+
 
             Vue.mixin({
                 data(){ return {
@@ -60,6 +67,8 @@ export default class VueInitializer {
         Vue.use(VTooltip, {
             defaultOffset:5
         });
+        Vue.use(VueQrcodeReader);
+        Vue.use(VueTour);
     }
 
     registerComponents(components){

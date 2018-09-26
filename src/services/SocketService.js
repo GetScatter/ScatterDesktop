@@ -18,8 +18,27 @@ const getNewKey = socket => new Promise((resolve, reject) => {
 
 const socketHandler = (socket) => {
 
+    // const testers = [
+    //     'connect_error',
+    //     'connect_timeout',
+    //     'error',
+    //     'disconnect',
+    //     'reconnect',
+    //     'reconnect_attempt',
+    //     'reconnecting',
+    //     'reconnect_error',
+    //     'reconnect_failed',
+    //     'ping',
+    //     'pong',
+    // ];
+    //
+    // testers.map(x => {
+    //     socket.on(x, e => console.error(x, e))
+    // });
+
+
     // TODO: Testing the event system.
-    // Events are sent to the plugins to notify them of changes
+    // Events are sent to the applications to notify them of changes
     // such as identity changes, key removals, account un-linking
     // and scatter being locked.
     // setInterval(() => {
@@ -98,24 +117,21 @@ const socketHandler = (socket) => {
         }
 
         else {
-            PopupService.push(Popup.popout(linkApp, async ({result}) => {
-                if(result) {
-                    if(request.data.appkey.indexOf('appkey:') === -1) {
-                        const newKey = await getNewKey(socket);
-                        if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return socket.emit('paired', false);
-                        addAuthorizedApp(newKey.data.appkey)
-                    } else {
-                        addAuthorizedApp();
-                    }
-                }
-                else socket.emit('paired', false);
-            }))
+            if(request.data.appkey.indexOf('appkey:') === -1){
+                const newKey = await getNewKey(socket);
+                if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return socket.emit('paired', false);
+                addAuthorizedApp(newKey.data.appkey)
+            } else {
+                PopupService.push(Popup.popout(linkApp, async ({result}) => {
+                    if(result) addAuthorizedApp();
+                    else socket.emit('paired', false);
+                }))
+            }
+
+
+
 
         }
-    });
-
-    socket.on('disconnect', () => {
-
     });
 };
 
@@ -123,8 +139,10 @@ export default class SocketService {
 
     static initialize(){
         const server = window.require('http').createServer();
-        server.listen(50005, 'localhost');
-        io = window.require('socket.io').listen(server);
+        server.listen(50005, '127.0.0.1');
+        io = window.require('socket.io').listen(server, {
+            pingTimeout:100000000000000000,
+        });
     }
 
     static open(){

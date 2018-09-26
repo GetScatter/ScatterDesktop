@@ -1,19 +1,22 @@
 import AES from 'aes-oop';
 import {Blockchains} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
+import Crypto from '../util/Crypto';
 import ExternalWallet from './ExternalWallet';
+import {store} from '../store/store';
 
 export default class Keypair {
 
     constructor(){
         this.id = IdGenerator.text(24);
-        this.blockchain = Blockchains.EOSIO;
         this.name = '';
         this.privateKey = '';
-        this.publicKey = '';
+        this.keyHash = '';
 
         this.external = null;
         this.fork = null;
+
+        this.publicKeys = [];
     }
 
     static placeholder(){ return new Keypair(); }
@@ -23,7 +26,15 @@ export default class Keypair {
         return p;
     }
 
-    unique(){ return `${this.blockchain}:${this.publicKey.toLowerCase()}`; }
+    hash(){
+        this.keyHash = Crypto.bufferToHash(this.privateKey);
+    }
+
+    accounts(){
+        return store.state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique())
+    }
+
+    unique(){ return this.id; }
     clone(){ return Keypair.fromJson(JSON.parse(JSON.stringify(this))) }
 
     static blockchain(publicKey){
@@ -36,12 +47,9 @@ export default class Keypair {
      * Checks whether a private key is encrypted
      * @returns {boolean}
      */
-    isEncrypted(){ switch(this.blockchain) {
-        // EOS private keys are 51 chars long
-        case Blockchains.EOSIO: return this.privateKey.length > 51;
-        // ETH private keys are 64 chars long
-        case Blockchains.ETH: return this.privateKey.length > 64;
-    }}
+    isEncrypted(){
+        return typeof this.privateKey === 'string' && this.privateKey.length > 100;
+    }
 
     /***
      * Encrypts this Keypair's Private Key
@@ -57,7 +65,9 @@ export default class Keypair {
      * @param seed - The seed to decrypt with
      */
     decrypt(seed){
-        if(this.isEncrypted())
+        if(this.isEncrypted()) {
             this.privateKey = AES.decrypt(this.privateKey, seed);
+            if(typeof this.privateKey === 'object' && this.privateKey.hasOwnProperty('data')) this.privateKey = this.privateKey.data;
+        }
     }
 }

@@ -24,18 +24,25 @@
 
             <section class="lists">
 
-                <section class="list" v-if="!generatingNewKeypair">
-                    <section class="breadcrumbs">
-                        <!--<figure class="breadcrumb">Generate New Key Pair</figure>-->
+                <section class="list" v-if="selectingKeypair">
+
+                    <section style="overflow: hidden; margin-top:20px;">
+                        <section class="item short" @click="generateKeypair">
+                            <figure class="title">Generate</figure>
+                            <figure class="chevron">
+                                <i class="fa fa-plus"></i>
+                            </figure>
+                        </section>
+
+                        <section class="item short" @click="toggleImportKeypair">
+                            <figure class="title">Import</figure>
+                            <figure class="chevron">
+                                <i class="fa fa-pencil"></i>
+                            </figure>
+                        </section>
                     </section>
 
-                    <section class="item" @click="toggleGenerateKeypair">
-                        <figure class="title">Generate New Keypair</figure>
-                        <!--<figure class="sub-title">If you want to create a new keypair to provide to {{payload.origin}} click here.</figure>-->
-                        <figure class="chevron">
-                            <i class="fa fa-chevron-right"></i>
-                        </figure>
-                    </section>
+
 
                     <section v-if="validPublicKeys.length">
                         <div style="margin:20px 0; background:rgba(0,0,0,0.1); width:100%; height:1px;"></div>
@@ -46,7 +53,7 @@
 
                         <section class="item" v-for="kp in validPublicKeys" @click="returnResult({keypair:kp, isNew:false})">
                             <figure class="title">{{kp.name}}</figure>
-                            <figure class="sub-title">{{kp.publicKey}}</figure>
+                            <figure class="sub-title">{{kp.publicKeys.find(x => x.blockchain === blockchain).key}}</figure>
                             <figure class="chevron">
                                 <i class="fa fa-check"></i>
                             </figure>
@@ -54,33 +61,18 @@
                     </section>
                 </section>
 
-                <section class="list" v-if="generatingNewKeypair">
+                <section class="list" v-if="importingKeypair">
                     <section class="breadcrumbs">
-                        <figure class="breadcrumb button" @click="toggleGenerateKeypair">Back</figure>
-                        <figure class="breadcrumb">Generate New Key Pair</figure>
+                        <figure class="breadcrumb button" @click="toggleImportKeypair">Back</figure>
+                        <figure class="breadcrumb">Import</figure>
                     </section>
 
                     <section style="padding:20px;">
-                        <cin :forced="keypair.name.length" placeholder="Name ( organizational )" :text="keypair.name" v-on:changed="changed => bind(changed, 'keypair.name')"></cin>
-                        <btn style="float:left;" large="true" v-on:clicked="copyKeyPair" :red="true" text="Copy Key"></btn>
-                        <btn style="float:right;" large="true" v-on:clicked="returnResult({keypair, isNew:true})" text="Send Back Key"></btn>
+                        <cin :key="id" type="password" placeholder="Account Secret" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                        <figure class="existing-key" v-if="keyExists">This key already exists in your keychain under the name "{{keyExists.name}}".</figure>
                     </section>
                 </section>
 
-                <!--<section class="list" v-if="selectedIdentity && accountRequirements.length">-->
-                    <!--<section class="breadcrumbs">-->
-                        <!--<figure class="breadcrumb button" @click="backToIdentities">Back</figure>-->
-                        <!--<figure class="breadcrumb">Select an Account</figure>-->
-                    <!--</section>-->
-
-                    <!--<section class="item" v-for="account in validAccounts" @click="selectAccount(account)">-->
-                        <!--<figure class="title">{{account.formatted()}}</figure>-->
-                        <!--<figure class="sub-title">{{account.networkUnique}}</figure>-->
-                        <!--<figure class="chevron">-->
-                            <!--<i class="fa fa-chevron-right"></i>-->
-                        <!--</figure>-->
-                    <!--</section>-->
-                <!--</section>-->
 
             </section>
         </section>
@@ -98,12 +90,15 @@
     import ElectronHelpers from '../../util/ElectronHelpers'
     import PopupService from '../../services/PopupService';
     import {Popup} from '../../models/popups/Popup'
+    import PluginRepository from '../../plugins/PluginRepository'
+    import RIDLService from '../../services/RIDLService'
 
     export default {
         data () {return {
             keypair:Keypair.placeholder(),
-            generatingNewKeypair:false,
+            importingKeypair:false,
             searchTerms:'',
+            id:Math.random()*99999 + 1
         }},
         computed:{
             ...mapState([
@@ -115,12 +110,21 @@
                 'keypairs',
             ]),
             validPublicKeys(){
-                return this.keypairs.filter(x => this.payload.blockchain === x.blockchain);
+                return this.keypairs.filter(x => x.publicKeys.find(k => this.blockchain === k.blockchain) || (x.external && x.external.blockchain === this.blockchain));
             },
+            selectingKeypair(){
+                return !this.importingKeypair
+            },
+            keyExists(){
+                return this.keypairs.find(x => x.keyHash === this.keypair.keyHash);
+            },
+            blockchain(){
+                return this.payload.blockchain;
+            }
         },
         mounted(){
             this.keypair.name = `Key For ${this.payload.origin}`;
-            this.keypair.blockchain = this.payload.blockchain;
+            this.keypair.blockchain = this.blockchain;
 
             this.checkWarning();
         },
@@ -134,19 +138,42 @@
             returnResult(result){
                 this.$emit('returned', result);
             },
-            async toggleGenerateKeypair(){
-                this.generatingNewKeypair = !this.generatingNewKeypair;
+            async generateKeypair(){
+                await KeyPairService.generateKeyPair(this.keypair);
+                await KeyPairService.makePublicKeys(this.keypair);
+                this.returnResult({keypair:this.keypair, isNew:true});
+            },
+            async toggleImportKeypair(){
+                this.importingKeypair = !this.importingKeypair;
+            },
+            async makePublicKeys(){
+                return new Promise(resolve => {
+                    if(!KeyPairService.isValidPrivateKey(this.keypair)){
+                        return resolve(false);
+                    }
 
-                if(this.generatingNewKeypair) {
-                    await KeyPairService.generateKeyPair(this.keypair);
-                }
+                    if(typeof this.keypair.privateKey === 'string')
+                        KeyPairService.convertHexPrivateToBuffer(this.keypair);
+
+                    setTimeout(async () => {
+                        await KeyPairService.makePublicKeys(this.keypair);
+                        resolve(true);
+                    }, 100)
+                })
             },
             copyKeyPair(){
-                ElectronHelpers.copy(this.keypair.privateKey);
+                ElectronHelpers.copy(this.keypair.privateKey.toString('hex'));
                 PopupService.push(Popup.snackbar("Keypair copied to clipboard!", "key"))
             },
         },
-        props:['payload', 'pluginOrigin']
+        props:['payload', 'pluginOrigin'],
+        watch:{
+            async ['keypair.privateKey'](){
+                if(await this.makePublicKeys()){
+                    this.returnResult({keypair:this.keypair, isNew:true});
+                }
+            }
+        }
     }
 </script>
 
@@ -155,6 +182,14 @@
 
     .pop-in {
         width:200px;
+    }
+
+    .existing-key {
+        width:100%;
+        padding:10px 0;
+        color:$red;
+        font-weight: bold;
+        font-size: 13px;
     }
 
     .popup {
@@ -332,6 +367,16 @@
                     transition: box-shadow 0.2s ease, transform 0.2s ease;
                     margin-bottom:10px;
                     padding-right:50px;
+
+                    &.short {
+                        padding:15px 30px;
+                        float:left;
+                        width:calc(50% - 30px);
+
+                        &:last-child {
+                            margin-left:0;
+                        }
+                    }
 
                     .title {
                         font-size:18px;

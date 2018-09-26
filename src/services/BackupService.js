@@ -31,7 +31,7 @@ export default class BackupService {
     }
 
     static async createAutoBackup(){
-        if(!store.state.scatter || store.state.scatter.settings) return;
+        if(!store.state.scatter || !store.state.scatter.settings) return;
         const strategy = store.state.scatter.settings.autoBackup;
         if(!strategy || !strategy.length || strategy === BACKUP_STRATEGIES.MANUAL) return;
 

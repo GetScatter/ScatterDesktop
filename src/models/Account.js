@@ -11,13 +11,16 @@ export default class Account {
         this.authority = '';
     }
 
+    sendable(){
+        return PluginRepository.plugin(this.blockchain()).accountsAreImported() ? this.name : this.publicKey;
+    }
+
     formatted(){
         return PluginRepository.plugin(this.blockchain()).accountFormatter(this);
     }
 
     formattedWithNetwork(){
-        const networkName = store.state.scatter.settings.networks.find(x => x.unique() === this.networkUnique).name;
-        return `${networkName} - ${this.formatted()}`;
+        return `${this.network().name} - ${this.formatted()}`;
     }
 
     network(){
@@ -29,12 +32,13 @@ export default class Account {
     }
 
     blockchain(){
-        return this.keypairUnique.split(':')[0];
+        if(!this.keypair()) return;
+        return this.keypair().publicKeys.find(x => x.key === this.publicKey).blockchain;
     }
 
     static placeholder(){ return new Account(); }
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
-    unique(){ return this.keypairUnique + this.networkUnique + this.name + this.authority; }
+    unique(){ return this.keypairUnique + this.networkUnique + this.name + this.authority + this.publicKey; }
     clone(){ return Account.fromJson(JSON.parse(JSON.stringify(this))) }
 
     asReturnable(){

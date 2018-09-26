@@ -18,6 +18,7 @@ export class Popup {
 
     dimensions(){
         if(this.data.type === ApiActions.GET_OR_REQUEST_IDENTITY)   return {width:440, height:560};
+        if(this.data.type === ApiActions.REQUEST_TRANSFER)          return {width:440, height:560};
         if(this.data.type === ApiActions.REQUEST_SIGNATURE)         return {width:1024, height:800};
         if(this.data.type === ApiActions.REQUEST_ADD_NETWORK)       return {width:440, height:360};
         if(this.data.type === ApiActions.LINK_ACCOUNT)              return {width:440, height:360};
@@ -28,13 +29,22 @@ export class Popup {
     }
 
     static prompt(title, description, icon, buttonText, callback, denyButtonText = null){
-        let params = { title, description, icon, buttonText };
-        if(denyButtonText) params = Object.assign(params, {denyButtonText});
+        let params = { title, description, icon };
+        if(buttonText) params.buttonText = buttonText;
+        if(denyButtonText) params.denyButtonText = denyButtonText;
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
+    }
+
+    static checkHardwareWalletScreen(){
+        return Popup.prompt('Check Hardware Wallet', 'Please check your hardware wallet screen.', 'eye');
     }
 
     static transactionSuccess(blockchain, tx, callback){
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
+    }
+
+    static vault(){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VAULT, {}, () => {}))
     }
 
     static textPrompt(title, description, icon, buttonText, input, callback){
@@ -88,6 +98,11 @@ export const PopupTypes = {
     PROMPT:'prompt',
     TEXT_PROMPT:'textPrompt',
     SELECTOR:'selector',
+    VAULT:'vault',
+
+
+
+
     BUY_SELL_RAM:'buySellRAM',
     DELEGATE_RESOURCES:'delegateResources',
     TX_SUCCESS:'txSuccess',

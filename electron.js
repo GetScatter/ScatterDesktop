@@ -1,6 +1,9 @@
-const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron')
+const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron');
 const path = require("path");
 const url = require("url");
+
+const Transport = require('@ledgerhq/hw-transport-node-hid');
+global.appShared = { Transport };
 
 let tray = null;
 let win = null;
@@ -96,6 +99,16 @@ app.on('ready', function () {
 //         createWindow()
 //     }
 // });
+
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+    const isLocal = url.startsWith('https://127.0.0.1');
+    if (isLocal) {
+        event.preventDefault()
+        callback(true)
+    } else {
+        callback(false)
+    }
+})
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
