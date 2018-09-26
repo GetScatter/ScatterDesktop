@@ -94,12 +94,14 @@
         },
         computed:{
             ...mapState([
-                'popups'
+                'popups',
+                'balances',
             ]),
             ...mapGetters([
-                'nextPopIn'
+
             ]),
             account(){
+                if(!this.nextPopIn) return null;
                 return this.nextPopIn.data.props.account;
             },
             pricePerKB(){
@@ -130,6 +132,9 @@
                 this[Actions.RELEASE_POPUP](this.nextPopIn);
             },
             async init(){
+                const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+                this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', 'EOS')).toString()} EOS`;
+
                 const parseAsset = asset => asset.split(' ')[0];
                 const ramInfo = await this.eos.getTableRows({
                     json:true,
@@ -144,15 +149,11 @@
 
                 this.pricePerByte = (ramInfo[0] / ramInfo[1]).toFixed(8);
 
-                PluginRepository.plugin(Blockchains.EOSIO).accountData(this.account, this.account.network()).then(data => {
+                plugin.accountData(this.account, this.account.network()).then(data => {
                     this.fetchedBalance = true;
-                    if(!data) {
-                        this.balance = 'Error getting balance';
-                        return null;
-                    }
+                    if(!data) return null;
 
                     this.accountData = data;
-                    this.balance = data.core_liquid_balance;
                 });
 
             },
@@ -193,7 +194,8 @@
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
-        }
+        },
+        props:['nextPopIn'],
     }
 </script>
 

@@ -87,17 +87,17 @@
 
 
                 <!-- KEYPAIR -->
-                <section key="key" v-if="selected" style="display:flex; flex-direction: column; flex:1;">
+                <section key="key" v-if="selected" class="flexer">
 
                     <transition name="slide-right" mode="out-in">
 
                         <!-- NOT EXPORTING -->
-                        <section key="notexporting" v-if="!exporting" style="display:flex; flex-direction: column; flex:1;">
+                        <section key="notexporting" v-if="!exporting" class="flexer">
 
                             <transition name="slide-right" mode="out-in">
 
                                 <!-- ACCOUNT DETAILS -->
-                                <section key="accountdetails" v-if="selectedAccount">
+                                <section key="accountdetails" v-if="selectedAccount" class="flexer">
                                     <section class="keypair">
 
                                         <section class="stats">
@@ -105,11 +105,13 @@
                                                 <radial-progress inner-stroke-color="#ebebeb"
                                                                  start-color="#ff4645"
                                                                  stop-color="#62d0fd"
-                                                                 :diameter="200"
+                                                                 :diameter="150"
                                                                  :total-steps="100"
                                                                  :completed-steps="resource.percentage"
-                                                                 :stroke-width="20">
-                                                    {{resource.name}} - {{resource.percentage}}
+                                                                 :stroke-width="18">
+                                                    <figure class="button" @click="moderateResource(resource)">
+                                                        Moderate <b>{{resource.name}}</b>
+                                                    </figure>
                                                 </radial-progress>
                                             </section>
                                         </section>
@@ -117,7 +119,7 @@
                                     </section>
                                 </section>
 
-                                <section key="vaultentry" v-if="!selectedAccount">
+                                <section key="vaultentry" v-if="!selectedAccount" class="flexer">
                                     <section class="keypair" :class="{'disabled':status}">
                                         <section key="keypairhead" class="head" :class="{'no-name':keyNameError}">
                                             <figure class="name">
@@ -235,7 +237,7 @@
 
 
                         <!-- EXPORTING -->
-                        <section key="exporting" v-if="exporting" style="display:flex; flex-direction: column; flex:1;">
+                        <section key="exporting" v-if="exporting" class="flexer">
                             <section class="keypair">
                                 <transition name="slide-left" mode="out-in">
 
@@ -619,6 +621,10 @@
                 this.selectedAccount = account;
                 this.resources = await ResourceService.getResourcesFor(account);
             },
+            async moderateResource(resource){
+                if(await ResourceService.moderateResource(resource, this.selectedAccount))
+                    this.resources = await ResourceService.getResourcesFor(account);
+            },
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
@@ -660,6 +666,10 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
+
+    .flexer {
+        display:flex; flex-direction: column; flex:1;
+    }
 
     .vault {
         width:500px;
@@ -1166,6 +1176,36 @@
                     transform:translateY(0px);
                     box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 4px 9px rgba(0,0,0,0.1);
                 }
+            }
+        }
+    }
+
+
+    .stats {
+        flex:1;
+        display:flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding:20px 20px 80px;
+        text-align:center;
+        border-top:1px solid rgba(0,0,0,0.1);
+
+        .stat {
+            flex:1;
+
+            .radial-progress-container {
+                display:inline-block;
+            }
+
+            .button {
+                height:110px;
+                width:110px;
+                padding:10px;
+                float:none;
+                color:$black;
+                font-size: 11px;
+                border-radius:50%;
+
             }
         }
     }

@@ -98,7 +98,7 @@
         data(){ return {
             eos:null,
             fetchedBalance:false,
-            balance:'0.0000 EOS',
+            balance:'0.0000',
             accountData:null,
             delegating:true,
             cpu:0,
@@ -112,12 +112,14 @@
         },
         computed:{
             ...mapState([
-                'popups'
+                'popups',
+                'balances'
             ]),
             ...mapGetters([
-                'nextPopIn'
+
             ]),
             account(){
+                if(!this.nextPopIn) return null;
                 return this.nextPopIn.data.props.account;
             },
             availableCPU(){
@@ -141,23 +143,26 @@
                 this[Actions.RELEASE_POPUP](this.nextPopIn);
             },
             async init(){
+                const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+                this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', 'EOS')).toString()} EOS`;
 
-                PluginRepository.plugin(Blockchains.EOSIO).accountData(this.account, this.account.network()).then(data => {
+                console.log('bal', this.balance);
+
+                plugin.accountData(this.account, this.account.network()).then(data => {
                     this.fetchedBalance = true;
 
-                    if(!data || !data.hasOwnProperty('core_liquid_balance')) {
-                        this.balance = null;
-                        return null;
-                    }
+                    if(!data || !data.hasOwnProperty('core_liquid_balance')) return null;
+
 
                     this.accountData = data;
-                    this.balance = data.core_liquid_balance;
                     if(data.hasOwnProperty('refund_request')){
                         const refund = data.refund_request;
-                        const baseFunds = parseFloat(this.balance.split(' ')[0]);
-                        const cpuRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
-                        const netRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
-                        this.balance = `${parseFloat(baseFunds + cpuRefund + netRefund).toFixed(4)} ${this.balance.split(' ')[1]}`
+                        if(refund) {
+                            const baseFunds = parseFloat(this.balance.split(' ')[0]);
+                            const cpuRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
+                            const netRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
+                            this.balance = `${parseFloat(baseFunds + cpuRefund + netRefund).toFixed(4)} ${this.balance.split(' ')[1]}`
+                        }
                     }
                 });
 
@@ -194,7 +199,8 @@
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
-        }
+        },
+        props:['nextPopIn'],
     }
 </script>
 

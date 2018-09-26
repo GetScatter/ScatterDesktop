@@ -105,8 +105,8 @@ export default class EOS extends Plugin {
     usesResources(){ return true; }
 
     async getResourcesFor(account){
-        const data = await this.accountData(account, account.network());
-        if(!data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return [];
+        const data = await this.accountData(account);
+        if(!data || !data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return [];
         return [{
             name:'CPU',
             available:data.cpu_limit.available,
@@ -123,6 +123,25 @@ export default class EOS extends Plugin {
             max:data.ram_quota,
             percentage:((data.ram_quota - data.ram_usage) * 100) / data.ram_quota
         }]
+    }
+
+    async moderateResource(resource, account){
+        return new Promise(resolve => {
+            const {name} = resource;
+
+            const returnResult = tx => {
+                if(!tx) return resolve(false);
+                PopupService.push(Popup.transactionSuccess(account.blockchain(), tx.transaction_id));
+                resolve(true);
+            }
+
+            if(['CPU', 'NET'].includes(name))
+                PopupService.push(Popup.delegateResources(account, returnResult));
+
+            if(name === 'RAM')
+                PopupService.push(Popup.buySellRAM(account, returnResult));
+
+        })
     }
 
     async needsResources(account){
