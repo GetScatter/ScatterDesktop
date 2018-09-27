@@ -63,7 +63,11 @@ export default class PriceService {
 
         //TODO: Only fetching EOS Tokens for now.
         // const accounts = store.state.scatter.keychain.accounts;
-        const accounts = store.state.scatter.keychain.accounts.filter(x => x.blockchain() === Blockchains.EOSIO);
+        const accounts = store.state.scatter.keychain.accounts.filter(x => x.blockchain() === Blockchains.EOSIO)
+            .reduce((acc, account) => {
+                if(!acc.find(x => x.sendable() === account.sendable())) acc.push(account);
+                return acc;
+            }, []);
 
         const balances = {};
         const tokens = store.state.tokens;
@@ -77,11 +81,16 @@ export default class PriceService {
             balances[account.unique()] = [];
 
             return await Promise.all(tokens.map(async token => {
-                const balance = await plugin.balanceFor(account, token.account, token.symbol);
-                if(parseFloat(balance) > 0){
-                    balances[account.unique()].push({symbol:token.symbol, balance, account:token.account, blockchain:account.blockchain()});
-                }
-                return true;
+                return Promise.race([
+                    new Promise(resolve => setTimeout(() => resolve(true), 500)),
+                    (async () => {
+                        const balance = await plugin.balanceFor(account, token.account, token.symbol);
+                        if(parseFloat(balance) > 0){
+                            balances[account.unique()].push({symbol:token.symbol, balance, account:token.account, blockchain:account.blockchain()});
+                        }
+                        return true;
+                    })()
+                ])
             }));
         }));
 
