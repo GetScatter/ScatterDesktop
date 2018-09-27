@@ -64,7 +64,7 @@ export default class ETH extends Plugin {
     accountsAreImported(){ return false; }
     isValidRecipient(address){ return this.validPublicKey(address); }
     privateToPublic(privateKey){ return ethUtil.addHexPrefix(ethUtil.privateToAddress(toBuffer(privateKey)).toString('hex')); }
-    validPrivateKey(privateKey){ return ethUtil.isValidPrivate(toBuffer(privateKey)); }
+    validPrivateKey(privateKey){ return privateKey.length === 64 && ethUtil.isValidPrivate(toBuffer(privateKey)); }
     validPublicKey(publicKey){   return ethUtil.isValidAddress(publicKey); }
     randomPrivateKey(){
         return new Promise((resolve, reject) => {

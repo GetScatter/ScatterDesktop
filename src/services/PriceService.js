@@ -12,8 +12,9 @@ let priceInterval;
 
 export default class PriceService {
 
-    static async watchPrices(){
+    static async watchPrices(enable = true){
         clearInterval(priceInterval);
+        if(!enable) return;
         return new Promise(async resolve => {
 
             const setPrices = async () => {
@@ -119,11 +120,12 @@ export default class PriceService {
         return accountBalances;
     }
 
-    static toggleDisplayToken(token){
+    static async toggleDisplayToken(token){
         const scatter = store.state.scatter.clone();
         if(!scatter.settings.displayToken) scatter.settings.displayToken = token;
         else scatter.settings.displayToken = scatter.settings.displayToken.symbol !== token.symbol ? token : null;
-        store.dispatch(Actions.SET_SCATTER, scatter);
+        await this.watchPrices(!!token);
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
 }

@@ -207,6 +207,7 @@
             },
         },
         mounted(){
+            WindowService.openTools()
             this.checkWarning();
 
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
@@ -322,7 +323,7 @@
             },
             async accepted(){
                 //TODO: Return with whitelist and selected location
-                const needResources = await ResourceService.transactionNeedsResources(this.payload.participants);
+                const needResources = this.payload.hasOwnProperty('participants') ? await ResourceService.transactionNeedsResources(this.payload.participants) : false;
                 this.returnResult({
                     whitelists:this.whitelists,
                     selectedLocation:this.selectedLocation,

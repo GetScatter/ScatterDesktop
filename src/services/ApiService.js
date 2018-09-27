@@ -378,12 +378,14 @@ export default class ApiService {
             const keypair = KeyPairService.getKeyPairFromPublicKey(publicKey);
             if(!keypair) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
+            const blockchain = keypair.publicKeys.find(x => x.key === publicKey).blockchain;
+
             // Blockchain specific plugin
             const plugin = PluginRepository.plugin(keypair.blockchain);
 
             // Convert buf and abi to messages
             payload.messages = [{
-                code:`${keypair.blockchain.toUpperCase()} Blockchain`,
+                code:`${blockchain.toUpperCase()} Blockchain`,
                 type:'Arbitrary Signature',
                 data:{
                     signing:data
