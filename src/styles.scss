@@ -208,7 +208,7 @@ a {
     transform:scale(1);
   }
   50% {
-    transform: scale(1.5);
+    transform: scale(1.3);
   }
 }
 
@@ -381,8 +381,9 @@ $speed:0.4s;
 
   max-width:600px;
   display:flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: stretch;
+  flex-wrap: wrap;
 
   .no-third {
     max-width:calc(100% - 110px) !important;
@@ -400,8 +401,9 @@ $speed:0.4s;
 
     &:nth-child(2) {
       text-align:left;
-      min-width:200px;
       padding-left:0;
+      flex:1;
+
     }
 
     &:nth-child(3) {

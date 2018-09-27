@@ -25,6 +25,12 @@ export default class ResourceService {
         });
     }
 
+    static usesResources(account){
+        account = Account.fromJson(account);
+        const plugin = PluginRepository.plugin(account.blockchain());
+        return plugin.usesResources();
+    }
+
     static async needsResources(account){
         account = Account.fromJson(account);
         const plugin = PluginRepository.plugin(account.blockchain());

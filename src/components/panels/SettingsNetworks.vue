@@ -25,7 +25,7 @@
                             <section style="display:flex;">
                                 <transition name="slide-left" mode="out-in">
                                     <section style="display:flex;" v-if="isNew">
-                                        <figure class="action red large relative" v-tooltip="'Save New Network'" @click="save">
+                                        <figure class="action red large relative" :class="{'ready glow':newNetworkReady}" v-tooltip="'Save New Network'" @click="save">
                                             <i class="fa fa-check"></i>
                                         </figure>
                                         <figure class="action red large relative" v-tooltip="'Cancel'" @click="cancelAdd">
@@ -50,7 +50,6 @@
 
 
                 <figure class="line"></figure>
-                <br><br>
 
                 <section v-if="network">
 
@@ -59,14 +58,22 @@
                          :parser="blockchain => blockchain.value.toUpperCase()"
                          v-on:changed="blockchain => network.blockchain = blockchain.value"></sel>
 
-                    <cin :disabled="!isNew" placeholder="Name ( organizational )" :text="network.name" v-on:changed="changed => bind(changed, 'network.name')"></cin>
+                    <section class="multi-inputs">
+                        <cin :disabled="!isNew" placeholder="Name ( organizational )" :text="network.name" v-on:changed="changed => bind(changed, 'network.name')"></cin>
 
-                    <cin :disabled="!isNew" placeholder="Host ( domain.com or IP )" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
-                    <cin :disabled="!isNew" placeholder="Port" type="number" :text="network.port" v-on:changed="changed => bind(changed, 'network.port')"></cin>
+                        <cin :disabled="!isNew" placeholder="Host ( domain.com or IP )" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
+                    </section>
 
-                    <swch :disabled="!isNew" first="http"
-                          second="https" :selected="network.protocol === 'http' ? 'https' : 'http'"
-                          v-on:switched="network.protocol = network.protocol === 'http' ? 'https' : 'http'"></swch>
+                    <section class="multi-inputs">
+                        <swch style="flex:0 0 auto;" :disabled="!isNew" first="http"
+                              second="https" :selected="network.protocol === 'http' ? 'https' : 'http'"
+                              v-on:switched="network.protocol = network.protocol === 'http' ? 'https' : 'http'"></swch>
+
+                        <cin :disabled="!isNew" placeholder="Port" type="number" :text="network.port" v-on:changed="changed => bind(changed, 'network.port')"></cin>
+
+                    </section>
+
+
 
                     <cin :disabled="!isNew" placeholder="Chain ID" :text="network.chainId"
                          :dynamic-button="!isNew ? null : 'chain'" dynamic-tooltip="Fetch Chain ID" v-on:dynamic="fetchChainId" v-on:changed="changed => bind(changed, 'network.chainId')"></cin>
@@ -110,6 +117,9 @@
             isNew(){
                 if(!this.network) return false;
                 return !this.networks.find(x => x.id === this.network.id);
+            },
+            newNetworkReady(){
+                return this.isNew && this.network.filledNetwork()
             }
         },
         mounted(){
@@ -144,17 +154,34 @@
                 Actions.SET_SCATTER
             ])
         },
+        watch:{
+            ['network.host'](){
+                if(this.network.host.indexOf('://') > -1) this.network.host = this.network.host.split('://')[1]
+            }
+        }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
 
+    .multi-inputs {
+        display:flex;
+
+        section {
+            &:not(:first-child){
+                flex:0 1 auto;
+                padding-left:10px;
+                border-left:1px solid rgba(0,0,0,0.1);
+            }
+        }
+    }
+
     .line {
         width:100%;
         height:1px;
         background:rgba(0,0,0,0.1);
-        margin-top:30px;
+        margin:5px 0 20px;
     }
 
     .flexer {
@@ -240,6 +267,12 @@
                         margin-top:0;
                         margin-left:10px;
                         top:0;
+                    }
+
+                    &.ready {
+                        background:$light-blue;
+                        border:1px solid $light-blue;
+                        color:#fff;
                     }
                 }
 

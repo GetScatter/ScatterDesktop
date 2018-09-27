@@ -149,7 +149,7 @@
 
                                                 <!-- PUBLIC KEYS -->
                                                 <section class="accounts" :class="{'hidden':!showingSecrets}">
-                                                    <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied ${pkey.blockchain.toUpperCase()} Share-Safe Key to Clipboard.`)">
+                                                    <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied to Clipboard.`)">
                                                         <section class="info">
                                                             <figure class="name">{{pkey.blockchain.toUpperCase()}}</figure>
                                                             <figure class="description"><i class="fa fa-user"></i> {{pkey.key}}</figure>
@@ -164,7 +164,7 @@
 
                                                 <!-- ACCOUNTS -->
                                                 <section class="accounts">
-                                                    <section class="account" v-for="account in uniqueAccounts" @click="selectAccount(account)">
+                                                    <section class="account" :class="{'static':!usesResources(account)}" v-for="account in uniqueAccounts" @click="selectAccount(account)">
                                                         <section class="info">
                                                             <figure class="name">{{account.sendable()}}</figure>
                                                             <figure class="description" v-if="account.authority.length"><i class="fa fa-id-card"></i> {{authorities(account)}}</figure>
@@ -428,6 +428,9 @@
             }
         },
         methods:{
+            usesResources(account){
+                return ResourceService.usesResources(account);
+            },
             authorities(account){
                 return this.accounts.filter(x => x.sendable() === account.sendable() && x.network().unique() === account.network().unique())
                     .map(x => x.authority).join(', ')
@@ -638,6 +641,7 @@
                 }
             },
             async selectAccount(account){
+                if(!this.usesResources(account)) return;
                 this.resources = null;
                 this.selectedAccount = account;
                 this.resources = await ResourceService.getResourcesFor(account);
