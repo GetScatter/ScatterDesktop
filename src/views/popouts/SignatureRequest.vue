@@ -7,18 +7,18 @@
                 <section class="head">
                     <figure class="logo">S</figure>
                     <figure class="info">
-                        <figure>Sign {{isArbitrarySignature ? 'an Arbitrary' : 'a' }} Transaction</figure>
-                        <figure>{{pluginOrigin}} : {{payload.origin}} {{isArbitrarySignature ? '' : `on ${network.name}`}}</figure>
+                        <figure>{{isArbitrarySignature ? 'Arbitrary Data' : 'Actions' }}</figure>
+                        <figure>{{pluginOrigin}} : {{payload.origin}} {{isArbitrarySignature ? '' : `on ${network ? network.name : ''}`}}</figure>
                     </figure>
                     <section class="buttons">
-                        <btn text="Accept" v-on:clicked="accepted"></btn>
-                        <btn red="true" text="Deny" v-on:clicked="returnResult(false)"></btn>
+                        <figure class="button red" @click="returnResult(false)"><i class="fa fa-times"></i></figure>
+                        <figure class="button" @click="accepted"><i class="fa fa-check"></i></figure>
                     </section>
                 </section>
             </section>
 
             <section class="transaction-details" ref="transactions" v-on:scroll="checkScroll" v-if="identity">
-                
+
                 <section class="below-fold" v-if="belowFold && !seenAllActions">
                     <figure class="alert">
                         {{belowFold}} more actions below.
@@ -66,37 +66,38 @@
                     </section>
                 </section>
 
-                <section class="breaker">
-                    Transaction Data Below
-                    <span class="red">( Do not accept this without reading the information below )</span>
-                </section>
+                <section class="breaker" v-if="identityRequirements.personal.length || identityRequirements.location.length"></section>
 
                 <section class="partition" :ref="`message_${index}`" v-for="(message, index) in messages">
                     <section class="action" :class="{'with-ricardian':hasRicardianContract(message), 'showing-ricardian':getAction(message, 'ricardian'),
                                                     'already-whitelisted':isPreviouslyWhitelisted(message)}">
 
-                        <section class="breadcrumbs">
-                            <figure class="breadcrumb button whitelist"
-                                    v-if="!isArbitrarySignature"
-                                    :class="{'whitelisted':!!getWhitelist(message) || isPreviouslyWhitelisted(message)}"
-                                    @click="addWhitelist(message)">
-                                <b style="">{{!!getWhitelist(message) || isPreviouslyWhitelisted(message) ? 'whitelisted' : 'whitelist'}}</b>
-                            </figure>
 
-                            <figure class="breadcrumb">{{message.code}} -> <u>{{message.type}}</u></figure>
+
+
+                        <section class="breadcrumbs" style="overflow:hidden;">
+                            <section class="key-value contract-action">
+                                <figure class="value"><span class="bubbler">{{message.code}} -> {{message.type}}</span></figure>
+                            </section>
 
                             <section class="right">
-                                <section class="switcher">
+                                <section class="switcher right">
                                     <figure class="switch" :class="{'active':isShowingJson(message)}" @click="toggleJsonDisplay(message)">json</figure>
                                     <figure class="switch" :class="{'active':!isShowingJson(message)}" @click="toggleJsonDisplay(message)">human</figure>
                                 </section>
+                                <figure class="breadcrumb button whitelist right"
+                                        v-if="!isArbitrarySignature"
+                                        :class="{'whitelisted':!!getWhitelist(message) || isPreviouslyWhitelisted(message), 'hide':isShowingJson(message)}"
+                                        @click="addWhitelist(message)">
+                                    <b style="">{{!!getWhitelist(message) || isPreviouslyWhitelisted(message) ? 'whitelisted' : 'whitelist'}}</b>
+                                </figure>
                             </section>
                         </section>
 
                         <section class="padded" v-if="!isShowingJson(message)">
                             <section class="key-value" v-for="(value,key) in message.data">
                                 <figure class="key"><b>{{key}}</b></figure>
-                                <figure class="whitelister" v-if="!!getWhitelist(message)">
+                                <figure class="whitelister" :class="{'show':!!getWhitelist(message)}">
                                     <input type="checkbox" @change="toggleWhitelistProp(getWhitelist(message), key)" />
                                 </figure>
                                 <figure class="value" v-if="typeof value === 'object'">
@@ -128,7 +129,7 @@
 
                         <section class="padded">
                             <section class="key-value">
-                                <figure class="key">{{message.type}}</figure>
+                                <figure><b>{{message.type}}</b></figure>
                                 <section class="value">
                                     <figure v-html="message.ricardian"></figure>
                                 </section>
@@ -207,6 +208,7 @@
             },
         },
         mounted(){
+            WindowService.openTools()
             this.checkWarning();
 
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
@@ -381,14 +383,14 @@
         width:100%;
         background:#333;
         border-radius:4px;
-        box-shadow:0 1px 0 #fff, 0 -1px 0 #000;
+        box-shadow:0 1px 0 #fff, 0 -1px 0 #000, inset 0 25px 150px rgba(0,0,0,0.2);
         font-size: 13px;
         font-weight: 400;
         margin-top:4px;
     }
 
     .bubbler {
-        padding:6px 10px;
+        padding:10px 20px;
         background:#fff;
         display:block;
         border-radius:4px;
@@ -411,30 +413,75 @@
         padding-bottom:25px;
 
         .key {
-            font-size:13px;
+            font-size:14px;
             font-style: italic;
+            background:rgba(0,0,0,0.1);
+            display: table;
+            padding:5px 10px 30px;
+            margin-bottom:-30px;
+            border-radius:4px;
+            box-shadow:inset 0 2px 0 rgba(0,0,0,0.1), 0 1px 1px #fff;
         }
 
         .whitelister {
             display:inline-block;
-            padding-top:3px;
+            padding-top:6px;
+            max-width:0;
+            width:100%;
+            overflow:hidden;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+            transition-property: max-width, visibility, opacity;
+
             input {
-                width:16px;
-                height:16px;
+                cursor: pointer;
+                width:22px;
+                height:22px;
+                margin-left:2px;
+            }
+
+            &.show {
+                max-width:25px;
+                visibility: visible;
+                opacity: 1;
             }
         }
 
         .value {
             margin-top:2px;
-            font-size:16px;
+            font-size:22px;
             font-weight: 600;
             display:inline-block;
             vertical-align: top;
+            margin-left:5px;
 
             pre {
                 font-family: 'Roboto', sans-serif;
                 font-size: 13px;
                 margin-top:5px;
+            }
+        }
+
+        &.contract-action {
+            padding:0;
+            margin:0;
+            width:auto;
+            float:left;
+
+            .value {
+                margin:0;
+                font-size: 18px;
+                line-height:18px;
+                background:$dark-blue;
+                border-radius:4px;
+
+                .bubbler {
+                    margin:0;
+                    background:transparent;
+                    color:#fff;
+                    box-shadow:0 -1px 0 #3382c9, 0 1px 1px #fff, inset 0 -10px 20px rgba(0,0,0,0.02);
+                }
             }
         }
     }
@@ -449,6 +496,7 @@
 
         .top-section {
             flex: 0 1 auto;
+            border-bottom:1px solid rgba(0,0,0,0.05);
         }
 
         .head {
@@ -457,32 +505,35 @@
             -webkit-app-region: drag;
             padding:20px;
             overflow: hidden;
+            width:100%;
+            text-align:center;
+            display:flex;
+            align-items: center;
 
             .logo {
-                line-height: 40px;
-                height:36px;
-                width:36px;
+                line-height: 66px;
+                padding-right:3px;
+                height:60px;
+                width:60px;
+                font-size:45px;
                 background:$light-blue;
                 color:#fff;
                 font-family: 'Grand Hotel', sans-serif;
-                font-size:24px;
                 border-radius:50%;
                 text-align:center;
-                float:left;
-                padding-right: 1px;
+                display:inline-block;
+                margin-right:20px;
             }
 
             .info {
-                float:left;
-                width:300px;
-                padding-left:20px;
                 overflow: hidden;
+                text-align:left;
+                flex:1;
 
                 figure {
-                    float:left;
 
                     &:first-child {
-                        font-size:16px;
+                        font-size:28px;
                         font-weight: 600;
                         width:100%;
                         padding-top:2px;
@@ -497,14 +548,40 @@
             }
 
             .buttons {
-                float:left;
-                width:calc(100% - 336px);
+                display:flex;
 
-                button {
-                    float:right;
-                    margin-top:0;
+
+                .button {
+                    cursor: pointer;
+                    border:2px solid $light-blue;
+                    color:$black;
+                    height:70px;
+                    width:70px;
+                    display:flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius:4px;
+                    font-size: 30px;
+                    font-weight: bold;
+
+                    &:not(:first-child){
+                        margin-left:10px;
+                    }
+
+                    &:hover {
+                        background:$light-blue;
+                        color:#fff;
+                    }
+
+                    &.red {
+                        &:hover {
+                            border:2px solid $red;
+                            background:$red;
+                            color:#fff;
+                        }
+                    }
+
                     -webkit-app-region: no-drag;
-                    margin-left:10px;
                 }
             }
         }
@@ -623,7 +700,7 @@
                     width:100%;
 
                     .breadcrumb {
-                        padding:6px 10px;
+                        padding:10px 20px;
                         font-size:11px;
                         font-style: italic;
                         font-weight: 600;
@@ -644,6 +721,17 @@
                             &.whitelist {
                                 background:$dark-blue;
                                 color:#fff;
+                                margin-right:5px;
+                                opacity:1;
+                                visibility: visible;
+                                transition: all 0.3s ease;
+                                transition-property: transform, opacity, visibility;
+
+                                &.hide {
+                                    opacity:0;
+                                    visibility: visible;
+                                    transform:translateY(-10px);
+                                }
                             }
 
                             &:hover {
@@ -673,10 +761,8 @@
                             cursor: pointer;
                             background:#ebedf3;
                             float:left;
-                            padding:0 10px;
+                            padding:10px 20px;
                             font-size:11px;
-                            height:27px;
-                            line-height:27px;
                             font-style: italic;
                             font-weight: 600;
 

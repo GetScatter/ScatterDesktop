@@ -1,8 +1,6 @@
 <template>
     <section class="popout">
 
-        <figure class="nonce" v-if="scatter && scatter.noncePrefix && showNonce">{{`${scatter.noncePrefix}:${scatter.nonce}`}}</figure>
-
         <section v-if="windowMessage">
 
             <get-identity v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"
