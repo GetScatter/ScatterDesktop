@@ -208,7 +208,6 @@
             },
         },
         mounted(){
-            WindowService.openTools()
             this.checkWarning();
 
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
