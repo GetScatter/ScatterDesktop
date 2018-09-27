@@ -69,7 +69,7 @@
                               second="https" :selected="network.protocol === 'http' ? 'https' : 'http'"
                               v-on:switched="network.protocol = network.protocol === 'http' ? 'https' : 'http'"></swch>
 
-                        <cin :disabled="!isNew" placeholder="Port" type="number" :text="network.port" v-on:changed="changed => bind(changed, 'network.port')"></cin>
+                        <cin :disabled="!isNew" placeholder="Port" type="number" :text="network.port > 0 ? network.port : ''" v-on:changed="changed => bind(changed, 'network.port')"></cin>
 
                     </section>
 
