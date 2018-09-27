@@ -145,9 +145,9 @@
             },
             async removeNetwork(){
                 this.working = true;
-                if(await NetworkService.removeNetwork(this.network)){
-                    this.network = this.networks[0];
-                }
+                if(await NetworkService.removeNetwork(this.network))
+                    setTimeout(() => this.network = this.networks[0], 250);
+
                 this.working = false;
             },
             ...mapActions([
