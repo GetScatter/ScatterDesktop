@@ -37,9 +37,9 @@ export const actions = {
 
         if(await PasswordService.verifyPassword()){
             const scatter = state.scatter.clone();
-            if(await migrate(scatter))
-                // return;
-                await dispatch(Actions.SET_SCATTER, scatter);
+            await migrate(scatter);
+            scatter.meta.regenerateVersion();
+            await dispatch(Actions.SET_SCATTER, scatter);
         }
     },
 

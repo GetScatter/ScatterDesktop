@@ -3,10 +3,10 @@ import * as Actions from '../store/constants';
 import {Blockchains, BlockchainsArray} from '../models/Blockchains';
 import PluginRepository from '../plugins/PluginRepository'
 
-const cmc = x => `https://api.coinmarketcap.com/v2/ticker/${x}/`
+const api = "https://api.get-scatter.com";
 
 // Once every 30 minutes.
-const intervalTime = 60000 * 30;
+const intervalTime = 60000 * 10;
 let priceInterval;
 
 
@@ -33,17 +33,7 @@ export default class PriceService {
     static getAll(){
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(false), 1000)),
-            fetch('https://api.coinmarketcap.com/v2/ticker/').then(x => x.json()).then(res => {
-                return Object.keys(res.data).map(key => {
-                    const token = res.data[key];
-                    const {symbol, name, quotes} = token;
-                    const price = parseFloat(quotes.USD.price).toFixed(2);
-                    return { symbol, name, price };
-                }).reduce((acc, x) => {
-                    acc[x.symbol] = x;
-                    return acc;
-                }, {});
-            })
+            fetch(api+'/v1/prices').then(x => x.json())
         ])
     }
 

@@ -134,7 +134,7 @@
         },
         methods:{
             async init(){
-                await PriceService.watchPrices(!!this.scatter.displayToken);
+                await PriceService.watchPrices(!this.scatter.displayToken);
                 await PriceService.getAllTokens();
                 this.refresh();
             },
@@ -252,7 +252,7 @@
                 cursor: pointer;
 
                 span {
-                    font-size: 13px;
+                    font-size: 18px;
                     display:block;
                     margin-top:-10px;
                     padding-left:0;
@@ -261,7 +261,7 @@
                 }
 
                 &:hover {
-                    font-size: 13px;
+                    font-size: 18px;
 
                     span {
                         font-size:48px;
