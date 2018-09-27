@@ -37,12 +37,6 @@ export default class Keypair {
     unique(){ return this.id; }
     clone(){ return Keypair.fromJson(JSON.parse(JSON.stringify(this))) }
 
-    static blockchain(publicKey){
-        if(publicKey.indexOf('EOS') !== -1) return Blockchains.EOSIO;
-        if(publicKey.indexOf('0x') !== -1 && publicKey.length === 42) return Blockchains.ETH;
-        return null;
-    }
-
     /***
      * Checks whether a private key is encrypted
      * @returns {boolean}

@@ -6,50 +6,63 @@
             <section class="head">
 
                 <transition name="fade" mode="out-in">
-                    <section key="noerror" v-if="!status && !error">
+
+                    <!-- TITLE HEAD -->
+                    <section key="noerror" v-if="!status && !error && !selectedAccount">
                         <figure class="title">Vault</figure>
-                        <figure class="description">
-                            View and manage all your Secrets
-                        </figure>
+                        <figure class="description">View and manage all your Secrets</figure>
                     </section>
+
+                    <!-- ACCOUNT HEAD -->
+                    <section key="account" v-if="!status && !error && selectedAccount">
+                        <figure class="title">{{selectedAccount.blockchain().toUpperCase()}}</figure>
+                        <figure class="description">{{selectedAccount.sendable()}}</figure>
+                    </section>
+
+                    <!-- ERROR -->
                     <section key="error" v-if="!status && error" class="error">
                         <figure class="title">Error</figure>
-                        <figure class="description">
-                            {{error}}
-                        </figure>
+                        <figure class="description">{{error}}</figure>
                     </section>
+
+                    <!-- STATUS -->
                     <section key="status" v-if="status" class="status">
                         <figure class="title">Status</figure>
-                        <figure class="description">
-                            {{status}}
-                        </figure>
+                        <figure class="description">{{status}}</figure>
                     </section>
                 </transition>
 
+                <!-- ADD OR BACK -->
                 <figure id="tour2" class="add-keypair" :class="{'cancel':selected, 'hide':status}" v-tooltip="selected ? 'Go Back' : 'Add New Secret'" @click="addOrBack">
                     <i class="fa fa-plus"></i>
                 </figure>
 
+                <!-- REMOVE -->
                 <figure class="remove-keypair" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Remove'" @click="removeKeypair">
                     <i class="fa fa-ban"></i>
                 </figure>
 
+                <!-- REFRESH ACCOUNTS -->
                 <figure class="refresh-accounts" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Refresh Linked Accounts'" @click="refreshAccounts">
                     <i class="fa fa-refresh"></i>
                 </figure>
 
+                <!-- EXPORT SECRET -->
                 <figure class="show-qr" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Export Secret'" @click="exporting = true">
                     <i class="fa fa-key"></i>
                 </figure>
 
+                <!-- SAVE QR CODE -->
                 <figure class="show-qr" :class="{'show':selected && !isNew && exporting && exportType === EXPORT_TYPES.QR && !status}" v-tooltip="'Save QR'" @click="saveQR">
                     <i class="fa fa-save"></i>
                 </figure>
 
+                <!-- SCAN QR CODE -->
                 <figure class="show-cam" :class="{'show':importType === IMPORT_TYPES.TEXT && !status && !camera}" v-tooltip="'Scan QR Code'" @click="camera = true">
                     <i class="fa fa-qrcode"></i>
                 </figure>
 
+                <!-- ENTER PRIVATE KEY MANUALLY -->
                 <figure class="show-cam" :class="{'show':importType === IMPORT_TYPES.TEXT && !status && camera}" v-tooltip="'Enter Manually'" @click="camera = false">
                     <i class="fa fa-asterisk"></i>
                 </figure>
@@ -64,6 +77,7 @@
                         <input placeholder="Search..." />
                     </section>
 
+                    <!-- KEYPAIRS -->
                     <section class="accounts scroller">
                         <section class="account" v-for="keypair in keypairs" @click="selectKeypair(keypair)">
                             <section class="info">
@@ -79,125 +93,175 @@
 
 
                 <!-- KEYPAIR -->
-                <section key="key" v-if="selected" style="display:flex; flex-direction: column; flex:1;">
+                <section key="key" v-if="selected" class="flexer">
 
                     <transition name="slide-right" mode="out-in">
 
                         <!-- NOT EXPORTING -->
-                        <section key="notexporting" v-if="!exporting" style="display:flex; flex-direction: column; flex:1;">
+                        <section key="notexporting" v-if="!exporting" class="flexer">
 
-                            <section class="keypair" :class="{'disabled':status}">
-                                <section key="keypairhead" class="head" :class="{'no-name':keyNameError}">
-                                    <figure class="name">
-                                        <input placeholder="Name this Secret" v-model="selected.name" />
-                                    </figure>
+                            <transition name="slide-right" mode="out-in">
 
-                                    <transition name="slide-left" mode="out-in">
-                                        <figure key="named" class="description" v-if="!keyNameError">Click name to change it.</figure>
-                                        <figure key="noname" class="description" v-else>{{keyNameError}}</figure>
-                                    </transition>
+                                <!-- ACCOUNT DETAILS -->
+                                <section key="accountdetails" v-if="selectedAccount" class="flexer">
+                                    <section class="keypair">
+
+                                        <section class="stats">
+                                            <section class="stat" v-for="resource in resources">
+                                                <radial-progress inner-stroke-color="#eee"
+                                                                 start-color="#ff4645"
+                                                                 stop-color="#ff4645"
+                                                                 :diameter="130"
+                                                                 :total-steps="100"
+                                                                 :completed-steps="resource.percentage"
+                                                                 :stroke-width="18">
+                                                    <figure class="button" @click="moderateResource(resource)">
+                                                        <i class="fa fa-exclamation-triangle" v-if="resource.percentage > 80"></i>
+                                                        Moderate <b>{{resource.name}}</b>
+                                                    </figure>
+                                                </radial-progress>
+                                                <figure class="percentage" :class="{'warning':resource.percentage > 80}">
+                                                    {{parseFloat(resource.percentage).toFixed(2)}}%
+                                                </figure>
+                                            </section>
+                                        </section>
+
+                                    </section>
+                                </section>
+
+                                <section key="vaultentry" v-if="!selectedAccount" class="flexer">
+                                    <section class="keypair" :class="{'disabled':status}">
+                                        <section key="keypairhead" class="head" :class="{'no-name':keyNameError}">
+                                            <figure class="name">
+                                                <input placeholder="Name this Secret" v-model="selected.name" />
+                                            </figure>
+
+                                            <transition name="slide-left" mode="out-in">
+                                                <figure key="named" class="description" v-if="!keyNameError">Click name to change it.</figure>
+                                                <figure key="noname" class="description" v-else>{{keyNameError}}</figure>
+                                            </transition>
+                                        </section>
+
+
+                                        <!-- EXISTING KEY -->
+                                        <transition name="slide-left" mode="out-in">
+                                            <section key="showkey" v-if="!isNew" class="scroller">
+
+                                                <!-- PUBLIC KEYS -->
+                                                <section class="accounts" :class="{'hidden':!showingSecrets}">
+                                                    <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied to Clipboard.`)">
+                                                        <section class="info">
+                                                            <figure class="name">{{pkey.blockchain.toUpperCase()}}</figure>
+                                                            <figure class="description"><i class="fa fa-user"></i> {{pkey.key}}</figure>
+                                                        </section>
+                                                    </section>
+                                                </section>
+
+                                                <!-- PUBLIC KEYS LIST TOGGLER -->
+                                                <section class="breaker" @click="showingSecrets = !showingSecrets">
+                                                    {{showingSecrets ? 'Collapse' : 'Expand'}}
+                                                </section>
+
+                                                <!-- ACCOUNTS -->
+                                                <section class="accounts">
+                                                    <section class="account" :class="{'static':!usesResources(account)}" v-for="account in uniqueAccounts" @click="selectAccount(account)">
+                                                        <section class="info">
+                                                            <figure class="name">{{account.sendable()}}</figure>
+                                                            <figure class="description" v-if="account.authority.length"><i class="fa fa-id-card"></i> {{authorities(account)}}</figure>
+                                                            <figure class="description"><i class="fa fa-globe"></i> {{account.network().name}}</figure>
+                                                        </section>
+                                                    </section>
+                                                </section>
+                                            </section>
+
+                                            <!-- NEW KEY -->
+                                            <section key="newkeypair" v-if="isNew && !importing" class="new-keypair">
+                                                <!-- GENERATE NEW KEY -->
+                                                <section class="button" @click="generateKey">
+                                                    <figure class="name">Generate</figure>
+                                                    <figure class="description">Click here if you need to generate a brand new Secret.</figure>
+                                                </section>
+
+                                                <!-- GO TO IMPORT SCREEN -->
+                                                <section class="button" @click="importing = true;">
+                                                    <figure class="name">Import</figure>
+                                                    <figure class="description">Click here if you want to import a Secret from text or hardware.</figure>
+                                                </section>
+                                            </section>
+
+                                            <!-- IMPORTING -->
+                                            <section key="importing" v-if="isNew && importing && !importType" class="new-keypair">
+                                                <!-- SELECT TEXTUAL/QR IMPORT -->
+                                                <section class="button" @click="importType = IMPORT_TYPES.TEXT;">
+                                                    <figure class="name">Text or QR</figure>
+                                                    <figure class="description">Click here to type, paste or scan your Secret in.</figure>
+                                                </section>
+
+                                                <!-- SELECT HARDWARE IMPORT -->
+                                                <section class="button" @click="importType = IMPORT_TYPES.HARDWARE;">
+                                                    <figure class="name">Hardware</figure>
+                                                    <figure class="description">Click here to use a hardware device.</figure>
+                                                </section>
+                                            </section>
+
+                                            <!-- IMPORTING TEXT OR QR -->
+                                            <section key="import-text" v-if="importType === IMPORT_TYPES.TEXT" class="scroller">
+                                                <transition name="slide-right" mode="out-in">
+                                                    <qr-reader key="qrreader" v-if="camera" @decode="qrScanned"></qr-reader>
+
+                                                    <section v-if="!camera" key="inputsecret" class="input-keypair">
+                                                        <section class="inputs">
+                                                            <label><i class="fa fa-key"></i> Enter a Secret</label>
+                                                            <input v-model="selected.privateKey" type="password" />
+                                                        </section>
+                                                    </section>
+                                                </transition>
+                                            </section>
+
+                                            <!-- IMPORTING HARDWARE -->
+                                            <section key="import-text" v-if="importType === IMPORT_TYPES.HARDWARE" class="import-hardware">
+                                                <sel :selected="selected.external.type" v-if="selected.external"
+                                                     :options="EXT_WALLET_TYPES" v-on:changed="(x) => hardwareType = x"></sel>
+
+                                                <transition name="slide-left" mode="out-in">
+                                                    <section key="getpublickey" v-if="hardwareReady" class="button wide" @click="importKeyFromHardware">
+                                                        <figure class="name">Link Hardware</figure>
+                                                        <figure class="description">This will link this hardware account to you Scatter.</figure>
+                                                    </section>
+
+                                                    <section key="loadinghardware" class="loading" v-else>
+                                                        <i class="fa fa-hourglass-o fa-spin"></i>
+                                                    </section>
+                                                </transition>
+
+                                            </section>
+                                        </transition>
+                                    </section>
+
                                 </section>
 
 
-                                <!-- EXISTING KEY -->
-                                <transition name="slide-left" mode="out-in">
-                                    <section key="showkey" v-if="!isNew" class="scroller">
+                            </transition>
 
-                                        <section class="accounts" :class="{'hidden':!showingSecrets}">
-                                            <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied ${pkey.blockchain.toUpperCase()} Share-Safe Key to Clipboard.`)">
-                                                <section class="info">
-                                                    <figure class="name">{{pkey.blockchain.toUpperCase()}}</figure>
-                                                    <figure class="description"><i class="fa fa-user"></i> {{pkey.key}}</figure>
-                                                </section>
-                                            </section>
-                                        </section>
-
-                                        <section class="breaker" @click="showingSecrets = !showingSecrets">
-                                            {{showingSecrets ? 'Collapse' : 'Expand'}}
-                                        </section>
-
-                                        <section class="accounts">
-                                            <section class="account" v-for="account in selected.accounts()">
-                                                <section class="info">
-                                                    <figure class="name">{{account.formatted()}}</figure>
-                                                    <figure class="description"><i class="fa fa-globe"></i> {{account.network().name}}</figure>
-                                                </section>
-                                            </section>
-                                        </section>
-                                    </section>
-
-                                    <!-- NEW KEY -->
-                                    <section key="newkeypair" v-if="isNew && !importing" class="new-keypair">
-                                        <section class="button" @click="generateKey">
-                                            <figure class="name">Generate</figure>
-                                            <figure class="description">Click here if you need to generate a brand new Secret.</figure>
-                                        </section>
-                                        <section class="button" @click="importing = true;">
-                                            <figure class="name">Import</figure>
-                                            <figure class="description">Click here if you want to import a Secret from text or hardware.</figure>
-                                        </section>
-                                    </section>
-
-                                    <!-- IMPORTING -->
-                                    <section key="importing" v-if="isNew && importing && !importType" class="new-keypair">
-                                        <section class="button" @click="importType = IMPORT_TYPES.TEXT;">
-                                            <figure class="name">Text or QR</figure>
-                                            <figure class="description">Click here to type, paste or scan your Secret in.</figure>
-                                        </section>
-                                        <section class="button" @click="importType = IMPORT_TYPES.HARDWARE;">
-                                            <figure class="name">Hardware</figure>
-                                            <figure class="description">Click here to use a hardware device.</figure>
-                                        </section>
-                                    </section>
-
-                                    <!-- IMPORTING TEXT OR QR -->
-                                    <section key="import-text" v-if="importType === IMPORT_TYPES.TEXT" class="scroller">
-                                        <transition name="slide-right" mode="out-in">
-                                            <qr-reader key="qrreader" v-if="camera" @decode="qrScanned"></qr-reader>
-
-                                            <section v-if="!camera" key="inputsecret" class="input-keypair">
-                                                <section class="inputs">
-                                                    <label><i class="fa fa-key"></i> Enter a Secret</label>
-                                                    <input v-model="selected.privateKey" type="password" />
-                                                </section>
-                                            </section>
-                                        </transition>
-                                    </section>
-
-                                    <!-- IMPORTING HARDWARE -->
-                                    <section key="import-text" v-if="importType === IMPORT_TYPES.HARDWARE" class="import-hardware">
-                                        <sel :selected="selected.external.type" v-if="selected.external"
-                                             :options="EXT_WALLET_TYPES" v-on:changed="(x) => hardwareType = x"></sel>
-
-                                        <transition name="slide-left" mode="out-in">
-                                            <section key="getpublickey" v-if="hardwareReady" class="button wide" @click="importKeyFromHardware">
-                                                <figure class="name">Link Hardware</figure>
-                                                <figure class="description">This will link this hardware account to you Scatter.</figure>
-                                            </section>
-
-                                            <section key="loadinghardware" class="loading" v-else>
-                                                <i class="fa fa-hourglass-o fa-spin"></i>
-                                            </section>
-                                        </transition>
-
-                                    </section>
-                                </transition>
-                            </section>
                         </section>
 
 
 
                         <!-- EXPORTING -->
-                        <section key="exporting" v-if="exporting" style="display:flex; flex-direction: column; flex:1;">
+                        <section key="exporting" v-if="exporting" class="flexer">
                             <section class="keypair">
                                 <transition name="slide-left" mode="out-in">
 
                                     <!-- SELECT EXPORT TYPE -->
                                     <section key="exportselect" class="new-keypair" v-if="!exportType">
+
+                                        <!-- EXPORT AS KEY -->
                                         <section class="button" @click="exportType = EXPORT_TYPES.KEY;">
                                             <figure class="name">Key</figure>
                                             <figure class="description">Export this Secret in Key format.</figure>
                                         </section>
+
+                                        <!-- EXPORT AS QR -->
                                         <section class="button" @click="createQR">
                                             <figure class="name">QR Code</figure>
                                             <figure class="description">Export this Secret as an encrypted QR.</figure>
@@ -268,6 +332,8 @@
 </template>
 
 <script>
+    // TODO: Holy shit extrapolate me already.
+
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
 
@@ -281,6 +347,7 @@
     import QRService from '../../services/QRService'
     import PasswordService from '../../services/PasswordService'
     import PriceService from '../../services/PriceService'
+    import ResourceService from '../../services/ResourceService'
 
     import ElectronHelpers from '../../util/ElectronHelpers';
     import IdGenerator from '../../util/IdGenerator';
@@ -312,6 +379,9 @@
             isNew:false,
             showingSecrets:false,
             flashingNameError:false,
+
+            selectedAccount:null,
+            resources:null,
 
             EXPORT_TYPES:EXPORT_TYPES,
             exporting:null,
@@ -349,9 +419,22 @@
                 if(!this.selected.name.trim().length) return 'You must name this Secret.';
                 if(this.keypairs.find(x => x.id !== this.selected.id && x.name.toLowerCase() === this.selected.name.toLowerCase())) return 'A Secret with this name already exists.';
                 return false;
+            },
+            uniqueAccounts(){
+                return this.selected.accounts().reduce((acc, account) => {
+                    if(!acc.find(x => account.sendable() === x.sendable())) acc.push(account);
+                    return acc;
+                }, [])
             }
         },
         methods:{
+            usesResources(account){
+                return ResourceService.usesResources(account);
+            },
+            authorities(account){
+                return this.accounts.filter(x => x.sendable() === account.sendable() && x.network().unique() === account.network().unique())
+                    .map(x => x.authority).join(', ')
+            },
             copy(text, note){
                 ElectronHelpers.copy(text);
                 PopupService.push(Popup.snackbar(note));
@@ -402,6 +485,7 @@
                 if(this.exporting)  return this.exporting = null;
                 if(this.importType) return this.importType = null;
                 if(this.importing)  return this.importing = false;
+                if(this.selectedAccount)  return this.selectedAccount = null;
                 if(this.selected)   return this.selectKeypair();
                 this.newKeypair();
             },
@@ -556,6 +640,16 @@
                     await this.keyImported('Hardware Linked');
                 }
             },
+            async selectAccount(account){
+                if(!this.usesResources(account)) return;
+                this.resources = null;
+                this.selectedAccount = account;
+                this.resources = await ResourceService.getResourcesFor(account);
+            },
+            async moderateResource(resource){
+                if(await ResourceService.moderateResource(resource, this.selectedAccount))
+                    this.resources = await ResourceService.getResourcesFor(this.selectedAccount);
+            },
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
@@ -597,6 +691,10 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
+
+    .flexer {
+        display:flex; flex-direction: column; flex:1;
+    }
 
     .vault {
         width:500px;
@@ -1102,6 +1200,79 @@
                 &:active {
                     transform:translateY(0px);
                     box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 4px 9px rgba(0,0,0,0.1);
+                }
+            }
+        }
+    }
+
+
+    .stats {
+        flex:1;
+        display:flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding:20px 20px 80px;
+        text-align:center;
+        border-top:1px solid rgba(0,0,0,0.1);
+
+        .stat {
+            flex:1;
+
+            .percentage {
+                font-family: 'Open Sans', sans-serif;
+                color: rgba(0,0,0,0.4);
+                display:inline-block;
+                padding:5px 10px;
+                border-radius:4px;
+                border:1px solid rgba(0,0,0,0.2);
+                box-shadow:0 3px 5px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1);
+                background:#fff;
+                font-size: 18px;
+                margin-top:5px;
+
+                &.warning {
+                    background:$red;
+                    color:#fff;
+                }
+            }
+
+            .radial-progress-container {
+                display:inline-block;
+                box-shadow: 0 3px 16px rgba(0,0,0,0.1), 0 12px 16px rgba(0,0,0,0.1);
+                border-radius: 50%;
+                margin:8px;
+
+                transform:translateY(0px);
+                transition: box-shadow 0.2s ease, transform 0.4s ease;
+
+                &:hover {
+                    transform:translateY(2px);
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1);
+                }
+
+                &:active {
+                    transform:translateY(4px);
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.1);
+                }
+            }
+
+            .button {
+                height:100px;
+                width:100px;
+                padding:10px;
+                float:none;
+                color:$black;
+                font-size: 11px;
+                border-radius:50%;
+
+                &:hover {
+                    transform:translateY(-3px);
+                    box-shadow:0 16px 2px rgba(0,0,0,0.1), 0 10px 8px rgba(0,0,0,0.1);
+                }
+
+                &:active {
+                    transform:translateY(0px);
+                    box-shadow:0 1px 2px rgba(0,0,0,0.2), 0 2px 3px rgba(0,0,0,0.1);
                 }
             }
         }

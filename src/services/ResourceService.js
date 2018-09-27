@@ -25,6 +25,12 @@ export default class ResourceService {
         });
     }
 
+    static usesResources(account){
+        account = Account.fromJson(account);
+        const plugin = PluginRepository.plugin(account.blockchain());
+        return plugin.usesResources();
+    }
+
     static async needsResources(account){
         account = Account.fromJson(account);
         const plugin = PluginRepository.plugin(account.blockchain());
@@ -37,6 +43,20 @@ export default class ResourceService {
         const plugin = PluginRepository.plugin(account.blockchain());
         if(!plugin.usesResources()) return false;
         return plugin.addResources(account);
+    }
+
+    static getResourcesFor(account){
+        account = Account.fromJson(account);
+        const plugin = PluginRepository.plugin(account.blockchain());
+        if(!plugin.usesResources()) return [];
+        return plugin.getResourcesFor(account);
+    }
+
+    static async moderateResource(resource, account){
+        account = Account.fromJson(account);
+        const plugin = PluginRepository.plugin(account.blockchain());
+        if(!plugin.usesResources()) return [];
+        return plugin.moderateResource(resource, account);
     }
 
 }

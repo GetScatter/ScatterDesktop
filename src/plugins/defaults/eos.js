@@ -103,12 +103,52 @@ export default class EOS extends Plugin {
     }
 
     usesResources(){ return true; }
-    async needsResources(account){
-        const data = await this.accountData(account, account.network());
 
-        // Older chains wont have this.
-        if(!data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return false;
-        return data.cpu_limit.available < 6000;
+    async getResourcesFor(account){
+        const data = await this.accountData(account);
+        if(!data || !data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return [];
+        return [{
+            name:'CPU',
+            available:data.cpu_limit.available,
+            max:data.cpu_limit.max,
+            percentage:(data.cpu_limit.used * 100) / data.cpu_limit.max
+        },{
+            name:'NET',
+            available:data.net_limit.available,
+            max:data.net_limit.max,
+            percentage:(data.net_limit.used * 100) / data.net_limit.max
+        },{
+            name:'RAM',
+            available:data.ram_usage,
+            max:data.ram_quota,
+            percentage:(data.ram_usage * 100) / data.ram_quota
+        }]
+    }
+
+    async moderateResource(resource, account){
+        return new Promise(resolve => {
+            const {name} = resource;
+
+            const returnResult = tx => {
+                if(!tx) return resolve(false);
+                // PopupService.push(Popup.transactionSuccess(account.blockchain(), tx.transaction_id));
+                resolve(true);
+            }
+
+            if(['CPU', 'NET'].includes(name))
+                PopupService.push(Popup.delegateResources(account, returnResult));
+
+            if(name === 'RAM')
+                PopupService.push(Popup.buySellRAM(account, returnResult));
+
+        })
+    }
+
+    async needsResources(account){
+        const resources = await this.getResourcesFor(account);
+        if(!resources.length) return false;
+
+        return resources.find(x => x.name === 'CPU').available < 6000;
     }
 
     async addResources(account){
@@ -138,7 +178,7 @@ export default class EOS extends Plugin {
 
     isValidRecipient(name){ return /(^[a-z1-5.]{1,11}[a-z1-5]$)|(^[a-z1-5.]{12}[a-j1-5]$)/g.test(name); }
     privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
-    validPrivateKey(privateKey){ return ecc.isValidPrivate(privateKey); }
+    validPrivateKey(privateKey){ return privateKey.length === 51 && ecc.isValidPrivate(privateKey); }
     validPublicKey(publicKey, prefix = null){ return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
 
     randomPrivateKey(){ return ecc.randomKey(); }

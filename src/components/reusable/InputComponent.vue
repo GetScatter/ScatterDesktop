@@ -1,6 +1,6 @@
 <template>
     <section class="input" :class="{'forced':forced, 'big':big}">
-        <input @keyup.enter="enter" @blur="blur" :maxlength="maxlength || -1" :class="{'large-font':largeFont, 'hide-date':type === 'date' && !input.length}" :disabled="disabled || false" :type="type || 'text'" v-model="input" />
+        <input @keyup.enter="enter" @blur="blur" :maxlength="maxlength || -1" :class="{'large-font':largeFont, 'hide-date':type === 'date' && !input.length, 'pad-right':dynamicButton}" :disabled="disabled || false" :type="type || 'text'" v-model="input" />
         <label :class="{'hidden':input.toString().length, 'for-disabled':disabled || false}">{{placeholder}}</label>
         <label v-if="forced" class="forced">{{placeholder}}</label>
         <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
@@ -110,6 +110,10 @@
             background:transparent;
             z-index:1;
             font-size:15px;
+
+            &.pad-right {
+                padding-right:30px;
+            }
 
             &:disabled {
                 cursor:not-allowed;

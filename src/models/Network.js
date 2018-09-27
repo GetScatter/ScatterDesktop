@@ -41,6 +41,9 @@ export default class Network {
         if(!BlockchainsArray.map(x => x.value).includes(this.blockchain)) return false;
         return (this.host.length && this.port) || this.chainId.length
     }
+    filledNetwork(){
+        return this.name.length && this.port.toString().length && this.chainId.length && this.host.length
+    }
     setPort(){
         if(!this.port) this.port = 80;
         if(![80,443].includes(parseInt(this.port))) return;

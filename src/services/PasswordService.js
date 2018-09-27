@@ -78,7 +78,7 @@ export default class PasswordService {
             const oldSeed = store.state.seed;
 
             // Setting a new salt every time the password is changed.
-            await StorageService.setSalt(Hasher.insecureHash(IdGenerator.text(32)));
+            await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
             const [newMnemonic, newSeed] = await Mnemonic.generateMnemonic(newPassword);
 
             // Re-encrypting keypairs
@@ -98,6 +98,53 @@ export default class PasswordService {
             await store.dispatch(Actions.SET_SCATTER, scatter);
             resolve(newMnemonic);
 
+        })
+    }
+
+    static async setPIN(pin, verify = false){
+        return new Promise(resolve => {
+            const set = async () => {
+                const scatter = store.state.scatter.clone();
+                scatter.pin = pin ? Hasher.unsaltedQuickHash(pin) : null;
+                resolve(await store.dispatch(Actions.SET_SCATTER, scatter));
+            };
+
+            if(verify) PopupService.push(Popup.textPrompt(
+                'Confirm Password',
+                'Please confirm your password before changing your PIN.',
+                'lock',
+                'Okay', {placeholder:'Confirm your current Password', type:'password'}, async confirm => {
+                    const confirmed = await PasswordService.verifyPassword(confirm, false);
+                    if(!confirmed) return resolve(null);
+
+                    set();
+            }));
+
+            else set();
+        })
+    }
+
+    static async verifyPIN(){
+        return new Promise(resolve => {
+            const scatter = store.state.scatter;
+
+            const check = async pin => {
+                if(pin === null) resolve(true);
+                else {
+                    if(scatter.pin !== Hasher.unsaltedQuickHash(pin)){
+                        PopupService.push(Popup.prompt("Bad PIN.", "The PIN you entered is invalid. If you can't remember your PIN go to Settings and change it using your Password.", "ban", "Okay"));
+                        resolve(false);
+                    } else resolve(true);
+                }
+            };
+
+            if(!scatter.pin || !scatter.pin.length) return check(null);
+            else PopupService.push(Popup.textPrompt(
+                'Enter PIN',
+                'In order to do this you must enter your PIN',
+                'lock',
+                'Okay', {placeholder:'Enter your PIN', type:'password'},
+                async pin => check(pin ? pin : '')));
         })
     }
 

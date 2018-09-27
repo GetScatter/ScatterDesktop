@@ -93,6 +93,9 @@ const socketHandler = (socket) => {
             payload:request.data
         };
 
+        if(request.data.passthrough)
+            return socket.emit('paired', existingApp && existingApp.checkKey(request.data.appkey));
+
         const addAuthorizedApp = (newKey = null) => {
             const authedApp = new AuthorizedApp(request.data.origin, newKey ? newKey : request.data.appkey);
             const clone = scatter.clone();
@@ -101,37 +104,20 @@ const socketHandler = (socket) => {
             socket.emit('paired', true);
         };
 
-        if(request.data.passthrough)
-            return socket.emit('paired', existingApp && existingApp.checkKey(request.data.appkey));
+        const repair = async () => {
+            const newKey = await getNewKey(socket);
+            if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return socket.emit('paired', false);
+            addAuthorizedApp(newKey.data.appkey)
+        }
 
         if(existingApp){
-            if(request.data.appkey.indexOf('appkey:') > -1){
-                PopupService.push(Popup.popout(linkApp, ({result}) => {
-                    if(result) addAuthorizedApp(null);
-                    else socket.emit('paired', false);
-                }))
-            } else {
-                if(!existingApp) return socket.emit('paired', false);
-                return socket.emit('paired', existingApp.checkKey(request.data.appkey));
-            }
+            if(existingApp.checkKey(request.data.appkey)) return socket.emit('paired', true);
+            else PopupService.push(Popup.popout(linkApp, async ({result}) => {
+                if(result) return repair();
+                else socket.emit('paired', false);
+            }));
         }
-
-        else {
-            if(request.data.appkey.indexOf('appkey:') === -1){
-                const newKey = await getNewKey(socket);
-                if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return socket.emit('paired', false);
-                addAuthorizedApp(newKey.data.appkey)
-            } else {
-                PopupService.push(Popup.popout(linkApp, async ({result}) => {
-                    if(result) addAuthorizedApp();
-                    else socket.emit('paired', false);
-                }))
-            }
-
-
-
-
-        }
+        else return repair();
     });
 };
 

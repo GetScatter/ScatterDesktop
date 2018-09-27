@@ -51,9 +51,9 @@
 
                 <section v-if="!delegating">
                     <label style="float:left;">
-                        <span :class="{'red':lowCPU}">{{parseFloat(parseFloat(availableCPU) - parseFloat(cpu)).toFixed(4)}} CPU</span>
+                        <span :class="{'red':lowCPU}">{{parseFloat(parseFloat(totalCPU) - parseFloat(cpu)).toFixed(4)}} CPU</span>
                         <span class="separator"></span>
-                        <span :class="{'red':lowNET}">{{parseFloat(parseFloat(availableNET) - parseFloat(net)).toFixed(4)}} NET</span>
+                        <span :class="{'red':lowNET}">{{parseFloat(parseFloat(totalNET) - parseFloat(net)).toFixed(4)}} NET</span>
                     </label>
                     <label style="float:right;">{{parseFloat(parseFloat(net) + parseFloat(cpu)).toFixed(4)}} {{balance.split(' ')[1]}}</label>
                     <br>
@@ -98,7 +98,7 @@
         data(){ return {
             eos:null,
             fetchedBalance:false,
-            balance:'0.0000 EOS',
+            balance:'0.0000',
             accountData:null,
             delegating:true,
             cpu:0,
@@ -112,27 +112,41 @@
         },
         computed:{
             ...mapState([
-                'popups'
+                'popups',
+                'balances'
             ]),
             ...mapGetters([
-                'nextPopIn'
+
             ]),
             account(){
+                if(!this.nextPopIn) return null;
                 return this.nextPopIn.data.props.account;
             },
             availableCPU(){
                 if(!this.accountData) return 0;
+                if(!this.accountData.self_delegated_bandwidth) return 0;
                 return this.accountData.self_delegated_bandwidth.cpu_weight.split(' ')[0];
             },
             availableNET(){
                 if(!this.accountData) return 0;
+                if(!this.accountData.self_delegated_bandwidth) return 0;
                 return this.accountData.self_delegated_bandwidth.net_weight.split(' ')[0];
             },
+            totalCPU(){
+                if(!this.accountData) return 0;
+                if(!this.accountData.total_resources) return 0;
+                return this.accountData.total_resources.cpu_weight.split(' ')[0];
+            },
+            totalNET(){
+                if(!this.accountData) return 0;
+                if(!this.accountData.total_resources) return 0;
+                return this.accountData.total_resources.net_weight.split(' ')[0];
+            },
             lowCPU(){
-                return parseFloat(this.availableCPU) - this.cpu <= 5
+                return parseFloat(this.totalCPU) - this.cpu <= 2
             },
             lowNET(){
-                return parseFloat(this.availableNET) - this.net <= 5
+                return parseFloat(this.totalNET) - this.net <= 2
             }
         },
         methods:{
@@ -141,25 +155,24 @@
                 this[Actions.RELEASE_POPUP](this.nextPopIn);
             },
             async init(){
+                const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+                this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', 'EOS')).toString()} EOS`;
 
-                PluginRepository.plugin(Blockchains.EOSIO).accountData(this.account, this.account.network()).then(data => {
+                plugin.accountData(this.account, this.account.network()).then(data => {
                     this.fetchedBalance = true;
 
-                    if(!data || !data.hasOwnProperty('core_liquid_balance')) {
-                        this.balance = null;
-                        return null;
-                    }
+                    if(!data || !data.hasOwnProperty('core_liquid_balance')) return null;
 
-                    console.log('data', data);
 
                     this.accountData = data;
-                    this.balance = data.core_liquid_balance;
                     if(data.hasOwnProperty('refund_request')){
                         const refund = data.refund_request;
-                        const baseFunds = parseFloat(this.balance.split(' ')[0]);
-                        const cpuRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
-                        const netRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
-                        this.balance = `${parseFloat(baseFunds + cpuRefund + netRefund).toFixed(4)} ${this.balance.split(' ')[1]}`
+                        if(refund) {
+                            const baseFunds = parseFloat(this.balance.split(' ')[0]);
+                            const cpuRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
+                            const netRefund = parseFloat(refund.cpu_amount.split(' ')[0]);
+                            this.balance = `${parseFloat(baseFunds + cpuRefund + netRefund).toFixed(4)} ${this.balance.split(' ')[1]}`
+                        }
                     }
                 });
 
@@ -196,7 +209,8 @@
             ...mapActions([
                 Actions.RELEASE_POPUP
             ])
-        }
+        },
+        props:['nextPopIn'],
     }
 </script>
 

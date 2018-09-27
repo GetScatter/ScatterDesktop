@@ -135,6 +135,7 @@
     import ContactService from '../services/ContactService'
     import {Blockchains} from '../models/Blockchains'
     import PopupService from '../services/PopupService'
+    import PasswordService from '../services/PasswordService'
     import {Popup} from '../models/popups/Popup';
 
     export default {
@@ -255,6 +256,8 @@
                 const account = this.sendingAccount(tokensToSend);
                 if(!account) return PopupService.push(Popup.prompt("Overspending balance.", "You don't have any account that has enough balance to make this transfer in it's base token.", "ban", "Okay"));
                 if(account.blockchain() !== Blockchains.EOSIO) return PopupService.push(Popup.prompt("Okay, this one is on us.", "Only EOSIO internal token transfers are supported right now.", "ban", "Okay"));
+
+                if(!await PasswordService.verifyPIN()) return;
 
                 this.sending = true;
                 await TransferService[account.blockchain()]({

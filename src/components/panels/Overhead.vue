@@ -134,7 +134,7 @@
         },
         methods:{
             async init(){
-                await PriceService.watchPrices();
+                await PriceService.watchPrices(!!this.scatter.displayToken);
                 await PriceService.getAllTokens();
                 this.refresh();
             },

@@ -70,6 +70,7 @@
     "v-tooltip": "^2.0.0-rc.33",
     "vue": "^2.5.17",
     "vue-qrcode-reader": "^1.2.2",
+    "vue-radial-progress": "^0.2.10",
     "vue-router": "^3.0.1",
     "vue-tour": "^1.0.1",
     "vuex": "^3.0.1",
