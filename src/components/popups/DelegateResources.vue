@@ -51,9 +51,9 @@
 
                 <section v-if="!delegating">
                     <label style="float:left;">
-                        <span :class="{'red':lowCPU}">{{parseFloat(parseFloat(availableCPU) - parseFloat(cpu)).toFixed(4)}} CPU</span>
+                        <span :class="{'red':lowCPU}">{{parseFloat(parseFloat(totalCPU) - parseFloat(cpu)).toFixed(4)}} CPU</span>
                         <span class="separator"></span>
-                        <span :class="{'red':lowNET}">{{parseFloat(parseFloat(availableNET) - parseFloat(net)).toFixed(4)}} NET</span>
+                        <span :class="{'red':lowNET}">{{parseFloat(parseFloat(totalNET) - parseFloat(net)).toFixed(4)}} NET</span>
                     </label>
                     <label style="float:right;">{{parseFloat(parseFloat(net) + parseFloat(cpu)).toFixed(4)}} {{balance.split(' ')[1]}}</label>
                     <br>
@@ -124,17 +124,29 @@
             },
             availableCPU(){
                 if(!this.accountData) return 0;
+                if(!this.accountData.self_delegated_bandwidth) return 0;
                 return this.accountData.self_delegated_bandwidth.cpu_weight.split(' ')[0];
             },
             availableNET(){
                 if(!this.accountData) return 0;
+                if(!this.accountData.self_delegated_bandwidth) return 0;
                 return this.accountData.self_delegated_bandwidth.net_weight.split(' ')[0];
             },
+            totalCPU(){
+                if(!this.accountData) return 0;
+                if(!this.accountData.total_resources) return 0;
+                return this.accountData.total_resources.cpu_weight.split(' ')[0];
+            },
+            totalNET(){
+                if(!this.accountData) return 0;
+                if(!this.accountData.total_resources) return 0;
+                return this.accountData.total_resources.net_weight.split(' ')[0];
+            },
             lowCPU(){
-                return parseFloat(this.availableCPU) - this.cpu <= 5
+                return parseFloat(this.totalCPU) - this.cpu <= 2
             },
             lowNET(){
-                return parseFloat(this.availableNET) - this.net <= 5
+                return parseFloat(this.totalNET) - this.net <= 2
             }
         },
         methods:{
@@ -145,8 +157,6 @@
             async init(){
                 const plugin = PluginRepository.plugin(Blockchains.EOSIO);
                 this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', 'EOS')).toString()} EOS`;
-
-                console.log('bal', this.balance);
 
                 plugin.accountData(this.account, this.account.network()).then(data => {
                     this.fetchedBalance = true;

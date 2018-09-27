@@ -121,7 +121,7 @@ export default class EOS extends Plugin {
             name:'RAM',
             available:data.ram_usage,
             max:data.ram_quota,
-            percentage:((data.ram_quota - data.ram_usage) * 100) / data.ram_quota
+            percentage:(data.ram_usage * 100) / data.ram_quota
         }]
     }
 
@@ -131,7 +131,7 @@ export default class EOS extends Plugin {
 
             const returnResult = tx => {
                 if(!tx) return resolve(false);
-                PopupService.push(Popup.transactionSuccess(account.blockchain(), tx.transaction_id));
+                // PopupService.push(Popup.transactionSuccess(account.blockchain(), tx.transaction_id));
                 resolve(true);
             }
 

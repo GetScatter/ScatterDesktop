@@ -377,18 +377,21 @@ $speed:0.4s;
 
 .pop-in-head {
 
+  border-top:3px solid $light-blue;
+
   max-width:600px;
+  display:flex;
+  justify-content: center;
+  align-items: stretch;
 
   .no-third {
     max-width:calc(100% - 110px) !important;
   }
 
   section {
-    vertical-align: middle;
-    /*float:left;*/
-    display:inline-block;
-    text-align:center;
+    flex:0 0 auto;
     padding:30px;
+
 
     &:nth-child(1) {
       width:100px;
@@ -397,14 +400,12 @@ $speed:0.4s;
 
     &:nth-child(2) {
       text-align:left;
-      max-width:calc(70% - 150px);
       min-width:200px;
       padding-left:0;
     }
 
     &:nth-child(3) {
       padding-left:0;
-      float:right;
     }
 
     button {

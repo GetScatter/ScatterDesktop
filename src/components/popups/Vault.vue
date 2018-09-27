@@ -8,9 +8,15 @@
                 <transition name="fade" mode="out-in">
 
                     <!-- TITLE HEAD -->
-                    <section key="noerror" v-if="!status && !error">
+                    <section key="noerror" v-if="!status && !error && !selectedAccount">
                         <figure class="title">Vault</figure>
                         <figure class="description">View and manage all your Secrets</figure>
+                    </section>
+
+                    <!-- ACCOUNT HEAD -->
+                    <section key="account" v-if="!status && !error && selectedAccount">
+                        <figure class="title">{{selectedAccount.blockchain().toUpperCase()}}</figure>
+                        <figure class="description">{{selectedAccount.sendable()}}</figure>
                     </section>
 
                     <!-- ERROR -->
@@ -102,17 +108,21 @@
 
                                         <section class="stats">
                                             <section class="stat" v-for="resource in resources">
-                                                <radial-progress inner-stroke-color="#ebebeb"
+                                                <radial-progress inner-stroke-color="#eee"
                                                                  start-color="#ff4645"
-                                                                 stop-color="#62d0fd"
-                                                                 :diameter="150"
+                                                                 stop-color="#ff4645"
+                                                                 :diameter="130"
                                                                  :total-steps="100"
                                                                  :completed-steps="resource.percentage"
                                                                  :stroke-width="18">
                                                     <figure class="button" @click="moderateResource(resource)">
+                                                        <i class="fa fa-exclamation-triangle" v-if="resource.percentage > 80"></i>
                                                         Moderate <b>{{resource.name}}</b>
                                                     </figure>
                                                 </radial-progress>
+                                                <figure class="percentage" :class="{'warning':resource.percentage > 80}">
+                                                    {{parseFloat(resource.percentage).toFixed(2)}}%
+                                                </figure>
                                             </section>
                                         </section>
 
@@ -154,9 +164,10 @@
 
                                                 <!-- ACCOUNTS -->
                                                 <section class="accounts">
-                                                    <section class="account" v-for="account in selected.accounts()" @click="selectAccount(account)">
+                                                    <section class="account" v-for="account in uniqueAccounts" @click="selectAccount(account)">
                                                         <section class="info">
-                                                            <figure class="name">{{account.formatted()}}</figure>
+                                                            <figure class="name">{{account.sendable()}}</figure>
+                                                            <figure class="description" v-if="account.authority.length"><i class="fa fa-id-card"></i> {{authorities(account)}}</figure>
                                                             <figure class="description"><i class="fa fa-globe"></i> {{account.network().name}}</figure>
                                                         </section>
                                                     </section>
@@ -408,9 +419,19 @@
                 if(!this.selected.name.trim().length) return 'You must name this Secret.';
                 if(this.keypairs.find(x => x.id !== this.selected.id && x.name.toLowerCase() === this.selected.name.toLowerCase())) return 'A Secret with this name already exists.';
                 return false;
+            },
+            uniqueAccounts(){
+                return this.selected.accounts().reduce((acc, account) => {
+                    if(!acc.find(x => account.sendable() === x.sendable())) acc.push(account);
+                    return acc;
+                }, [])
             }
         },
         methods:{
+            authorities(account){
+                return this.accounts.filter(x => x.sendable() === account.sendable() && x.network().unique() === account.network().unique())
+                    .map(x => x.authority).join(', ')
+            },
             copy(text, note){
                 ElectronHelpers.copy(text);
                 PopupService.push(Popup.snackbar(note));
@@ -623,7 +644,7 @@
             },
             async moderateResource(resource){
                 if(await ResourceService.moderateResource(resource, this.selectedAccount))
-                    this.resources = await ResourceService.getResourcesFor(account);
+                    this.resources = await ResourceService.getResourcesFor(this.selectedAccount);
             },
             ...mapActions([
                 Actions.RELEASE_POPUP
@@ -1193,19 +1214,62 @@
         .stat {
             flex:1;
 
+            .percentage {
+                font-family: 'Open Sans', sans-serif;
+                color: rgba(0,0,0,0.4);
+                display:inline-block;
+                padding:5px 10px;
+                border-radius:4px;
+                border:1px solid rgba(0,0,0,0.2);
+                box-shadow:0 3px 5px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1);
+                background:#fff;
+                font-size: 18px;
+                margin-top:5px;
+
+                &.warning {
+                    background:$red;
+                    color:#fff;
+                }
+            }
+
             .radial-progress-container {
                 display:inline-block;
+                box-shadow: 0 3px 16px rgba(0,0,0,0.1), 0 12px 16px rgba(0,0,0,0.1);
+                border-radius: 50%;
+                margin:8px;
+
+                transform:translateY(0px);
+                transition: box-shadow 0.2s ease, transform 0.4s ease;
+
+                &:hover {
+                    transform:translateY(2px);
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1);
+                }
+
+                &:active {
+                    transform:translateY(4px);
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.1);
+                }
             }
 
             .button {
-                height:110px;
-                width:110px;
+                height:100px;
+                width:100px;
                 padding:10px;
                 float:none;
                 color:$black;
                 font-size: 11px;
                 border-radius:50%;
 
+                &:hover {
+                    transform:translateY(-3px);
+                    box-shadow:0 16px 2px rgba(0,0,0,0.1), 0 10px 8px rgba(0,0,0,0.1);
+                }
+
+                &:active {
+                    transform:translateY(0px);
+                    box-shadow:0 1px 2px rgba(0,0,0,0.2), 0 2px 3px rgba(0,0,0,0.1);
+                }
             }
         }
     }
