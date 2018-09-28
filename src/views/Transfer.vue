@@ -48,7 +48,7 @@
                 <section class="inline-inputs">
                     <section class="inputs half">
                         <label>Recipient</label>
-                        <input :class="{'with-action':!isAlreadyContact, 'with-icon':recipient.length}" v-model="recipient" placeholder="Enter and Address or Account Name" />
+                        <input :class="{'with-action':!isAlreadyContact, 'with-icon':recipient.length}" v-model="recipient" placeholder="Enter an Address or Account Name" />
                         <transition name="slide-down">
                             <figure class="prefix icon" v-if="recipient.length" @click="recipient = ''">
                                 <i class="fa fa-times"></i>

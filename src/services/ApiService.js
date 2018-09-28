@@ -381,7 +381,7 @@ export default class ApiService {
             const blockchain = keypair.publicKeys.find(x => x.key === publicKey).blockchain;
 
             // Blockchain specific plugin
-            const plugin = PluginRepository.plugin(keypair.blockchain);
+            const plugin = PluginRepository.plugin(blockchain);
 
             // Convert buf and abi to messages
             payload.messages = [{
