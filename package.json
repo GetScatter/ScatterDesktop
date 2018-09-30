@@ -64,6 +64,7 @@
     "scrypt-async": "^2.0.1",
     "selfsigned": "^1.10.3",
     "socket.io": "^2.1.1",
+    "tronweb": "^2.0.12",
     "typeface-grand-hotel": "0.0.54",
     "typeface-roboto": "0.0.54",
     "usb": "^1.3.3",

@@ -18,29 +18,44 @@ export default class TransferService {
         return blockchain;
     }
 
+    static async [Blockchains.TRX](params){
+        return this.baseTransfer(params);
+    }
+
     static async [Blockchains.EOSIO](params){
+        return this.baseTransfer(params);
+    }
+
+    static async baseTransfer(params){
         let {account, recipient, amount, memo, token } = params;
-        const network = account.network();
         const plugin = PluginRepository.plugin(account.blockchain());
 
         const decimals = PriceService.tokenDecimals(token);
-
         amount = parseFloat(amount).toFixed(decimals);
         this.amount = amount;
         const transfer = await PluginRepository.plugin(account.blockchain())
-            .transfer(
+            .transfer({
                 account,
-                recipient,
+                to:recipient,
                 amount,
-                network,
-                token.account,
-                token.symbol,
+                contract:token.account,
+                symbol:token.symbol,
                 memo
-            ).catch(x => x);
+            }).catch(x => x);
 
         if(transfer !== null) {
             if (transfer.hasOwnProperty('error')) PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
-            else PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, transfer.transaction_id))
+            else {
+
+                switch(token.blockchain){
+                    case Blockchains.EOSIO:
+                        PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.transaction_id))
+                        break;
+                    case Blockchains.TRX:
+                        PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.txID))
+                        break;
+                }
+            }
         }
 
         return true;

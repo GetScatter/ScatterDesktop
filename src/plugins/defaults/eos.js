@@ -260,12 +260,12 @@ export default class EOS extends Plugin {
 
 
 
-    async passThroughProvider(payload, account, network, rejector){
+    async passThroughProvider(payload, account, rejector){
         return new Promise(async resolve => {
-            payload.messages = await this.requestParser(payload, Network.fromJson(network));
+            payload.messages = await this.requestParser(payload, Network.fromJson(account.network()));
             payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
             payload.participants = [account];
-            payload.network = network;
+            payload.network = account.network();
             payload.origin = 'Internal Scatter Transfer';
             const request = {
                 payload,
@@ -282,7 +282,7 @@ export default class EOS extends Plugin {
                 let signature = null;
                 if(KeyPairService.isHardware(account.publicKey)){
                     const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
-                    signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi, network);
+                    signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi, account.network());
                 } else signature = await this.signer({data:payload.buf}, account.publicKey, true);
 
                 if(!signature) return rejector({error:'Could not get signature'});
@@ -325,16 +325,16 @@ export default class EOS extends Plugin {
         })
     }
 
-    async transfer(account, to, amount, network, tokenAccount, symbol, memo, promptForSignature = true){
+    async transfer({account, to, amount, contract, symbol, memo, promptForSignature = true}){
         return new Promise(async (resolve, reject) => {
             const signProvider = promptForSignature
-                ? payload => this.passThroughProvider(payload, account, network, reject)
+                ? payload => this.passThroughProvider(payload, account, reject)
                 : payload => this.signer(payload, account.publicKey);
 
-            const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-            const contract = await eos.contract(tokenAccount);
+            const eos = Eos({httpEndpoint:account.network().fullhost(), chainId:account.network().chainId, signProvider});
+            const contractObject = await eos.contract(contract);
             const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
-            resolve(await contract.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
+            resolve(await contractObject.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
                 .catch(error => {
                     console.log('error', error);
                     return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}

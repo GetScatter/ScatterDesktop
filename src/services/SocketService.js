@@ -138,6 +138,7 @@ export default class SocketService {
 
     static close(){
         // Getting namespace
+        if(!io) return;
         const socket = io.of(`/scatter`);
 
         // Disconnecting all active connections to this namespace
