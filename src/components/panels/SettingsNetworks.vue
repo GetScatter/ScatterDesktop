@@ -55,7 +55,7 @@
 
                     <sel :disabled="!isNew" :selected="network.blockchain.toUpperCase()"
                          :options="blockchains"
-                         :parser="blockchain => blockchain.value.toUpperCase()"
+                         :parser="blockchain => blockchainName(blockchain.value)"
                          v-on:changed="blockchain => network.blockchain = blockchain.value"></sel>
 
                     <section class="multi-inputs">
@@ -129,6 +129,7 @@
             })
         },
         methods: {
+            blockchainName,
             addNetwork(){
                 this.network = Network.placeholder();
             },

@@ -151,7 +151,7 @@
                                                 <section class="accounts" :class="{'hidden':!showingSecrets}">
                                                     <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied to Clipboard.`)">
                                                         <section class="info">
-                                                            <figure class="name">{{pkey.blockchain.toUpperCase()}}</figure>
+                                                            <figure class="name">{{blockchainName(pkey.blockchain)}}</figure>
                                                             <figure class="description"><i class="fa fa-user"></i> {{pkey.key}}</figure>
                                                         </section>
                                                     </section>
@@ -337,7 +337,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
 
-    import {Blockchains} from '../../models/Blockchains'
+    import {Blockchains, blockchainName} from '../../models/Blockchains'
     import Keypair from '../../models/Keypair'
     import {Popup} from '../../models/popups/Popup'
 
@@ -428,6 +428,7 @@
             }
         },
         methods:{
+            blockchainName,
             usesResources(account){
                 return ResourceService.usesResources(account);
             },

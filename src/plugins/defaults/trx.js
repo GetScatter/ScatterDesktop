@@ -5,6 +5,7 @@ import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
 
 import IdGenerator from '../../util/IdGenerator';
+import Hasher from '../../util/Hasher';
 import KeyPairService from '../../services/KeyPairService';
 import {store} from '../../store/store';
 
@@ -160,10 +161,15 @@ export default class TRX extends Plugin {
     }
 
     async requestParser(transaction, abi){
+        const txID = transaction.transaction.transaction.txID;
         transaction = transaction.transaction.transaction.raw_data;
+        // const buf = Buffer.from(JSON.stringify(transaction));
+        // console.log('test', Hasher.unsaltedQuickHash(buf))
+        // console.log('hash', txID, transaction);
         return transaction.contract.map(contract => {
 
             const data = contract.parameter.value;
+
 
             return {
                 data,
