@@ -43,9 +43,9 @@ export default class VueInitializer {
                             return whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimal ? `.${decimal}` : '').toString();
                         }
                         if(commaOnly) return toComma(num);
-                        return num > 999999999 ? toComma((num/1000000000).toFixed(1)) + ' Billion' :
-                            num > 999999 ? toComma((num/1000000).toFixed(1)) + ' Million' :
-                                num > 999 ? toComma((num/1000).toFixed(1)) + ' Thousand' : num
+                        return num > 999999999 ? toComma((num/1000000000).toFixed(1)) + ' B' :
+                            num > 999999 ? toComma((num/1000000).toFixed(1)) + ' M' :
+                                num > 999 ? toComma((num/1000).toFixed(1)) + ' K' : num
                     },
                     bind(changed, dotNotation) {
                         let props = dotNotation.split(".");

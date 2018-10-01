@@ -26,9 +26,6 @@
 
                 <!-- VAULT -->
                 <figure id="tour1" class="action vault" @click="openVault">
-                    <!--<div style="margin-top:4px;">-->
-                        <!--<img src="../../assets/vault.png" />-->
-                    <!--</div>-->
                     Vault
                 </figure>
 
@@ -44,13 +41,18 @@
             <transition name="slide-right" mode="out-in">
                 <router-link v-if="route === 'home'" key="balance" :to="{name:'tokens'}">
                     <section class="value tokens">
-                        {{formatNumber(totalBalance[0])}} <b>{{totalBalance[1]}}</b>
+                        {{formatNumber(totalBalance[0], !scatter.settings.displayToken)}} <b>{{totalBalance[1]}}</b>
                         <span>View <b>Tokens</b></span>
                     </section>
                 </router-link>
 
-                <section key="othername" class="value" v-else>
+                <section key="othername" class="value" style="position:relative;" v-else>
                     {{route}}
+                    <i v-if="route === 'tokens'"
+                       class="refresh-tokens fa fa-refresh"
+                       :class="{'fa-spin':refreshing}"
+                       v-tooltip="'Refresh'"
+                       @click="refreshTokens"></i>
                 </section>
             </transition>
 
@@ -101,7 +103,7 @@
 
     export default {
         data () {return {
-
+            refreshing:false,
         }},
         computed:{
             ...mapState([
@@ -136,11 +138,7 @@
         methods:{
             async init(){
                 await PriceService.watchPrices(!this.scatter.displayToken);
-                await PriceService.getAllTokens();
-                this.refresh();
-            },
-            async refresh(){
-                await PriceService.getBalances();
+                this.refreshTokens();
             },
             openVault(){
                 if(this.$tours['scatter']) this.$tours['scatter'].nextStep();
@@ -152,6 +150,16 @@
             quit(){
                 remote.app.quit();
             },
+            async refreshTokens(){
+                if(this.refreshing) return;
+                this.refreshing = true;
+                console.log('refreshing')
+                await PriceService.getAllTokens();
+                await PriceService.getBalances();
+                setTimeout(() => {
+                    this.refreshing = false;
+                }, 2500)
+            },
         }
     }
 </script>
@@ -159,6 +167,30 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
 
+    .refresh-tokens {
+        cursor: pointer;
+        font-size: 24px;
+        position:absolute;
+        top:0;
+        right:-45px;
+        width:40px;
+        height:40px;
+        background:$dark-blue;
+        border-radius:50%;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom:1px;
+
+        transition: all 0.2s ease;
+        transition-property: color, background;
+
+        &:hover {
+            background:#fff;
+            color:$dark-blue;
+        }
+
+    }
 
     .overhead {
         opacity:1;
