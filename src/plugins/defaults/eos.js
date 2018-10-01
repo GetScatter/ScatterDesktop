@@ -94,7 +94,7 @@ export default class EOS extends Plugin {
 
     async isEndorsedNetwork(network){
         const endorsedNetwork = await this.getEndorsedNetwork();
-        return network.hostport() === endorsedNetwork.hostport();
+        return network.blockchain === Blockchains.EOSIO && network.chainId === endorsedNetwork.chainId;
     }
 
     async getChainId(network){

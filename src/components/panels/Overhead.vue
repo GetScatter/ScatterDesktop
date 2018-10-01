@@ -25,10 +25,11 @@
                 <figure class="breaker"></figure>
 
                 <!-- VAULT -->
-                <figure id="tour1" class="action" v-tooltip="'Vault'" @click="openVault">
-                    <div style="margin-top:4px;">
-                        <img src="../../assets/vault.png" />
-                    </div>
+                <figure id="tour1" class="action vault" @click="openVault">
+                    <!--<div style="margin-top:4px;">-->
+                        <!--<img src="../../assets/vault.png" />-->
+                    <!--</div>-->
+                    Vault
                 </figure>
 
             </figure>
@@ -222,6 +223,16 @@
                 img {
                     width:24px;
                     height:24px;
+                }
+
+                &.vault {
+                    font-size:18px;
+                    font-weight: bold;
+                    padding:10px;
+                    border:2px solid $light-blue;
+                    line-height:18px;
+                    margin-top:20px;
+                    border-radius:4px;
                 }
             }
         }

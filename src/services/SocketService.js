@@ -136,7 +136,7 @@ export default class SocketService {
         namespace.on('connection', socket => socketHandler(socket))
     }
 
-    static close(){
+    static async close(){
         // Getting namespace
         if(!io) return;
         const socket = io.of(`/scatter`);
@@ -152,6 +152,8 @@ export default class SocketService {
         // Deleting the namespace from the array of
         // available namespaces for connections
         delete io.nsps[`/scatter`];
+
+        return true;
     }
 
 }

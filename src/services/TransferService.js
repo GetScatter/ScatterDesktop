@@ -18,6 +18,10 @@ export default class TransferService {
         return blockchain;
     }
 
+    static async [Blockchains.ETH](params){
+        return this.baseTransfer(params, false);
+    }
+
     static async [Blockchains.TRX](params){
         return this.baseTransfer(params);
     }
@@ -26,13 +30,14 @@ export default class TransferService {
         return this.baseTransfer(params);
     }
 
-    static async baseTransfer(params){
+    static async baseTransfer(params, parseDecimals = true){
         let {account, recipient, amount, memo, token } = params;
         const plugin = PluginRepository.plugin(account.blockchain());
 
-        const decimals = PriceService.tokenDecimals(token);
-        amount = parseFloat(amount).toFixed(decimals);
-        this.amount = amount;
+        if(parseDecimals) {
+            const decimals = PriceService.tokenDecimals(token);
+            amount = parseFloat(amount).toFixed(decimals);
+        }
         const transfer = await PluginRepository.plugin(account.blockchain())
             .transfer({
                 account,
@@ -53,6 +58,10 @@ export default class TransferService {
                         break;
                     case Blockchains.TRX:
                         PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.txID))
+                        break;
+                    case Blockchains.ETH:
+                        console.log(transfer);
+                        PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.transactionHash))
                         break;
                 }
             }

@@ -49,17 +49,13 @@ export default class PriceService {
     }
 
     static async getBalances(){
-        const eosPlugin = PluginRepository.plugin(Blockchains.EOSIO);
-
-        //TODO: Only fetching EOS Tokens for now.
-        // const accounts = store.state.scatter.keychain.accounts;
-
-        const blockchains = [Blockchains.EOSIO, Blockchains.TRX];
-        const accounts = store.state.scatter.keychain.accounts.filter(x => blockchains.includes(x.blockchain()))
+        const accounts = store.state.scatter.keychain.accounts
             .reduce((acc, account) => {
                 if(!acc.find(x => x.sendable() === account.sendable())) acc.push(account);
                 return acc;
             }, []);
+
+        console.log('accounts', accounts);
 
         const balances = {};
         const tokens = store.state.tokens;

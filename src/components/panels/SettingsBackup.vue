@@ -14,17 +14,8 @@
 
                 <section class="split-panels left">
                     <section class="info-box">
-
-                        <!--<swch first="Automatic Backups" second="Manual Backups Only"-->
-                              <!--:selected="autoBackup !== strategies.AUTOMATIC ? 'Automatic Backups' : 'Manual Backups Only'"-->
-                              <!--v-on:switched="setBackupStrategy(autoBackup === strategies.AUTOMATIC ? strategies.MANUAL : strategies.AUTOMATIC)"></swch>-->
-
-                        <section v-if="autoBackup === strategies.AUTOMATIC">
-                            <btn text="Choose Automatic Backup Location" secondary="true" large="true" v-on:clicked="setBackupLocation()"></btn>
-                        </section>
-                        <section v-if="autoBackup === strategies.MANUAL">
-                            <btn text="Create New Backup" large="true" secondary="true" v-on:clicked="createBackup"></btn>
-                        </section>
+                        <btn text="Choose Automatic Backup Location" secondary="true" large="true" v-on:clicked="setBackupLocation()"></btn>
+                        <btn text="Create Single Backup File" large="true" secondary="true" v-on:clicked="createBackup"></btn>
                     </section>
                 </section>
 

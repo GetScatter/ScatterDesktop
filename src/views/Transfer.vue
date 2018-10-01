@@ -256,9 +256,9 @@
                 const account = this.sendingAccount(tokensToSend);
                 if(!account) return PopupService.push(Popup.prompt("Overspending balance.", "You don't have any account that has enough balance to make this transfer in it's base token.", "ban", "Okay"));
 
-                const enabledBlockchains = [Blockchains.EOSIO, Blockchains.TRX];
-                if(!enabledBlockchains.includes(account.blockchain())) return PopupService.push(Popup.prompt("Okay, this one is on us.",
-                    `${account.blockchain().toUpperCase()} transfers aren't enabled right now.`, "ban", "Okay"));
+//                const enabledBlockchains = [Blockchains.EOSIO, Blockchains.TRX];
+//                if(!enabledBlockchains.includes(account.blockchain())) return PopupService.push(Popup.prompt("Okay, this one is on us.",
+//                    `${account.blockchain().toUpperCase()} transfers aren't enabled right now.`, "ban", "Okay"));
 
                 if(!await PasswordService.verifyPIN()) return;
 

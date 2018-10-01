@@ -54,7 +54,7 @@ export default class TRX extends Plugin {
 
     async isEndorsedNetwork(network){
         const endorsedNetwork = await this.getEndorsedNetwork();
-        return network.hostport() === endorsedNetwork.hostport();
+        return network.blockchain === Blockchains.TRX && network.chainId === endorsedNetwork.chainId;
     }
 
     async getChainId(network){
@@ -101,12 +101,12 @@ export default class TRX extends Plugin {
     }
 
 
-    async transfer({account, to, amount, network, promptForSignature = true}){
+    async transfer({account, to, amount, promptForSignature = true}){
         return new Promise(async (resolve, reject) => {
             const tron = getCachedInstance(account.network());
             tron.trx.sign = async signargs => {
                 const transaction = { transaction:signargs, participants:[account.publicKey], };
-                const payload = { transaction, blockchain:Blockchains.TRX, network, requiredFields:{} };
+                const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
                 return promptForSignature
                     ? await this.passThroughProvider(payload, account, reject)
                     : await this.signer(payload, account.publicKey);
@@ -138,7 +138,7 @@ export default class TRX extends Plugin {
             const request = {
                 payload,
                 origin:payload.origin,
-                blockchain:'eos',
+                blockchain:Blockchains.TRX,
                 requiredFields:{},
                 type:Actions.REQUEST_SIGNATURE,
                 id:1,

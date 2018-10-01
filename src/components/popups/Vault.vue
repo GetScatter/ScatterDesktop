@@ -182,7 +182,7 @@
                                                 <!-- GENERATE NEW KEY -->
                                                 <section class="button" @click="generateKey">
                                                     <figure class="name">Generate New</figure>
-                                                    <figure class="description">Click here if you need to generate a brand new Key.</figure>
+                                                    <figure class="description">Click here if you want to generate a brand new set of Keys.</figure>
                                                 </section>
 
                                                 <!-- GO TO IMPORT SCREEN -->
