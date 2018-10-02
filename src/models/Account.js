@@ -12,7 +12,6 @@ export default class Account {
     }
 
     sendable(){
-        console.log('sendable', this, this.keypair(), this.blockchain());
         return PluginRepository.plugin(this.blockchain()).accountsAreImported() ? this.name : this.publicKey;
     }
 
@@ -29,7 +28,6 @@ export default class Account {
     }
 
     keypair(){
-        // console.log('keypairs', store.state.scatter.keychain.keypairs.map(x => x.unique()), this.keypairUnique);
         return store.state.scatter.keychain.keypairs.find(x => x.unique() === this.keypairUnique);
     }
 

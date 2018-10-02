@@ -9,6 +9,7 @@ import * as Actions from './store/constants'
 import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
 import RadialProgressBar from 'vue-radial-progress'
+import WindowService from './services/WindowService';
 
 
 // Globals
@@ -66,6 +67,11 @@ import PercentageBarComponent from './components/reusable/PercentageBarComponent
 const {remote} = window.require('electron');
 const app = remote.app;
 console.log(app.getPath('userData'));
+
+// f12 to open console from anywhere.
+document.addEventListener("keydown", function (e) {
+    if (e.which === 123) WindowService.openTools();
+});
 
 class Main {
 

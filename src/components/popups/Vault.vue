@@ -15,7 +15,7 @@
 
                     <!-- ACCOUNT HEAD -->
                     <section key="account" v-if="!status && !error && selectedAccount">
-                        <figure class="title">{{selectedAccount.blockchain().toUpperCase()}}</figure>
+                        <figure class="title">{{blockchainName(selectedAccount.blockchain())}}</figure>
                         <figure class="description">{{selectedAccount.sendable()}}</figure>
                     </section>
 
@@ -125,6 +125,14 @@
                                                     {{parseFloat(resource.percentage).toFixed(2)}}%
                                                 </figure>
                                             </section>
+
+                                            <section style="flex:0 0 auto; width:100%; margin-top:20px;"
+                                                     v-if="resources && outOfEOSResources">
+                                                <section class="button wide" style="border:1px solid red;" @click="goToCPUEmergency">
+                                                    <figure class="name">You're Out of Resources</figure>
+                                                    <figure class="description">Click here to go to CPU Emergency and see if you are eligible to get some temporary resources.</figure>
+                                                </section>
+                                            </section>
                                         </section>
 
                                     </section>
@@ -165,6 +173,17 @@
 
                                                 <!-- ACCOUNTS -->
                                                 <section class="accounts">
+
+                                                    <!--<section class="account" style="border-bottom:3px solid rgba(0,0,0,0.1);" @click="manuallyLinking = true;">-->
+                                                        <!--<section class="info">-->
+                                                            <!--<figure class="name">Link Account Manually</figure>-->
+                                                            <!--<figure class="description">-->
+                                                                <!--Click here if you want to either create a new account or-->
+                                                                <!--manually add an existing account that can't be linked automatically.-->
+                                                            <!--</figure>-->
+                                                        <!--</section>-->
+                                                    <!--</section>-->
+
                                                     <section class="account" :class="{'static':!usesResources(account)}" v-for="account in uniqueAccounts" @click="selectAccount(account)">
                                                         <section class="info">
                                                             <figure class="description linked-account">{{blockchainName(account.blockchain())}} Account</figure>
@@ -181,7 +200,7 @@
                                             <section key="newkeypair" v-if="isNew && !importing" class="new-keypair">
                                                 <!-- GENERATE NEW KEY -->
                                                 <section class="button" @click="generateKey">
-                                                    <figure class="name">Generate New</figure>
+                                                    <figure class="name">Create New</figure>
                                                     <figure class="description">Click here if you want to generate a brand new set of Keys.</figure>
                                                 </section>
 
@@ -382,6 +401,7 @@
             isNew:false,
             showingSecrets:false,
             flashingNameError:false,
+            manuallyLinking:false,
 
             selectedAccount:null,
             resources:null,
@@ -428,6 +448,12 @@
                     if(!acc.find(x => account.sendable() === x.sendable())) acc.push(account);
                     return acc;
                 }, [])
+            },
+            outOfEOSResources(){
+                if(this.selectedAccount.blockchain() !== Blockchains.EOSIO) return false;
+                const cpu = this.resources.find(x => x.name === 'CPU');
+                if(!cpu) return false;
+                return cpu.available <= 0;
             }
         },
         methods:{
@@ -438,6 +464,9 @@
             authorities(account){
                 return this.accounts.filter(x => x.sendable() === account.sendable() && x.network().unique() === account.network().unique())
                     .map(x => x.authority).join(', ')
+            },
+            goToCPUEmergency(){
+                ElectronHelpers.openLinkInBrowser('https://cpuemergency.com/');
             },
             copy(text, note){
                 ElectronHelpers.copy(text);
@@ -484,6 +513,7 @@
                 if(this.error) this.error = null;
                 if(this.status) this.status = null;
 
+                if(this.manuallyLinking)  return this.manuallyLinking = null;
                 if(this.exposedPrivateKey)  return this.exposedPrivateKey = null;
                 if(this.exportType)  return this.exportType = null;
                 if(this.exporting)  return this.exporting = null;
@@ -589,7 +619,7 @@
                 this.status = 'Checking if Private Key is valid.';
 
                 if(typeof this.selected.privateKey === 'string'){
-                    this.selected.privateKey = this.selected.privateKey.trim();
+                    this.selected.privateKey = this.selected.privateKey.trim().replace(/\W/g, '');
                 }
 
                 if(!KeyPairService.isValidPrivateKey(this.selected)) return this.status = null;

@@ -55,8 +55,6 @@ export default class PriceService {
                 return acc;
             }, []);
 
-        console.log('accounts', accounts);
-
         const balances = {};
         const tokens = store.state.tokens;
 

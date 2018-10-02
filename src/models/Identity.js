@@ -26,25 +26,6 @@ export const LocationFields = {
     zipcode:'zipcode'
 };
 
-export const AccountFields = {
-    blockchain:'blockchain',
-    network:'network'
-};
-
-
-/*
-//EXAMPLE
-scatter.getIdentity({
-    personal:['email'],
-    accounts:[
-        {blockchain:Blockchains.EOSIO,network:{chainId:1}},
-        {blockchain:Blockchains.ETH,network:{chainId:1}}
-    ],
-    location:['country']
-})
-*/
-
-
 export class IdentityRequiredFields {
     constructor(){
         this.accounts = [];
