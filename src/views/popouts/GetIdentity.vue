@@ -174,7 +174,7 @@
             if(!this.validAccounts.length){
                 this.error = {
                     title:"No available accounts.",
-                    subtext:`Missing Required Blockchains`,
+                    subtext:`Missing Required Networks`,
                     list:this.fields.accounts
                         .filter(x => !this.networks.find(n => n.chainId === x.chainId))
                         .map(x => {

@@ -61,8 +61,7 @@ export const actions = {
 
             //TODO: Add first automatic keypair
 
-            SocketService.initialize();
-            SocketService.open();
+            await SocketService.initialize();
 
             await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 

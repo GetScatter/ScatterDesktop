@@ -133,7 +133,7 @@
     import PluginRepository from '../plugins/PluginRepository'
     import TransferService from '../services/TransferService'
     import ContactService from '../services/ContactService'
-    import {Blockchains} from '../models/Blockchains'
+    import {Blockchains, BlockchainsArray} from '../models/Blockchains'
     import PopupService from '../services/PopupService'
     import PasswordService from '../services/PasswordService'
     import {Popup} from '../models/popups/Popup';
@@ -255,7 +255,10 @@
 
                 const account = this.sendingAccount(tokensToSend);
                 if(!account) return PopupService.push(Popup.prompt("Overspending balance.", "You don't have any account that has enough balance to make this transfer in it's base token.", "ban", "Okay"));
-                if(account.blockchain() !== Blockchains.EOSIO) return PopupService.push(Popup.prompt("Okay, this one is on us.", "Only EOSIO internal token transfers are supported right now.", "ban", "Okay"));
+
+//                const enabledBlockchains = [Blockchains.EOSIO, Blockchains.TRX];
+//                if(!enabledBlockchains.includes(account.blockchain())) return PopupService.push(Popup.prompt("Okay, this one is on us.",
+//                    `${account.blockchain().toUpperCase()} transfers aren't enabled right now.`, "ban", "Okay"));
 
                 if(!await PasswordService.verifyPIN()) return;
 
@@ -272,6 +275,17 @@
                 await PriceService.getBalances();
             },
 
+        },
+        watch:{
+            ['recipient'](){
+                BlockchainsArray.map(({value}) => {
+                    const plugin = PluginRepository.plugin(value);
+                    if(plugin.isValidRecipient(this.recipient)){
+                        const token = this.filteredTokens.find(x => x.blockchain === value);
+                        if(token) this.selectToken(token);
+                    }
+                });
+            }
         }
     }
 </script>

@@ -24,16 +24,17 @@
         <section class="permissions">
 
             <!-- SEARCH -->
-            <section class="search" v-if="Object.keys(origins).length">
+            <section class="search" v-if="Object.keys(origins).length || searchTerms.length">
 
                 <!-- INPUT -->
                 <section class="input">
                     <figure class="icon"><i class="fa fa-search"></i></figure>
-                    <input placeholder="Search Permissions..." />
+                    <input placeholder="Search Permissions..." v-model="searchTerms" />
                 </section>
 
                 <!-- ACTIONS -->
                 <section class="actions">
+                    <figure class="action find-more" @click="openApps">Find More Apps</figure>
                     <figure class="action" @click="removeAllPermissions">Clear All</figure>
                 </section>
 
@@ -43,7 +44,7 @@
             <!-- PERMISSIONS LIST -->
             <section class="permissions-list">
 
-                <section v-if="!Object.keys(origins).length" class="no-permissions">
+                <section v-if="!Object.keys(origins).length && !searchTerms.length" class="no-permissions">
                     <section class="container">
                         <figure class="title">No Apps</figure>
                         <figure class="link" @click="openApps">Click here to find some</figure>
@@ -217,11 +218,12 @@
             height:40px;
             background:#f3f3f3;
             border-top:1px solid #e1e1e1;
-            border-bottom:1px solid #e1e1e1;
+            display:flex;
+
 
             .input {
-                float:left;
-                width:calc(100% - 100px);
+                align-self: flex-start;
+                flex:1 0 auto;
 
                 .icon {
                     float:left;
@@ -243,16 +245,36 @@
             }
 
             .actions {
-                float:left;
-                width:100px;
+                align-self: flex-end;
                 line-height:40px;
                 text-align:right;
+                flex:0 0 auto;
+                display:flex;
 
                 .action {
                     cursor: pointer;
                     font-size: 11px;
                     font-weight: 500;
-                    text-decoration: underline;
+
+                    text-decoration: none;
+                    border:1px solid rgba(0,0,0,0.1);
+                    border-radius:4px;
+                    line-height:22px;
+                    height:auto;
+                    justify-content: center;
+                    align-items: center;
+                    display:flex;
+                    margin:10px 0 7px 10px;
+                    padding:0 10px;
+
+                    transition: all 0.2s ease;
+                    transition-property: background, color, border;
+
+                    &:hover {
+                        color:#fff;
+                        background:rgba(0,0,0,0.3);
+                        border:1px solid transparent;
+                    }
                 }
             }
 
@@ -264,6 +286,7 @@
             flex-direction: column;
             padding:0 40px 50px 50px;
             overflow-y:auto;
+            border-top:1px solid rgba(0,0,0,0.1);
 
             .no-permissions {
                 flex:1;
@@ -272,7 +295,6 @@
                 justify-content:center;
                 align-items: center;
                 padding:50px;
-                border-top:1px solid rgba(0,0,0,0.1);
 
                 .container {
                     max-width:500px;

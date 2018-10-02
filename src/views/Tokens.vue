@@ -235,16 +235,7 @@
             this.displayType = DISPLAY_TYPE.TOKENS;
         },
         methods:{
-            formatNumber(num, commaOnly = false){
-                const toComma = x => {
-                    const [whole, decimal] = x.toString().split('.');
-                    return whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimal ? `.${decimal}` : '').toString();
-                }
-                if(commaOnly) return toComma(num);
-                return num > 999999999 ? toComma((num/1000000000).toFixed(1)) + ' Billion' :
-                       num > 999999 ? toComma((num/1000000).toFixed(1)) + ' Million' :
-                       num > 999 ? toComma((num/1000).toFixed(1)) + ' Thousand' : num
-            },
+
             select(x){
                 if(JSON.stringify(x) === JSON.stringify(this.selected)) this.selected = null;
                 else this.selected = x;

@@ -13,6 +13,7 @@
                     <tx-success v-if="popIn.data.type === popupTypes.TX_SUCCESS"></tx-success>
                     <buy-sell-ram :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.BUY_SELL_RAM"></buy-sell-ram>
                     <delegate-resources :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.DELEGATE_RESOURCES"></delegate-resources>
+                    <link-or-create-account :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.LINK_OR_CREATE_ACCOUNT"></link-or-create-account>
 
                     <vault :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.VAULT"></vault>
                 </section>
