@@ -20,7 +20,7 @@ export default class NetworkService {
 
         network.setPort();
 
-        if(networks.find(x => x.chainId === network.chainId))
+        if(networks.find(x => x.blockchain === network.blockchain && x.chainId === network.chainId))
             return PopupService.push(Popup.snackbar("A network with this chain id already exists", "ban"));
 
         if(networks.find(x => x.name.toLowerCase() === network.name.toLowerCase()))

@@ -3,6 +3,8 @@ import * as PluginTypes from '../PluginTypes';
 import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
 
+import * as Actions from '../../models/api/ApiActions';
+import {store} from '../../store/store'
 const EthTx = require('ethereumjs-tx')
 const ethUtil = require('ethereumjs-util');
 import Web3 from 'web3';
@@ -17,10 +19,40 @@ import ObjectHelpers from '../../util/ObjectHelpers'
 import PopupService from '../../services/PopupService'
 import {Popup} from '../../models/popups/Popup'
 
-const web3 = new Web3();
+const web3util = new Web3();
 
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 
+let cachedInstances = {};
+const getCachedInstance = (network, wallet = null) => {
+    const key = network.unique() + (wallet ? wallet.getAccounts()[0] : '');
+    if(cachedInstances.hasOwnProperty(key)) return cachedInstances[key];
+    else {
+        const engine = new ProviderEngine();
+        const web3 = new Web3(engine);
+        if(wallet) engine.addProvider(new HookedWalletSubprovider(wallet));
+
+        const rpcUrl = network.host === 'ethnodes.get-scatter.com' ? 'https://commonly-classic-katydid.quiknode.io/d0bf98e7-a866-43d4-ac71-2397fd1b3aba/dQsznyrZRg2dr4DQJNPDgw==/' : network.fullhost();
+        engine.addProvider(new RpcSubprovider({rpcUrl}));
+        engine.start();
+        cachedInstances[key] = web3;
+        return web3;
+
+        // const web3 = new Web3(network.fullhost());
+        // cachedInstances[network.unique()] = web3;
+        // return web3;
+    }
+}
+
+const getMainnetGasPrices = async () => {
+    return Promise.race([
+        new Promise(r => setTimeout(() => r(null),500)),
+        new Promise(async r => {
+            let response = await fetch('https://ethgasstation.info/json/ethgasAPI.json').then(res => res.json());
+            r(response.average / 10);
+        })
+    ])
+}
 
 const EXPLORERS = [
     {
@@ -44,13 +76,13 @@ export default class ETH extends Plugin {
 
     async getEndorsedNetwork(){
         return new Promise((resolve, reject) => {
-            resolve(new Network('ETH Mainnet', 'https', 'ethereum.com', 8080, Blockchains.ETH, '1'));
+            resolve(new Network('ETH Mainnet', 'https', 'ethnodes.get-scatter.com', 443, Blockchains.ETH, '1'));
         });
     }
 
     async isEndorsedNetwork(network){
         const endorsedNetwork = await this.getEndorsedNetwork();
-        return network.hostport() === endorsedNetwork.hostport();
+        return network.blockchain === Blockchains.ETH && network.chainId === endorsedNetwork.chainId;
     }
 
     async getChainId(network){
@@ -92,7 +124,8 @@ export default class ETH extends Plugin {
     }
 
     async balanceFor(account, tokenAccount, symbol){
-        return 0;
+        const web3 = getCachedInstance(account.network());
+        return web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
     }
 
     defaultDecimals(){ return 18; }
@@ -118,9 +151,26 @@ export default class ETH extends Plugin {
     }
 
 
-    async transfer(account, to, amount, network, tokenAccount, symbol, memo){
-        PopupService.push(Popup.prompt("Ethereum transfers not enabled yet", "Sorry, but only EOS transfers are currently enabled", "ban", "Okay"))
-        return null;
+    async transfer({account, to, amount, contract, symbol, promptForSignature = true}){
+        return new Promise(async (resolve, reject) => {
+            const wallet = new ScatterEthereumWallet(account, async (transaction, callback) => {
+                const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
+                const signatures = promptForSignature
+                    ? await this.passThroughProvider(payload, account, reject)
+                    : await this.signer(payload.transaction, account.publicKey);
+
+                if(callback) callback(null, signatures);
+                return signatures;
+            });
+
+            const web3 = getCachedInstance(account.network(), wallet);
+            const value = web3util.utils.toWei(amount.toString());
+            web3.eth.sendTransaction({from:account.publicKey, to, value})
+                .on('transactionHash', transactionHash => {
+                    resolve({transactionHash})
+                })
+                .on('error', error => resolve({error}));
+        })
     }
 
     async signer(transaction, publicKey, arbitrary = false, isHash = false){
@@ -133,6 +183,38 @@ export default class ETH extends Plugin {
         return ethUtil.addHexPrefix(tx.serialize().toString('hex'));
     }
 
+    async passThroughProvider(payload, account, rejector){
+        return new Promise(async resolve => {
+            payload.messages = await this.requestParser(payload.transaction);
+            payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+            payload.participants = [account];
+            payload.network = account.network();
+            payload.origin = 'Internal Scatter Transfer';
+            const request = {
+                payload,
+                origin:payload.origin,
+                blockchain:Blockchains.ETH,
+                requiredFields:{},
+                type:Actions.REQUEST_SIGNATURE,
+                id:1,
+            };
+
+            PopupService.push(Popup.popout(request, async ({result}) => {
+                if(!result || (!result.accepted || false)) return rejector({error:'Could not get signature'});
+
+                let signature = null;
+                if(KeyPairService.isHardware(account.publicKey)){
+                    const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
+                    signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi, account.network());
+                } else signature = await this.signer(payload.transaction, account.publicKey, true);
+
+                if(!signature) return rejector({error:'Could not get signature'});
+
+                resolve(signature);
+            }));
+        })
+    }
+
     async requestParser(transaction, abi){
         let params = {};
         let methodABI;
@@ -140,7 +222,7 @@ export default class ETH extends Plugin {
             methodABI = abi.find(method => transaction.data.indexOf(method.signature) !== -1);
             if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
 
-            params = web3.eth.abi.decodeParameters(methodABI.inputs, transaction.data.replace(methodABI.signature, ''));
+            params = web3util.eth.abi.decodeParameters(methodABI.inputs, transaction.data.replace(methodABI.signature, ''));
             params = Object.keys(params).reduce((acc, key) => {
                 if(methodABI.inputs.map(input => input.name).includes(key))
                     acc[key] = params[key];
@@ -148,12 +230,12 @@ export default class ETH extends Plugin {
             }, {});
         }
 
-        const h2n = web3.utils.hexToNumberString;
+        const h2n = web3util.utils.hexToNumberString;
 
         const data = Object.assign(params, {
             // gas:h2n(transaction.gas),
             gasLimit:h2n(transaction.gasLimit),
-            gasPrice:web3.utils.fromWei(h2n(transaction.gasPrice)),
+            gasPrice:web3util.utils.fromWei(h2n(transaction.gasPrice)),
         });
 
         if(transaction.hasOwnProperty('value') && transaction.value > 0)
@@ -167,4 +249,17 @@ export default class ETH extends Plugin {
         }];
     }
 
+}
+
+
+class ScatterEthereumWallet {
+    constructor(account, signer){
+        this.signTransaction = signer;
+        this.getAccounts = async (callback) => {
+            const accounts = [account.sendable()];
+            if(callback) callback(null, accounts);
+            return accounts;
+        };
+
+    }
 }

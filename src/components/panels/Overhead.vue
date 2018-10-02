@@ -25,10 +25,8 @@
                 <figure class="breaker"></figure>
 
                 <!-- VAULT -->
-                <figure id="tour1" class="action" v-tooltip="'Vault'" @click="openVault">
-                    <div style="margin-top:4px;">
-                        <img src="../../assets/vault.png" />
-                    </div>
+                <figure id="tour1" class="action vault" @click="openVault">
+                    Vault
                 </figure>
 
             </figure>
@@ -43,13 +41,19 @@
             <transition name="slide-right" mode="out-in">
                 <router-link v-if="route === 'home'" key="balance" :to="{name:'tokens'}">
                     <section class="value tokens">
-                        {{totalBalance[0]}} <b>{{totalBalance[1]}}</b>
+                        {{formatNumber(totalBalance[0], !scatter.settings.displayToken)}} <b>{{totalBalance[1]}}</b>
                         <span>View <b>Tokens</b></span>
                     </section>
                 </router-link>
 
-                <section key="othername" class="value" v-else>
-                    {{route}}
+                <section key="othername" class="value" style="position:relative;" v-else>
+                    <span v-if="route === 'transfer'">Send</span>
+                    <span v-else>{{route}}</span>
+                    <i v-if="route === 'tokens'"
+                       class="refresh-tokens fa fa-refresh"
+                       :class="{'fa-spin':refreshing}"
+                       v-tooltip="'Refresh'"
+                       @click="refreshTokens"></i>
                 </section>
             </transition>
 
@@ -59,19 +63,19 @@
                 <transition name="slide-left" mode="out-in">
                     <section key="ishome" v-if="isHome && accounts.length">
                         <!-- RECEIVE TOKENS -->
-                        <router-link :to="{name:'receive'}"  class="action" v-tooltip="'Receive'">
-                            <i class="icon receive fa fa-arrow-down"></i>
+                        <router-link :to="{name:'receive'}"  class="action">
+                            Receive
                         </router-link>
 
                         <!-- SEND TOKENS -->
-                        <router-link :to="{name:'transfer'}"  class="action" v-tooltip="'Send'">
-                            <i class="icon send fa fa-arrow-up"></i>
+                        <router-link :to="{name:'transfer'}"  class="action">
+                            Send
                         </router-link>
                     </section>
 
                     <section key="nothome" v-if="!isHome">
                         <!-- GO HOME -->
-                        <router-link :to="{name:'home'}"  class="action" v-tooltip="'Go Home'">
+                        <router-link :to="{name:'home'}"  class="action square" v-tooltip="'Go Home'">
                             <i class="icon fa fa-times"></i>
                         </router-link>
                     </section>
@@ -100,7 +104,7 @@
 
     export default {
         data () {return {
-
+            refreshing:false,
         }},
         computed:{
             ...mapState([
@@ -135,11 +139,7 @@
         methods:{
             async init(){
                 await PriceService.watchPrices(!this.scatter.displayToken);
-                await PriceService.getAllTokens();
-                this.refresh();
-            },
-            async refresh(){
-                await PriceService.getBalances();
+                this.refreshTokens();
             },
             openVault(){
                 if(this.$tours['scatter']) this.$tours['scatter'].nextStep();
@@ -151,6 +151,15 @@
             quit(){
                 remote.app.quit();
             },
+            async refreshTokens(){
+                if(this.refreshing) return;
+                this.refreshing = true;
+                await PriceService.getAllTokens();
+                await PriceService.getBalances();
+                setTimeout(() => {
+                    this.refreshing = false;
+                }, 2500)
+            },
         }
     }
 </script>
@@ -158,6 +167,30 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../_variables";
 
+    .refresh-tokens {
+        cursor: pointer;
+        font-size: 24px;
+        position:absolute;
+        top:0;
+        right:-45px;
+        width:40px;
+        height:40px;
+        background:$dark-blue;
+        border-radius:50%;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom:1px;
+
+        transition: all 0.2s ease;
+        transition-property: color, background;
+
+        &:hover {
+            background:#fff;
+            color:$dark-blue;
+        }
+
+    }
 
     .overhead {
         opacity:1;
@@ -223,6 +256,16 @@
                     width:24px;
                     height:24px;
                 }
+
+                &.vault {
+                    font-size:18px;
+                    font-weight: bold;
+                    padding:10px;
+                    border:2px solid $light-blue;
+                    line-height:18px;
+                    margin-top:20px;
+                    border-radius:4px;
+                }
             }
         }
     }
@@ -276,18 +319,30 @@
             position: relative;
 
             .action {
+                font-size: 18px;
+                font-weight: bold;
                 cursor: pointer;
                 border-radius:2px;
                 border:1px solid #fff;
-                height:60px;
-                width:60px;
-                line-height:72px;
+
+                padding:0 20px;
+                line-height:60px;
                 display:inline-block;
                 text-align: center;
                 margin-left:6px;
                 background:transparent;
                 transition: all 0.2s ease;
                 transition-property: background, color;
+
+                &.square {
+                    padding:0;
+                    height:60px;
+                    width:60px;
+                    padding-bottom:2px;
+                    display:flex;
+                    justify-content: center;
+                    align-items: center;
+                }
 
                 &:hover {
                     background:#fff;

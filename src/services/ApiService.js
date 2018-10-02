@@ -252,7 +252,15 @@ export default class ApiService {
                 if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the transfer request")});
                 const account = Account.fromJson(result.account);
                 const plugin = PluginRepository.plugin(network.blockchain);
-                const sent = await PluginRepository.plugin(network.blockchain).transfer(account, to, result.amount, network, contract, symbol, request.payload.memo, false);
+                const sent = await PluginRepository.plugin(network.blockchain).transfer({
+                    account,
+                    to,
+                    amount:result.amount,
+                    contract,
+                    symbol,
+                    memo:request.payload.memo,
+                    promptForSignature:false
+                });
                 resolve({id:request.id, result:sent})
             }));
         })
@@ -283,7 +291,9 @@ export default class ApiService {
             // Convert buf and abi to messages
             switch(blockchain){
                 case Blockchains.EOSIO: payload.messages = await plugin.requestParser(payload, network); break;
-                case Blockchains.ETH: payload.messages = await plugin.requestParser(payload, payload.hasOwnProperty('abi') ? payload.abi : null); break;
+                case Blockchains.ETH:
+                case Blockchains.TRX:
+                    payload.messages = await plugin.requestParser(payload, payload.hasOwnProperty('abi') ? payload.abi : null); break;
             }
 
 

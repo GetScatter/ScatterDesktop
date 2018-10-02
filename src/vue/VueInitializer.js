@@ -37,6 +37,16 @@ export default class VueInitializer {
                     langKeys:LANG_KEYS,
                 }},
                 methods: {
+                    formatNumber(num, commaOnly = false){
+                        const toComma = x => {
+                            const [whole, decimal] = x.toString().split('.');
+                            return whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimal ? `.${decimal}` : '').toString();
+                        }
+                        if(commaOnly) return toComma(num);
+                        return num > 999999999 ? toComma((num/1000000000).toFixed(1)) + ' B' :
+                            num > 999999 ? toComma((num/1000000).toFixed(1)) + ' M' :
+                                num > 999 ? toComma((num/1000).toFixed(1)) + ' K' : num
+                    },
                     bind(changed, dotNotation) {
                         let props = dotNotation.split(".");
                         const lastKey = props.pop();

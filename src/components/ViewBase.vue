@@ -53,14 +53,14 @@
             steps: [
                 {
                     target: '#tour1',
-                    content: `This is your <b>Vault</b> <br><b>Open it.</b>`,
+                    content: `This is your <b>Vault</b> where all of your Keys are kept. <br><b>Open it.</b>`,
                     params: {
                         placement: 'bottom'
                     }
                 },
                 {
                     target: '#tour2',
-                    content: `Now click here to add a <b>Secret</b>`,
+                    content: `Now click here to add a <b>Vault Entry</b>`,
                     params: {
                         placement: 'left'
                     }

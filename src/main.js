@@ -9,6 +9,7 @@ import * as Actions from './store/constants'
 import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
 import RadialProgressBar from 'vue-radial-progress'
+import WindowService from './services/WindowService';
 
 
 // Globals
@@ -42,6 +43,7 @@ import BuySellRAM from './components/popups/BuySellRAM.vue'
 import RegisterWithRIDL from './components/popups/RegisterWithRIDL.vue'
 import PopInHead from './components/popups/fragments/PopInHead.vue'
 import Vault from './components/popups/Vault.vue'
+import LinkOrCreateAccount from './components/popups/LinkOrCreateAccount.vue'
 
 // POP OUTS
 import GetIdentity from './views/popouts/GetIdentity.vue'
@@ -66,6 +68,11 @@ import PercentageBarComponent from './components/reusable/PercentageBarComponent
 const {remote} = window.require('electron');
 const app = remote.app;
 console.log(app.getPath('userData'));
+
+// f12 to open console from anywhere.
+document.addEventListener("keydown", function (e) {
+    if (e.which === 123) WindowService.openTools();
+});
 
 class Main {
 
@@ -111,6 +118,7 @@ class Main {
             {tag:'ridl-register', vue:RegisterWithRIDL},
             {tag:'pop-in-head', vue:PopInHead},
             {tag:'vault', vue:Vault},
+            {tag:'link-or-create-account', vue:LinkOrCreateAccount},
 
             // POP OUTS
             {tag:'get-identity', vue:GetIdentity},

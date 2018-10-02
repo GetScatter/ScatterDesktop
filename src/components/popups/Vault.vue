@@ -10,12 +10,12 @@
                     <!-- TITLE HEAD -->
                     <section key="noerror" v-if="!status && !error && !selectedAccount">
                         <figure class="title">Vault</figure>
-                        <figure class="description">View and manage all your Secrets</figure>
+                        <figure class="description">View and manage all your Keys</figure>
                     </section>
 
                     <!-- ACCOUNT HEAD -->
                     <section key="account" v-if="!status && !error && selectedAccount">
-                        <figure class="title">{{selectedAccount.blockchain().toUpperCase()}}</figure>
+                        <figure class="title">{{blockchainName(selectedAccount.blockchain())}}</figure>
                         <figure class="description">{{selectedAccount.sendable()}}</figure>
                     </section>
 
@@ -33,8 +33,9 @@
                 </transition>
 
                 <!-- ADD OR BACK -->
-                <figure id="tour2" class="add-keypair" :class="{'cancel':selected, 'hide':status}" v-tooltip="selected ? 'Go Back' : 'Add New Secret'" @click="addOrBack">
-                    <i class="fa fa-plus"></i>
+                <figure id="tour2" class="add-keypair" :class="{'cancel':selected, 'hide':status}" v-tooltip="selected ? 'Go Back' : 'Add New Vault Entry'" @click="addOrBack">
+                    <i class="fa fa-plus" v-if="selected"></i>
+                    <span v-else>New</span>
                 </figure>
 
                 <!-- REMOVE -->
@@ -48,7 +49,7 @@
                 </figure>
 
                 <!-- EXPORT SECRET -->
-                <figure class="show-qr" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Export Secret'" @click="exporting = true">
+                <figure class="show-qr" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Export Private Key'" @click="exporting = true">
                     <i class="fa fa-key"></i>
                 </figure>
 
@@ -124,6 +125,14 @@
                                                     {{parseFloat(resource.percentage).toFixed(2)}}%
                                                 </figure>
                                             </section>
+
+                                            <section style="flex:0 0 auto; width:100%; margin-top:20px;"
+                                                     v-if="resources && outOfEOSResources">
+                                                <section class="button wide" style="border:1px solid red;" @click="goToCPUEmergency">
+                                                    <figure class="name">You're Out of Resources</figure>
+                                                    <figure class="description">Click here to go to CPU Emergency and see if you are eligible to get some temporary resources.</figure>
+                                                </section>
+                                            </section>
                                         </section>
 
                                     </section>
@@ -133,7 +142,7 @@
                                     <section class="keypair" :class="{'disabled':status}">
                                         <section key="keypairhead" class="head" :class="{'no-name':keyNameError}">
                                             <figure class="name">
-                                                <input placeholder="Name this Secret" v-model="selected.name" />
+                                                <input placeholder="Name this Vault Entry" v-model="selected.name" />
                                             </figure>
 
                                             <transition name="slide-left" mode="out-in">
@@ -149,28 +158,41 @@
 
                                                 <!-- PUBLIC KEYS -->
                                                 <section class="accounts" :class="{'hidden':!showingSecrets}">
-                                                    <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied to Clipboard.`)">
+                                                    <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied ${blockchainName(pkey.blockchain)} Public Key to Clipboard.`)">
                                                         <section class="info">
-                                                            <figure class="name">{{pkey.blockchain.toUpperCase()}}</figure>
-                                                            <figure class="description"><i class="fa fa-user"></i> {{pkey.key}}</figure>
+                                                            <figure class="name">{{blockchainName(pkey.blockchain)}}</figure>
+                                                            <figure class="description"><i class="fa fa-copy"></i> {{pkey.key}}</figure>
                                                         </section>
                                                     </section>
                                                 </section>
 
                                                 <!-- PUBLIC KEYS LIST TOGGLER -->
                                                 <section class="breaker" @click="showingSecrets = !showingSecrets">
-                                                    {{showingSecrets ? 'Collapse' : 'Expand'}}
+                                                    {{showingSecrets ? 'Hide' : 'Show Public Keys'}}
                                                 </section>
 
                                                 <!-- ACCOUNTS -->
                                                 <section class="accounts">
+
+                                                    <!--<section class="account" style="border-bottom:3px solid rgba(0,0,0,0.1);" @click="linkManually">-->
+                                                        <!--<section class="info">-->
+                                                            <!--<figure class="name">Link or Create Account</figure>-->
+                                                            <!--<figure class="description">-->
+                                                                <!--Click here if you want to either create a new account on top of this Key or-->
+                                                                <!--manually add an existing account that can't be linked automatically.-->
+                                                            <!--</figure>-->
+                                                        <!--</section>-->
+                                                    <!--</section>-->
+
                                                     <section class="account" :class="{'static':!usesResources(account)}" v-for="account in uniqueAccounts" @click="selectAccount(account)">
                                                         <section class="info">
+                                                            <figure class="description linked-account">{{blockchainName(account.blockchain())}} Account</figure>
                                                             <figure class="name">{{account.sendable()}}</figure>
                                                             <figure class="description" v-if="account.authority.length"><i class="fa fa-id-card"></i> {{authorities(account)}}</figure>
                                                             <figure class="description"><i class="fa fa-globe"></i> {{account.network().name}}</figure>
                                                         </section>
                                                     </section>
+                                                    <div style="height:50px;"></div>
                                                 </section>
                                             </section>
 
@@ -178,14 +200,14 @@
                                             <section key="newkeypair" v-if="isNew && !importing" class="new-keypair">
                                                 <!-- GENERATE NEW KEY -->
                                                 <section class="button" @click="generateKey">
-                                                    <figure class="name">Generate</figure>
-                                                    <figure class="description">Click here if you need to generate a brand new Secret.</figure>
+                                                    <figure class="name">Create New</figure>
+                                                    <figure class="description">Click here if you want to generate a brand new set of Keys.</figure>
                                                 </section>
 
                                                 <!-- GO TO IMPORT SCREEN -->
                                                 <section class="button" @click="importing = true;">
                                                     <figure class="name">Import</figure>
-                                                    <figure class="description">Click here if you want to import a Secret from text or hardware.</figure>
+                                                    <figure class="description">Click here if you want to import a Key from text or hardware.</figure>
                                                 </section>
                                             </section>
 
@@ -194,7 +216,7 @@
                                                 <!-- SELECT TEXTUAL/QR IMPORT -->
                                                 <section class="button" @click="importType = IMPORT_TYPES.TEXT;">
                                                     <figure class="name">Text or QR</figure>
-                                                    <figure class="description">Click here to type, paste or scan your Secret in.</figure>
+                                                    <figure class="description">Click here to type, paste or scan your Private Key in.</figure>
                                                 </section>
 
                                                 <!-- SELECT HARDWARE IMPORT -->
@@ -211,7 +233,7 @@
 
                                                     <section v-if="!camera" key="inputsecret" class="input-keypair">
                                                         <section class="inputs">
-                                                            <label><i class="fa fa-key"></i> Enter a Secret</label>
+                                                            <label><i class="fa fa-key"></i> Enter a Private Key</label>
                                                             <input v-model="selected.privateKey" type="password" />
                                                         </section>
                                                     </section>
@@ -258,13 +280,13 @@
                                         <!-- EXPORT AS KEY -->
                                         <section class="button" @click="exportType = EXPORT_TYPES.KEY;">
                                             <figure class="name">Key</figure>
-                                            <figure class="description">Export this Secret in Key format.</figure>
+                                            <figure class="description">Export this Private Key in String format.</figure>
                                         </section>
 
                                         <!-- EXPORT AS QR -->
                                         <section class="button" @click="createQR">
                                             <figure class="name">QR Code</figure>
-                                            <figure class="description">Export this Secret as an encrypted QR.</figure>
+                                            <figure class="description">Export this Private Key as an encrypted QR.</figure>
                                         </section>
                                     </section>
 
@@ -337,7 +359,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
 
-    import {Blockchains} from '../../models/Blockchains'
+    import {Blockchains, blockchainName} from '../../models/Blockchains'
     import Keypair from '../../models/Keypair'
     import {Popup} from '../../models/popups/Popup'
 
@@ -416,8 +438,8 @@
             keyNameError(){
                 if(this.flashingNameError) return false;
                 if(!this.selected) return false;
-                if(!this.selected.name.trim().length) return 'You must name this Secret.';
-                if(this.keypairs.find(x => x.id !== this.selected.id && x.name.toLowerCase() === this.selected.name.toLowerCase())) return 'A Secret with this name already exists.';
+                if(!this.selected.name.trim().length) return 'Enter a name for this Vault Entry';
+                if(this.keypairs.find(x => x.id !== this.selected.id && x.name.toLowerCase() === this.selected.name.toLowerCase())) return 'A Vault Entry with this name already exists.';
                 return false;
             },
             uniqueAccounts(){
@@ -425,15 +447,30 @@
                     if(!acc.find(x => account.sendable() === x.sendable())) acc.push(account);
                     return acc;
                 }, [])
+            },
+            outOfEOSResources(){
+                if(this.selectedAccount.blockchain() !== Blockchains.EOSIO) return false;
+                const cpu = this.resources.find(x => x.name === 'CPU');
+                if(!cpu) return false;
+                return cpu.available <= 0;
             }
         },
         methods:{
+            blockchainName,
+            linkManually(){
+                PopupService.push(Popup.linkOrCreateAccount(this.selected, done => {
+                    console.log('done', done);
+                }));
+            },
             usesResources(account){
                 return ResourceService.usesResources(account);
             },
             authorities(account){
                 return this.accounts.filter(x => x.sendable() === account.sendable() && x.network().unique() === account.network().unique())
                     .map(x => x.authority).join(', ')
+            },
+            goToCPUEmergency(){
+                ElectronHelpers.openLinkInBrowser(`https://cpuemergency.com/?account=${this.selectedAccount.sendable()}`);
             },
             copy(text, note){
                 ElectronHelpers.copy(text);
@@ -445,12 +482,12 @@
                     const {data, salt} = JSON.parse(qr);
                     const tryDecryption = () => {
                         PopupService.push(Popup.textPrompt(
-                            'Decrypt Secret',
+                            'Decrypt Private Key',
                             'Please enter the password/pin this QR code is encrypted with.',
                             'asterisk', 'Okay',
                             {placeholder:'Enter Password/PIN', type:'password'},
                             async pass => {
-                                this.status = 'Decrypting Secure Secret';
+                                this.status = 'Decrypting Secure Private Key';
                                 const privateKey = await QRService.decryptQR(data, salt, pass).catch(() => null);
                                 if(!privateKey || typeof privateKey !== 'object' || !privateKey.hasOwnProperty('data')){
                                     return tryDecryption();
@@ -461,7 +498,7 @@
 
                                 setTimeout(async () => {
                                     await KeyPairService.makePublicKeys(this.selected);
-                                    this.keyImported("A Secret was imported.");
+                                    this.keyImported("A Key was imported.");
                                 }, 1000);
                             }))
                     };
@@ -530,8 +567,8 @@
             },
             async removeKeypair(){
                 PopupService.promptGuard(Popup.prompt(
-                    "Deleting Secret", "Before you do this make sure you have a backup of this Secret.",
-                    "trash-o", "Delete Secret"
+                    "Deleting Vault Entry", "Before you do this make sure you have a backup of this Vault Entry's Private Key.",
+                    "trash-o", "Delete"
                 ), async accepted => {
                     if(accepted) {
                         await KeyPairService.removeKeyPair(this.selected);
@@ -541,10 +578,10 @@
 
             },
             async generateKey(){
-                this.status = 'Generating Secure Secret';
+                this.status = 'Generating new Keys';
                 setTimeout(async () => {
                     await KeyPairService.generateKeyPair(this.selected);
-                    this.keyImported("A new Secret was generated.");
+                    this.keyImported("A new Key was generated.");
                 }, 1000);
             },
             async keyImported(snackbar){
@@ -556,11 +593,11 @@
 
                 if(existing){
                     this.status = null;
-                    this.error = `This Secret already exists under the name ${existing.name}`;
+                    this.error = `This Private Key already exists under the name ${existing.name}`;
                     return false;
                 }
 
-                if(this.keyNameError) this.selected.name = `Secret-${IdGenerator.text(10)}`;
+                if(this.keyNameError) this.selected.name = `VaultEntry-${IdGenerator.text(10)}`;
 
                 if(!isHardware) await KeyPairService.makePublicKeys(this.selected);
                 if(!this.selected.publicKeys.length) return false;
@@ -582,20 +619,20 @@
             },
             async testKey(){
                 if(this.status) return false;
-                this.status = 'Checking if Secret is valid.';
+                this.status = 'Checking if Private Key is valid.';
 
                 if(typeof this.selected.privateKey === 'string'){
-                    this.selected.privateKey = this.selected.privateKey.trim();
+                    this.selected.privateKey = this.selected.privateKey.trim().replace(/\W/g, '');
                 }
 
                 if(!KeyPairService.isValidPrivateKey(this.selected)) return this.status = null;
 
                 setTimeout(async () => {
-                    this.status = 'Creating multi-blockchain profile from Secret.';
+                    this.status = 'Creating multi-blockchain profile from Private Key.';
                     setTimeout(async() => {
                         await KeyPairService.convertHexPrivateToBuffer(this.selected);
                         this.selected.hash();
-                        this.keyImported('A Secret was imported.')
+                        this.keyImported('New Vault Entry created.')
                     }, 2000);
                 }, 2000);
             },
@@ -713,9 +750,6 @@
             font-size: 40px;
             color:$mid-light-grey;
             text-align:center;
-
-            /*animation: pulsate 1s ease-out;*/
-            /*animation-iteration-count: infinite;*/
         }
 
         .head {
@@ -761,10 +795,10 @@
                 visibility: visible;
                 cursor: pointer;
                 height:40px;
-                width:40px;
-                line-height:40px;
-                text-align:center;
-                display:inline-block;
+                padding:0 12px;
+                display:flex;
+                justify-content:center;
+                align-items: center;
                 border-radius:2px;
                 font-size: 16px;
 
@@ -774,6 +808,11 @@
 
                 transition: all 0.2s ease;
                 transition-property: background, color, border, opacity, top, visibility;
+
+                span {
+                    font-weight: bold;
+                    font-size: 13px;
+                }
 
                 &:hover {
                     border:1px solid $light-blue;
@@ -964,6 +1003,13 @@
                     .description {
                         margin-top:3px;
                         font-size: 11px;
+
+                        &.linked-account {
+                            font-size: 9px;
+                            font-weight: bold;
+                            color:$mid-dark-grey;
+                            margin-bottom:5px;
+                        }
 
                         i {
                             color:$dark-grey;

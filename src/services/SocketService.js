@@ -2,8 +2,7 @@ import ApiService from '../services/ApiService';
 import AuthorizedApp from '../models/AuthorizedApp';
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
-import Hasher from '../util/Hasher';
-import Error from '../models/errors/Error';
+const fs = window.require('fs');
 
 import {Popup} from '../models/popups/Popup'
 import PopupService from '../services/PopupService';
@@ -121,14 +120,37 @@ const socketHandler = (socket) => {
     });
 };
 
+const getCerts = async () => {
+    return fetch('https://certs.get-scatter.com').then(res => res.json());
+};
+
 export default class SocketService {
 
-    static initialize(){
-        const server = window.require('http').createServer();
-        server.listen(50005, '127.0.0.1');
-        io = window.require('socket.io').listen(server, {
-            pingTimeout:100000000000000000,
-        });
+    static async initialize(){
+
+        io = window.require('socket.io')();
+        const options = { pingTimeout:100000000000000000 };
+
+        const http = window.require('http');
+        const https = window.require('https');
+        const ip = '127.0.0.1';
+
+
+        // HTTP protocol (port 50005)
+        const httpServer = http.createServer();
+        httpServer.listen(50005,ip);
+        io.attach(httpServer,options);
+
+
+        // HTTPS protocol (port 50006)
+        const certs = await getCerts();
+        if(certs && certs.hasOwnProperty('key') && certs.hasOwnProperty('cert')){
+            const httpsServer = https.createServer(certs);
+            httpsServer.listen(50006, ip);
+            io.attach(httpsServer,options);
+        }
+
+        this.open();
     }
 
     static open(){
@@ -136,8 +158,9 @@ export default class SocketService {
         namespace.on('connection', socket => socketHandler(socket))
     }
 
-    static close(){
+    static async close(){
         // Getting namespace
+        if(!io) return;
         const socket = io.of(`/scatter`);
 
         // Disconnecting all active connections to this namespace
@@ -151,6 +174,8 @@ export default class SocketService {
         // Deleting the namespace from the array of
         // available namespaces for connections
         delete io.nsps[`/scatter`];
+
+        return true;
     }
 
 }
