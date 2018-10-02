@@ -174,15 +174,15 @@
                                                 <!-- ACCOUNTS -->
                                                 <section class="accounts">
 
-                                                    <section class="account" style="border-bottom:3px solid rgba(0,0,0,0.1);" @click="linkManually">
-                                                        <section class="info">
-                                                            <figure class="name">Link or Create Account</figure>
-                                                            <figure class="description">
-                                                                Click here if you want to either create a new account on top of this Key or
-                                                                manually add an existing account that can't be linked automatically.
-                                                            </figure>
-                                                        </section>
-                                                    </section>
+                                                    <!--<section class="account" style="border-bottom:3px solid rgba(0,0,0,0.1);" @click="linkManually">-->
+                                                        <!--<section class="info">-->
+                                                            <!--<figure class="name">Link or Create Account</figure>-->
+                                                            <!--<figure class="description">-->
+                                                                <!--Click here if you want to either create a new account on top of this Key or-->
+                                                                <!--manually add an existing account that can't be linked automatically.-->
+                                                            <!--</figure>-->
+                                                        <!--</section>-->
+                                                    <!--</section>-->
 
                                                     <section class="account" :class="{'static':!usesResources(account)}" v-for="account in uniqueAccounts" @click="selectAccount(account)">
                                                         <section class="info">

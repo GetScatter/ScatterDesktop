@@ -60,7 +60,6 @@ export default class TransferService {
                         PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.txID))
                         break;
                     case Blockchains.ETH:
-                        console.log(transfer);
                         PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.transactionHash))
                         break;
                 }
