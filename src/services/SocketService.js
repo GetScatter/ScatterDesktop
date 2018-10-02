@@ -124,11 +124,37 @@ const socketHandler = (socket) => {
 export default class SocketService {
 
     static initialize(){
-        const server = window.require('http').createServer();
-        server.listen(50005, '127.0.0.1');
-        io = window.require('socket.io').listen(server, {
+        const fs = window.require('fs');
+
+        const http = window.require('http');
+        const https = window.require('https');
+
+
+        const ip = '127.0.0.1';
+
+        /*** HTTP protocol (port 50005) ***/
+        const httpServer = http.createServer();
+        httpServer.listen(50005,ip);
+
+        /*** HTTPS protocol (port 50006) ***/
+        const ssl = {
+            key: fs.readFileSync('./static/ssl/privkey.pem'),
+            cert: fs.readFileSync('./static/ssl/fullchain.pem')
+        };  
+        const httpsServer = https.createServer(
+            ssl
+        );
+        httpsServer.listen(50006, ip);
+
+
+        io = window.require('socket.io')();
+
+        const options = {
             pingTimeout:100000000000000000,
-        });
+        };
+
+        io.attach(httpServer,options);
+        io.attach(httpsServer,options);
     }
 
     static open(){
