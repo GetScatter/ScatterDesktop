@@ -47,6 +47,10 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VAULT, {}, () => {}))
     }
 
+    static linkOrCreateAccount(keypair, callback){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.LINK_OR_CREATE_ACCOUNT, {keypair}, callback))
+    }
+
     static textPrompt(title, description, icon, buttonText, input, callback){
         let params = { title, description, icon, buttonText, input };
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TEXT_PROMPT, params, callback))
@@ -99,6 +103,7 @@ export const PopupTypes = {
     TEXT_PROMPT:'textPrompt',
     SELECTOR:'selector',
     VAULT:'vault',
+    LINK_OR_CREATE_ACCOUNT:'linkOrCreateAccount',
 
 
 

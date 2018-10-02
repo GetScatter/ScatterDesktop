@@ -74,8 +74,7 @@
                     await this[Actions.LOAD_SCATTER]();
 
                     if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-                        SocketService.initialize();
-                        SocketService.open();
+                        await SocketService.initialize();
 
                         this.pushTo(RouteNames.HOME);
                     } else {

@@ -174,15 +174,15 @@
                                                 <!-- ACCOUNTS -->
                                                 <section class="accounts">
 
-                                                    <!--<section class="account" style="border-bottom:3px solid rgba(0,0,0,0.1);" @click="manuallyLinking = true;">-->
-                                                        <!--<section class="info">-->
-                                                            <!--<figure class="name">Link Account Manually</figure>-->
-                                                            <!--<figure class="description">-->
-                                                                <!--Click here if you want to either create a new account or-->
-                                                                <!--manually add an existing account that can't be linked automatically.-->
-                                                            <!--</figure>-->
-                                                        <!--</section>-->
-                                                    <!--</section>-->
+                                                    <section class="account" style="border-bottom:3px solid rgba(0,0,0,0.1);" @click="linkManually">
+                                                        <section class="info">
+                                                            <figure class="name">Link or Create Account</figure>
+                                                            <figure class="description">
+                                                                Click here if you want to either create a new account on top of this Key or
+                                                                manually add an existing account that can't be linked automatically.
+                                                            </figure>
+                                                        </section>
+                                                    </section>
 
                                                     <section class="account" :class="{'static':!usesResources(account)}" v-for="account in uniqueAccounts" @click="selectAccount(account)">
                                                         <section class="info">
@@ -401,7 +401,6 @@
             isNew:false,
             showingSecrets:false,
             flashingNameError:false,
-            manuallyLinking:false,
 
             selectedAccount:null,
             resources:null,
@@ -458,6 +457,11 @@
         },
         methods:{
             blockchainName,
+            linkManually(){
+                PopupService.push(Popup.linkOrCreateAccount(this.selected, done => {
+                    console.log('done', done);
+                }));
+            },
             usesResources(account){
                 return ResourceService.usesResources(account);
             },
@@ -466,7 +470,7 @@
                     .map(x => x.authority).join(', ')
             },
             goToCPUEmergency(){
-                ElectronHelpers.openLinkInBrowser('https://cpuemergency.com/');
+                ElectronHelpers.openLinkInBrowser(`https://cpuemergency.com/?account=${this.selectedAccount.sendable()}`);
             },
             copy(text, note){
                 ElectronHelpers.copy(text);
@@ -513,7 +517,6 @@
                 if(this.error) this.error = null;
                 if(this.status) this.status = null;
 
-                if(this.manuallyLinking)  return this.manuallyLinking = null;
                 if(this.exposedPrivateKey)  return this.exposedPrivateKey = null;
                 if(this.exportType)  return this.exportType = null;
                 if(this.exporting)  return this.exporting = null;
@@ -747,9 +750,6 @@
             font-size: 40px;
             color:$mid-light-grey;
             text-align:center;
-
-            /*animation: pulsate 1s ease-out;*/
-            /*animation-iteration-count: infinite;*/
         }
 
         .head {

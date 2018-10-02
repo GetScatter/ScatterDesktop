@@ -43,6 +43,7 @@ import BuySellRAM from './components/popups/BuySellRAM.vue'
 import RegisterWithRIDL from './components/popups/RegisterWithRIDL.vue'
 import PopInHead from './components/popups/fragments/PopInHead.vue'
 import Vault from './components/popups/Vault.vue'
+import LinkOrCreateAccount from './components/popups/LinkOrCreateAccount.vue'
 
 // POP OUTS
 import GetIdentity from './views/popouts/GetIdentity.vue'
@@ -117,6 +118,7 @@ class Main {
             {tag:'ridl-register', vue:RegisterWithRIDL},
             {tag:'pop-in-head', vue:PopInHead},
             {tag:'vault', vue:Vault},
+            {tag:'link-or-create-account', vue:LinkOrCreateAccount},
 
             // POP OUTS
             {tag:'get-identity', vue:GetIdentity},
