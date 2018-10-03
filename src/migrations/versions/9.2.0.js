@@ -13,5 +13,8 @@ export const m9_2_0 = async scatter => {
         return network;
     }));
 
+    if(!scatter.settings.networks.find(x => x.blockchain === Blockchains.TRX))
+        scatter.settings.networks.push(await PluginRepository.plugin(Blockchains.TRX).getEndorsedNetwork());
+
     return true;
 };
