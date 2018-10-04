@@ -104,11 +104,6 @@
             origins(){
                 const origins = {};
 
-//                this.apps.map(p => {
-//                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
-//                    else origins[p.origin] += 1;
-//                });
-
                 this.permissions.map(p => {
                     if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
                     else origins[p.origin] += 1;

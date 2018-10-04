@@ -18,6 +18,7 @@ import {Popup} from '../models/popups/Popup'
 import migrate from '../migrations/migrator'
 
 export const actions = {
+    [Actions.SET_SPLASH]:({commit}, x) => commit(Actions.SET_SPLASH, x),
     [Actions.SET_SEARCH_TERMS]:({commit}, terms) => commit(Actions.SET_SEARCH_TERMS, terms),
     [Actions.HOLD_SCATTER]:({commit}, scatter) => commit(Actions.SET_SCATTER, scatter),
     [Actions.SET_SEED]:({commit}, password) => {

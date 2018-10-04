@@ -22,7 +22,7 @@
 
                 </section>
 
-                <section v-if="!unlocked">
+                <section v-else>
                     <auth></auth>
                 </section>
             </section>
@@ -82,7 +82,7 @@
             },
             route(){
                 return this.$route.name
-            },
+            }
         },
         created(){
 

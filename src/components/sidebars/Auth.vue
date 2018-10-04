@@ -3,7 +3,7 @@
         <section>
 
 
-            <section class="fader" :class="{'hide-all':leaving}">
+            <section class="fader" v-if="!loggingIn" :class="{'hide-all':leaving}">
                 <section class="logo-container">
                     <figure class="grand-hotel logo">Scatter</figure>
                 </section>
@@ -19,6 +19,12 @@
                     <cin big="1" placeholder="Password" type="password" :text="password" v-on:enter="unlock" v-on:changed="changed => bind(changed, 'password')"></cin>
                     <btn v-on:clicked="unlock" text="Unlock Scatter" full="true" large="true"></btn>
                 </section>
+            </section>
+
+            <section v-if="loggingIn">
+                <video id="intro" width="100%" height="100%" muted>
+                    <source src="../../../static/logo_intro.mp4" type="video/mp4">
+                </video>
             </section>
 
 
@@ -45,6 +51,7 @@
             password:'',
             confirmPassword:'',
             leaving:false,
+            loggingIn:false,
         }},
         computed: {
             isNewScatter(){
@@ -74,9 +81,15 @@
                     await this[Actions.LOAD_SCATTER]();
 
                     if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-                        await SocketService.initialize();
-
-                        this.pushTo(RouteNames.HOME);
+                        this.loggingIn = true;
+                        this.$nextTick(() => {
+                            document.getElementById('intro').play();
+                            setTimeout(async () => {
+                                await this[Actions.SET_SPLASH](true);
+                                await SocketService.initialize();
+                                this.pushTo(RouteNames.HOME);
+                            }, 10000)
+                        })
                     } else {
                         this.leaving = false;
                         PopupService.push(Popup.snackbar("Bad Password", "ban"))
@@ -101,7 +114,8 @@
             ...mapActions([
                 Actions.SET_SEED,
                 Actions.CREATE_SCATTER,
-                Actions.LOAD_SCATTER
+                Actions.LOAD_SCATTER,
+                Actions.SET_SPLASH
             ])
         }
     }

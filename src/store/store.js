@@ -13,6 +13,8 @@ import * as HARDWARE_STATES from '../models/hardware/constants';
 Vue.use(Vuex);
 
 const state = {
+    splash:false,
+
     searchTerms:'',
 
     seed:'',
@@ -31,7 +33,7 @@ const state = {
 
 const getters = {
     // App State
-    unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && state.scatter instanceof Scatter && !state.scatter.isEncrypted(),
+    unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && state.scatter instanceof Scatter && !state.scatter.isEncrypted() && state.splash,
 
 
     contacts:state =>       state.scatter.contacts || [],

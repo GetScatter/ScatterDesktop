@@ -1,3 +1,4 @@
+export const SET_SPLASH = 'setSplash';
 export const SET_SEARCH_TERMS = 'setSearchTerms';
 
 export const SET_SEED =         'setSeed';
