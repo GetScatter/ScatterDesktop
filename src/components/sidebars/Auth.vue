@@ -75,21 +75,29 @@
                 this.pushTo(RouteNames.ONBOARDING);
             },
             async unlock(){
+                const showIntro = false;
+
                 this.leaving = true;
                 setTimeout(async () => {
                     await this[Actions.SET_SEED](this.password);
                     await this[Actions.LOAD_SCATTER]();
 
                     if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-                        this.loggingIn = true;
-                        this.$nextTick(() => {
-                            document.getElementById('intro').play();
-                            setTimeout(async () => {
-                                await this[Actions.SET_SPLASH](true);
-                                await SocketService.initialize();
-                                this.pushTo(RouteNames.HOME);
-                            }, 10000)
-                        })
+                        const logIn = async () => {
+                            await this[Actions.SET_SPLASH](true);
+                            await SocketService.initialize();
+                            this.pushTo(RouteNames.HOME);
+                        };
+                        if(showIntro){
+                            this.loggingIn = true;
+                            this.$nextTick(() => {
+                                document.getElementById('intro').play();
+                                setTimeout(async () => {
+                                    logIn();
+                                }, 10000)
+                            })
+                        } else logIn();
+
                     } else {
                         this.leaving = false;
                         PopupService.push(Popup.snackbar("Bad Password", "ban"))

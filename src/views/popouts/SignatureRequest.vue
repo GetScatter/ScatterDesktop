@@ -36,7 +36,7 @@
                         <section class="padded">
                             <section class="key-value" v-for="field in identityRequirements.personal">
                                 <figure class="key">{{field}}</figure>
-                                <figure class="value">{{identity.getPropertyValueByName(field)}}</figure>
+                                <figure class="value bubbler">{{identity.getPropertyValueByName(field)}}</figure>
                             </section>
                         </section>
 
@@ -60,7 +60,7 @@
 
                             <section class="key-value" v-for="field in identityRequirements.location">
                                 <figure class="key">{{field}}</figure>
-                                <figure class="value">{{identity.getPropertyValueByName(field, selectedLocation)}}</figure>
+                                <figure class="value bubbler">{{identity.getPropertyValueByName(field, selectedLocation)}}</figure>
                             </section>
                         </section>
                     </section>

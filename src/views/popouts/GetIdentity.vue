@@ -157,7 +157,7 @@
                 return this.accountRequirements.map(x => this.networks.find(x => x.chainId === x.chainId).name).join(' / ')
             },
             shouldShowSearchbar(){
-                return this.selectedIdentity && this.validAccounts.length > 1;
+                return this.searchTerms.length || (this.selectedIdentity && this.validAccounts.length > 1);
             }
         },
         mounted(){

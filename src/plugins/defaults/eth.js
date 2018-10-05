@@ -35,23 +35,19 @@ const getCachedInstance = (network, wallet = null) => {
         const rpcUrl = network.host === 'ethnodes.get-scatter.com' ? 'https://commonly-classic-katydid.quiknode.io/d0bf98e7-a866-43d4-ac71-2397fd1b3aba/dQsznyrZRg2dr4DQJNPDgw==/' : network.fullhost();
         engine.addProvider(new RpcSubprovider({rpcUrl}));
         engine.start();
-        cachedInstances[key] = web3;
-        return web3;
-
-        // const web3 = new Web3(network.fullhost());
-        // cachedInstances[network.unique()] = web3;
-        // return web3;
+        cachedInstances[key] = [web3, engine];
+        return cachedInstances[key];
     }
 }
 
-const getMainnetGasPrices = async () => {
-    return Promise.race([
-        new Promise(r => setTimeout(() => r(null),500)),
-        new Promise(async r => {
-            let response = await fetch('https://ethgasstation.info/json/ethgasAPI.json').then(res => res.json());
-            r(response.average / 10);
-        })
-    ])
+const killCachedInstance = (network, wallet = null) => {
+    const key = network.unique() + (wallet ? wallet.getAccounts()[0] : '');
+    if(cachedInstances.hasOwnProperty(key)) {
+        const [web3, engine] = cachedInstances[key];
+        engine.stop();
+        delete cachedInstances[key];
+    }
+
 }
 
 const EXPLORERS = [
@@ -124,8 +120,10 @@ export default class ETH extends Plugin {
     }
 
     async balanceFor(account, tokenAccount, symbol){
-        const web3 = getCachedInstance(account.network());
-        return web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
+        const [web3, engine] = getCachedInstance(account.network());
+        let balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
+        killCachedInstance(account.network());
+        return balance;
     }
 
     defaultDecimals(){ return 18; }
@@ -163,13 +161,16 @@ export default class ETH extends Plugin {
                 return signatures;
             });
 
-            const web3 = getCachedInstance(account.network(), wallet);
+            const finished = x => {
+                killCachedInstance(account.network(), wallet);
+                resolve(x);
+            };
+
+            const [web3, engine] = getCachedInstance(account.network(), wallet);
             const value = web3util.utils.toWei(amount.toString());
             web3.eth.sendTransaction({from:account.publicKey, to, value})
-                .on('transactionHash', transactionHash => {
-                    resolve({transactionHash})
-                })
-                .on('error', error => resolve({error}));
+                .on('transactionHash', transactionHash => finished({transactionHash}))
+                .on('error', error => finished({error}));
         })
     }
 
