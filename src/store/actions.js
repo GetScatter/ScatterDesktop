@@ -19,6 +19,8 @@ import migrate from '../migrations/migrator'
 
 export const actions = {
     [Actions.SET_SPLASH]:({commit}, x) => commit(Actions.SET_SPLASH, x),
+    [Actions.SET_DAPP_DATA]:({commit}, x) => commit(Actions.SET_DAPP_DATA, x),
+    [Actions.SET_DAPP_LOGO]:({commit}, x) => commit(Actions.SET_DAPP_LOGO, x),
     [Actions.SET_SEARCH_TERMS]:({commit}, terms) => commit(Actions.SET_SEARCH_TERMS, terms),
     [Actions.HOLD_SCATTER]:({commit}, scatter) => commit(Actions.SET_SCATTER, scatter),
     [Actions.SET_SEED]:({commit}, password) => {

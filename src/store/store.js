@@ -14,6 +14,8 @@ Vue.use(Vuex);
 
 const state = {
     splash:false,
+    dappLogos:{},
+    dappData:{},
 
     searchTerms:'',
 

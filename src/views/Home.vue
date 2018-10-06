@@ -54,7 +54,7 @@
                 <section class="permission" v-for="(permCount, origin) in origins">
                     <section class="info">
                         <figure class="logo" @click="openApp(origin)">
-                            <img :src="originLogo(origin)" v-if="originLogo(origin)" />
+                            <img v-if="originLogo(origin)" :src="originLogo(origin)" />
                             <figure class="no-meta" v-else>
                                 <figure><i class="fa fa-ban"></i> No<br>Meta</figure>
                             </figure>
@@ -108,7 +108,9 @@
         }},
         computed:{
             ...mapState([
-                'scatter'
+                'scatter',
+                'dappLogos',
+                'dappData',
             ]),
             ...mapGetters([
                 'identity',
@@ -137,7 +139,11 @@
                 BlockchainsArray.map(({value}) => {
                     allApps = allApps.concat(res[blockchainName(value)]);
                 });
-                this.appData = allApps;
+                allApps = allApps.reduce((acc,x) => {
+                    acc[x.applink] = x;
+                    return acc;
+                })
+                this[Actions.SET_DAPP_DATA](allApps);
             });
         },
         methods:{
@@ -150,24 +156,22 @@
                     url:'',
                 };
 
-                if(!this.appData) return emptyResult;
-                const found = this.appData.find(x => {
-                    return x.applink === origin
-                });
+                const found = this.dappData[origin];
                 if(!found) return emptyResult;
 
-                if(!this.images.find(x => x.origin === origin)){
+                if(!this.dappLogos.hasOwnProperty(origin)){
+                    this[Actions.SET_DAPP_LOGO]({origin, logo:null});
                     const logo = `https://rawgit.com/GetScatter/ScatterApps/master/logos/${found.applink}.svg`;
-                    this.images.push({origin, logo:null});
                     fetch(logo).then(res => {
-                        this.images.find(x => x.origin === origin).logo = res.status === 200 ? logo : null;
+                        this[Actions.SET_DAPP_LOGO]({origin, logo:res.status === 200 ? logo : null});
+                        this.$forceUpdate();
                     })
                 }
 
                 return found;
             },
             originLogo(origin){
-                return (this.images.find(x => x.origin === origin) || {logo:null}).logo;
+                return this.dappLogos[origin];
             },
             openApps(){
                 ElectronHelpers.openLinkInBrowser('https://github.com/GetScatter/ScatterApps/')
@@ -184,7 +188,11 @@
             },
             removeAllPermissions(){
                 PermissionService.removeAllPermissions();
-            }
+            },
+            ...mapActions([
+                Actions.SET_DAPP_LOGO,
+                Actions.SET_DAPP_DATA,
+            ])
         }
     }
 </script>
