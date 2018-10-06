@@ -19,12 +19,14 @@ export default class ExternalWallet {
         this.type = _type;
         this.blockchain = _blockchain;
         this.interface = getInterface(_type, _blockchain);
+        this.addressIndex = 0;
     }
 
     static placeholder(){ return new ExternalWallet(); }
     static fromJson(json){
         let p = Object.assign(this.placeholder(), json);
         p.interface = getInterface(p.type, p.blockchain);
+        p.interface.setAddressIndex(p.addressIndex);
         return p;
     }
 }
@@ -52,6 +54,18 @@ export class ExternalWalletInterface {
 
     canConnect(){
         return this.handler.canConnect();
+    }
+
+    setAddressIndex(path){
+        return this.handler.setAddressIndex(path);
+    }
+
+    availableBlockchains(){
+        return this.handler.availableBlockchains();
+    }
+
+    reset(){
+        return this.handler.reset();
     }
 
 }

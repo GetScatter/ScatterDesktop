@@ -5,7 +5,7 @@ import * as HARDWARE_STATES from './constants';
 const {remote} = window.require('electron');
 const Transport = remote.getGlobal('appShared').Transport.default;
 import bippath from 'bip32-path';
-import {ExternalWalletInterface, EXT_WALLET_TYPES} from '../ExternalWallet';
+import {EXT_WALLET_TYPES} from '../ExternalWallet';
 import {Blockchains} from '../Blockchains';
 import PopupService from '../../services/PopupService';
 import {Popup} from '../popups/Popup';
@@ -15,6 +15,9 @@ const assert = require('assert');
 const asn1 = require('asn1-ber');
 import Eos from 'eosjs';
 
+const EthTx = require('ethereumjs-tx')
+import Eth from "@ledgerhq/hw-app-eth";
+
 const throwErr = () => PopupService.push(Popup.prompt(
     'No Hardware Available',
     'You either need to plug in your Ledger, or select the appropriate App.',
@@ -23,15 +26,17 @@ const throwErr = () => PopupService.push(Popup.prompt(
 ));
 
 export const LEDGER_PATHS = {
-    [Blockchains.EOSIO]:"44'/194'/0'/0/0",
+    [Blockchains.EOSIO]:(index = 0) => `44'/194'/0'/0/${index}`,
+    [Blockchains.ETH]:(index = 0) => `44'/60'/0'/0/${index}`,
 }
 
-const cache = {};
+export const cache = {};
 
 export default class LedgerWallet {
 
     constructor(blockchain){
         this.blockchain = blockchain;
+        this.api = null;
         this.init();
     }
 
@@ -44,6 +49,9 @@ export default class LedgerWallet {
         this.getPublicKey = async () => { return throwErr(); };
         this.sign = async () => { return throwErr(); };
         this.canConnect = async () => { return 'Open and unlock your Ledger.'; };
+        this.setAddressIndex = index => { return null; };
+        this.availableBlockchains = () => [Blockchains.EOSIO, Blockchains.ETH];
+        this.reset = () => this.init();
 
         const handleEvents = ({type, device}) => this[type](device);
         const setHardware = async () => {
@@ -56,14 +64,16 @@ export default class LedgerWallet {
                         await store.state.hardware.transport.close();
                     if(store.state.hardware.subscriber)
                         await store.state.hardware.subscriber.unsubscribe();
+
                     store.dispatch(Actions.SET_HARDWARE, null);
                     delete cache[this.blockchain];
                 }
             }
+
             return store.dispatch(Actions.SET_HARDWARE, hardware);
         }
 
-        if(store.state.hardware){
+        if(store.state.hardware && store.state.hardware.type !== EXT_WALLET_TYPES.LEDGER){
             await store.state.hardware.disconnect();
             return await setHardware();
         } else return await setHardware();
@@ -72,20 +82,20 @@ export default class LedgerWallet {
     async add(device){
         const {path} = device;
 
-        const clone = Object.assign(store.state.hardware, {transport:await Transport.open(path)});
-        store.dispatch(Actions.SET_HARDWARE, clone);
+        if(!store.state.hardware.transport) {
+            const clone = Object.assign(store.state.hardware, {transport: await Transport.open(path)});
+            await store.dispatch(Actions.SET_HARDWARE, clone);
+        }
 
-
-        this.api = new LedgerAPI(store.state.hardware.transport, this.blockchain, this);
+        this.api = new LedgerAPI(this.blockchain);
         this.getPublicKey = this.api.getPublicKey;
         this.sign = this.api.signTransaction;
         this.canConnect = this.api.getAppConfiguration;
+        this.setAddressIndex = this.api.setAddressIndex;
     }
 
     async remove(device){
-        const {path} = device;
         await store.state.hardware.disconnect();
-        store.dispatch(Actions.SET_HARDWARE, null);
     }
 
 }
@@ -107,26 +117,56 @@ const CODE = {
 
 class LedgerAPI {
 
-    constructor(blockchain, parent){
+    constructor(blockchain){
         this.blockchain = blockchain;
-        this.parent = parent;
+        this.addressIndex = 0;
 
+        let scrambleKey;
+        switch(this.blockchain){
+            case Blockchains.EOSIO: scrambleKey = "e0s"; break;
+            case Blockchains.ETH: scrambleKey = "eth"; break;
+        }
         store.state.hardware.transport.decorateAppAPIMethods(
             this,
-            [
-                "getPublicKey",
-                "signTransaction",
-                "getAppConfiguration"
-            ],
-            "e0s"
+            [ "getPublicKey", "signTransaction", "getAppConfiguration" ],
+            scrambleKey
         );
     }
 
+    setAddressIndex(index){
+        this.addressIndex = index;
+    }
+
     getPublicKey(){
+        const prefix = this.api ? this.api : this;
+        return prefix[`getPublicKey`+this.blockchain]();
+    }
+
+    getAppConfiguration(){
+        const prefix = this.api ? this.api : this;
+        return prefix[`getAppConfiguration`+this.blockchain]();
+    }
+
+    async signTransaction(publicKey, rawTxHex, abi, network){
+        const prefix = this.api ? this.api : this;
+        return prefix[`signTransaction`+this.blockchain](publicKey, rawTxHex, abi, network);
+    }
+
+
+
+
+
+
+
+    /*************************************************/
+    /*                 GET PUBLIC KEY                */
+    /*************************************************/
+
+    [`getPublicKey`+Blockchains.EOSIO](){
         return new Promise((resolve, reject) => {
             setTimeout(() => {
 
-                const path = LEDGER_PATHS[this.blockchain];
+                const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
                 const paths = bippath.fromString(path).toPathArray();
                 const buffer = Buffer.alloc(1 + paths.length * 4);
                 buffer[0] = paths.length;
@@ -163,14 +203,40 @@ class LedgerAPI {
                     })
             }, 1);
         })
-
     }
 
-    signTransaction(publicKey, rawTxHex, abi, network){
+    [`getPublicKey`+Blockchains.ETH](){
+        return new Promise(async (resolve, reject) => {
+            const popup = Popup.checkHardwareWalletScreen();
+            PopupService.push(popup);
+            const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
+            const eth = new Eth(store.state.hardware.transport);
+            eth.getAddress(path, true)
+                .then(response => {
+                    PopupService.remove(popup);
+                    resolve(response.address);
+                }).catch(err => {
+                    PopupService.remove(popup);
+                    reject(err);
+                });
+        })
+    }
+
+
+
+
+
+
+
+    /*************************************************/
+    /*                 SIGN TRANSACTION              */
+    /*************************************************/
+
+    [`signTransaction`+Blockchains.EOSIO](publicKey, rawTxHex, abi, network){
 
         const transaction = rawTxHex.transaction;
 
-        const path = LEDGER_PATHS[this.blockchain];
+        const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
         const paths = bippath.fromString(path).toPathArray();
         let offset = 0;
 
@@ -230,7 +296,40 @@ class LedgerAPI {
         })
     }
 
-    getAppConfiguration(){
+    async [`signTransaction`+Blockchains.ETH](publicKey, payload, abi, network){
+        const {transaction} = payload;
+        const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
+        const eth = new Eth(store.state.hardware.transport);
+        const popup = Popup.checkHardwareWalletScreen();
+        PopupService.push(popup);
+        const chainIdHex = '0x'+(network.chainId.length === 1 ? '0'+ network.chainId : network.chainId).toString();
+        const baseTransaction = Object.assign(transaction, {chainId:parseInt(network.chainId), r:'0x00', s:'0x00', v:chainIdHex});
+        const rawTxHex = (new EthTx(baseTransaction)).serialize().toString('hex');
+        return eth.signTransaction(path, rawTxHex).then(res => {
+            PopupService.remove(popup);
+            const r = '0x' + res.r;
+            const s = '0x' + res.s;
+            const v = '0x' + res.v;
+            const signed = Object.assign(baseTransaction, {r,s,v});
+            return '0x'+(new EthTx(signed)).serialize().toString('hex');
+        }).catch(err => {
+            PopupService.remove(popup);
+            return null;
+        })
+    }
+
+
+
+
+
+
+
+
+    /*************************************************/
+    /*                 GET APP CONFIG                */
+    /*************************************************/
+
+    [`getAppConfiguration`+Blockchains.EOSIO](){
         if(!store.state.hardware) return 'Hardware wallet disconnected';
 
         return store.state.hardware.transport.send(CODE.CLA, CODE.INFO, CODE.NO, CODE.NO).then(res => {
@@ -240,6 +339,21 @@ class LedgerAPI {
             return `You must open the ${this.blockchain.toUpperCase()} Ledger App in order to use it with Scatter`;
         })
     }
+
+    async [`getAppConfiguration`+Blockchains.ETH](){
+        const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
+        const eth = new Eth(store.state.hardware.transport);
+        return eth.getAppConfiguration().then(res => {
+            return true;
+        }).catch(err => {
+            delete cache[this.blockchain];
+            return `You must open the ${this.blockchain.toUpperCase()} Ledger App in order to use it with Scatter`;
+        })
+    }
+
+
+
+
 
 }
 

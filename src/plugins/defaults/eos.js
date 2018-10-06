@@ -165,7 +165,9 @@ export default class EOS extends Plugin {
     accountsAreImported(){ return true; }
     getImportableAccounts(keypair, network){
         return new Promise((resolve, reject) => {
-            const publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
+            let publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO);
+            if(!publicKey) return resolve([]);
+            publicKey = publicKey.key;
             getAccountsFromPublicKey(publicKey, network).then(accounts => {
                 resolve(accounts.map(account => Account.fromJson({
                     name:account.name,

@@ -250,6 +250,20 @@
                                                 <sel :selected="selected.external.type" v-if="selected.external"
                                                      :options="EXT_WALLET_TYPES" v-on:changed="(x) => hardwareType = x"></sel>
 
+                                                <section style="margin-top:10px;" v-if="selected.external.interface.availableBlockchains().length > 1">
+                                                    <sel style="width:calc(80% - 10px); float:left;" :selected="blockchainName(hardwareBlockchain)" v-if="selected.external"
+                                                         :options="selected.external.interface.availableBlockchains()" :parser="x => blockchainName(x)" v-on:changed="(x) => hardwareBlockchain = x"></sel>
+
+                                                    <input style="text-align:center;  font-size:16px; padding:0 10px; width:20%; float:left; height:50px; border-radius:4px; border:1px solid rgba(0,0,0,0.2); margin-left:10px; outline:0;" v-if="selected.external" placeholder="Index" v-model="selected.external.addressIndex" type="number" min="0" />
+                                                </section>
+
+                                                <!--<section class="input-keypair" style="padding:20px;">-->
+                                                    <!--<section class="inputs">-->
+                                                        <!--<label>Address Index</label>-->
+                                                        <!--<input v-if="selected.external" placeholder="Select an Index ( number )" v-model="selected.external.addressIndex" type="number" min="0" />-->
+                                                    <!--</section>-->
+                                                <!--</section>-->
+
                                                 <transition name="slide-left" mode="out-in">
                                                     <section key="getpublickey" v-if="hardwareReady" class="button wide" @click="importKeyFromHardware">
                                                         <figure class="name">Link Hardware</figure>
@@ -364,7 +378,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
 
-    import {Blockchains, blockchainName} from '../../models/Blockchains'
+    import {Blockchains, BlockchainsArray, blockchainName} from '../../models/Blockchains'
     import Keypair from '../../models/Keypair'
     import {Popup} from '../../models/popups/Popup'
 
@@ -400,7 +414,8 @@
         data(){ return {
             displayPrivateKeyField:false,
 
-            Blockchains:Blockchains,
+            BlockchainsArray,
+            Blockchains,
             selected:null,
             publicKey:null,
             error:null,
@@ -425,6 +440,7 @@
             camera:false,
             hardwareReady:false,
             hardwareType:EXT_WALLET_TYPES.LEDGER,
+            hardwareBlockchain:Blockchains.EOSIO,
         }},
         mounted(){
 
@@ -676,7 +692,7 @@
                 this.hardwareReady = true;
             },
             setupHardware(){
-                this.selected.external = new ExternalWallet(this.hardwareType);
+                this.selected.external = new ExternalWallet(this.hardwareType, this.hardwareBlockchain);
                 this.hardwareReady = false;
             },
             async importKeyFromHardware(){
@@ -728,6 +744,14 @@
             },
             ['hardwareType'](){
                 this.setupHardware();
+            },
+            ['hardwareBlockchain'](){
+                this.setupHardware();
+            },
+            ['selected.external.addressIndex'](){
+                if(this.selected && this.selected.external)
+                    this.selected.external.interface
+                        .setAddressIndex(this.selected.external.addressIndex);
             }
         }
     }

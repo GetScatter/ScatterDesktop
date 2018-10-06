@@ -53,8 +53,11 @@
 
                 <section class="permission" v-for="(permCount, origin) in origins">
                     <section class="info">
-                        <figure class="logo" v-if="originLogo(origin)" @click="openApp(origin)">
-                            <img :src="originLogo(origin)" />
+                        <figure class="logo" @click="openApp(origin)">
+                            <img :src="originLogo(origin)" v-if="originLogo(origin)" />
+                            <figure class="no-meta" v-else>
+                                <figure><i class="fa fa-ban"></i> No<br>Meta</figure>
+                            </figure>
                         </figure>
 
                         <section class="details">
@@ -426,6 +429,21 @@
                         img {
                             width:100%;
                             height:100%;
+                        }
+
+                        .no-meta {
+                            width:100%;
+                            height:100%;
+                            background:rgba(0,0,0,0.05);
+                            color:rgba(0,0,0,0.4);
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            text-align:center;
+                            border-radius:50%;
+                            font-size: 9px;
+                            font-weight: bold;
+                            box-shadow:inset 0 5px 10px rgba(0,0,0,0.1), inset 0 1px 2px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,1);
                         }
                     }
 

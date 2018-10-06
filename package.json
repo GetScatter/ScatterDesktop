@@ -43,6 +43,7 @@
     "postinstall": "electron-rebuild --force"
   },
   "dependencies": {
+    "@ledgerhq/hw-app-eth": "^4.23.0",
     "@ledgerhq/hw-transport": "^4.21.0",
     "@ledgerhq/hw-transport-node-hid": "^4.22.0",
     "aes-oop": "^1.0.4",
@@ -52,8 +53,8 @@
     "electron-store": "^2.0.0",
     "eos-rc-parser": "^1.0.4",
     "eosjs": "^16.0.9",
-    "eosjs2": "npm:eosjs@beta",
     "eosjs-ecc": "^4.0.4",
+    "eosjs2": "npm:eosjs@beta",
     "ethereumjs-abi": "^0.6.5",
     "ethereumjs-tx": "^1.3.7",
     "ethereumjs-util": "^5.2.0",

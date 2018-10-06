@@ -154,7 +154,7 @@ export default class ETH extends Plugin {
             const wallet = new ScatterEthereumWallet(account, async (transaction, callback) => {
                 const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
                 const signatures = promptForSignature
-                    ? await this.passThroughProvider(payload, account, reject)
+                    ? await this.passThroughProvider(payload, account, x => finished(x))
                     : await this.signer(payload.transaction, account.publicKey);
 
                 if(callback) callback(null, signatures);
@@ -256,7 +256,7 @@ export default class ETH extends Plugin {
 class ScatterEthereumWallet {
     constructor(account, signer){
         this.signTransaction = signer;
-        this.getAccounts = async (callback) => {
+        this.getAccounts = (callback) => {
             const accounts = [account.sendable()];
             if(callback) callback(null, accounts);
             return accounts;
