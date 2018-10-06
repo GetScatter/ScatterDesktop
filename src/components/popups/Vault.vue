@@ -49,7 +49,7 @@
                 </figure>
 
                 <!-- EXPORT SECRET -->
-                <figure class="show-qr" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Export Private Key'" @click="exporting = true">
+                <figure class="export-keypair" :class="{'show':selected && !selected.external && !isNew && !exporting && !status}" v-tooltip="'Export Private Key'" @click="exporting = true">
                     <i class="fa fa-key"></i>
                 </figure>
 
@@ -160,6 +160,7 @@
                                                 <section class="accounts" :class="{'hidden':!showingSecrets}">
                                                     <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied ${blockchainName(pkey.blockchain)} Public Key to Clipboard.`)">
                                                         <section class="info">
+                                                            <figure class="description linked-account">Shareable Key</figure>
                                                             <figure class="name">{{blockchainName(pkey.blockchain)}}</figure>
                                                             <figure class="description"><i class="fa fa-copy"></i> {{pkey.key}}</figure>
                                                         </section>
@@ -788,7 +789,7 @@
                 }
             }
 
-            .add-keypair, .remove-keypair, .refresh-accounts, .show-qr, .show-cam {
+            .add-keypair, .remove-keypair, .refresh-accounts, .show-qr, .show-cam, .export-keypair {
                 position: absolute;
                 opacity:1;
                 top:20px;
@@ -863,7 +864,7 @@
                 top:-20px;
                 visibility: hidden;
 
-                right:110px;
+                right:65px;
 
                 &:hover {
                     border:1px solid $red;
@@ -878,13 +879,27 @@
                 }
             }
 
+            .export-keypair {
+                opacity:0;
+                top:-20px;
+                visibility: hidden;
+
+                right:110px;
+
+                &.show {
+                    opacity:1;
+                    top:20px;
+                    visibility: visible;
+                }
+            }
+
             .refresh-accounts {
                 transition-delay: 0.1s;
                 opacity:0;
                 top:-20px;
                 visibility: hidden;
 
-                right:65px;
+                right:20px;
 
                 &.show {
                     opacity:1;

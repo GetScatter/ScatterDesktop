@@ -500,9 +500,9 @@ export default class EOS extends Plugin {
         });
 
         payload.buf = Buffer.concat([
-            new Buffer(transaction.chainId, "hex"),            // Chain ID
-            buffer, // Transaction
-            new Buffer(new Uint8Array(32)),                // Context free actions
+            new Buffer(transaction.chainId, "hex"),         // Chain ID
+            buffer,                                         // Transaction
+            new Buffer(new Uint8Array(32)),                 // Context free actions
         ]);
 
         return parsed.actions;
