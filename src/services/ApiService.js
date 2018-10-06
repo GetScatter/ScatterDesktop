@@ -334,8 +334,8 @@ export default class ApiService {
             const needToSelectLocation = requiredFields.hasOwnProperty('location') && requiredFields.location.length && identity.locations.length > 1;
             if(existingApp
                 && !hasHardwareKeys
-                && !needToSelectLocation
-                && identity.locations.length === 1
+                && (!needToSelectLocation
+                || needToSelectLocation && identity.locations.length === 1)
                 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
                 return await signAndReturn(identity.locations[0]);
             }
