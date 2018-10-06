@@ -453,7 +453,7 @@
                 if(this.selectedAccount.blockchain() !== Blockchains.EOSIO) return false;
                 const cpu = this.resources.find(x => x.name === 'CPU');
                 if(!cpu) return false;
-                return cpu.available <= 0;
+                return cpu.available <= 6000;
             }
         },
         methods:{
