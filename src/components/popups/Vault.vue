@@ -235,7 +235,11 @@
                                                     <section v-if="!camera" key="inputsecret" class="input-keypair">
                                                         <section class="inputs">
                                                             <label><i class="fa fa-key"></i> Enter a Private Key</label>
-                                                            <input v-model="selected.privateKey" type="password" />
+                                                            <input class="pad-right" v-model="selected.privateKey" :type="displayPrivateKeyField ? 'text' : 'password'" />
+                                                            <figure class="eye-icon" @click="displayPrivateKeyField = !displayPrivateKeyField">
+                                                                <i class="fa fa-eye" v-tooltip="'Show Input'" v-if="!displayPrivateKeyField"></i>
+                                                                <i class="fa fa-eye-slash" v-tooltip="'Hide Input'" v-if="displayPrivateKeyField"></i>
+                                                            </figure>
                                                         </section>
                                                     </section>
                                                 </transition>
@@ -394,6 +398,8 @@
 
     export default {
         data(){ return {
+            displayPrivateKeyField:false,
+
             Blockchains:Blockchains,
             selected:null,
             publicKey:null,
@@ -1191,6 +1197,7 @@
                 padding:40px;
 
                 .inputs {
+                    position: relative;
 
                     label {
                         font-size: 13px;
@@ -1205,6 +1212,17 @@
                         border-bottom:1px dashed rgba(0,0,0,0.2);
                         font-size: 18px;
                         margin-top:10px;
+
+                        &.pad-right {
+                            padding-right:25px;
+                        }
+                    }
+
+                    .eye-icon {
+                        position:absolute;
+                        right:0;
+                        bottom:5px;
+                        cursor: pointer;
                     }
                 }
             }
