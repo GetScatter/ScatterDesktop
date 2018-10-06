@@ -53,11 +53,19 @@
 
                 <section class="permission" v-for="(permCount, origin) in origins">
                     <section class="info">
-                        <figure class="name" @click="openApp(origin)">{{origin}}</figure>
-                        <figure class="description"><b>Link Permission</b>
-                            <span v-if="permCount - 1 > 0"> and <b>{{permCount - 1}} Action Permission{{permCount -1 > 0 ? 's' : ''}}</b></span>
-                            <span v-else>only</span>
+                        <figure class="logo" v-if="originLogo(origin)" @click="openApp(origin)">
+                            <img :src="originLogo(origin)" />
                         </figure>
+
+                        <section class="details">
+                            <figure class="name" @click="openApp(origin)">{{getAppData(origin).name}}</figure>
+                            <figure class="type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
+                            <figure class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></figure>
+                            <figure class="description">Link Permission
+                                <span v-if="permCount - 1 > 0"> and {{permCount - 1}} Action Permission{{permCount -1 > 0 ? 's' : ''}}</span>
+                                <span v-else>only</span>
+                            </figure>
+                        </section>
                     </section>
 
                     <section class="actions">
@@ -85,12 +93,15 @@
 
     import PermissionService from '../services/PermissionService';
     import ElectronHelpers from '../util/ElectronHelpers';
+    import {BlockchainsArray, blockchainName} from '../models/Blockchains';
 
     let saveTimeout = null;
 
     export default {
         data () {return {
             searchTerms:'',
+            appData:null,
+            images:[],
         }},
         computed:{
             ...mapState([
@@ -115,15 +126,55 @@
 
                     return acc;
                 }, {});
-            },
+            }
+        },
+        mounted(){
+            fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(res => {
+                let allApps = [];
+                BlockchainsArray.map(({value}) => {
+                    allApps = allApps.concat(res[blockchainName(value)]);
+                });
+                this.appData = allApps;
+            });
         },
         methods:{
+            getAppData(origin){
+                const emptyResult = {
+                    type:'',
+                    name:origin,
+                    description:'',
+                    logo:'',
+                    url:'',
+                };
+
+                if(!this.appData) return emptyResult;
+                const found = this.appData.find(x => {
+                    return x.applink === origin
+                });
+                if(!found) return emptyResult;
+
+                if(!this.images.find(x => x.origin === origin)){
+                    const logo = `https://rawgit.com/GetScatter/ScatterApps/master/logos/${found.applink}.svg`;
+                    this.images.push({origin, logo:null});
+                    fetch(logo).then(res => {
+                        this.images.find(x => x.origin === origin).logo = res.status === 200 ? logo : null;
+                    })
+                }
+
+                return found;
+            },
+            originLogo(origin){
+                return (this.images.find(x => x.origin === origin) || {logo:null}).logo;
+            },
             openApps(){
                 ElectronHelpers.openLinkInBrowser('https://github.com/GetScatter/ScatterApps/')
             },
             openApp(origin){
-                if(origin.indexOf('://') === -1) origin = `https://${origin}`
-                ElectronHelpers.openLinkInBrowser(origin);
+                const data = this.getAppData(origin);
+                if(data.url.length){
+                    ElectronHelpers.openLinkInBrowser(data.url);
+                }
+
             },
             removePermissions(origin){
                 PermissionService.removeAllPermissionsFor(origin);
@@ -363,26 +414,61 @@
                 .info {
                     width:calc(100% - 100px);
                     float:left;
+                    overflow: hidden;
 
-                    .name {
-                        font-weight: 600;
-                        font-size: 18px;
+                    .logo {
                         cursor: pointer;
-                        display: inline-block;
-                        border-bottom:2px solid rgba(0,0,0,0);
-                        color:$black;
-                        transition: all 0.2s ease;
-                        transition-property: border-bottom, color;
+                        width:50px;
+                        height:50px;
+                        float:left;
+                        margin-right:20px;
 
-                        &:hover {
-                            border-bottom:2px solid $dark-blue;
-                            color:$dark-blue;
+                        img {
+                            width:100%;
+                            height:100%;
                         }
                     }
 
-                    .description {
-                        margin-top:3px;
-                        font-size: 13px;
+                    .details {
+                        float:left;
+
+                        .type {
+                            font-size: 9px;
+                            font-weight: bold;
+                            border:1px solid rgba(0,0,0,0.2);
+                            margin-bottom:3px;
+                            padding:3px 5px;
+                            vertical-align: middle;
+                            margin-left:5px;
+                            width:auto;
+                            display:inline-block;
+                            border-radius:4px;
+                        }
+
+                        .name {
+                            font-weight: 600;
+                            font-size: 18px;
+                            cursor: pointer;
+                            display: inline-block;
+                            color:$black;
+                            transition: all 0.2s ease;
+                            transition-property: border-bottom, color;
+
+                            &:hover {
+                                color:$dark-blue;
+                            }
+                        }
+
+                        .description {
+                            margin-top:3px;
+                            font-size: 9px;
+
+                            &:not(:last-child){
+                                padding-bottom:5px;
+                                margin-bottom:5px;
+                                border-bottom:1px solid rgba(0,0,0,0.1);
+                            }
+                        }
                     }
                 }
 
