@@ -51,7 +51,7 @@
                     </section>
                 </section>
 
-                <section class="permission" v-for="(permCount, origin) in origins">
+                <section class="permission" v-for="(permCount, origin) in origins" :class="{'clickable':getAppData(origin).url.length}">
                     <section class="info">
                         <figure class="logo" @click="openApp(origin)">
                             <img v-if="originLogo(origin)" :src="originLogo(origin)" />
@@ -231,10 +231,9 @@
                 margin-left:10px;
                 cursor: pointer;
                 border-radius: 2px;
-                border:1px solid #d9d9d9;
                 width:40px;
                 height:40px;
-                line-height:38px;
+                line-height:40px;
                 text-align:center;
                 font-size: 18px;
                 color:#959595;
@@ -245,13 +244,11 @@
 
                 &.red {
                     background:$red;
-                    border:1px solid $red;
                     color:#fff;
                 }
 
                 &:hover {
                     background:$light-blue;
-                    border:1px solid $light-blue;
                     color:#fff;
                 }
 
@@ -411,24 +408,12 @@
                     border-bottom:1px solid #d9d9d9;
                 }
 
-                &:hover {
-                    .info {
-                        .name {
-                            color:$dark-blue;
-                            animation: pulsate 1s ease-out;
-                            animation-iteration-count: infinite;
-                        }
-                    }
-
-                }
-
                 .info {
-                    width:calc(100% - 100px);
+                    width:calc(100% - 150px);
                     float:left;
                     overflow: hidden;
 
                     .logo {
-                        cursor: pointer;
                         width:50px;
                         height:50px;
                         float:left;
@@ -474,15 +459,10 @@
                         .name {
                             font-weight: 600;
                             font-size: 18px;
-                            cursor: pointer;
                             display: inline-block;
                             color:$black;
                             transition: all 0.2s ease;
                             transition-property: border-bottom, color;
-
-                            &:hover {
-                                color:$dark-blue;
-                            }
                         }
 
                         .description {
@@ -500,18 +480,17 @@
 
                 .actions {
                     float:left;
-                    width:100px;
+                    width:150px;
 
                     .action {
                         margin-left:10px;
                         cursor: pointer;
                         border-radius: 2px;
-                        border:1px solid #d9d9d9;
-                        width:30px;
-                        height:30px;
-                        line-height:28px;
+                        width:40px;
+                        height:40px;
+                        line-height:40px;
                         text-align:center;
-                        font-size: 14px;
+                        font-size: 18px;
                         color:#959595;
                         float:right;
 
@@ -520,14 +499,42 @@
 
                         &:hover {
                             background:$light-blue;
-                            border:1px solid $light-blue;
                             color:#fff;
                         }
 
                         &.red {
                             &:hover {
                                 background:$red;
-                                border:1px solid $red;
+                            }
+                        }
+                    }
+                }
+
+
+
+                &.clickable {
+                    &:hover {
+                        .info {
+                            .name {
+                                cursor: pointer;
+                                color:$dark-blue;
+                                animation: pulsate 1s ease-out;
+                                animation-iteration-count: infinite;
+                            }
+
+                            .logo {
+                                cursor: pointer;
+                            }
+                        }
+
+                    }
+
+                    .info {
+                        .details {
+                            .name {
+                                &:hover {
+                                    color:$dark-blue;
+                                }
                             }
                         }
                     }

@@ -161,7 +161,6 @@
             }
         },
         mounted(){
-
             if(!this.isValidIdentity){
                 this.error = {
                     title:"Your Identity is missing some properties.",
@@ -185,7 +184,7 @@
                 return;
             }
 
-            this.checkWarning();
+//            this.checkWarning();
         },
         methods: {
             async checkWarning(){

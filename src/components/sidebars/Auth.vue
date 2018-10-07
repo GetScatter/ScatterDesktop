@@ -80,7 +80,7 @@
                 this.pushTo(RouteNames.ONBOARDING);
             },
             async unlock(){
-                const showIntro = false;
+                const showIntro = true;
 
                 this.leaving = true;
                 setTimeout(async () => {
@@ -96,12 +96,22 @@
                         if(showIntro){
                             this.loggingIn = true;
                             this.$nextTick(() => {
-                                document.getElementById('intro').play();
+                                const vid = document.getElementById('intro');
+                                vid.playbackRate = 2;
+                                vid.play();
+                                setTimeout(() => {
+                                    SocketService.initialize();
+                                }, 1000);
                                 setTimeout(async () => {
-                                    logIn();
-                                }, 10000)
+                                    await this[Actions.SET_SPLASH](true);
+                                    this.pushTo(RouteNames.HOME);
+                                }, 5000)
                             })
-                        } else logIn();
+                        } else {
+                            await this[Actions.SET_SPLASH](true);
+                            await SocketService.initialize();
+                            this.pushTo(RouteNames.HOME);
+                        }
 
                     } else {
                         this.leaving = false;
