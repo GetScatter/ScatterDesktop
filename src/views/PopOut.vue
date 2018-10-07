@@ -44,7 +44,16 @@
         mounted(){
             WindowService.watch('popup', windowMessage => {
                 this.windowMessage = windowMessage;
-                this[Actions.HOLD_SCATTER](Scatter.fromJson(this.windowMessage.data.scatter));
+
+                const scatter = this.windowMessage.data.scatter;
+
+                // Hardware wallets cause slowdowns to initialize
+                // which makes popups slow down too.
+                scatter.keychain.keypairs.map(x => {
+                    if(x.external) x.external = null;
+                })
+
+                this[Actions.HOLD_SCATTER](Scatter.fromJson(scatter));
             });
         },
         computed:{

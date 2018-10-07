@@ -123,19 +123,12 @@ export default class KeyPairService {
 
     static async loadFromHardware(keypair){
         return keypair.external.interface.getPublicKey().then(key => {
-            let isValid = false;
-
-            BlockchainsArray.map(x => {
-                if(isValid) return;
-                if(PluginRepository.plugin(x.value).validPublicKey(key)){
-                    isValid = true;
-                    keypair.external.blockchain = x.value;
-                    keypair.external.publicKey = key;
-                    keypair.publicKeys.push({blockchain:x.value, key})
-                }
-            });
-
-            return true;
+            if(PluginRepository.plugin(keypair.external.blockchain).validPublicKey(key)){
+                keypair.external.publicKey = key;
+                keypair.publicKeys.push({blockchain:keypair.external.blockchain, key});
+                keypair.hash();
+                return true;
+            } else return false;
         }).catch(() => {
             return false;
         })

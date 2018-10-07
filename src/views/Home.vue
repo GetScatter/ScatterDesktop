@@ -51,13 +51,24 @@
                     </section>
                 </section>
 
-                <section class="permission" v-for="(permCount, origin) in origins">
+                <section class="permission" v-for="(permCount, origin) in origins" :class="{'clickable':getAppData(origin).url.length}">
                     <section class="info">
-                        <figure class="name" @click="openApp(origin)">{{origin}}</figure>
-                        <figure class="description"><b>Link Permission</b>
-                            <span v-if="permCount - 1 > 0"> and <b>{{permCount - 1}} Action Permission{{permCount -1 > 0 ? 's' : ''}}</b></span>
-                            <span v-else>only</span>
+                        <figure class="logo" @click="openApp(origin)">
+                            <img v-if="originLogo(origin)" :src="originLogo(origin)" />
+                            <figure class="no-meta" v-else>
+                                <figure><i class="fa fa-ban"></i> No<br>Meta</figure>
+                            </figure>
                         </figure>
+
+                        <section class="details">
+                            <figure class="name" @click="openApp(origin)">{{getAppData(origin).name}}</figure>
+                            <figure class="type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
+                            <figure class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></figure>
+                            <figure class="description">Link Permission
+                                <span v-if="permCount - 1 > 0"> and {{permCount - 1}} Action Permission{{permCount -1 > 0 ? 's' : ''}}</span>
+                                <span v-else>only</span>
+                            </figure>
+                        </section>
                     </section>
 
                     <section class="actions">
@@ -85,16 +96,21 @@
 
     import PermissionService from '../services/PermissionService';
     import ElectronHelpers from '../util/ElectronHelpers';
+    import {BlockchainsArray, blockchainName} from '../models/Blockchains';
 
     let saveTimeout = null;
 
     export default {
         data () {return {
             searchTerms:'',
+            appData:null,
+            images:[],
         }},
         computed:{
             ...mapState([
-                'scatter'
+                'scatter',
+                'dappLogos',
+                'dappData',
             ]),
             ...mapGetters([
                 'identity',
@@ -103,11 +119,6 @@
             ]),
             origins(){
                 const origins = {};
-
-//                this.apps.map(p => {
-//                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
-//                    else origins[p.origin] += 1;
-//                });
 
                 this.permissions.map(p => {
                     if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
@@ -120,22 +131,68 @@
 
                     return acc;
                 }, {});
-            },
+            }
+        },
+        mounted(){
+            fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(res => {
+                let allApps = [];
+                BlockchainsArray.map(({value}) => {
+                    allApps = allApps.concat(res[blockchainName(value)]);
+                });
+                allApps = allApps.reduce((acc,x) => {
+                    acc[x.applink] = x;
+                    return acc;
+                })
+                this[Actions.SET_DAPP_DATA](allApps);
+            });
         },
         methods:{
+            getAppData(origin){
+                const emptyResult = {
+                    type:'',
+                    name:origin,
+                    description:'',
+                    logo:'',
+                    url:'',
+                };
+
+                const found = this.dappData[origin];
+                if(!found) return emptyResult;
+
+                if(!this.dappLogos.hasOwnProperty(origin)){
+                    this[Actions.SET_DAPP_LOGO]({origin, logo:null});
+                    const logo = `https://rawgit.com/GetScatter/ScatterApps/master/logos/${found.applink}.svg`;
+                    fetch(logo).then(res => {
+                        this[Actions.SET_DAPP_LOGO]({origin, logo:res.status === 200 ? logo : null});
+                        this.$forceUpdate();
+                    })
+                }
+
+                return found;
+            },
+            originLogo(origin){
+                return this.dappLogos[origin];
+            },
             openApps(){
                 ElectronHelpers.openLinkInBrowser('https://github.com/GetScatter/ScatterApps/')
             },
             openApp(origin){
-                if(origin.indexOf('://') === -1) origin = `https://${origin}`
-                ElectronHelpers.openLinkInBrowser(origin);
+                const data = this.getAppData(origin);
+                if(data.url.length){
+                    ElectronHelpers.openLinkInBrowser(data.url);
+                }
+
             },
             removePermissions(origin){
                 PermissionService.removeAllPermissionsFor(origin);
             },
             removeAllPermissions(){
                 PermissionService.removeAllPermissions();
-            }
+            },
+            ...mapActions([
+                Actions.SET_DAPP_LOGO,
+                Actions.SET_DAPP_DATA,
+            ])
         }
     }
 </script>
@@ -174,10 +231,9 @@
                 margin-left:10px;
                 cursor: pointer;
                 border-radius: 2px;
-                border:1px solid #d9d9d9;
                 width:40px;
                 height:40px;
-                line-height:38px;
+                line-height:40px;
                 text-align:center;
                 font-size: 18px;
                 color:#959595;
@@ -188,13 +244,11 @@
 
                 &.red {
                     background:$red;
-                    border:1px solid $red;
                     color:#fff;
                 }
 
                 &:hover {
                     background:$light-blue;
-                    border:1px solid $light-blue;
                     color:#fff;
                 }
 
@@ -354,57 +408,89 @@
                     border-bottom:1px solid #d9d9d9;
                 }
 
-                &:hover {
-                    .info {
-                        .name {
-                            color:$dark-blue;
-                            animation: pulsate 1s ease-out;
-                            animation-iteration-count: infinite;
-                        }
-                    }
-
-                }
-
                 .info {
-                    width:calc(100% - 100px);
+                    width:calc(100% - 150px);
                     float:left;
+                    overflow: hidden;
 
-                    .name {
-                        font-weight: 600;
-                        font-size: 18px;
-                        cursor: pointer;
-                        display: inline-block;
-                        border-bottom:2px solid rgba(0,0,0,0);
-                        color:$black;
-                        transition: all 0.2s ease;
-                        transition-property: border-bottom, color;
+                    .logo {
+                        width:50px;
+                        height:50px;
+                        float:left;
+                        margin-right:20px;
 
-                        &:hover {
-                            border-bottom:2px solid $dark-blue;
-                            color:$dark-blue;
+                        img {
+                            width:100%;
+                            height:100%;
+                        }
+
+                        .no-meta {
+                            width:100%;
+                            height:100%;
+                            background:rgba(0,0,0,0.05);
+                            color:rgba(0,0,0,0.4);
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            text-align:center;
+                            border-radius:50%;
+                            font-size: 9px;
+                            font-weight: bold;
+                            box-shadow:inset 0 5px 10px rgba(0,0,0,0.1), inset 0 1px 2px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,1);
                         }
                     }
 
-                    .description {
-                        margin-top:3px;
-                        font-size: 13px;
+                    .details {
+                        float:left;
+
+                        .type {
+                            font-size: 9px;
+                            font-weight: bold;
+                            border:1px solid rgba(0,0,0,0.2);
+                            margin-bottom:3px;
+                            padding:3px 5px;
+                            vertical-align: middle;
+                            margin-left:5px;
+                            width:auto;
+                            display:inline-block;
+                            border-radius:4px;
+                        }
+
+                        .name {
+                            font-weight: 600;
+                            font-size: 18px;
+                            display: inline-block;
+                            color:$black;
+                            transition: all 0.2s ease;
+                            transition-property: border-bottom, color;
+                        }
+
+                        .description {
+                            margin-top:3px;
+                            font-size: 9px;
+
+                            &:not(:last-child){
+                                padding-bottom:5px;
+                                margin-bottom:5px;
+                                border-bottom:1px solid rgba(0,0,0,0.1);
+                            }
+                        }
                     }
                 }
 
                 .actions {
                     float:left;
-                    width:100px;
+                    width:150px;
 
                     .action {
                         margin-left:10px;
                         cursor: pointer;
                         border-radius: 2px;
-                        border:1px solid #d9d9d9;
-                        width:30px;
-                        height:30px;
-                        line-height:28px;
+                        width:40px;
+                        height:40px;
+                        line-height:40px;
                         text-align:center;
-                        font-size: 14px;
+                        font-size: 18px;
                         color:#959595;
                         float:right;
 
@@ -413,14 +499,42 @@
 
                         &:hover {
                             background:$light-blue;
-                            border:1px solid $light-blue;
                             color:#fff;
                         }
 
                         &.red {
                             &:hover {
                                 background:$red;
-                                border:1px solid $red;
+                            }
+                        }
+                    }
+                }
+
+
+
+                &.clickable {
+                    &:hover {
+                        .info {
+                            .name {
+                                cursor: pointer;
+                                color:$dark-blue;
+                                animation: pulsate 1s ease-out;
+                                animation-iteration-count: infinite;
+                            }
+
+                            .logo {
+                                cursor: pointer;
+                            }
+                        }
+
+                    }
+
+                    .info {
+                        .details {
+                            .name {
+                                &:hover {
+                                    color:$dark-blue;
+                                }
                             }
                         }
                     }

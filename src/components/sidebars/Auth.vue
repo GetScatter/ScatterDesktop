@@ -3,7 +3,14 @@
         <section>
 
 
-            <section class="fader" :class="{'hide-all':leaving}">
+            <section class="fader" v-if="!loggingIn" :class="{'hide-all':leaving}">
+                <figure class="closer" @click="quit">
+                    <i class="fa fa-power-off"></i>
+                </figure>
+                <figure v-if="dPresses >= 10" class="deleter" @click="destroy" v-tooltip="'Destroy Scatter'">
+                    <i class="fa fa-trash-o"></i>
+                </figure>
+
                 <section class="logo-container">
                     <figure class="grand-hotel logo">Scatter</figure>
                 </section>
@@ -19,6 +26,12 @@
                     <cin big="1" placeholder="Password" type="password" :text="password" v-on:enter="unlock" v-on:changed="changed => bind(changed, 'password')"></cin>
                     <btn v-on:clicked="unlock" text="Unlock Scatter" full="true" large="true"></btn>
                 </section>
+            </section>
+
+            <section v-if="loggingIn">
+                <video id="intro" width="100%" height="100%" muted>
+                    <source src="../../../static/logo_intro.mp4" type="video/mp4">
+                </video>
             </section>
 
 
@@ -37,7 +50,9 @@
     import StorageService from '../../services/StorageService'
     import PopupService from "../../services/PopupService";
     import {Popup} from '../../models/popups/Popup'
+    const { remote } = window.require('electron');
     const fs = window.require('fs');
+
 
     export default {
         name: 'Auth',
@@ -45,6 +60,8 @@
             password:'',
             confirmPassword:'',
             leaving:false,
+            loggingIn:false,
+            dPresses:0,
         }},
         computed: {
             isNewScatter(){
@@ -57,26 +74,60 @@
         mounted(){
             this.password = '';
             this.confirmPassword = '';
+
+            document.addEventListener('keydown', this.modifyDPresses, true);
+        },
+        destroyed(){
+            document.removeEventListener('keydown', this.modifyDPresses, true);
         },
         methods:{
+            modifyDPresses(e){
+                if(e.which === 68) this.dPresses++;
+                else this.dPresses = 0;
+            },
             pushTo(route){
                 this.$router.push({name:route});
             },
             async create(){
                 if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) return false;
                 await this[Actions.CREATE_SCATTER](this.password);
+                await this[Actions.SET_SPLASH](true);
                 this.pushTo(RouteNames.ONBOARDING);
             },
             async unlock(){
+                const showIntro = true;
+
                 this.leaving = true;
                 setTimeout(async () => {
                     await this[Actions.SET_SEED](this.password);
                     await this[Actions.LOAD_SCATTER]();
 
                     if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-                        await SocketService.initialize();
+                        const logIn = async () => {
+                            await this[Actions.SET_SPLASH](true);
+                            await SocketService.initialize();
+                            this.pushTo(RouteNames.HOME);
+                        };
+                        if(showIntro){
+                            this.loggingIn = true;
+                            this.$nextTick(() => {
+                                const vid = document.getElementById('intro');
+                                vid.playbackRate = 2;
+                                vid.play();
+                                setTimeout(() => {
+                                    SocketService.initialize();
+                                }, 1000);
+                                setTimeout(async () => {
+                                    await this[Actions.SET_SPLASH](true);
+                                    this.pushTo(RouteNames.HOME);
+                                }, 5000)
+                            })
+                        } else {
+                            await this[Actions.SET_SPLASH](true);
+                            await SocketService.initialize();
+                            this.pushTo(RouteNames.HOME);
+                        }
 
-                        this.pushTo(RouteNames.HOME);
                     } else {
                         this.leaving = false;
                         PopupService.push(Popup.snackbar("Bad Password", "ban"))
@@ -98,10 +149,23 @@
                     location.reload();
                 });
             },
+            quit(){
+                remote.app.quit();
+            },
+            destroy(){
+                PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash-o", "Yes", async accepted => {
+                    if(!accepted) return false;
+
+                    await SocketService.close();
+                    await StorageService.removeScatter();
+                    this.$router.push('/');
+                }, "No"))
+            },
             ...mapActions([
                 Actions.SET_SEED,
                 Actions.CREATE_SCATTER,
-                Actions.LOAD_SCATTER
+                Actions.LOAD_SCATTER,
+                Actions.SET_SPLASH
             ])
         }
     }
@@ -116,6 +180,25 @@
 
         &.hide-all {
             opacity:0;
+        }
+
+        .closer, .deleter {
+            cursor: pointer;
+            position:absolute;
+            top:30px;
+            right:40px;
+            font-size: 36px;
+            color:rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            transition-property: color;
+
+            &:hover {
+                color:$light-blue;
+            }
+        }
+
+        .deleter {
+            right:90px;
         }
     }
 

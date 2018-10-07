@@ -136,6 +136,7 @@
     import {Blockchains, BlockchainsArray} from '../models/Blockchains'
     import PopupService from '../services/PopupService'
     import PasswordService from '../services/PasswordService'
+    import KeyPairService from '../services/KeyPairService'
     import {Popup} from '../models/popups/Popup';
 
     export default {
@@ -246,6 +247,7 @@
             },
 
             async send(){
+                if(this.sending) return false;
                 if(parseFloat(this.amount) <= 0) return PopupService.push(Popup.prompt("Invalid Amount", "You must send an amount greater than 0", "ban", "Okay"));
                 if(!this.recipient.trim().length) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "ban", "Okay"));
 
@@ -256,23 +258,28 @@
                 const account = this.sendingAccount(tokensToSend);
                 if(!account) return PopupService.push(Popup.prompt("Overspending balance.", "You don't have any account that has enough balance to make this transfer in it's base token.", "ban", "Okay"));
 
-//                const enabledBlockchains = [Blockchains.EOSIO, Blockchains.TRX];
-//                if(!enabledBlockchains.includes(account.blockchain())) return PopupService.push(Popup.prompt("Okay, this one is on us.",
-//                    `${account.blockchain().toUpperCase()} transfers aren't enabled right now.`, "ban", "Okay"));
-
                 if(!await PasswordService.verifyPIN()) return;
 
+                if(KeyPairService.isHardware(account.publicKey)){
+                    const canConnect = await account.keypair().external.interface.canConnect();
+                    if(canConnect !== true){
+                        PopupService.push(Popup.prompt('Hardware Error', canConnect, 'exclamation-triangle', 'Cancel'))
+                        account.keypair().resetExternal();
+                        return;
+                    }
+                }
+
                 this.sending = true;
-                await TransferService[account.blockchain()]({
+                const sent = await TransferService[account.blockchain()]({
                     account,
                     recipient:this.recipient,
                     amount:tokensToSend,
                     memo:this.memo,
                     token:this.token,
-                }).catch(() => {});
+                }).catch(() => false);
                 this.sending = false;
 
-                await PriceService.getBalances();
+                if(sent) await PriceService.getBalances();
             },
 
         },

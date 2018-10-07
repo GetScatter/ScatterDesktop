@@ -36,7 +36,7 @@
                         <section class="padded">
                             <section class="key-value" v-for="field in identityRequirements.personal">
                                 <figure class="key">{{field}}</figure>
-                                <figure class="value">{{identity.getPropertyValueByName(field)}}</figure>
+                                <figure class="value bubbler">{{identity.getPropertyValueByName(field)}}</figure>
                             </section>
                         </section>
 
@@ -60,7 +60,7 @@
 
                             <section class="key-value" v-for="field in identityRequirements.location">
                                 <figure class="key">{{field}}</figure>
-                                <figure class="value">{{identity.getPropertyValueByName(field, selectedLocation)}}</figure>
+                                <figure class="value bubbler">{{identity.getPropertyValueByName(field, selectedLocation)}}</figure>
                             </section>
                         </section>
                     </section>
@@ -353,12 +353,33 @@
             },
             addWhitelist(message){
                 if(this.isPreviouslyWhitelisted(message)) return false;
+
+
                 this.toggleAction(message, 'whitelist');
                 const unique = this.getMessageUnique(message, 'whitelist');
                 const whitelist = {unique, props:[], code:message.code, type:message.type, fields:message.data};
+
                 if(this.whitelists.find(x => x.unique === whitelist.unique))
                     this.whitelists = this.whitelists.filter(x => x.unique !== unique);
-                else this.whitelists.push(whitelist);
+                else {
+                    if(message.type === 'transfer'){
+                        PopupService.push(Popup.prompt(
+                            'Whitelist Warning',
+                            `You are about to whitelist a transfer action. This can be dangerous as you will get no notification of an Application using your funds. Are you sure you want to do this?`,
+                            'exclamation-triangle',
+                            'Yes',
+                            accepted => {
+                                if(accepted){
+                                    this.whitelists.push(whitelist);
+                                }
+                            },
+                            'No'
+                        ))
+                    } else this.whitelists.push(whitelist);
+                }
+
+
+
             },
             getWhitelist(message){
                 const unique = this.getMessageUnique(message, 'whitelist');

@@ -49,7 +49,7 @@
                 </figure>
 
                 <!-- EXPORT SECRET -->
-                <figure class="show-qr" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Export Private Key'" @click="exporting = true">
+                <figure class="export-keypair" :class="{'show':selected && !selected.external && !isNew && !exporting && !status}" v-tooltip="'Export Private Key'" @click="exporting = true">
                     <i class="fa fa-key"></i>
                 </figure>
 
@@ -160,6 +160,7 @@
                                                 <section class="accounts" :class="{'hidden':!showingSecrets}">
                                                     <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied ${blockchainName(pkey.blockchain)} Public Key to Clipboard.`)">
                                                         <section class="info">
+                                                            <figure class="description linked-account">Shareable Key</figure>
                                                             <figure class="name">{{blockchainName(pkey.blockchain)}}</figure>
                                                             <figure class="description"><i class="fa fa-copy"></i> {{pkey.key}}</figure>
                                                         </section>
@@ -234,7 +235,11 @@
                                                     <section v-if="!camera" key="inputsecret" class="input-keypair">
                                                         <section class="inputs">
                                                             <label><i class="fa fa-key"></i> Enter a Private Key</label>
-                                                            <input v-model="selected.privateKey" type="password" />
+                                                            <input class="pad-right" v-model="selected.privateKey" :type="displayPrivateKeyField ? 'text' : 'password'" />
+                                                            <figure class="eye-icon" @click="displayPrivateKeyField = !displayPrivateKeyField">
+                                                                <i class="fa fa-eye" v-tooltip="'Show Input'" v-if="!displayPrivateKeyField"></i>
+                                                                <i class="fa fa-eye-slash" v-tooltip="'Hide Input'" v-if="displayPrivateKeyField"></i>
+                                                            </figure>
                                                         </section>
                                                     </section>
                                                 </transition>
@@ -244,6 +249,20 @@
                                             <section key="import-text" v-if="importType === IMPORT_TYPES.HARDWARE" class="import-hardware">
                                                 <sel :selected="selected.external.type" v-if="selected.external"
                                                      :options="EXT_WALLET_TYPES" v-on:changed="(x) => hardwareType = x"></sel>
+
+                                                <section style="margin-top:10px;" v-if="selected.external.interface.availableBlockchains().length > 1">
+                                                    <sel style="width:calc(80% - 10px); float:left;" :selected="blockchainName(hardwareBlockchain)" v-if="selected.external"
+                                                         :options="selected.external.interface.availableBlockchains()" :parser="x => blockchainName(x)" v-on:changed="(x) => hardwareBlockchain = x"></sel>
+
+                                                    <input style="text-align:center;  font-size:16px; padding:0 10px; width:20%; float:left; height:50px; border-radius:4px; border:1px solid rgba(0,0,0,0.2); margin-left:10px; outline:0;" v-if="selected.external" placeholder="Index" v-model="selected.external.addressIndex" type="number" min="0" />
+                                                </section>
+
+                                                <!--<section class="input-keypair" style="padding:20px;">-->
+                                                    <!--<section class="inputs">-->
+                                                        <!--<label>Address Index</label>-->
+                                                        <!--<input v-if="selected.external" placeholder="Select an Index ( number )" v-model="selected.external.addressIndex" type="number" min="0" />-->
+                                                    <!--</section>-->
+                                                <!--</section>-->
 
                                                 <transition name="slide-left" mode="out-in">
                                                     <section key="getpublickey" v-if="hardwareReady" class="button wide" @click="importKeyFromHardware">
@@ -359,7 +378,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
 
-    import {Blockchains, blockchainName} from '../../models/Blockchains'
+    import {Blockchains, BlockchainsArray, blockchainName} from '../../models/Blockchains'
     import Keypair from '../../models/Keypair'
     import {Popup} from '../../models/popups/Popup'
 
@@ -393,7 +412,10 @@
 
     export default {
         data(){ return {
-            Blockchains:Blockchains,
+            displayPrivateKeyField:false,
+
+            BlockchainsArray,
+            Blockchains,
             selected:null,
             publicKey:null,
             error:null,
@@ -418,6 +440,7 @@
             camera:false,
             hardwareReady:false,
             hardwareType:EXT_WALLET_TYPES.LEDGER,
+            hardwareBlockchain:Blockchains.EOSIO,
         }},
         mounted(){
 
@@ -452,7 +475,7 @@
                 if(this.selectedAccount.blockchain() !== Blockchains.EOSIO) return false;
                 const cpu = this.resources.find(x => x.name === 'CPU');
                 if(!cpu) return false;
-                return cpu.available <= 0;
+                return cpu.available <= 6000;
             }
         },
         methods:{
@@ -669,7 +692,7 @@
                 this.hardwareReady = true;
             },
             setupHardware(){
-                this.selected.external = new ExternalWallet(this.hardwareType);
+                this.selected.external = new ExternalWallet(this.hardwareType, this.hardwareBlockchain);
                 this.hardwareReady = false;
             },
             async importKeyFromHardware(){
@@ -721,6 +744,14 @@
             },
             ['hardwareType'](){
                 this.setupHardware();
+            },
+            ['hardwareBlockchain'](){
+                this.setupHardware();
+            },
+            ['selected.external.addressIndex'](){
+                if(this.selected && this.selected.external)
+                    this.selected.external.interface
+                        .setAddressIndex(this.selected.external.addressIndex);
             }
         }
     }
@@ -788,7 +819,7 @@
                 }
             }
 
-            .add-keypair, .remove-keypair, .refresh-accounts, .show-qr, .show-cam {
+            .add-keypair, .remove-keypair, .refresh-accounts, .show-qr, .show-cam, .export-keypair {
                 position: absolute;
                 opacity:1;
                 top:20px;
@@ -863,7 +894,7 @@
                 top:-20px;
                 visibility: hidden;
 
-                right:110px;
+                right:65px;
 
                 &:hover {
                     border:1px solid $red;
@@ -878,13 +909,27 @@
                 }
             }
 
+            .export-keypair {
+                opacity:0;
+                top:-20px;
+                visibility: hidden;
+
+                right:110px;
+
+                &.show {
+                    opacity:1;
+                    top:20px;
+                    visibility: visible;
+                }
+            }
+
             .refresh-accounts {
                 transition-delay: 0.1s;
                 opacity:0;
                 top:-20px;
                 visibility: hidden;
 
-                right:65px;
+                right:20px;
 
                 &.show {
                     opacity:1;
@@ -1176,6 +1221,7 @@
                 padding:40px;
 
                 .inputs {
+                    position: relative;
 
                     label {
                         font-size: 13px;
@@ -1190,6 +1236,17 @@
                         border-bottom:1px dashed rgba(0,0,0,0.2);
                         font-size: 18px;
                         margin-top:10px;
+
+                        &.pad-right {
+                            padding-right:25px;
+                        }
+                    }
+
+                    .eye-icon {
+                        position:absolute;
+                        right:0;
+                        bottom:5px;
+                        cursor: pointer;
                     }
                 }
             }

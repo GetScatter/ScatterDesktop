@@ -1,3 +1,7 @@
+export const SET_SPLASH = 'setSplash';
+export const SET_DAPP_DATA =  'setDappData';
+export const SET_DAPP_LOGO =  'setDappLogo';
+
 export const SET_SEARCH_TERMS = 'setSearchTerms';
 
 export const SET_SEED =         'setSeed';

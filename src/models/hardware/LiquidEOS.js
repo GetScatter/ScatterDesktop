@@ -2,6 +2,7 @@ import {ExternalWalletInterface} from '../ExternalWallet'
 import * as Http from '../../util/Http'
 import PopupService from '../../services/PopupService';
 import {Popup} from '../popups/Popup';
+import {Blockchains} from '../../models/Blockchains';
 
 export default class LiquidEOS {
 
@@ -28,9 +29,10 @@ export default class LiquidEOS {
                 if(!res) return null;
                 return res.key
             })},
-            async canConnect(){
-                return true;
-            },
+            async canConnect(){ return true; },
+            setAddressIndex(){ return true; },
+            availableBlockchains(){ return [Blockchains.EOSIO] },
+            reset(){ return true; }
         });
     };
 

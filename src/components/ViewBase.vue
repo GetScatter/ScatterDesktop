@@ -22,7 +22,7 @@
 
                 </section>
 
-                <section v-if="!unlocked">
+                <section v-else>
                     <auth></auth>
                 </section>
             </section>
@@ -82,7 +82,7 @@
             },
             route(){
                 return this.$route.name
-            },
+            }
         },
         created(){
 
@@ -97,6 +97,7 @@
                 this[Actions.SET_SCATTER](scatter);
             },
             checkTour(){
+                if(!this.scatter) return;
                 if(!this.scatter.toured && !this.onboarding && this.unlocked && this.route === 'home'){
                     this.$tours['scatter'].start();
                 }
