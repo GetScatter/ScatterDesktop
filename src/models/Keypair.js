@@ -26,8 +26,15 @@ export default class Keypair {
         return p;
     }
 
+    resetExternal(){
+        this.external.interface.reset();
+        this.external = ExternalWallet.fromJson(this.external);
+    }
+
     hash(){
-        this.keyHash = Crypto.bufferToHash(this.privateKey);
+        if(!this.external) this.keyHash = Crypto.bufferToHash(this.privateKey);
+        else this.keyHash = `${this.external.type}:${this.external.blockchain}:${this.external.addressIndex}`
+
     }
 
     accounts(){

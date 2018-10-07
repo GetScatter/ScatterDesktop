@@ -99,8 +99,6 @@ export default class PermissionService {
 
 
         const scatter = store.state.scatter.clone();
-
-        if(scatter.keychain.permissions.find(x => x.checksum() === permission.checksum())) return;
         return permission;
     }
 
@@ -113,7 +111,18 @@ export default class PermissionService {
 
         if(permissions.length){
             const scatter = store.state.scatter.clone();
-            permissions.map(x => scatter.keychain.permissions.push(x));
+            permissions.map(perm => {
+                // Removing all similar permissions for this action
+                const similar = scatter.keychain.permissions.filter(x =>
+                    x.origin === origin
+                    && x.isContractAction
+                    && x.contract === perm.contract
+                    && x.action === perm.action
+                ).map(x => x.id);
+
+                scatter.keychain.permissions = scatter.keychain.permissions.filter(x => !similar.includes(x.id));
+                scatter.keychain.permissions.push(perm)
+            });
             await store.dispatch(Actions.SET_SCATTER, scatter);
         }
     }

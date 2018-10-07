@@ -306,7 +306,6 @@ export default class ApiService {
             if(!participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});
             payload.participants = participants;
 
-
             // Getting the identity for this transaction
             const identity = store.state.scatter.keychain.identities.find(x => x.publicKey === possibleId.publicKey);
 
@@ -333,7 +332,11 @@ export default class ApiService {
 
             const hasHardwareKeys = participants.some(x => KeyPairService.isHardware(x.publicKey));
             const needToSelectLocation = requiredFields.hasOwnProperty('location') && requiredFields.location.length && identity.locations.length > 1;
-            if(existingApp && !hasHardwareKeys && !needToSelectLocation && identity.locations.length === 1 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
+            if(existingApp
+                && !hasHardwareKeys
+                && (!needToSelectLocation
+                || needToSelectLocation && identity.locations.length === 1)
+                && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
                 return await signAndReturn(identity.locations[0]);
             }
 

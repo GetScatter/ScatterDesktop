@@ -34,10 +34,12 @@ export default class TransferService {
         let {account, recipient, amount, memo, token } = params;
         const plugin = PluginRepository.plugin(account.blockchain());
 
+
         if(parseDecimals) {
             const decimals = PriceService.tokenDecimals(token);
             amount = parseFloat(amount).toFixed(decimals);
         }
+
         const transfer = await PluginRepository.plugin(account.blockchain())
             .transfer({
                 account,
@@ -49,9 +51,11 @@ export default class TransferService {
             }).catch(x => x);
 
         if(transfer !== null) {
-            if (transfer.hasOwnProperty('error')) PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
+            if (transfer.hasOwnProperty('error')) {
+                PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
+                return false;
+            }
             else {
-
                 switch(token.blockchain){
                     case Blockchains.EOSIO:
                         PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.transaction_id))
@@ -63,10 +67,11 @@ export default class TransferService {
                         PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.transactionHash))
                         break;
                 }
+
+                return true;
             }
         }
 
-        return true;
     }
 
 }

@@ -157,11 +157,10 @@
                 return this.accountRequirements.map(x => this.networks.find(x => x.chainId === x.chainId).name).join(' / ')
             },
             shouldShowSearchbar(){
-                return this.selectedIdentity && this.validAccounts.length > 1;
+                return this.searchTerms.length || (this.selectedIdentity && this.validAccounts.length > 1);
             }
         },
         mounted(){
-
             if(!this.isValidIdentity){
                 this.error = {
                     title:"Your Identity is missing some properties.",
@@ -185,7 +184,7 @@
                 return;
             }
 
-            this.checkWarning();
+//            this.checkWarning();
         },
         methods: {
             async checkWarning(){

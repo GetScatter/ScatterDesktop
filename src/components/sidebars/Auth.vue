@@ -4,6 +4,10 @@
 
 
             <section class="fader" v-if="!loggingIn" :class="{'hide-all':leaving}">
+                <figure class="closer" @click="quit">
+                    <i class="fa fa-power-off"></i>
+                </figure>
+
                 <section class="logo-container">
                     <figure class="grand-hotel logo">Scatter</figure>
                 </section>
@@ -43,6 +47,7 @@
     import StorageService from '../../services/StorageService'
     import PopupService from "../../services/PopupService";
     import {Popup} from '../../models/popups/Popup'
+    const { remote } = window.require('electron');
     const fs = window.require('fs');
 
     export default {
@@ -75,21 +80,39 @@
                 this.pushTo(RouteNames.ONBOARDING);
             },
             async unlock(){
+                const showIntro = true;
+
                 this.leaving = true;
                 setTimeout(async () => {
                     await this[Actions.SET_SEED](this.password);
                     await this[Actions.LOAD_SCATTER]();
 
                     if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-                        this.loggingIn = true;
-                        this.$nextTick(() => {
-                            document.getElementById('intro').play();
-                            setTimeout(async () => {
-                                await this[Actions.SET_SPLASH](true);
-                                await SocketService.initialize();
-                                this.pushTo(RouteNames.HOME);
-                            }, 10000)
-                        })
+                        const logIn = async () => {
+                            await this[Actions.SET_SPLASH](true);
+                            await SocketService.initialize();
+                            this.pushTo(RouteNames.HOME);
+                        };
+                        if(showIntro){
+                            this.loggingIn = true;
+                            this.$nextTick(() => {
+                                const vid = document.getElementById('intro');
+                                vid.playbackRate = 2;
+                                vid.play();
+                                setTimeout(() => {
+                                    SocketService.initialize();
+                                }, 1000);
+                                setTimeout(async () => {
+                                    await this[Actions.SET_SPLASH](true);
+                                    this.pushTo(RouteNames.HOME);
+                                }, 5000)
+                            })
+                        } else {
+                            await this[Actions.SET_SPLASH](true);
+                            await SocketService.initialize();
+                            this.pushTo(RouteNames.HOME);
+                        }
+
                     } else {
                         this.leaving = false;
                         PopupService.push(Popup.snackbar("Bad Password", "ban"))
@@ -111,6 +134,9 @@
                     location.reload();
                 });
             },
+            quit(){
+                remote.app.quit();
+            },
             ...mapActions([
                 Actions.SET_SEED,
                 Actions.CREATE_SCATTER,
@@ -130,6 +156,21 @@
 
         &.hide-all {
             opacity:0;
+        }
+
+        .closer {
+            cursor: pointer;
+            position:absolute;
+            top:30px;
+            right:40px;
+            font-size: 36px;
+            color:rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            transition-property: color;
+
+            &:hover {
+                color:$light-blue;
+            }
         }
     }
 

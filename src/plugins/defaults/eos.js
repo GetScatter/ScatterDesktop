@@ -15,6 +15,8 @@ import StorageService from '../../services/StorageService'
 import ApiService from '../../services/ApiService'
 import * as Actions from '../../models/api/ApiActions';
 import {store} from '../../store/store'
+import eosjs2 from 'eosjs2';
+import * as numeric from "eosjs2/dist/eosjs-numeric";
 
 
 let cachedInstances = {};
@@ -163,7 +165,9 @@ export default class EOS extends Plugin {
     accountsAreImported(){ return true; }
     getImportableAccounts(keypair, network){
         return new Promise((resolve, reject) => {
-            const publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
+            let publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO);
+            if(!publicKey) return resolve([]);
+            publicKey = publicKey.key;
             getAccountsFromPublicKey(publicKey, network).then(accounts => {
                 resolve(accounts.map(account => Account.fromJson({
                     name:account.name,
@@ -353,62 +357,6 @@ export default class EOS extends Plugin {
         return ecc.sign(Buffer.from(arbitrary ? payload.data : payload.buf, 'utf8'), privateKey);
     }
 
-    async requestParser(signargs, network){
-        const eos = getCachedInstance(network);
-
-        const contracts = signargs.transaction.actions.map(action => action.account)
-            .reduce((acc, contract) => {
-                if(!acc.includes(contract)) acc.push(contract);
-                return acc;
-            }, []);
-
-        const staleAbi = +new Date() - (1000 * 60 * 60 * 24 * 2);
-        const abis = {};
-
-        await Promise.all(contracts.map(async contractAccount => {
-            const cachedABI = await StorageService.getCachedABI(contractAccount, network.chainId);
-
-            if(cachedABI === 'object' && cachedABI.timestamp > +new Date((await eos.getAccount(contractAccount)).last_code_update))
-                abis[contractAccount] = eos.fc.abiCache.abi(contractAccount, cachedABI.abi);
-
-            else {
-                abis[contractAccount] = (await eos.contract(contractAccount)).fc;
-                const savableAbi = JSON.parse(JSON.stringify(abis[contractAccount]));
-                delete savableAbi.schema;
-                delete savableAbi.structs;
-                delete savableAbi.types;
-                savableAbi.timestamp = +new Date();
-
-                await StorageService.cacheABI(contractAccount, network.chainId, savableAbi);
-            }
-        }));
-
-        return await Promise.all(signargs.transaction.actions.map(async (action, index) => {
-            const contractAccountName = action.account;
-
-            let abi = abis[contractAccountName];
-
-            const typeName = abi.abi.actions.find(x => x.name === action.name).type;
-            const data = abi.fromBuffer(typeName, action.data);
-            const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
-            let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
-
-            if(ricardian){
-                const htmlFormatting = {h1:'div class="ricardian-action"', h2:'div class="ricardian-description"'};
-                const signer = action.authorization.length === 1 ? action.authorization[0].actor : null;
-                ricardian = ricardianParser.parse(action.name, data, ricardian, signer, htmlFormatting);
-            }
-
-            return {
-                data,
-                code:action.account,
-                type:action.name,
-                authorization:action.authorization,
-                ricardian
-            };
-        }));
-    }
-
     async createTransaction(actions, account, network){
         let tx = {};
         const formatContract = x => x.replace('.', '_');
@@ -442,5 +390,129 @@ export default class EOS extends Plugin {
         }, {broadcast:false}).catch(() => {});
 
         return tx;
+    }
+
+
+
+
+
+
+    async getAbis(contracts, network, eos){
+        const abis = {};
+
+        await Promise.all(contracts.map(async contractAccount => {
+            const cachedABI = await StorageService.getCachedABI(contractAccount, network.chainId);
+
+            if(cachedABI === 'object' && cachedABI.timestamp > +new Date((await eos.getAccount(contractAccount)).last_code_update))
+                abis[contractAccount] = eos.fc.abiCache.abi(contractAccount, cachedABI.abi);
+
+            else {
+                abis[contractAccount] = (await eos.contract(contractAccount)).fc;
+                const savableAbi = JSON.parse(JSON.stringify(abis[contractAccount]));
+                delete savableAbi.schema;
+                delete savableAbi.structs;
+                delete savableAbi.types;
+                savableAbi.timestamp = +new Date();
+
+                await StorageService.cacheABI(contractAccount, network.chainId, savableAbi);
+            }
+        }));
+
+        return abis;
+    }
+
+    async parseEosjsRequest(payload, network){
+        const {transaction} = payload;
+
+        const eos = getCachedInstance(network);
+
+        const contracts = ObjectHelpers.distinct(transaction.actions.map(action => action.account));
+        const abis = await this.getAbis(contracts, network, eos);
+
+
+        return await Promise.all(transaction.actions.map(async (action, index) => {
+            const contractAccountName = action.account;
+
+            let abi = abis[contractAccountName];
+
+            const typeName = abi.abi.actions.find(x => x.name === action.name).type;
+            const data = abi.fromBuffer(typeName, action.data);
+            const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
+            let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
+
+            if(ricardian){
+                const htmlFormatting = {h1:'div class="ricardian-action"', h2:'div class="ricardian-description"'};
+                const signer = action.authorization.length === 1 ? action.authorization[0].actor : null;
+                ricardian = ricardianParser.parse(action.name, data, ricardian, signer, htmlFormatting);
+            }
+
+            return {
+                data,
+                code:action.account,
+                type:action.name,
+                authorization:action.authorization,
+                ricardian
+            };
+        }));
+    }
+
+    async parseEosjs2Request(payload, network){
+        const {transaction} = payload;
+
+        const rpc = new eosjs2.Rpc.JsonRpc(network.fullhost());
+        const api = new eosjs2.Api({rpc});
+
+        const contracts = ObjectHelpers.distinct(transaction.abis.map(x => x.account_name));
+
+        const abis = await Promise.all(contracts.map(async accountName => {
+            const cachedABI = await StorageService.getCachedABI(accountName+'eosjs2', network.chainId);
+
+            const account = await rpc.get_account(accountName);
+            const lastUpdate = +new Date(account.last_code_update);
+
+            let rawAbiHex;
+            const fetchAbi = async () => {
+                const rawAbi = numeric.base64ToBinary((await rpc.get_raw_code_and_abi(accountName)).abi);
+                rawAbiHex = Buffer.from(rawAbi).toString('hex');
+                await StorageService.cacheABI(accountName+'eosjs2', network.chainId, {
+                    rawAbiHex,
+                    timestamp:+new Date()
+                });
+            };
+
+            if(!cachedABI) await fetchAbi();
+            else {
+                if(cachedABI.timestamp < lastUpdate) await fetchAbi();
+                else rawAbiHex = cachedABI.rawAbiHex;
+            }
+
+            const rawAbi = Buffer.from(rawAbiHex, 'hex');
+            const abi = api.rawAbiToJson(rawAbi);
+            api.cachedAbis.set(accountName, { rawAbi, abi });
+            return true;
+        }));
+
+        const buffer = Buffer.from(transaction.serializedTransaction, 'hex');
+        const parsed = await api.deserializeTransactionWithActions(buffer);
+        parsed.actions.map(x => {
+            x.code = x.account;
+            x.type = x.name;
+            delete x.account;
+            delete x.name;
+        });
+
+        payload.buf = Buffer.concat([
+            new Buffer(transaction.chainId, "hex"),         // Chain ID
+            buffer,                                         // Transaction
+            new Buffer(new Uint8Array(32)),                 // Context free actions
+        ]);
+
+        return parsed.actions;
+    }
+
+    async requestParser(payload, network){
+        if(payload.transaction.hasOwnProperty('serializedTransaction'))
+            return this.parseEosjs2Request(payload, network);
+        else return this.parseEosjsRequest(payload, network);
     }
 }
