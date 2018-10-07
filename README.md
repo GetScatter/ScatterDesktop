@@ -7,11 +7,6 @@ Scatter Desktop from this GitHub, and **NOWHERE ELSE**.
 
 ### [CLICK HERE AND GRAB THE LATEST RELEASE](https://github.com/GetScatter/ScatterDesktop/releases)
 
-## Setup
-
-Scatter now has internal help / wizards to help you set up every step of the way.
-Click the "Help" menu from the sidebar to get started.
-
 ## Running in development mode
 
 - clone the repo
