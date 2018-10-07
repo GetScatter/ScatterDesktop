@@ -113,5 +113,5 @@ app.on('window-all-closed', () => {
 app.on('activate', (e) => {
     e.preventDefault();
     if(!win) return;
-    if(win.isMinimized()) win.restore();
+    win.restore();
 });
