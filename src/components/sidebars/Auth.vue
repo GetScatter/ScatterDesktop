@@ -7,6 +7,9 @@
                 <figure class="closer" @click="quit">
                     <i class="fa fa-power-off"></i>
                 </figure>
+                <figure v-if="dPresses >= 10" class="deleter" @click="destroy" v-tooltip="'Destroy Scatter'">
+                    <i class="fa fa-trash-o"></i>
+                </figure>
 
                 <section class="logo-container">
                     <figure class="grand-hotel logo">Scatter</figure>
@@ -50,6 +53,7 @@
     const { remote } = window.require('electron');
     const fs = window.require('fs');
 
+
     export default {
         name: 'Auth',
         data () {return {
@@ -57,6 +61,7 @@
             confirmPassword:'',
             leaving:false,
             loggingIn:false,
+            dPresses:0,
         }},
         computed: {
             isNewScatter(){
@@ -69,14 +74,24 @@
         mounted(){
             this.password = '';
             this.confirmPassword = '';
+
+            document.addEventListener('keydown', this.modifyDPresses, true);
+        },
+        destroyed(){
+            document.removeEventListener('keydown', this.modifyDPresses, true);
         },
         methods:{
+            modifyDPresses(e){
+                if(e.which === 68) this.dPresses++;
+                else this.dPresses = 0;
+            },
             pushTo(route){
                 this.$router.push({name:route});
             },
             async create(){
                 if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) return false;
                 await this[Actions.CREATE_SCATTER](this.password);
+                await this[Actions.SET_SPLASH](true);
                 this.pushTo(RouteNames.ONBOARDING);
             },
             async unlock(){
@@ -137,6 +152,15 @@
             quit(){
                 remote.app.quit();
             },
+            destroy(){
+                PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash-o", "Yes", async accepted => {
+                    if(!accepted) return false;
+
+                    await SocketService.close();
+                    await StorageService.removeScatter();
+                    this.$router.push('/');
+                }, "No"))
+            },
             ...mapActions([
                 Actions.SET_SEED,
                 Actions.CREATE_SCATTER,
@@ -158,7 +182,7 @@
             opacity:0;
         }
 
-        .closer {
+        .closer, .deleter {
             cursor: pointer;
             position:absolute;
             top:30px;
@@ -171,6 +195,10 @@
             &:hover {
                 color:$light-blue;
             }
+        }
+
+        .deleter {
+            right:90px;
         }
     }
 

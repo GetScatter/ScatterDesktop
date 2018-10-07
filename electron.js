@@ -94,12 +94,6 @@ app.on('ready', function () {
 
 });
 
-// app.on('activate', () => {
-//     if (win === null) {
-//         createWindow()
-//     }
-// });
-
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     const isLocal = url.startsWith('https://127.0.0.1');
     if (isLocal) {
