@@ -134,7 +134,8 @@ class LedgerAPI {
     }
 
     setAddressIndex(index){
-        this.addressIndex = index;
+        const prefix = this.api ? this.api : this;
+        prefix.addressIndex = index;
     }
 
     getPublicKey(){
@@ -165,7 +166,6 @@ class LedgerAPI {
     [`getPublicKey`+Blockchains.EOSIO](){
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-
                 const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
                 const paths = bippath.fromString(path).toPathArray();
                 const buffer = Buffer.alloc(1 + paths.length * 4);

@@ -170,7 +170,7 @@
                 return;
             }
 
-            if(!this.validAccounts.length){
+            if(!this.validAccounts.length && this.accountRequirements.length){
                 this.error = {
                     title:"No available accounts.",
                     subtext:`Missing Required Networks`,
