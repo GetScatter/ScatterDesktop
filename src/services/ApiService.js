@@ -31,7 +31,6 @@ remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
 export default class ApiService {
 
     static handleDeepLink(deepLink){
-        console.log('deep', deepLink);
         if(!deepLink) return;
         let [type, payload] = deepLink.toString().split('scatter://')[1].split('/?payload=');
         type = type.replace('/', '');
@@ -39,11 +38,10 @@ export default class ApiService {
 
         try { payload = JSON.parse(payload); } catch(e){}
 
-        console.log('td', type, payload);
-
+        // Special case for transfers which just makes URLs prettier
         if(type === 'transfer'){
             type = 'requestTransfer';
-            let [to, blockchain, chainId, memo] = payload.split('/');
+            let [to, amount, blockchain, chainId, memo] = payload.split('/');
             if(!to || !blockchain || !chainId) return false;
             if(!memo) memo = '';
 
@@ -59,14 +57,13 @@ export default class ApiService {
                 payload:{
                     network,
                     to,
-                    amount:0,
+                    amount,
                     options:{contract:token.account, symbol:token.symbol, memo, decimals}
                 }
             };
         }
 
-        if(typeof ApiService[type] !== 'undefined')
-            ApiService[type](payload);
+        if(typeof ApiService[type] !== 'undefined') ApiService[type](payload);
     }
 
     static async handler(request){

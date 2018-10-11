@@ -100,9 +100,6 @@
 
     let saveTimeout = null;
 
-
-    import ApiService from '../services/ApiService'
-
     export default {
         data () {return {
             searchTerms:'',
@@ -137,8 +134,6 @@
             }
         },
         mounted(){
-//            ApiService.handleDeepLink('scatter://transfer/?payload=safetransfer/eos/aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906/ramdeathtest');
-
             fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(res => {
                 let allApps = [];
                 BlockchainsArray.map(({value}) => {
