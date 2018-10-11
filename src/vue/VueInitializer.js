@@ -4,7 +4,6 @@ import VueQrcodeReader from 'vue-qrcode-reader'
 import VueTour from 'vue-tour'
 
 
-
 import VueRouter from 'vue-router'
 import {Routing} from './Routing';
 import {store} from '../store/store'
@@ -12,7 +11,8 @@ import * as Actions from '../store/constants'
 import {localized} from '../localization/locales'
 import * as LANG_KEYS from '../localization/keys'
 import ElectronHelpers from '../util/ElectronHelpers'
-import PriceService from '../services/PriceService';
+
+Vue.config.productionTip = false
 
 /***
  * Sets up an instance of Vue.

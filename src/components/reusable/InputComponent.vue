@@ -1,6 +1,14 @@
 <template>
     <section class="input" :class="{'forced':forced, 'big':big}">
-        <input @keyup.enter="enter" @blur="blur" :maxlength="maxlength || -1" :class="{'large-font':largeFont, 'hide-date':type === 'date' && !input.length, 'pad-right':dynamicButton}" :disabled="disabled || false" :type="type || 'text'" v-model="input" />
+        <input ref="focuser"
+               @keyup.enter="enter"
+               @blur="blur"
+               :maxlength="maxlength || -1"
+               :class="{'large-font':largeFont, 'hide-date':type === 'date' && !input.length, 'pad-right':dynamicButton}"
+               :disabled="disabled || false"
+               :type="type || 'text'"
+               v-model="input" />
+
         <label :class="{'hidden':input.toString().length, 'for-disabled':disabled || false}">{{placeholder}}</label>
         <label v-if="forced" class="forced">{{placeholder}}</label>
         <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
@@ -26,7 +34,14 @@
                 ElectronHelpers.copy(this.text);
             }
         },
-        props:['placeholder', 'type', 'maxlength', 'text', 'disabled', 'forced', 'copy', 'dynamicButton', 'dynamicTooltip', 'largeFont', 'big'],
+        created(){
+            if(this.focus) {
+                this.$nextTick(() => {
+                    this.$refs.focuser.focus();
+                })
+            }
+        },
+        props:['placeholder', 'type', 'maxlength', 'text', 'disabled', 'forced', 'copy', 'dynamicButton', 'dynamicTooltip', 'largeFont', 'big', 'focus'],
         watch:{
             input:function(){ this.emit(); },
             text:function(){ this.input = this.text; },

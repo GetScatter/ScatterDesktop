@@ -77,6 +77,7 @@ module.exports = {
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
+    module: "empty",
     child_process: 'empty'
   },
   externals: {

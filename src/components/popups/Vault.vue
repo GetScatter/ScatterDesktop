@@ -235,7 +235,7 @@
                                                     <section v-if="!camera" key="inputsecret" class="input-keypair">
                                                         <section class="inputs">
                                                             <label><i class="fa fa-key"></i> Enter a Private Key</label>
-                                                            <input class="pad-right" v-model="selected.privateKey" :type="displayPrivateKeyField ? 'text' : 'password'" />
+                                                            <input ref="focuser" class="pad-right" v-model="selected.privateKey" :type="displayPrivateKeyField ? 'text' : 'password'" />
                                                             <figure class="eye-icon" @click="displayPrivateKeyField = !displayPrivateKeyField">
                                                                 <i class="fa fa-eye" v-tooltip="'Show Input'" v-if="!displayPrivateKeyField"></i>
                                                                 <i class="fa fa-eye-slash" v-tooltip="'Hide Input'" v-if="displayPrivateKeyField"></i>
@@ -740,6 +740,15 @@
                 } else {
                     this.hardwareReady = false;
                     this.selected.external = null;
+
+                    if(this.importType === IMPORT_TYPES.TEXT){
+                        this.$nextTick(() => {
+                            setTimeout(() => {
+                                if(this.$refs.focuser)
+                                    this.$refs.focuser.focus();
+                            }, 500)
+                        })
+                    }
                 }
             },
             ['hardwareType'](){
