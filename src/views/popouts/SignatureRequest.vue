@@ -25,6 +25,13 @@
                     </figure>
                 </section>
 
+                <section class="below-fold" v-if="isArbitrarySignature">
+                    <figure class="alert">
+                        <b style="color:yellow;">Warning, arbitrary signatures can be dangerous.</b> <b>DO NOT</b> sign anything which you can not read clearly in human language.
+                        If what you are signing is a random jumble of letters and numbers it's possible that it's a transaction that you can not read and could be a transfer of all of your funds.
+                    </figure>
+                </section>
+
 
                 <section class="partition" v-if="identityRequirements.personal.length || identityRequirements.location.length">
 

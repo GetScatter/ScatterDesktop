@@ -81,7 +81,7 @@
                 <br>
 
                 <section class="inputs">
-                    <label>Location Name ( used for orgnization only )</label>
+                    <label>Location Name ( used for organization only )</label>
                     <input v-model="location.name" placeholder="Unnamed Location" />
                 </section>
 

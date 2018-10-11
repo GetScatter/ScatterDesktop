@@ -55,7 +55,7 @@ const createScatterInstance = () => {
         icon:'assets/icon.png'
     });
 
-    win.openDevTools();
+    // win.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';
@@ -111,11 +111,10 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 
 
 const shouldQuit = app.makeSingleInstance(argv => {
-    if (process.platform === 'win32') {
-        if(global.appShared.ApiWatcher !== null){
+    if (process.platform === 'win32')
+        if(global.appShared.ApiWatcher !== null)
             global.appShared.ApiWatcher(argv.slice(1));
-        }
-    }
+
 
     if (win) activateInstance();
 })
@@ -126,9 +125,9 @@ app.on('will-finish-launching', () => {
 
     app.on('open-url', function (event, url) {
         event.preventDefault()
-        if(global.appShared.ApiWatcher !== null){
+        if(global.appShared.ApiWatcher !== null)
             global.appShared.ApiWatcher(argv.slice(1));
-        }
+
     })
 });
 
