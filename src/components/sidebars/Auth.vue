@@ -76,6 +76,7 @@
             this.confirmPassword = '';
 
             document.addEventListener('keydown', this.modifyDPresses, true);
+
         },
         destroyed(){
             document.removeEventListener('keydown', this.modifyDPresses, true);
@@ -95,38 +96,37 @@
                 this.pushTo(RouteNames.ONBOARDING);
             },
             async unlock(){
-                const showIntro = true;
-
+                const showIntro = false;
                 this.leaving = true;
+
+                const logIn = async () => {
+                    await this[Actions.SET_SPLASH](true);
+                    await SocketService.initialize();
+                    this.pushTo(RouteNames.HOME);
+                };
+
                 setTimeout(async () => {
                     await this[Actions.SET_SEED](this.password);
                     await this[Actions.LOAD_SCATTER]();
 
                     if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-                        const logIn = async () => {
-                            await this[Actions.SET_SPLASH](true);
-                            await SocketService.initialize();
-                            this.pushTo(RouteNames.HOME);
-                        };
-                        if(showIntro){
-                            this.loggingIn = true;
-                            this.$nextTick(() => {
-                                const vid = document.getElementById('intro');
-                                vid.playbackRate = 2;
-                                vid.play();
-                                setTimeout(() => {
-                                    SocketService.initialize();
-                                }, 1000);
-                                setTimeout(async () => {
-                                    await this[Actions.SET_SPLASH](true);
-                                    this.pushTo(RouteNames.HOME);
-                                }, 5000)
-                            })
-                        } else {
-                            await this[Actions.SET_SPLASH](true);
-                            await SocketService.initialize();
-                            this.pushTo(RouteNames.HOME);
-                        }
+                        if(!showIntro) return logIn();
+
+                        const canPlayIntro = !!document.createElement('video').canPlayType &&
+                            !!document.createElement('video').canPlayType('video/mp4');
+
+                        if(!canPlayIntro) return logIn();
+
+                        this.loggingIn = true;
+                        this.$nextTick(() => {
+                            const vid = document.getElementById('intro');
+                            if(!vid) return logIn();
+
+                            vid.playbackRate = 2;
+                            vid.play();
+
+                            setTimeout(async () => logIn(), 5000)
+                        })
 
                     } else {
                         this.leaving = false;

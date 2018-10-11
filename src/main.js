@@ -148,6 +148,10 @@ class Main {
 
         });
 
+        window.onerror = log => {
+            console.log('err logged', log);
+        }
+
 
 
         // window.eval = global.eval = () => {

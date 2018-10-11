@@ -121,7 +121,9 @@ const socketHandler = (socket) => {
 };
 
 const getCerts = async () => {
-    return fetch('https://certs.get-scatter.com').then(res => res.json());
+    return fetch('https://certs.get-scatter.com')
+        .then(res => res.json())
+        .catch(() => console.error('Could not fetch certs. Probably due to a proxy, vpn, or firewall.'));
 };
 
 export default class SocketService {
@@ -148,6 +150,10 @@ export default class SocketService {
             const httpsServer = https.createServer(certs);
             httpsServer.listen(50006, ip);
             io.attach(httpsServer,options);
+        } else {
+            PopupService.push(Popup.prompt("Couldn't fetch certificates",
+                'There was an issue trying to fetch the certificates which allow Scatter to run on SSL. This is usually caused by proxies, firewalls, and anti-viruses.',
+                'exclamation-triangle', 'Okay'))
         }
 
         this.open();

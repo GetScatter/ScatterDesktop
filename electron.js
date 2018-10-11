@@ -3,23 +3,23 @@ const path = require("path");
 const url = require("url");
 
 const Transport = require('@ledgerhq/hw-transport-node-hid');
-global.appShared = { Transport };
+global.appShared = { Transport, ApiWatcher:null };
 
 let tray = null;
 let win = null;
 
+const logToConsoles = (s) => {
+    console.log(s)
+    if (win && win.webContents) {
+        win.webContents.executeJavaScript(`console.log("${s}")`)
+    }
+}
+
 const setupMenu = () => {
     const menu = new Menu();
 
-    menu.append(new MenuItem({
-        label: 'Print',
-        accelerator: 'CmdOrCtrl+Shift+D',
-        click: () => { win.toggleDevTools(); }
-    }));
-
     // Menu.setApplicationMenu(menu)
     win.setMenu(menu);
-
 
   const template = [{
     label: "Application",
@@ -43,20 +43,19 @@ const setupMenu = () => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
 
-app.on('ready', function () {
+const createScatterInstance = () => {
+    app.setAsDefaultProtocolClient('scatter');
 
     // Initialize the window to our specified dimensions
     win = new BrowserWindow({
         width: 1280,
         height: 800,
-        // width: 800,
-        // height: 600,
         frame: false,
         radii: [5,5,5,5],
         icon:'assets/icon.png'
     });
 
-    // win.openDevTools();
+    win.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';
@@ -89,10 +88,16 @@ app.on('ready', function () {
     tray.setContextMenu(contextMenu);
 
     setupMenu();
+};
 
+const activateInstance = e => {
+    if(e) e.preventDefault();
+    if(!win) return;
+    win.restore();
+};
 
-
-});
+app.on('ready', createScatterInstance);
+app.on('activate', activateInstance);
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     const isLocal = url.startsWith('https://127.0.0.1');
@@ -104,14 +109,26 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
     }
 })
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
+
+const shouldQuit = app.makeSingleInstance(argv => {
+    if (process.platform === 'win32') {
+        if(global.appShared.ApiWatcher !== null){
+            global.appShared.ApiWatcher(argv.slice(1));
+        }
     }
+
+    if (win) activateInstance();
+})
+
+if (shouldQuit) app.quit();
+
+app.on('will-finish-launching', () => {
+
+    app.on('open-url', function (event, url) {
+        event.preventDefault()
+        if(global.appShared.ApiWatcher !== null){
+            global.appShared.ApiWatcher(argv.slice(1));
+        }
+    })
 });
 
-app.on('activate', (e) => {
-    e.preventDefault();
-    if(!win) return;
-    win.restore();
-});

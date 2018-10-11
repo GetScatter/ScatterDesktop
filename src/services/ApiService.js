@@ -22,7 +22,52 @@ import Account from '../models/Account';
 import Error from '../models/errors/Error'
 import Network from '../models/Network'
 
+const {remote} = window.require('electron');
+remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
+    console.log('using api from deep link', deepLink);
+    ApiService.handleDeepLink(deepLink);
+};
+
 export default class ApiService {
+
+    static handleDeepLink(deepLink){
+        console.log('deep', deepLink);
+        if(!deepLink) return;
+        let [type, payload] = deepLink.toString().split('scatter://')[1].split('/?payload=');
+        type = type.replace('/', '');
+        if(payload) payload = decodeURI(payload);
+
+        try { payload = JSON.parse(payload); } catch(e){}
+
+        console.log('td', type, payload);
+
+        if(type === 'transfer'){
+            type = 'requestTransfer';
+            let [to, blockchain, chainId, memo] = payload.split('/');
+            if(!to || !blockchain || !chainId) return false;
+            if(!memo) memo = '';
+
+            const plugin = PluginRepository.plugin(blockchain);
+            const token = plugin.defaultToken();
+            const decimals = plugin.defaultDecimals();
+
+            const network = store.state.scatter.settings.networks.find(x => x.blockchain === blockchain && x.chainId === chainId);
+            if(!network) return;
+
+            payload = {
+                type,
+                payload:{
+                    network,
+                    to,
+                    amount:0,
+                    options:{contract:token.account, symbol:token.symbol, memo, decimals}
+                }
+            };
+        }
+
+        if(typeof ApiService[type] !== 'undefined')
+            ApiService[type](payload);
+    }
 
     static async handler(request){
         const action = Action.fromJson(request);

@@ -1,6 +1,6 @@
 {
   "name": "scatter",
-  "version": "9.3.1",
+  "version": "9.3.2",
   "description": "Scatter Desktop Companion",
   "private": true,
   "main": "electron.js",
@@ -160,6 +160,10 @@
     "appId": "com.get-scatter.server",
     "artifactName": "${os}-${productName}-${version}-${arch}.${ext}",
     "asar": true,
+    "protocols": {
+      "name": "electron-deep-linking",
+      "schemes": ["scatter"]
+    },
     "files": [
       "dist/**/*",
       "static/**/*",
