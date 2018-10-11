@@ -10,6 +10,9 @@ import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
 import RadialProgressBar from 'vue-radial-progress'
 import WindowService from './services/WindowService';
+import ElectronHelpers from './util/ElectronHelpers';
+
+ElectronHelpers.bindContextMenu();
 
 
 // Globals
