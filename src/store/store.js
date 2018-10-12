@@ -92,12 +92,15 @@ const getters = {
         if(!displayToken){
             Object.keys(state.balances).map(acc => {
                 state.balances[acc].map(t => {
+                    const defaultToken = PluginRepository.plugin(t.blockchain).defaultToken();
+                    if(defaultToken.symbol !== t.symbol) return;
                     totals[t.symbol] = (totals[t.symbol] || 0) + parseFloat(t.balance)
                 })
             });
 
             Object.keys(totals).map(key => {
                 if(state.prices.hasOwnProperty(key)){
+                    console.log('key', key);
                     total += state.prices[key].price * totals[key];
                 }
             });
@@ -107,7 +110,6 @@ const getters = {
             Object.keys(state.balances).map(acc => {
                 state.balances[acc].filter(t => t.symbol === displayToken.symbol).map(t => {
                     total += parseFloat(t.balance)
-                    // totals[t.symbol] = (totals[t.symbol] || 0) + parseFloat(t.balance)
                 })
             });
         }
