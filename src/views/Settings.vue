@@ -22,7 +22,10 @@
 
         <section v-if="selectedOption" style="flex:3; overflow:hidden; display:flex; flex-direction: column;">
             <figure class="panel-head">
-                <span class="version">Scatter Desktop v{{version}}</span>
+                <section class="version">
+                    Scatter Desktop v{{version}}
+                    <figure class="update-button" v-if="needsUpdate" @click="openUpdateLink">Update Available</figure>
+                </section>
                 <span class="console fa fa-code" @click="openConsole"></span>
             </figure>
             <section class="transitioner">
@@ -52,7 +55,9 @@
     import {Popup} from '../models/popups/Popup'
     import PopupService from '../services/PopupService'
     import PasswordService from '../services/PasswordService'
+    import UpdateService from '../services/UpdateService'
     import WindowService from '../services/WindowService'
+    import ElectronHelpers from '../util/ElectronHelpers'
 
     const SettingsOptions = {
         LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
@@ -70,6 +75,7 @@
             settingsOptions:SettingsOptions,
             selectedOption:null,
             unlocked:false,
+            needsUpdate:false,
         }},
         computed: {
             ...mapState([
@@ -81,8 +87,14 @@
         },
         mounted(){
             this.selectedOption = SettingsOptions.LANGUAGE;
+            UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
+                this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
+            })
         },
         methods: {
+            openUpdateLink(){
+                ElectronHelpers.openLinkInBrowser(this.needsUpdate);
+            },
             openConsole(){ WindowService.openTools(); },
             selectOption(option){
                 if((option.locked || false) && !this.unlocked) {
@@ -133,6 +145,23 @@
                 bottom:15px;
                 left:15px;
                 font-family: 'Open Sans', sans-serif;
+
+                .update-button {
+                    cursor: pointer;
+                    border-radius:4px;
+                    display:inline-block;
+                    padding:2px 5px 3px;
+                    margin-left:10px;
+                    background:$red;
+                    border:2px solid #fff;
+                    font-size: 11px;
+                    font-weight: bold;
+                    transition: background 0.2s ease;
+
+                    &:hover {
+                        background:transparent;
+                    }
+                }
             }
 
             .console {
