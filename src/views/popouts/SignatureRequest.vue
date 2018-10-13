@@ -202,6 +202,7 @@
                 'networks',
             ]),
             participants(){
+                if(!this.payload.hasOwnProperty('participants')) return '';
                 return this.payload.participants.map(x => Account.fromJson(x).sendable()).join(', ')
             },
             messages(){
