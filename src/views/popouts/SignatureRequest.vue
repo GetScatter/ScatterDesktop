@@ -8,7 +8,16 @@
                     <figure class="logo">S</figure>
                     <figure class="info">
                         <figure>{{isArbitrarySignature ? 'Arbitrary Data' : 'Actions' }}</figure>
-                        <figure>{{pluginOrigin}} : {{payload.origin}} <b>{{isArbitrarySignature ? '' : `on ${network ? network.name : ''}`}}</b></figure>
+                        <figure>
+                            {{pluginOrigin}} : {{payload.origin}}
+                            <b :class="{'red':isEndorsedNetwork}">
+                                {{isArbitrarySignature ? '' : `on ${network ? network.name : ''}`}}
+                                <i class="endorsed-network" v-if="!isArbitrarySignature && isEndorsedNetwork">
+                                    <i class="fa fa-shield"></i>
+                                </i>
+                            </b>
+
+                        </figure>
                         <figure v-if="!isArbitrarySignature">
                             Involved Accounts: <b>{{participants}}</b>
                         </figure>
@@ -191,6 +200,7 @@
             scrollTop:0,
             belowFold:0,
             seenAllActions:false,
+            isEndorsedNetwork:false,
         }},
         computed:{
             ...mapState([
@@ -224,6 +234,7 @@
         mounted(){
 //            WindowService.openTools()
             this.checkWarning();
+            this.checkNetwork();
 
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
             if(!id) return this.returnResult(Error.identityMissing());
@@ -272,6 +283,10 @@
 
         },
         methods: {
+            async checkNetwork(){
+                if(!this.network) return;
+                this.isEndorsedNetwork = await PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network);
+            },
             isShowingJson(message){
                 return this.showingJson.find(x => x === this.hash(message));
             },
@@ -564,6 +579,20 @@
                 overflow: hidden;
                 text-align:left;
                 flex:1;
+
+                .red {
+                    color:$red;
+                    text-decoration: underline;
+                }
+
+                .endorsed-network {
+                    display:inline-block;
+                    color:$red;
+                    font-size: 11px;
+                    animation: attention 1s ease-out;
+                    animation-iteration-count: infinite;
+                    margin-left:3px;
+                }
 
                 figure {
 
