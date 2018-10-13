@@ -10,7 +10,7 @@
                         <figure>{{isArbitrarySignature ? 'Arbitrary Data' : 'Actions' }}</figure>
                         <figure>
                             {{pluginOrigin}} : {{payload.origin}}
-                            <b :class="{'red':isEndorsedNetwork}">
+                            <b>
                                 {{isArbitrarySignature ? '' : `on ${network ? network.name : ''}`}}
                                 <i class="endorsed-network" v-if="!isArbitrarySignature && isEndorsedNetwork">
                                     <i class="fa fa-shield"></i>
@@ -580,14 +580,8 @@
                 text-align:left;
                 flex:1;
 
-                .red {
-                    color:$red;
-                    text-decoration: underline;
-                }
-
                 .endorsed-network {
                     display:inline-block;
-                    color:$red;
                     font-size: 11px;
                     animation: attention 1s ease-out;
                     animation-iteration-count: infinite;
