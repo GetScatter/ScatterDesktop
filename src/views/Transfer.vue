@@ -32,7 +32,7 @@
         <!-- TRANSFER DETAILS -->
         <section class="details" v-if="token">
             <section class="actions">
-                <figure class="action" @click="isSimple = !isSimple">
+                <figure class="action" @click="switchSimple">
                     {{isSimple ? 'Customize' : 'Simple'}}
                 </figure>
                 <figure class="action" @click="sending ? null : send()">
@@ -62,7 +62,7 @@
                     </section>
 
                     <section class="inputs third">
-                        <label>{{isSimple ? 'Value' : `Amount of ${token.name}`}}</label>
+                        <label>{{isSimple ? `Value ( ${token.symbol} )` : `Amount of ${token.name}`}}</label>
                         <input v-model="amount" :class="{'with-prefix':isSimple}" placeholder="0" type="number" />
                         <transition name="slide-down">
                             <figure class="prefix" v-if="isSimple">$</figure>
@@ -72,8 +72,8 @@
 
                 <div style="height:30px; clear:both;"></div>
 
-                <transition name="slide-left">
-                    <section v-if="!isSimple">
+                <transition name="slide-left" mode="out-in">
+                    <section key="complex" v-if="!isSimple">
                         <div class="breaker"></div>
                         <section class="inline-inputs">
                             <section class="inputs half">
@@ -101,18 +101,25 @@
                             </section>
 
                         </section>
+
+
+                        <transition name="slide-left">
+                            <section v-if="!isSimple && token.blockchain === Blockchains.EOSIO">
+                                <div class="breaker"></div>
+                                <section class="inputs">
+                                    <input placeholder="Memo" v-model="memo" />
+                                </section>
+                            </section>
+                        </transition>
                     </section>
-                </transition>
 
-
-                <transition name="slide-left">
-                    <section v-if="!isSimple && token.blockchain === Blockchains.EOSIO">
-                        <div class="breaker"></div>
-                        <section class="inputs">
-                            <input placeholder="Memo" v-model="memo" />
-                        </section>
+                    <section key="simple" v-else>
+                        <b>Value Transfers</b>
+                        <p style="margin-top:5px;">
+                            Value transfers automatically convert the value you specify into tokens that the account you are sending to accepts.
+                            The tokens that are sent will always be value-paired tokens like EOS, ETH, TRX, and other tokens we provide fiat pairs to.
+                        </p>
                     </section>
-
                 </transition>
 
 
@@ -244,6 +251,14 @@
                 })
 
                 return account;
+            },
+
+
+            async switchSimple(){
+                if(this.amount > 0) {
+                    this.amount = this.isSimple ? await PriceService.valueToTokens(this.token, this.amount) : await PriceService.tokensToValue(this.token, this.amount);
+                }
+                this.isSimple = !this.isSimple;
             },
 
             async send(){

@@ -91,10 +91,15 @@ export default class PriceService {
     }
 
     static async valueToTokens(token, value){
-        const balances = store.state.balances;
         const prices = await PriceService.getAll();
         if(!prices || !Object.keys(prices).length || !prices.hasOwnProperty(token.symbol)) return 0;
         return parseFloat(value / prices[token.symbol].price).toFixed(this.tokenDecimals(token));
+    }
+
+    static async tokensToValue(token, value){
+        const prices = await PriceService.getAll();
+        if(!prices || !Object.keys(prices).length || !prices.hasOwnProperty(token.symbol)) return 0;
+        return parseFloat(value * prices[token.symbol].price).toFixed(2);
     }
 
     static async getTokenInfo(token){

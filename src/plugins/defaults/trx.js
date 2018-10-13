@@ -24,7 +24,6 @@ let cachedInstances = {};
 const getCachedInstance = network => {
     if(cachedInstances.hasOwnProperty(network.unique())) return cachedInstances[network.unique()];
     else {
-        console.log('network', network, network.fullhost())
         const provider = new TronWeb.providers.HttpProvider(network.fullhost());
         const tronWeb = new TronWeb(provider, provider, network.fullhost());
         cachedInstances[network.unique()] = tronWeb;
@@ -176,7 +175,7 @@ export default class TRX extends Plugin {
             const data = contract.parameter.value;
 
             // let params = {};
-            // let methodABI;
+            let methodABI;
             // if(abiData){
             //     const tron = getCachedInstance(network);
             //
@@ -210,7 +209,7 @@ export default class TRX extends Plugin {
             return {
                 data,
                 code:contract.type,
-                type:abiData ? methodABI.name : 'transfer',
+                type:methodABI ? methodABI.name : 'transfer',
             };
 
         })
