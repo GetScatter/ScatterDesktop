@@ -48,8 +48,12 @@
     "@ledgerhq/hw-transport-node-hid": "^4.22.0",
     "aes-oop": "^1.0.4",
     "asn1-ber": "^1.0.9",
+    "bigi": "^1.4.2",
     "bip32-path": "^0.4.2",
     "bip39": "^2.5.0",
+    "bytebuffer": "^5.0.1",
+    "create-hash": "^1.2.0",
+    "ecurve": "^1.0.6",
     "electron-store": "^2.0.0",
     "eos-rc-parser": "^1.0.4",
     "eosjs": "^16.0.9",
@@ -162,7 +166,9 @@
     "asar": true,
     "protocols": {
       "name": "electron-deep-linking",
-      "schemes": ["scatter"]
+      "schemes": [
+        "scatter"
+      ]
     },
     "files": [
       "dist/**/*",

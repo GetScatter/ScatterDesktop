@@ -4,6 +4,7 @@ export const LINK_ACCOUNT =                     'linkAccount';
 export const HAS_ACCOUNT_FOR =                  'hasAccountFor';
 export const GET_OR_REQUEST_IDENTITY =          'getOrRequestIdentity';
 export const IDENTITY_FROM_PERMISSIONS =        'identityFromPermissions';
+export const GET_ENCRYPTION_KEY =               'getEncryptionKey';
 export const FORGET_IDENTITY =                  'forgetIdentity';
 export const REQUEST_TRANSFER =                 'requestTransfer';
 export const REQUEST_SIGNATURE =                'requestSignature';

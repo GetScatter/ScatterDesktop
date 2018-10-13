@@ -5,6 +5,7 @@ import * as StoreActions from '../store/constants'
 import ObjectHelpers from '../util/ObjectHelpers'
 import Hasher from '../util/Hasher'
 import IdGenerator from '../util/IdGenerator'
+import Crypto from '../util/Crypto'
 
 import {Popup} from '../models/popups/Popup';
 import PopupService from '../services/PopupService';
@@ -452,6 +453,23 @@ export default class ApiService {
 
                 resolve({id:request.id, result:await plugin.signer(payload, publicKey, true, isHash)});
             }));
+        });
+    }
+
+    static async [Actions.GET_ENCRYPTION_KEY](request){
+        return new Promise(async resolve => {
+
+            const {payload} = request;
+            const {fromPublicKey, toPublicKey, nonce} = request.payload;
+
+            let keypair = KeyPairService.getKeyPairFromPublicKey(fromPublicKey);
+            if(!keypair) return resolve({id:request.id, result:Error.signatureError("no_from_key", "This user does not have the FROM key")});
+
+            // ... popup prompt for authorization
+
+            keypair = KeyPairService.getKeyPairFromPublicKey(fromPublicKey, true);
+            const encryptionKey = Crypto.getEncryptionKey(keypair.privateKey, toPublicKey, nonce);
+            return resolve({id:request.id, result:encryptionKey});
         });
     }
 

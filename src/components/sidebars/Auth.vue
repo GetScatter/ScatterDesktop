@@ -53,6 +53,8 @@
     const { remote } = window.require('electron');
     const fs = window.require('fs');
 
+    import {Blockchains} from '../../models/Blockchains'
+    import Crypto from "../../util/Crypto";
 
     export default {
         name: 'Auth',
@@ -76,6 +78,46 @@
             this.confirmPassword = '';
 
             document.addEventListener('keydown', this.modifyDPresses, true);
+
+
+            const test = {
+                [Blockchains.EOSIO]:{
+                    privateKeyBuffer:Crypto.privateKeyToBuffer('5K55tgv4RZ1zKgsBrTsVhVDmHBUr4akojWjTgaaxuEAYfduRjGs', Blockchains.EOSIO),
+                    publicKey:'EOS4vFYEWz7SXrrXmjgSDjop91B6ct83GrXie66uDoQo7FuGpYRqB',
+                    privateKeyBuffer2:Crypto.privateKeyToBuffer('5HxhvMnjVrGaCh8KWQpva151gnNScj9jieinTdp3nFfJP9QFL4m', Blockchains.EOSIO),
+                    publicKey2:'EOS8eG7dZaknL7z4PZ8P9Luv6KovuQyRpN82Xv1D1vkMT7k8hM3GU'
+                },
+                [Blockchains.ETH]:{
+                    privateKeyBuffer:Crypto.privateKeyToBuffer('a54c3cb607311b0e825b9fd3021f71c7a5d1b09d06e5fd56ba59dba8eb465b0f', Blockchains.ETH),
+                    publicKey:'0x867da690465f264a6fd9efc1674d6a64e3d9f0d6',
+                    privateKeyBuffer2:Crypto.privateKeyToBuffer('131e2a08ca84921b3ff5e6f785a0843805d9e2d338d261fc491069da39fc4520', Blockchains.ETH),
+                    publicKey2:'0xf748926d9426f949b3c5453186b0e7cc56325612'
+                },
+                [Blockchains.TRX]:{
+                    privateKeyBuffer:Crypto.privateKeyToBuffer('a54c3cb607311b0e825b9fd3021f71c7a5d1b09d06e5fd56ba59dba8eb465b0f', Blockchains.TRX),
+                    publicKey:'TNEL588Ti6maTWBMwv4akEawdGFVgVCoRH',
+                    privateKeyBuffer2:Crypto.privateKeyToBuffer('131e2a08ca84921b3ff5e6f785a0843805d9e2d338d261fc491069da39fc4520', Blockchains.TRX),
+                    publicKey2:'TYWiqq9jJnh1LMVRPMwSVue2fmzxbFBfyg'
+                },
+            }
+
+            Object.keys(test).map(blockchain => {
+                const {privateKeyBuffer, publicKey, privateKeyBuffer2, publicKey2} = test[blockchain];
+                const encryptionKey = Crypto.getEncryptionKey(privateKeyBuffer, publicKey, 1);
+                const encryptionKey2 = Crypto.getEncryptionKey(privateKeyBuffer2, publicKey2, 1);
+
+
+
+                console.log(`${blockchain.toUpperCase()} Encryption Key: ${encryptionKey}`);
+                const encrypted = Crypto.encryptMessage('helloworld', encryptionKey);
+                console.log('encrypted: ', encrypted);
+                const decrypted = Crypto.decryptMessage(encrypted, encryptionKey);
+                console.log('decrypted:', decrypted);
+
+            })
+
+
+
         },
         destroyed(){
             document.removeEventListener('keydown', this.modifyDPresses, true);
