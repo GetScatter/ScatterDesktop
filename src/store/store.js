@@ -8,8 +8,6 @@ import {PopupDisplayTypes} from '../models/popups/Popup'
 import Scatter from '../models/Scatter';
 import PluginRepository from '../plugins/PluginRepository'
 
-import * as HARDWARE_STATES from '../models/hardware/constants';
-
 Vue.use(Vuex);
 
 const state = {
@@ -100,7 +98,6 @@ const getters = {
 
             Object.keys(totals).map(key => {
                 if(state.prices.hasOwnProperty(key)){
-                    console.log('key', key);
                     total += state.prices[key].price * totals[key];
                 }
             });
@@ -113,8 +110,6 @@ const getters = {
                 })
             });
         }
-
-
 
         return [parseFloat(total).toFixed(2).toString(), symbol];
     }

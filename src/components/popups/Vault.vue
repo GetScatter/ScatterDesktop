@@ -75,12 +75,12 @@
                 <section key="nokey" v-if="!selected" class="scroller">
                     <section class="search">
                         <figure class="icon"><i class="fa fa-search"></i></figure>
-                        <input placeholder="Search..." />
+                        <input placeholder="Search..." v-model="searchTerms" />
                     </section>
 
                     <!-- KEYPAIRS -->
                     <section class="accounts scroller">
-                        <section class="account" v-for="keypair in keypairs" @click="selectKeypair(keypair)">
+                        <section class="account" v-for="keypair in vaultEntries" @click="selectKeypair(keypair)">
                             <section class="info">
                                 <figure class="name">{{keypair.name}}</figure>
                                 <figure class="description">{{keypair.accounts().length}} linked accounts</figure>
@@ -412,6 +412,7 @@
 
     export default {
         data(){ return {
+            searchTerms:'',
             displayPrivateKeyField:false,
 
             BlockchainsArray,
@@ -458,6 +459,14 @@
                 'keypairs',
                 'accounts',
             ]),
+            vaultEntries(){
+                const terms = this.searchTerms.toLowerCase().trim();
+                return this.keypairs.filter(keypair => {
+                    if(keypair.name.toLowerCase().indexOf(terms) > -1) return true;
+                    if(keypair.accounts().some(x => x.name.toLowerCase().indexOf(terms) > -1)) return true;
+                    return false;
+                });
+            },
             keyNameError(){
                 if(this.flashingNameError) return false;
                 if(!this.selected) return false;

@@ -100,6 +100,8 @@
 
     let saveTimeout = null;
 
+    import {m9_4_0} from '../migrations/versions/9.4.0';
+
     export default {
         data () {return {
             searchTerms:'',

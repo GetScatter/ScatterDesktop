@@ -16,14 +16,17 @@ import TronWeb from 'tronweb';
 import * as utils from 'tronweb/src/utils/crypto';
 const ethUtil = require('ethereumjs-util');
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
+import Web3 from 'web3';
+// import Ethers from 'ethers';
+import ethabi from 'ethereumjs-abi';
 
 let cachedInstances = {};
 const getCachedInstance = network => {
     if(cachedInstances.hasOwnProperty(network.unique())) return cachedInstances[network.unique()];
     else {
-        const HttpProvider = TronWeb.providers.HttpProvider;
-        const fullNode = new HttpProvider(network.fullhost());
-        const tronWeb = new TronWeb(fullNode, fullNode, `${network.protocol}://${network.host}`);
+        console.log('network', network, network.fullhost())
+        const provider = new TronWeb.providers.HttpProvider(network.fullhost());
+        const tronWeb = new TronWeb(provider, provider, network.fullhost());
         cachedInstances[network.unique()] = tronWeb;
         return tronWeb;
     }
@@ -81,7 +84,7 @@ export default class TRX extends Plugin {
     async balanceFor(account){
         const tron = getCachedInstance(account.network());
         const balance = await tron.trx.getBalance(account.publicKey);
-        return tron.toBigNumber(balance).div(6).toFixed(6).toString(10);
+        return tron.toBigNumber(balance).div(1000000).toFixed(6).toString(10);
     }
 
     defaultDecimals(){ return 6; }
@@ -160,21 +163,54 @@ export default class TRX extends Plugin {
         })
     }
 
-    async requestParser(transaction, abi){
+    async requestParser(transaction, abiData){
+        const network = Network.fromJson(transaction.network);
         const txID = transaction.transaction.transaction.txID;
         transaction = transaction.transaction.transaction.raw_data;
-        // const buf = Buffer.from(JSON.stringify(transaction));
-        // console.log('test', Hasher.unsaltedQuickHash(buf))
-        // console.log('hash', txID, transaction);
+
+
+
+
         return transaction.contract.map(contract => {
 
             const data = contract.parameter.value;
+
+            // let params = {};
+            // let methodABI;
+            // if(abiData){
+            //     const tron = getCachedInstance(network);
+            //
+            //     const {abi, address, method} = abiData;
+            //
+            //     console.log('abi', abi);
+            //
+            //     methodABI = abi.find(x => x.name === method);
+            //     if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
+            //
+            //
+            //     console.log('parsing', method, methodABI.inputs, data.data);
+            //
+            //     // params = (new Web3()).eth.abi.decodeParameters(methodABI.inputs, data.data);
+            //     // params = Object.keys(params).reduce((acc, key) => {
+            //     //     if(methodABI.inputs.map(input => input.name).includes(key))
+            //     //         acc[key] = params[key];
+            //     //     return acc;
+            //     // }, {});
+            //
+            //
+            //     // const abiCoder = new Ethers.utils.AbiCoder();
+            //     // params = abiCoder.decode(methodABI.inputs, data.data);
+            //
+            //     params = ethabi.rawDecode(methodABI.inputs.map(x => x.type), data.data);
+            //
+            //     console.log('params', params);
+            // }
 
 
             return {
                 data,
                 code:contract.type,
-                type:contract.type,
+                type:abiData ? methodABI.name : 'transfer',
             };
 
         })

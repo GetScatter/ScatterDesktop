@@ -60,25 +60,13 @@
 
                     <section class="multi-inputs">
                         <cin :disabled="!isNew" placeholder="Name ( organizational )" :text="network.name" v-on:changed="changed => bind(changed, 'network.name')"></cin>
-
                         <cin :disabled="!isNew" placeholder="Host ( domain.com or IP )" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
                     </section>
 
-                    <section class="multi-inputs">
-                        <!--<swch style="flex:0 0 auto;" :disabled="!isNew" first="http"-->
-                              <!--second="https" :selected="network.protocol === 'http' ? 'https' : 'http'"-->
-                              <!--v-on:switched="network.protocol = network.protocol === 'http' ? 'https' : 'http'"></swch>-->
-
-                        <sel :disabled="!isNew" :selected="network.protocol"
-                             :options="['http', 'https']"
-                             v-on:changed="x => network.protocol = x"></sel>
-
-
+                    <section class="multi-inputs" style="margin-top:20px;">
+                        <sel :disabled="!isNew" :selected="network.protocol" :options="['http', 'https']" v-on:changed="x => network.protocol = x"></sel>
                         <cin :disabled="!isNew" placeholder="Port" type="number" :text="network.port > 0 ? network.port : ''" v-on:changed="changed => bind(changed, 'network.port')"></cin>
-
                     </section>
-
-
 
                     <cin :disabled="!isNew" placeholder="Chain ID" :text="network.chainId"
                          :dynamic-button="!isNew ? null : 'chain'" dynamic-tooltip="Fetch Chain ID" v-on:dynamic="fetchChainId" v-on:changed="changed => bind(changed, 'network.chainId')"></cin>
