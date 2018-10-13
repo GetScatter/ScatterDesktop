@@ -8,7 +8,10 @@
                     <figure class="logo">S</figure>
                     <figure class="info">
                         <figure>{{isArbitrarySignature ? 'Arbitrary Data' : 'Actions' }}</figure>
-                        <figure>{{pluginOrigin}} : {{payload.origin}} {{isArbitrarySignature ? '' : `on ${network ? network.name : ''}`}}</figure>
+                        <figure>{{pluginOrigin}} : {{payload.origin}} <b>{{isArbitrarySignature ? '' : `on ${network ? network.name : ''}`}}</b></figure>
+                        <figure v-if="!isArbitrarySignature">
+                            Involved Accounts: <b>{{participants}}</b>
+                        </figure>
                     </figure>
                     <section class="buttons">
                         <figure class="button red" @click="returnResult(false)"><i class="fa fa-times"></i></figure>
@@ -198,6 +201,9 @@
                 'accounts',
                 'networks',
             ]),
+            participants(){
+                return this.payload.participants.map(x => Account.fromJson(x).sendable()).join(', ')
+            },
             messages(){
                 return this.payload.messages;
             },
@@ -560,18 +566,17 @@
 
                 figure {
 
-                    &:first-child {
+                    &:nth-child(1) {
                         font-size:28px;
                         font-weight: 600;
                         width:100%;
                         padding-top:2px;
+                        color:$black;
                     }
 
-                    &:last-child {
-                        font-size:11px;
-                        color:$dark-grey;
-                        margin-top:2px;
-                    }
+                    font-size:11px;
+                    color:$dark-grey;
+                    margin-top:2px;
                 }
             }
 
