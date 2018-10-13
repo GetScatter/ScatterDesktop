@@ -5,42 +5,32 @@ const url = require("url");
 const Transport = require('@ledgerhq/hw-transport-node-hid');
 global.appShared = { Transport, ApiWatcher:null };
 
-let tray = null;
-let win = null;
-
-const logToConsoles = (s) => {
-    console.log(s)
-    if (win && win.webContents) {
-        win.webContents.executeJavaScript(`console.log("${s}")`)
-    }
-}
+let tray, win;
 
 const setupMenu = () => {
     const menu = new Menu();
-
-    // Menu.setApplicationMenu(menu)
     win.setMenu(menu);
 
-  const template = [{
-    label: "Application",
-    submenu: [
-      { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
-      { type: "separator" },
-      { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
-    ]}, {
-    label: "Edit",
-    submenu: [
-      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-      { type: "separator" },
-      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-      { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-    ]}
-  ];
+    const template = [{
+        label: "Application",
+        submenu: [
+            { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+            { type: "separator" },
+            { label: "Quit", accelerator: "Command+Q", click: () => { app.quit(); }}
+        ]}, {
+        label: "Edit",
+        submenu: [
+            { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+            { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+            { type: "separator" },
+            { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+            { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+            { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        ]}
+    ];
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
 
 const createScatterInstance = () => {
@@ -72,9 +62,8 @@ const createScatterInstance = () => {
     }
     win.loadURL(mainUrl);
 
-    win.on('closed', () => {
-        win = null;
-    });
+    win.on('closed', () => win = null);
+    win.on('close', () => app.quit());
 
     tray = new Tray(trayIcon);
     const contextMenu = Menu.buildFromTemplate([
@@ -98,6 +87,7 @@ const activateInstance = e => {
 
 app.on('ready', createScatterInstance);
 app.on('activate', activateInstance);
+app.on('window-all-closed', () => app.quit())
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
     const isLocal = url.startsWith('https://127.0.0.1');
@@ -109,25 +99,23 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
     }
 })
 
+const callDeepLink = url => {
+    if(global.appShared.ApiWatcher !== null)
+        global.appShared.ApiWatcher(url);
+}
 
 const shouldQuit = app.makeSingleInstance(argv => {
-    if (process.platform === 'win32')
-        if(global.appShared.ApiWatcher !== null)
-            global.appShared.ApiWatcher(argv.slice(1));
-
-
+    if (process.platform === 'win32') callDeepLink(argv.slice(1))
     if (win) activateInstance();
 })
 
 if (shouldQuit) app.quit();
 
 app.on('will-finish-launching', () => {
-
-    app.on('open-url', function (event, url) {
-        event.preventDefault()
-        if(global.appShared.ApiWatcher !== null)
-            global.appShared.ApiWatcher(argv.slice(1));
-
+    app.on('open-url', (e, url) => {
+        e.preventDefault();
+        callDeepLink(url)
     })
 });
+
 

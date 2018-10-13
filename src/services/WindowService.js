@@ -29,6 +29,17 @@ const sendMessage = (windowId, type, data, resolver = null) => {
         .send(type, message);
 };
 
+const getWindow = (width = 800, height = 600) => new remote.BrowserWindow({
+    width,
+    height,
+    frame: false,
+    radii: [5,5,5,5],
+    icon:'assets/icon.png',
+    show:false,
+});
+
+let waitingPopup = getWindow(1024, 800);
+
 export default class WindowService {
 
     static openTools(){
@@ -59,14 +70,10 @@ export default class WindowService {
         clone.nonce++;
         store.dispatch(Actions.SET_SCATTER, clone);
 
-        let win = new remote.BrowserWindow({
-            width,
-            height,
-            frame: false,
-            radii: [5,5,5,5],
-            icon:'assets/icon.png',
-            show:false,
-        });
+        let win = waitingPopup;
+        if(!win) win = getWindow();
+        else waitingPopup = null;
+        win.setSize(width, height);
 
         win.once('ready-to-show', () => {
             onReady(win);
@@ -79,8 +86,7 @@ export default class WindowService {
         win.once('closed', () => {
             onClosed(win);
             win = null;
-            // remote.getCurrentWindow().hide();
-            // remote.getCurrentWindow().show();
+            waitingPopup = getWindow(1024, 800);
         });
 
         if(remote.process.mainModule.filename.indexOf('app.asar') === -1){

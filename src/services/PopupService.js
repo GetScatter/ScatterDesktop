@@ -42,6 +42,7 @@ export default class PopupService {
 
         popouts.push(popup);
 
+
         WindowService.openPopOut(
             readyWindow => WindowService.sendAndWait(readyWindow.id, 'popup', {scatter, popup}).then(result => {
                 responded = true;
