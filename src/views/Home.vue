@@ -29,7 +29,7 @@
                 <!-- INPUT -->
                 <section class="input">
                     <figure class="icon"><i class="fa fa-search"></i></figure>
-                    <input placeholder="Search Permissions..." v-model="searchTerms" />
+                    <input placeholder="Search Applications..." v-model="searchTerms" />
                 </section>
 
                 <!-- ACTIONS -->
@@ -63,7 +63,7 @@
                         <section class="details">
                             <figure class="name" @click="openApp(origin)">{{getAppData(origin).name}}</figure>
                             <figure class="type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
-                            <figure class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></figure>
+                            <figure class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description.substr(0,200)}}{{getAppData(origin).description.length > 200 ? '...':''}}</b></figure>
                             <figure class="description">Link Permission
                                 <span v-if="permCount - 1 > 0"> and {{permCount - 1}} Action Permission{{permCount -1 > 0 ? 's' : ''}}</span>
                                 <span v-else>only</span>
@@ -443,6 +443,7 @@
 
                     .details {
                         float:left;
+                        width:calc(100% - 80px);
 
                         .type {
                             font-size: 9px;
