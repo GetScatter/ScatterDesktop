@@ -162,7 +162,9 @@
     "asar": true,
     "protocols": {
       "name": "electron-deep-linking",
-      "schemes": ["scatter"]
+      "schemes": [
+        "scatter"
+      ]
     },
     "files": [
       "dist/**/*",

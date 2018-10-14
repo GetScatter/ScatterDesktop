@@ -9,7 +9,12 @@
                     <figure class="logo">S</figure>
                     <figure class="info">
                         <figure>Transfer Request</figure>
-                        <figure>{{pluginOrigin}} - {{payload.origin}}</figure>
+                        <figure>
+                            <b>{{network.name}}</b>
+                            <i class="endorsed-network" v-if="isEndorsedNetwork">
+                                <i class="fa fa-shield"></i>
+                            </i>
+                        </figure>
                     </figure>
                     <figure class="close" @click="returnResult(null)">
                         <i class="fa fa-times"></i>
@@ -99,6 +104,7 @@
             searchTerms:'',
             balances:[],
             customAmount:0,
+            isEndorsedNetwork:false,
         }},
         computed:{
             ...mapState([
@@ -125,6 +131,7 @@
             },
         },
         mounted(){
+            this.checkNetwork();
             this.checkWarning();
             this.validAccounts.map(async account => {
                 this.balances.push({
@@ -134,6 +141,10 @@
             })
         },
         methods: {
+            async checkNetwork(){
+                if(!this.network) return;
+                this.isEndorsedNetwork = await PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network);
+            },
             async checkWarning(){
 //                const warn = await RIDLService.shouldWarn(RIDLService.buildEntityName('application', this.payload.origin));
 //                if(warn.length)
@@ -175,6 +186,14 @@
 
     .pop-in {
         width:200px;
+    }
+
+    .endorsed-network {
+        display:inline-block;
+        font-size: 11px;
+        animation: attention 1s ease-out;
+        animation-iteration-count: infinite;
+        margin-left:3px;
     }
 
     .popup {

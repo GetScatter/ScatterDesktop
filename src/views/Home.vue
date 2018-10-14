@@ -134,6 +134,7 @@
             }
         },
         mounted(){
+
             fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(res => {
                 let allApps = [];
                 BlockchainsArray.map(({value}) => {
