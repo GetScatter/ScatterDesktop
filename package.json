@@ -188,7 +188,7 @@
       "output": "release"
     },
     "dmg": {
-      "icon": "static/icons/icon.icns",
+      "icon": "static/icons/icon.png",
       "contents": [
         {
           "x": 110,
