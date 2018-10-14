@@ -175,7 +175,7 @@
                 return this.dappLogos[origin];
             },
             openApps(){
-                ElectronHelpers.openLinkInBrowser('https://github.com/GetScatter/ScatterApps/')
+                ElectronHelpers.openLinkInBrowser('https://get-scatter.com/Apps')
             },
             openApp(origin){
                 const data = this.getAppData(origin);
