@@ -12,12 +12,6 @@
                     Please choose a location to save these backups.
                 </p>
 
-                <!--<section v-if="!hasBackupLocation">-->
-                    <!--<swch first="Automatic Backups" second="Manual Backups Only"-->
-                          <!--:selected="autoBackup !== strategies.AUTOMATIC ? 'Automatic Backups' : 'Manual Backups Only'"-->
-                          <!--v-on:switched="setBackupStrategy(autoBackup === strategies.AUTOMATIC ? strategies.MANUAL : strategies.AUTOMATIC)"></swch>-->
-                <!--</section>-->
-
                 <btn v-if="autoBackup === strategies.MANUAL" large="1" text="Continue Without Automatic Backups" red="1" v-on:clicked="nextStep"></btn>
 
                 <section v-if="autoBackup === strategies.AUTOMATIC">

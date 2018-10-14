@@ -13,13 +13,14 @@
                     <figure class="title">RAM</figure>
                 </section>
                 <section>
-                    <btn :disabled="submitting" text="Cancel" red="true" v-on:clicked="returnResult(false)"></btn>
-                    <btn :disabled="submitting" :text="buying ? 'Buy RAM' : 'Sell RAM'" v-on:clicked="buyOrSell"></btn>
+                    <btn :disabled="submitting" large="1" :red="true" :text="buying ? 'Buy' : 'Sell'" v-on:clicked="buyOrSell"></btn>
                 </section>
             </section>
 
             <section class="buy-sell" :class="{'disabled':!fetchedBalance}">
-                <swch first="Buy" second="Sell" :selected="buying ? 'Sell' : 'Buy'" v-on:switched="toggleBuySell"></swch>
+                <section style="text-align:center; padding-bottom:15px;">
+                    <swch first="Buy" second="Sell" :selected="buying ? 'Sell' : 'Buy'" v-on:switched="toggleBuySell"></swch>
+                </section>
 
                 <figure v-if="buying" class="description">Buying RAM for {{account.formatted()}} will let that account hold more data.</figure>
                 <figure v-else class="description">Selling RAM for {{account.formatted()}} return EOS to that account at the current price of RAM.</figure>

@@ -23,20 +23,25 @@
 <style scoped lang="scss">
     @import "../../_variables";
 
+    .switcher {
+        width:100%;
+    }
+
     button {
         cursor: pointer;
-        /*width:100%;*/
+        width:50%;
         padding:0 20px;
         height:40px;
         line-height:39px;
         border:1px solid $dark-blue;
+        border-radius:5px;
         outline:0;
         background:$light-blue;
-        border-radius:2px;
         color:#fff;
         font-size:13px;
         font-weight: bold;
         margin-top:10px;
+        display:inline-block;
 
         transition: all 0.15s ease;
         transition-property: background, color, border;
@@ -47,12 +52,12 @@
 
         &.secondary {
             background:transparent;
-            border:1px solid $dark-blue;
-            color:$dark-blue;
+            border:1px solid rgba(0,0,0,0.2);
+            color:rgba(0,0,0,0.2);
 
             &:hover {
-                background: $light-blue;
-                color: #fff;
+                border:1px solid $dark-blue;
+                color: $dark-blue;
             }
 
             &:active {

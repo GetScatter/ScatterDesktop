@@ -189,8 +189,13 @@
                                                         <section class="info">
                                                             <figure class="description linked-account">{{blockchainName(account.blockchain())}} Account</figure>
                                                             <figure class="name">{{account.sendable()}}</figure>
-                                                            <figure class="description" v-if="account.authority.length"><i class="fa fa-id-card"></i> {{authorities(account)}}</figure>
-                                                            <figure class="description"><i class="fa fa-globe"></i> {{account.network().name}}</figure>
+
+                                                            <figure class="description">
+                                                                <i class="fa fa-globe"></i> {{account.network().name}}
+                                                                <span v-if="account.authority.length" style="margin-left:15px;"><i class="fa fa-id-card"></i> {{authorities(account)}}</span>
+                                                            </figure>
+                                                            <figure class="description" style="margin-top:10px;"
+                                                                    v-if="account.blockchain() === Blockchains.EOSIO"><i class="fa fa-mouse-pointer"></i> <b>Click to Manage Account</b></figure>
                                                         </section>
                                                     </section>
                                                     <div style="height:50px;"></div>

@@ -13,13 +13,14 @@
                     <figure class="title">CPU & NET</figure>
                 </section>
                 <section>
-                    <btn :disabled="submitting" text="Cancel" red="true" v-on:clicked="returnResult(false)"></btn>
-                    <btn :disabled="submitting" :text="delegating ? 'Stake' : 'Unstake'" v-on:clicked="stakeOrUnstake"></btn>
+                    <btn :disabled="submitting" large="1" :red="true" :text="delegating ? 'Stake' : 'Unstake'" v-on:clicked="stakeOrUnstake"></btn>
                 </section>
             </section>
 
             <section class="buy-sell" :class="{'disabled':!fetchedBalance}">
-                <swch first="Stake" second="Unstake" :selected="delegating ? 'Unstake' : 'Stake'" v-on:switched="toggleDelegating"></swch>
+                <section style="text-align:center; padding-bottom:15px;">
+                    <swch first="Stake" second="Unstake" :selected="delegating ? 'Unstake' : 'Stake'" v-on:switched="toggleDelegating"></swch>
+                </section>
 
                 <!--<figure class="title">Buy RAM</figure>-->
                 <figure v-if="delegating" class="description">Self staking CPU & NET for {{account.formatted()}} will let that account do more on the network.</figure>
