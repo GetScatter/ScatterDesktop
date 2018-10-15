@@ -1,20 +1,3 @@
-
-export const MAINMENU_Identities = 'mm_ids';
-export const MAINMENU_Keys = 'mm_keys';
-export const MAINMENU_Permissions = 'mm_perm';
-export const MAINMENU_History = 'mm_hist';
-export const MAINMENU_Lock = 'mm_lock';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const OVERHEAD_ViewToken = 'oh_viewtoken';
+export const OVERHEAD_Receive = 'oh_receive';
+export const OVERHEAD_Send = 'oh_send';

@@ -44,14 +44,16 @@
                 'networks',
             ]),
             selectedLanguage(){
-                return LANG.ENGLISH
+                return LANG[this.scatter.settings.language];
             }
         },
         mounted(){
         },
         methods: {
             selectLanguage(language){
-
+              const scatter = this.scatter.clone();
+              scatter.settings.language = Object.keys(LANG).find(x => LANG[x] === language);
+              this[Actions.SET_SCATTER](scatter);
             },
             ...mapActions([
                 Actions.SET_SCATTER

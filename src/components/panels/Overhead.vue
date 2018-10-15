@@ -42,7 +42,7 @@
                 <router-link v-if="route === 'home'" key="balance" :to="{name:'tokens'}">
                     <section class="value tokens">
                         {{formatNumber(totalBalance[0], !scatter.settings.displayToken)}} <b>{{totalBalance[1]}}</b>
-                        <span>View <b>Tokens</b></span>
+                        <span><span v-html="locale('oh_viewtoken')"></span></span>
                     </section>
                 </router-link>
 
@@ -64,12 +64,12 @@
                     <section key="ishome" v-if="isHome && accounts.length">
                         <!-- RECEIVE TOKENS -->
                         <router-link :to="{name:'receive'}"  class="action">
-                            Receive
+                            {{locale('oh_receive')}}
                         </router-link>
 
                         <!-- SEND TOKENS -->
                         <router-link :to="{name:'transfer'}"  class="action">
-                            Send
+                            {{locale('oh_send')}}
                         </router-link>
                     </section>
 

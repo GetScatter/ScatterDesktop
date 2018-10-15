@@ -1,13 +1,16 @@
 import * as KEYS from './keys';
 
 import english from './languages/english';
+import korean from './languages/korean';
 
 export const LANG = {
     ENGLISH: 'English',
+    KOREAN: '한국어 ( Korean )'
 };
 
 const languages = {
     [LANG.ENGLISH]:english,
+    [LANG.KOREAN]:korean,
 };
 
 export const locales = () => {
