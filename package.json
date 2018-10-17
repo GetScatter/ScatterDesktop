@@ -191,12 +191,12 @@
       "icon": "static/icons/icon.png",
       "contents": [
         {
-          "x": 110,
-          "y": 150
+          "x": 134,
+          "y": 190
         },
         {
-          "x": 240,
-          "y": 150,
+          "x": 344,
+          "y": 190,
           "type": "link",
           "path": "/Applications"
         }

@@ -42,7 +42,10 @@ const createScatterInstance = () => {
         height: 800,
         frame: false,
         radii: [5,5,5,5],
-        icon:'assets/icon.png'
+        icon:'static/icons/icon.png',
+        resizable: true,
+        minWidth: 620,
+        minHeight:580
     });
 
     // win.openDevTools();
