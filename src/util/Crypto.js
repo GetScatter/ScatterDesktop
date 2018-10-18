@@ -1,5 +1,5 @@
 import ecc from 'eosjs-ecc';
-const {PrivateKey} = ecc;
+const {PrivateKey, PublicKey} = ecc;
 const ecurve = require('ecurve');
 const Point = ecurve.Point;
 const secp256k1 = ecurve.getCurveByName('secp256k1');
@@ -43,7 +43,7 @@ export default class Crypto {
     }
 
     static sharedSecret(privateKeyBuffer, publicKey){
-        let publicKeyBuffer = Buffer.from(publicKey);
+        let publicKeyBuffer = PublicKey(publicKey).toUncompressed().toBuffer();
         let keyBufferPoint = Point.fromAffine(
             secp256k1,
             BigInteger.fromBuffer( publicKeyBuffer.slice( 1,33 )), // x
