@@ -1,13 +1,16 @@
 import * as KEYS from './keys';
 
 import english from './languages/english';
+import dutch from './languages/dutch';
 
 export const LANG = {
     ENGLISH: 'English',
+    DUTCH: 'Nederlands (Dutch)',
 };
 
 const languages = {
     [LANG.ENGLISH]:english,
+    [LANG.DUTCH]:dutch,
 };
 
 export const locales = () => {
