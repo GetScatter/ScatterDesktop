@@ -172,43 +172,26 @@ export default class TRX extends Plugin {
 
         return transaction.contract.map(contract => {
 
-            const data = contract.parameter.value;
+            let data = contract.parameter.value;
+            const address = data.contract_address;
 
-            // let params = {};
+            let params = {};
             let methodABI;
-            // if(abiData){
-            //     const tron = getCachedInstance(network);
-            //
-            //     const {abi, address, method} = abiData;
-            //
-            //     console.log('abi', abi);
-            //
-            //     methodABI = abi.find(x => x.name === method);
-            //     if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
-            //
-            //
-            //     console.log('parsing', method, methodABI.inputs, data.data);
-            //
-            //     // params = (new Web3()).eth.abi.decodeParameters(methodABI.inputs, data.data);
-            //     // params = Object.keys(params).reduce((acc, key) => {
-            //     //     if(methodABI.inputs.map(input => input.name).includes(key))
-            //     //         acc[key] = params[key];
-            //     //     return acc;
-            //     // }, {});
-            //
-            //
-            //     // const abiCoder = new Ethers.utils.AbiCoder();
-            //     // params = abiCoder.decode(methodABI.inputs, data.data);
-            //
-            //     params = ethabi.rawDecode(methodABI.inputs.map(x => x.type), data.data);
-            //
-            //     console.log('params', params);
-            // }
+            if(abiData){
+                const tron = getCachedInstance(network);
+                const {abi, address, method} = abiData;
+                methodABI = abi.find(x => x.name === method);
+                if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
+                const names = methodABI.inputs.map(x => x.name);
+                const types = methodABI.inputs.map(x => x.type);
+
+                data = tron.utils.abi.decodeParams(names, types, data.data, true);
+            }
 
 
             return {
                 data,
-                code:contract.type,
+                code:address,
                 type:methodABI ? methodABI.name : 'transfer',
             };
 
