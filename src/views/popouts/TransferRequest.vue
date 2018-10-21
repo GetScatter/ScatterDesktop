@@ -67,7 +67,7 @@
                         <figure class="header">
                             <b>{{selectedAccount.formatted()}}</b>
                             <figure class="line"></figure>
-                            You are about to transfer <b>{{amount > 0 ? parseFloat(amount).toFixed(decimals) : parseFloat(customAmount).toFixed(decimals)}} {{symbol}}</b> to <b>{{to}}</b>.
+                            You are about to transfer <b>{{displayAmount}} {{symbol}}</b> to <b>{{to}}</b>.
                             Are you sure?
                         </figure>
                         <section class="action-buttons">
@@ -129,6 +129,10 @@
                     .filter(x => [this.network.blockchain].includes(x.blockchain().toLowerCase()))
                     .filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1);
             },
+            displayAmount(){
+                const amount = this.amount > 0 ? parseFloat(this.amount).toFixed(this.decimals) : parseFloat(this.customAmount).toFixed(this.decimals)
+                return !isNaN(amount) ? amount : 0;
+            }
         },
         mounted(){
             this.checkNetwork();
@@ -154,7 +158,8 @@
             returnResult(result){
                 let returned = null;
                 if(result){
-                    let amount = this.amount > 0 ? parseFloat(this.amount).toFixed(this.decimals).toString() : parseFloat(this.customAmount).toFixed(this.decimals).toString();
+                    let amount = this.displayAmount;
+                    if(parseFloat(amount) <= 0) return PopupService.push(Popup.prompt('Invalid Amount', `You can not send 0 ${this.symbol}`, 'exclamation-triangle', 'Okay'));
 
                     returned = {
                         account:this.selectedAccount,

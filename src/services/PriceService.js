@@ -76,13 +76,15 @@ export default class PriceService {
                         if(parseFloat(balance) > 0){
                             balances[account.unique()].push({symbol:token.symbol, balance, account:token.account, blockchain:account.blockchain()});
                         }
+
+                        await store.dispatch(Actions.SET_BALANCES, balances);
                         return true;
                     })()
                 ])
             }));
         }));
 
-        await store.dispatch(Actions.SET_BALANCES, balances);
+        // await store.dispatch(Actions.SET_BALANCES, balances);
     }
 
     static tokenDecimals(token){
