@@ -33,7 +33,7 @@ export default class PriceService {
 
     static getAll(){
         return Promise.race([
-            new Promise(resolve => setTimeout(() => resolve(false), 1000)),
+            new Promise(resolve => setTimeout(() => resolve(false), 10000)),
             fetch(api+'/v1/prices').then(x => x.json())
         ])
     }
