@@ -154,7 +154,7 @@
                 return this.fields.accounts || [];
             },
             printableAccountRequirements(){
-                return this.accountRequirements.map(x => this.networks.find(x => x.chainId === x.chainId).name).join(' / ')
+                return this.accountRequirements.map(x => this.networks.find(y => y.chainId === x.chainId).name).join(' / ')
             },
             shouldShowSearchbar(){
                 return this.searchTerms.length || (this.selectedIdentity && this.validAccounts.length > 1);

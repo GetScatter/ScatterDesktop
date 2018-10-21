@@ -173,7 +173,7 @@ export default class TRX extends Plugin {
         return transaction.contract.map(contract => {
 
             let data = contract.parameter.value;
-            const address = data.contract_address;
+            const address = data.hasOwnProperty('contract_address') ? data.contract_address : 'system';
 
             let params = {};
             let methodABI;
