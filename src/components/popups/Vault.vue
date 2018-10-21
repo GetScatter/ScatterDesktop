@@ -496,7 +496,7 @@
             blockchainName,
             linkManually(){
                 PopupService.push(Popup.linkOrCreateAccount(this.selected, done => {
-                    console.log('done', done);
+
                 }));
             },
             usesResources(account){

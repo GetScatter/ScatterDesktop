@@ -24,7 +24,6 @@ import Network from '../models/Network'
 
 const {remote} = window.require('electron');
 remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
-    console.log('using api from deep link', deepLink);
     ApiService.handleDeepLink(deepLink);
 };
 
