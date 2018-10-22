@@ -103,8 +103,8 @@
 
             Object.keys(test).map(blockchain => {
                 const {privateKeyBuffer, publicKey, privateKeyBuffer2, publicKey2} = test[blockchain];
-                const encryptionKey = Crypto.getEncryptionKey(privateKeyBuffer, publicKey, 1);
-                const encryptionKey2 = Crypto.getEncryptionKey(privateKeyBuffer2, publicKey2, 1);
+                const encryptionKey = Crypto.getEncryptionKey(privateKeyBuffer, publicKey, 1, blockchain);
+                const encryptionKey2 = Crypto.getEncryptionKey(privateKeyBuffer2, publicKey2, 1, blockchain);
 
 
 
