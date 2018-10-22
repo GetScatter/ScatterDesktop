@@ -4,10 +4,12 @@ import ecc from 'eosjs-ecc'
 import {Blockchains} from './Blockchains'
 import LedgerWallet from './hardware/LedgerWallet';
 import LiquidEOS from './hardware/LiquidEOS';
+import WookongSolo from './hardware/WookongSolo';
 
 export const EXT_WALLET_TYPES = {
-    LEDGER:'Ledger Nano S',
-    LIQUID_EOS:'Scatter/LiquidEOS DIY Hardware Wallet'
+    LEDGER: 'Ledger Nano S',
+    LIQUID_EOS: 'Scatter/LiquidEOS DIY Hardware Wallet',
+    WOOKONG_SOLO: 'Wookong Solo'
 };
 
 export const EXT_WALLET_TYPES_ARR = Object.keys(EXT_WALLET_TYPES).map(x => EXT_WALLET_TYPES[x]);
@@ -35,6 +37,7 @@ const getInterface = (type, blockchain) => {
     switch(type){
         case EXT_WALLET_TYPES.LEDGER: return LedgerWallet.typeToInterface(blockchain);
         case EXT_WALLET_TYPES.LIQUID_EOS: return LiquidEOS.typeToInterface();
+        case EXT_WALLET_TYPES.WOOKONG_SOLO: return WookongSolo.typeToInterface();
     }
 }
 
