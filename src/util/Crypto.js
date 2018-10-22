@@ -25,16 +25,20 @@ export default class Crypto {
         return PluginRepository.plugin(blockchain).bufferToHexPrivate(buffer);
     }
 
-    static privateKeyToBuffer(privateKey, blockchain){
+    static privateKeyToBuffer(privateKey, blockchain) {
         return PluginRepository.plugin(blockchain).hexPrivateToBuffer(privateKey);
+    }
+  
+    static publicKeyToBuffer(publicKey, blockchain) {
+        return PluginRepository.plugin(blockchain).publicToBuffer(publicKey);
     }
 
     static bufferToHash(buffer){
         return ecc.sha256(buffer);
     }
 
-    static getEncryptionKey(privateKeyBuffer, publicKey, nonce){
-        const sharedKey = Crypto.sharedSecret(privateKeyBuffer, publicKey);
+    static getEncryptionKey(privateKeyBuffer, publicKey, nonce, blockchain){
+        const sharedKey = Crypto.sharedSecret(privateKeyBuffer, Crypto.publicKeyToBuffer(publicKey, blockchain));
         let ebuf = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
         ebuf.writeUint64(nonce)
         ebuf.append(sharedKey.toString('binary'), 'binary')
@@ -42,8 +46,8 @@ export default class Crypto {
         return sha512(ebuf)
     }
 
-    static sharedSecret(privateKeyBuffer, publicKey){
-        let publicKeyBuffer = PublicKey(publicKey).toUncompressed().toBuffer();
+    static sharedSecret(privateKeyBuffer, publicKeyBuffer){
+        //let publicKeyBuffer = PublicKey(publicKey).toUncompressed().toBuffer();
         let keyBufferPoint = Point.fromAffine(
             secp256k1,
             BigInteger.fromBuffer( publicKeyBuffer.slice( 1,33 )), // x
