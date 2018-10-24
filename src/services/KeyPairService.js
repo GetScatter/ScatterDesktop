@@ -89,7 +89,7 @@ export default class KeyPairService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static getKeyPairFromPublicKey(publicKey, decrypt = false){
+    static getKeyPairFromPublicKey(publicKey, decrypt = false, blockchain = Blockchains.EOSIO){
         const keypair = store.state.scatter.keychain.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
         if(keypair) {
             if(decrypt) keypair.decrypt(store.state.seed);
@@ -101,7 +101,7 @@ export default class KeyPairService {
             if(decrypt) identity.decrypt(store.state.seed);
             return Keypair.fromJson({
                 name:identity.name,
-                publicKeys:[{blockchain:Blockchains.EOSIO, key:publicKey}],
+                publicKeys:[{blockchain, key:publicKey}],
                 privateKey:identity.privateKey
             });
         }
