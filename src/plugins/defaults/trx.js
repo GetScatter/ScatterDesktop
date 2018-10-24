@@ -75,9 +75,6 @@ export default class TRX extends Plugin {
     validPublicKey(publicKey){ return utils.isAddressValid(address); }
     bufferToHexPrivate(buffer){ return new Buffer(buffer).toString('hex') }
     hexPrivateToBuffer(privateKey){ return Buffer.from(privateKey, 'hex'); }
-    publicToBuffer(publicKey){
-        //TODO
-    }
     conformPrivateKey(privateKey){
         privateKey = privateKey.trim();
         return privateKey;
