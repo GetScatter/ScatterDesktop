@@ -79,7 +79,9 @@
 
             document.addEventListener('keydown', this.modifyDPresses, true);
 
-
+            //TODO: change public keys to a hex representation of the 64 bytes key
+            // remove digests and version from eos key
+            // Buffer.from(publicKey, 'hex')
             const test = {
                 [Blockchains.EOSIO]:{
                     privateKeyBuffer:Crypto.privateKeyToBuffer('5K55tgv4RZ1zKgsBrTsVhVDmHBUr4akojWjTgaaxuEAYfduRjGs', Blockchains.EOSIO),
@@ -103,8 +105,8 @@
 
             Object.keys(test).map(blockchain => {
                 const {privateKeyBuffer, publicKey, privateKeyBuffer2, publicKey2} = test[blockchain];
-                const encryptionKey = Crypto.getEncryptionKey(privateKeyBuffer, publicKey, 1, blockchain);
-                const encryptionKey2 = Crypto.getEncryptionKey(privateKeyBuffer2, publicKey2, 1, blockchain);
+                const encryptionKey = Crypto.getEncryptionKey(privateKeyBuffer, publicKey, 1);
+                const encryptionKey2 = Crypto.getEncryptionKey(privateKeyBuffer2, publicKey2, 1);
 
 
 
@@ -115,9 +117,8 @@
                 console.log('decrypted:', decrypted);
 
             })
-
-
-
+            
+            
         },
         destroyed(){
             document.removeEventListener('keydown', this.modifyDPresses, true);
