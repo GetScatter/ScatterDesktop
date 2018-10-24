@@ -107,9 +107,6 @@ export default class ETH extends Plugin {
     hexPrivateToBuffer(privateKey){
         return Buffer.from(privateKey, 'hex');
     }
-    publicToBuffer(publicKey){
-        //TODO
-    }
     conformPrivateKey(privateKey){
         privateKey = privateKey.trim();
 
