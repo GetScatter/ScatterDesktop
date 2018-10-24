@@ -101,7 +101,7 @@ export default class KeyPairService {
             if(decrypt) identity.decrypt(store.state.seed);
             return Keypair.fromJson({
                 name:identity.name,
-                publicKeys:[{blockchain:Blockchains.EOSIO, key:publicKey}],
+                publicKeys:[{blockchain: Blockchains.EOSIO, key:publicKey}],
                 privateKey:identity.privateKey
             });
         }

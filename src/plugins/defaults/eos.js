@@ -197,7 +197,7 @@ export default class EOS extends Plugin {
     hexPrivateToBuffer(privateKey){
         return new ecc.PrivateKey(privateKey).toBuffer();
     }
-
+  
     actionParticipants(payload){
         return ObjectHelpers.flatten(
             payload.messages

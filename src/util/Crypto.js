@@ -1,5 +1,5 @@
 import ecc from 'eosjs-ecc';
-const {PrivateKey} = ecc;
+const {PrivateKey, PublicKey} = ecc;
 const ecurve = require('ecurve');
 const Point = ecurve.Point;
 const secp256k1 = ecurve.getCurveByName('secp256k1');
@@ -25,7 +25,7 @@ export default class Crypto {
         return PluginRepository.plugin(blockchain).bufferToHexPrivate(buffer);
     }
 
-    static privateKeyToBuffer(privateKey, blockchain){
+    static privateKeyToBuffer(privateKey, blockchain) {
         return PluginRepository.plugin(blockchain).hexPrivateToBuffer(privateKey);
     }
 
@@ -33,25 +33,24 @@ export default class Crypto {
         return ecc.sha256(buffer);
     }
 
-    static getEncryptionKey(privateKeyBuffer, publicKey, nonce){
-        const sharedKey = Crypto.sharedSecret(privateKeyBuffer, publicKey);
-        let ebuf = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN)
-        ebuf.writeUint64(nonce)
-        ebuf.append(sharedKey.toString('binary'), 'binary')
-        ebuf = new Buffer(ebuf.copy(0, ebuf.offset).toBinary(), 'binary')
-        return sha512(ebuf)
+    static getEncryptionKey(privateKeyBuffer, publicKeyBuffer, nonce) {
+        const sharedKey = Crypto.sharedSecret(privateKeyBuffer, publicKeyBuffer);
+        let ebuf = new ByteBuffer(ByteBuffer.DEFAULT_CAPACITY, ByteBuffer.LITTLE_ENDIAN);
+        ebuf.writeUint64(nonce);
+        ebuf.append(sharedKey.toString('binary'), 'binary');
+        ebuf = new Buffer(ebuf.copy(0, ebuf.offset).toBinary(), 'binary');
+        return sha512(ebuf);
     }
 
-    static sharedSecret(privateKeyBuffer, publicKey){
-        let publicKeyBuffer = Buffer.from(publicKey);
+    static sharedSecret(privateKeyBuffer, publicKeyBuffer){
         let keyBufferPoint = Point.fromAffine(
             secp256k1,
             BigInteger.fromBuffer( publicKeyBuffer.slice( 1,33 )), // x
             BigInteger.fromBuffer( publicKeyBuffer.slice( 33,65 )) // y
-        )
+        );
         let P = keyBufferPoint.multiply(BigInteger.fromBuffer(privateKeyBuffer));
         let S = P.affineX.toBuffer({size: 32});
-        return sha512(S)
+        return sha512(S);
     }
 
 }

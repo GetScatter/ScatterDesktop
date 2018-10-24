@@ -468,7 +468,9 @@ export default class ApiService {
             // ... popup prompt for authorization
 
             keypair = KeyPairService.getKeyPairFromPublicKey(fromPublicKey, true);
-            const encryptionKey = Crypto.getEncryptionKey(keypair.privateKey, toPublicKey, nonce);
+          
+            const toPublicKeyBuffer = Buffer.from(toPublicKey, 'hex');
+            const encryptionKey = Crypto.getEncryptionKey(keypair.privateKey, toPublicKeyBuffer, nonce);
             return resolve({id:request.id, result:encryptionKey});
         });
     }
