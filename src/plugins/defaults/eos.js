@@ -198,10 +198,6 @@ export default class EOS extends Plugin {
         return new ecc.PrivateKey(privateKey).toBuffer();
     }
   
-    publicToBuffer(publicKey){
-        return new ecc.PublicKey(publicKey).toUncompressed().toBuffer();
-    }
-
     actionParticipants(payload){
         return ObjectHelpers.flatten(
             payload.messages
