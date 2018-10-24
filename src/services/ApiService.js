@@ -460,15 +460,15 @@ export default class ApiService {
         return new Promise(async resolve => {
 
             const {payload} = request;
-            const {fromPublicKey, toPublicKey, nonce, blockchain} = request.payload;
+            const {fromPublicKey, toPublicKey, fromBlockchain, toBlockchain, nonce} = request.payload;
 
-            let keypair = KeyPairService.getKeyPairFromPublicKey(fromPublicKey);
+            let keypair = KeyPairService.getKeyPairFromPublicKey(fromPublicKey, false, fromBlockchain);
             if(!keypair) return resolve({id:request.id, result:Error.signatureError("no_from_key", "This user does not have the FROM key")});
 
             // ... popup prompt for authorization
 
-            keypair = KeyPairService.getKeyPairFromPublicKey(fromPublicKey, true);
-            const encryptionKey = Crypto.getEncryptionKey(keypair.privateKey, toPublicKey, nonce, blockchain);
+            keypair = KeyPairService.getKeyPairFromPublicKey(fromPublicKey, true, fromBlockchain);
+            const encryptionKey = Crypto.getEncryptionKey(keypair.privateKey, toPublicKey, nonce, toBlockchain);
             return resolve({id:request.id, result:encryptionKey});
         });
     }
