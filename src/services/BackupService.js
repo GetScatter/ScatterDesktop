@@ -12,6 +12,7 @@ const getLatestScatter = () => StorageService.getScatter();
 const saveFile = (filepath) => {
     return new Promise(resolve => {
         const scatter = getLatestScatter();
+        scatter.settings.backupLocation = '';
         const date = new Date();
         const month = date.getUTCMonth();
         const year = date.getUTCFullYear();
