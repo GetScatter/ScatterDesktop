@@ -32,7 +32,7 @@ const getCachedInstance = network => {
 
 const getAccountsFromPublicKey = (publicKey, network) => {
     return Promise.race([
-        new Promise(resolve => setTimeout(() => resolve([]), 2500)),
+        new Promise(resolve => setTimeout(() => resolve([]), 20000)),
         new Promise((resolve, reject) => {
             const eos = getCachedInstance(network);
             eos.getKeyAccounts(publicKey).then(res => {
