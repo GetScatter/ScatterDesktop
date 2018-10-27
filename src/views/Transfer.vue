@@ -146,10 +146,12 @@
     import KeyPairService from '../services/KeyPairService'
     import {Popup} from '../models/popups/Popup';
 
+    const uniqueToken = x => `${x.account}${x.blockchain}${x.name}${x.symbol}`;
+
     export default {
         data () {return {
             Blockchains:Blockchains,
-            isSimple:true,
+            isSimple:false,
             sending:false,
             token:null,
             showingAll:false,
@@ -204,6 +206,10 @@
             },
             selectAccount(account){
                 this.account = account;
+                if(this.token && this.token.blockchain === account.blockchain()) {
+                    const hasToken = !!this.filteredTokens.find(x => uniqueToken(x) === uniqueToken(this.token));
+                    if(hasToken) return;
+                }
                 this.token = this.filteredTokens[0];
             },
             selectToken(token){
@@ -303,6 +309,7 @@
                 BlockchainsArray.map(({value}) => {
                     const plugin = PluginRepository.plugin(value);
                     if(plugin.isValidRecipient(this.recipient)){
+                        if(this.token.blockchain === value) return;
                         const token = this.filteredTokens.find(x => x.blockchain === value);
                         if(token) this.selectToken(token);
                     }
