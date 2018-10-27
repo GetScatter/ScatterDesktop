@@ -3,11 +3,13 @@ import AuthorizedApp from '../models/AuthorizedApp';
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
 const fs = window.require('fs');
+const http = window.require('http');
+const https = window.require('https');
 
 import {Popup} from '../models/popups/Popup'
 import PopupService from '../services/PopupService';
 
-let io = null;
+let io = window.require('socket.io')();
 
 let rekeyPromise;
 const getNewKey = socket => new Promise((resolve, reject) => {
@@ -126,23 +128,38 @@ const getCerts = async () => {
         .catch(() => console.error('Could not fetch certs. Probably due to a proxy, vpn, or firewall.'));
 };
 
+
+const ip = '127.0.0.1';
+const isPortOpen = async port => new Promise(resolve => {
+    const httpServer = http.createServer();
+    httpServer.on('error', error => {
+        resolve(false);
+    })
+
+    httpServer.listen(50005,ip);
+
+    setTimeout(() => {
+        httpServer.close();
+        resolve(true);
+    }, 400);
+});
+
 export default class SocketService {
 
     static async initialize(){
 
-        io = window.require('socket.io')();
+        const recurse = () => setTimeout(() => {
+            this.initialize(true);
+        }, 1000*60*10); // every ten minutes.
+
+        if(!(await isPortOpen(50005))) return recurse();
+
         const options = { pingTimeout:100000000000000000 };
-
-        const http = window.require('http');
-        const https = window.require('https');
-        const ip = '127.0.0.1';
-
 
         // HTTP protocol (port 50005)
         const httpServer = http.createServer();
         httpServer.listen(50005,ip);
         io.attach(httpServer,options);
-
 
         // HTTPS protocol (port 50006)
         const certs = await getCerts();
@@ -157,6 +174,8 @@ export default class SocketService {
         }
 
         this.open();
+        recurse();
+        return true;
     }
 
     static open(){
