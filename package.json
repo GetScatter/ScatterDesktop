@@ -54,7 +54,7 @@
     "eos-rc-parser": "^1.0.4",
     "eosjs": "^16.0.9",
     "eosjs-ecc": "^4.0.4",
-    "eosjs2": "npm:eosjs@beta",
+    "eosjs2": "npm:eosjs@20.0.0-beta2",
     "ethereumjs-abi": "^0.6.5",
     "ethereumjs-tx": "^1.3.7",
     "ethereumjs-util": "^5.2.0",

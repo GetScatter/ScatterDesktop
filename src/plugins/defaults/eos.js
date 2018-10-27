@@ -15,7 +15,7 @@ import StorageService from '../../services/StorageService'
 import ApiService from '../../services/ApiService'
 import * as Actions from '../../models/api/ApiActions';
 import {store} from '../../store/store'
-import eosjs2 from 'eosjs2';
+import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs2';
 import * as numeric from "eosjs2/dist/eosjs-numeric";
 
 
@@ -459,10 +459,13 @@ export default class EOS extends Plugin {
     async parseEosjs2Request(payload, network){
         const {transaction} = payload;
 
-        const rpc = new eosjs2.Rpc.JsonRpc(network.fullhost());
-        const api = new eosjs2.Api({rpc});
+        const rpc = new JsonRpc(network.fullhost());
+        const api = new Api({rpc});
 
-        const contracts = ObjectHelpers.distinct(transaction.abis.map(x => x.account_name));
+        const contracts = ObjectHelpers.distinct(transaction.abis.map(x => {
+            if(x.hasOwnProperty('account_name')) return x.account_name;
+            return x.accountName;
+        }));
 
         const abis = await Promise.all(contracts.map(async accountName => {
             const cachedABI = await StorageService.getCachedABI(accountName+'eosjs2', network.chainId);

@@ -10,7 +10,7 @@ export default class UpdateService {
     static async needsUpdate(){
         const scatter = store.state.scatter.clone();
         const update = await this.needsUpdateNoPrompt();
-        if(update) PopupService.push(Popup.prompt('New Update!', 'There is a new Scatter update available. Do you want to download it?', 'download', 'Yes', accepted => {
+        if(update) PopupService.push(Popup.prompt('New Update!', 'There is a new Scatter update available. Do you want to download it? ( You should backup your scatter before updating! )', 'download', 'Yes', accepted => {
             if(accepted) ElectronHelpers.openLinkInBrowser(update[2]);
             else {
                 scatter.meta.lastSuggestedVersion = update[1];

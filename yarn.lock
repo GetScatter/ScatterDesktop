@@ -3037,9 +3037,9 @@ eosjs-ecc@4.0.4, eosjs-ecc@^4.0.1, eosjs-ecc@^4.0.2, eosjs-ecc@^4.0.4:
     ecurve "^1.0.5"
     randombytes "^2.0.5"
 
-"eosjs2@npm:eosjs@beta":
-  version "20.0.0-beta1"
-  resolved "https://registry.yarnpkg.com/eosjs/-/eosjs-20.0.0-beta1.tgz#2c69329c503902e058f6fa1e4fdb1e4ce73f1f0e"
+"eosjs2@npm:eosjs@20.0.0-beta2":
+  version "20.0.0-beta2"
+  resolved "https://registry.yarnpkg.com/eosjs/-/eosjs-20.0.0-beta2.tgz#026255a13fefeb4d46a98b0c55de7b972de661c0"
   dependencies:
     "@types/jest" "^23.3.1"
     babel-polyfill "^6.26.0"
