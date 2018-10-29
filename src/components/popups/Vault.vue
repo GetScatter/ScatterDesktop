@@ -16,7 +16,8 @@
                     <!-- ACCOUNT HEAD -->
                     <section key="account" v-if="!status && !error && selectedAccount">
                         <figure class="title">{{blockchainName(selectedAccount.blockchain())}}</figure>
-                        <figure class="description">{{selectedAccount.sendable()}}</figure>
+                        <figure class="description"><b>{{selectedAccount.sendable()}}</b></figure>
+                        <figure class="description" style="font-size: 11px;">{{selectedAccount.network().name}}</figure>
                     </section>
 
                     <!-- ERROR -->
@@ -118,7 +119,7 @@
                                                                  :stroke-width="18">
                                                     <figure class="button" @click="moderateResource(resource)">
                                                         <i class="fa fa-exclamation-triangle" v-if="resource.percentage > 80"></i>
-                                                        Moderate <b>{{resource.name}}</b>
+                                                        Manage <b>{{resource.name}}</b>
                                                     </figure>
                                                 </radial-progress>
                                                 <figure class="percentage" :class="{'warning':resource.percentage > 80}">
@@ -481,7 +482,7 @@
             },
             uniqueAccounts(){
                 return this.selected.accounts().reduce((acc, account) => {
-                    if(!acc.find(x => account.sendable() === x.sendable())) acc.push(account);
+                    if(!acc.find(x => account.network().unique() === x.network().unique() && account.sendable() === x.sendable())) acc.push(account);
                     return acc;
                 }, [])
             },

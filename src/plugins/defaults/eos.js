@@ -100,7 +100,7 @@ export default class EOS extends Plugin {
     }
 
     async getChainId(network){
-        const eos = Eos({httpEndpoint:`${network.protocol}://${network.hostport()}`});
+        const eos = Eos({httpEndpoint:network.fullhost()});
         return eos.getInfo({}).then(x => x.chain_id || '').catch(() => '');
     }
 
