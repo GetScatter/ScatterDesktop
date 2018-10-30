@@ -366,6 +366,7 @@ export default class ApiService {
                 const signatures = await Promise.all(participants.map(x => {
                     if(KeyPairService.isHardware(x.publicKey)){
                         const keypair = KeyPairService.getKeyPairFromPublicKey(x.publicKey);
+                        keypair.external.interface.setAddressIndex(keypair.external.addressIndex);
                         return keypair.external.interface.sign(x.publicKey, payload, payload.abi, network);
                     } else return plugin.signer(payload, x.publicKey)
                 }));

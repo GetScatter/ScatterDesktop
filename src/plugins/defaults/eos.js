@@ -305,6 +305,7 @@ export default class EOS extends Plugin {
                 let signature = null;
                 if(KeyPairService.isHardware(account.publicKey)){
                     const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
+                    keypair.external.interface.setAddressIndex(keypair.external.addressIndex);
                     signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi, account.network());
                 } else signature = await this.signer({data:payload.buf}, account.publicKey, true);
 
