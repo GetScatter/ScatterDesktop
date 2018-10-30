@@ -22,8 +22,8 @@
 
     .p-bar {
         width:100%;
-        height:30px;
-        border-radius:20px;
+        height:40px;
+        border-radius:50px;
         position: relative;
 
         background:rgba(0,0,0,0.04);
@@ -34,7 +34,7 @@
 
 
         .full {
-            height:30px;
+            height:40px;
             border-radius:20px;
 
             &.red {
@@ -60,8 +60,8 @@
 
         .text {
             position: absolute;
-            top:7px;
-            font-size: 11px;
+            top:10px;
+            font-size: 14px;
             font-weight: bold;
 
 
@@ -74,9 +74,9 @@
             }
 
             &.right {
-                right:10px;
+                right:15px;
                 font-family: 'Open Sans', sans-serif;
-                top:7px;
+                top:13px;
                 font-size: 11px;
             }
         }

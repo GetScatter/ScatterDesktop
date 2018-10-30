@@ -173,7 +173,7 @@ export default class TRX extends Plugin {
             let data = contract.parameter.value;
             const address = data.hasOwnProperty('contract_address') ? data.contract_address : 'system';
 
-            const quantity = data.hasOwnProperty('call_value') ? {quantity:tron.fromSun(data.call_value) + ' TRX'} : {};
+            const quantity = data.hasOwnProperty('call_value') ? {paying:tron.fromSun(data.call_value) + ' TRX'} : {};
 
             let params = {};
             let methodABI;

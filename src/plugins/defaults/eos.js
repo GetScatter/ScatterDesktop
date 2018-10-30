@@ -109,22 +109,41 @@ export default class EOS extends Plugin {
     async getResourcesFor(account){
         const data = await this.accountData(account);
         if(!data || !data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return [];
-        return [{
-            name:'CPU',
-            available:data.cpu_limit.available,
-            max:data.cpu_limit.max,
-            percentage:(data.cpu_limit.used * 100) / data.cpu_limit.max
+
+        const refund = data.hasOwnProperty('refund_request') && data.refund_request ? {
+          type:'bar',
+          name:'Refund',
+          cpu:data.refund_request.cpu_amount,
+          net:data.refund_request.net_amount,
+          used:+new Date() - +new Date(data.refund_request.request_time),
+          total:(86400*3*1000),
+          text:(new Date((+new Date(data.refund_request.request_time)) + (86400*3*1000))).toLocaleString(),
+          color:'blue',
+        } : null;
+
+        const resources = [{
+          type:'radial',
+          name:'CPU',
+          available:data.cpu_limit.available,
+          max:data.cpu_limit.max,
+          percentage:(data.cpu_limit.used * 100) / data.cpu_limit.max
         },{
-            name:'NET',
-            available:data.net_limit.available,
-            max:data.net_limit.max,
-            percentage:(data.net_limit.used * 100) / data.net_limit.max
+          type:'radial',
+          name:'NET',
+          available:data.net_limit.available,
+          max:data.net_limit.max,
+          percentage:(data.net_limit.used * 100) / data.net_limit.max
         },{
-            name:'RAM',
-            available:data.ram_usage,
-            max:data.ram_quota,
-            percentage:(data.ram_usage * 100) / data.ram_quota
-        }]
+          type:'radial',
+          name:'RAM',
+          available:data.ram_usage,
+          max:data.ram_quota,
+          percentage:(data.ram_usage * 100) / data.ram_quota
+        }];
+
+        if(refund) resources.push(refund);
+
+        return resources;
     }
 
     async moderateResource(resource, account){

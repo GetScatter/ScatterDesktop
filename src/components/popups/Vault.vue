@@ -109,8 +109,9 @@
                                     <section class="keypair">
 
                                         <section class="stats">
-                                            <section class="stat" v-for="resource in resources">
-                                                <radial-progress inner-stroke-color="#eee"
+                                            <section class="stat" :class="{'bar':resource.type === 'bar'}" v-for="resource in resources">
+                                                <radial-progress v-if="resource.type === 'radial'"
+                                                                 inner-stroke-color="#eee"
                                                                  start-color="#ff4645"
                                                                  stop-color="#ff4645"
                                                                  :diameter="130"
@@ -122,7 +123,16 @@
                                                         Manage <b>{{resource.name}}</b>
                                                     </figure>
                                                 </radial-progress>
-                                                <figure class="percentage" :class="{'warning':resource.percentage > 80}">
+
+                                                <p-bar v-if="resource.type === 'bar'"
+                                                       :used="resource.used"
+                                                       :total="resource.total"
+                                                       :l-text="resource.name"
+                                                       :r-text="resource.text"
+                                                       :color="resource.color"
+                                                ></p-bar>
+
+                                                <figure class="percentage" v-if="resource.hasOwnProperty('percentage')" :class="{'warning':resource.percentage > 80}">
                                                     {{parseFloat(resource.percentage).toFixed(2)}}%
                                                 </figure>
                                             </section>
@@ -1344,6 +1354,12 @@
 
         .stat {
             flex:1;
+
+            &.bar {
+              width:100%;
+              margin-top:20px;
+              flex:1 1 auto;
+            }
 
             .percentage {
                 font-family: 'Open Sans', sans-serif;
