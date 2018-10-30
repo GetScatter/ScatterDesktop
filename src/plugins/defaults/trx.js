@@ -167,18 +167,17 @@ export default class TRX extends Plugin {
         const txID = transaction.transaction.transaction.txID;
         transaction = transaction.transaction.transaction.raw_data;
 
-
-
-
+        const tron = getCachedInstance(network);
         return transaction.contract.map(contract => {
 
             let data = contract.parameter.value;
             const address = data.hasOwnProperty('contract_address') ? data.contract_address : 'system';
 
+            const quantity = data.hasOwnProperty('call_value') ? {quantity:tron.fromSun(data.call_value) + ' TRX'} : {};
+
             let params = {};
             let methodABI;
             if(abiData){
-                const tron = getCachedInstance(network);
                 const {abi, address, method} = abiData;
                 methodABI = abi.find(x => x.name === method);
                 if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
@@ -186,6 +185,7 @@ export default class TRX extends Plugin {
                 const types = methodABI.inputs.map(x => x.type);
 
                 data = tron.utils.abi.decodeParams(names, types, data.data, true);
+                data = Object.assign(data, quantity);
             }
 
 
