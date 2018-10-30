@@ -186,6 +186,10 @@ export default class TRX extends Plugin {
 
                 data = tron.utils.abi.decodeParams(names, types, data.data, true);
                 data = Object.assign(data, quantity);
+
+                Object.keys(data).map(key => {
+                    if(tron.utils.isBigNumber(data[key])) data[key] = data[key].toString();
+                });
             }
 
 
