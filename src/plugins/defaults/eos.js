@@ -443,6 +443,7 @@ export default class EOS extends Plugin {
 
     async parseEosjsRequest(payload, network){
         const {transaction} = payload;
+        console.log('trx', transaction);
 
         const eos = getCachedInstance(network);
 
@@ -464,6 +465,10 @@ export default class EOS extends Plugin {
                 const htmlFormatting = {h1:'div class="ricardian-action"', h2:'div class="ricardian-description"'};
                 const signer = action.authorization.length === 1 ? action.authorization[0].actor : null;
                 ricardian = ricardianParser.parse(action.name, data, ricardian, signer, htmlFormatting);
+            }
+
+            if(transaction.hasOwnProperty('delay_sec') && parseInt(transaction.delay_sec) > 0){
+              data.delay_sec = transaction.delay_sec;
             }
 
             return {
