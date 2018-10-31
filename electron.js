@@ -2,8 +2,21 @@ const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron');
 const path = require("path");
 const url = require("url");
 
+
+
+
+let prefix;
+if(process.mainModule.filename.indexOf('app.asar') === -1){
+  prefix = './';
+} else {
+  prefix = __dirname + '/';
+}
+
+const LowLevelWindowService = require(prefix+'src/services/LowLevelWindowService');
+
+
 const Transport = require('@ledgerhq/hw-transport-node-hid');
-global.appShared = { Transport, ApiWatcher:null };
+global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService };
 
 let tray, win;
 
@@ -48,7 +61,7 @@ const createScatterInstance = () => {
         minHeight:580
     });
 
-    // win.openDevTools();
+    win.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';
@@ -80,6 +93,11 @@ const createScatterInstance = () => {
     tray.setContextMenu(contextMenu);
 
     setupMenu();
+
+    LowLevelWindowService.setMainWindow(win);
+
+    // const LowLevelSocketService = require('./src/services/LowLevelSocketService');
+    // LowLevelSocketService.initialize();
 };
 
 const activateInstance = e => {

@@ -1,14 +1,26 @@
-import Onboarding from '../views/Onboarding.vue'
-import Login from '../views/Login.vue'
-import Settings from '../views/Settings.vue'
-import PopOut from '../views/PopOut.vue'
+// import Onboarding from '../views/Onboarding.vue'
+// import Login from '../views/Login.vue'
+// import Settings from '../views/Settings.vue'
+// import PopOut from '../views/PopOut.vue'
 
-import Home from '../views/Home.vue'
-import Identity from '../views/Identity.vue'
-import Transfer from '../views/Transfer.vue'
-import Receive from '../views/Receive.vue'
-import Permission from '../views/Permission.vue'
-import Tokens from '../views/Tokens.vue'
+// import Home from '../views/Home.vue'
+// import Identity from '../views/Identity.vue'
+// import Transfer from '../views/Transfer.vue'
+// import Receive from '../views/Receive.vue'
+// import Permission from '../views/Permission.vue'
+// import Tokens from '../views/Tokens.vue'
+
+const Onboarding = () => import('../views/Onboarding')
+const Login = () => import('../views/Login')
+const Settings = () => import('../views/Settings')
+const PopOut = () => import('../views/PopOut')
+
+const Home = () => import('../views/Home')
+const Identity = () => import('../views/Identity')
+const Transfer = () => import('../views/Transfer')
+const Receive = () => import('../views/Receive')
+const Permission = () => import('../views/Permission')
+const Tokens = () => import('../views/Tokens')
 
 
 

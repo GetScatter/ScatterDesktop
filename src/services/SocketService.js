@@ -2,7 +2,6 @@ import ApiService from '../services/ApiService';
 import AuthorizedApp from '../models/AuthorizedApp';
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
-const fs = window.require('fs');
 const http = window.require('http');
 const https = window.require('https');
 
@@ -54,6 +53,7 @@ const socketHandler = (socket) => {
 
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async request => {
+        console.log('api', new Date().toTimeString())
 
         // 2 way authentication
         if(request.data.hasOwnProperty('appkey')){

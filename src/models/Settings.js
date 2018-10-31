@@ -17,6 +17,7 @@ export default class Settings {
         this.advancedMode = false;
         this.explorers = PluginRepository.defaultExplorers();
         this.displayToken = null;
+        this.showNotifications = true;
     }
 
     static placeholder(){ return new Settings(); }

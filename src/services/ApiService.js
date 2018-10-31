@@ -390,6 +390,11 @@ export default class ApiService {
                 && (!needToSelectLocation
                 || needToSelectLocation && identity.locations.length === 1)
                 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
+
+                let myNotification = new Notification('Signed Transaction', {
+                  body: `${origin} - ${participants.map(x => x.sendable()).join(',')}`,
+                  silent:true,
+                })
                 return await signAndReturn(identity.locations[0]);
             }
 

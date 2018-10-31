@@ -1,17 +1,13 @@
-import 'typeface-roboto'
-import 'typeface-grand-hotel'
 import './styles.scss'
 import './tour.scss';
 
 import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
-import * as Actions from './store/constants'
 import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
 import RadialProgressBar from 'vue-radial-progress'
 import WindowService from './services/WindowService';
 import ElectronHelpers from './util/ElectronHelpers';
-
 ElectronHelpers.bindContextMenu();
 
 
@@ -68,9 +64,9 @@ import SwitchComponent from './components/reusable/SwitchComponent.vue'
 import SliderComponent from './components/reusable/SliderComponent.vue'
 import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
 
-const {remote} = window.require('electron');
-const app = remote.app;
-console.log(app.getPath('userData'));
+// import {remote} = window.require('electron');
+// const app = remote.app;
+// console.log(app.getPath('userData'));
 
 // f12 to open console from anywhere.
 document.addEventListener("keydown", function (e) {
@@ -81,11 +77,34 @@ class Main {
 
     constructor(){
 
+        const hash = location.hash.replace("#/", '');
 
-        const components = [
-            // REUSABLE
+        const shared = [
+          {tag:'popups', vue:Popups},
+          {tag:'prompt', vue:Prompt},
+          {tag:'snackbar', vue:Snackbar},
+          {tag:'text-prompt', vue:TextPrompt},
+          {tag:'pop-in-head', vue:PopInHead},
+          {tag:'btn', vue:ButtonComponent},
+
+          {tag:'view-base', vue:ViewBase},
+          {tag:'auth', vue:Auth},
+        ];
+
+        let fragments;
+        if(hash === 'popout'){
+          fragments = [
+            {tag:'get-identity', vue:GetIdentity},
+            {tag:'signature-request', vue:SignatureRequest},
+            {tag:'suggest-network', vue:SuggestNetwork},
+            {tag:'link-app', vue:LinkApp},
+            {tag:'get-public-key', vue:GetPublicKey},
+            {tag:'link-account', vue:LinkAccount},
+            {tag:'transfer-request', vue:TransferRequest},
+          ]
+        } else {
+          fragments = [
             {tag:'cin', vue:InputComponent},
-            {tag:'btn', vue:ButtonComponent},
             {tag:'tags', vue:TagsComponent},
             {tag:'sel', vue:SelectComponent},
             {tag:'sub-menu-head', vue:SubMenuHead},
@@ -108,46 +127,29 @@ class Main {
             {tag:'overhead', vue:Overhead},
             {tag:'terms', vue:Terms},
 
-            // POPUPS
-            {tag:'popups', vue:Popups},
-            {tag:'prompt', vue:Prompt},
             {tag:'mnemonic', vue:Mnemonic},
-            {tag:'text-prompt', vue:TextPrompt},
             {tag:'selector', vue:Selector},
-            {tag:'snackbar', vue:Snackbar},
             {tag:'tx-success', vue:TransactionSuccess},
             {tag:'buy-sell-ram', vue:BuySellRAM},
             {tag:'delegate-resources', vue:DelegateResources},
             {tag:'ridl-register', vue:RegisterWithRIDL},
-            {tag:'pop-in-head', vue:PopInHead},
             {tag:'vault', vue:Vault},
             {tag:'link-or-create-account', vue:LinkOrCreateAccount},
+          ]
+        }
 
-            // POP OUTS
-            {tag:'get-identity', vue:GetIdentity},
-            {tag:'signature-request', vue:SignatureRequest},
-            {tag:'suggest-network', vue:SuggestNetwork},
-            {tag:'link-app', vue:LinkApp},
-            {tag:'get-public-key', vue:GetPublicKey},
-            {tag:'link-account', vue:LinkAccount},
-            {tag:'transfer-request', vue:TransferRequest},
-
-            // GLOBALS
-            {tag:'view-base', vue:ViewBase},
-            {tag:'auth', vue:Auth},
-        ];
+        const components = shared.concat(fragments);
 
         const routes = Routing.routes();
 
         const middleware = (to, next, store) => {
+            if(hash === 'popout') return next();
             if(Routing.isRestricted(to.name))
                 store.getters.unlocked ? next() : next({name:RouteNames.LOGIN});
             else next();
         };
 
         new VueInitializer(routes, components, middleware, async (router, store) => {
-
-
 
         });
 
