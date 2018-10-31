@@ -17,7 +17,6 @@ import {Blockchains, BlockchainsArray} from '../models/Blockchains';
 
 import Keypair from '../models/Keypair';
 import Identity from '../models/Identity';
-import {IdentityRequiredFields} from '../models/Identity';
 import Account from '../models/Account';
 import Error from '../models/errors/Error'
 import Network from '../models/Network'
@@ -329,7 +328,7 @@ export default class ApiService {
         return new Promise(async resolve => {
 
             const {payload} = request;
-            const {origin, requiredFields, blockchain} = request.payload;
+            const {origin, requiredFields, blockchain} = payload;
 
             const possibleId = PermissionService.identityFromPermissions(origin, false);
             if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
@@ -391,10 +390,11 @@ export default class ApiService {
                 || needToSelectLocation && identity.locations.length === 1)
                 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
 
-                let myNotification = new Notification('Signed Transaction', {
+                if(store.state.scatter.settings.showNotifications) new Notification('Signed Transaction', {
                   body: `${origin} - ${participants.map(x => x.sendable()).join(',')}`,
                   silent:true,
-                })
+                });
+
                 return await signAndReturn(identity.locations[0]);
             }
 

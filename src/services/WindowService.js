@@ -29,17 +29,6 @@ const sendMessage = (windowId, type, data, resolver = null) => {
         .send(type, message);
 };
 
-const getWindow = (width = 800, height = 600) => new remote.BrowserWindow({
-    width,
-    height,
-    frame: false,
-    radii: [5,5,5,5],
-    icon:'assets/icon.png',
-    show:false,
-});
-
-let waitingPopup = getWindow(1024, 800);
-
 export default class WindowService {
 
     static openTools(){
@@ -64,7 +53,7 @@ export default class WindowService {
         ipcRenderer.on(type, (event, data) => handler(data))
     }
 
-    static openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600){
+    static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600){
         return LowLevelWindowService.openPopOut(onReady, onClosed, width, height);
     }
 

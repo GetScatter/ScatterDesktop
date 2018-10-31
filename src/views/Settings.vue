@@ -30,6 +30,7 @@
             </figure>
             <section class="transitioner">
                 <transition name="slide-left" mode="out-in">
+                    <settings-general v-if="selectedOption.name === settingsOptions.GENERAL.name"></settings-general>
                     <settings-language v-if="selectedOption.name === settingsOptions.LANGUAGE.name"></settings-language>
                     <settings-explorer v-if="selectedOption.name === settingsOptions.EXPLORER.name"></settings-explorer>
                     <settings-networks v-if="selectedOption.name === settingsOptions.NETWORKS.name"></settings-networks>
@@ -60,6 +61,7 @@
     import ElectronHelpers from '../util/ElectronHelpers'
 
     const SettingsOptions = {
+        GENERAL:{ flash:false, locked:false, name:'General', description:'General Scatter settings.' },
         LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
         EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
         PIN:{ flash:false, locked:true, name:'PIN', description:'Set or disabled your secondary PIN.' },
@@ -86,7 +88,7 @@
             ])
         },
         mounted(){
-            this.selectedOption = SettingsOptions.LANGUAGE;
+            this.selectedOption = SettingsOptions.GENERAL;
             UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
                 this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
             })

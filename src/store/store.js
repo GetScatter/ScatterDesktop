@@ -60,6 +60,8 @@ const getters = {
     nextPopIn:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN)[0] || null,
     snackbars:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.SNACKBAR) || [],
 
+    showNotifications:state => state.scatter.settings.showNotifications,
+
     totalTokenBalance:state => {
         let total = 0;
         Object.keys(state.balances).map(acc => {

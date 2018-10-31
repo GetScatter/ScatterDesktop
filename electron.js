@@ -3,26 +3,11 @@ const path = require("path");
 const url = require("url");
 
 
-
-
-let prefix;
-if(process.mainModule.filename.indexOf('app.asar') === -1){
-  prefix = './';
-} else {
-  prefix = __dirname + '/';
-}
-
-const LowLevelWindowService = require(prefix+'src/services/LowLevelWindowService');
-
-
-const Transport = require('@ledgerhq/hw-transport-node-hid');
-global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService };
-
-let tray, win;
+let tray, mainWindow;
 
 const setupMenu = () => {
     const menu = new Menu();
-    win.setMenu(menu);
+    mainWindow.setMenu(menu);
 
     const template = [{
         label: "Application",
@@ -50,7 +35,7 @@ const createScatterInstance = () => {
     app.setAsDefaultProtocolClient('scatter');
 
     // Initialize the window to our specified dimensions
-    win = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 1280,
         height: 800,
         frame: false,
@@ -61,7 +46,7 @@ const createScatterInstance = () => {
         minHeight:580
     });
 
-    win.openDevTools();
+    mainWindow.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';
@@ -76,16 +61,16 @@ const createScatterInstance = () => {
         });
         trayIcon = __dirname + '/static/icons/icon-tray.png';
     }
-    win.loadURL(mainUrl);
+    mainWindow.loadURL(mainUrl);
 
-    win.on('closed', () => win = null);
-    win.on('close', () => app.quit());
+    mainWindow.on('closed', () => mainWindow = null);
+    mainWindow.on('close', () => app.quit());
 
     tray = new Tray(trayIcon);
     const contextMenu = Menu.buildFromTemplate([
         {label: 'Open', type: 'normal', click:() => {
-            win.show();
-            if(win.isMinimized()) win.restore();
+            mainWindow.show();
+            if(mainWindow.isMinimized()) mainWindow.restore();
         }},
         {label: 'Exit', type: 'normal', click:() => app.quit()}
     ]);
@@ -94,16 +79,13 @@ const createScatterInstance = () => {
 
     setupMenu();
 
-    LowLevelWindowService.setMainWindow(win);
-
-    // const LowLevelSocketService = require('./src/services/LowLevelSocketService');
-    // LowLevelSocketService.initialize();
+    LowLevelWindowService.onMainWindowReady();
 };
 
 const activateInstance = e => {
     if(e) e.preventDefault();
-    if(!win) return;
-    win.restore();
+    if(!mainWindow) return;
+    mainWindow.restore();
 };
 
 app.on('ready', createScatterInstance);
@@ -127,7 +109,7 @@ const callDeepLink = url => {
 
 const shouldQuit = app.makeSingleInstance(argv => {
     if (process.platform === 'win32') callDeepLink(argv.slice(1))
-    if (win) activateInstance();
+    if (mainWindow) activateInstance();
 })
 
 if (shouldQuit) app.quit();
@@ -138,5 +120,83 @@ app.on('will-finish-launching', () => {
         callDeepLink(url)
     })
 });
+
+
+
+
+
+
+const getWindow = (width = 800, height = 600) => {
+  return new Promise(resolve => {
+    const win = new BrowserWindow({
+      width,
+      height,
+      frame: false,
+      radii: [5,5,5,5],
+      icon:'assets/icon.png',
+      show:false,
+    });
+
+    if(process.mainModule.filename.indexOf('app.asar') === -1){
+      win.loadURL('http://localhost:8080/#/popout');
+    } else {
+      win.loadURL(url.format({
+        pathname: path.join(app.getAppPath(), "dist", "index.html"),
+        protocol: "file:",
+        slashes: true,
+        hash: '/popout'
+      }));
+    }
+
+    win.once('ready-to-show', () => {
+      resolve(win);
+    });
+  })
+}
+
+let waitingPopup;
+
+class LowLevelWindowService {
+
+  static async onMainWindowReady(){
+    waitingPopup = await getWindow(1,1);
+  }
+
+  static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600){
+
+    let win = waitingPopup;
+    if(!win) win = await getWindow();
+    else waitingPopup = null;
+    win.setSize(width, height);
+    win.center();
+
+    onReady(win);
+    win.show();
+    win.setAlwaysOnTop(true);
+    win.focus();
+    win.setAlwaysOnTop(false);
+
+    win.once('closed', async () => {
+      if (process.platform === 'darwin') {
+        mainWindow.hide();
+        app.hide();
+      }
+
+      onClosed(win);
+      win = null;
+      waitingPopup = await getWindow(1, 1);
+
+    });
+
+    return win;
+  }
+
+}
+
+
+
+
+const Transport = require('@ledgerhq/hw-transport-node-hid');
+global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService };
 
 

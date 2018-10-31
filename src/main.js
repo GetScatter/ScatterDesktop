@@ -17,6 +17,7 @@ import Auth from './components/sidebars/Auth.vue'
 
 // Panels
 import Terms from './components/panels/Terms.vue'
+import SettingsGeneral from './components/panels/SettingsGeneral.vue'
 import SettingsLanguage from './components/panels/SettingsLanguage.vue'
 import SettingsExplorer from './components/panels/SettingsExplorer.vue'
 import SettingsNetworks from './components/panels/SettingsNetworks.vue'
@@ -116,6 +117,7 @@ class Main {
             {tag:'radial-progress', vue:RadialProgressBar},
 
             // PANELS
+            {tag:'settings-general', vue:SettingsGeneral},
             {tag:'settings-language', vue:SettingsLanguage},
             {tag:'settings-backup', vue:SettingsBackup},
             {tag:'settings-networks', vue:SettingsNetworks},
