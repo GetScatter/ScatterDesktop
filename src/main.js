@@ -156,6 +156,7 @@ class Main {
         });
 
         window.onerror = log => {
+        	alert(log);
             console.log('err logged', log);
         }
 
