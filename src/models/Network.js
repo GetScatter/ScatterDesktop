@@ -13,8 +13,6 @@ export default class Network {
 
         this.fromOrigin = null;
         this.createdAt = +new Date();
-
-        this.accountInfoFetcher = 'chain';
     }
 
     static placeholder(){ return new Network(); }
