@@ -23,7 +23,7 @@
                 </section>
 
                 <section class="inputs" v-else>
-                    <cin :focus="true" big="1" placeholder="Password" type="password" :text="password" v-on:enter="unlock" v-on:changed="changed => bind(changed, 'password')"></cin>
+                    <cin :focus="true" big="1" placeholder="Password or Backup Phrase" type="password" :text="password" v-on:enter="unlock" v-on:changed="changed => bind(changed, 'password')"></cin>
                     <btn v-on:clicked="unlock" text="Unlock Scatter" full="true" large="true"></btn>
                 </section>
             </section>

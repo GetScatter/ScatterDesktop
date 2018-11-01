@@ -53,7 +53,6 @@ const socketHandler = (socket) => {
 
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async request => {
-        console.log('api', new Date().toTimeString())
 
         // 2 way authentication
         if(request.data.hasOwnProperty('appkey')){

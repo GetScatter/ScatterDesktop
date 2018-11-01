@@ -443,7 +443,6 @@ export default class EOS extends Plugin {
 
     async parseEosjsRequest(payload, network){
         const {transaction} = payload;
-        console.log('trx', transaction);
 
         const eos = getCachedInstance(network);
 

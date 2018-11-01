@@ -27,6 +27,12 @@
                 </section>
 
                 <section class="info-box">
+                    <figure class="name">Data Path</figure>
+                    <figure class="description">The location on your computer that Scatter saves it's encrypted data to.</figure>
+                    <cin dynamic-button="folder-open" dynamic-tooltip="Open Folder" disabled="1" copy="1" :text="dataPath" v-on:dynamic="openFilePathLink"></cin>
+                </section>
+
+                <section class="info-box">
                     <figure class="name">Developer Console</figure>
                     <figure class="description">Sometimes you might need to see if Scatter is throwing any errors.</figure>
                     <btn @click.native="openConsole" text="Open Console"></btn>
@@ -46,9 +52,13 @@
     import WindowService from '../../services/WindowService';
     import ElectronHelpers from '../../util/ElectronHelpers';
 
+    const {remote} = window.require('electron');
+    const app = remote.app;
+
     export default {
         data () {return {
             needsUpdate:false,
+            dataPath:'',
         }},
         computed:{
             ...mapState([
@@ -60,12 +70,16 @@
             ])
         },
         mounted(){
+        	this.dataPath = app.getPath('userData');
             UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
                 this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
 
             })
         },
         methods: {
+        	openFilePathLink(){
+        	    ElectronHelpers.openLinkInBrowser(this.dataPath);
+            },
 	        openUpdateLink(){
 		        ElectronHelpers.openLinkInBrowser(this.needsUpdate);
 	        },

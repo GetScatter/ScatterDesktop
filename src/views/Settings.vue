@@ -94,7 +94,7 @@
             unlock(option){
                 PopupService.push(
                     Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
-                        placeholder:'Enter Password',
+                        placeholder:'Enter Password or Backup Phrase',
                         type:'password'
                     }, async password => {
                         if(!password || !password.length) return;
