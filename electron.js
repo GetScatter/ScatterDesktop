@@ -77,6 +77,11 @@ const createScatterInstance = () => {
     tray.setToolTip('Scatter Desktop Companion');
     tray.setContextMenu(contextMenu);
 
+    tray.on('click', () => {
+	    mainWindow.show();
+	    if(mainWindow.isMinimized()) mainWindow.restore();
+    })
+
     setupMenu();
 
     LowLevelWindowService.onMainWindowReady();
