@@ -219,11 +219,6 @@
                     return acc;
                 }, []);
             },
-            tokenHasPrice(){
-                if(!this.selected) return false;
-                if(this.displayType !== DISPLAY_TYPE.TOKENS) return false;
-                return this.prices.hasOwnProperty(this.selected.symbol);
-            },
             isDisplayToken(){
                 if(!this.selected) return false;
                 if(!this.scatter.settings.displayToken) return false;

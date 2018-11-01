@@ -84,7 +84,7 @@ export default class PriceService {
             }));
         }));
 
-        // await store.dispatch(Actions.SET_BALANCES, balances);
+        await store.dispatch(Actions.SET_BALANCES, balances);
     }
 
     static tokenDecimals(token){

@@ -115,7 +115,7 @@
         //background:$light-grey;
         opacity:0;
         visibility: hidden;
-        transition: all 0.5s ease;
+        transition: all 0.1s ease;
         transition-property: opacity, visibility;
 
         z-index:10000;

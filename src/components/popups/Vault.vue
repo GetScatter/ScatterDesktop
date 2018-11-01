@@ -643,6 +643,7 @@
                     if(accepted) {
                         await KeyPairService.removeKeyPair(this.selected);
                         this.selectKeypair();
+	                    PriceService.getBalances();
                     }
                 });
 
