@@ -8,9 +8,21 @@
                 <transition name="fade" mode="out-in">
 
                     <!-- TITLE HEAD -->
-                    <section key="noerror" v-if="!status && !error && !selectedAccount">
+                    <section key="noerror" v-if="!status && !error && !selectedAccount && !exportType">
                         <figure class="title">Vault</figure>
                         <figure class="description">View and manage all your Keys</figure>
+                    </section>
+
+                    <!-- TITLE HEAD -->
+                    <section key="noerror" v-if="exporting && exportType === EXPORT_TYPES.KEY">
+                        <figure class="title">Save Key</figure>
+                        <figure class="description">Select a blockchain to export this key for. <b style="color:red;">You should always keep a backup of your Private Keys.</b></figure>
+                    </section>
+
+                    <!-- TITLE HEAD -->
+                    <section key="noerror" v-if="exporting && exportType === EXPORT_TYPES.QR">
+                        <figure class="title">Save Key</figure>
+                        <figure class="description">This QR is encrypted, and you will need your password to unlock it.</figure>
                     </section>
 
                     <!-- ACCOUNT HEAD -->
@@ -342,10 +354,7 @@
 
                                         <transition name="slide-left" mode="out-in">
                                             <section key="selectkeyformat" class="keypair" v-if="!exposedPrivateKey">
-                                                <section class="export">
-                                                    <figure class="name">Select a Key Format</figure>
-                                                </section>
-                                                <section class="accounts" style="border-top:1px solid rgba(0,0,0,0.05);">
+                                                <section class="accounts">
                                                     <section class="account" v-for="(value, key) in Blockchains" @click="exportKeyFor(value)">
                                                         <section class="info">
                                                             <figure class="name">{{key}}</figure>
@@ -357,7 +366,20 @@
                                             </section>
 
                                             <section class="new-keypair" key="exposedkey" v-else>
+
+                                                <section class="input-keypair" style="background:transparent; padding:0; margin-bottom:20px;">
+                                                    <section class="inputs">
+                                                        <label><i class="fa fa-key"></i> View this Private Key</label>
+                                                        <input ref="focuser" class="pad-right" v-model="exposedPrivateKey" :type="displayPrivateKeyField ? 'text' : 'password'" />
+                                                        <figure class="eye-icon" @click="displayPrivateKeyField = !displayPrivateKeyField">
+                                                            <i class="fa fa-eye" v-tooltip="'Show Input'" v-if="!displayPrivateKeyField"></i>
+                                                            <i class="fa fa-eye-slash" v-tooltip="'Hide Input'" v-if="displayPrivateKeyField"></i>
+                                                        </figure>
+                                                    </section>
+                                                </section>
+
                                                 <section class="button wide" @click="copyKey">
+
                                                     <figure class="name">Click to Copy</figure>
                                                     <figure class="description">When you click this button your key will be copied to your clipboard.</figure>
                                                 </section>
@@ -629,7 +651,11 @@
                 this.status = 'Generating new Keys';
                 setTimeout(async () => {
                     await KeyPairService.generateKeyPair(this.selected);
-                    this.keyImported("A new Key was generated.");
+                    await this.keyImported("A new Key was generated.");
+	                this.importType = null;
+	                this.importing = false;
+	                this.exporting = true;
+	                this.exportType = EXPORT_TYPES.KEY;
                 }, 1000);
             },
             async keyImported(snackbar){
@@ -663,6 +689,7 @@
                 this.importing = false;
                 this.selected = this.keypairs.find(x => x.id === this.selected.id).clone();
                 await PriceService.getBalances();
+                return true;
 
             },
             async testKey(){
