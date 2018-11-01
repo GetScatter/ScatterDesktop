@@ -144,13 +144,17 @@ const isPortOpen = async port => new Promise(resolve => {
     }, 400);
 });
 
+// Every 2 minutes.
+const reconnectTime = 1000*60*2;
+let initialConnection = true;
+
 export default class SocketService {
 
     static async initialize(){
 
         const recurse = () => setTimeout(() => {
             this.initialize(true);
-        }, 1000*60*10); // every ten minutes.
+        }, reconnectTime); // every ten minutes.
 
         if(!(await isPortOpen(50005))) return recurse();
 
@@ -168,11 +172,12 @@ export default class SocketService {
             httpsServer.listen(50006, ip);
             io.attach(httpsServer,options);
         } else {
-            PopupService.push(Popup.prompt("Couldn't fetch certificates",
+            if(initialConnection) PopupService.push(Popup.prompt("Couldn't fetch certificates",
                 'There was an issue trying to fetch the certificates which allow Scatter to run on SSL. This is usually caused by proxies, firewalls, and anti-viruses.',
                 'exclamation-triangle', 'Okay'))
         }
 
+	    initialConnection = false;
         this.open();
         recurse();
         return true;
