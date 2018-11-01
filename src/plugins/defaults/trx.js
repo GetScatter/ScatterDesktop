@@ -33,7 +33,7 @@ const getCachedInstance = network => {
 
 const EXPLORERS = [
     {
-        name:'Etherscan',
+        name:'Tronscan',
         account:account => `https://tronscan.org/#/address/${account.formatted()}`,
         transaction:id => `https://tronscan.org/#/transaction/${id}`,
         block:id => `https://tronscan.org/#/block/${id}`

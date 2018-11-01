@@ -203,7 +203,7 @@
 
     .identity {
         background:#fff;
-        height:100px;
+        height:70px;
         padding:0 50px;
         overflow: hidden;
         display:flex;
@@ -215,12 +215,12 @@
             float:left;
 
             .name {
-                font-size: 24px;
+                font-size: 18px;
                 font-weight: bold;
             }
 
             .description {
-                font-size: 13px;
+                font-size: 11px;
             }
         }
 

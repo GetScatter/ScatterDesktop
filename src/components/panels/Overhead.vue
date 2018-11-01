@@ -169,12 +169,12 @@
 
     .refresh-tokens {
         cursor: pointer;
-        font-size: 24px;
+        font-size: 16px;
         position:absolute;
         top:0;
-        right:-45px;
-        width:40px;
-        height:40px;
+        right:-38px;
+        width:30px;
+        height:30px;
         background:$dark-blue;
         border-radius:50%;
         display:flex;
@@ -273,7 +273,7 @@
     .dashboard {
         background:$light-blue;
         color:#fff;
-        height:160px;
+        height:100px;
         overflow: hidden;
         padding:0 50px;
         position: relative;
@@ -284,7 +284,7 @@
         align-items: center;
 
         .value {
-            font-size: 48px;
+            font-size: 24px;
             font-family: 'Open Sans', sans-serif;
             font-weight: 300;
             text-transform: capitalize;
@@ -295,19 +295,18 @@
                 cursor: pointer;
 
                 span {
-                    font-size: 18px;
+                    font-size: 16px;
                     display:block;
-                    margin-top:-10px;
                     padding-left:0;
                     transition: all 0.3s ease;
                     transition-property: font-size, opacity;
                 }
 
                 &:hover {
-                    font-size: 18px;
+                    font-size: 16px;
 
                     span {
-                        font-size:48px;
+                        font-size:24px;
                     }
                 }
             }
@@ -319,14 +318,14 @@
             position: relative;
 
             .action {
-                font-size: 18px;
+                font-size: 16px;
                 font-weight: bold;
                 cursor: pointer;
                 border-radius:2px;
                 border:1px solid #fff;
 
                 padding:0 20px;
-                line-height:60px;
+                line-height:40px;
                 display:inline-block;
                 text-align: center;
                 margin-left:6px;
@@ -336,8 +335,8 @@
 
                 &.square {
                     padding:0;
-                    height:60px;
-                    width:60px;
+                    height:40px;
+                    width:40px;
                     padding-bottom:2px;
                     display:flex;
                     justify-content: center;
@@ -350,7 +349,7 @@
                 }
 
                 .icon {
-                    font-size: 36px;
+                    font-size: 24px;
                     padding:12px;
 
                     &.send { transform:rotate(45deg); }

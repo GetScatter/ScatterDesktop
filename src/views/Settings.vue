@@ -22,11 +22,6 @@
 
         <section v-if="selectedOption" style="flex:3; overflow:hidden; display:flex; flex-direction: column;">
             <figure class="panel-head">
-                <section class="version">
-                    Scatter Desktop v{{version}}
-                    <figure class="update-button" v-if="needsUpdate" @click="openUpdateLink">Update Available</figure>
-                </section>
-                <span class="console fa fa-code" @click="openConsole"></span>
             </figure>
             <section class="transitioner">
                 <transition name="slide-left" mode="out-in">
@@ -77,7 +72,6 @@
             settingsOptions:SettingsOptions,
             selectedOption:null,
             unlocked:false,
-            needsUpdate:false,
         }},
         computed: {
             ...mapState([
@@ -89,15 +83,8 @@
         },
         mounted(){
             this.selectedOption = SettingsOptions.GENERAL;
-            UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
-                this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
-            })
         },
         methods: {
-            openUpdateLink(){
-                ElectronHelpers.openLinkInBrowser(this.needsUpdate);
-            },
-            openConsole(){ WindowService.openTools(); },
             selectOption(option){
                 if((option.locked || false) && !this.unlocked) {
                     return this.unlock(option);

@@ -46,7 +46,7 @@ const createScatterInstance = () => {
         minHeight:580
     });
 
-    mainWindow.openDevTools();
+    // mainWindow.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';
