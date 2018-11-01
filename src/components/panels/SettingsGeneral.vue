@@ -18,6 +18,11 @@
                     <figure class="name">Version</figure>
                     <b>Scatter Desktop v{{version}}</b><br>
                     <btn :disabled="!needsUpdate" @click.native="openUpdateLink" :text="needsUpdate ? 'Update Available' : 'No Update Needed'"></btn>
+                    <section v-if="needsUpdate">
+                        <br>
+                        <span style="font-size: 11px;">Open this link in your browser if the button above doesn't work.</span>
+                        <cin style="margin-top:5px;" text="https://github.com/GetScatter/ScatterDesktop" disabled="1" copy="1"></cin>
+                    </section>
                 </section>
 
                 <section class="info-box">
@@ -73,7 +78,6 @@
         	this.dataPath = app.getPath('userData');
             UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
                 this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
-
             })
         },
         methods: {

@@ -46,7 +46,7 @@ const createScatterInstance = () => {
         minHeight:580
     });
 
-    // mainWindow.openDevTools();
+    mainWindow.openDevTools();
 
     let mainUrl = '';
     let trayIcon = '';
@@ -200,8 +200,38 @@ class LowLevelWindowService {
 
 
 
+const notifier = require("node-notifier");
+
+class NotificationService {
+	static pushNotification(title, body){
+
+		notifier.notify({
+			message:body,
+			title,
+			appID:'com.get-scatter.server',
+			// Special sound
+			// Case Sensitive string for location of sound file, or use one of OS X's native sounds
+			// Only Notification Center or Windows Toasters
+			sound: false,
+			// The absolute path to the icon of the message
+			// (doesn't work on balloons)
+			// If not found, a system icon will be shown
+			icon : 'static/icons/icon.png',
+			// Wait with callback (onClick event of the toast), until user action is taken against notification
+			wait:false
+		},err => console.error(err));
+
+
+        // new Notification(title, {
+        //     body,
+        //     silent:true,
+        // });
+	}
+
+}
+
 
 const Transport = require('@ledgerhq/hw-transport-node-hid');
-global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService };
+global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService };
 
 

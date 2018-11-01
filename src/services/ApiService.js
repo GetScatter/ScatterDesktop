@@ -22,6 +22,7 @@ import Error from '../models/errors/Error'
 import Network from '../models/Network'
 
 const {remote} = window.require('electron');
+const NotificationService = remote.getGlobal('appShared').NotificationService;
 remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
     ApiService.handleDeepLink(deepLink);
 };
@@ -390,10 +391,8 @@ export default class ApiService {
                 || needToSelectLocation && identity.locations.length === 1)
                 && PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
 
-                if(store.state.scatter.settings.showNotifications) new Notification('Signed Transaction', {
-                  body: `${origin} - ${participants.map(x => x.sendable()).join(',')}`,
-                  silent:true,
-                });
+                if(store.state.scatter.settings.showNotifications)
+                    NotificationService.pushNotification('Signed Transaction', `${origin} - ${participants.map(x => x.sendable()).join(',')}`);
 
                 return await signAndReturn(identity.locations[0]);
             }
