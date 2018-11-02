@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="./static/fonts/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./static/fonts/scatter-fonts/css/scatter-fonts.css">
+    <link rel="stylesheet" href="./static/fonts/google-fonts/google-fonts.css">
+    <title>Scatter</title>
+
+    <style>
+      body {
+        margin:0;
+        padding:0;
+      }
+      .splash {
+        width:100%;
+        height:100vh;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .logo-container {
+        padding:0 80px 50px;
+        text-align:center;
+      }
+
+      .logo {
+        font-size:140px;
+        color:#62d0fd;
+        font-family: 'Grand Hotel', sans-serif;
+
+        animation: float 2s ease-out;
+        animation-iteration-count: infinite;
+      }
+
+      @keyframes float {
+        0%, 100% {
+          transform:translateY(0px);
+          text-shadow:0 20px 20px rgba(0,0,0,0.03);
+        }
+        50% {
+          transform:translateY(5px);
+          text-shadow:0 10px 2px rgba(0,0,0,0.06);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="splash">
+      <section>
+        <section class="logo-container">
+          <figure class="grand-hotel logo">Scatter</figure>
+        </section>
+      </section>
+    </section>
+  </body>
+</html>
