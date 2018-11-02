@@ -87,6 +87,10 @@ export default class ETH extends Plugin {
         return 1;
     }
 
+    async getCoreSymbol(network){
+      return 'ETH';
+    }
+
     usesResources(){ return false; }
 
     accountsAreImported(){ return false; }

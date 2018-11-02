@@ -237,6 +237,7 @@ export default class ApiService {
                 return resolve({id:request.id, result:new Error("network_timeout", "You can only add 1 network every 24 hours.")});
 
             network.fromOrigin = request.payload.origin;
+            network.coreSymbol = await PluginRepository.plugin(network.blockchain).getCoreSymbol(network);
             const scatter = store.state.scatter.clone();
             scatter.settings.networks.push(network);
             await store.dispatch(StoreActions.SET_SCATTER, scatter);
@@ -280,7 +281,7 @@ export default class ApiService {
             else {
                 // TODO: Support fork chains
                 switch(network.blockchain){
-                    case Blockchains.EOSIO: symbol = 'EOS';
+                  case Blockchains.EOSIO: symbol = network.coreSymbol;
                 }
             }
 

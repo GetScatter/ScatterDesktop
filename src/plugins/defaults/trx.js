@@ -63,6 +63,10 @@ export default class TRX extends Plugin {
         return 1;
     }
 
+    async getCoreSymbol(network){
+      return 'TRX';
+    }
+
     usesResources(){ return false; }
 
     accountsAreImported(){ return false; }

@@ -23,7 +23,7 @@
                 </section>
 
                 <figure v-if="buying" class="description">Buying RAM for {{account.formatted()}} will let that account hold more data.</figure>
-                <figure v-else class="description">Selling RAM for {{account.formatted()}} return EOS to that account at the current price of RAM.</figure>
+                <figure v-else class="description">Selling RAM for {{account.formatted()}} return {{coreSymbol}} to that account at the current price of RAM.</figure>
 
 
 
@@ -77,6 +77,7 @@
         data(){ return {
             inputsOnly:false,
             eos:null,
+            coreSymbol:'EOS',
             pricePerByte:0,
             balance:'0.0000 EOS',
             fetchedBalance:false,
@@ -134,7 +135,8 @@
             },
             async init(){
                 const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-                this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', 'EOS')).toString()} EOS`;
+                this.coreSymbol = this.account.network().coreSymbol;
+                this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', this.coreSymbol)).toString()} ${this.coreSymbol}`;
 
                 const parseAsset = asset => asset.split(' ')[0];
                 const ramInfo = await this.eos.getTableRows({

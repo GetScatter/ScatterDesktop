@@ -104,6 +104,11 @@ export default class EOS extends Plugin {
         return eos.getInfo({}).then(x => x.chain_id || '').catch(() => '');
     }
 
+    async getCoreSymbol(network){
+      const eos = Eos({httpEndpoint:network.fullhost()});
+        return eos.getAccount("eosio").then(x => x.core_liquid_balance ? x.core_liquid_balance.split(" ")[1] : "EOS").catch(() => '');
+    }
+
     usesResources(){ return true; }
 
     async getResourcesFor(account){
@@ -176,7 +181,7 @@ export default class EOS extends Plugin {
         const signProvider = payload => this.signer(payload, account.publicKey);
         const network = account.network();
         const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-        return await eos.delegatebw(account.name, account.name, '0.0000 EOS', '0.1000 EOS', 0, { authorization:[account.formatted()] })
+        return await eos.delegatebw(account.name, account.name, `0.0000 ${network.coreSymbol}`, `0.1000 ${network.coreSymbol}`, 0, { authorization:[account.formatted()] })
             .catch(error => console.error(error))
             .then(res => res);
     }

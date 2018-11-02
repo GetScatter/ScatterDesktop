@@ -30,7 +30,7 @@
                 <transition name="fade">
                     <label v-if="(lowCPU || lowNET) && !delegating">
                         <span class="red">
-                            You are about to Unstake your resources dangerously. Always make sure you leave at least a few {{balance.split(' ')[1]}} on your account in both CPU and NET.
+                            You are about to Unstake your resources dangerously. Always make sure you leave at least a few {{coreSymbol}} on your account in both CPU and NET.
                         </span>
                         <br>
                         <br>
@@ -66,8 +66,8 @@
 
                 <section v-if="inputsOnly">
                     <br>
-                    <cin :forced="parseFloat(cpu) > 0" :placeholder="`EOS to ${delegating ? 'stake' : 'unstake'} in CPU`" :text="cpu === 0 ? '' : cpu" type="number" v-on:changed="x => cpu = Math.abs(x)"></cin>
-                    <cin :forced="parseFloat(net) > 0" :placeholder="`EOS to ${delegating ? 'stake' : 'unstake'} in NET`" :text="net === 0 ? '' : net" type="number" v-on:changed="x => net = Math.abs(x)"></cin>
+                    <cin :forced="parseFloat(cpu) > 0" :placeholder="`${coreSymbol} to ${delegating ? 'stake' : 'unstake'} in CPU`" :text="cpu === 0 ? '' : cpu" type="number" v-on:changed="x => cpu = Math.abs(x)"></cin>
+                    <cin :forced="parseFloat(net) > 0" :placeholder="`${coreSymbol} to ${delegating ? 'stake' : 'unstake'} in NET`" :text="net === 0 ? '' : net" type="number" v-on:changed="x => net = Math.abs(x)"></cin>
                 </section>
 
 
@@ -98,6 +98,7 @@
     export default {
         data(){ return {
             eos:null,
+            coreSymbol: 'EOS',
             fetchedBalance:false,
             balance:'0.0000',
             accountData:null,
@@ -157,7 +158,8 @@
             },
             async init(){
                 const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-                this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', 'EOS')).toString()} EOS`;
+                this.coreSymbol = this.account.network().coreSymbol;
+                this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', this.coreSymbol)).toString()} ${this.coreSymbol}`;
 
                 plugin.accountData(this.account, this.account.network()).then(data => {
                     this.fetchedBalance = true;
@@ -189,10 +191,8 @@
 
                 this.submitting = true;
 
-                const symbol = this.balance ? this.balance.split(' ')[1] : 'EOS';
-
-                const cpu = `${parseFloat(this.cpu).toFixed(4)} ${symbol}`;
-                const net = `${parseFloat(this.net).toFixed(4)} ${symbol}`;
+                const cpu = `${parseFloat(this.cpu).toFixed(4)} ${this.coreSymbol}`;
+                const net = `${parseFloat(this.net).toFixed(4)} ${this.coreSymbol}`;
 
                 PluginRepository.plugin(Blockchains.EOSIO).stakeOrUnstake(this.account, cpu, net, this.account.network(), this.delegating).then(res => {
                     if(!res || !res.hasOwnProperty('transaction_id')) {

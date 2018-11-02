@@ -141,11 +141,16 @@
             async fetchChainId(){
                 this.network.chainId = await PluginRepository.plugin(this.network.blockchain).getChainId(this.network);
             },
+            async fetchCoreSymbol(){
+              this.network.coreSymbol = await PluginRepository.plugin(this.network.blockchain).getCoreSymbol(this.network);
+            },
             async save(){
                 this.working = true;
 
-	            if(this.isNew) await NetworkService.addNetwork(this.network);
-	            else await NetworkService.updateNetwork(this.network);
+	            if(this.isNew){
+	              await this.fetchCoreSymbol();
+	              await NetworkService.addNetwork(this.network);
+	            } else await NetworkService.updateNetwork(this.network);
 
 	            this.originalNetwork = this.network.clone();
 	            this.networkChanged = false;
