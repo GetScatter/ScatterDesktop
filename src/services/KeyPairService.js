@@ -9,19 +9,24 @@ import Crypto from '../util/Crypto';
 import {store} from '../store/store';
 import Keypair from '../models/Keypair';
 import Account from '../models/Account'
+import AccountService from "./AccountService";
 
 export default class KeyPairService {
 
-    static isValidPrivateKey(keypair){
-        let valid = false;
+    static getImportedKeyBlockchains(privateKey){
+        let blockchains = [];
         BlockchainsArray.map(blockchainKV => {
-            if(valid) return;
             try {
                 const plugin = PluginRepository.plugin(blockchainKV.value);
-                valid = plugin.validPrivateKey(keypair.privateKey);
+                if(plugin.validPrivateKey(privateKey))
+                    blockchains.push(blockchainKV.value);
             } catch(e){}
         });
-        return valid;
+        return blockchains;
+    }
+
+    static isValidPrivateKey(keypair){
+        return !!this.getImportedKeyBlockchains(keypair.privateKey).length;
     }
 
     static convertHexPrivateToBuffer(keypair){
@@ -77,9 +82,29 @@ export default class KeyPairService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
+    static async addOrRemoveBlockchain(keypair, blockchain){
+
+        // Removing
+	    if(keypair.blockchains.includes(blockchain)){
+		    keypair.blockchains = keypair.blockchains.filter(x => x !== blockchain);
+		    const accountsToRemove = keypair.accounts().filter(x => x.blockchain() === blockchain);
+		    await AccountService.removeAccounts(accountsToRemove);
+        }
+
+        // Adding
+	    else {
+		    keypair.blockchains.push(blockchain);
+		    await AccountService.importAllAccounts(keypair);
+        }
+
+	    KeyPairService.updateKeyPair(keypair);
+	    return true;
+    }
+
     static updateKeyPair(keypair){
         const scatter = store.state.scatter.clone();
         scatter.keychain.keypairs.find(x => x.unique() === keypair.unique()).name = keypair.name;
+        scatter.keychain.keypairs.find(x => x.unique() === keypair.unique()).blockchains = keypair.blockchains;
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 

@@ -180,8 +180,8 @@
                                             <section key="showkey" v-if="!isNew" class="scroller">
 
                                                 <!-- PUBLIC KEYS -->
-                                                <section class="accounts" :class="{'hidden':!showingSecrets}">
-                                                    <section class="account copy" v-for="pkey in selected.publicKeys" @click="copy(pkey.key, `Copied ${blockchainName(pkey.blockchain)} Public Key to Clipboard.`)">
+                                                <section class="accounts slider" :class="{'hidden':!showingSecrets}">
+                                                    <section class="account copy" v-for="pkey in visiblePublicKeys" @click="copy(pkey.key, `Copied ${blockchainName(pkey.blockchain)} Public Key to Clipboard.`)">
                                                         <section class="info">
                                                             <figure class="description linked-account">Shareable Key</figure>
                                                             <figure class="name">{{blockchainName(pkey.blockchain)}}</figure>
@@ -190,23 +190,30 @@
                                                     </section>
                                                 </section>
 
-                                                <!-- PUBLIC KEYS LIST TOGGLER -->
-                                                <section class="breaker" @click="showingSecrets = !showingSecrets">
-                                                    {{showingSecrets ? 'Hide' : 'Show Public Keys'}}
+                                                <!-- PUBLIC KEYS -->
+                                                <section class="accounts slider" :class="{'hidden':!showingBlockchains}">
+                                                    <section class="account copy" v-for="blockchain in Blockchains" @click="addOrRemoveBlockchain(blockchain)">
+                                                        <section class="info">
+                                                            <figure class="icon" :class="{'hide':!selected.blockchains.includes(blockchain)}"><i class="fa fa-check-circle"></i></figure>
+                                                            <figure class="name">{{blockchainName(blockchain)}}</figure>
+                                                        </section>
+                                                    </section>
+                                                </section>
+
+                                                <section class="breaker-container">
+                                                    <!-- PUBLIC KEYS LIST TOGGLER -->
+                                                    <section class="breaker" :class="{'active':showingSecrets}" @click="showingSecrets = !showingSecrets; showingBlockchains = false;">
+                                                        {{showingSecrets ? 'Hide Public Keys' : 'Show Public Keys'}}
+                                                    </section>
+
+                                                    <!-- PUBLIC KEYS LIST TOGGLER -->
+                                                    <section class="breaker" :class="{'active':showingBlockchains}" @click="showingBlockchains = !showingBlockchains; showingSecrets = false;">
+                                                        {{showingBlockchains ? 'Hide Blockchains' : 'Show Blockchains'}}
+                                                    </section>
                                                 </section>
 
                                                 <!-- ACCOUNTS -->
                                                 <section class="accounts">
-
-                                                    <!--<section class="account" style="border-bottom:3px solid rgba(0,0,0,0.1);" @click="linkManually">-->
-                                                        <!--<section class="info">-->
-                                                            <!--<figure class="name">Link or Create Account</figure>-->
-                                                            <!--<figure class="description">-->
-                                                                <!--Click here if you want to either create a new account on top of this Key or-->
-                                                                <!--manually add an existing account that can't be linked automatically.-->
-                                                            <!--</figure>-->
-                                                        <!--</section>-->
-                                                    <!--</section>-->
 
                                                     <section class="account" :class="{'static':!usesResources(account)}" v-for="account in uniqueAccounts" @click="selectAccount(account)">
                                                         <section class="info">
@@ -461,6 +468,7 @@
             status:null,
             isNew:false,
             showingSecrets:false,
+            showingBlockchains:false,
             flashingNameError:false,
 
             selectedAccount:null,
@@ -523,6 +531,9 @@
                 const cpu = this.resources.find(x => x.name === 'CPU');
                 if(!cpu) return false;
                 return cpu.available <= 6000;
+            },
+            visiblePublicKeys(){
+            	return this.selected.publicKeys.filter(x => this.selected.blockchains.includes(x.blockchain));
             }
         },
         methods:{
@@ -545,6 +556,10 @@
             copy(text, note){
                 ElectronHelpers.copy(text);
                 PopupService.push(Popup.snackbar(note));
+            },
+	        async addOrRemoveBlockchain(blockchain){
+            	await KeyPairService.addOrRemoveBlockchain(this.selected, blockchain);
+            	await PriceService.getBalances();
             },
             qrScanned(qr){
                 this.camera = false;
@@ -703,6 +718,8 @@
 
                 if(!KeyPairService.isValidPrivateKey(this.selected)) return this.status = null;
 
+                this.selected.blockchains = KeyPairService.getImportedKeyBlockchains(this.selected.privateKey);
+
                 setTimeout(async () => {
                     this.status = 'Creating multi-blockchain profile from Private Key.';
                     setTimeout(async() => {
@@ -764,7 +781,8 @@
                     this.resources = await ResourceService.getResourcesFor(this.selectedAccount);
             },
             ...mapActions([
-                Actions.RELEASE_POPUP
+                Actions.RELEASE_POPUP,
+                Actions.SET_SCATTER,
             ])
         },
         watch:{
@@ -1065,13 +1083,15 @@
 
         .accounts {
             flex:0 0 auto;
-            /*overflow-y:auto;*/
-            max-height:1200px;
-            transition:max-height 0.5s ease;
+            max-height:300px;
+            transition:max-height 0.2s ease;
 
 
             &.hidden {
                 max-height:0;
+            }
+
+            &.slider {
                 overflow:hidden;
             }
 
@@ -1123,6 +1143,21 @@
                             margin-right:3px;
                         }
                     }
+
+                    .icon {
+                        color:$dark-blue;
+                        margin-right:10px;
+                        font-size: 16px;
+                        margin-left:-10px;
+                        overflow:hidden;
+                        max-width:20px;
+                        transition:all 0.2s ease;
+                        transition-property: max-width;
+
+                        &.hide {
+                            max-width:0;
+                        }
+                    }
                 }
 
                 .icon {
@@ -1148,8 +1183,14 @@
             }
         }
 
-        .breaker {
+        .breaker-container {
+            display:flex;
+            margin-bottom:10px;
             flex:0 0 auto;
+        }
+
+        .breaker {
+            flex:1 1 auto;
             border-top:1px solid rgba(0,0,0,0.4);
             border-bottom:1px solid rgba(0,0,0,0.05);
             height:40px;
@@ -1166,7 +1207,7 @@
             transition: all 0.2s ease;
             transition-property: background, border, color;
 
-            &:hover {
+            &:hover, &.active {
                 background:$light-blue;
                 border-top:1px solid $dark-blue;
                 border-bottom:1px solid $dark-blue;

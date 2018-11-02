@@ -26,14 +26,22 @@ export default class AccountService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
+    static async removeAccounts(accounts){
+        const scatter = store.state.scatter.clone();
+	    accounts.map(account => scatter.keychain.removeAccount(account));
+        return store.dispatch(Actions.SET_SCATTER, scatter);
+    }
+
     static importAllAccounts(keypair){
         return new Promise(async resolve => {
             const scatter = store.state.scatter.clone();
             let accounts = [];
 
-            await Promise.all(BlockchainsArray.map(async ({value}) => {
-                const plugin = PluginRepository.plugin(value);
-                const networks = scatter.settings.networks.filter(x => x.blockchain === value);
+            const blockchains = keypair.blockchains;
+
+            await Promise.all(blockchains.map(async blockchain => {
+                const plugin = PluginRepository.plugin(blockchain);
+                const networks = scatter.settings.networks.filter(x => x.blockchain === blockchain);
                 return AccountService.accountsFrom(plugin, networks, accounts, keypair);
             }));
 

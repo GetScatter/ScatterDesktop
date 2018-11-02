@@ -17,6 +17,7 @@ export default class Keypair {
         this.fork = null;
 
         this.publicKeys = [];
+        this.blockchains = [Blockchains.EOSIO, Blockchains.ETH, Blockchains.TRX];
     }
 
     static placeholder(){ return new Keypair(); }

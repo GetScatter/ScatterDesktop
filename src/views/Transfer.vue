@@ -180,13 +180,13 @@
                     .filter(x => x.blockchain === this.account.blockchain())
             },
             filteredAccounts(){
-                if(this.showingAll) return this.accounts;
-                return this.accounts
-                    .filter(x => this.balances.hasOwnProperty(x.unique()) && this.balances[x.unique()].length)
-                    .reduce((acc,x) => {
-                        if(!acc.map(y => y.sendable()).includes(x.sendable())) acc.push(x);
-                        return acc;
-                    }, [])
+            	const reducer = accs => accs.reduce((acc,x) => {
+		            if(!acc.find(y => `${y.networkUnique}${y.sendable()}` === `${x.networkUnique}${x.sendable()}`)) acc.push(x);
+		            return acc;
+	            }, []);
+                if(this.showingAll) return reducer(this.accounts);
+                return reducer(this.accounts
+                    .filter(x => this.balances.hasOwnProperty(x.unique()) && this.balances[x.unique()].length));
             },
             isAlreadyContact(){
                 return this.contacts.find(x => x.recipient.toLowerCase() === this.recipient.toLowerCase())
