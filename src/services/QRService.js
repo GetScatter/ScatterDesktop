@@ -34,10 +34,6 @@ export default class QRService {
                                 const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);
                                 resolve(QRCode.toDataURL(JSON.stringify({data:dData, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
                             }))
-
-
-
-
                     }
 
             }))
