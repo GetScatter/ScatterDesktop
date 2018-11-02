@@ -62,7 +62,7 @@
                 </figure>
 
                 <!-- EXPORT SECRET -->
-                <figure class="export-keypair" :class="{'show':selected && !selected.external && !isNew && !exporting && !status}" v-tooltip="'Export Private Key'" @click="exporting = true">
+                <figure class="export-keypair" :class="{'show':selected && !selected.external && !isNew && !exporting && !status}" v-tooltip="'Export Private Key'" @click="enableExportKey">
                     <i class="fa fa-key"></i>
                 </figure>
 
@@ -628,22 +628,25 @@
                 this.qr = await QRService.createQR(this.selected.privateKey);
                 this.exportType = EXPORT_TYPES.QR;
             },
-            exportKeyFor(blockchain){
-                PopupService.push(
-                    Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
-                        placeholder:'Enter Password',
-                        type:'password'
-                    }, async password => {
-                        if(!password || !password.length) return;
-                        if(!await PasswordService.verifyPassword(password)){
-                            this.close();
-                            this.$router.push('/');
-                            return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "ban", "Okay"));
-                        }
+            enableExportKey(){
+	            PopupService.push(
+		            Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
+			            placeholder:'Enter Password',
+			            type:'password'
+		            }, async password => {
+			            if(!password || !password.length) return;
+			            if(!await PasswordService.verifyPassword(password)){
+				            this.close();
+				            this.$router.push('/');
+				            return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "ban", "Okay"));
+			            }
 
-                        this.selected.decrypt(this.seed);
-                        this.exposedPrivateKey = Crypto.bufferToPrivateKey(this.selected.privateKey, blockchain);
-                    }))
+			            this.exporting = true;
+		            }))
+            },
+            exportKeyFor(blockchain){
+	            this.selected.decrypt(this.seed);
+	            this.exposedPrivateKey = Crypto.bufferToPrivateKey(this.selected.privateKey, blockchain);
             },
             copyKey(){
                 ElectronHelpers.copy(this.exposedPrivateKey);
