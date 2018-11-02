@@ -156,6 +156,7 @@
     "appId": "com.get-scatter.server",
     "artifactName": "${os}-${productName}-${version}-${arch}.${ext}",
     "asar": true,
+	"asarUnpack": ["node_modules/node-notifier/vendor/**"],
     "protocols": {
       "name": "electron-deep-linking",
       "schemes": [
