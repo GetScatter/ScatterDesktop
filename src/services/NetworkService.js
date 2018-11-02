@@ -58,4 +58,11 @@ export default class NetworkService {
         })
     }
 
+    static async updateNetwork(network){
+	    const scatter = store.state.scatter.clone();
+	    scatter.settings.updateOrPushNetwork(network);
+	    await store.dispatch(Actions.SET_SCATTER, scatter);
+	    PopupService.push(Popup.snackbar("Network Saved!", "check"));
+    }
+
 }

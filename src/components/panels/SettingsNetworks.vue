@@ -20,12 +20,12 @@
                             <sel :disabled="isNew" :options="networks" style="flex:3;"
                                  :selected="network"
                                  :parser="x => x.name"
-                                 v-on:changed="x => network = x"></sel>
+                                 v-on:changed="x => selectNetwork(x)"></sel>
 
                             <section style="display:flex;">
                                 <transition name="slide-left" mode="out-in">
-                                    <section style="display:flex;" v-if="isNew">
-                                        <figure class="action red large relative" :class="{'ready glow':newNetworkReady}" v-tooltip="'Save New Network'" @click="save">
+                                    <section style="display:flex;" v-if="isNew || networkChanged">
+                                        <figure class="action red large relative" :class="{'ready glow':newNetworkReady || !isNew}" v-tooltip="'Save New Network'" @click="save">
                                             <i class="fa fa-check"></i>
                                         </figure>
                                         <figure class="action red large relative" v-tooltip="'Cancel'" @click="cancelAdd">
@@ -59,13 +59,13 @@
                          v-on:changed="blockchain => network.blockchain = blockchain.value"></sel>
 
                     <section class="multi-inputs">
-                        <cin :disabled="!isNew" placeholder="Name ( organizational )" :text="network.name" v-on:changed="changed => bind(changed, 'network.name')"></cin>
-                        <cin :disabled="!isNew" placeholder="Host ( domain.com or IP )" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
+                        <cin placeholder="Name ( organizational )" :text="network.name" v-on:changed="changed => bind(changed, 'network.name')"></cin>
+                        <cin placeholder="Host ( domain.com or IP )" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
                     </section>
 
                     <section class="multi-inputs" style="margin-top:20px;">
-                        <sel :disabled="!isNew" :selected="network.protocol" :options="['http', 'https']" v-on:changed="x => network.protocol = x"></sel>
-                        <cin :disabled="!isNew" placeholder="Port" type="number" :text="network.port > 0 ? network.port : ''" v-on:changed="changed => bind(changed, 'network.port')"></cin>
+                        <sel :selected="network.protocol" :options="['http', 'https']" v-on:changed="x => network.protocol = x"></sel>
+                        <cin placeholder="Port" type="number" :text="network.port > 0 ? network.port : ''" v-on:changed="changed => bind(changed, 'network.port')"></cin>
                     </section>
 
                     <cin :disabled="!isNew" placeholder="Chain ID" :text="network.chainId"
@@ -99,6 +99,8 @@
             network:null,
             endorsedNetworks:[],
             working:false,
+            originalNetwork:null,
+            networkChanged:false,
         }},
         computed:{
             ...mapState([
@@ -117,24 +119,37 @@
         },
         mounted(){
             this.network = this.networks[0].clone();
+            this.originalNetwork = this.networks[0].clone();
             BlockchainsArray.map(async blockchain => {
                 this.endorsedNetworks.push(await PluginRepository.plugin(blockchain.value).getEndorsedNetwork());
             })
         },
         methods: {
             blockchainName,
+            selectNetwork(network){
+            	this.network = network.clone();
+	            this.originalNetwork = network;
+            },
             addNetwork(){
                 this.network = Network.placeholder();
             },
             cancelAdd(){
-                this.network = this.networks[0];
+            	if(this.isNew) this.network = this.networks[0].clone();
+            	else this.network = this.originalNetwork.clone();
+	            this.networkChanged = false;
             },
             async fetchChainId(){
                 this.network.chainId = await PluginRepository.plugin(this.network.blockchain).getChainId(this.network);
             },
             async save(){
                 this.working = true;
-                await NetworkService.addNetwork(this.network);
+
+	            if(this.isNew) await NetworkService.addNetwork(this.network);
+	            else await NetworkService.updateNetwork(this.network);
+
+	            this.originalNetwork = this.network.clone();
+	            this.networkChanged = false;
+
                 this.working = false;
             },
             async removeNetwork(){
@@ -144,6 +159,9 @@
 
                 this.working = false;
             },
+            checkNetworkChanged(){
+                this.networkChanged = JSON.stringify(this.network) !== JSON.stringify(this.originalNetwork);
+            },
             ...mapActions([
                 Actions.SET_SCATTER
             ])
@@ -151,6 +169,16 @@
         watch:{
             ['network.host'](){
                 if(this.network.host.indexOf('://') > -1) this.network.host = this.network.host.split('://')[1]
+	            this.checkNetworkChanged();
+            },
+            ['network.port'](){
+            	this.checkNetworkChanged();
+            },
+            ['network.protocol'](){
+            	this.checkNetworkChanged();
+            },
+            ['network.name'](){
+            	this.checkNetworkChanged();
             }
         }
     }
