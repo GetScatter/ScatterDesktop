@@ -81,13 +81,9 @@ export const actions = {
     [Actions.SET_SCATTER]:({commit, state}, scatter) => {
         return new Promise(async resolve => {
 
-            await StorageService.setScatter(
-                AES.encrypt(
-                    scatter.savable(state.seed), state.seed
-                )
-            );
-
-            await BackupService.createAutoBackup();
+            StorageService.setScatter(AES.encrypt(scatter.savable(state.seed), state.seed)).then(() => {
+	            BackupService.createAutoBackup()
+            });
 
             commit(Actions.SET_SCATTER, scatter);
             resolve(scatter);

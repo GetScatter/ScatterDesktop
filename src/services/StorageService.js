@@ -1,15 +1,58 @@
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
 const Store = window.require('electron-store');
-const scatterStorage = new Store({name:'scatter'});
+
+const SCATTER_DATA_NAME = 'scatter';
+const SCATTER_INTERMED_NAME = 'scatter_intermed';
+
+const scatterStorage = new Store({name:SCATTER_DATA_NAME});
+const scatterIntermedStorage = new Store({name:SCATTER_INTERMED_NAME});
 const abiStorage = new Store({name:'abi'});
+
+const {remote} = window.require('electron');
+const app = remote.app;
+const dataPath = app.getPath('userData');
+const fs = window.require('fs');
+
+let saveResolvers = [];
+let saveTimeouts = [];
+const clearSaveTimeouts = () => {
+	saveResolvers.map(x => x(true));
+    saveTimeouts.map(x => clearTimeout(x));
+    saveTimeouts = [];
+};
+
+const safeSetScatter = async (scatter, resolver) => {
+	const path = name => `${dataPath}/${name}.json`;
+	const retry = () => saveTimeouts.push(
+		setTimeout(() => safeSetScatter(scatter, resolver), 50)
+	);
+
+	const salt = await StorageService.getSalt();
+	await scatterIntermedStorage.set('scatter', scatter);
+	await scatterIntermedStorage.set('salt', salt);
+	const savedScatter = await scatterIntermedStorage.get('scatter');
+
+	// Didn't save properly
+	if(scatter !== savedScatter) retry();
+
+	// Saved properly, overwriting old data with new data
+	else fs.rename(path(SCATTER_INTERMED_NAME), path(SCATTER_DATA_NAME), (err) => {
+		if(err) return retry();
+		resolver(true);
+	});
+}
 
 export default class StorageService {
 
     constructor(){}
 
-    static setScatter(scatter){
-        return scatterStorage.set('scatter', scatter);
+    static async setScatter(scatter){
+	    return new Promise(async resolve => {
+		    clearSaveTimeouts();
+		    saveResolvers.push(resolve);
+		    safeSetScatter(scatter, resolve);
+        })
     };
 
     static getScatter() {
