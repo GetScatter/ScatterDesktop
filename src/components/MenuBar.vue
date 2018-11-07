@@ -57,6 +57,10 @@
 		width:100%;
 		text-align:center;
 		z-index: 10;
+		position:absolute;
+		top:0;
+		left:0;
+		right:0;
 
 		.logo {
 			font-family: 'Grand Hotel', sans-serif;

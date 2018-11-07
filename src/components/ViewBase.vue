@@ -3,6 +3,7 @@
         <section class="router-base">
 
             <menu-bar></menu-bar>
+            <user-bar></user-bar>
 
 
             <!--<transition name="slide-left" mode="out-in">-->
@@ -18,7 +19,7 @@
                 <router-view></router-view>
             </section>
 
-            <section v-else>
+            <section class="app-content" v-else>
                 <transition name="slide-left" mode="out-in">
                     <router-view class="shifter" :class="{'home':route === 'home'}"></router-view>
                 </transition>
@@ -118,7 +119,7 @@
     }
 </script>
 
-<style scoped lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss">
     @import '../_variables.scss';
 
     .main {
@@ -127,6 +128,18 @@
         position: relative;
         display:flex;
         flex-direction: column;
+    }
+
+    .app-content {
+        position:absolute;
+        overflow-y: auto;
+        overflow-x:hidden;
+        left: 0;
+        right: 0;
+        top: 80px;
+        z-index: 1;
+        background: white;
+        transition:all 0.24s ease-in-out;
     }
 
     .shifter {
@@ -140,8 +153,6 @@
         }
     }
 
-
-
     .view-base {
         min-height:100vh;
     }
@@ -151,7 +162,6 @@
         display: flex;
         flex-direction: column;
         flex: 1;
-        overflow-x:hidden;
     }
 
 

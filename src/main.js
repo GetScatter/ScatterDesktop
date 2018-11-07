@@ -36,6 +36,7 @@ library.add(faCheck)
 
 // Globals
 import MenuBar from './components/MenuBar.vue'
+import UserBar from './components/UserBar.vue'
 import ViewBase from './components/ViewBase.vue'
 
 // Panels
@@ -115,6 +116,7 @@ class Main {
 			{tag:'swch', vue:SwitchComponent},
 
 			{tag:'menu-bar', vue:MenuBar},
+			{tag:'user-bar', vue:UserBar},
 			{tag:'view-base', vue:ViewBase},
 		];
 

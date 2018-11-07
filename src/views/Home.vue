@@ -1,7 +1,7 @@
 <template>
     <section class="home">
 
-        <section class="top-bar">
+        <!-- <section class="top-bar">
             <section>
                 <btn small="1" text="Nathan James"></btn>
             </section>
@@ -18,7 +18,7 @@
                     </section>
                 </figure>
             </section>
-        </section>
+        </section> -->
 
         <section class="action-bar short" v-if="keypairs.length">
             <section>
@@ -153,81 +153,18 @@
     }
 </script>
 
-<style scoped lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss">
     @import "../_variables";
 
+    /* sets vertical position so user can see top bar */
+    .app-content {
+        top:132px;
+    }
+
     .home {
-        height:calc(100vh - 80px);
+        position:relative;
 
-        .top-bar {
-            width:100%;
-            height:50px;
-            background:$light-blue;
-            display:flex;
-            flex-direction: row;
-            justify-content: space-between;
-            padding:0 30px;
-
-            .actions {
-                .action {
-                    cursor: pointer;
-                    background:transparent;
-                    outline:0;
-                    border-radius:4px;
-                    transition: all 0.15s ease;
-                    transition-property: background, color, border;
-                    height:32px;
-                    line-height: 32px;
-                    font-size: 13px;
-                    font-weight: bold;
-                    width:auto;
-                    padding:0 10px;
-                    border:1px solid rgba(0,0,0,0.12);
-                    color:#fff;
-                    display:inline-block;
-
-                    &:hover {
-                        border:1px solid rgba(0,0,0,0.22);
-                    }
-
-                    &:active {
-                        background:rgba(0,0,0,0.06);
-                        border:1px solid rgba(0,0,0,0.12);
-                    }
-
-                    .percentage {
-                        border:2px solid #fff;
-                        border-radius:50px;
-                        width:64px;
-                        height:10px;
-                        display:inline-block;
-                        padding:1px;
-                        margin-left:5px;
-
-                        .bar {
-                            height:4px;
-                            width:20%;
-                            background:#fff;
-                            border-radius:50px;
-                        }
-                    }
-                }
-            }
-
-            button {
-                border:1px solid rgba(0,0,0,0.12);
-                color:#fff;
-
-                &:hover {
-                    border:1px solid rgba(0,0,0,0.22);
-                }
-
-                &:active {
-                    border:1px solid rgba(0,0,0,0.12);
-                    background:rgba(0,0,0,0.22);
-                }
-            }
-        }
+        
     }
 
 
