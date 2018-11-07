@@ -114,10 +114,17 @@ export default class TRX extends Plugin {
                     : await this.signer(payload, account.publicKey);
             };
 
-            const send = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
-            resolve(await tron.trx.sign(send).then(x => x).catch(error => {
-                return {error}
-            }));
+	        amount = tron.toSun(amount);
+            const unsignedTransaction = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
+	        const signed = await tron.trx.sign(unsignedTransaction)
+                .then(x => ({success:true, result:x}))
+                .catch(error => ({success:false, result:error}));
+
+	        if(!signed.success) return resolve({error:signed.result});
+	        else {
+	            const sent = await tron.trx.sendRawTransaction(signed.result).then(x => x.result);
+	            resolve(sent ? signed.result : {error:'Failed to send.'});
+            }
         })
     }
 
