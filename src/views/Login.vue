@@ -2,7 +2,7 @@
     <section>
         <transition name="fade" mode="out-in">
             <!-- NEW SCATTER -->
-            <section key="new" class="new-scatter"><!--  v-if="isNewScatter && !restoringBackup"> -->
+            <section key="new" class="new-scatter" v-if="isNewScatter && !restoringBackup">
                 <h1>You must be new here!</h1>
                 <h5>Just a few easy steps and we'll walk you through them. Let's start with your password.</h5>
                 <svg id="image-onboarding" viewBox="0 0 557 112" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
