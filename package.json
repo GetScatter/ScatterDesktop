@@ -51,6 +51,7 @@
     "bip32-path": "^0.4.2",
     "bip39": "^2.5.0",
     "electron-platform": "^1.2.0",
+    "electron-settings": "^3.2.0",
     "electron-store": "^2.0.0",
     "eos-rc-parser": "^1.0.4",
     "eosjs": "^16.0.9",

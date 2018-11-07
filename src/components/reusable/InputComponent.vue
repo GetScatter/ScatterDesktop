@@ -14,8 +14,8 @@
                v-model="input" />
 
         <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
-            <i class="fa " v-if="!loaderOnDynamic" :class="`fa-${dynamicButton}`"></i>
-            <i class="fa fa-spinner fa-spin" v-if="loaderOnDynamic"></i>
+            <i class="fal " v-if="!loaderOnDynamic" :class="`fa-${dynamicButton}`"></i>
+            <i class="fal fa-spinner fa-spin" v-if="loaderOnDynamic"></i>
         </figure>
         <!--<figure class="copy" v-if="copy" :class="{'unforced':!forced}">-->
             <!--<i class="fa fa-copy" v-tooltip="'Copy'" @click="copyText"></i>-->
@@ -120,21 +120,25 @@
         &.big {
 
             input {
+                line-height:68px;
                 height:68px;
-                font-size: 48px;
                 padding:0 20px;
 
                 &::-webkit-input-placeholder {
                     font-size: 18px;
+                    color:rgba(0,0,0,0.18);
                 }
                 &::-moz-placeholder {
                     font-size: 18px;
+                    color:rgba(0,0,0,0.18);
                 }
                 &:-ms-input-placeholder {
                     font-size: 18px;
+                    color:rgba(0,0,0,0.18);
                 }
                 &:-moz-placeholder {
                     font-size: 18px;
+                    color:rgba(0,0,0,0.18);
                 }
 
                 &.pad-right {

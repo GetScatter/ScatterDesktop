@@ -1,6 +1,7 @@
 const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron');
 const path = require("path");
 const url = require("url");
+const settings = require('electron-settings');
 
 const isDev = process.mainModule.filename.indexOf('app.asar') === -1;
 
@@ -74,11 +75,20 @@ const setupTray = () => {
 	})
 };
 
+app.on('ready', () => {
+
+	// first time run
+	settings.set('windowSettings', {
+		theme: 'light'
+	});
+
+});
+
 const createScatterInstance = () => {
 	app.setAsDefaultProtocolClient('scatter');
 
 	const createMainWindow = (show = true) => new BrowserWindow({
-		width: 800,
+		width: 600,
 		height: 800,
 		frame: false,
 		radii: [5,5,5,5],
@@ -226,5 +236,4 @@ class NotificationService {
 
 const Transport = require('@ledgerhq/hw-transport-node-hid');
 global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService };
-
 

@@ -1,8 +1,8 @@
 <template>
     <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'small':small}">
-        <i class="fa " :class="'fa-'+icon" v-if="icon"></i>
+        <i class="fal " :class="'fa-'+icon" v-if="icon"></i>
         <span v-else>
-            <i class="fa fa-spinner fa-spin" v-if="loading"></i>
+            <i class="fal fa-spinner fa-spin" v-if="loading"></i>
             <span v-else>{{text}}</span>
         </span>
     </button>
