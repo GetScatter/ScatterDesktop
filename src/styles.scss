@@ -6,7 +6,13 @@ div, figure, section, nav, article, input, textarea {
 
 html, body {
   height:100%;
-  -webkit-user-select:none;
+}
+
+*, *::after, *::before {
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-app-region: no-drag;
+  cursor: default;
 }
 
 body {
