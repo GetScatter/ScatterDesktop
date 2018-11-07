@@ -86,12 +86,15 @@ const createScatterInstance = () => {
 		resizable: true,
 		minWidth: 620,
 		minHeight:580,
-		show,
 		titleBarStyle:'hiddenInset',
-		vibrancy:'appearance-based'
+		vibrancy:'appearance-based',
+		backgroundColor: '#62D0FD',
+		show: false, 
 	});
 
 	mainWindow = createMainWindow(false);
+
+
 
 	const splash = createMainWindow(true);
 	splash.loadURL(splashScreen);
@@ -100,7 +103,8 @@ const createScatterInstance = () => {
 	// if main window is ready to show, then destroy the splash window and show up the main window
 	mainWindow.once('ready-to-show', () => {
 		splash.destroy();
-		mainWindow.show();
+		mainWindow.show(); 
+  		mainWindow.focus(); 
 	});
 
 	// mainWindow.openDevTools();
