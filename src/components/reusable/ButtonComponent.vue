@@ -47,6 +47,15 @@
             border-bottom:2px solid $dark-blue;
         }
 
+        &:hover {
+            border:1px solid rgba(0,0,0,0.22);
+        }
+
+        &:active {
+            border:1px solid $dark-blue;
+            background:rgba(0,0,0,0.04);
+        }
+
         &:disabled {
             opacity:0.4;
             cursor: not-allowed;

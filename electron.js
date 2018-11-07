@@ -87,7 +87,11 @@ const createScatterInstance = () => {
 		minWidth: 620,
 		minHeight:580,
 		show,
+		titleBarStyle:'hiddenInset',
+		vibrancy:'appearance-based'
 	});
+
+	console.log(process);
 
 	mainWindow = createMainWindow(false);
 

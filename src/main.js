@@ -9,7 +9,13 @@ import RadialProgressBar from 'vue-radial-progress'
 import WindowService from './services/WindowService';
 import ElectronHelpers from './util/ElectronHelpers';
 ElectronHelpers.bindContextMenu();
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCog } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+library.add(faCog)
+library.add(faArrowRight)
 
 // Globals
 import MenuBar from './components/MenuBar.vue'
@@ -115,6 +121,7 @@ class Main {
 				{tag:'slider', vue:SliderComponent},
 				{tag:'qr-reader', vue:QrcodeReader},
 				{tag:'radial-progress', vue:RadialProgressBar},
+				{tag:'font-awesome-icon', vue:FontAwesomeIcon},
 
 				// PANELS
 				{tag:'settings-general', vue:SettingsGeneral},

@@ -8,7 +8,7 @@
 
             <section class="actions">
                 <figure class="action">
-                    <i class="fa fa-cog"></i>
+                    <font-awesome-icon icon="cog" />
                 </figure>
 
                 <figure class="action">
@@ -182,9 +182,18 @@
                     font-weight: bold;
                     width:auto;
                     padding:0 10px;
-                    border:1px solid #5db9df;
+                    border:1px solid rgba(0,0,0,0.12);
                     color:#fff;
                     display:inline-block;
+
+                    &:hover {
+                        border:1px solid rgba(0,0,0,0.22);
+                    }
+
+                    &:active {
+                        background:rgba(0,0,0,0.06);
+                        border:1px solid rgba(0,0,0,0.12);
+                    }
 
                     .percentage {
                         border:2px solid #fff;
@@ -206,8 +215,17 @@
             }
 
             button {
-                border:1px solid #5db9df;
+                border:1px solid rgba(0,0,0,0.12);
                 color:#fff;
+
+                &:hover {
+                    border:1px solid rgba(0,0,0,0.22);
+                }
+
+                &:active {
+                    border:1px solid rgba(0,0,0,0.12);
+                    background:rgba(0,0,0,0.22);
+                }
             }
         }
     }

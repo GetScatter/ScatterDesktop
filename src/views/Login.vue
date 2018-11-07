@@ -45,7 +45,7 @@
                          dynamic-button="arrow-right"
                     ></cin>
                     <section v-if="dPresses >= 10" class="bottom-stuck">
-                        <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" text="I need to reset my password"></btn>
+                        <btn :icon="arrow-right" :disabled="working" style="width:auto;" v-on:clicked="destroy" text="I need to reset my password"></btn>
                     </section>
                 </section>
             </section>
