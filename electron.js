@@ -91,8 +91,6 @@ const createScatterInstance = () => {
 		vibrancy:'appearance-based'
 	});
 
-	console.log(process);
-
 	mainWindow = createMainWindow(false);
 
 	const splash = createMainWindow(true);

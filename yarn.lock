@@ -3339,6 +3339,11 @@ electron-osx-sign@0.4.11:
     minimist "^1.2.0"
     plist "^3.0.1"
 
+electron-platform@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/electron-platform/-/electron-platform-1.2.0.tgz#2fc70bce53fb732ec81769bd6c48e10c40a551aa"
+  integrity sha1-L8cLzlP7cy7IF2m9bEjhDEClUao=
+
 electron-publish@20.29.0:
   version "20.29.0"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-20.29.0.tgz#ab61e95bc4d466b4aff360c12bf1ee3d673967a4"

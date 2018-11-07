@@ -1,7 +1,8 @@
 <template>
 	<section class="menu-bar">
 		<figure class="logo">Scatter</figure>
-		<section class="actions">
+
+		<section class="actions" v-if="isWindows">
 
 			<!-- MINIMIZE -->
 			<section class="action">
@@ -25,11 +26,22 @@
 <script>
 	const { remote } = window.require('electron');
 
+	// Now we can address the platform type, for different headers for Win32, Mac, etc.
+	const platform = require('electron-platform');
+
 	export default {
 		methods:{
 			quit(){
 				remote.app.quit();
-			},
+			}
+		},
+		computed:{
+			isWindows(){
+				console.log(platform);
+				if(platform.isWin32){
+					return true;
+				}
+			}
 		}
 	}
 </script>
