@@ -1,22 +1,25 @@
 <template>
-    <section class="input" :class="{'forced':forced, 'big':big}">
+    <section class="input" :class="{'big':big}">
+
+        <label v-if="label">{{label}}</label>
+
         <input ref="focuser"
+               :placeholder="placeholder"
                @keyup.enter="enter"
                @blur="blur"
+               :class="{'pad-right':dynamicButton}"
                :maxlength="maxlength || -1"
-               :class="{'large-font':largeFont, 'hide-date':type === 'date' && !input.length, 'pad-right':dynamicButton}"
                :disabled="disabled || false"
                :type="type || 'text'"
                v-model="input" />
 
-        <label :class="{'hidden':input.toString().length, 'for-disabled':disabled || false}">{{placeholder}}</label>
-        <label v-if="forced" class="forced">{{placeholder}}</label>
         <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
-            <i class="fa " :class="`fa-${dynamicButton}`"></i>
+            <i class="fa " v-if="!loaderOnDynamic" :class="`fa-${dynamicButton}`"></i>
+            <i class="fa fa-spinner fa-spin" v-if="loaderOnDynamic"></i>
         </figure>
-        <figure class="copy" v-if="copy" :class="{'unforced':!forced}">
-            <i class="fa fa-copy" v-tooltip="'Copy'" @click="copyText"></i>
-        </figure>
+        <!--<figure class="copy" v-if="copy" :class="{'unforced':!forced}">-->
+            <!--<i class="fa fa-copy" v-tooltip="'Copy'" @click="copyText"></i>-->
+        <!--</figure>-->
     </section>
 </template>
 
@@ -30,9 +33,7 @@
             emit(){ this.$emit('changed', this.input) },
             blur(){ this.$emit('blur') },
             emitDynamicButton(){ this.$emit('dynamic') },
-            copyText(){
-                ElectronHelpers.copy(this.text);
-            }
+            copyText(){ ElectronHelpers.copy(this.text); }
         },
         created(){
             if(this.focus) {
@@ -41,7 +42,7 @@
                 })
             }
         },
-        props:['placeholder', 'type', 'maxlength', 'text', 'disabled', 'forced', 'copy', 'dynamicButton', 'dynamicTooltip', 'largeFont', 'big', 'focus'],
+        props:['placeholder', 'label', 'type', 'maxlength', 'text', 'disabled', 'copy', 'dynamicButton', 'dynamicTooltip', 'big', 'focus', 'loaderOnDynamic'],
         watch:{
             input:function(){ this.emit(); },
             text:function(){ this.input = this.text; },
@@ -52,123 +53,101 @@
 <style scoped lang="scss">
     @import "../../_variables";
     .input {
-        height:32px;
+        text-align:left;
         position: relative;
         width:100%;
-        margin-top:20px;
-
-        &.forced {
-            height:40px;
-            margin-bottom:10px;
-
-            input {
-                margin-top:15px;
-            }
-        }
+        margin-bottom:20px;
 
         label {
-            position:absolute;
-            bottom:9px;
-            font-size:13px;
-            color:$mid-dark-grey;
-            /*font-weight: bold;*/
-            z-index:0;
-            opacity:1;
-
-            transition:bottom 0.2s ease, opacity 0.2s ease;
-
-            &.for-disabled {
-                padding-left:10px;
-            }
-
-            &.hidden {
-                opacity:0;
-            }
-
-            &.forced {
-                bottom:28px;
-            }
+            font-size: 11px;
+            color:#7899a6;
+            font-weight: bold;
+            margin-bottom:5px;
+            display: block;
         }
 
         .copy, .dynamic-button {
             cursor: pointer;
             position: absolute;
-            right:10px;
-            bottom:9px;
+            right:20px;
+            bottom:0;
+            top:0;
+            display:flex;
+            justify-content: center;
+            align-items: center;
             font-size:13px;
             z-index:2;
+            color:$light-blue;
+
+            transition: all 0.2s ease;
+            transition-property: color;
 
             &:hover {
                 color:$dark-blue;
             }
-
-            &.not-disabled {
-                bottom:10px;
-            }
-
-            &.unforced {
-                bottom:10px;
-            }
         }
-
         .dynamic-button + .copy {
             right:30px;
         }
 
         input {
             outline:0;
-            border:0;
-            height:30px;
+            height:44px;
             width:100%;
-            border-bottom:1px solid rgba(0,0,0,0.2);
-            position: relative;
-            background:transparent;
-            z-index:1;
-            font-size:15px;
+            border:1px solid #dfe0e1;
+            border-radius:4px;
+            padding:0 15px;
+            font-size: 18px;
+
+            &::-webkit-input-placeholder {
+                font-size: 18px;
+            }
+            &::-moz-placeholder {
+                font-size: 18px;
+            }
+            &:-ms-input-placeholder {
+                font-size: 18px;
+            }
+            &:-moz-placeholder {
+                font-size: 18px;
+            }
 
             &.pad-right {
                 padding-right:30px;
             }
-
-            &:disabled {
-                cursor:not-allowed;
-                background:rgba(0,0,0,0.03);
-                padding:0 10px;
-                clear:both;
-            }
-
-            &.hide-date {
-                color:transparent;
-            }
-
-            &:focus {
-                color:inherit;
-                ~ label {
-                    bottom:28px;
-                }
-            }
-
-            &.large-font {
-                font-size: 20px;
-            }
         }
 
         &.big {
-            margin-bottom: 10px;
 
             input {
-                font-size: 36px;
+                height:68px;
+                font-size: 48px;
+                padding:0 20px;
 
-                &:focus {
-                  ~ label {
-                    bottom:34px;
-                  }
+                &::-webkit-input-placeholder {
+                    font-size: 18px;
+                }
+                &::-moz-placeholder {
+                    font-size: 18px;
+                }
+                &:-ms-input-placeholder {
+                    font-size: 18px;
+                }
+                &:-moz-placeholder {
+                    font-size: 18px;
+                }
+
+                &.pad-right {
+                    padding-right:50px;
                 }
             }
 
-            label {
-                font-size: 20px;
+            .dynamic-button {
+                font-size: 26px;
             }
+
+
         }
+
     }
 </style>

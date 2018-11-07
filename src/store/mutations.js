@@ -1,7 +1,6 @@
 import * as Mutations from './constants'
 
 export const mutations = {
-    [Mutations.SET_SPLASH]:(state, x) => state.splash = x,
     [Mutations.SET_SEARCH_TERMS]:(state, terms) => state.searchTerms = terms,
     [Mutations.SET_SEED]:(state, seed) => state.seed = seed,
     [Mutations.SET_MNEMONIC]:(state, mnemonic) => state.mnemonic = mnemonic,

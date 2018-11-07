@@ -1,4 +1,3 @@
-export const SET_SPLASH = 'setSplash';
 export const SET_DAPP_DATA =  'setDappData';
 export const SET_DAPP_LOGO =  'setDappLogo';
 

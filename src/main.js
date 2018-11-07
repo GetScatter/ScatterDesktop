@@ -12,8 +12,8 @@ ElectronHelpers.bindContextMenu();
 
 
 // Globals
+import MenuBar from './components/MenuBar.vue'
 import ViewBase from './components/ViewBase.vue'
-import Auth from './components/sidebars/Auth.vue'
 
 // Panels
 import Terms from './components/panels/Terms.vue'
@@ -91,8 +91,8 @@ class Main {
 			{tag:'sel', vue:SelectComponent},
 			{tag:'swch', vue:SwitchComponent},
 
+			{tag:'menu-bar', vue:MenuBar},
 			{tag:'view-base', vue:ViewBase},
-			{tag:'auth', vue:Auth},
 		];
 
 		let fragments;

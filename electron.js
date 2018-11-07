@@ -78,7 +78,7 @@ const createScatterInstance = () => {
 	app.setAsDefaultProtocolClient('scatter');
 
 	const createMainWindow = (show = true) => new BrowserWindow({
-		width: 1280,
+		width: 800,
 		height: 800,
 		frame: false,
 		radii: [5,5,5,5],
