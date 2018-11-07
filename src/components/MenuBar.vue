@@ -37,7 +37,6 @@
 		},
 		computed:{
 			isWindows(){
-				console.log(platform);
 				if(platform.isWin32){
 					return true;
 				}

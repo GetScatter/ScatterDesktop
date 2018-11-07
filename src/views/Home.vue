@@ -12,7 +12,7 @@
                 </figure>
 
                 <figure class="action">
-                    <i class="fa fa-refresh"></i>
+                    <font-awesome-icon icon="sync" />
                     <section class="percentage">
                         <figure class="bar"></figure>
                     </section>

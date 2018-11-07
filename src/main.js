@@ -10,12 +10,29 @@ import WindowService from './services/WindowService';
 import ElectronHelpers from './util/ElectronHelpers';
 ElectronHelpers.bindContextMenu();
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCog } from '@fortawesome/free-solid-svg-icons'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+// Fontawesome icons
+import { faCog } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import { faAngleUp } from '@fortawesome/free-solid-svg-icons'
+import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faSync } from '@fortawesome/free-solid-svg-icons'
+import { faQrcode } from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 library.add(faCog)
 library.add(faArrowRight)
+library.add(faAngleLeft)
+library.add(faAngleRight)
+library.add(faAngleUp)
+library.add(faAngleDown)
+library.add(faTimes) // Close
+library.add(faSync)
+library.add(faQrcode)
+library.add(faCheck)
 
 // Globals
 import MenuBar from './components/MenuBar.vue'
