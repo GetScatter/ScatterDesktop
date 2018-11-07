@@ -6,6 +6,7 @@ div, figure, section, nav, article, input, textarea {
 
 html, body {
   height:100%;
+  -webkit-user-select:none;
 }
 
 body {
@@ -140,11 +141,6 @@ $speed:0.1s;
     }
   }
 }
-
-
-
-
-
 
 /* Type Ratio: 1.067 */
 
