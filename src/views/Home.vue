@@ -35,7 +35,7 @@
             <section>
                 
                 <section id="image-piggy-waiting">
-                    <svg id="image-piggy-butt" class="animate bounceInDown" width="93px" height="110px" viewBox="0 0 93 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <svg id="image-piggy-butt" class="animated bounceInDown" width="93px" height="110px" viewBox="0 0 93 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g id="gs_desktop_home_pc-firsttime" transform="translate(-354.000000, -285.000000)">
                                 <g id="Group-2" transform="translate(354.000000, 282.000000)">
