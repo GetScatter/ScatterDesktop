@@ -41,10 +41,9 @@
         }
 
         &.blue {
-            border:0;
+            border:1px solid rgba(0,0,0,0);
             color:#fff;
             background:$light-blue;
-            border-bottom:2px solid $dark-blue;
         }
 
         &:hover {

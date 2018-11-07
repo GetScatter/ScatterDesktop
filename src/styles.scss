@@ -146,14 +146,37 @@ $speed:0.1s;
 
 
 
+/* Type Ratio: 1.067 */
 
-
-h1 {
+h1,h2,h3,h4,h5 {
   font-family: 'Roboto-Light', sans-serif;
-  font-size: 2rem;
   color: #393D3F;
   font-weight:300;
+}
+
+h1 {
+  font-size: 2.041rem;
   margin: 0 0 1.2rem 0;
+}
+
+h2 {
+  font-size: 1.913rem;
+  margin: 0 0 1.1rem 0;
+}
+
+h3 {
+  font-size: 1.793rem;
+  margin: 0 0 1rem 0;
+}
+
+h4 {
+  font-size: 1.68rem;
+  margin: 0 0 .95rem 0;
+}
+
+h5 {
+  font-size: 1.575rem;
+  margin: 0 0 .9rem 0;
 }
 
 p {

@@ -158,7 +158,7 @@
 
     /* sets vertical position so user can see top bar */
     .app-content {
-        top:132px;
+        top:130px;
     }
 
     .home {

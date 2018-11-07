@@ -3,7 +3,7 @@
         <section class="router-base">
 
             <menu-bar></menu-bar>
-            <user-bar></user-bar>
+            <user-bar v-if="unlocked"></user-bar>
 
 
             <!--<transition name="slide-left" mode="out-in">-->
@@ -131,12 +131,13 @@
     }
 
     .app-content {
-        position:absolute;
+        position:fixed;
         overflow-y: auto;
         overflow-x:hidden;
         left: 0;
         right: 0;
         top: 80px;
+        bottom:0;
         z-index: 1;
         background: white;
         transition:all 0.24s ease-in-out;

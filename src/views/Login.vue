@@ -2,17 +2,9 @@
     <section>
         <transition name="fade" mode="out-in">
             <!-- NEW SCATTER -->
-            <section key="new" class="new-scatter" v-if="isNewScatter && !restoringBackup">
-                <h1>
-                    You must be new here!<br>
-                    That's okay, we'll walk you through it.
-                </h1>
-                <p>
-                    First you need to set up your password, then you can import or create some blockchain accounts/keys and maybe even get some tokens.
-                    Once we get all that sorted you will be able to use applications.
-                </p>
-
-                
+            <section key="new" class="new-scatter"><!--  v-if="isNewScatter && !restoringBackup"> -->
+                <h1>You must be new here!</h1>
+                <h5>Just a few easy steps and we'll walk you through them. Let's start with your password.</h5>
                 <svg id="image-onboarding" viewBox="0 0 557 112" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <g id="gs_desktop_home_pc-login-first" transform="translate(-131.000000, -298.000000)">
@@ -138,7 +130,7 @@
             </section>
 
             <!-- IMPORT -->
-            <section key="import" class="import-scatter" v-if="isNewScatter && restoringBackup">
+            <section key="import" class="import-scatter"><!--  v-if="isNewScatter && restoringBackup"> -->
                 <section>
                     <h1>Restore from backup</h1>
                     <p>If you have a backup for your Scatter you can import it here by loading it into Scatter. You will still need the password to unlock it.</p>
@@ -184,6 +176,9 @@
 			...mapState([
 				'scatter'
 			]),
+            hide(){
+                return false;
+            },
 			isNewScatter(){
 				return this.scatter === null;
 			},
@@ -322,8 +317,9 @@
             border-top-left-radius:0;
             border-top-right-radius:0;
             overflow: hidden;
-            background:#dfe0e1;
+            background:#ffffff;
             position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.1);
 
             span {
                 color:#fff;
@@ -343,6 +339,8 @@
                 background:$light-blue;
                 height:100%;
                 width:100%;
+                height: 4px;
+                margin: 4px;
 
                 transition: all 0.5s ease;
                 transition-property: width, background;
