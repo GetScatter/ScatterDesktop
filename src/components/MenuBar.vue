@@ -1,16 +1,16 @@
 <template>
 	<section class="menu-bar">
-		<figure class="logo">Scatter</figure>
+		<router-link :to="{name:'home'}" class="logo">Scatter</router-link>
 
 		<section class="actions" v-if="isWindows">
 
 			<!-- MINIMIZE -->
-			<section class="action">
+			<section class="action" @click="minimize">
 				<figure class="line"></figure>
 			</section>
 
 			<!-- EXPAND / CONTRACT -->
-			<section class="action">
+			<section class="action" @click="maximize">
 				<figure class="sqr"></figure>
 			</section>
 
@@ -26,21 +26,23 @@
 <script>
 	const { remote } = window.require('electron');
 
-	// Now we can address the platform type, for different headers for Win32, Mac, etc.
-	const platform = require('electron-platform');
-
 	export default {
 		methods:{
 			quit(){
 				remote.app.quit();
-			}
+			},
+			minimize(){
+				remote.BrowserWindow.getFocusedWindow().hide();
+			},
+			maximize(){
+				const win = remote.BrowserWindow.getFocusedWindow();
+				win.isMaximized() ? win.unmaximize() : win.maximize();
+			},
 		},
 		computed:{
-			isWindows(){
-				if(platform.isWin32){
-					return true;
-				}
-			}
+			isWindows(){ return remote.process.platform === 'win32'; },
+			isMacOS(){ return remote.process.platform === 'darwin'; },
+			isLinux(){ return !this.isWindows && !this.isMacOS; }
 		}
 	}
 </script>
@@ -70,6 +72,8 @@
 			height:80px;
 			line-height: 80px;
 			padding-top:3px;
+			cursor: default;
+			-webkit-app-region: drag;
 		}
 
 		.actions {

@@ -14,6 +14,12 @@ const LOGIN = {
 		SubTitle:'login_existing_subtitle',
 		PasswordPlaceholder:'login_existing_password_placeholder',
 		ResetButton:'login_existing_reset_button',
+	},
+	RESTORE:{
+		Title:'login_restore_title',
+		SubTitle:'login_restore_subtitle',
+		ChooseButton:'login_restore_choose_button',
+		BackButton:'login_restore_back_button',
 	}
 };
 

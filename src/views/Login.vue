@@ -54,15 +54,23 @@
             <!-- IMPORT -->
             <section key="import" class="import-scatter" v-if="isNewScatter && restoringBackup">
                 <section>
-                    <h1>Restore from backup</h1>
-                    <p>If you have a backup for your Scatter you can import it here by loading it into Scatter. You will still need the password to unlock it.</p>
+                    <h1>{{locale(langKeys.LOGIN.RESTORE.Title)}}</h1>
+                    <p>{{locale(langKeys.LOGIN.RESTORE.SubTitle)}}</p>
 
                     <img src="../assets/import_backup.png" style="margin:10px 0 20px;" />
 
-                    <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="importBackup" text="Choose your Backup" blue="true"></btn>
+                    <btn :disabled="working"
+                         :loading="working"
+                         style="width:300px;"
+                         v-on:clicked="importBackup"
+                         :text="locale(langKeys.LOGIN.RESTORE.ChooseButton)"
+                         blue="true"></btn>
                     <br>
                     <br>
-                    <btn :disabled="working" v-on:clicked="restoringBackup = false" text="I want to start from scratch" small="true"></btn>
+                    <btn :disabled="working"
+                         v-on:clicked="restoringBackup = false"
+                         :text="locale(langKeys.LOGIN.RESTORE.BackButton)"
+                         small="true"></btn>
                 </section>
             </section>
         </transition>

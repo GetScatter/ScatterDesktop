@@ -54,6 +54,10 @@
         &:active {
             border:1px solid $dark-blue;
             background:rgba(0,0,0,0.04);
+
+            &.blue {
+                color:$dark-blue;
+            }
         }
 
         &:disabled {

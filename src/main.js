@@ -27,9 +27,6 @@ import SettingsPassword from './components/panels/SettingsPassword.vue'
 import SettingsPIN from './components/panels/SettingsPIN.vue'
 import SettingsNonce from './components/panels/SettingsNonce.vue'
 
-
-import Overhead from './components/panels/Overhead.vue'
-
 // POPUPS
 import Popups from './components/Popups.vue'
 import Mnemonic from './components/popups/Mnemonic.vue'
@@ -129,7 +126,6 @@ class Main {
 				{tag:'settings-password', vue:SettingsPassword},
 				{tag:'settings-nonce', vue:SettingsNonce},
 				{tag:'settings-pin', vue:SettingsPIN},
-				{tag:'overhead', vue:Overhead},
 				{tag:'terms', vue:Terms},
 
 				{tag:'mnemonic', vue:Mnemonic},
