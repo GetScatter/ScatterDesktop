@@ -43,7 +43,7 @@
                          type="password"
                          :loader-on-dynamic="working"
                          :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="changed => bind(changed, 'password')"
-                         dynamic-button="arrow-right"
+                         dynamic-button="icon-right-open-big"
                     ></cin>
                     <section v-if="dPresses >= 10" class="bottom-stuck">
                         <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" :text="locale(langKeys.LOGIN.EXISTING.ResetButton)"></btn>

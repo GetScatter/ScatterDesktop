@@ -14,8 +14,8 @@
                v-model="input" />
 
         <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
-            <i class="fal " v-if="!loaderOnDynamic" :class="`fa-${dynamicButton}`"></i>
-            <i class="fal fa-spinner fa-spin" v-if="loaderOnDynamic"></i>
+            <i v-if="!loaderOnDynamic" :class="`${dynamicButton}`"></i>
+            <i class="icon-spin4 animate-spin" v-if="loaderOnDynamic"></i>
         </figure>
         <!--<figure class="copy" v-if="copy" :class="{'unforced':!forced}">-->
             <!--<i class="fa fa-copy" v-tooltip="'Copy'" @click="copyText"></i>-->

@@ -120,7 +120,7 @@
         right: 0;
         top: 80px;
         bottom:0;
-        z-index: 1;
+        z-index: 2;
         background: white;
         transition:all 0.24s ease-in-out;
     }
