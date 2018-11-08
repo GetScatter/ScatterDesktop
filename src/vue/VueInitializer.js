@@ -9,7 +9,7 @@ import {Routing} from './Routing';
 import {store} from '../store/store'
 import * as Actions from '../store/constants'
 import {localized} from '../localization/locales'
-import * as LANG_KEYS from '../localization/keys'
+import LANG_KEYS from '../localization/keys'
 import ElectronHelpers from '../util/ElectronHelpers'
 
 Vue.config.productionTip = false
@@ -37,6 +37,7 @@ export default class VueInitializer {
                     langKeys:LANG_KEYS,
                 }},
                 methods: {
+	                locale:(key, ...args) => localized(key, args, store.getters.language),
                     formatNumber(num, commaOnly = false){
                         const toComma = x => {
                             const [whole, decimal] = x.toString().split('.');
@@ -55,7 +56,6 @@ export default class VueInitializer {
                     openInBrowser(url){
                         ElectronHelpers.openLinkInBrowser(url);
                     },
-                    locale:(key) => localized(key, store.getters.language),
                     scrollTo(step){
                         const ref = typeof step === 'object' ? step.ref : step;
                         if(typeof step === 'object') this.onStep = step;

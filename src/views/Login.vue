@@ -3,22 +3,29 @@
         <transition name="fade" mode="out-in">
             <!-- NEW SCATTER -->
             <section key="new" class="new-scatter" v-if="isNewScatter && !restoringBackup">
-                <h1>You must be new here!</h1>
-                <h5>Just a few easy steps and we'll walk you through them. Let's start with your password.</h5>
+                <h1>{{locale(langKeys.LOGIN.NEW.Title)}}</h1>
+                <h5>{{locale(langKeys.LOGIN.NEW.SubTitle)}}</h5>
                 <OnboardingSvg />
 
                 <section class="inputs">
-                    <cin :focus="true" label="Choose a password" placeholder="Make sure it's a strong password!" type="password" v-on:enter="create" :text="password" v-on:changed="changed => bind(changed, 'password')"></cin>
-                    <section class="password-strength">
-                        <figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 100}">
+                    <cin :focus="true"
+                         :label="locale(langKeys.LOGIN.NEW.PasswordLabel)"
+                         :placeholder="locale(langKeys.LOGIN.NEW.PasswordPlaceholder)"
+                         type="password" v-on:enter="create" :text="password"
+                         v-on:changed="changed => bind(changed, 'password')"></cin>
 
-                        </figure>
+                    <section class="password-strength">
+                        <figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 100}"></figure>
                     </section>
-                    <cin label="Type your password again" placeholder="Twice is nice." type="password" v-on:enter="create" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
+
+                    <cin :label="locale(langKeys.LOGIN.NEW.PasswordConfirmLabel)"
+                         :placeholder="locale(langKeys.LOGIN.NEW.PasswordConfirmPlaceholder)"
+                         type="password" v-on:enter="create" :text="confirmPassword"
+                         v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
+
                     <br>
                     <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="create" text="Let's go!" blue="true"></btn>
-                    <br>
-                    <br>
+                    <br><br>
                     <btn :disabled="working" v-on:clicked="restoringBackup = true" text="I want to restore from backup" small="true"></btn>
                 </section>
             </section>
@@ -27,18 +34,19 @@
             <section key="existing" class="existing-scatter" v-if="!isNewScatter">
                 <section>
                     <figure class="badge">S</figure>
-                    <h1>Welcome Back</h1>
-                    <p>Enter your password to unlock your Scatter.</p>
+                    <h1>{{locale(langKeys.LOGIN.EXISTING.Title)}}</h1>
+                    <p>{{locale(langKeys.LOGIN.EXISTING.SubTitle)}}</p>
                     <br>
                     <br>
                     <cin style="width:350px;" :focus="true" big="1"
-                         placeholder="Password or Backup Phrase" type="password"
+                         :placeholder="locale(langKeys.LOGIN.EXISTING.PasswordPlaceholder)"
+                         type="password"
                          :loader-on-dynamic="working"
                          :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="changed => bind(changed, 'password')"
                          dynamic-button="arrow-right"
                     ></cin>
                     <section v-if="dPresses >= 10" class="bottom-stuck">
-                        <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" text="I need to reset my password"></btn>
+                        <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" :text="locale(langKeys.LOGIN.EXISTING.ResetButton)"></btn>
                     </section>
                 </section>
             </section>

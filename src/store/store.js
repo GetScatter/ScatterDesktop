@@ -49,7 +49,7 @@ const getters = {
     // Settings
     version:state =>        state.scatter.meta.version,
     networks:state =>       state.scatter.settings.networks || [],
-    language:state =>       state.scatter.settings.language || [],
+    language:state =>       state.scatter && state.scatter.hasOwnProperty('settings') ? state.scatter.settings.language : null,
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
