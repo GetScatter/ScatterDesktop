@@ -41,18 +41,12 @@
     "postinstall": "electron-rebuild --force"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.8",
-    "@fortawesome/free-solid-svg-icons": "^5.5.0",
-    "@fortawesome/vue-fontawesome": "^0.1.2",
     "@ledgerhq/hw-app-eth": "^4.23.0",
     "@ledgerhq/hw-transport-node-hid": "^4.22.0",
     "aes-oop": "^1.0.4",
-    "animate.css": "^3.7.0",
     "asn1-ber": "^1.0.9",
     "bip32-path": "^0.4.2",
     "bip39": "^2.5.0",
-    "electron-platform": "^1.2.0",
-    "electron-settings": "^3.2.0",
     "electron-store": "^2.0.0",
     "eos-rc-parser": "^1.0.4",
     "eosjs": "^16.0.9",
@@ -83,7 +77,6 @@
     "web3-provider-engine": "^14.0.6"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-pro": "^5.5.0",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.26.0",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
@@ -163,9 +156,7 @@
     "appId": "com.get-scatter.server",
     "artifactName": "${os}-${productName}-${version}-${arch}.${ext}",
     "asar": true,
-    "asarUnpack": [
-      "node_modules/node-notifier/vendor/**"
-    ],
+	"asarUnpack": ["node_modules/node-notifier/vendor/**"],
     "protocols": {
       "name": "electron-deep-linking",
       "schemes": [
