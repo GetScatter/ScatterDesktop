@@ -29,6 +29,7 @@
         border-radius:4px;
         color:$dark-blue;
         font-size: 16px;
+        font-weight: 500;
         transition: all 0.15s ease;
         transition-property: background, color, border;
 

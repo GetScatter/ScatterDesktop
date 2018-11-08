@@ -11,7 +11,7 @@ const Tokens = () => import('../views/Tokens')
 
 
 const Home = () => import('../views/Home')
-const Keypair = () => import('../views/Keypair')
+const NewKeypair = () => import('../views/NewKeypair')
 
 
 
@@ -19,7 +19,7 @@ const Keypair = () => import('../views/Keypair')
 export const RouteNames = {
     LOGIN:'login',
     HOME:'home',
-    KEYPAIR:'keypair',
+    NEW_KEYPAIR:'newKeypair',
     IDENTITY:'identity',
     TRANSFER:'transfer',
     RECEIVE:'receive',
@@ -36,7 +36,7 @@ const RouteViews = {
     [RouteNames.LOGIN]:Login,
     [RouteNames.ONBOARDING]:Onboarding,
     [RouteNames.HOME]:Home,
-    [RouteNames.KEYPAIR]:Keypair,
+    [RouteNames.NEW_KEYPAIR]:NewKeypair,
     [RouteNames.IDENTITY]:Identity,
     [RouteNames.TRANSFER]:Transfer,
     [RouteNames.TOKENS]:Tokens,
@@ -49,7 +49,6 @@ const RouteViews = {
 
 const RoutePaths = {
 	[RouteNames.HOME]: '/',
-	[RouteNames.KEYPAIR]: '/:id',
 };
 
 export class Routing {

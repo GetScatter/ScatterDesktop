@@ -3,13 +3,9 @@
         <section class="router-base">
 
             <menu-bar></menu-bar>
-            <user-bar v-if="unlocked"></user-bar>
-
-
-            <!--<transition name="slide-left" mode="out-in">-->
-                <!--<router-view class="shifter" :class="{'home':route === 'home'}"></router-view>-->
-            <!--</transition>-->
-
+            <transition name="slide-up">
+                <user-bar v-if="route === routeNames.HOME"></user-bar>
+            </transition>
 
             <section v-if="onboarding">
                 <terms></terms>
@@ -21,10 +17,9 @@
 
             <section class="app-content" v-else>
                 <transition name="slide-left" mode="out-in">
-                    <router-view class="shifter" :class="{'home':route === 'home'}"></router-view>
+                    <router-view></router-view>
                 </transition>
             </section>
-
 
             <popups></popups>
 
@@ -38,15 +33,10 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
     import {RouteNames, Routing} from '../vue/Routing'
-    import WindowService from '../services/WindowService'
-    import PopupService from '../services/PopupService'
-    import {Popup} from '../models/popups/Popup'
 
     export default {
         data(){ return {
             routeNames:RouteNames,
-            loggingIn:false,
-            collapsedMenu:false,
 
             steps: [
                 {
@@ -95,10 +85,10 @@
                 this[Actions.SET_SCATTER](scatter);
             },
             checkTour(){
-                if(!this.scatter) return;
-                if(!this.scatter.toured && !this.onboarding && this.unlocked && this.route === 'home'){
-                    this.$tours['scatter'].start();
-                }
+                // if(!this.scatter) return;
+                // if(!this.scatter.toured && !this.onboarding && this.unlocked && this.route === 'home'){
+                //     this.$tours['scatter'].start();
+                // }
             },
             ...mapActions([
                 Actions.SET_SCATTER
@@ -122,14 +112,6 @@
 <style lang="scss" rel="stylesheet/scss">
     @import '../_variables.scss';
 
-    .main {
-        background:#f8f8f8;
-        min-height:100vh;
-        position: relative;
-        display:flex;
-        flex-direction: column;
-    }
-
     .app-content {
         position:fixed;
         overflow-y: auto;
@@ -141,17 +123,6 @@
         z-index: 1;
         background: white;
         transition:all 0.24s ease-in-out;
-    }
-
-    .shifter {
-        position: relative;
-        flex: 1;
-        display: flex;
-
-
-        &.home {
-            flex-direction: column;
-        }
     }
 
     .view-base {

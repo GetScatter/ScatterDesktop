@@ -12,7 +12,6 @@ html, body {
   -webkit-user-select: none;
   -webkit-user-drag: none;
   -webkit-app-region: no-drag;
-  cursor: default;
 }
 
 body {
@@ -41,7 +40,7 @@ $speed:0.1s;
 .slide-down-enter {         transform: translate(0, 50%);  opacity:0;      }
 .slide-down-leave-to {      transform: translate(0, -50%);  opacity:0;     }
 .slide-up-enter {        transform: translate(0, -50%);   opacity:0;    }
-.slide-up-leave-to {     transform: translate(0, 50%);   opacity:0;     }
+.slide-up-leave-to {     transform: translate(0, -50%);   opacity:0;     }
 
 .slide-left-leave-active,
 .slide-left-enter-active,
@@ -51,7 +50,7 @@ $speed:0.1s;
   transition: $speed;
 }
 
-.slide-left-enter {         transform: translate(50%, 0);  opacity:0; }
+.slide-left-enter {         transform: translate(-50%, 0);  opacity:0; }
 .slide-left-leave-to {  transform: translate(-50%, 0); opacity:0; }
 .slide-right-enter {        transform: translate(50%, 0); opacity:0;  }
 .slide-right-leave-to {  transform: translate(50%, 0); opacity:0;  }
@@ -190,7 +189,7 @@ p {
 }
 
 .full-panel {
-  min-height:calc(100vh - 220px);
+  min-height:calc(100vh - 80px);
   width:100%;
 
   &.center-fold {
@@ -208,6 +207,10 @@ p {
       right:0;
     }
   }
+}
+
+.panel-container {
+  padding:40px 70px;
 }
 
 

@@ -98,6 +98,7 @@
             border-radius:4px;
             padding:0 15px;
             font-size: 18px;
+            cursor: text;
 
             &::-webkit-input-placeholder {
                 font-size: 18px;
