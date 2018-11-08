@@ -21,6 +21,7 @@ body {
   word-break: break-word;
   font-family: 'Raleway', sans-serif;
   background:#fff;
+  color:#393d3f;
 }
 
 a {
@@ -212,6 +213,7 @@ p {
 
 .action-bar {
   height:90px;
+  width:100%;
   display:flex;
   justify-content: space-between;
   align-items: center;

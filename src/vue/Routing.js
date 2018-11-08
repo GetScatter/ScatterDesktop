@@ -3,7 +3,6 @@ const Login = () => import('../views/Login')
 const Settings = () => import('../views/Settings')
 const PopOut = () => import('../views/PopOut')
 
-const Home = () => import('../views/Home')
 const Identity = () => import('../views/Identity')
 const Transfer = () => import('../views/Transfer')
 const Receive = () => import('../views/Receive')
@@ -11,11 +10,16 @@ const Permission = () => import('../views/Permission')
 const Tokens = () => import('../views/Tokens')
 
 
+const Home = () => import('../views/Home')
+const Keypair = () => import('../views/Keypair')
+
+
 
 
 export const RouteNames = {
     LOGIN:'login',
     HOME:'home',
+    KEYPAIR:'keypair',
     IDENTITY:'identity',
     TRANSFER:'transfer',
     RECEIVE:'receive',
@@ -32,6 +36,7 @@ const RouteViews = {
     [RouteNames.LOGIN]:Login,
     [RouteNames.ONBOARDING]:Onboarding,
     [RouteNames.HOME]:Home,
+    [RouteNames.KEYPAIR]:Keypair,
     [RouteNames.IDENTITY]:Identity,
     [RouteNames.TRANSFER]:Transfer,
     [RouteNames.TOKENS]:Tokens,
@@ -42,6 +47,11 @@ const RouteViews = {
     [RouteNames.POP_OUT]:PopOut,
 };
 
+const RoutePaths = {
+	[RouteNames.HOME]: '/',
+	[RouteNames.KEYPAIR]: '/:id',
+};
+
 export class Routing {
 
     static builder(){
@@ -50,7 +60,7 @@ export class Routing {
         let routesBuilder = {};
         routeNames.map(routeName => {
             routesBuilder[routeName] = {
-                path:routeName === RouteNames.LOGIN ? '' : '/'+routeName,
+	            path:RoutePaths.hasOwnProperty(routeName) ? RoutePaths[routeName] : `/${routeName}`,
                 name:routeName,
                 component: RouteViews[routeName]
             }
