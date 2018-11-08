@@ -37,7 +37,7 @@
                 Well, what are you waiting for?
             </section>
             <section class="action-bar short bottom centered">
-                <btn blue="1" style="width:300px;" text="Add Keys"></btn>
+                <btn v-on:clicked="newKeypair" blue="1" style="width:300px;" text="Add Keys"></btn>
             </section>
         </section>
 
@@ -51,6 +51,7 @@
     import PermissionService from '../services/PermissionService';
     import ElectronHelpers from '../util/ElectronHelpers';
     import {BlockchainsArray, blockchainName} from '../models/Blockchains';
+    import {RouteNames} from "../vue/Routing";
 
     let saveTimeout = null;
 
@@ -103,6 +104,12 @@
             });
         },
         methods:{
+	        newKeypair(){
+	            this.$router.push({name:RouteNames.KEYPAIR, params:{id:-1}});
+            },
+
+
+
             getAppData(origin){
                 const emptyResult = {
                     type:'',

@@ -64,6 +64,7 @@ import MenuSearch from './components/reusable/MenuSearch.vue'
 import SwitchComponent from './components/reusable/SwitchComponent.vue'
 import SliderComponent from './components/reusable/SliderComponent.vue'
 import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
+import BackBar from './components/reusable/BackBar.vue'
 
 // import {remote} = window.require('electron');
 // const app = remote.app;
@@ -90,6 +91,7 @@ class Main {
 			{tag:'cin', vue:InputComponent},
 			{tag:'sel', vue:SelectComponent},
 			{tag:'swch', vue:SwitchComponent},
+			{tag:'back-bar', vue:BackBar},
 
 			{tag:'menu-bar', vue:MenuBar},
 			{tag:'view-base', vue:ViewBase},
