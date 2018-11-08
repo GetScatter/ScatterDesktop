@@ -11,7 +11,6 @@ import PluginRepository from '../plugins/PluginRepository'
 Vue.use(Vuex);
 
 const state = {
-    splash:false,
     dappLogos:{},
     dappData:{},
 
@@ -33,7 +32,7 @@ const state = {
 
 const getters = {
     // App State
-    unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && state.scatter instanceof Scatter && !state.scatter.isEncrypted() && state.splash,
+    unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && state.scatter instanceof Scatter && !state.scatter.isEncrypted(),
 
 
     contacts:state =>       state.scatter.contacts || [],

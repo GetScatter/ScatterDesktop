@@ -2,6 +2,14 @@
     <section class="view-base">
         <section class="router-base">
 
+            <menu-bar></menu-bar>
+            <user-bar v-if="unlocked"></user-bar>
+
+
+            <!--<transition name="slide-left" mode="out-in">-->
+                <!--<router-view class="shifter" :class="{'home':route === 'home'}"></router-view>-->
+            <!--</transition>-->
+
 
             <section v-if="onboarding">
                 <terms></terms>
@@ -11,26 +19,16 @@
                 <router-view></router-view>
             </section>
 
-            <section v-else>
-                <section class="main" v-if="unlocked">
-
-                    <overhead></overhead>
-
-                    <transition name="slide-left" mode="out-in">
-                        <router-view class="shifter" :class="{'home':route === 'home'}"></router-view>
-                    </transition>
-
-                </section>
-
-                <section v-else>
-                    <auth></auth>
-                </section>
+            <section class="app-content" v-else>
+                <transition name="slide-left" mode="out-in">
+                    <router-view class="shifter" :class="{'home':route === 'home'}"></router-view>
+                </transition>
             </section>
 
 
             <popups></popups>
 
-            <v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>
+            <!--<v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>-->
         </section>
 
     </section>
@@ -121,15 +119,28 @@
     }
 </script>
 
-<style scoped lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss">
     @import '../_variables.scss';
 
     .main {
         background:#f8f8f8;
-        height:100vh;
+        min-height:100vh;
         position: relative;
         display:flex;
         flex-direction: column;
+    }
+
+    .app-content {
+        position:fixed;
+        overflow-y: auto;
+        overflow-x:hidden;
+        left: 0;
+        right: 0;
+        top: 80px;
+        bottom:0;
+        z-index: 1;
+        background: white;
+        transition:all 0.24s ease-in-out;
     }
 
     .shifter {
@@ -143,47 +154,8 @@
         }
     }
 
-
-
     .view-base {
-
-    }
-
-    .sidebar {
-        position:absolute;
-        top:0;
-        bottom:0;
-        left:0;
-        transition: left 0.6s ease;
-        transition-delay: 0.1s;
-        z-index:2;
-
-        &.hidden {
-            left:-450px;
-            transition-delay: 0s;
-        }
-    }
-
-    main {
-        width:calc(100% - 270px);
-        right:0;
-        position: absolute;
-        top:0;
-        bottom:0;
-        z-index:1;
-
-
-        &.expanded {
-            width:calc(100% - 450px);
-        }
-
-        &.no-sidebar {
-            width:100%;
-        }
-
-        &.collapsed-menu {
-            width:calc(100% - 70px);
-        }
+        min-height:100vh;
     }
 
     .router-base {
@@ -191,7 +163,6 @@
         display: flex;
         flex-direction: column;
         flex: 1;
-        height: 100vh;
     }
 
 

@@ -1,47 +1,405 @@
 <template>
-    <section class="login">
-        <!--<figure class="bg"></figure>-->
+    <section>
+        <transition name="fade" mode="out-in">
+            <!-- NEW SCATTER -->
+            <section key="new" class="new-scatter" v-if="isNewScatter && !restoringBackup">
+                <h1>You must be new here!</h1>
+                <h5>Just a few easy steps and we'll walk you through them. Let's start with your password.</h5>
+                <svg id="image-onboarding" viewBox="0 0 557 112" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g id="gs_desktop_home_pc-login-first" transform="translate(-131.000000, -298.000000)">
+                            <g id="Group-10" transform="translate(131.000000, 298.000000)">
+                                <path d="M482.747656,43.5 L483.444268,44.1935484 L533.495999,44.1935484 L532.799387,43.5 L482.747656,43.5 Z" id="Rectangle-Copy-23" stroke="#A7E5FE"></path>
+                                <path d="M149.21088,83.5 L149.907492,84.1935484 L168.052007,84.1935484 L167.355394,83.5 L149.21088,83.5 Z" id="Rectangle" stroke="#A7E5FE"></path>
+                                <circle id="Oval-Copy-3" stroke="#EFF0F0" fill="#FFFFFF" cx="433" cy="56" r="55.5"></circle>
+                                <circle id="Oval" stroke="#EFF0F0" fill="#FFFFFF" cx="107" cy="56" r="55.5"></circle>
+                                <circle id="Oval-Copy" stroke="#EFF0F0" fill="#FFFFFF" cx="269" cy="56" r="55.5"></circle>
+                                <g id="Group-9" transform="translate(223.000000, 11.000000)">
+                                    <circle id="Oval-Copy-5" stroke="#EFF0F0" stroke-width="10" fill="#FFFFFF" cx="46" cy="45" r="30"></circle>
+                                    <g id="Group-8" transform="translate(49.000000, 40.000000)">
+                                        <polygon id="Rectangle-Copy-18" fill="#FFFFFF" points="0 0 37 0 37 37"></polygon>
+                                        <polygon id="Rectangle" fill="#EFF0F0" points="4.93333333 14.8 27.1333333 14.8 27.1333333 37"></polygon>
+                                    </g>
+                                    <g id="Group-8-Copy" transform="translate(23.500000, 31.500000) rotate(180.000000) translate(-23.500000, -31.500000) translate(5.000000, 13.000000)">
+                                        <polygon id="Rectangle-Copy-18" fill="#FFFFFF" points="0 0 37 0 37 37"></polygon>
+                                        <polygon id="Rectangle" fill="#EFF0F0" points="4.93333333 14.8 27.1333333 14.8 27.1333333 37"></polygon>
+                                    </g>
+                                    <g id="Group-5" transform="translate(45.500000, 45.000000) rotate(45.000000) translate(-45.500000, -45.000000) translate(28.000000, -1.000000)" stroke-width="2">
+                                        <ellipse id="Oval" stroke="#393D3F" fill="#FFFFFF" cx="17.5" cy="74.3812878" rx="16.5" ry="16.4054054"></ellipse>
+                                        <ellipse id="Oval-Copy-8" stroke="#FFFFFF" fill="#62D0FD" cx="17.5" cy="74.3812878" rx="14.5" ry="14.4054054"></ellipse>
+                                        <ellipse id="Oval-Copy-6" stroke="#393D3F" fill="#FFFFFF" cx="17.5" cy="17.4054054" rx="16.5" ry="16.4054054"></ellipse>
+                                        <ellipse id="Oval-Copy-7" stroke="#FFFFFF" fill="#62D0FD" cx="17.5" cy="17.4054054" rx="14.5" ry="14.4324324"></ellipse>
+                                    </g>
+                                    <g id="eth" transform="translate(61.000000, 14.000000)" stroke="#C0ECFE" stroke-width="2">
+                                        <path d="M5.3920161,2.12659071 L1.36243042,9.76748325 L5.38871138,12.5156233 L9.50321457,9.76419966 L5.3920161,2.12659071 Z M7.12077919,15.2050952 L10.7983288,13.0792752 L9.46374861,11.6619361 L7.12077919,15.2050952 Z M5.189221,18.126097 L4.31481244,19.4484226 L6.00599373,19.4847793 L5.189221,18.126097 Z M3.51002734,15.3327975 L1.32514267,11.6982928 L-0.0684870826,13.0573679 L3.51002734,15.3327975 Z" id="Combined-Shape"></path>
+                                    </g>
+                                </g>
+                                <g id="Group-4" transform="translate(397.000000, 24.000000)">
+                                    <path d="M6,5 L66,5 C69.3137085,5 72,7.6862915 72,11 L72,51 C72,54.3137085 69.3137085,57 66,57 L6,57 C2.6862915,57 1.29399067e-15,54.3137085 8.8817842e-16,51 L8.8817842e-16,11 C4.82366169e-16,7.6862915 2.6862915,5 6,5 Z" id="Rectangle" fill="#62D0FD"></path>
+                                    <path d="M9.51294332,11.8704591 L56.9574341,46.1359246 C59.6437888,48.0760697 60.2487112,51.8265887 58.3085661,54.5129433 C57.1805456,56.074818 55.3711155,57 53.4444908,57 L6,57 C2.6862915,57 -3.14690143e-15,54.3137085 -3.55271368e-15,51 L1.77635684e-15,16.7345344 C1.37054459e-15,13.4208259 2.6862915,10.7345344 6,10.7345344 C7.26126703,10.7345344 8.49046034,11.1319991 9.51294332,11.8704591 Z" id="Rectangle-Copy-17" fill="#59BEE7" opacity="0.54531715"></path>
+                                    <path d="M31,3 C30.4477153,3 30,3.44771525 30,4 L30,8 C30,8.55228475 30.4477153,9 31,9 L41,9 C41.5522847,9 42,8.55228475 42,8 L42,4 C42,3.44771525 41.5522847,3 41,3 L31,3 Z" id="Rectangle-Copy-10" stroke="#393D3F" stroke-width="2" fill="#FFFFFF"></path>
+                                    <path d="M36,1 C35.4477153,1 35,1.44771525 35,2 C35,2.55228475 35.4477153,3 36,3 C36.5522847,3 37,2.55228475 37,2 C37,1.44771525 36.5522847,1 36,1 Z" id="Rectangle-Copy-11" stroke="#393D3F" stroke-width="2" fill="#FFFFFF"></path>
+                                    <g id="Group-2" transform="translate(10.000000, 17.000000)" fill="#FFFFFF">
+                                        <g id="Group-3">
+                                            <path d="M6.5,17 L19.5,17 C23.0898509,17 26,19.9101491 26,23.5 L26,28 C26,29.1045695 25.1045695,30 24,30 L2,30 C0.8954305,30 1.3527075e-16,29.1045695 0,28 L0,23.5 C-4.39629938e-16,19.9101491 2.91014913,17 6.5,17 Z" id="Rectangle-Copy-3"></path>
+                                            <path d="M34,0 L51,0 C51.5522847,-1.01453063e-16 52,0.44771525 52,1 L52,1 C52,1.55228475 51.5522847,2 51,2 L34,2 C33.4477153,2 33,1.55228475 33,1 L33,1 C33,0.44771525 33.4477153,1.01453063e-16 34,0 Z" id="Rectangle-Copy-4" opacity="0.6"></path>
+                                            <path d="M32,7 L51,7 C51.5522847,7 52,7.44771525 52,8 L52,8 C52,8.55228475 51.5522847,9 51,9 L32,9 C31.4477153,9 31,8.55228475 31,8 L31,8 C31,7.44771525 31.4477153,7 32,7 Z" id="Rectangle-Copy-5" opacity="0.6"></path>
+                                            <path d="M39,14 L51,14 C51.5522847,14 52,14.4477153 52,15 L52,15 C52,15.5522847 51.5522847,16 51,16 L39,16 C38.4477153,16 38,15.5522847 38,15 L38,15 C38,14.4477153 38.4477153,14 39,14 Z" id="Rectangle-Copy-7" opacity="0.6"></path>
+                                            <path d="M36,21 L51,21 C51.5522847,21 52,21.4477153 52,22 L52,22 C52,22.5522847 51.5522847,23 51,23 L36,23 C35.4477153,23 35,22.5522847 35,22 L35,22 C35,21.4477153 35.4477153,21 36,21 Z" id="Rectangle-Copy-6" opacity="0.6"></path>
+                                            <path d="M32,28 L51,28 C51.5522847,28 52,28.4477153 52,29 L52,29 C52,29.5522847 51.5522847,30 51,30 L32,30 C31.4477153,30 31,29.5522847 31,29 L31,29 C31,28.4477153 31.4477153,28 32,28 Z" id="Rectangle-Copy-8" opacity="0.6"></path>
+                                            <circle id="Oval" cx="13" cy="7" r="7"></circle>
+                                        </g>
+                                    </g>
+                                </g>
+                                <g id="Group-7" transform="translate(78.000000, 19.000000)">
+                                    <path d="M16.0229186,1.01245481 C16.0114594,1.01241104 16.0114594,1.01241104 16,1.01240228 C13.2385763,1.01240228 11,3.25097853 11,6.01240228 L11,58.2392934 C11,60.991771 13.2246326,63.2266242 15.9770814,63.2392408 L52.3835615,63.40612 C52.3950208,63.4061638 52.3950208,63.4061638 52.4064801,63.4061725 C55.1679039,63.4061725 57.4064801,61.1675963 57.4064801,58.4061725 L57.4064801,6.17928143 C57.4064801,3.42680376 55.1818475,1.19195057 52.4293988,1.17933396 L16.0229186,1.01245481 Z" id="Rectangle-Copy-5" stroke-opacity="0.566434556" stroke="#62D0FD" stroke-width="2" fill="#FFFFFF"></path>
+                                    <path d="M6.02757673,6.01158343 L45.3501099,6.19231649 C48.6530192,6.20749722 51.3225331,8.88930892 51.3225331,12.1922531 L51.3225331,68.4723683 C51.3225331,71.7860768 48.6362416,74.4723683 45.3225331,74.4723683 C45.3133409,74.4723683 45.3041486,74.4723472 45.2949564,74.4723049 L5.97242327,74.2915719 C2.66951396,74.2763911 4.8453861e-15,71.5945794 4.4408921e-15,68.2916352 L2.66453526e-15,12.0115201 C2.25872301e-15,8.69781156 2.6862915,6.01152006 6,6.01152006 C6.00919228,6.01152006 6.01838455,6.01154118 6.02757673,6.01158343 Z" id="Rectangle-Copy-3" fill="#62D0FD"></path>
+                                    <path d="M10.8021712,20.4048934 L44.0922765,64.847539 C46.0789018,67.4997049 45.5393745,71.2601882 42.8872086,73.2468134 C41.841601,74.0300338 40.5689332,74.4505833 39.2625286,74.4445789 L5.97242327,74.2915719 C2.66951396,74.2763911 1.29267242e-15,71.5945794 8.8817842e-16,68.2916352 L3.55271368e-15,24.0019967 C3.14690143e-15,20.6882882 2.6862915,18.0019967 6,18.0019967 C7.88981782,18.0019967 9.66919289,18.8923553 10.8021712,20.4048934 Z" id="Rectangle-Copy-16" fill="#59BEE7" opacity="0.54531715"></path>
+                                    <ellipse id="Oval" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" cx="25.7460972" cy="50.0322581" rx="8.66568483" ry="8.64516129"></ellipse>
+                                </g>
+                                <ellipse id="Oval" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" cx="180.82732" cy="42.8104839" rx="2.82731959" ry="2.81048387"></ellipse>
+                                <ellipse id="Oval-Copy-9" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" cx="37.1726804" cy="85.8104839" rx="3.82731959" ry="3.81048387"></ellipse>
+                                <polygon id="Star-Copy" fill="#62D0FD" points="202.481959 53.5823194 197.191415 55.6862814 199.309676 50.4314516 197.191415 45.1766218 202.481959 47.2805839 207.772503 45.1766218 205.654241 50.4314516 207.772503 55.6862814"></polygon>
+                                <polygon id="Star-Copy-2" fill="#62D0FD" points="337.481959 27.3103467 334.312735 28.5649611 335.581649 25.4314516 334.312735 22.2979421 337.481959 23.5525565 340.651182 22.2979421 339.382268 25.4314516 340.651182 28.5649611"></polygon>
+                                <polygon id="Star-Copy-5" fill="#62D0FD" points="502.481959 85.3103467 499.312735 86.5649611 500.581649 83.4314516 499.312735 80.2979421 502.481959 81.5525565 505.651182 80.2979421 504.382268 83.4314516 505.651182 86.5649611"></polygon>
+                                <polygon id="Star-Copy-6" fill="#62D0FD" points="12.5180412 62.3103467 9.3488178 63.5649611 10.6177316 60.4314516 9.3488178 57.2979421 12.5180412 58.5525565 15.6872647 57.2979421 14.4183509 60.4314516 15.6872647 63.5649611"></polygon>
+                                <path d="M180.21088,24.5 L180.907492,25.1935484 L199.052007,25.1935484 L198.355394,24.5 L180.21088,24.5 Z" id="Rectangle-Copy-7" stroke="#A7E5FE"></path>
+                                <path d="M338.21088,54.0649611 L338.907492,54.7585095 L357.052007,54.7585095 L356.355394,54.0649611 L338.21088,54.0649611 Z" id="Rectangle-Copy-22" stroke="#A7E5FE"></path>
+                                <path d="M504.21088,61.5 L504.907492,62.1935484 L523.052007,62.1935484 L522.355394,61.5 L504.21088,61.5 Z" id="Rectangle-Copy-24" stroke="#A7E5FE"></path>
+                                <path d="M346.21088,38.5 L346.907492,39.1935484 L365.052007,39.1935484 L364.355394,38.5 L346.21088,38.5 Z" id="Rectangle-Copy-8" stroke="#A7E5FE"></path>
+                                <path d="M536.21088,80.5 L536.907492,81.1935484 L555.052007,81.1935484 L554.355394,80.5 L536.21088,80.5 Z" id="Rectangle-Copy-25" stroke="#A7E5FE"></path>
+                                <path d="M1.59917532,80.5 L2.29578799,81.1935484 L20.4403025,81.1935484 L19.7436898,80.5 L1.59917532,80.5 Z" id="Rectangle-Copy-26" stroke="#A7E5FE"></path>
+                                <path d="M192.21088,68.5 L192.907492,69.1935484 L222.959223,69.1935484 L222.262611,68.5 L192.21088,68.5 Z" id="Rectangle-Copy-2" stroke="#A7E5FE"></path>
+                                <path d="M315.21088,68.5 L315.907492,69.1935484 L365.959223,69.1935484 L365.262611,68.5 L315.21088,68.5 Z" id="Rectangle-Copy-19" stroke="#A7E5FE"></path>
+                                <ellipse id="Oval-Copy-4" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" cx="318.069588" cy="84.891129" rx="7.93041237" ry="7.89112903"></ellipse>
+                                <ellipse id="Oval-Copy-10" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" cx="501.743148" cy="21.3024194" rx="4.43041237" ry="4.39112903"></ellipse>
+                                <path d="M94,39 L113,39 C113.552285,39 114,39.4477153 114,40 L114,40 C114,40.5522847 113.552285,41 113,41 L94,41 C93.4477153,41 93,40.5522847 93,40 L93,40 C93,39.4477153 93.4477153,39 94,39 Z" id="Rectangle-Copy-5" fill="#FFFFFF" opacity="0.6"></path>
+                                <path d="M94,46 L113,46 C113.552285,46 114,46.4477153 114,47 L114,47 C114,47.5522847 113.552285,48 113,48 L94,48 C93.4477153,48 93,47.5522847 93,47 L93,47 C93,46.4477153 93.4477153,46 94,46 Z" id="Rectangle-Copy-15" fill="#FFFFFF" opacity="0.6"></path>
+                                <path d="M43.2108797,62.5 L43.9074924,63.1935484 L62.0520069,63.1935484 L61.3553942,62.5 L43.2108797,62.5 Z" id="Rectangle-Copy" stroke="#A7E5FE"></path>
+                                <polygon id="Star" fill="#62D0FD" points="34.6082474 33.4489628 29.1956002 35.6065799 31.3627502 30.2177419 29.1956002 24.828904 34.6082474 26.9865211 40.0208947 24.828904 37.8537447 30.2177419 40.0208947 35.6065799"></polygon>
+                                <polygon id="Star-Copy-3" fill="#62D0FD" points="360.654639 93.2872275 355.241992 95.4448446 357.409142 90.0560066 355.241992 84.6671687 360.654639 86.8247858 366.067286 84.6671687 363.900136 90.0560066 366.067286 95.4448446"></polygon>
+                                <polygon id="Star-Copy-4" fill="#62D0FD" points="546.654639 61.8521886 541.241992 64.0098057 543.409142 58.6209677 541.241992 53.2321298 546.654639 55.3897469 552.067286 53.2321298 549.900136 58.6209677 552.067286 64.0098057"></polygon>
+                                <path d="M31.2108797,48.5 L31.9074924,49.1935484 L61.9592234,49.1935484 L61.2626107,48.5 L31.2108797,48.5 Z" id="Rectangle-Copy-6" stroke="#A7E5FE"></path>
+                                <g id="eos" transform="translate(241.139175, 65.000000)" stroke="#C0ECFE">
+                                    <g id="Group-9">
+                                        <path d="M7.65604799,1.53346657 L3.28354327,6.44868854 L7.64969448,18.7083067 L11.7327787,6.43812976 L7.65604799,1.53346657 Z" id="Path-7" stroke-width="2"></path>
+                                        <path d="M9.5914008,19.079797 L13.8474743,16.1542313 L12.6170784,10.07896 L9.5914008,19.079797 Z" id="Path-8" stroke-width="2"></path>
+                                        <path d="M5.73494074,19.2990589 L2.43647122,10.0330833 L1.20610437,16.4992128 L5.73494074,19.2990589 Z" id="Path-9" stroke-width="2"></path>
+                                        <path d="M7.4709618,7.34106658 L1.58623655,16.4560227 L7.46828939,20.3706162 L13.4645557,16.4535576 L7.4709618,7.34106658 Z" id="Path-10" stroke-width="2"></path>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+
+                <section class="inputs">
+                    <cin :focus="true" label="Choose a password" placeholder="Make sure it's a strong password!" type="password" v-on:enter="create" :text="password" v-on:changed="changed => bind(changed, 'password')"></cin>
+                    <section class="password-strength">
+                        <figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 100}">
+
+                        </figure>
+                    </section>
+                    <cin label="Type your password again" placeholder="Twice is nice." type="password" v-on:enter="create" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
+                    <br>
+                    <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="create" text="Let's go!" blue="true"></btn>
+                    <br>
+                    <br>
+                    <btn :disabled="working" v-on:clicked="restoringBackup = true" text="I want to restore from backup" small="true"></btn>
+                </section>
+            </section>
+
+            <!-- LOGIN -->
+            <section key="existing" class="existing-scatter" v-if="!isNewScatter">
+                <section>
+                    <figure class="badge">S</figure>
+                    <h1>Welcome Back</h1>
+                    <p>Enter your password to unlock your Scatter.</p>
+                    <br>
+                    <br>
+                    <cin style="width:350px;" :focus="true" big="1"
+                         placeholder="Password or Backup Phrase" type="password"
+                         :loader-on-dynamic="working"
+                         :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="changed => bind(changed, 'password')"
+                         dynamic-button="arrow-right"
+                    ></cin>
+                    <section v-if="dPresses >= 10" class="bottom-stuck">
+                        <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" text="I need to reset my password"></btn>
+                    </section>
+                </section>
+            </section>
+
+            <!-- IMPORT -->
+            <section key="import" class="import-scatter"><!--  v-if="isNewScatter && restoringBackup"> -->
+                <section>
+                    <h1>Restore from backup</h1>
+                    <p>If you have a backup for your Scatter you can import it here by loading it into Scatter. You will still need the password to unlock it.</p>
+
+                    <img src="../assets/import_backup.png" style="margin:10px 0 20px;" />
+
+                    <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="importBackup" text="Choose your Backup" blue="true"></btn>
+                    <br>
+                    <br>
+                    <btn :disabled="working" v-on:clicked="restoringBackup = false" text="I want to start from scratch" small="true"></btn>
+                </section>
+            </section>
+        </transition>
+
     </section>
 </template>
 
 <script>
-    import { mapActions, mapGetters, mapState } from 'vuex'
+	import { mapActions, mapGetters, mapState } from 'vuex'
+	import * as Actions from '../store/constants';
+	import {RouteNames} from '../vue/Routing'
 
-    export default {
-        name: 'Login',
-        data () {return {
+	import SocketService from '../services/SocketService'
+	import BackupService, {getFileLocation} from '../services/BackupService'
+	import PasswordService from '../services/PasswordService'
+	import StorageService from '../services/StorageService'
+	import PopupService from "../services/PopupService";
+	import {Popup} from '../models/popups/Popup'
+	const { remote } = window.require('electron');
+	const fs = window.require('fs');
 
-        }},
-        computed:{
-            ...mapState([
-                'scatter'
-            ]),
-            ...mapGetters([
-                'accounts',
-                'networks',
-            ])
-        },
-        mounted(){
 
-        }
-    }
+	export default {
+		name: 'Auth',
+		data () {return {
+			password:'',
+			confirmPassword:'',
+            working:false,
+            restoringBackup:false,
+			dPresses:0,
+		}},
+		computed: {
+			...mapState([
+				'scatter'
+			]),
+            hide(){
+                return false;
+            },
+			isNewScatter(){
+				return this.scatter === null;
+			},
+            passwordStrength(){
+				const special = "!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?".split('');
+				const p = this.password;
+				let points = 0;
+
+				const upper = p.split('').filter(x => x === x.toUpperCase()).length;
+				points += upper < 5 ? upper : (5 * 2) + (upper-5);
+
+				const specs = p.split('').filter(x => special.includes(x)).length;
+				points += specs < 5 ? specs : (5 * 2) + (specs-5);
+
+				points += p.length;
+
+				const good = 60;
+				const percentage = points / good > 1 ? 1 : points / good;
+				return (percentage*100).toString();
+            }
+		},
+		mounted(){
+			this.password = '';
+			this.confirmPassword = '';
+			document.addEventListener('keydown', this.modifyDPresses, true);
+		},
+		destroyed(){
+			document.removeEventListener('keydown', this.modifyDPresses, true);
+		},
+		methods:{
+			modifyDPresses(e){
+				if(e.which === 68) this.dPresses++;
+				else this.dPresses = 0;
+			},
+			pushTo(route){
+				this.$router.push({name:route});
+			},
+			async create(){
+				if(this.working) return;
+				this.working = true;
+
+				if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) {
+					this.working = false;
+					return false;
+				}
+
+				setTimeout(async () => {
+					await this[Actions.CREATE_SCATTER](this.password);
+					this.password = '';
+					this.confirmPassword = '';
+					this.pushTo(RouteNames.ONBOARDING);
+                }, 100);
+			},
+			async unlock(){
+				if(this.working) return;
+				this.working = true;
+
+				const logIn = async () => {
+					await SocketService.initialize();
+					this.pushTo(RouteNames.HOME);
+				};
+
+				setTimeout(async () => {
+					await this[Actions.SET_SEED](this.password);
+					await this[Actions.LOAD_SCATTER]();
+
+					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
+						logIn();
+					} else {
+						this.working = false;
+						PopupService.push(Popup.snackbar("Bad Password", "ban"))
+					}
+				}, 400)
+			},
+			importBackup(){
+				const file = getFileLocation()[0];
+				if(!file) return;
+
+				fs.readFile(file, 'utf-8', (err, data) => {
+					if(err) return alert("Could not read the backup file.");
+
+					const [obj, salt] = data.split('|SLT|');
+					if(!obj || !salt) return alert("Error parsing backup");
+
+					StorageService.setSalt(salt);
+					StorageService.setScatter(obj);
+					location.reload();
+				});
+			},
+			quit(){
+				remote.app.quit();
+			},
+			destroy(){
+				PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash-o", "Yes", async accepted => {
+					if(!accepted) return false;
+
+					await SocketService.close();
+					await StorageService.removeScatter();
+					this.$router.push('/');
+				}, "No"))
+			},
+			...mapActions([
+				Actions.SET_SEED,
+				Actions.CREATE_SCATTER,
+				Actions.LOAD_SCATTER,
+			])
+		}
+	}
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables.scss";
+    @import "../_variables";
 
-    .login {
-        /*position: relative;*/
-        /*height:100vh;*/
-        /*width:100%;*/
-        /*-webkit-app-region: drag;*/
-
-        .bg {
-            position:absolute;
-            top:0; bottom:0; left:0; right:0;
-            background:url(https://images.unsplash.com/photo-1478515463067-d20f52aace26?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=899a8459cffc394ab9d49544618503ff&auto=format&fit=crop&w=968&q=80);
-            background-size:cover;
-        }
+    #image-onboarding {
+        width:100%;
+        margin:2rem 0;
     }
+
+    .new-scatter {
+        text-align:center;
+        width:100%;
+        padding:60px 80px;
+
+        .inputs {
+            max-width:400px;
+            margin:0 auto;
+        }
+
+        .password-strength {
+            width:100%;
+            height:14px;
+            line-height: 14px;
+            margin-top:-23px;
+            margin-bottom:20px;
+            border-radius:4px;
+            border-top-left-radius:0;
+            border-top-right-radius:0;
+            overflow: hidden;
+            background:#ffffff;
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+
+            span {
+                color:#fff;
+                font-size: 9px;
+                position: absolute;
+                top:0;
+                bottom:0;
+                left:0;
+                right:0;
+
+                &.dark {
+                    color:#333;
+                }
+            }
+
+            .bar {
+                background:$light-blue;
+                height:100%;
+                width:100%;
+                height: 4px;
+                margin: 4px;
+
+                transition: all 0.5s ease;
+                transition-property: width, background;
+
+                &.red {
+                    background:$red;
+                }
+            }
+        }
+
+    }
+
+    .existing-scatter {
+        text-align:center;
+        width:100%;
+        min-height:calc(100vh - 80px);
+        padding:60px 80px;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        position: relative;
+
+        .badge {
+            font-family: 'Grand Hotel', sans-serif;
+            height:120px;
+            line-height: 135px;
+            padding-right:3px;
+            width:120px;
+            box-shadow:0 0 30px rgba(0,0,0,0.08), 0 0 20px rgba(0,0,0,0.04);
+            border-radius:50%;
+            color:$light-blue;
+            font-size: 88px;
+            display:inline-block;
+            margin-bottom:50px;
+        }
+
+        .bottom-stuck {
+            position:absolute;
+            bottom:20px;
+            left:0;
+            right:0;
+        }
+
+    }
+
+    .import-scatter {
+        text-align:center;
+        width:100%;
+        min-height:calc(100vh - 80px);
+        padding:60px 80px;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        position: relative;
+
+
+    }
+
 
 </style>
