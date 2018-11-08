@@ -394,6 +394,7 @@
         -webkit-app-region: drag;
         padding:15px;
         overflow: hidden;
+        margin-top:150px;
 
         .logo {
             line-height: 40px;

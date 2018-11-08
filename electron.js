@@ -87,8 +87,8 @@ app.on('ready', () => {
 const createScatterInstance = () => {
 	app.setAsDefaultProtocolClient('scatter');
 
-	const createMainWindow = (show = true) => new BrowserWindow({
-		width: 600,
+	const createMainWindow = (show, backgroundColor) => new BrowserWindow({
+		width: 800,
 		height: 800,
 		frame: false,
 		radii: [5,5,5,5],
@@ -98,15 +98,15 @@ const createScatterInstance = () => {
 		minHeight:580,
 		titleBarStyle:'hiddenInset',
 		vibrancy:'appearance-based',
-		backgroundColor: '#62D0FD',
-		show: false, 
+		backgroundColor,
+		show,
 	});
 
-	mainWindow = createMainWindow(false);
+	mainWindow = createMainWindow(false, '#62D0FD');
 
 
 
-	const splash = createMainWindow(true);
+	const splash = createMainWindow(true, '#fff');
 	splash.loadURL(splashScreen);
 	mainWindow.loadURL(mainUrl(false));
 
@@ -117,7 +117,7 @@ const createScatterInstance = () => {
   		mainWindow.focus(); 
 	});
 
-	// mainWindow.openDevTools();
+	mainWindow.openDevTools();
 	mainWindow.loadURL(mainUrl(false));
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => app.quit());

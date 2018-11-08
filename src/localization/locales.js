@@ -1,6 +1,17 @@
-import * as KEYS from './keys';
+import KEYS from './keys';
+import ObjectHelpers from '../util/ObjectHelpers'
+
+
+/*************************************/
+/*          Add imports here         */
+/*************************************/
 
 import english from './languages/english';
+
+
+/*************************************/
+/*         Add languages here        */
+/*************************************/
 
 export const LANG = {
     ENGLISH: 'English',
@@ -10,15 +21,33 @@ const languages = {
     [LANG.ENGLISH]:english,
 };
 
-export const locales = () => {
+/*************************************/
+
+
+
+
+
+
+
+export const createLocales = () => {
     return Object.keys(LANG).reduce((langobj, lang) => {
-        langobj[lang] = Object.keys(KEYS).reduce((keyobj, key) => {
-            keyobj[KEYS[key]] = languages[LANG[lang]][KEYS[key]];
+        langobj[LANG[lang]] = ObjectHelpers.flattenObject(KEYS).reduce((keyobj, key) => {
+            keyobj[key] = languages[LANG[lang]][key];
             return keyobj;
         }, {});
-        return langobj;
+	    return langobj;
     }, {});
 };
 
-export const getLangKey = lang => Object.keys(LANG).find(key => LANG[key] === lang);
-export const localized = (key, language) => locales()[language][key] || locales()['ENGLISH'][key]
+let locs;
+const locales = () => {
+    if(!locs) locs = createLocales();
+    return locs;
+}
+
+export const localized = (key, args, language) => {
+    if(!language) language = LANG.ENGLISH;
+    let locale = locales()[language];
+    if(!locale || !locale.hasOwnProperty(key)) locale = locales()[LANG.ENGLISH];
+    return locale[key](args);
+}
