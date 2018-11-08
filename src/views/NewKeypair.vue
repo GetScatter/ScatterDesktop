@@ -21,7 +21,12 @@
                 <br>
                 <br>
 
-                <FullWidthRow :items="importTypes" />
+                <transition name="slide-left" mode="out-in">
+                    <FullWidthRow :items="importTypes" key="select" v-if="importState === IMPORT_STATES.SELECT" />
+                    <ImportTextKey key="text" v-if="importState === IMPORT_STATES.TEXT" />
+                    <ImportHardwareKey key="text" v-if="importState === IMPORT_STATES.HARDWARE" />
+                    <ImportQRKey key="text" v-if="importState === IMPORT_STATES.QR" />
+                </transition>
             </section>
         </transition>
 
@@ -33,6 +38,9 @@
     import * as Actions from '../store/constants';
     import {RouteNames, Routing} from '../vue/Routing'
     import FullWidthRow from '../components/reusable/FullWidthRow';
+    import ImportTextKey from '../components/panels/keypair/ImportTextKey';
+    import ImportHardwareKey from '../components/panels/keypair/ImportHardwareKey';
+    import ImportQRKey from '../components/panels/keypair/ImportQRKey';
 
     const STATES = {
     	SELECT:'select',
@@ -49,7 +57,12 @@
     };
 
     export default {
-    	components:{ FullWidthRow },
+    	components:{
+    		FullWidthRow,
+		    ImportTextKey,
+		    ImportHardwareKey,
+		    ImportQRKey
+        },
         data () {return {
             newKeyTypes:[],
             state:STATES.SELECT,
@@ -79,16 +92,17 @@
 
 	        this.importTypes = [
 		        {icon:'', title:'Import private key as text', description:`If you would like to type in or paste in your private key`,
-                    action:'Select', handler:() => this.importState = IMPORT_STATES.TEXT},
+                    action:'Text', handler:() => this.importState = IMPORT_STATES.TEXT},
 		        {icon:'', title:'Import from hardware wallet', description:'If you have a supported hardware wallet',
-                    action:'Select', handler:() => this.importState = IMPORT_STATES.HARDWARE},
+                    action:'Hardware', handler:() => this.importState = IMPORT_STATES.HARDWARE},
 		        {icon:'', title:'Import private key from a QR code', description:`If you have an encrypted paper wallet QR code`,
-                    action:'Select', handler:() => this.importState = IMPORT_STATES.QR},
+                    action:'QR', handler:() => this.importState = IMPORT_STATES.QR},
 	        ];
 
         },
         methods:{
 	        back(){
+	        	if(this.importState !== IMPORT_STATES.SELECT) return this.importState = IMPORT_STATES.SELECT;
 	        	if(this.state !== STATES.SELECT) return this.state = STATES.SELECT;
 	            this.$router.push({name:RouteNames.HOME});
             },

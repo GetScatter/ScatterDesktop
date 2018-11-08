@@ -45,6 +45,7 @@
                          :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="changed => bind(changed, 'password')"
                          dynamic-button="arrow-right"
                     ></cin>
+                    <span class="locked" v-if="lockedTimeLeft > 0">Locked: {{formatTime(lockedTimeLeft)}}</span>
                     <section v-if="dPresses >= 10" class="bottom-stuck">
                         <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" :text="locale(langKeys.LOGIN.EXISTING.ResetButton)"></btn>
                     </section>
@@ -94,6 +95,15 @@
 	const { remote } = window.require('electron');
 	const fs = window.require('fs');
 
+	const lockoutTime = 1000*60*5;
+	const resetLockout = () => window.localStorage.removeItem('lockout');
+	const getLockout = () => JSON.parse(window.localStorage.getItem('lockout') || JSON.stringify({tries:0, stamp:0}));
+	const setLockout = () => {
+		const lockout = getLockout();
+		lockout.tries++;
+		lockout.stamp = +new Date();
+		return window.localStorage.setItem('lockout', JSON.stringify(lockout));
+    };
 
 	export default {
 		components:{ OnboardingSvg },
@@ -103,6 +113,7 @@
             working:false,
             restoringBackup:false,
 			dPresses:0,
+            lockedOutTime:+new Date() + 10000,
 		}},
 		computed: {
 			...mapState([
@@ -130,11 +141,15 @@
 				const good = 60;
 				const percentage = points / good > 1 ? 1 : points / good;
 				return (percentage*100).toString();
+            },
+            lockedTimeLeft(){
+				return (this.lockedOutTime - this.now)/1000;
             }
 		},
 		mounted(){
 			this.password = '';
 			this.confirmPassword = '';
+			this.lockedOutTime = getLockout().stamp + lockoutTime;
 			document.addEventListener('keydown', this.modifyDPresses, true);
 		},
 		destroyed(){
@@ -149,6 +164,7 @@
 				this.$router.push({name:route});
 			},
 			async create(){
+				resetLockout();
 				if(this.working) return;
 				this.working = true;
 
@@ -165,7 +181,13 @@
                 }, 100);
 			},
 			async unlock(){
-				if(this.working) return;
+				const lockout = getLockout();
+                if(lockout.tries >= 5 && +new Date() < lockout.stamp + lockoutTime){
+                	this.lockedOutTime = lockout.stamp + lockoutTime;
+	                return PopupService.push(Popup.snackbar("You have been locked out temporarily.", "ban"));
+                }
+
+                if(this.working) return;
 				this.working = true;
 
 				setTimeout(async () => {
@@ -173,11 +195,13 @@
 					await this[Actions.LOAD_SCATTER]();
 
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
+						resetLockout();
 						await SocketService.initialize();
 						this.pushTo(RouteNames.HOME);
 					} else {
 						this.working = false;
-						PopupService.push(Popup.snackbar("Bad Password", "ban"))
+						PopupService.push(Popup.snackbar("Bad Password", "ban"));
+						setLockout();
 					}
 				}, 400)
 			},
@@ -289,6 +313,15 @@
         .bottom-stuck {
             position:absolute;
             bottom:20px;
+            left:0;
+            right:0;
+        }
+
+        .locked {
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            bottom:10px;
             left:0;
             right:0;
         }

@@ -35,7 +35,14 @@ export default class VueInitializer {
             Vue.mixin({
                 data(){ return {
                     langKeys:LANG_KEYS,
+                    workingScreen:null,
+                    now:0,
                 }},
+                mounted(){
+                    setInterval(() => {
+                        this.now = +new Date();
+                    }, 1000);
+                },
                 methods: {
 	                locale:(key, ...args) => localized(key, args, store.getters.language),
                     formatNumber(num, commaOnly = false){
@@ -47,6 +54,18 @@ export default class VueInitializer {
                         return num > 999999999 ? toComma((num/1000000000).toFixed(1)) + ' B' :
                             num > 999999 ? toComma((num/1000000).toFixed(1)) + ' M' :
                                 num > 999 ? toComma((num/1000).toFixed(1)) + ' K' : num
+                    },
+	                formatTime(milliseconds){
+	                    const formatTimeNumber = n => {
+		                    if(!n) return '00';
+		                    if(n.toString().length === 1) n = '0'+n;
+		                    if(n.toString().length === 0) n = '00';
+		                    return n;
+                        };
+
+	                    const seconds = Math.trunc(milliseconds) % 60;
+		                const minutes = Math.trunc(milliseconds / 60) % 60;
+                        return `${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`;
                     },
                     bind(changed, dotNotation) {
                         let props = dotNotation.split(".");

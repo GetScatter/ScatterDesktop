@@ -23,6 +23,16 @@
 
             <popups></popups>
 
+            <transition name="fade" mode="out-in">
+                <section class="working-screen" v-if="workingScreen">
+                    <section>
+                        <h5 v-if="workingScreen.hasOwnProperty('title')">{{workingScreen.title}}</h5>
+                        <br>
+                        <figure class="fa fa-spin spinner"></figure>
+                    </section>
+                </section>
+            </transition>
+
             <!--<v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>-->
         </section>
 
@@ -111,6 +121,26 @@
 
 <style lang="scss" rel="stylesheet/scss">
     @import '../_variables.scss';
+
+    .working-screen {
+        background:#fff;
+        position:fixed;
+        top:80px;
+        left:0;
+        right:0;
+        bottom:0;
+        z-index:9999999;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        .spinner {
+            width:36px;
+            height:36px;
+            background:red;
+        }
+    }
 
     .app-content {
         position:fixed;

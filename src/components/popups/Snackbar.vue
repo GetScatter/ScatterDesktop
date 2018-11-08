@@ -42,7 +42,10 @@
         display:inline-block;
 
         margin-top:10px;
+
         background:$light-blue;
+        background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
+
         color:white;
         padding:10px 0;
         border-radius:40px;
@@ -64,6 +67,7 @@
                 border-radius:50%;
                 color:$dark-grey;
                 font-size:16px;
+                box-shadow:0 2px 3px rgba(0,0,0,0.2);
             }
         }
 
@@ -71,8 +75,10 @@
             vertical-align: middle;
             display:inline-block;
             padding-right:20px;
+            padding-bottom:3px;
             color:white;
             font-size:13px;
+            font-weight: bold;
 
             &.no-icon {
                 padding:0 20px;
