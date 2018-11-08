@@ -42,17 +42,16 @@
         display:inline-block;
 
         margin-top:10px;
-        background:$light-blue;
-        color:white;
+        background:#fff;
         padding:10px 0;
-        border-radius:40px;
-        box-shadow:0 6px 28px rgba(0,0,0,0.12);
-        border:1px solid $light-blue;
+        border-radius:4px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2), 0 10px 50px rgba(0,0,0,0.1), 0 0 250px rgba(0,0,0,0.1);
+        border:1px solid $medium-grey;
         text-align:left;
 
         .icon {
             display:inline-block;
-            padding:0 10px;
+            padding:0 20px;
 
             i {
                 display:inline-block;
@@ -60,9 +59,9 @@
                 width:30px;
                 line-height:30px;
                 text-align:center;
-                background:white;
+                background:$medium-grey;
                 border-radius:50%;
-                color:$dark-grey;
+                color:#fff;
                 font-size:16px;
             }
         }
@@ -71,7 +70,7 @@
             vertical-align: middle;
             display:inline-block;
             padding-right:20px;
-            color:white;
+            color:$dark-grey;
             font-size:13px;
 
             &.no-icon {

@@ -1,17 +1,13 @@
 <template>
-    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'small':small}">
-        <i class="fal " :class="'fa-'+icon" v-if="icon"></i>
-        <span v-else>
-            <i class="fal fa-spinner fa-spin" v-if="loading"></i>
-            <span v-else>{{text}}</span>
-        </span>
+    <button :disabled="disabled" v-on:click="emit" :class="{'secondary':secondary, 'large':large, 'full':full, 'red':red}">
+        {{text}}
     </button>
 </template>
 
 <script>
     export default {
         methods: { emit(){ this.$emit('clicked') } },
-        props:['text', 'icon', 'blue', 'disabled', 'small', 'loading']
+        props:['text', 'red', 'disabled', 'full', 'large', 'secondary']
     }
 </script>
 
@@ -20,45 +16,96 @@
 
     button {
         cursor: pointer;
-        height:44px;
-        padding:0 15px;
-        width:100%;
-        background:transparent;
+        padding:0 20px;
+        height:40px;
+        line-height:39px;
+        border:1px solid $dark-blue;
         outline:0;
-        border:1px solid #dfe0e1;
-        border-radius:4px;
-        color:$dark-blue;
-        font-size: 16px;
+        background:$light-blue;
+        border-radius:2px;
+        color:#fff;
+        font-size:13px;
+        font-weight: bold;
+        margin-top:10px;
+
         transition: all 0.15s ease;
         transition-property: background, color, border;
-
-        &.small {
-            height:32px;
-            font-size: 13px;
-            font-weight: bold;
-            width:auto;
-            padding:0 10px;
-        }
-
-        &.blue {
-            border:1px solid rgba(0,0,0,0);
-            color:#fff;
-            background:$light-blue;
-        }
-
-        &:hover {
-            border:1px solid rgba(0,0,0,0.22);
-        }
-
-        &:active {
-            border:1px solid $dark-blue;
-            background:rgba(0,0,0,0.04);
-        }
 
         &:disabled {
             opacity:0.4;
             cursor: not-allowed;
         }
 
+        &.head {
+            width:100%;
+        }
+
+        &.full {
+            width:100%;
+        }
+
+        &.large {
+            height:50px;
+            line-height:49px;
+            font-size:16px;
+        }
+
+        &:not(:disabled){
+
+            &:hover {
+                background:transparent;
+                border:1px solid $dark-blue;
+                color:$dark-blue;
+            }
+
+            &:active {
+                background:$dark-blue;
+                border:1px solid transparent;
+                color:#fff;
+            }
+
+        }
+
+        &.red {
+            background:$red;
+            border:1px solid transparent;
+            color:#fff;
+
+            &:not(:disabled){
+
+                &:hover {
+                    background:transparent;
+                    border:1px solid $red;
+                    color:$red;
+                }
+
+                &:active {
+                    background:$dark-red;
+                    border:1px solid transparent;
+                    color:#fff;
+                }
+
+            }
+        }
+
+        &.secondary {
+            background:transparent;
+            border:1px solid $dark-blue;
+            color:$dark-blue;
+
+            &:not(:disabled) {
+                &:hover {
+                    background: $light-blue;
+                    border: 1px solid transparent;
+                    color: #fff;
+                }
+
+                &:active {
+                    background: $dark-blue;
+                    border: 1px solid transparent;
+                    color: #fff;
+                }
+            }
+        }
     }
 </style>

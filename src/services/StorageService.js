@@ -14,8 +14,6 @@ const app = remote.app;
 const dataPath = app.getPath('userData');
 const fs = window.require('fs');
 
-const path = name => `${dataPath}/${name}.json`;
-
 let saveResolvers = [];
 let saveTimeouts = [];
 const clearSaveTimeouts = () => {
@@ -25,6 +23,7 @@ const clearSaveTimeouts = () => {
 };
 
 const safeSetScatter = async (scatter, resolver) => {
+	const path = name => `${dataPath}/${name}.json`;
 	const retry = () => saveTimeouts.push(
 		setTimeout(() => safeSetScatter(scatter, resolver), 50)
 	);

@@ -1,87 +1,91 @@
 <template>
-    <section class="home">
+    <section>
 
-        <!-- <section class="top-bar">
-            <section>
-                <btn small="1" text="Nathan James"></btn>
+        <!-- IDENTITY -->
+        <section class="identity">
+            <!-- INFO -->
+            <section class="info">
+                <figure class="name">{{identity.name}}</figure>
+                <figure class="description">This is your Identity.</figure>
             </section>
 
+            <!-- ACTIONS -->
             <section class="actions">
-                <figure class="action">
-                    <font-awesome-icon icon="cog" />
-                </figure>
-
-                <figure class="action">
-                    <font-awesome-icon icon="sync" />
-                    <section class="percentage">
-                        <figure class="bar"></figure>
-                    </section>
-                </figure>
-            </section>
-        </section> -->
-
-        <section class="action-bar short" v-if="keypairs.length">
-            <section>
-                <btn text="Placeholder Placeholder"></btn>
-                <btn text="Exchange"></btn>
-            </section>
-            <section>
-                <btn text="Send"></btn>
-                <btn text="Receive"></btn>
+                <router-link :to="{name:'identity'}"  class="action" v-tooltip="'Edit'">
+                    <i class="fa fa-pencil"></i>
+                </router-link>
             </section>
         </section>
 
-        <section class="full-panel center-fold" v-if="keypairs.length">
-            <section>
-                
-                <section id="image-piggy-waiting">
-                    <svg id="image-piggy-butt" class="animated bounceInDown" width="93px" height="110px" viewBox="0 0 93 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <g id="gs_desktop_home_pc-firsttime" transform="translate(-354.000000, -285.000000)">
-                                <g id="Group-2" transform="translate(354.000000, 282.000000)">
-                                    <path d="M81.976478,106.704314 L89.6003704,91.9453625 L74.9013956,99.2328414 C74.1478368,99.6064418 73.585721,100.27922 73.3520542,101.087198 C72.891755,102.678829 73.808881,104.342248 75.4005124,104.802547 L81.976478,106.704314 Z" id="Path-2-Copy-2" stroke="#393D3F" stroke-width="2" fill="#393D3F" transform="translate(82.060685, 98.794007) rotate(210.000000) translate(-82.060685, -98.794007) "></path>
-                                    <g id="Group-7" transform="translate(13.872931, 89.033872) scale(-1, 1) rotate(10.000000) translate(-13.872931, -89.033872) translate(1.372931, 80.033872)" fill="#FFFFFF" stroke="#393D3F" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                                        <path d="M9.05919434,5.54980469 C9.05919434,10.0302734 16.0663712,13.8012695 21.2511412,11.0507812 C24.7076546,9.2171224 25.5495194,6.68733724 23.7767357,3.46142578 C22.9732452,6.72900391 20.6705695,8.36279297 16.8687085,8.36279297 C13.0668475,8.36279297 11.3518302,6.72900391 11.7236566,3.46142578 C9.94734842,1.86669922 9.05919434,2.56282552 9.05919434,5.54980469 Z" id="Path-4"></path>
-                                        <path d="M6.23567094,17.3183594 C19.5729708,17.3183594 21.116856,3 15.3240318,1 C9.53120767,-1 7.24580719,5.53833008 9.92410928,5.53833008 C12.6024114,5.53833008 13.7188201,5.37744141 12.1338111,8.1496582 C10.5488021,10.921875 5.57706986,11.6756375 0.591552734,10.3342285" id="Path-3"></path>
-                                    </g>
-                                    <g id="Group-9" transform="translate(50.500000, 55.000000) scale(-1, 1) translate(-50.500000, -55.000000) translate(11.000000, 0.000000)">
-                                        <path d="M9.43099072,20.3554404 L21.1004746,14.8445713 L11.5824822,11.7919221 C10.9709477,11.5957883 10.3126128,11.601076 9.70430768,11.8070075 C8.13494303,12.3382895 7.29341079,14.0412001 7.82469282,15.6105647 L9.43099072,20.3554404 Z" id="Path-2-Copy" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(15.242325, 16.193677) scale(-1, 1) rotate(80.000000) translate(-15.242325, -16.193677) "></path>
-                                        <path d="M40.3642812,7.9907474 C38.9637723,7.79889687 37.5518247,7.70263761 36.1382364,7.70263761 C18.9410633,7.70263761 5,21.6437009 5,38.840874 L5,63.6094181 L4.88915275,63.824798 C2.63149849,68.2114967 1.45370343,73.073786 1.45370343,78.0073575 C1.45370343,95.1241213 15.3295821,109 32.4463459,109 L38.3285897,109 C40.4745994,109 42.6169479,108.822871 44.7338169,108.470418 C65.9804423,104.932909 80.3365173,84.8413978 76.7990077,63.5947725 C76.5168407,61.9000501 76.2538551,60.1993721 76.0100505,58.4927402 C75.2947804,53.4858496 74.7787571,48.6667864 74.4620876,44.035451 C73.2009206,25.5907086 59.1627182,10.5658762 40.845969,8.05673251 L40.3642802,7.99074726 Z" id="Rectangle" stroke="#393D3F" stroke-width="2" fill="#FFFFFF"></path>
-                                        <g id="Group" transform="translate(19.500000, 63.500000) rotate(6.000000) translate(-19.500000, -63.500000) translate(6.000000, 55.000000)" fill="#FFFFFF" stroke="#393D3F" stroke-width="2">
-                                            <path d="M26.9097436,9.58631533 C26.9097436,14.2807357 23.1720346,17 18.45,17 L8.55,17 C3.82796539,17 2.17293817e-13,13.1944204 2.16715534e-13,8.5 C2.16137252e-13,3.80557963 3.82796539,0 8.55,0 L18.45,0" id="Rectangle-Copy-2"></path>
-                                            <rect id="Rectangle-Copy-4" x="6" y="6" width="1" height="5" rx="0.5"></rect>
-                                            <rect id="Rectangle-Copy-7" x="15" y="6" width="1" height="5" rx="0.5"></rect>
-                                        </g>
-                                        <circle id="Oval" stroke="#393D3F" stroke-width="2" fill="#393D3F" cx="45.5" cy="50.5" r="1.5"></circle>
-                                        <circle id="Oval-Copy-6" stroke="#393D3F" stroke-width="2" fill="#393D3F" cx="12.5" cy="48.5" r="1.5"></circle>
-                                        <path d="M49.0360285,14.0682256 L55.5626261,9.4835457 L50.7080918,6.56761861 C49.6762573,5.94783634 48.3738919,6.00477283 47.4000816,6.71223737 C46.0596256,7.68606677 45.762416,9.56216577 46.7362454,10.9026218 L49.0360285,14.0682256 Z" id="Path-2" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(51.279340, 10.295796) scale(-1, 1) rotate(30.000000) translate(-51.279340, -10.295796) "></path>
-                                        <polygon id="Path-Copy-2" fill="#FFFFFF" points="46.5001007 14.9781901 49.5086179 9.48795573 62 9.48795573 61.2057292 14.9781901"></polygon>
-                                        <path d="M63.8550098,20.3936709 C65.7646385,18.4601066 64.7357876,13.2601056 60.3909448,4.93561028 C60.2631839,4.69082689 60.0861204,4.47515029 59.8709057,4.30216357 C59.0099782,3.6101614 57.7510799,3.74710248 57.0590773,4.60803062 L49.8598346,13.5646743 C49.7326771,13.7228724 49.6219023,13.8935664 49.5292126,14.0741329 C48.7725729,15.548125 49.3541015,17.356411 50.8280918,18.1130539 C57.6627327,21.6214588 62.0092737,22.2625418 63.8550098,20.3936709 Z" id="Path-2-Copy-4" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(56.982714, 12.639410) scale(-1, 1) rotate(21.000000) translate(-56.982714, -12.639410) "></path>
-                                    </g>
-                                    <path d="M83.1035736,23.3516572 C86.1529801,22.5890073 87.7359944,18.3024311 87.5598399,10.2264334 C87.555141,10.011008 87.5156601,9.79775745 87.4429239,9.59492834 C87.0700661,8.55519247 85.9249326,8.01458104 84.8851967,8.38743892 L76.3963121,11.431623 C76.3343569,11.4538407 76.2731496,11.4780912 76.2127897,11.5043352 C74.693339,12.1649804 73.9971417,13.9322955 74.6577927,15.4517438 C77.3291546,21.5957422 80.1560292,24.0888316 83.1035736,23.3516572 Z" id="Path-2-Copy-5" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(80.990482, 15.875578) scale(-1, 1) translate(-80.990482, -15.875578) "></path>
-                                    <path d="M57.2015033,114.179748 L65.0544126,98.9774475 L48.1528148,104.45761 C47.3405561,104.720976 46.6790141,105.317994 46.3339605,106.09906 C45.6644313,107.614611 46.350268,109.385969 47.8658196,110.055499 L57.2015033,114.179748 Z" id="Path-2-Copy-6" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(56.067892, 106.375518) rotate(210.000000) translate(-56.067892, -106.375518) "></path>
-                                    <path d="M25.2814659,86.0378019 L36.7503823,76.5881786 L31.7536446,70.2968558 C31.2367048,69.645984 30.4729008,69.2387502 29.6443832,69.1722706 C27.992837,69.039752 26.5465668,70.2711672 26.4140481,71.9227134 L25.2814659,86.0378019 Z" id="Path-2-Copy-3" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(31.120112, 78.236393) scale(-1, 1) rotate(210.000000) translate(-31.120112, -78.236393) "></path>
-                                    <polygon id="Path" fill="#FFFFFF" points="24.5657552 76.343099 22.1207682 71.7939453 36.1201172 74.281901 35.3258464 79.7721354"></polygon>
-                                    <polygon id="Path-Copy" fill="#FFFFFF" points="47.3440755 108.026042 41.609375 106.594727 58.999349 97.4879557 58.2050781 102.97819"></polygon>
-                                </g>
-                            </g>
-                        </g>
-                    </svg>
 
-                    <svg id="image-piggy-shadow" width="80px" height="29px" viewBox="0 0 80 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.218517485">
-                            <g id="gs_desktop_home_pc-firsttime" transform="translate(-368.000000, -412.000000)" fill="#62D0FD">
-                                <path d="M377.854042,412.247234 L437.860244,413.752766 C443.342009,413.890301 447.714286,418.373652 447.714286,423.857143 L447.714286,423.857143 C447.714286,429.920672 443.618213,435.21869 437.750012,436.745319 C426.446748,439.685866 414.924611,441.008864 403.183594,440.714286 C393.750838,440.477622 385.657536,439.234037 378.903689,436.983532 L378.903685,436.983545 C372.392244,434.813814 368,428.720567 368,421.857143 L368,421.857143 C368,416.548067 372.303857,412.24421 377.612933,412.24421 C377.693312,412.24421 377.773688,412.245218 377.854042,412.247234 Z" id="Rectangle-Copy"></path>
-                            </g>
-                        </g>
-                    </svg>
+
+
+        <!-- PERMISSIONS -->
+        <section class="permissions">
+
+            <!-- SEARCH -->
+            <section class="search" v-if="Object.keys(origins).length || searchTerms.length">
+
+                <!-- INPUT -->
+                <section class="input">
+                    <figure class="icon"><i class="fa fa-search"></i></figure>
+                    <input placeholder="Search Applications..." v-model="searchTerms" />
                 </section>
-                <p>Well, what are you waiting for?</p>
+
+                <!-- ACTIONS -->
+                <section class="actions">
+                    <figure class="action find-more" @click="openApps">Find More Apps</figure>
+                    <figure class="action" @click="removeAllPermissions">Clear All</figure>
+                </section>
+
             </section>
-            <section class="action-bar short bottom centered">
-                <btn blue="1" style="width:300px;" text="Add Keys"></btn>
+
+
+            <!-- PERMISSIONS LIST -->
+            <section class="permissions-list">
+
+                <section v-if="!Object.keys(origins).length && !searchTerms.length" class="no-permissions">
+                    <section class="container">
+                        <figure class="title">No Apps</figure>
+                        <figure class="link" @click="openApps">Click here to find some</figure>
+                    </section>
+                </section>
+
+                <section class="permission" v-for="(permCount, origin) in origins" :class="{'clickable':getAppData(origin).url.length}">
+                    <section class="info">
+                        <figure class="logo" @click="openApp(origin)">
+                            <img v-if="originLogo(origin)" :src="originLogo(origin)" />
+                            <figure class="no-meta" v-else>
+                                <figure><i class="fa fa-ban"></i> No<br>Meta</figure>
+                            </figure>
+                        </figure>
+
+                        <section class="details">
+                            <figure class="name" @click="openApp(origin)">{{getAppData(origin).name}}</figure>
+                            <figure class="type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
+                            <figure class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description.substr(0,200)}}{{getAppData(origin).description.length > 200 ? '...':''}}</b></figure>
+                            <figure class="description">Link Permission
+                                <span v-if="permCount - 1 > 0"> and {{permCount - 1}} Action Permission{{permCount -1 > 0 ? 's' : ''}}</span>
+                                <span v-else>only</span>
+                            </figure>
+                        </section>
+                    </section>
+
+                    <section class="actions">
+                        <router-link :to="{name:'permission', params: { origin }}" class="action" v-tooltip="'Edit'">
+                            <i class="fa fa-pencil"></i>
+                        </router-link>
+                        <figure class="action red" v-tooltip="'Remove'" @click="removePermissions(origin)">
+                            <i class="fa fa-ban"></i>
+                        </figure>
+                    </section>
+                </section>
+
             </section>
+
         </section>
+
+
 
     </section>
 </template>
@@ -110,7 +114,6 @@
             ]),
             ...mapGetters([
                 'identity',
-                'keypairs',
                 'permissions',
                 'apps',
             ]),
@@ -195,41 +198,353 @@
     }
 </script>
 
-<style lang="scss" rel="stylesheet/scss">
+<style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables";
 
-    #image-piggy-waiting {
-        width:100px;
-        height:100px;
-        position:relative;
-        margin: 0 auto;
-        top:-30px;
+    .identity {
+        background:#fff;
+        height:70px;
+        padding:0 50px;
+        overflow: hidden;
+        display:flex;
+        justify-content: center;
+        align-items: center;
 
-        #image-piggy-butt {
-            position: absolute;
-            left: 50%;
-            margin-left: -48px;
-            z-index:2;
+        .info {
+            width:calc(100% - 160px);
+            float:left;
+
+            .name {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .description {
+                font-size: 11px;
+            }
         }
 
-        #image-piggy-shadow {
-            position: absolute;
-            left: 50%;
-            margin-left: -38px;
-            bottom:-20px;
-            z-index:1;
+        .actions {
+            width:160px;
+            float:left;
+
+            .action {
+                margin-left:10px;
+                cursor: pointer;
+                border-radius: 2px;
+                width:40px;
+                height:40px;
+                line-height:40px;
+                text-align:center;
+                font-size: 18px;
+                color:#959595;
+                float:right;
+
+                transition:all 0.2s ease;
+                transition-property: background, border, color;
+
+                &.red {
+                    background:$red;
+                    color:#fff;
+                }
+
+                &:hover {
+                    background:$light-blue;
+                    color:#fff;
+                }
+
+                &.padded {
+                    width:auto;
+                    padding:0 10px;
+                }
+            }
         }
     }
 
-    /* sets vertical position so user can see top bar */
-    .app-content {
-        top:130px;
-    }
+    .permissions {
+        width:100%;
+        flex:1;
+        display:flex;
+        flex-direction: column;
 
-    .home {
-        position:relative;
+        .search {
+            padding:0 50px;
+            overflow: hidden;
+            height:40px;
+            background:#f3f3f3;
+            border-top:1px solid #e1e1e1;
+            display:flex;
 
-        
+
+            .input {
+                align-self: flex-start;
+                flex:1 0 auto;
+
+                .icon {
+                    float:left;
+                    font-size: 13px;
+                    line-height:40px;
+                    color: #aeaeae;
+                }
+
+                input {
+                    margin-left:10px;
+                    font-size: 11px;
+                    float:left;
+                    outline:0;
+                    border:0;
+                    height:40px;
+                    background:transparent;
+
+                }
+            }
+
+            .actions {
+                align-self: flex-end;
+                line-height:40px;
+                text-align:right;
+                flex:0 0 auto;
+                display:flex;
+
+                .action {
+                    cursor: pointer;
+                    font-size: 11px;
+                    font-weight: 500;
+
+                    text-decoration: none;
+                    border:1px solid rgba(0,0,0,0.1);
+                    border-radius:4px;
+                    line-height:22px;
+                    height:auto;
+                    justify-content: center;
+                    align-items: center;
+                    display:flex;
+                    margin:10px 0 7px 10px;
+                    padding:0 10px;
+
+                    transition: all 0.2s ease;
+                    transition-property: background, color, border;
+
+                    &:hover {
+                        color:#fff;
+                        background:rgba(0,0,0,0.3);
+                        border:1px solid transparent;
+                    }
+                }
+            }
+
+        }
+
+        .permissions-list {
+            flex:1;
+            display:flex;
+            flex-direction: column;
+            padding:0 40px 50px 50px;
+            overflow-y:auto;
+            border-top:1px solid rgba(0,0,0,0.1);
+
+            .no-permissions {
+                flex:1;
+                display:flex;
+                text-align:center;
+                justify-content:center;
+                align-items: center;
+                padding:50px;
+
+                .container {
+                    max-width:500px;
+                    margin:0 auto;
+                }
+
+                .title {
+                    font-size: 46px;
+                    font-weight: 500;
+                    margin-bottom:10px;
+                    color: #d6d6d6;
+                    text-shadow:0 -1px 1px rgba(0,0,0,0.6), 0 1px 0 #fff;
+                }
+
+                .link {
+                    font-size: 22px;
+                    cursor: pointer;
+                    color:$dark-blue;
+                    font-weight: bold;
+                    padding:10px 20px;
+                    border:2px solid $dark-blue;
+                    border-radius:4px;
+                    transform:translateY(0px);
+                    box-shadow:0 100px 50px rgba(0,0,0,0);
+                    opacity:1;
+
+                    transition: all 0.2s ease;
+                    transition-property: background, color, transform, box-shadow, opacity;
+
+                    &:hover {
+                        color:#fff;
+                        background:$light-blue;
+                        transform:translateY(-2px);
+                        box-shadow:0 3px 1px rgba(0,0,0,0.2);
+                    }
+
+                    &:active {
+                        transform:scale(1.05);
+                        opacity:0;
+                        box-shadow:0 0 500px rgba(0,0,0,0.5);
+                    }
+                }
+            }
+
+
+
+
+            .permission {
+                flex:0 0 auto;
+                padding:20px 0;
+                overflow: hidden;
+                display:flex;
+                justify-content: center;
+                align-items: center;
+
+                &:not(:last-child){
+                    border-bottom:1px solid #d9d9d9;
+                }
+
+                .info {
+                    width:calc(100% - 150px);
+                    float:left;
+                    overflow: hidden;
+
+                    .logo {
+                        width:50px;
+                        height:50px;
+                        float:left;
+                        margin-right:20px;
+
+                        img {
+                            width:100%;
+                            height:100%;
+                        }
+
+                        .no-meta {
+                            width:100%;
+                            height:100%;
+                            background:rgba(0,0,0,0.05);
+                            color:rgba(0,0,0,0.4);
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            text-align:center;
+                            border-radius:50%;
+                            font-size: 9px;
+                            font-weight: bold;
+                            box-shadow:inset 0 5px 10px rgba(0,0,0,0.1), inset 0 1px 2px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,1);
+                        }
+                    }
+
+                    .details {
+                        float:left;
+                        width:calc(100% - 80px);
+
+                        .type {
+                            font-size: 9px;
+                            font-weight: bold;
+                            border:1px solid rgba(0,0,0,0.2);
+                            margin-bottom:3px;
+                            padding:3px 5px;
+                            vertical-align: middle;
+                            margin-left:5px;
+                            width:auto;
+                            display:inline-block;
+                            border-radius:4px;
+                        }
+
+                        .name {
+                            font-weight: 600;
+                            font-size: 18px;
+                            display: inline-block;
+                            color:$black;
+                            transition: all 0.2s ease;
+                            transition-property: border-bottom, color;
+                        }
+
+                        .description {
+                            margin-top:3px;
+                            font-size: 9px;
+
+                            &:not(:last-child){
+                                padding-bottom:5px;
+                                margin-bottom:5px;
+                                border-bottom:1px solid rgba(0,0,0,0.1);
+                            }
+                        }
+                    }
+                }
+
+                .actions {
+                    float:left;
+                    width:150px;
+
+                    .action {
+                        margin-left:10px;
+                        cursor: pointer;
+                        border-radius: 2px;
+                        width:40px;
+                        height:40px;
+                        line-height:40px;
+                        text-align:center;
+                        font-size: 18px;
+                        color:#959595;
+                        float:right;
+
+                        transition:all 0.2s ease;
+                        transition-property: background, border, color;
+
+                        &:hover {
+                            background:$light-blue;
+                            color:#fff;
+                        }
+
+                        &.red {
+                            &:hover {
+                                background:$red;
+                            }
+                        }
+                    }
+                }
+
+
+
+                &.clickable {
+                    &:hover {
+                        .info {
+                            .name {
+                                cursor: pointer;
+                                color:$dark-blue;
+                                animation: pulsate 1s ease-out;
+                                animation-iteration-count: infinite;
+                            }
+
+                            .logo {
+                                cursor: pointer;
+                            }
+                        }
+
+                    }
+
+                    .info {
+                        .details {
+                            .name {
+                                &:hover {
+                                    color:$dark-blue;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 
 
