@@ -1,8 +1,8 @@
 <template>
     <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'small':small}">
-        <i class="fa " :class="'fa-'+icon" v-if="icon"></i>
+        <i class="fal " :class="'fa-'+icon" v-if="icon"></i>
         <span v-else>
-            <i class="fa fa-spinner fa-spin" v-if="loading"></i>
+            <i class="fal fa-spinner fa-spin" v-if="loading"></i>
             <span v-else>{{text}}</span>
         </span>
     </button>
@@ -41,10 +41,18 @@
         }
 
         &.blue {
-            border:0;
+            border:1px solid rgba(0,0,0,0);
             color:#fff;
             background:$light-blue;
-            border-bottom:2px solid $dark-blue;
+        }
+
+        &:hover {
+            border:1px solid rgba(0,0,0,0.22);
+        }
+
+        &:active {
+            border:1px solid $dark-blue;
+            background:rgba(0,0,0,0.04);
         }
 
         &:disabled {

@@ -1,6 +1,7 @@
 const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron');
 const path = require("path");
 const url = require("url");
+const settings = require('electron-settings');
 
 const isDev = process.mainModule.filename.indexOf('app.asar') === -1;
 
@@ -74,11 +75,20 @@ const setupTray = () => {
 	})
 };
 
+app.on('ready', () => {
+
+	// first time run
+	settings.set('windowSettings', {
+		theme: 'light'
+	});
+
+});
+
 const createScatterInstance = () => {
 	app.setAsDefaultProtocolClient('scatter');
 
 	const createMainWindow = (show = true) => new BrowserWindow({
-		width: 800,
+		width: 600,
 		height: 800,
 		frame: false,
 		radii: [5,5,5,5],
@@ -86,10 +96,15 @@ const createScatterInstance = () => {
 		resizable: true,
 		minWidth: 620,
 		minHeight:580,
-		show,
+		titleBarStyle:'hiddenInset',
+		vibrancy:'appearance-based',
+		backgroundColor: '#62D0FD',
+		show: false, 
 	});
 
 	mainWindow = createMainWindow(false);
+
+
 
 	const splash = createMainWindow(true);
 	splash.loadURL(splashScreen);
@@ -98,7 +113,8 @@ const createScatterInstance = () => {
 	// if main window is ready to show, then destroy the splash window and show up the main window
 	mainWindow.once('ready-to-show', () => {
 		splash.destroy();
-		mainWindow.show();
+		mainWindow.show(); 
+  		mainWindow.focus(); 
 	});
 
 	// mainWindow.openDevTools();
@@ -220,5 +236,4 @@ class NotificationService {
 
 const Transport = require('@ledgerhq/hw-transport-node-hid');
 global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService };
-
 

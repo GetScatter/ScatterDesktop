@@ -1,7 +1,8 @@
 <template>
 	<section class="menu-bar">
 		<figure class="logo">Scatter</figure>
-		<section class="actions">
+
+		<section class="actions" v-if="isWindows">
 
 			<!-- MINIMIZE -->
 			<section class="action">
@@ -25,11 +26,21 @@
 <script>
 	const { remote } = window.require('electron');
 
+	// Now we can address the platform type, for different headers for Win32, Mac, etc.
+	const platform = require('electron-platform');
+
 	export default {
 		methods:{
 			quit(){
 				remote.app.quit();
-			},
+			}
+		},
+		computed:{
+			isWindows(){
+				if(platform.isWin32){
+					return true;
+				}
+			}
 		}
 	}
 </script>
@@ -40,12 +51,17 @@
 	.menu-bar {
 		-webkit-app-region: drag;
 		background:$light-blue;
+		background-image: linear-gradient(-180deg, #39ADFF -20%, #62D0FD 100%);
 		color:#fff;
 		height:80px;
 		line-height: 80px;
 		width:100%;
 		text-align:center;
 		z-index: 10;
+		position:absolute;
+		top:0;
+		left:0;
+		right:0;
 
 		.logo {
 			font-family: 'Grand Hotel', sans-serif;
