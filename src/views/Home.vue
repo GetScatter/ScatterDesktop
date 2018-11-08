@@ -151,8 +151,10 @@
 
     .home {
         position:relative;
+    }
 
-        
+    .app-content {
+        top:130px;
     }
 
 

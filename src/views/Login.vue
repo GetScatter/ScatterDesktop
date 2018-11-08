@@ -43,7 +43,7 @@
                          type="password"
                          :loader-on-dynamic="working"
                          :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="changed => bind(changed, 'password')"
-                         dynamic-button="arrow-right"
+                         dynamic-button="icon-right-open-big"
                     ></cin>
                     <span class="locked" v-if="lockedTimeLeft > 0">Locked: {{formatTime(lockedTimeLeft)}}</span>
                     <section v-if="dPresses >= 10" class="bottom-stuck">
