@@ -27,7 +27,6 @@
 
 	.search-bar {
 		height:60px;
-		border-bottom:2px solid #f4f4f4;
 		position: relative;
 
 		.icon {

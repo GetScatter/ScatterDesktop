@@ -32,6 +32,7 @@
         font-weight: bold;
         transition: all 0.15s ease;
         transition-property: background, color, border;
+        background:#fff;
 
         &.small {
             height:32px;

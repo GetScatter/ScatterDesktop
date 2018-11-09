@@ -16,16 +16,16 @@
 
             <!-- IMPORT KEYPAIR SELECTOR -->
             <section key="import" v-if="state === STATES.IMPORT" class="panel-container">
-                <cin big="1" placeholder="Name your key" label="Vault Entry Name" :text="name" v-on:changed="x => name = x"></cin>
+                <cin big="1" label="Wallet Name" placeholder="Give this wallet a name to remember." :text="name" v-on:changed="x => name = x"></cin>
 
                 <br>
                 <br>
 
                 <transition name="slide-left" mode="out-in">
                     <FullWidthRow :items="importTypes" key="select" v-if="importState === IMPORT_STATES.SELECT" />
-                    <ImportTextKey key="text" v-if="importState === IMPORT_STATES.TEXT" v-on:keypair="saveKeypair" />
-                    <ImportHardwareKey key="text" v-if="importState === IMPORT_STATES.HARDWARE" v-on:keypair="saveKeypair" />
-                    <ImportQRKey key="text" v-if="importState === IMPORT_STATES.QR" v-on:keypair="saveKeypair" />
+                    <ImportTextKey key="text" v-if="importState === IMPORT_STATES.TEXT" v-on:keypair="insertKeypair" />
+                    <ImportHardwareKey key="text" v-if="importState === IMPORT_STATES.HARDWARE" v-on:keypair="insertKeypair" />
+                    <ImportQRKey key="text" v-if="importState === IMPORT_STATES.QR" v-on:keypair="insertKeypair" />
                 </transition>
             </section>
         </transition>
@@ -117,9 +117,9 @@
 	        	const keypair = Keypair.placeholder();
 	            await KeyPairService.generateKeyPair(keypair);
 	            await KeyPairService.makePublicKeys(keypair);
-	            this.saveKeypair(keypair);
+	            this.insertKeypair(keypair);
             },
-            async saveKeypair(keypair){
+            async insertKeypair(keypair){
 	            this.setWorkingScreen('Checking for duplicates');
 	            const isHardware = !!keypair.external;
 	            const existing = this.keypairs.find(x => {
@@ -144,8 +144,8 @@
 	            await KeyPairService.saveKeyPair(keypair);
 	            await AccountService.importAllAccounts(keypair);
 	            this.setWorkingScreen(null);
+	            this.$router.push({name:RouteNames.KEYPAIR, params:{id:keypair.id}})
 
-	            console.log(keypair);
             },
             ...mapActions([
 

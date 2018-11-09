@@ -2,7 +2,7 @@
 	<section class="vault">
 		<SearchBar placeholder="Search Keys" v-on:terms="x => searchTerms = x" />
 		<section class="list">
-			<section class="item" v-for="keypair in vaultEntries">
+			<section class="item" v-for="keypair in vaultEntries" @click="goToKeypair(keypair.id)">
 				<section class="details">
 					<figure class="title">{{keypair.name}}</figure>
 					<p>{{keypair.accounts().length}} linked accounts</p>
@@ -20,6 +20,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import SearchBar from './SearchBar';
+	import {RouteNames} from "../../../vue/Routing";
 
 	export default {
 		data(){return {
@@ -40,7 +41,11 @@
 						|| keypair.publicKeys.some(x => x.key.toLowerCase().indexOf(this.searchTerms) > -1);
 				});
 			},
-
+		},
+		methods:{
+			goToKeypair(id){
+				this.$router.push({name:RouteNames.KEYPAIR, params:{id}});
+			}
 		}
 	}
 
@@ -62,6 +67,7 @@
 		padding:10px 30px;
 		overflow-y: auto;
 		height: 0;
+		border-top:2px solid #f4f4f4;
 
 		.item {
 			padding:20px 0 0;

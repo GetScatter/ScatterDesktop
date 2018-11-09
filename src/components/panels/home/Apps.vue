@@ -186,6 +186,7 @@
 		padding:10px 30px 30px;
 		overflow-y: auto;
 		height: 0;
+		border-top:2px solid #f4f4f4;
 
 		.item {
 			padding:20px 0 5px;
@@ -256,6 +257,10 @@
 				.title {
 					&.has-url {
 						cursor: pointer;
+
+						&:hover {
+							text-decoration: underline;
+						}
 					}
 				}
 
@@ -271,10 +276,16 @@
 					span {
 						cursor: pointer;
 						font-size: 11px;
-						color:$dark-blue;
+						color:$dark-grey;
 						text-decoration: underline;
 						font-weight: bold;
 						margin-right:8px;
+						transition: 0.2s ease;
+						transition-property: color;
+
+						&:hover {
+							color:$dark-blue;
+						}
 					}
 				}
 			}
