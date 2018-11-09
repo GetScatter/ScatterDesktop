@@ -55,8 +55,6 @@
 	    },
         data () {return {
             searchTerms:'',
-            appData:null,
-            images:[],
         }},
         computed:{
             ...mapState([
@@ -88,17 +86,6 @@
         },
         mounted(){
 
-            fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(res => {
-                let allApps = [];
-                BlockchainsArray.map(({value}) => {
-                    allApps = allApps.concat(res[blockchainName(value)]);
-                });
-                allApps = allApps.reduce((acc,x) => {
-                    acc[x.applink] = x;
-                    return acc;
-                })
-                this[Actions.SET_DAPP_DATA](allApps);
-            });
         },
         methods:{
 

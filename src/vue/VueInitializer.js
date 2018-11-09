@@ -8,6 +8,7 @@ import VueRouter from 'vue-router'
 import {RouteNames, Routing} from './Routing';
 import {store} from '../store/store'
 import * as Actions from '../store/constants'
+import {blockchainName} from '../models/Blockchains'
 import {localized} from '../localization/locales'
 import LANG_KEYS from '../localization/keys'
 import ElectronHelpers from '../util/ElectronHelpers'
@@ -43,6 +44,7 @@ export default class VueInitializer {
                     }, 1000);
                 },
                 methods: {
+	                blockchainName,
 	                newKeypair(){
 		                this.$router.push({name:RouteNames.NEW_KEYPAIR});
 	                },

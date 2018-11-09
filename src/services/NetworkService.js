@@ -40,7 +40,7 @@ export default class NetworkService {
         return new Promise(resolve => {
             PopupService.promptGuard(Popup.prompt(
                 "Deleting Network", "This will delete this network, as well as all associated accounts and their permissions.",
-                "trash-o", "Delete Network"
+                "trash", "Delete Network"
             ), async accepted => {
                 if(accepted) {
                     const scatter = store.state.scatter.clone();

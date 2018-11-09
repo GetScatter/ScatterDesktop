@@ -60,6 +60,8 @@
 	.list {
 		flex:1;
 		padding:10px 30px;
+		overflow-y: auto;
+		height: 0;
 
 		.item {
 			padding:20px 0 0;

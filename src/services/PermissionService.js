@@ -170,7 +170,7 @@ export default class PermissionService {
 
     static removeAllPermissionsFor(origin){
         return new Promise(resolve => {
-            PopupService.push(Popup.prompt("Removing All Origin Permissions", "Are you sure?", "trash-o", "Yes", async accepted => {
+            PopupService.push(Popup.prompt("Removing All Origin Permissions", "Are you sure?", "trash", "Yes", async accepted => {
                 if(!accepted) return resolve(false);
                 const scatter = store.state.scatter.clone();
 
@@ -186,7 +186,7 @@ export default class PermissionService {
 
     static removeAllPermissions(){
         return new Promise(resolve => {
-            PopupService.push(Popup.prompt("Removing All Permissions", "Are you sure?", "trash-o", "Yes", async accepted => {
+            PopupService.push(Popup.prompt("Removing All Permissions", "Are you sure?", "trash", "Yes", async accepted => {
                 if(!accepted) return resolve(false);
                 const scatter = store.state.scatter.clone();
 
@@ -200,7 +200,7 @@ export default class PermissionService {
 
     static removePermission(permission){
         return new Promise(resolve => {
-            PopupService.push(Popup.prompt("Removing Permission", "Are you sure?", "trash-o", "Yes", async accepted => {
+            PopupService.push(Popup.prompt("Removing Permission", "Are you sure?", "trash", "Yes", async accepted => {
                 if(!accepted) return resolve(false);
                 const scatter = store.state.scatter.clone();
                 scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.id !== permission.id);

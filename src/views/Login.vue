@@ -230,7 +230,7 @@
 				remote.app.quit();
 			},
 			destroy(){
-				PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash-o", "Yes", async accepted => {
+				PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash", "Yes", async accepted => {
 					if(!accepted) return false;
 
 					await SocketService.close();

@@ -29,7 +29,7 @@
         </section>
 
         <!--<section class="snackbar-holder">-->
-            <!--<snackbar :popup="{data:{props:{message:'This is just some message whatever', icon:'trash-o'}}}"></snackbar>-->
+            <!--<snackbar :popup="{data:{props:{message:'This is just some message whatever', icon:'trash'}}}"></snackbar>-->
         <!--</section>-->
 
 
