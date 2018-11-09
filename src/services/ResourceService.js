@@ -18,7 +18,7 @@ export default class ResourceService {
         return new Promise(resolve => {
             PopupService.push(Popup.prompt('You need resources!',
                 'This transaction would deplete your resources. Do you want to allocate some more now?',
-                'exclamation-triangle', 'Yes', async bool => {
+                'attention', 'Yes', async bool => {
                     if(!bool) return resolve(false);
                     resolve(accountsNeedingResources);
                 }, 'No'))

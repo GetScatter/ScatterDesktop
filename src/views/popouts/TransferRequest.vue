@@ -153,13 +153,13 @@
 //                const warn = await RIDLService.shouldWarn(RIDLService.buildEntityName('application', this.payload.origin));
 //                if(warn.length)
 //                    PopupService.push(Popup.selector('Warning', 'This entity has a negative reputation. Be careful interacting with it.',
-//                        'exclamation-triangle', warn, x => `${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
+//                        'attention', warn, x => `${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
             },
             returnResult(result){
                 let returned = null;
                 if(result){
                     let amount = this.displayAmount;
-                    if(parseFloat(amount) <= 0) return PopupService.push(Popup.prompt('Invalid Amount', `You can not send 0 ${this.symbol}`, 'exclamation-triangle', 'Okay'));
+                    if(parseFloat(amount) <= 0) return PopupService.push(Popup.prompt('Invalid Amount', `You can not send 0 ${this.symbol}`, 'attention', 'Okay'));
 
                     returned = {
                         account:this.selectedAccount,

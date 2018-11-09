@@ -52,7 +52,7 @@ export default class TransferService {
 
         if(transfer !== null) {
             if (transfer.hasOwnProperty('error')) {
-                PopupService.push(Popup.prompt("Transfer Error", transfer.error, "ban", "Okay"));
+                PopupService.push(Popup.prompt("Transfer Error", transfer.error, "attention-circled", "Okay"));
                 return false;
             }
             else {

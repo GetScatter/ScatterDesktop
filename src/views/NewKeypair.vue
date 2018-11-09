@@ -16,16 +16,16 @@
 
             <!-- IMPORT KEYPAIR SELECTOR -->
             <section key="import" v-if="state === STATES.IMPORT" class="panel-container">
-                <cin big="1" placeholder="Name your key" label="Vault Entry Name"></cin>
+                <cin big="1" placeholder="Name your key" label="Vault Entry Name" :text="name" v-on:changed="x => name = x"></cin>
 
                 <br>
                 <br>
 
                 <transition name="slide-left" mode="out-in">
                     <FullWidthRow :items="importTypes" key="select" v-if="importState === IMPORT_STATES.SELECT" />
-                    <ImportTextKey key="text" v-if="importState === IMPORT_STATES.TEXT" />
-                    <ImportHardwareKey key="text" v-if="importState === IMPORT_STATES.HARDWARE" />
-                    <ImportQRKey key="text" v-if="importState === IMPORT_STATES.QR" />
+                    <ImportTextKey key="text" v-if="importState === IMPORT_STATES.TEXT" v-on:keypair="saveKeypair" />
+                    <ImportHardwareKey key="text" v-if="importState === IMPORT_STATES.HARDWARE" v-on:keypair="saveKeypair" />
+                    <ImportQRKey key="text" v-if="importState === IMPORT_STATES.QR" v-on:keypair="saveKeypair" />
                 </transition>
             </section>
         </transition>
@@ -41,6 +41,10 @@
     import ImportTextKey from '../components/panels/keypair/ImportTextKey';
     import ImportHardwareKey from '../components/panels/keypair/ImportHardwareKey';
     import ImportQRKey from '../components/panels/keypair/ImportQRKey';
+    import IdGenerator from "../util/IdGenerator";
+    import KeyPairService from "../services/KeyPairService";
+    import AccountService from "../services/AccountService";
+    import Keypair from "../models/Keypair";
 
     const STATES = {
     	SELECT:'select',
@@ -57,13 +61,9 @@
     };
 
     export default {
-    	components:{
-    		FullWidthRow,
-		    ImportTextKey,
-		    ImportHardwareKey,
-		    ImportQRKey
-        },
         data () {return {
+	        name:'',
+
             newKeyTypes:[],
             state:STATES.SELECT,
 	        STATES,
@@ -72,6 +72,12 @@
             importState:IMPORT_STATES.SELECT,
 	        IMPORT_STATES,
         }},
+	    components:{
+		    FullWidthRow,
+		    ImportTextKey,
+		    ImportHardwareKey,
+		    ImportQRKey
+	    },
         computed:{
             ...mapState([
                 'scatter',
@@ -83,7 +89,7 @@
         mounted(){
 	        this.newKeyTypes = [
 		        {icon:'', title:'Create a new key', description:`We'll create a set of keys that you can use on any blockchain.`,
-                    action:'Create a Key', handler:() => this.state = STATES.CREATE},
+                    action:'Create a Key', handler:this.generateNewKeypair},
 		        {icon:'', title:'Import an existing key', description:'If you already have a key and want to import it into Scatter',
                     action:'Import a Key', handler:() => this.state = STATES.IMPORT},
 		        {icon:'', title:'Create a new EOS account', description:`We'll quickly generate two keys for you`,
@@ -105,6 +111,41 @@
 	        	if(this.importState !== IMPORT_STATES.SELECT) return this.importState = IMPORT_STATES.SELECT;
 	        	if(this.state !== STATES.SELECT) return this.state = STATES.SELECT;
 	            this.$router.push({name:RouteNames.HOME});
+            },
+            async generateNewKeypair(){
+	        	this.setWorkingScreen('Generating new Keys');
+	        	const keypair = Keypair.placeholder();
+	            await KeyPairService.generateKeyPair(keypair);
+	            await KeyPairService.makePublicKeys(keypair);
+	            this.saveKeypair(keypair);
+            },
+            async saveKeypair(keypair){
+	            this.setWorkingScreen('Checking for duplicates');
+	            const isHardware = !!keypair.external;
+	            const existing = this.keypairs.find(x => {
+		            const existingHardware = isHardware && x.external && keypair.external.publicKey === x.external.publicKey;
+		            return existingHardware || (x.keyHash === keypair.keyHash && x.id !== keypair.id)
+	            });
+
+	            if(existing){
+		            this.status = null;
+		            this.error = `This Private Key already exists under the name ${existing.name}`;
+		            return false;
+	            }
+
+	            keypair.name = this.name.trim().length ? this.name.trim() : `VaultEntry-${IdGenerator.text(10)}`;
+
+
+	            if(this.keypairs.find(x => x.name.toLowerCase() === keypair.name.toLowerCase()))
+	            	return 'A Vault Entry with this name already exists.';
+
+
+	            this.setWorkingScreen('Importing Accounts');
+	            await KeyPairService.saveKeyPair(keypair);
+	            await AccountService.importAllAccounts(keypair);
+	            this.setWorkingScreen(null);
+
+	            console.log(keypair);
             },
             ...mapActions([
 

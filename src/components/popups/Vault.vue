@@ -53,7 +53,7 @@
 
                 <!-- REMOVE -->
                 <figure class="remove-keypair" :class="{'show':selected && !isNew && !exporting && !status}" v-tooltip="'Remove'" @click="removeKeypair">
-                    <i class="fa fa-ban"></i>
+                    <i class="icon-attention-circled"></i>
                 </figure>
 
                 <!-- REFRESH ACCOUNTS -->
@@ -131,7 +131,7 @@
                                                                  :completed-steps="resource.percentage"
                                                                  :stroke-width="18">
                                                     <figure class="button" @click="moderateResource(resource)">
-                                                        <i class="fa fa-exclamation-triangle" v-if="resource.percentage > 80"></i>
+                                                        <i class="icon-attention" v-if="resource.percentage > 80"></i>
                                                         Manage <b>{{resource.name}}</b>
                                                     </figure>
                                                 </radial-progress>
@@ -638,7 +638,7 @@
 			            if(!await PasswordService.verifyPassword(password)){
 				            this.close();
 				            this.$router.push('/');
-				            return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "ban", "Okay"));
+				            return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "attention-circled", "Okay"));
 			            }
 
 			            this.exporting = true;

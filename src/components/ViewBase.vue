@@ -1,6 +1,7 @@
 <template>
     <section class="view-base">
         <section class="router-base">
+            <div style="position: absolute; bottom:0; left:0; z-index:20;">{{workingScreen ? 'ture' : 'false'}}</div>
 
             <menu-bar></menu-bar>
             <transition name="slide-up">
@@ -28,7 +29,7 @@
                     <section>
                         <h5 v-if="workingScreen.hasOwnProperty('title')">{{workingScreen.title}}</h5>
                         <br>
-                        <figure class="fa fa-spin spinner"></figure>
+                        <figure class="spinner icon-spin4 animate-spin"></figure>
                     </section>
                 </section>
             </transition>
@@ -67,7 +68,8 @@
         }},
         computed:{
             ...mapState([
-                'scatter'
+                'scatter',
+                'workingScreen'
             ]),
             ...mapGetters([
                 'unlocked',
@@ -123,7 +125,7 @@
     @import '../_variables.scss';
 
     .working-screen {
-        background:#fff;
+        background:rgba(255,255,255,0.93);
         position:fixed;
         top:80px;
         left:0;
@@ -136,9 +138,8 @@
         text-align: center;
 
         .spinner {
-            width:36px;
-            height:36px;
-            background:red;
+            font-size: 36px;
+            color:$light-blue;
         }
     }
 

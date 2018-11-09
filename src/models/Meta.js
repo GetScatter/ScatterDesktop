@@ -5,7 +5,7 @@ export default class Meta {
 
     constructor(){
         this.version = app.getVersion();
-        this.lastVersion = '0';
+        this.lastVersion = app.getVersion();
         this.acceptedTerms = false;
         this.lastSuggestedVersion = null;
     }

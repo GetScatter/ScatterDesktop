@@ -6,11 +6,11 @@
 
         <section class="actions">
             <figure class="action">
-                <i class="fa fa-cog"></i>
+                <i class="icon-cog-1"></i>
             </figure>
 
             <figure class="action">
-                <i class="fa fa-sync-alt"></i>
+                <i class="icon-arrows-ccw"></i>
                 <section class="percentage">
                     <figure class="bar"></figure>
                 </section>

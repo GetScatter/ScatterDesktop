@@ -92,7 +92,7 @@ export class Popup {
     };
 
     static invalidIdentityName(){
-        return Popup.snackbar("The name you entered is invalid. Names but be between 3-20 characters and include only a-Z, 0-9 and - or _", "ban");
+        return Popup.snackbar("The name you entered is invalid. Names but be between 3-20 characters and include only a-Z, 0-9 and - or _", "attention-circled");
     };
 
 }

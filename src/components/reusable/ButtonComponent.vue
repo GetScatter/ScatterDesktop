@@ -1,8 +1,8 @@
 <template>
     <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'small':small}">
-        <i class="fal " :class="'fa-'+icon" v-if="icon"></i>
+        <i :class="+icon" v-if="icon"></i>
         <span v-else>
-            <i class="fal fa-spinner fa-spin" v-if="loading"></i>
+            <i class="icon-spin4 animate-spin" v-if="loading"></i>
             <span v-else>{{text}}</span>
         </span>
     </button>
@@ -29,7 +29,7 @@
         border-radius:4px;
         color:$dark-blue;
         font-size: 16px;
-        font-weight: 500;
+        font-weight: bold;
         transition: all 0.15s ease;
         transition-property: background, color, border;
 

@@ -5,7 +5,7 @@ import VueTour from 'vue-tour'
 
 
 import VueRouter from 'vue-router'
-import {Routing} from './Routing';
+import {RouteNames, Routing} from './Routing';
 import {store} from '../store/store'
 import * as Actions from '../store/constants'
 import {localized} from '../localization/locales'
@@ -35,7 +35,6 @@ export default class VueInitializer {
             Vue.mixin({
                 data(){ return {
                     langKeys:LANG_KEYS,
-                    workingScreen:null,
                     now:0,
                 }},
                 mounted(){
@@ -44,6 +43,18 @@ export default class VueInitializer {
                     }, 1000);
                 },
                 methods: {
+	                newKeypair(){
+		                this.$router.push({name:RouteNames.NEW_KEYPAIR});
+	                },
+	                goToApps(){
+		                this.openInBrowser('https://get-scatter.com/Apps')
+	                },
+	                openInBrowser(url){
+		                ElectronHelpers.openLinkInBrowser(url);
+	                },
+
+
+
 	                locale:(key, ...args) => localized(key, args, store.getters.language),
                     formatNumber(num, commaOnly = false){
                         const toComma = x => {
@@ -67,18 +78,15 @@ export default class VueInitializer {
 		                const minutes = Math.trunc(milliseconds / 60) % 60;
                         return `${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`;
                     },
+                    setWorkingScreen(title){
+	                    store.dispatch(Actions.SET_WORKING_SCREEN, !title ? null : {
+	                        title
+	                    });
+                    },
                     bind(changed, dotNotation) {
                         let props = dotNotation.split(".");
                         const lastKey = props.pop();
                         props.reduce((obj,key)=> obj[key], this)[lastKey] = changed;
-                    },
-                    openInBrowser(url){
-                        ElectronHelpers.openLinkInBrowser(url);
-                    },
-                    scrollTo(step){
-                        const ref = typeof step === 'object' ? step.ref : step;
-                        if(typeof step === 'object') this.onStep = step;
-                        this.$refs.scroller.scrollTop = this.$refs[step.ref].offsetTop-120;
                     },
                 }
             })

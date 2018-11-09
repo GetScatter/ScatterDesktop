@@ -21,10 +21,10 @@ export default class NetworkService {
         network.setPort();
 
         if(networks.find(x => x.blockchain === network.blockchain && x.chainId === network.chainId))
-            return PopupService.push(Popup.snackbar("A network with this chain id already exists", "ban"));
+            return PopupService.push(Popup.snackbar("A network with this chain id already exists", "attention-circled"));
 
         if(networks.find(x => x.name.toLowerCase() === network.name.toLowerCase()))
-            return PopupService.push(Popup.textPrompt("Name Exists", 'Enter a different name for this network', 'exclamation-triangle', 'Okay', {placeholder:'Network Name'}, name => {
+            return PopupService.push(Popup.textPrompt("Name Exists", 'Enter a different name for this network', 'attention', 'Okay', {placeholder:'Network Name'}, name => {
                 if(!name) return false;
                 network.name = name;
                 return this.addNetwork(network);

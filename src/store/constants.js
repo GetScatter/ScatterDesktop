@@ -11,6 +11,7 @@ export const SET_SCATTER =      'setScatter';
 export const LOAD_SCATTER =     'loadScatter';
 export const HOLD_SCATTER =     'holdScatter';
 
+export const SET_WORKING_SCREEN ='setWorkingScreen';
 export const PUSH_POPUP =       'pushPopup';
 export const RELEASE_POPUP =    'releasePopup';
 

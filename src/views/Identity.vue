@@ -69,7 +69,7 @@
                                     <i class="fa fa-plus"></i>
                                 </figure>
                                 <figure :class="{'hide-action':identity.locations.length <= 1}" class="action red large relative" v-tooltip="'Remove'" @click="removeLocation">
-                                    <i class="fa fa-ban"></i>
+                                    <i class="icon-attention-circled"></i>
                                 </figure>
                             </section>
                         </section>
@@ -217,7 +217,7 @@
             },
             removeLocation(){
                 if(this.identity.locations.length <= 1) return;
-                PopupService.push(Popup.prompt('Removing Location', 'Are you sure you wish to remove this location?', 'exclamation-triangle', 'Yes', removed => {
+                PopupService.push(Popup.prompt('Removing Location', 'Are you sure you wish to remove this location?', 'attention', 'Yes', removed => {
                     if(!removed) return;
                     this.identity.locations = this.identity.locations.filter(x => x.id !== this.location.id);
                     this.location = this.identity.locations[0];

@@ -100,7 +100,7 @@
                         if(!password || !password.length) return;
                         if(!await PasswordService.verifyPassword(password)){
                             this.$router.push('/');
-                            return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "ban", "Okay"));
+                            return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "attention-circled", "Okay"));
                         }
 
                         this.unlocked = true;

@@ -40,12 +40,12 @@
                     <br>
                     <cin style="width:350px;" :focus="true" big="1"
                          :placeholder="locale(langKeys.LOGIN.EXISTING.PasswordPlaceholder)"
-                         type="password"
+                         type="password" :disabled="isLockedOut"
                          :loader-on-dynamic="working"
                          :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="changed => bind(changed, 'password')"
-                         dynamic-button="arrow-right"
+                         :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'"
                     ></cin>
-                    <span class="locked" v-if="lockedTimeLeft > 0">Locked: {{formatTime(lockedTimeLeft)}}</span>
+                    <span class="locked" v-if="isLockedOut">Locked: {{formatTime(lockedTimeLeft)}}</span>
                     <section v-if="dPresses >= 10" class="bottom-stuck">
                         <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" :text="locale(langKeys.LOGIN.EXISTING.ResetButton)"></btn>
                     </section>
@@ -113,7 +113,7 @@
             working:false,
             restoringBackup:false,
 			dPresses:0,
-            lockedOutTime:+new Date() + 10000,
+            lockedOutTime:0,
 		}},
 		computed: {
 			...mapState([
@@ -144,12 +144,18 @@
             },
             lockedTimeLeft(){
 				return (this.lockedOutTime - this.now)/1000;
+            },
+            isLockedOut(){
+	            return this.lockedTimeLeft > 0 && this.lockedOutTime > 0
             }
 		},
 		mounted(){
 			this.password = '';
 			this.confirmPassword = '';
-			this.lockedOutTime = getLockout().stamp + lockoutTime;
+
+			const lockout = getLockout();
+			this.lockedOutTime = lockout.stamp > 0 ? lockout.stamp + lockoutTime : 0;
+
 			document.addEventListener('keydown', this.modifyDPresses, true);
 		},
 		destroyed(){
@@ -184,7 +190,7 @@
 				const lockout = getLockout();
                 if(lockout.tries >= 5 && +new Date() < lockout.stamp + lockoutTime){
                 	this.lockedOutTime = lockout.stamp + lockoutTime;
-	                return PopupService.push(Popup.snackbar("You have been locked out temporarily.", "ban"));
+	                return PopupService.push(Popup.snackbar("You have been locked out temporarily.", "attention-circled"));
                 }
 
                 if(this.working) return;
@@ -200,7 +206,7 @@
 						this.pushTo(RouteNames.HOME);
 					} else {
 						this.working = false;
-						PopupService.push(Popup.snackbar("Bad Password", "ban"));
+						PopupService.push(Popup.snackbar("Bad Password", "attention-circled"));
 						setLockout();
 					}
 				}, 400)

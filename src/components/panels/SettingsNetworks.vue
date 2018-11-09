@@ -29,7 +29,7 @@
                                             <i class="fa fa-check"></i>
                                         </figure>
                                         <figure class="action red large relative" v-tooltip="'Cancel'" @click="cancelAdd">
-                                            <i class="fa fa-ban"></i>
+                                            <i class="icon-attention-circled"></i>
                                         </figure>
                                     </section>
 
@@ -38,7 +38,7 @@
                                             <i class="fa fa-plus"></i>
                                         </figure>
                                         <figure class="action red large relative" v-tooltip="'Remove Selected Network'" @click="removeNetwork">
-                                            <i class="fa fa-ban"></i>
+                                            <i class="icon-attention-circled"></i>
                                         </figure>
                                     </section>
                                 </transition>

@@ -58,7 +58,7 @@
         methods: {
             applyPrefix(){
                 if(!this.noncePrefix.length)
-                    return PopupService.push(Popup.prompt('Bad Prefix', 'The nonce prefix must not be empty.', 'exclamation-triangle', 'Okay'))
+                    return PopupService.push(Popup.prompt('Bad Prefix', 'The nonce prefix must not be empty.', 'attention', 'Okay'))
 
                 const clone = this.scatter.clone();
                 clone.noncePrefix = this.noncePrefix;

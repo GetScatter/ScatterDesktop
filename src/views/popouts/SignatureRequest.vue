@@ -245,7 +245,7 @@
             if(!hasAllRequiredFields){
                 PopupService.push(Popup.prompt(
                     "Missing Required Fields",
-                    "You are missing some required fields", "ban", "Okay", () => {
+                    "You are missing some required fields", "attention-circled", "Okay", () => {
                         this.returnResult(null);
                     }
                 ))
@@ -343,7 +343,7 @@
                     PopupService.push(Popup.selector('Warning',
                         `The contract you are interacting with has been given a bad reputation by the users of RIDL.
                         If you decide to interact with this contract make sure you read the parameters and fully understand your liability.`,
-                        'exclamation-triangle', warnings, x => `${x.contract} -> ${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
+                        'attention', warnings, x => `${x.contract} -> ${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
             },
             checkScroll(e){
                 this.scrollTop = e.target.scrollTop;
@@ -395,7 +395,7 @@
                         PopupService.push(Popup.prompt(
                             'Whitelist Warning',
                             `You are about to whitelist a transfer action. This can be dangerous as you will get no notification of an Application using your funds. Are you sure you want to do this?`,
-                            'exclamation-triangle',
+                            'attention',
                             'Yes',
                             accepted => {
                                 if(accepted){

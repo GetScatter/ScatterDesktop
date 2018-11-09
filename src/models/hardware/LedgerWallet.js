@@ -21,7 +21,7 @@ import Eth from "@ledgerhq/hw-app-eth";
 const throwErr = () => PopupService.push(Popup.prompt(
     'No Hardware Available',
     'You either need to plug in your Ledger, or select the appropriate App.',
-    'exclamation-triangle',
+    'attention',
     'Okay'
 ));
 
@@ -246,7 +246,7 @@ class LedgerAPI {
             b = serialize(network.chainId, rawTxHex.transaction, fc.types).toString('hex');
         } catch(e){
             WindowService.flashWindow();
-            PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App', 'exclamation-triangle', 'Okay'));
+            PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App', 'attention', 'Okay'));
             return null;
         }
         const rawTx = Buffer.from(b, "hex");

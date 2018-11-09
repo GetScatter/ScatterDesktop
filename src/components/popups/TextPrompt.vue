@@ -1,7 +1,7 @@
 <template>
     <section class="pop-in-head">
         <section>
-            <figure class="bubble-icon" :class="{'red':nextPopIn.data.props.icon === 'exclamation-triangle'}">
+            <figure class="bubble-icon" :class="{'red':nextPopIn.data.props.icon === 'attention'}">
                 <i class="fa " :class="`fa-${nextPopIn.data.props.icon}`"></i>
             </figure>
         </section>

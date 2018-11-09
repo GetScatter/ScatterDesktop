@@ -15,12 +15,12 @@ export default class PasswordService {
     static isValidPassword(password, confirmPassword = null){
         // TODO: Password error prompts
         if(!password || password.length < 8) {
-            PopupService.push(Popup.prompt("Invalid Password", "Passwords must be at least 8 characters long.", "ban", "Okay"));
+            PopupService.push(Popup.prompt("Invalid Password", "Passwords must be at least 8 characters long.", "attention-circled", "Okay"));
             return false;
         }
 
         if(confirmPassword !== null && password !== confirmPassword) {
-          PopupService.push(Popup.prompt("Confirmation Mismatch", "The confirmation password does not match.", "ban", "Okay"));
+          PopupService.push(Popup.prompt("Confirmation Mismatch", "The confirmation password does not match.", "attention-circled", "Okay"));
             return false;
         }
 
@@ -132,7 +132,7 @@ export default class PasswordService {
                 if(pin === null) resolve(true);
                 else {
                     if(scatter.pin !== Hasher.unsaltedQuickHash(pin)){
-                        PopupService.push(Popup.prompt("Bad PIN.", "The PIN you entered is invalid. If you can't remember your PIN go to Settings and change it using your Password.", "ban", "Okay"));
+                        PopupService.push(Popup.prompt("Bad PIN.", "The PIN you entered is invalid. If you can't remember your PIN go to Settings and change it using your Password.", "attention-circled", "Okay"));
                         resolve(false);
                     } else resolve(true);
                 }

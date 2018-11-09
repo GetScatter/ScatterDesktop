@@ -1,14 +1,21 @@
 <template>
     <section class="home">
 
-        <section class="action-bar short" v-if="keypairs.length">
-            <section>
-                <btn text="Placeholder Placeholder"></btn>
-                <btn text="Exchange"></btn>
+        <section class="full-panel home" v-if="keypairs.length">
+            <section class="action-bar short">
+                <section>
+                    <btn text="Placeholder Placeholder"></btn>
+                    <!--<btn text="Exchange"></btn>-->
+                </section>
+                <section>
+                    <btn text="Send"></btn>
+                    <btn text="Receive"></btn>
+                </section>
             </section>
-            <section>
-                <btn text="Send"></btn>
-                <btn text="Receive"></btn>
+
+            <section class="vertical-split">
+                <VaultEntries class="half" />
+                <Apps class="half" />
             </section>
         </section>
 
@@ -31,16 +38,20 @@
 
     import PiggyWaiting from '../components/svgs/PiggyWaiting'
 
+    import Apps from '../components/panels/home/Apps';
+    import VaultEntries from '../components/panels/home/VaultEntries';
+
     import PermissionService from '../services/PermissionService';
     import ElectronHelpers from '../util/ElectronHelpers';
     import {BlockchainsArray, blockchainName} from '../models/Blockchains';
     import {RouteNames} from "../vue/Routing";
 
-    let saveTimeout = null;
 
     export default {
     	components:{
-    		PiggyWaiting
+    		PiggyWaiting,
+		    VaultEntries,
+            Apps,
 	    },
         data () {return {
             searchTerms:'',
@@ -90,9 +101,6 @@
             });
         },
         methods:{
-	        newKeypair(){
-	            this.$router.push({name:RouteNames.NEW_KEYPAIR, params:{id:-1}});
-            },
 
 
 
@@ -151,7 +159,20 @@
 
     .home {
         position:relative;
+        display:flex;
+        flex-direction: column;
 
+        .vertical-split {
+            flex:1;
+            display: flex;
+            flex-direction: row;
+
+            .half {
+                &:first-child {
+                    border-right:2px solid #f4f4f4;
+                }
+            }
+        }
         
     }
 

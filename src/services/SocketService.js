@@ -173,7 +173,7 @@ export default class SocketService {
         } else {
             if(initialConnection) PopupService.push(Popup.prompt("Couldn't fetch certificates",
                 'There was an issue trying to fetch the certificates which allow Scatter to run on SSL. This is usually caused by proxies, firewalls, and anti-viruses.',
-                'exclamation-triangle', 'Okay'))
+                'attention', 'Okay'))
         }
 
 	    initialConnection = false;

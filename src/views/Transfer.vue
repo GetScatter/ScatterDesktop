@@ -20,7 +20,7 @@
                 <section class="address" v-for="contact in contacts" @click="recipient = contact.recipient">
                     <figure class="name">{{contact.name}}</figure>
                     <figure class="remove" @click="removeContact(contact)">
-                        <i class="fa fa-ban"></i>
+                        <i class="icon-attention-circled"></i>
                     </figure>
                 </section>
 
@@ -241,7 +241,7 @@
                 let blockchain;
                 if(this.isSimple) {
                     blockchain = TransferService.blockchainFromRecipient(this.recipient);
-                    if (!blockchain) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "ban", "Okay"));
+                    if (!blockchain) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "attention-circled", "Okay"));
                 } else {
                     blockchain = this.token.blockchain;
                 }
@@ -269,22 +269,22 @@
 
             async send(){
                 if(this.sending) return false;
-                if(parseFloat(this.amount) <= 0) return PopupService.push(Popup.prompt("Invalid Amount", "You must send an amount greater than 0", "ban", "Okay"));
-                if(!this.recipient.trim().length) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "ban", "Okay"));
+                if(parseFloat(this.amount) <= 0) return PopupService.push(Popup.prompt("Invalid Amount", "You must send an amount greater than 0", "attention-circled", "Okay"));
+                if(!this.recipient.trim().length) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "attention-circled", "Okay"));
 
                 const tokensToSend = this.isSimple ? await PriceService.valueToTokens(this.token, this.amount) : this.amount;
                 if(parseFloat(tokensToSend) <= 0) return PopupService.push(Popup.prompt("Could not calculate tokens from value.",
-                    "Scatter most likely couldn't fetch the token price from the server due to rate limiting or congestion. Please try again later.", "ban", "Okay"));
+                    "Scatter most likely couldn't fetch the token price from the server due to rate limiting or congestion. Please try again later.", "attention-circled", "Okay"));
 
                 const account = this.sendingAccount(tokensToSend);
-                if(!account) return PopupService.push(Popup.prompt("Overspending balance.", "You don't have any account that has enough balance to make this transfer in it's base token.", "ban", "Okay"));
+                if(!account) return PopupService.push(Popup.prompt("Overspending balance.", "You don't have any account that has enough balance to make this transfer in it's base token.", "attention-circled", "Okay"));
 
                 if(!await PasswordService.verifyPIN()) return;
 
                 if(KeyPairService.isHardware(account.publicKey)){
                     const canConnect = await account.keypair().external.interface.canConnect();
                     if(canConnect !== true){
-                        PopupService.push(Popup.prompt('Hardware Error', canConnect, 'exclamation-triangle', 'Cancel'))
+                        PopupService.push(Popup.prompt('Hardware Error', canConnect, 'attention', 'Cancel'))
                         account.keypair().resetExternal();
                         return;
                     }

@@ -13,6 +13,7 @@ Vue.use(Vuex);
 const state = {
     dappLogos:{},
     dappData:{},
+    workingScreen:null,
 
     searchTerms:'',
 

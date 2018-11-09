@@ -3,7 +3,7 @@
 
         <section class="snackbar" @click="close">
             <figure class="icon" v-if="item.icon">
-                <i class="fa" :class="`fa-${item.icon}`"></i>
+                <i :class="`icon-${item.icon}`"></i>
             </figure>
             <figure class="message" :class="{'no-icon':!item.icon}">{{item.message}}</figure>
         </section>

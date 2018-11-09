@@ -46,15 +46,6 @@
 
 		.details {
 			width:calc(100% - 40px - 150px);
-
-			.title {
-				color:$light-blue;
-				font-weight: bold;
-			}
-
-			p {
-				font-size:11px;
-			}
 		}
 
 		.action {

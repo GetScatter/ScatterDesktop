@@ -192,6 +192,11 @@ p {
   min-height:calc(100vh - 80px);
   width:100%;
 
+  &.home {
+    min-height:calc(100vh - 130px);
+    margin-top:50px;
+  }
+
   &.center-fold {
     display:flex;
     justify-content: center;
@@ -223,7 +228,7 @@ p {
   padding:0 30px;
 
   &:not(.bottom){ box-shadow:0 10px 20px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.02); }
-  &.bottom {      box-shadow:0 -10px 20px rgba(0,0,0,0.03), 0 -2px 4px rgba(0,0,0,0.02); }
+  &.bottom { box-shadow:0 -10px 20px rgba(0,0,0,0.03), 0 -2px 4px rgba(0,0,0,0.02); }
   &.centered { justify-content: center; }
   &.short { height:80px; }
 
@@ -234,5 +239,16 @@ p {
     }
   }
 
+}
+
+.details {
+  .title {
+    color:$dark-blue;
+  }
+
+  p {
+    font-size:12px;
+    color:rgba(0,0,0,0.4);
+  }
 }
 
