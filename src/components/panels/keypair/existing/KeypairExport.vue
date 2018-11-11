@@ -1,6 +1,6 @@
 <template>
     <section>
-        <section class="panel-container" v-if="keypair">
+        <section class="panel-container limited" v-if="keypair">
 
             <!-- SELECT EXPORT TYPE -->
             <section key="select" v-if="state === STATES.SELECT">

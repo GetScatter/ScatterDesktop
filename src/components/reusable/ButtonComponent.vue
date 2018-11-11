@@ -23,7 +23,6 @@
         height:44px;
         padding:0 15px;
         width:100%;
-        background:transparent;
         outline:0;
         border:1px solid #dfe0e1;
         border-radius:4px;

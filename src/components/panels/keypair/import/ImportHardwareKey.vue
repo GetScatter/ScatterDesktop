@@ -5,7 +5,7 @@
 
 		<br>
 
-		<cin label="Ledger Key/Address Index"></cin>
+		<cin v-if="hardwareType === EXT_WALLET_TYPES.LEDGER" label="Ledger Key/Address Index"></cin>
 
 		<section class="action-bar-holder">
 			<section class="action-bar short bottom centered">
@@ -23,6 +23,7 @@
 	export default {
 		data(){return {
 			hardwareType:EXT_WALLET_TYPES.LEDGER,
+			EXT_WALLET_TYPES,
 			EXT_WALLET_TYPES_ARR
 		}},
 

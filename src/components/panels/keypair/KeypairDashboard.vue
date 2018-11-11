@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<!-- MAIN KEYPAIR DASHBOARD -->
-		<section class="panel-container">
+		<section class="panel-container limited">
 			<cin :big="scrollerAtTop"
 			     :error="nameError"
 			     :label="locale(langKeys.KEYPAIR.NameLabel)"
@@ -243,6 +243,10 @@
 		padding-left:70px;
 		padding-right:55px;
 
+		@media (min-width:1280px){
+			padding:0;
+		}
+
 		.search {
 			margin-left:-30px;
 			border-bottom:0 solid rgba(0,0,0,0);
@@ -250,6 +254,10 @@
 
 			&.short {
 				border-bottom:1px solid rgba(0,0,0,0.05);
+			}
+
+			@media (min-width:1280px){
+				padding:0;
 			}
 		}
 	}
@@ -274,8 +282,8 @@
 			top:60px;
 
 			@media (min-width:1280px){
-				display:flex;
-				flex-flow: column wrap;
+				padding:0 10px;
+				padding-bottom:50px;
 			}
 
 			.item {
@@ -283,16 +291,6 @@
 				margin-bottom:20px;
 				border:1px solid #dfe0e1;
 				border-radius:2px;
-
-
-				@media (min-width:1280px){
-					width:calc(50% - 10px);
-					flex:0 0 auto;
-
-					margin-bottom:10px;
-				}
-
-
 			}
 		}
 

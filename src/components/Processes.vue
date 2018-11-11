@@ -79,5 +79,26 @@
                 margin:0;
             }
         }
+
+        @media (min-width:1280px){
+
+            width:260px;
+
+            .process {
+                padding:20px;
+
+                .title {
+                    font-size: 16px;
+                    margin-bottom:8px;
+                }
+
+                .sub-title {
+                    font-size: 13px;
+                    margin-top:8px;
+                    padding:8px 0;
+                }
+            }
+
+        }
     }
 </style>

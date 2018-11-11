@@ -4,7 +4,7 @@
         <back-bar v-on:back="back"></back-bar>
 
         <!-- SELECT NEW KEY TYPE -->
-        <section key="select" v-if="state === STATES.SELECT" class="panel-container">
+        <section key="select" v-if="state === STATES.SELECT" class="panel-container limited">
             <h1>{{locale(langKeys.DASHBOARD.KEYS.AddKeysButton)}}</h1>
 
             <br>
@@ -14,7 +14,7 @@
         </section>
 
         <!-- IMPORT KEYPAIR SELECTOR -->
-        <section key="import" v-if="state === STATES.IMPORT" class="panel-container">
+        <section key="import" v-if="state === STATES.IMPORT" class="panel-container limited">
             <h1>{{locale(langKeys.ADD_KEYS.SELECT.ImportButton)}}</h1>
 
             <br>

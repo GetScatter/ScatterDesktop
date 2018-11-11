@@ -52,7 +52,7 @@
 			</section>
 		</transition>
 		<section class="action-bar short bottom centered">
-			<btn blue="1" text="Explore Apps" v-on:clicked="goToApps"></btn>
+			<btn style="max-width:360px;" blue="1" text="Explore Apps" v-on:clicked="goToApps"></btn>
 		</section>
 	</section>
 </template>

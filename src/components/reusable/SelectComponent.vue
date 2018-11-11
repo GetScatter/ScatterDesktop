@@ -67,6 +67,7 @@
         methods: {
 	    	handleDocumentClick(e){
 
+                if(e.target.className !== 'selected-option') this.open = false;
             },
             isGrouped(item){
                 if(!item) return false;
@@ -124,7 +125,7 @@
 
     .select {
         cursor: pointer;
-        height:50px;
+        height:44px;
         position: relative;
         width:100%;
         font-family:'Raleway',sans-serif;
@@ -132,7 +133,7 @@
         background:#fff;
         border:1px solid #dfe0e1;
         font-size: 16px;
-        transition:background 0.2s ease;
+        transition:background 0.1s ease;
 
         input {
             position: absolute;
@@ -151,18 +152,18 @@
         .arrow {
             position:absolute;
             right:0;
-            height:50px;
-            line-height:50px;
+            height:44px;
+            line-height:44px;
             padding:0 15px;
             color:$dark-blue;
             opacity:0.5;
-            transition:opacity 0.2s ease, transform 0.2s ease;
+            transition:opacity 0.1s ease, transform 0.1s ease;
             pointer-events: none;
         }
 
         .selected-option {
-            height:50px;
-            line-height:50px;
+            height:44px;
+            line-height:44px;
             width:100%;
             padding:0 35px 0 15px;
             overflow: hidden;
@@ -180,26 +181,23 @@
 
         .options {
             position:absolute;
-            top:48px;
+            top:42px;
             background:#fff;
             border:1px solid $mid-light-grey;
             border-bottom-right-radius:4px;
             border-bottom-left-radius:4px;
             left:-1px; right:-1px;
-            box-shadow:0 8px 16px $light-grey;
+            box-shadow:0 8px 16px rgba(0,0,0,0.03);
             visibility:hidden;
             opacity:0;
             max-height:0;
             overflow:auto;
-            transition:all 0.2s ease, max-height 0.5s ease;
-            transition-property: visibility, box-shadow, opacity, max-height;
             z-index:2;
 
             .option {
                 padding:15px;
                 font-size: 13px;
                 background:transparent;
-                transition:background 0.15s ease;
                 word-break: break-all;
 
                 img {
@@ -222,10 +220,10 @@
         &.open {
             border-bottom-right-radius:0;
             border-bottom-left-radius:0;
-            background:$light-grey;
+            border:1px solid rgba(0,0,0,0.22);
 
             .options {
-                box-shadow:0 8px 16px rgba(0,0,0,0.15);
+                box-shadow:0 8px 8px rgba(0,0,0,0.08);
                 visibility:visible;
                 opacity:1;
                 max-height:180px;

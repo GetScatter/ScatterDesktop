@@ -109,8 +109,8 @@
             font-size: 18px;
             cursor: text;
 
-            transition: all 0.3s ease;
-            transition-property: line-height, height, padding;
+            transition: all 0.15s ease;
+            transition-property: line-height, height, padding, border;
 
             &::-webkit-input-placeholder {
                 font-size: 18px;
@@ -136,6 +136,10 @@
             &:disabled {
                 cursor: not-allowed;
                 opacity:0.5;
+            }
+
+            &:focus {
+                border:1px solid rgba(0,0,0,0.22);
             }
         }
 

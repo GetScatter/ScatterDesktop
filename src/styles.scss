@@ -231,6 +231,11 @@ p {
 
 .panel-container {
   padding:40px 70px;
+
+  &.limited {
+    max-width:1280px;
+    margin:0 auto;
+  }
 }
 
 

@@ -10,8 +10,8 @@
 				<p>{{item.description}}</p>
 			</section>
 
-			<section class="action">
-				<btn v-for="action in item.actions" :small="item.actions.length > 1" :text="action.name" v-on:clicked="action.handler"></btn>
+			<section class="actions" :class="{'multiple':item.actions.length > 1}">
+				<btn :key="action.name" v-for="action in item.actions" :text="action.name" v-on:clicked="action.handler"></btn>
 			</section>
 		</section>
 	</section>
@@ -43,25 +43,24 @@
 		}
 
 		.details {
+			flex:3;
 			padding-right:20px;
-			width:calc(100% - 170px);
-
-			&.has-icon {
-				width:calc(100% - 40px - 170px);
-			}
 
 			p { margin-top:5px; }
 		}
 
-		.action {
-			width:170px;
+		.actions {
+			flex:1;
 			display:flex;
 			align-items: center;
 			justify-content: flex-end;
 
-			button {
-				display:inline-block;
-				margin-left:5px;
+			&.multiple {
+				button {
+					display:inline-block;
+					margin-left:5px;
+					width:max-content;
+				}
 			}
 		}
 
