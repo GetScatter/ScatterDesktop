@@ -18,6 +18,8 @@ import {Popup} from '../models/popups/Popup'
 import migrate from '../migrations/migrator'
 
 export const actions = {
+    [Actions.ADD_RESOURCES]:({commit}, x) => commit(Actions.ADD_RESOURCES, x),
+    [Actions.SET_RESOURCES]:({commit}, x) => commit(Actions.SET_RESOURCES, x),
     [Actions.SET_PROCESS]:({commit}, x) => commit(Actions.SET_PROCESS, x),
     [Actions.RELEASE_PROCESS]:({commit}, x) => commit(Actions.RELEASE_PROCESS, x),
     [Actions.SET_WORKING_SCREEN]:({commit}, x) => commit(Actions.SET_WORKING_SCREEN, x),

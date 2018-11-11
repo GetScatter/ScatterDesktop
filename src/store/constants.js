@@ -1,5 +1,7 @@
 export const SET_DAPP_DATA =  'setDappData';
 export const SET_DAPP_LOGO =  'setDappLogo';
+export const SET_RESOURCES =  'setResources';
+export const ADD_RESOURCES =  'addResources';
 
 export const SET_SEARCH_TERMS = 'setSearchTerms';
 

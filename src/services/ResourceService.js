@@ -45,7 +45,7 @@ export default class ResourceService {
         return plugin.addResources(account);
     }
 
-    static getResourcesFor(account){
+    static async getResourcesFor(account){
         account = Account.fromJson(account);
         const plugin = PluginRepository.plugin(account.blockchain());
         if(!plugin.usesResources()) return [];

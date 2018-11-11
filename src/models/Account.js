@@ -39,6 +39,7 @@ export default class Account {
     static placeholder(){ return new Account(); }
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
     unique(){ return this.keypairUnique + this.networkUnique + this.name + this.authority + this.publicKey; }
+    identifiable(){ return this.networkUnique + this.sendable(); }
     clone(){ return Account.fromJson(JSON.parse(JSON.stringify(this))) }
 
     asReturnable(){

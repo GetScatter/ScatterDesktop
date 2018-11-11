@@ -2,7 +2,7 @@
 	<section>
 		<section class="basics" v-if="account">
 			<section class="info">
-				<figure class="network">{{blockchainName(account.blockchain())}} on {{account.network().name}}</figure>
+				<figure class="network">{{blockchainName(account.blockchain())}} - <b>{{account.network().name}}</b></figure>
 				<figure class="identifier">{{account.sendable()}}</figure>
 				<section class="authorities" v-if="authorities.length">
 					<figure class="authority" :class="{'red':authority === 'owner'}" v-for="authority in authorities">{{authority}}</figure>
@@ -13,29 +13,53 @@
 			</section>
 		</section>
 
-		<section class="moderations" v-if="account && account.blockchain() === Blockchains.EOSIO">
-			<section class="moderation" v-for="percentage in [2, 50, 88]">
-				<figure class="name">CPU</figure>
-				<figure class="percentage-bar">
-					<figure class="bar" :style="{'width':percentage + '%'}"></figure>
-				</figure>
-				<figure class="action">
-					<btn small="1" text="Manage"></btn>
-				</figure>
-			</section>
+		<section class="moderations" v-if="account && usesResources">
+			<transition name="delayed-fade" mode="out-in">
+				<section key="loading" class="loading" v-if="!accountResources">
+					<figure class="spinner icon-spin4 animate-spin"></figure>
+				</section>
+				<section key="resources" v-if="accountResources">
+					<section class="moderation" v-for="resource in accountResources">
+						<figure class="name">{{resource.name}}</figure>
+						<figure class="percentage-bar">
+							<figure class="bar" :class="{'red':resource.percentage > 80}" :style="{'width':resource.percentage + '%'}"></figure>
+						</figure>
+						<figure class="action">
+							<btn v-if="resource.manageable" v-on:clicked="() => moderateResource(resource)" small="1" text="Manage"></btn>
+							<span v-else>{{resource.text}}</span>
+						</figure>
+					</section>
+				</section>
+			</transition>
 		</section>
 	</section>
 </template>
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
+	import * as Actions from "../../../../store/constants";
 	import {Blockchains} from "../../../../models/Blockchains";
+	import ResourceService from "../../../../services/ResourceService";
+	import Account from "../../../../models/Account";
 
 	export default {
+		props:['account'],
+
 		data(){return {
 			Blockchains,
+			usesResources:false,
 		}},
+
+		mounted(){
+			console.log(this.account);
+			this.usesResources = ResourceService.usesResources(this.account);
+			console.log('this', this.usesResources);
+		},
+
 		computed:{
+			...mapState([
+				'resources',
+			]),
 			...mapGetters([
 				'accounts',
 			]),
@@ -44,8 +68,21 @@
 				return this.accounts.filter(x => x.sendable() === this.account.sendable() && x.network().unique() === this.account.network().unique())
 					.map(x => x.authority)
 			},
+			accountResources(){
+				const resource = this.resources.find(x => x.acc === this.account.identifiable());
+				return resource ? resource.res : null;
+			}
 		},
-		props:['account'],
+		methods:{
+			async moderateResource(resource){
+				if(await ResourceService.moderateResource(resource, this.account))
+					this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:await ResourceService.getResourcesFor(this.account)});
+			},
+
+			...mapActions([
+				Actions.ADD_RESOURCES
+			])
+		},
 	}
 
 </script>
@@ -68,6 +105,10 @@
 			.network {
 				font-size: 11px;
 				color: $mid-dark-grey;
+
+				b {
+					color:$dark-blue;
+				}
 			}
 
 			.identifier {
@@ -133,6 +174,13 @@
 		padding:20px;
 		background:#f4f5f5;
 
+		.loading {
+			padding:20px;
+			display:flex;
+			justify-content: center;
+			align-items: center;
+		}
+
 		.moderation {
 			display:flex;
 			flex-direction: row;
@@ -147,7 +195,9 @@
 			}
 
 			.action {
-
+				span {
+					font-size: 11px;
+				}
 			}
 		}
 	}

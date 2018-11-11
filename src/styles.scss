@@ -29,7 +29,7 @@ a {
   color:inherit;
 }
 
-$speed:0.08s;
+$speed:0.05s;
 .slide-down-leave-active,
 .slide-down-enter-active,
 .slide-up-leave-active,
@@ -291,6 +291,10 @@ p {
     border-radius:50px;
     transition: all 0.5s ease;
     transition-property: width, background;
+
+    &.red {
+      background: $red;
+    }
   }
 }
 

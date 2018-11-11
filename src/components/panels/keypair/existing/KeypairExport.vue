@@ -1,6 +1,5 @@
 <template>
     <section>
-        <back-bar v-on:back="back"></back-bar>
         <section v-if="keypair">
 
             <section class="panel-container">
@@ -31,8 +30,8 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../store/constants';
-    import {RouteNames, Routing} from '../vue/Routing'
+    import * as Actions from '../../../../store/constants';
+    import {RouteNames, Routing} from '../../../../vue/Routing'
 
     export default {
         data () {return {
@@ -65,7 +64,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables";
+    @import "../../../../variables";
 
     .panel-container {
         text-align: center;
@@ -76,10 +75,11 @@
         margin-top:100px;
         display:flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: center;
 
         .type {
             width:calc(50% - 10px);
+            max-width:400px;
             background:#fff;
             border:1px solid #e8e8e8;
             border-radius:10px;
