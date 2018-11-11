@@ -27,6 +27,7 @@
     import PriceService from "../services/PriceService";
     import AccountService from "../services/AccountService";
     import ResourceService from "../services/ResourceService";
+    import PasswordService from "../services/PasswordService";
 
     const STATES = {
     	DASHBOARD:'dash',
@@ -81,6 +82,22 @@
 	        	if(this.state !== STATES.DASHBOARD) return this.state = STATES.DASHBOARD;
 	            this.$router.push({name:RouteNames.HOME});
             },
+	        async lazyLoadResources(){
+		        const accounts = this.keypair.accounts()
+			        .reduce((acc, account) => {
+				        if(!acc.find(x => account.network().unique() === x.network().unique()
+					        && account.sendable() === x.sendable())) acc.push(account);
+				        return acc;
+			        }, []).filter(x => ResourceService.usesResources(x));
+
+		        for(let i = 0; i < accounts.length; i++){
+			        const resources = await ResourceService.getResourcesFor(accounts[i]);
+			        this[Actions.ADD_RESOURCES]({acc:accounts[i].identifiable(), res:resources});
+		        }
+	        },
+
+
+
             async remove(){
 	            PopupService.promptGuard(Popup.prompt(
 		            "Deleting Vault Entry", "Before you do this make sure you have a backup of this Vault Entry's Private Key.",
@@ -93,23 +110,29 @@
 		            }
 	            });
             },
+
 	        async refreshAccounts(){
 		        await AccountService.importAllAccounts(this.keypair);
 	        },
 
-            async lazyLoadResources(){
-	            const accounts = this.keypair.accounts()
-		            .reduce((acc, account) => {
-			            if(!acc.find(x => account.network().unique() === x.network().unique()
-				            && account.sendable() === x.sendable())) acc.push(account);
-			            return acc;
-		            }, []).filter(x => ResourceService.usesResources(x));
 
-	            for(let i = 0; i < accounts.length; i++){
-		            const resources = await ResourceService.getResourcesFor(accounts[i]);
-		            this[Actions.ADD_RESOURCES]({acc:accounts[i].identifiable(), res:resources});
-                }
-            },
+	        enableExportKey(){
+		        PopupService.push(
+			        Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
+				        placeholder:this.locale(this.langKeys.LOGIN.EXISTING.PasswordPlaceholder),
+				        type:'password'
+			        }, async password => {
+				        if(!password || !password.length) return;
+				        if(!await PasswordService.verifyPassword(password)){
+					        // this.close();
+					        // this.$router.push('/');
+					        return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "attention", "Okay"));
+				        }
+
+				        this.state = STATES.EXPORT;
+			        }))
+	        },
+
 
             ...mapActions([
             	Actions.SET_RESOURCES,

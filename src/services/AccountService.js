@@ -7,10 +7,6 @@ import Process from "../models/Process";
 
 export default class AccountService {
 
-    static accountsAreImported(keypair){
-        return PluginRepository.plugin(keypair.blockchain).accountsAreImported();
-    }
-
     static async addAccount(account){
         const scatter = store.state.scatter.clone();
         scatter.keychain.addAccount(account);
@@ -29,7 +25,7 @@ export default class AccountService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static importAllAccounts(keypair){
+    static importAllAccounts(keypair, isNewKeypair = false){
         return new Promise(async resolve => {
             if(Process.isProcessRunning(keypair.unique())) return resolve(false);
 	        const process = Process.importAccounts(keypair.unique());
@@ -42,6 +38,7 @@ export default class AccountService {
             await Promise.all(blockchains.map(async blockchain => {
                 const plugin = PluginRepository.plugin(blockchain);
                 const networks = scatter.settings.networks.filter(x => x.blockchain === blockchain);
+                if(isNewKeypair && plugin.accountsAreImported()) return true;
                 return AccountService.accountsFrom(plugin, networks, accounts, keypair, process, progressPerBlockchain);
             }));
 
@@ -52,7 +49,7 @@ export default class AccountService {
             // This method takes a while, re-cloning to make sure we're
             // always up to date before committing the data to storage.
 	        scatter = store.state.scatter.clone();
-	        
+
             accountsToRemove.map(account => scatter.keychain.removeAccount(account));
             accounts.map(account => scatter.keychain.addAccount(account));
 

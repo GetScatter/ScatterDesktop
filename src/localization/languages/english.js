@@ -2,10 +2,17 @@ import KEYS from '../keys';
 const {
 	LOGIN,
 	DASHBOARD,
-	ADD_KEYS
+	ADD_KEYS,
+	KEYPAIR
 } = KEYS;
 
-export default {
+// You can build your own pluralizers.
+// This one for instance is for words that end with "s" when
+// pluralized.
+// See [DASHBOARD.APPS.NPermissions] for example usage
+const plural_s = (n) => n !== 0 ? 's' : '';
+
+const Locale = {
 
 	/****************************************************/
 	/*                                                  */
@@ -60,7 +67,7 @@ export default {
 	[DASHBOARD.APPS.EditApp]:() => `Edit`,
 	[DASHBOARD.APPS.DeleteApp]:() => `Delete`,
 	[DASHBOARD.APPS.LinkPermissionOnly]:() => `Link permission only`,
-	[DASHBOARD.APPS.NPermissions]:n => `${n} Permission${n !== 0 ? 's' : ''}`,
+	[DASHBOARD.APPS.NPermissions]:n => `${n} Permission${plural_s(n)}`,
 
 
 
@@ -100,7 +107,21 @@ export default {
 
 
 
+	/****************************************************/
+	/*                                                  */
+	/*                 WALLET / KEYPAIR                 */
+	/*                                                  */
+	/****************************************************/
+	[KEYPAIR.NameLabel]:() => Locale[ADD_KEYS.IMPORT.NameLabel](),
+	[KEYPAIR.NamePlaceholder]:() => Locale[ADD_KEYS.IMPORT.NamePlaceholder](),
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[KEYPAIR.ACCOUNTS.SearchPlaceholder]:() => `Search Accounts`,
+	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,
+	[KEYPAIR.ACCOUNTS.EOSManageResourceButton]:() => `Manage`,
+	[KEYPAIR.ACCOUNTS.EOSClaimRefundButton]:() => `Refund`,
 
 	// [ADD_KEYS.IMPORT.QrButton]:() => ``,
 
 }
+
+export default Locale;

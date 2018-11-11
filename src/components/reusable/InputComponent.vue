@@ -13,7 +13,7 @@
                :type="type || 'text'"
                v-model="input" />
 
-        <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'not-disabled':!disabled}" @click="emitDynamicButton">
+        <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'labeled':label}" @click="emitDynamicButton">
             <i v-if="!loaderOnDynamic" :class="`${dynamicButton}`"></i>
             <i class="icon-spin4 animate-spin" v-if="loaderOnDynamic"></i>
         </figure>
@@ -75,7 +75,7 @@
             cursor: pointer;
             position: absolute;
             right:20px;
-            bottom:-15px;
+            bottom:0;
             top:0;
             display:flex;
             justify-content: center;
@@ -83,6 +83,10 @@
             font-size:20px;
             z-index:2;
             color:$light-blue;
+
+            &.labeled {
+                bottom:-15px;
+            }
 
             transition: all 0.2s ease;
             transition-property: color;
@@ -167,6 +171,10 @@
             .dynamic-button {
                 font-size: 26px;
                 bottom:0;
+
+                &.labeled {
+                    bottom:-15px;
+                }
             }
 
 

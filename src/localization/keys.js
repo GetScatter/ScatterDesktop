@@ -6,7 +6,8 @@
  */
 const prefixKeys = (name, obj) => {
 	Object.keys(obj).map(key => {
-		Object.keys(obj[key]).map(part => {
+		if(typeof obj[key] !== 'object') obj[key] = obj[key];
+		else Object.keys(obj[key]).map(part => {
 			obj[key][part] = `${name}_${key}_${obj[key][part]}`.toLowerCase()
 		})
 	});
@@ -94,10 +95,33 @@ const ADD_KEYS = prefixKeys('add_keys', {
 	IMPORT_QR:{}
 });
 
+const KEYPAIR = prefixKeys('keypair', {
+	NameLabel:'name_lbl',
+	NamePlaceholder:'name_plc',
+	ACCOUNTS:{
+		SearchPlaceholder:'search_plc',
+		ViewTokens:'view_tokens',
+		EOSManageResourceButton:'eos_manage_btn',
+		EOSClaimRefundButton:'eos_refund_btn',
+	},
+	DASHBOARD:{
+		CreateTitle:'create_tit',
+		CreateDescription:'create_desc',
+		CreateButton:'create_btn',
+		ImportTitle:'import_tit',
+		ImportDescription:'import_desc',
+		ImportButton:'import_btn',
+		CreateEosTitle:'create_eos_tit',
+		CreateEosDescription:'create_eos_desc',
+		CreateEosButton:'create_eos_btn',
+	},
+});
+
 export default {
 	LOGIN,
 	DASHBOARD,
-	ADD_KEYS
+	ADD_KEYS,
+	KEYPAIR
 }
 
 

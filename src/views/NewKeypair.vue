@@ -16,7 +16,7 @@
 
             <!-- IMPORT KEYPAIR SELECTOR -->
             <section key="import" v-if="state === STATES.IMPORT" class="panel-container">
-                <cin big="1"
+                <cin :big="walletNameIsBig"
                      :label="locale(langKeys.ADD_KEYS.IMPORT.NameLabel)"
                      :placeholder="locale(langKeys.ADD_KEYS.IMPORT.NamePlaceholder)"
                      :text="name" v-on:changed="x => name = x"></cin>
@@ -88,6 +88,10 @@
             ...mapGetters([
                 'keypairs',
             ]),
+            walletNameIsBig(){
+            	if(this.importState === IMPORT_STATES.TEXT) return false;
+            	return true;
+            }
         },
         mounted(){
         	const locale = this.locale;
@@ -117,9 +121,9 @@
 	        	const keypair = Keypair.placeholder();
 	            await KeyPairService.generateKeyPair(keypair);
 	            await KeyPairService.makePublicKeys(keypair);
-	            this.insertKeypair(keypair);
+	            this.insertKeypair(keypair, true);
             },
-            async insertKeypair(keypair){
+            async insertKeypair(keypair, isNewKeypair = false){
 	            const isHardware = !!keypair.external;
 	            const existing = this.keypairs.find(x => {
 		            const existingHardware = isHardware && x.external && keypair.external.publicKey === x.external.publicKey;
@@ -132,7 +136,7 @@
 		            return false;
 	            }
 
-	            keypair.name = this.name.trim().length ? this.name.trim() : `VaultEntry-${IdGenerator.text(10)}`;
+	            keypair.name = this.name.trim().length ? this.name.trim() : `Wallet-${IdGenerator.text(10)}`;
 
 
 	            if(this.keypairs.find(x => x.name.toLowerCase() === keypair.name.toLowerCase()))
@@ -140,7 +144,7 @@
 
 
 	            await KeyPairService.saveKeyPair(keypair);
-	            await AccountService.importAllAccounts(keypair);
+	            await AccountService.importAllAccounts(keypair, isNewKeypair);
 	            this.setWorkingScreen(false);
 	            this.$router.push({name:RouteNames.KEYPAIR, params:{id:keypair.id}})
 

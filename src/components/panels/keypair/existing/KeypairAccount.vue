@@ -9,7 +9,7 @@
 				</section>
 			</section>
 			<section class="tokens">
-				View 4 tokens <i class="icon-right-open-big"></i>
+				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, 4)}} <i class="icon-right-open-big"></i>
 			</section>
 		</section>
 
@@ -25,7 +25,10 @@
 							<figure class="bar" :class="{'red':resource.percentage > 80}" :style="{'width':resource.percentage + '%'}"></figure>
 						</figure>
 						<figure class="action">
-							<btn v-if="resource.manageable" v-on:clicked="() => moderateResource(resource)" small="1" text="Manage"></btn>
+							<btn v-if="resource.actionable"
+							     v-on:clicked="() => moderateResource(resource)"
+							     small="1" :text="resource.actionText"></btn>
+
 							<span v-else>{{resource.text}}</span>
 						</figure>
 					</section>
@@ -51,9 +54,7 @@
 		}},
 
 		mounted(){
-			console.log(this.account);
 			this.usesResources = ResourceService.usesResources(this.account);
-			console.log('this', this.usesResources);
 		},
 
 		computed:{
@@ -185,6 +186,7 @@
 			display:flex;
 			flex-direction: row;
 			align-items: center;
+			min-height:32px;
 
 			&:not(:last-child){
 				margin-bottom:5px;
@@ -195,8 +197,19 @@
 			}
 
 			.action {
+				button {
+					min-width:75px;
+				}
+
 				span {
+					text-align:center;
 					font-size: 11px;
+					font-weight: bold;
+					color:$mid-dark-grey;
+					max-width:150px;
+					min-width:75px;
+					display:inline-block;
+					padding-right:1px;
 				}
 			}
 		}

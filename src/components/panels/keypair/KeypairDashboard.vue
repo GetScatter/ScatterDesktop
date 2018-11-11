@@ -4,8 +4,8 @@
 		<section class="panel-container">
 			<cin :big="scrollerAtTop"
 			     :error="nameError"
-			     label="Wallet Name"
-			     placeholder="Give this wallet a name to remember."
+			     :label="locale(langKeys.KEYPAIR.NameLabel)"
+			     :placeholder="locale(langKeys.KEYPAIR.NamePlaceholder)"
 			     :text="keypair.name"
 			     v-on:changed="x => keypair.name = x" />
 
@@ -17,7 +17,13 @@
 			<transition name="slide-left" mode="out-in">
 				<!-- ACCOUNTS -->
 				<section class="list-container" key="accounts" v-if="dashState === DASH_STATES.ACCOUNTS">
-					<SearchBar :short="!scrollerAtTop" class="search" :class="{'short':!scrollerAtTop}" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+					<!-- Accounts Searchbar -->
+					<SearchBar :short="!scrollerAtTop"
+					           class="search" :class="{'short':!scrollerAtTop}"
+					           :placeholder="locale(langKeys.KEYPAIR.ACCOUNTS.SearchPlaceholder)"
+					           v-on:terms="x => searchTerms = x" />
+
+					<!-- Accounts List -->
 					<section class="list accounts" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
 						<section class="item" v-for="account in filteredAccounts">
 							<KeypairAccount :key="account.unique()" :account="account" />

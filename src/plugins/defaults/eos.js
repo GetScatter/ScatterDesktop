@@ -4,6 +4,8 @@ import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
 import Account from '../../models/Account'
 import KeyPairService from '../../services/KeyPairService'
+import {localized} from '../../localization/locales'
+import LANG_KEYS from '../../localization/keys'
 import Eos from 'eosjs'
 let {ecc, Fcbuffer} = Eos.modules;
 import ObjectHelpers from '../../util/ObjectHelpers'
@@ -127,31 +129,41 @@ export default class EOS extends Plugin {
 		const data = await this.accountData(account);
 		if(!data || !data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return [];
 
-		const refund = data.hasOwnProperty('refund_request') && data.refund_request ? {
-			name:'Refund',
-			text:`Refunds on ` + (new Date((+new Date(data.refund_request.request_time)) + (86400*3*1000))).toLocaleDateString(),
-			percentage:(((+new Date() - +new Date(data.refund_request.request_time)) * 100) / (86400*3*1000)),
-            manageable:false,
-		} : null;
+		let refund;
+		if(data.hasOwnProperty('refund_request') && data.refund_request){
+			const threeDays = (86400*3*1000);
+			const percentage = ((+new Date() - +new Date(data.refund_request.request_time)) * 100) / threeDays;
+			refund = {
+				name:'Refund',
+				text:(new Date((+new Date(data.refund_request.request_time)) + (86400*3*1000))).toLocaleDateString(),
+				percentage,
+				actionable:percentage >= 100,
+				actionText:localized(LANG_KEYS.KEYPAIR.ACCOUNTS.EOSClaimRefundButton, null, store.getters.language),
+			}
+		}
 
+		const actionText = localized(LANG_KEYS.KEYPAIR.ACCOUNTS.EOSManageResourceButton, null, store.getters.language);
 		const resources = [{
 			name:'CPU',
 			available:data.cpu_limit.available,
 			max:data.cpu_limit.max,
 			percentage:(data.cpu_limit.used * 100) / data.cpu_limit.max,
-			manageable:true,
+			actionable:true,
+			actionText,
 		},{
 			name:'NET',
 			available:data.net_limit.available,
 			max:data.net_limit.max,
 			percentage:(data.net_limit.used * 100) / data.net_limit.max,
-			manageable:true,
+			actionable:true,
+			actionText,
 		},{
 			name:'RAM',
 			available:data.ram_usage,
 			max:data.ram_quota,
 			percentage:(data.ram_usage * 100) / data.ram_quota,
-			manageable:true,
+			actionable:true,
+			actionText,
 		}];
 
 		if(refund) resources.push(refund);

@@ -1,6 +1,6 @@
 <template>
 	<section>
-		<cin :type="keyInputType"
+		<cin :type="keyInputType" big="1"
 		     :label="locale(langKeys.ADD_KEYS.IMPORT_TEXT.KeyLabel)"
 		     :placeholder="locale(langKeys.ADD_KEYS.IMPORT_TEXT.KeyPlaceholder)"
 		     :dynamic-button="eyeIcon"
@@ -37,7 +37,6 @@
 				keypair.privateKey = this.key;
 
 				if(!KeyPairService.isValidPrivateKey(keypair)) return;
-
 
 				this.setWorkingScreen(true);
 
