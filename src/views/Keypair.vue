@@ -2,13 +2,8 @@
     <section>
         <back-bar v-on:back="back" :buttons="state === STATES.DASHBOARD ? buttons : []"></back-bar>
         <section v-if="keypair">
-
-            <transition name="slide-left" mode="out-in">
-                <KeypairDashboard key="dashboard" v-if="state === STATES.DASHBOARD" :keypair="keypair" />
-                <KeypairExport key="export" v-if="state === STATES.EXPORT" :keypair="keypair" />
-            </transition>
-
-
+            <KeypairDashboard key="dashboard" v-if="state === STATES.DASHBOARD" :keypair="keypair" />
+            <KeypairExport key="export" v-if="state === STATES.EXPORT" :keypair="keypair" />
         </section>
     </section>
 </template>
@@ -41,6 +36,7 @@
 
         	buttons:[],
 	        keypair:null,
+            destroying:false,
         }},
 
         components:{
@@ -53,16 +49,20 @@
 		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
 		    if(!this.keypair) this.$router.push({name:RouteNames.HOME});
 
+		    const locale = this.locale;
+		    const {KEYPAIR} = this.langKeys;
+
 		    this.buttons = [
-			    {text:'Export', clicked:() => this.state = STATES.EXPORT},
-			    {text:'Refresh', clicked:this.refreshAccounts, process:this.keypair.unique()},
-			    {text:'Remove', clicked:this.remove, process:this.keypair.unique()},
+			    {text:locale(KEYPAIR.ExportButton), clicked:this.enableExportKey},
+			    {text:locale(KEYPAIR.RefreshButton), clicked:this.refreshAccounts, process:this.keypair.unique()},
+			    {text:locale(KEYPAIR.RemoveButton), clicked:this.remove, process:this.keypair.unique()},
 		    ];
 
 		    this.lazyLoadResources();
 	    },
 
         destroyed(){
+        	this.destroying = true;
             this[Actions.SET_RESOURCES]([]);
         },
 
@@ -91,6 +91,7 @@
 			        }, []).filter(x => ResourceService.usesResources(x));
 
 		        for(let i = 0; i < accounts.length; i++){
+		        	if(this.destroying) return;
 			        const resources = await ResourceService.getResourcesFor(accounts[i]);
 			        this[Actions.ADD_RESOURCES]({acc:accounts[i].identifiable(), res:resources});
 		        }
@@ -117,20 +118,20 @@
 
 
 	        enableExportKey(){
-		        PopupService.push(
-			        Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
-				        placeholder:this.locale(this.langKeys.LOGIN.EXISTING.PasswordPlaceholder),
-				        type:'password'
-			        }, async password => {
-				        if(!password || !password.length) return;
-				        if(!await PasswordService.verifyPassword(password)){
-					        // this.close();
-					        // this.$router.push('/');
-					        return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "attention", "Okay"));
-				        }
+	        	return this.state = STATES.EXPORT;
+		        PopupService.push(Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
+			        placeholder:this.locale(this.langKeys.LOGIN.EXISTING.PasswordPlaceholder),
+			        type:'password'
+		        }, async password => {
+			        if(!password || !password.length) return;
+			        if(!await PasswordService.verifyPassword(password)){
+				        // this.close();
+				        // this.$router.push('/');
+				        return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "attention", "Okay"));
+			        }
 
-				        this.state = STATES.EXPORT;
-			        }))
+			        this.state = STATES.EXPORT;
+		        }))
 	        },
 
 

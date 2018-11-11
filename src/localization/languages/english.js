@@ -80,7 +80,9 @@ const Locale = {
 	/****************************************************/
 
 	[ADD_KEYS.SELECT.CreateTitle]:() => `Create a new key`,
-	[ADD_KEYS.SELECT.CreateDescription]:() => `We'll create a set of keys that you can use on any blockchain.`,
+	[ADD_KEYS.SELECT.CreateDescription]:() =>
+		`If you want to create a new set of keys that you can use on any blockchain. 
+		The keys will not have any funds on them, they are brand new.`,
 	[ADD_KEYS.SELECT.CreateButton]:() => `Create a Key`,
 	[ADD_KEYS.SELECT.ImportTitle]:() => `Import an existing key`,
 	[ADD_KEYS.SELECT.ImportDescription]:() => `If you already have a key and want to import it into Scatter`,
@@ -114,11 +116,29 @@ const Locale = {
 	/****************************************************/
 	[KEYPAIR.NameLabel]:() => Locale[ADD_KEYS.IMPORT.NameLabel](),
 	[KEYPAIR.NamePlaceholder]:() => Locale[ADD_KEYS.IMPORT.NamePlaceholder](),
+	[KEYPAIR.ExportButton]:() => `Export`,
+	[KEYPAIR.RefreshButton]:() => `Refresh`,
+	[KEYPAIR.RemoveButton]:() => `Remove`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.ACCOUNTS.SearchPlaceholder]:() => `Search Accounts`,
 	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,
 	[KEYPAIR.ACCOUNTS.EOSManageResourceButton]:() => `Manage`,
 	[KEYPAIR.ACCOUNTS.EOSClaimRefundButton]:() => `Refund`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[KEYPAIR.BLOCKCHAINS.CopyButton]:() => `Copy Public Key`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[KEYPAIR.EXPORT.SELECT.KeyTitle]:() => `Key`,
+	[KEYPAIR.EXPORT.SELECT.KeyDescription]:() => `Export this Private Key as text`,
+	[KEYPAIR.EXPORT.SELECT.QrTitle]:() => `Paper Wallet`,
+	[KEYPAIR.EXPORT.SELECT.QrDescription]:() => `Export this Private Key as an encrypted QR code`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[KEYPAIR.EXPORT.KEY.Title]:() => `Private Key as Text`,
+	[KEYPAIR.EXPORT.KEY.CopyButton]:() => `Copy`,
+	[KEYPAIR.EXPORT.KEY.RevealButton]:() => `Reveal`,
+	[KEYPAIR.EXPORT.KEY.HideButton]:() => `Hide`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[KEYPAIR.EXPORT.QR.Title]:() => `QR Code Paper Wallet`,
+	[KEYPAIR.EXPORT.QR.SaveButton]:() => `Save as Image`,
 
 	// [ADD_KEYS.IMPORT.QrButton]:() => ``,
 

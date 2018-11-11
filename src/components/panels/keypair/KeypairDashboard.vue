@@ -14,30 +14,28 @@
 				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys and Blockchains</figure>
 			</section>
 
-			<transition name="slide-left" mode="out-in">
-				<!-- ACCOUNTS -->
-				<section class="list-container" key="accounts" v-if="dashState === DASH_STATES.ACCOUNTS">
-					<!-- Accounts Searchbar -->
-					<SearchBar :short="!scrollerAtTop"
-					           class="search" :class="{'short':!scrollerAtTop}"
-					           :placeholder="locale(langKeys.KEYPAIR.ACCOUNTS.SearchPlaceholder)"
-					           v-on:terms="x => searchTerms = x" />
+			<!-- ACCOUNTS -->
+			<section class="list-container" key="accounts" v-if="dashState === DASH_STATES.ACCOUNTS">
+				<!-- Accounts Searchbar -->
+				<SearchBar :short="!scrollerAtTop"
+				           class="search" :class="{'short':!scrollerAtTop}"
+				           :placeholder="locale(langKeys.KEYPAIR.ACCOUNTS.SearchPlaceholder)"
+				           v-on:terms="x => searchTerms = x" />
 
-					<!-- Accounts List -->
-					<section class="list accounts" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
-						<section class="item" v-for="account in filteredAccounts">
-							<KeypairAccount :key="account.unique()" :account="account" />
-						</section>
+				<!-- Accounts List -->
+				<section class="list accounts" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
+					<section class="item" v-for="account in filteredAccounts">
+						<KeypairAccount :key="account.unique()" :account="account" />
 					</section>
 				</section>
+			</section>
 
-				<!-- KEYS AND BLOCKCHAINS -->
-				<section class="list-container" key="keys" v-if="dashState === DASH_STATES.PUBLIC_KEYS">
-					<section class="list blockchains" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
-						<KeypairBlockchains :key="keypair.unique()" :keypair="keypair" />
-					</section>
+			<!-- KEYS AND BLOCKCHAINS -->
+			<section class="list-container" key="keys" v-if="dashState === DASH_STATES.PUBLIC_KEYS">
+				<section class="list blockchains" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
+					<KeypairBlockchains :key="keypair.unique()" :keypair="keypair" />
 				</section>
-			</transition>
+			</section>
 		</section>
 	</section>
 </template>

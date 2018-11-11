@@ -158,6 +158,7 @@
 			flex-direction: row;
 
 			$icon-bounds:70px;
+
 			.icon-wrapper {
 				width:$icon-bounds;
 				height:$icon-bounds;

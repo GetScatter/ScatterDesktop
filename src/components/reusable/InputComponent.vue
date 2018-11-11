@@ -62,7 +62,7 @@
             font-size: 11px;
             color:#7899a6;
             font-weight: bold;
-            margin-bottom:5px;
+            margin-bottom:8px;
             display: block;
 
             &.error {

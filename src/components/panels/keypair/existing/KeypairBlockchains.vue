@@ -1,6 +1,7 @@
 <template>
 	<section>
 		<section class="item" v-for="blockchain in Blockchains">
+
 			<section class="switch" :class="{'disabled':isRefreshing}" @click="addOrRemoveBlockchain(blockchain)">
 				<figure class="dot" :class="{'disabled':!keypair.blockchains.includes(blockchain)}"></figure>
 			</section>
@@ -9,7 +10,11 @@
 				<figure class="blockchain">{{blockchainName(blockchain)}}</figure>
 				<figure class="key">{{keypair.publicKeys.find(x => x.blockchain === blockchain).key}}</figure>
 			</section>
-			<btn small="1" text="Copy"></btn>
+
+			<btn small="1"
+			     v-on:clicked="copyPublicKey(keypair.publicKeys.find(x => x.blockchain === blockchain).key)"
+			     :text="locale(langKeys.KEYPAIR.BLOCKCHAINS.CopyButton)"></btn>
+
 		</section>
 	</section>
 </template>
@@ -20,6 +25,7 @@
 	import KeyPairService from "../../../../services/KeyPairService";
 	import PriceService from "../../../../services/PriceService";
 	import Process from "../../../../models/Process";
+	import ElectronHelpers from "../../../../util/ElectronHelpers";
 
 	export default {
 		data(){return {
@@ -36,6 +42,9 @@
 				await KeyPairService.addOrRemoveBlockchain(this.keypair, blockchain);
 				await PriceService.getBalances();
 			},
+			copyPublicKey(key){
+				ElectronHelpers.copy(key);
+			}
 		},
 		props:['keypair'],
 	}
@@ -115,7 +124,7 @@
 			}
 
 			.key {
-				font-size: 14px;
+				font-size: 11px;
 			}
 		}
 	}

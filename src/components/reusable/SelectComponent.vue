@@ -1,35 +1,44 @@
 <template>
-    <section class="select" :class="{'open':open, 'disabled':disabled}">
-        <figure class="arrow">
-            <i class="fa fa-chevron-down"></i>
-        </figure>
+    <section>
+        <label v-if="label">{{label}}</label>
 
-        <figure class="selected-option" v-on:click="toggle">
-            {{parse(selectedOption)}}
-        </figure>
-
-        <section class="options">
-            <input ref="terms" placeholder="Search..." v-model="optionsTerms" />
-            <figure :class="isGrouped(item) ? 'group-title' : 'option'" v-for="item in filteredOptions" v-on:click="isGrouped(item) ? null : select(item)">
-                <figure v-if="isGrouped(item) && !optionsTerms.length">{{item}}</figure>
-                <section v-else>
-                    <img v-if="imgParser" :src="imgParser(item)" />
-                    {{parse(item)}}
-                </section>
-
+        <section class="select" :class="{'open':open, 'disabled':disabled}">
+            <figure class="arrow">
+                <i class="icon-down-open-big"></i>
             </figure>
+
+            <figure class="selected-option" v-on:click="toggle">
+                {{parse(selectedOption)}}
+            </figure>
+
+            <section class="options">
+                <input ref="terms" placeholder="Search..." v-model="optionsTerms" />
+                <figure :class="isGrouped(item) ? 'group-title' : 'option'" v-for="item in filteredOptions" v-on:click="isGrouped(item) ? null : select(item)">
+                    <figure v-if="isGrouped(item) && !optionsTerms.length">{{item}}</figure>
+                    <section v-else>
+                        <img v-if="imgParser" :src="imgParser(item)" />
+                        {{parse(item)}}
+                    </section>
+
+                </figure>
+            </section>
         </section>
     </section>
 </template>
 
 <script>
+    let documentListener;
     export default {
+	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'disabled', 'imgParser', 'grouper'],
+
         data(){ return {
             optionsTerms:'',
             selectedOption:this.selected || this.placeholder || this.options[0],
             open:false,
             groups:[],
         }},
+        mounted(){ document.addEventListener('click', this.handleDocumentClick) },
+        destroyed(){ document.removeEventListener('click', this.handleDocumentClick) },
         computed:{
             groupedOptions(){
                 if(!this.grouper) return this.options;
@@ -56,6 +65,9 @@
             }
         },
         methods: {
+	    	handleDocumentClick(e){
+
+            },
             isGrouped(item){
                 if(!item) return false;
                 return this.groups.includes(item);
@@ -85,7 +97,6 @@
                 this.$emit('changed', this.selectedOption)
             }
         },
-        props:['placeholder', 'options', 'selected', 'prop', 'parser', 'disabled', 'imgParser', 'grouper'],
         watch:{
             input(){ this.emit(); },
             text(){ this.input = this.text; },
@@ -97,16 +108,30 @@
 
 <style lang="scss">
     @import "../../_variables";
+
+    label {
+        font-size: 11px;
+        color:#7899a6;
+        font-weight: bold;
+        margin-bottom:5px;
+        display: block;
+
+        &.error {
+            color:$red;
+            animation: blink 1s ease infinite;
+        }
+    }
+
     .select {
         cursor: pointer;
         height:50px;
         position: relative;
         width:100%;
         font-family:'Raleway',sans-serif;
-        font-size:14px;
-        border:1px solid $mid-light-grey;
         border-radius:4px;
         background:#fff;
+        border:1px solid #dfe0e1;
+        font-size: 16px;
         transition:background 0.2s ease;
 
         input {
@@ -129,9 +154,9 @@
             height:50px;
             line-height:50px;
             padding:0 15px;
-            color:$mid-dark-grey;
-            opacity:0.3;
-            transition:opacity 0.2s ease;
+            color:$dark-blue;
+            opacity:0.5;
+            transition:opacity 0.2s ease, transform 0.2s ease;
             pointer-events: none;
         }
 
@@ -171,10 +196,10 @@
             z-index:2;
 
             .option {
-                padding:15px 10px;
-                font-size:14px;
+                padding:15px;
+                font-size: 13px;
                 background:transparent;
-                transition:background 0.2s ease, padding 0.3s ease;
+                transition:background 0.15s ease;
                 word-break: break-all;
 
                 img {
@@ -189,8 +214,7 @@
                 }
 
                 &:hover {
-                    background:rgba(0,0,0,0.05);
-                    padding-left:15px;
+                    background:rgba(0,0,0,0.02);
                 }
             }
         }
@@ -209,6 +233,7 @@
 
             .arrow {
                 opacity:1;
+                transform:rotateZ(-180deg) translateY(2px);
             }
         }
 

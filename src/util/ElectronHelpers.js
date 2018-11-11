@@ -1,3 +1,6 @@
+import PopupService from "../services/PopupService";
+import {Popup} from "../models/popups/Popup";
+
 const {clipboard, shell} = window.require('electron');
 const remote = window.require('electron').remote;
 
@@ -5,6 +8,7 @@ export default class ElectronHelpers {
 
     static copy(txt){
         clipboard.writeText(txt);
+	    PopupService.push(Popup.snackbar(`Copied to Clipboard`, 'check'));
     }
 
     static openLinkInBrowser(link){

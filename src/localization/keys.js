@@ -1,14 +1,15 @@
 /***
- * Prefixes keys.
- * ONLY GOES ONE LEVEL DEEP
+ * Recursively prefixes keys.
  * Example: `LOGIN.NEW.Title` == `login_new_tit`
  * @returns {*}
  */
-const prefixKeys = (name, obj) => {
+const prefixKeys = (name, obj, prefix = null) => {
+	if(!prefix) prefix = `${name}`;
 	Object.keys(obj).map(key => {
-		if(typeof obj[key] !== 'object') obj[key] = obj[key];
+		if(typeof obj[key] !== 'object') obj[key] = `${prefix}_${obj[key]}`.toLowerCase();
 		else Object.keys(obj[key]).map(part => {
-			obj[key][part] = `${name}_${key}_${obj[key][part]}`.toLowerCase()
+			if(typeof obj[key][part] === 'object') obj[key][part] = prefixKeys(name, obj[key][part], `${prefix}_${key}_${part}`.toLowerCase())
+			else obj[key][part] = `${prefix}_${key}_${obj[key][part]}`.toLowerCase()
 		})
 	});
 	return obj;
@@ -98,24 +99,40 @@ const ADD_KEYS = prefixKeys('add_keys', {
 const KEYPAIR = prefixKeys('keypair', {
 	NameLabel:'name_lbl',
 	NamePlaceholder:'name_plc',
+	ExportButton:'export_btn',
+	RefreshButton:'refresh_btn',
+	RemoveButton:'remove_btn',
+
 	ACCOUNTS:{
 		SearchPlaceholder:'search_plc',
 		ViewTokens:'view_tokens',
 		EOSManageResourceButton:'eos_manage_btn',
 		EOSClaimRefundButton:'eos_refund_btn',
 	},
-	DASHBOARD:{
-		CreateTitle:'create_tit',
-		CreateDescription:'create_desc',
-		CreateButton:'create_btn',
-		ImportTitle:'import_tit',
-		ImportDescription:'import_desc',
-		ImportButton:'import_btn',
-		CreateEosTitle:'create_eos_tit',
-		CreateEosDescription:'create_eos_desc',
-		CreateEosButton:'create_eos_btn',
+	BLOCKCHAINS:{
+		CopyButton:'cpy_btn',
 	},
+
+	EXPORT:{
+		SELECT:{
+			KeyTitle:'key_tit',
+			KeyDescription:'key_desc',
+			QrTitle:'qr_tit',
+			QrDescription:'qr_desc',
+		},
+		KEY:{
+			Title:'key_tit',
+			CopyButton:'copy_btn',
+			RevealButton:'reveal_btn',
+			HideButton:'hide_btn',
+		},
+		QR:{
+			Title:'qr_tit',
+			SaveButton:'save_btn',
+		}
+	}
 });
+
 
 export default {
 	LOGIN,

@@ -1,26 +1,43 @@
 <template>
     <section>
-        <section v-if="keypair">
+        <section class="panel-container" v-if="keypair">
 
-            <section class="panel-container">
-                <h1>Export "{{keypair.name}}"</h1>
+            <!-- SELECT EXPORT TYPE -->
+            <section key="select" v-if="state === STATES.SELECT">
+                <h1>{{locale(langKeys.KEYPAIR.ExportButton)}} "{{keypair.name}}"</h1>
 
                 <section class="types">
 
                     <!-- EXPORT KEY -->
-                    <section class="type">
+                    <section class="type" @click="state = STATES.KEY">
                         <figure class="badge icon-attention"></figure>
-                        <figure class="name">Key</figure>
-                        <p>Export this Private Key as text</p>
+                        <figure class="name">{{locale(langKeys.KEYPAIR.EXPORT.SELECT.KeyTitle)}}</figure>
+                        <p>{{locale(langKeys.KEYPAIR.EXPORT.SELECT.KeyDescription)}}</p>
                     </section>
 
                     <!-- EXPORT QR -->
-                    <section class="type">
+                    <section class="type" @click="createQR">
                         <figure class="badge icon-attention"></figure>
-                        <figure class="name">QR</figure>
-                        <p>Export this Private Key as an encrypted QR code</p>
+                        <figure class="name">{{locale(langKeys.KEYPAIR.EXPORT.SELECT.QrTitle)}}</figure>
+                        <p>{{locale(langKeys.KEYPAIR.EXPORT.SELECT.QrDescription)}}</p>
                     </section>
 
+                </section>
+            </section>
+
+            <!-- EXPORT AS TEXT KEY -->
+            <section key="text" v-if="state === STATES.KEY">
+                <h1>{{locale(langKeys.KEYPAIR.EXPORT.KEY.Title)}}</h1>
+                <br><br>
+                <FullWidthRow style="text-align:left;" :items="keys" />
+            </section>
+
+            <!-- EXPORT AS QR -->
+            <section key="text" v-if="state === STATES.QR">
+                <h1>{{locale(langKeys.KEYPAIR.EXPORT.QR.Title)}}</h1>
+                <br><br>
+                <section class="qr">
+                    <img :src="qr" />
                 </section>
             </section>
 
@@ -30,22 +47,57 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../../../store/constants';
-    import {RouteNames, Routing} from '../../../../vue/Routing'
+    import FullWidthRow from '../../../reusable/FullWidthRow';
+    import Crypto from "../../../../util/Crypto";
+    import ElectronHelpers from "../../../../util/ElectronHelpers";
+    import QRService from "../../../../services/QRService";
+
+    const STATES = {
+    	SELECT:'select',
+        KEY:'key',
+        QR:'qr',
+    };
 
     export default {
+    	props:['keypair'],
+
         data () {return {
-	        keypair:null,
+        	state:STATES.SELECT,
+	        STATES,
+
+            keys:[],
+            pkeys:[],
         }},
 
-	    mounted(){
-		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
-		    if(!this.keypair) this.$router.push({name:RouteNames.HOME});
-	    },
+        components:{
+	        FullWidthRow
+        },
+
+        mounted(){
+    		this.keys = this.keypair.blockchains.map(blockchain => {
+                return {
+                	icon:'',
+                    title:this.blockchainName(blockchain),
+                    description:this.getPublicKey(blockchain),
+                    isPublic:true,
+                    actions:[
+	                    {
+		                    id:'reveal',
+		                    name:this.locale(this.langKeys.KEYPAIR.EXPORT.KEY.RevealButton),
+		                    handler:() => this.revealPrivateKey(blockchain)
+	                    },
+                        {
+	                        name:this.locale(this.langKeys.KEYPAIR.EXPORT.KEY.CopyButton),
+	                        handler:() => this.copyPrivateKey(blockchain)
+                        },
+                    ]
+                }
+            });
+        },
 
         computed:{
             ...mapState([
-                'scatter',
+                'seed',
             ]),
             ...mapGetters([
                 'keypairs',
@@ -53,12 +105,34 @@
         },
 
         methods:{
-	        back(){
-	            this.$router.push({name:RouteNames.KEYPAIR, params:{id:this.keypair.id}});
+    		getPublicKey(blockchain){
+    		    return this.keypair.publicKeys.find(x => x.blockchain === blockchain).key;
             },
-            ...mapActions([
+	        getPrivateKey(blockchain){
+		        this.keypair.decrypt(this.seed);
+		        return Crypto.bufferToPrivateKey(this.keypair.privateKey, blockchain);
+	        },
+	        copyPrivateKey(blockchain){
+	        	ElectronHelpers.copy(this.getPrivateKey(blockchain));
+            },
+	        revealPrivateKey(blockchain){
+	        	const display = this.keys.find(x => x.title === this.blockchainName(blockchain));
+	        	const action = display.actions.find(x => x.id === 'reveal');
 
-            ])
+		        display.description = display.isPublic
+                    ? this.getPrivateKey(blockchain)
+                    : this.getPublicKey(blockchain);
+
+		        action.name = !display.isPublic
+                    ? this.locale(this.langKeys.KEYPAIR.EXPORT.KEY.RevealButton)
+	        	    : this.locale(this.langKeys.KEYPAIR.EXPORT.KEY.HideButton);
+
+		        display.isPublic = !display.isPublic;
+            },
+	        async createQR(){
+		        this.qr = await QRService.createQR(this.keypair.privateKey);
+		        this.state = STATES.QR;
+	        },
         },
     }
 </script>

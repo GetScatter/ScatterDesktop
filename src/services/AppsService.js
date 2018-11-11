@@ -5,24 +5,25 @@ import * as Actions from '../store/constants';
 let lastPullTime;
 
 const storeApps = res => {
-	let allApps = [];
-	BlockchainsArray.map(({value}) => {
-		allApps = allApps.concat(res[blockchainName(value)]);
-	});
-	allApps = allApps.reduce((acc,x) => {
+	const allApps = res.reduce((acc,x) => {
 		if(x.hasOwnProperty('hasimage'))
 			x.img = `https://rawgit.com/GetScatter/ScatterApps/master/logos/${x.applink}.svg`
 
 		acc[x.applink] = x;
 		return acc;
-	});
+	}, {});
 	store.dispatch(Actions.SET_DAPP_DATA, allApps);
 }
 
 const getAppsFromGithub = () => {
 	return new Promise(resolve => {
-		fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(res => {
-			storeApps(res);
+		fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(result => {
+			storeApps(Object.keys(result).reduce((acc, blockchain) => {
+				result[blockchain].map(app => {
+					acc.push(Object.assign(app, {blockchain}));
+				})
+				return acc;
+			}, []));
 			resolve(true);
 		}).catch(() => resolve(false));
 	})
@@ -30,7 +31,7 @@ const getAppsFromGithub = () => {
 
 const getAppsFromAPI = () => {
 	return new Promise(resolve => {
-		fetch(`https://api.get-scatter.com/v1/apps`).then(res => res.json()).then(res => {
+		fetch(`https://api.get-scatter.com/v1/apps?flat=true`).then(res => res.json()).then(res => {
 			storeApps(res);
 			resolve(true);
 		}).catch(() => resolve(false));

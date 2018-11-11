@@ -180,6 +180,7 @@
 			display:flex;
 			justify-content: center;
 			align-items: center;
+			color:$dark-blue;
 		}
 
 		.moderation {

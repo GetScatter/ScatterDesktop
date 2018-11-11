@@ -9,9 +9,11 @@
                 <span>Back</span>
             </section>
 
-            <section class="buttons" v-if="buttons">
-                <btn :key="button.text" class="button" v-for="button in buttons" :disabled="disabled(button)" :text="button.text" v-on:clicked="button.clicked"></btn>
-            </section>
+            <transition name="slide-right" mode="out-in">
+                <section key="buttons" class="buttons" v-if="buttons && buttons.length">
+                    <btn :key="button.text" class="button" v-for="button in buttons" :disabled="disabled(button)" :text="button.text" v-on:clicked="button.clicked"></btn>
+                </section>
+            </transition>
         </section>
     </section>
 </template>
@@ -38,13 +40,13 @@
         display:flex;
         flex-direction: row;
         font-weight: bold;
-        cursor: pointer;
         justify-content: space-between;
         align-items: center;
         width:100%;
 
         .back {
             padding: 30px 30px 30px 0;
+            cursor: pointer;
 
             span {
                 vertical-align: middle;

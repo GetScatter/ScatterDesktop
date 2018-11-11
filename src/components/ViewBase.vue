@@ -16,7 +16,7 @@
             </section>
 
             <section class="app-content" v-else>
-                <transition :name="route === 'login' ? 'fade' : 'slide-left'" mode="out-in">
+                <transition :name="route === 'login' ? 'fade' : ''" mode="out-in">
                     <router-view></router-view>
                 </transition>
             </section>

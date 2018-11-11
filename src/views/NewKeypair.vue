@@ -3,35 +3,28 @@
 
         <back-bar v-on:back="back"></back-bar>
 
-        <transition name="slide-left" mode="out-in">
-            <!-- SELECT NEW KEY TYPE -->
-            <section key="select" v-if="state === STATES.SELECT" class="panel-container">
-                <h1>Add Keys</h1>
+        <!-- SELECT NEW KEY TYPE -->
+        <section key="select" v-if="state === STATES.SELECT" class="panel-container">
+            <h1>{{locale(langKeys.DASHBOARD.KEYS.AddKeysButton)}}</h1>
 
-                <br>
-                <br>
+            <br>
+            <br>
 
-                <FullWidthRow :items="newKeyTypes" />
-            </section>
+            <FullWidthRow :items="newKeyTypes" />
+        </section>
 
-            <!-- IMPORT KEYPAIR SELECTOR -->
-            <section key="import" v-if="state === STATES.IMPORT" class="panel-container">
-                <cin :big="walletNameIsBig"
-                     :label="locale(langKeys.ADD_KEYS.IMPORT.NameLabel)"
-                     :placeholder="locale(langKeys.ADD_KEYS.IMPORT.NamePlaceholder)"
-                     :text="name" v-on:changed="x => name = x"></cin>
+        <!-- IMPORT KEYPAIR SELECTOR -->
+        <section key="import" v-if="state === STATES.IMPORT" class="panel-container">
+            <h1>{{locale(langKeys.ADD_KEYS.SELECT.ImportButton)}}</h1>
 
-                <br>
-                <br>
+            <br>
+            <br>
 
-                <transition name="slide-left" mode="out-in">
-                    <FullWidthRow :items="importTypes" key="select" v-if="importState === IMPORT_STATES.SELECT" />
-                    <ImportTextKey key="text" v-if="importState === IMPORT_STATES.TEXT" v-on:keypair="insertKeypair" />
-                    <ImportHardwareKey key="text" v-if="importState === IMPORT_STATES.HARDWARE" v-on:keypair="insertKeypair" />
-                    <ImportQRKey key="text" v-if="importState === IMPORT_STATES.QR" v-on:keypair="insertKeypair" />
-                </transition>
-            </section>
-        </transition>
+            <FullWidthRow :items="importTypes" key="select" v-if="importState === IMPORT_STATES.SELECT" />
+            <ImportTextKey key="text" v-if="importState === IMPORT_STATES.TEXT" v-on:keypair="insertKeypair" />
+            <ImportHardwareKey key="text" v-if="importState === IMPORT_STATES.HARDWARE" v-on:keypair="insertKeypair" />
+            <ImportQRKey key="text" v-if="importState === IMPORT_STATES.QR" v-on:keypair="insertKeypair" />
+        </section>
 
     </section>
 </template>
@@ -88,25 +81,21 @@
             ...mapGetters([
                 'keypairs',
             ]),
-            walletNameIsBig(){
-            	if(this.importState === IMPORT_STATES.TEXT) return false;
-            	return true;
-            }
         },
         mounted(){
         	const locale = this.locale;
         	const {SELECT, IMPORT} = this.langKeys.ADD_KEYS;
 
 	        this.newKeyTypes = [
-		        {icon:'', title:locale(SELECT.CreateTitle), description:locale(SELECT.CreateDescription), action:locale(SELECT.CreateButton), handler:this.generateNewKeypair},
-		        {icon:'', title:locale(SELECT.ImportTitle), description:locale(SELECT.ImportDescription), action:locale(SELECT.ImportButton), handler:() => this.state = STATES.IMPORT},
-		        {icon:'', title:locale(SELECT.CreateEosTitle), description:locale(SELECT.CreateEosDescription), action:locale(SELECT.CreateEosButton), handler:() => this.state = STATES.CREATE},
+		        {icon:'', title:locale(SELECT.CreateTitle), description:locale(SELECT.CreateDescription), actions:[{name:locale(SELECT.CreateButton), handler:this.generateNewKeypair}]},
+		        {icon:'', title:locale(SELECT.ImportTitle), description:locale(SELECT.ImportDescription), actions:[{name:locale(SELECT.ImportButton), handler:() => this.state = STATES.IMPORT}]},
+		        {icon:'', title:locale(SELECT.CreateEosTitle), description:locale(SELECT.CreateEosDescription), actions:[{name:locale(SELECT.CreateEosButton), handler:() => this.state = STATES.CREATE}]},
 	        ];
 
 	        this.importTypes = [
-		        {icon:'', title:locale(IMPORT.TextTitle), description:locale(IMPORT.TextDescription), action:locale(IMPORT.TextButton), handler:() => this.importState = IMPORT_STATES.TEXT},
-		        {icon:'', title:locale(IMPORT.HardwareTitle), description:locale(IMPORT.HardwareDescription), action:locale(IMPORT.HardwareButton), handler:() => this.importState = IMPORT_STATES.HARDWARE},
-		        {icon:'', title:locale(IMPORT.QrTitle), description:locale(IMPORT.QrDescription), action:locale(IMPORT.QrButton), handler:() => this.importState = IMPORT_STATES.QR},
+		        {icon:'', title:locale(IMPORT.TextTitle), description:locale(IMPORT.TextDescription), actions:[{name:locale(IMPORT.TextButton), handler:() => this.importState = IMPORT_STATES.TEXT}]},
+		        {icon:'', title:locale(IMPORT.HardwareTitle), description:locale(IMPORT.HardwareDescription), actions:[{name:locale(IMPORT.HardwareButton), handler:() => this.importState = IMPORT_STATES.HARDWARE}]},
+		        {icon:'', title:locale(IMPORT.QrTitle), description:locale(IMPORT.QrDescription), actions:[{name:locale(IMPORT.QrButton), handler:() => this.importState = IMPORT_STATES.QR}]},
 	        ];
 
         },
@@ -136,17 +125,15 @@
 		            return false;
 	            }
 
-	            keypair.name = this.name.trim().length ? this.name.trim() : `Wallet-${IdGenerator.text(10)}`;
-
-
-	            if(this.keypairs.find(x => x.name.toLowerCase() === keypair.name.toLowerCase()))
-	            	return 'A Vault Entry with this name already exists.';
+	            keypair.name = `Wallet-${IdGenerator.text(10)}`;
 
 
 	            await KeyPairService.saveKeyPair(keypair);
 	            await AccountService.importAllAccounts(keypair, isNewKeypair);
-	            this.setWorkingScreen(false);
 	            this.$router.push({name:RouteNames.KEYPAIR, params:{id:keypair.id}})
+	            setTimeout(() => {
+		            this.setWorkingScreen(false);
+                }, 200);
 
             },
             ...mapActions([
