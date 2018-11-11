@@ -14,6 +14,7 @@ const state = {
     dappLogos:{},
     dappData:{},
     workingScreen:null,
+    processes:[],
 
     searchTerms:'',
 

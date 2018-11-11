@@ -14,4 +14,10 @@ export const mutations = {
     [Mutations.SET_PRICES]:(state, prices) => state.prices = prices,
     [Mutations.SET_DAPP_LOGO]:(state, {origin, logo}) => state.dappLogos[origin] = logo,
     [Mutations.SET_DAPP_DATA]:(state, data) => state.dappData = data,
+	[Mutations.RELEASE_PROCESS]:(state, p) => state.processes = state.processes.filter(x => x.id !== p.id),
+	[Mutations.SET_PROCESS]:(state, p) => {
+        const process = state.processes.find(x => x.id === p.id);
+        if(!process) return state.processes.push(p);
+        else process.progress = p.progress;
+	}
 };

@@ -30,24 +30,41 @@ const getCachedInstance = network => {
 }
 
 
-const getAccountsFromPublicKey = (publicKey, network) => {
+const getAccountsFromPublicKey = (publicKey, network, process, progressDelta) => {
     return Promise.race([
         new Promise(resolve => setTimeout(() => resolve([]), 20000)),
         new Promise((resolve, reject) => {
             const eos = getCachedInstance(network);
+            if(process) process.subTitle = `Fetching accounts from ${network.name}`;
             eos.getKeyAccounts(publicKey).then(res => {
+	            if(process) process.updateProgress(progressDelta/3);
                 if(!res || !res.hasOwnProperty('account_names')){ resolve([]); return false; }
+                const {account_names} = res;
 
-                Promise.all(res.account_names.map(name => eos.getAccount(name).catch(e => resolve([])))).then(multires => {
-                    let accounts = [];
-                    multires.map(account => {
-                        account.permissions.map(perm => {
-                            if(!!perm.required_auth.keys.find(x => x.key === publicKey))
-                                accounts.push({name:account.account_name, authority:perm.perm_name})
-                        });
-                    });
-                    resolve(accounts)
-                }).catch(e => resolve([]));
+                const originalTitle = process.title;
+	            const setProcessTitle = () => {
+		            if(process) process.subTitle = `Importing ${account_names.length} accounts from ${network.name}`;
+                };
+	            setProcessTitle();
+
+	            const perAccountProgress = progressDelta ? (progressDelta/3) / account_names.length : 0;
+
+	            Promise.all(account_names.map(async name => {
+	                const data = await eos.getAccount(name).catch(e => resolve([]))
+		            setProcessTitle(true);
+		            if(process) process.updateProgress(perAccountProgress);
+		            return data;
+	            })).then(multires => {
+		            let accounts = [];
+		            multires.map(account => {
+			            account.permissions.map(perm => {
+				            if(!!perm.required_auth.keys.find(x => x.key === publicKey)) {
+					            accounts.push({name: account.account_name, authority: perm.perm_name})
+				            }
+			            });
+		            });
+		            resolve(accounts)
+	            }).catch(e => resolve([]));
             }).catch(e => resolve([]));
         })
     ])
@@ -182,12 +199,12 @@ export default class EOS extends Plugin {
     }
 
     accountsAreImported(){ return true; }
-    getImportableAccounts(keypair, network){
+    getImportableAccounts(keypair, network, process, progressDelta){
         return new Promise((resolve, reject) => {
             let publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO);
             if(!publicKey) return resolve([]);
             publicKey = publicKey.key;
-            getAccountsFromPublicKey(publicKey, network).then(accounts => {
+            getAccountsFromPublicKey(publicKey, network, process, progressDelta).then(accounts => {
                 resolve(accounts.map(account => Account.fromJson({
                     name:account.name,
                     authority:account.authority,

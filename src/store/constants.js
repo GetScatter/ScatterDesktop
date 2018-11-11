@@ -14,6 +14,8 @@ export const HOLD_SCATTER =     'holdScatter';
 export const SET_WORKING_SCREEN ='setWorkingScreen';
 export const PUSH_POPUP =       'pushPopup';
 export const RELEASE_POPUP =    'releasePopup';
+export const SET_PROCESS =      'addProcess';
+export const RELEASE_PROCESS =  'releaseProcess';
 
 export const SET_HARDWARE =     'setHardware';
 

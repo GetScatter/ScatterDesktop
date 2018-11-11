@@ -8,24 +8,28 @@
                     <!--<btn text="Exchange"></btn>-->
                 </section>
                 <section>
-                    <btn text="Send"></btn>
-                    <btn text="Receive"></btn>
+                    <btn :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
+                    <btn :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
                 </section>
             </section>
 
             <section class="vertical-split">
-                <VaultEntries class="half" />
+                <Wallets class="half" />
                 <Apps class="half" />
             </section>
         </section>
 
         <section class="full-panel center-fold" v-if="!keypairs.length">
             <section>
-                <PiggyWaiting />
-                <p>Well, what are you waiting for?</p>
+                <PiggyWaiting :faster="hoveringAddKeys" />
+                <p>{{locale(langKeys.DASHBOARD.KEYS.NoKeys)}}</p>
             </section>
             <section class="action-bar short bottom centered">
-                <btn v-on:clicked="newKeypair" blue="1" style="width:300px;" text="Add Keys"></btn>
+                <btn @mouseover.native="hoveringAddKeys = true"
+                     @mouseout.native="hoveringAddKeys = false"
+                     v-on:clicked="newKeypair" blue="1"
+                     style="width:300px;"
+                     :text="locale(langKeys.DASHBOARD.KEYS.AddKeysButton)"></btn>
             </section>
         </section>
 
@@ -39,7 +43,7 @@
     import PiggyWaiting from '../components/svgs/PiggyWaiting'
 
     import Apps from '../components/panels/home/Apps';
-    import VaultEntries from '../components/panels/home/VaultEntries';
+    import Wallets from '../components/panels/home/Wallets';
 
     import PermissionService from '../services/PermissionService';
     import ElectronHelpers from '../util/ElectronHelpers';
@@ -50,10 +54,11 @@
     export default {
     	components:{
     		PiggyWaiting,
-		    VaultEntries,
+		    Wallets,
             Apps,
 	    },
         data () {return {
+	        hoveringAddKeys:false,
             searchTerms:'',
         }},
         computed:{

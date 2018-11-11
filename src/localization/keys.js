@@ -1,30 +1,103 @@
-const LOGIN = {
+/***
+ * Prefixes keys.
+ * ONLY GOES ONE LEVEL DEEP
+ * Example: `LOGIN.NEW.Title` == `login_new_tit`
+ * @returns {*}
+ */
+const prefixKeys = (name, obj) => {
+	Object.keys(obj).map(key => {
+		Object.keys(obj[key]).map(part => {
+			obj[key][part] = `${name}_${key}_${obj[key][part]}`.toLowerCase()
+		})
+	});
+	return obj;
+};
+
+const LOGIN = prefixKeys('login', {
 	NEW:{
-		Title:'login_new_title',
-		SubTitle:'login_new_subtitle',
-		PasswordLabel:'login_new_password_label',
-		PasswordPlaceholder:'login_new_password_placeholder',
-		PasswordConfirmLabel:'login_new_password_confirm_label',
-		PasswordConfirmPlaceholder:'login_new_password_confirm_placeholder',
-		CreateButton:'login_new_create_button',
-		RestoreBackupButton:'login_new_restore_backup_button',
+		Title:'tit',
+		SubTitle:'sub',
+		PasswordLabel:'password_lbl',
+		PasswordPlaceholder:'password_plc',
+		PasswordConfirmLabel:'password_confirm_lbl',
+		PasswordConfirmPlaceholder:'password_confirm_plc',
+		CreateButton:'create_btn',
+		RestoreBackupButton:'restore_backup_btn',
 	},
 	EXISTING:{
-		Title:'login_existing_title',
-		SubTitle:'login_existing_subtitle',
-		PasswordPlaceholder:'login_existing_password_placeholder',
-		ResetButton:'login_existing_reset_button',
+		Title:'tit',
+		SubTitle:'sub',
+		PasswordPlaceholder:'password_plc',
+		ResetButton:'reset_btn',
 	},
 	RESTORE:{
-		Title:'login_restore_title',
-		SubTitle:'login_restore_subtitle',
-		ChooseButton:'login_restore_choose_button',
-		BackButton:'login_restore_back_button',
+		Title:'tit',
+		SubTitle:'sub',
+		ChooseButton:'choose_btn',
+		BackButton:'back_btn',
 	}
-};
+});
+
+const DASHBOARD = prefixKeys('dashboard', {
+	KEYS:{
+		SearchPlaceholder:'search_plc',
+		AddKeysButton:'add_keys',
+		NoKeys:'no_keys',
+		Accounts:'accounts'
+	},
+	APPS:{
+		SearchPlaceholder:'search_plc',
+		NoAppsTitle:'no_apps_tit',
+		NoAppsDescription:'no_apps_desc',
+		ExploreAppsButton:'explore_apps_btn',
+		EditApp:'edit_app',
+		DeleteApp:'del_app',
+		LinkPermissionOnly:'link_perm_only',
+		NPermissions:'n_permissions'
+	},
+	TOOLBARS:{
+		SendButton:'send',
+		ReceiveButton:'receive',
+	}
+});
+
+const ADD_KEYS = prefixKeys('add_keys', {
+	SELECT:{
+		CreateTitle:'create_tit',
+		CreateDescription:'create_desc',
+		CreateButton:'create_btn',
+		ImportTitle:'import_tit',
+		ImportDescription:'import_desc',
+		ImportButton:'import_btn',
+		CreateEosTitle:'create_eos_tit',
+		CreateEosDescription:'create_eos_desc',
+		CreateEosButton:'create_eos_btn',
+	},
+	IMPORT:{
+		NameLabel:'name_lbl',
+		NamePlaceholder:'name_plc',
+		TextTitle:'text_tit',
+		TextDescription:'text_desc',
+		TextButton:'text_btn',
+		HardwareTitle:'hw_tit',
+		HardwareDescription:'hw_desc',
+		HardwareButton:'hw_btn',
+		QrTitle:'qt_tit',
+		QrDescription:'qr_desc',
+		QrButton:'qr_btn',
+	},
+	IMPORT_TEXT:{
+		KeyLabel:'key_lbl',
+		KeyPlaceholder:'key_plc'
+	},
+	IMPORT_HW:{},
+	IMPORT_QR:{}
+});
 
 export default {
 	LOGIN,
+	DASHBOARD,
+	ADD_KEYS
 }
 
 

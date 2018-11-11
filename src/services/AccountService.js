@@ -3,15 +3,12 @@ import PluginRepository from '../plugins/PluginRepository'
 import * as Actions from '../store/constants'
 import {store} from '../store/store'
 import {BlockchainsArray} from '../models/Blockchains'
+import Process from "../models/Process";
 
 export default class AccountService {
 
     static accountsAreImported(keypair){
         return PluginRepository.plugin(keypair.blockchain).accountsAreImported();
-    }
-
-    static async getImportableAccounts(keypair, network, blockchain){
-        return await PluginRepository.plugin(blockchain).getImportableAccounts(keypair, network);
     }
 
     static async addAccount(account){
@@ -34,24 +31,33 @@ export default class AccountService {
 
     static importAllAccounts(keypair){
         return new Promise(async resolve => {
-            const scatter = store.state.scatter.clone();
+            if(Process.isProcessRunning(keypair.unique())) return resolve(false);
+	        const process = Process.importAccounts(keypair.unique());
+            let scatter = store.state.scatter.clone();
             let accounts = [];
 
             const blockchains = keypair.blockchains;
+            const progressPerBlockchain = 90 / blockchains.length;
 
             await Promise.all(blockchains.map(async blockchain => {
                 const plugin = PluginRepository.plugin(blockchain);
                 const networks = scatter.settings.networks.filter(x => x.blockchain === blockchain);
-                return AccountService.accountsFrom(plugin, networks, accounts, keypair);
+                return AccountService.accountsFrom(plugin, networks, accounts, keypair, process, progressPerBlockchain);
             }));
 
             const uniques = accounts.map(x => x.unique());
             const accountsToRemove = scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique() && !uniques.includes(x.unique()));
 
+
+            // This method takes a while, re-cloning to make sure we're
+            // always up to date before committing the data to storage.
+	        scatter = store.state.scatter.clone();
+	        
             accountsToRemove.map(account => scatter.keychain.removeAccount(account));
             accounts.map(account => scatter.keychain.addAccount(account));
 
             await store.dispatch(Actions.SET_SCATTER, scatter);
+	        process.updateProgress(100);
             resolve(true);
         })
     }
@@ -74,12 +80,11 @@ export default class AccountService {
         })
     }
 
-    static async accountsFrom(plugin, networks, accounts, keypair){
+    static async accountsFrom(plugin, networks, accounts, keypair, process = null, progressPerBlockchain = 0){
         return new Promise(async resolve => {
             if(plugin.accountsAreImported()){
                 (await Promise.all(networks.map(async network => {
-                    const availableAccounts = await plugin.getImportableAccounts(keypair, network);
-                    return await plugin.getImportableAccounts(keypair, network);
+                    return await plugin.getImportableAccounts(keypair, network, process, progressPerBlockchain);
                 }))).reduce((acc, arr) => {
                     arr.map(account => {
                         accounts.push(account)
@@ -89,6 +94,7 @@ export default class AccountService {
                 resolve(true);
             } else {
                 networks.map(network => {
+	                if(process) process.subTitle = `Importing accounts for ${network.name}`;
                     const key = keypair.publicKeys.find(x => x.blockchain === network.blockchain);
                     if(key){
                         accounts.push(Account.fromJson({
@@ -97,7 +103,9 @@ export default class AccountService {
                             publicKey:key.key
                         }));
                     }
+	                if(process) process.subTitle = null;
                 });
+	            if(process) process.updateProgress(progressPerBlockchain);
                 resolve(true);
             }
         })

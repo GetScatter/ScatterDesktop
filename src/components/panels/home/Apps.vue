@@ -1,18 +1,18 @@
 <template>
 	<section class="apps">
-		<transition name="slide-left" mode="out-in">
+		<transition name="slide-right" mode="out-in">
 
 
 			<!-- HAS APPS -->
 			<section key="apps" class="list-container" v-if="permissions.length">
-				<SearchBar placeholder="Search Apps" v-on:terms="x => searchTerms = x" />
+				<SearchBar :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
 				<section class="list">
 					<section class="item" v-for="(count, origin) in origins">
 
 						<!-- APP ICON -->
 						<section class="icon-wrapper" @click="openApp(origin)">
 							<figure class="icon">
-								<img v-if="originLogo(origin)" :src="originLogo(origin)" />
+								<img v-if="getAppData(origin).hasOwnProperty('img')" :src="getAppData(origin).img" />
 							</figure>
 							<figure class="app-type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
 						</section>
@@ -25,12 +25,16 @@
 
 							<p class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></p>
 
-							<p v-if="count === 1">Link permission only</p>
-							<p v-if="count > 1">{{count}} Permissions</p>
+							<p v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
+							<p v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
 
 							<section class="actions">
-								<span>Edit</span>
-								<span @click="removePermissions(origin)">Delete</span>
+								<span>
+									{{locale(langKeys.DASHBOARD.APPS.EditApp)}}
+								</span>
+								<span @click="removePermissions(origin)">
+									{{locale(langKeys.DASHBOARD.APPS.DeleteApp)}}
+								</span>
 							</section>
 						</section>
 
@@ -42,8 +46,8 @@
 			<section key="empty" class="placeholder" v-else>
 				<section>
 					<img src="../../../assets/rocketship.png" />
-					<h5>No apps connected</h5>
-					<p>Apps are at the heart of what makes Scatter awesome. You can explore apps and connect to them below.</p>
+					<h5>{{locale(langKeys.DASHBOARD.APPS.NoAppsTitle)}}</h5>
+					<p>{{locale(langKeys.DASHBOARD.APPS.NoAppsDescription)}}</p>
 				</section>
 			</section>
 		</transition>
@@ -59,6 +63,7 @@
 	import {BlockchainsArray} from '../../../models/Blockchains';
 	import SearchBar from './SearchBar';
 	import PermissionService from "../../../services/PermissionService";
+	import AppsService from "../../../services/AppsService";
 
 	export default {
 		data(){return {
@@ -66,23 +71,12 @@
 		}},
 		components:{ SearchBar },
 		mounted(){
-			fetch(`https://rawgit.com/GetScatter/ScatterApps/master/apps.json?rand=${Math.random() * 10000 + 1}`).then(res => res.json()).then(res => {
-				let allApps = [];
-				BlockchainsArray.map(({value}) => {
-					allApps = allApps.concat(res[this.blockchainName(value)]);
-				});
-				allApps = allApps.reduce((acc,x) => {
-					acc[x.applink] = x;
-					return acc;
-				});
-				this[Actions.SET_DAPP_DATA](allApps);
-			});
+			AppsService.getApps();
 		},
 		computed:{
 			...mapState([
 				'scatter',
 				'dappLogos',
-				'dappData',
 			]),
 			...mapGetters([
 				'permissions',
@@ -104,37 +98,7 @@
 
 		},
 		methods:{
-			getAppData(origin){
-				const emptyResult = {
-					type:'',
-					name:origin,
-					description:'',
-					logo:'',
-					url:'',
-				};
-
-				const found = this.dappData[origin];
-				if(!found) return emptyResult;
-
-				if(!this.dappLogos.hasOwnProperty(origin)){
-					this[Actions.SET_DAPP_LOGO]({origin, logo:null});
-					const logo = `https://rawgit.com/GetScatter/ScatterApps/master/logos/${found.applink}.svg`;
-					fetch(logo).then(res => {
-						this[Actions.SET_DAPP_LOGO]({origin, logo:res.status === 200 ? logo : null});
-						this.$forceUpdate();
-					})
-				}
-
-				const maxDescriptionLength = 70;
-				if(found.description.length > maxDescriptionLength){
-					found.description = `${found.description.substr(0,70)}${found.description.length > 70 ? '...':''}`
-				}
-
-				return found;
-			},
-			originLogo(origin){
-				return this.dappLogos[origin];
-			},
+			getAppData:AppsService.getAppData,
 			openApp(origin){
 				const data = this.getAppData(origin);
 				if(data.url.length){

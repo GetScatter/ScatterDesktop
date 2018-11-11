@@ -1,7 +1,7 @@
 <template>
     <section class="input" :class="{'big':big}">
 
-        <label v-if="label">{{label}}</label>
+        <label v-if="error || label" :class="{'error':error}">{{error ? error : label}}</label>
 
         <input ref="focuser"
                :placeholder="placeholder"
@@ -42,7 +42,7 @@
                 })
             }
         },
-        props:['placeholder', 'label', 'type', 'maxlength', 'text', 'disabled', 'copy', 'dynamicButton', 'dynamicTooltip', 'big', 'focus', 'loaderOnDynamic'],
+        props:['placeholder', 'label', 'error', 'type', 'maxlength', 'text', 'disabled', 'copy', 'dynamicButton', 'dynamicTooltip', 'big', 'focus', 'loaderOnDynamic'],
         watch:{
             input:function(){ this.emit(); },
             text:function(){ this.input = this.text; },
@@ -64,18 +64,23 @@
             font-weight: bold;
             margin-bottom:5px;
             display: block;
+
+            &.error {
+                color:$red;
+                animation: blink 1s ease infinite;
+            }
         }
 
         .copy, .dynamic-button {
             cursor: pointer;
             position: absolute;
             right:20px;
-            bottom:0;
+            bottom:-15px;
             top:0;
             display:flex;
             justify-content: center;
             align-items: center;
-            font-size:13px;
+            font-size:20px;
             z-index:2;
             color:$light-blue;
 
@@ -99,6 +104,9 @@
             padding:0 15px;
             font-size: 18px;
             cursor: text;
+
+            transition: all 0.3s ease;
+            transition-property: line-height, height, padding;
 
             &::-webkit-input-placeholder {
                 font-size: 18px;
@@ -158,6 +166,7 @@
 
             .dynamic-button {
                 font-size: 26px;
+                bottom:0;
             }
 
 

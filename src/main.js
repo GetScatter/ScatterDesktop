@@ -14,6 +14,7 @@ ElectronHelpers.bindContextMenu();
 import MenuBar from './components/MenuBar.vue'
 import UserBar from './components/UserBar.vue'
 import ViewBase from './components/ViewBase.vue'
+import Processes from './components/Processes.vue'
 
 // Panels
 import Terms from './components/panels/Terms.vue'
@@ -62,6 +63,8 @@ import SwitchComponent from './components/reusable/SwitchComponent.vue'
 import SliderComponent from './components/reusable/SliderComponent.vue'
 import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
 import BackBar from './components/reusable/BackBar.vue'
+import KeyPairService from "./services/KeyPairService";
+import Keypair from "./models/Keypair";
 
 // import {remote} = window.require('electron');
 // const app = remote.app;
@@ -93,6 +96,7 @@ class Main {
 			{tag:'menu-bar', vue:MenuBar},
 			{tag:'user-bar', vue:UserBar},
 			{tag:'view-base', vue:ViewBase},
+			{tag:'processes', vue:Processes},
 		];
 
 		let fragments;
@@ -158,6 +162,13 @@ class Main {
 			alert(log);
 			console.log('err logged', log);
 		}
+
+
+
+		// !! DO NOT REMOVE !!
+		// Gathering entropy causes slowdowns,
+		// doing this when idle
+		KeyPairService.generateKeyPair(Keypair.placeholder());
 
 
 

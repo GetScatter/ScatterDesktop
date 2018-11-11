@@ -1,7 +1,9 @@
 <template>
     <section class="user-bar">
-        <section>
-            <btn small="1" text="Nathan James"></btn>
+        <section class="actions">
+            <figure class="action">
+                Nathan James
+            </figure>
         </section>
 
         <section class="actions">

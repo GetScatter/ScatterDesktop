@@ -5,52 +5,37 @@
 
             <!-- MAIN KEYPAIR DASHBOARD -->
             <section class="panel-container">
-                <cin big="1" label="Wallet Name" placeholder="Give this wallet a name to remember." :text="keypair.name" v-on:changed="x => keypair.name = x"  />
+                <cin :big="scrollerAtTop"
+                     :error="nameError"
+                     label="Wallet Name"
+                     placeholder="Give this wallet a name to remember."
+                     :text="keypair.name"
+                     v-on:changed="x => keypair.name = x" />
 
-                <section class="dash-switch">
+                <section class="dash-switch" :class="{'short':!scrollerAtTop}">
                     <figure class="button" :class="{'active':dashState === DASH_STATES.ACCOUNTS}" @click="dashState = DASH_STATES.ACCOUNTS">Accounts</figure>
                     <figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys and Blockchains</figure>
                 </section>
 
-                <section class="list-container">
-                    <transition name="slide-left" mode="out-in">
+                <transition name="slide-left" mode="out-in">
 
-                        <!-- ACCOUNTS -->
-                        <section key="accounts" v-if="dashState === DASH_STATES.ACCOUNTS">
-                            <SearchBar class="search" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
-                            <section class="list">
-                                <section class="item" v-for="account in filteredAccounts">
-                                    <section class="basics">
-                                        <section class="info">
-                                            <figure class="network">{{blockchainName(account.blockchain())}} on {{account.network().name}}</figure>
-                                            <figure class="identifier">{{account.sendable()}}</figure>
-                                        </section>
-                                        <section class="tokens">
-                                            View 4 tokens <i class="icon-right-open-big"></i>
-                                        </section>
-                                    </section>
-
-                                    <section class="moderations">
-                                        <section class="moderation" v-for="percentage in [2, 50, 88]">
-                                            <figure class="name">CPU</figure>
-                                            <figure class="percentage-bar">
-                                                <figure class="bar" :style="{'width':percentage + '%'}"></figure>
-                                            </figure>
-                                            <figure class="action">
-                                                <btn small="1" text="Manage"></btn>
-                                            </figure>
-                                        </section>
-                                    </section>
-                                </section>
+                    <!-- ACCOUNTS -->
+                    <section class="list-container" key="accounts" v-if="dashState === DASH_STATES.ACCOUNTS">
+                        <SearchBar :short="!scrollerAtTop" class="search" :class="{'short':!scrollerAtTop}" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                        <section class="list accounts" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
+                            <section class="item" v-for="account in filteredAccounts">
+                                <KeypairAccounts :account="account" />
                             </section>
                         </section>
+                    </section>
 
-
-
-                        <!-- KEYS AND BLOCKCHAINS -->
-                        <section key="keys" v-if="dashState === DASH_STATES.PUBLIC_KEYS"></section>
-                    </transition>
-                </section>
+                    <!-- KEYS AND BLOCKCHAINS -->
+                    <section class="list-container" key="keys" v-if="dashState === DASH_STATES.PUBLIC_KEYS">
+                        <section class="list blockchains" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
+                            <KeypairBlockchains :keypair="keypair" />
+                        </section>
+                    </section>
+                </transition>
             </section>
 
 
@@ -64,12 +49,17 @@
     import {RouteNames, Routing} from '../vue/Routing'
 
     import SearchBar from '../components/panels/home/SearchBar';
+    import KeypairAccounts from '../components/panels/keypair/existing/KeypairAccounts';
+    import KeypairBlockchains from '../components/panels/keypair/existing/KeypairBlockchains';
 
     import KeyPairService from "../services/KeyPairService";
     import PopupService from "../services/PopupService";
     import {Popup} from "../models/popups/Popup";
     import PriceService from "../services/PriceService";
+    import Process from "../models/Process";
+    import AccountService from "../services/AccountService";
 
+    let saveTimeout;
 
     const DASH_STATES = {
         ACCOUNTS:'accounts',
@@ -78,6 +68,7 @@
 
     export default {
         data () {return {
+	        scrollerAtTop:true,
         	dashState:DASH_STATES.ACCOUNTS,
 	        DASH_STATES,
 
@@ -86,35 +77,53 @@
 
 	        keypair:null,
         }},
+
         components:{
-	        SearchBar
+	        SearchBar,
+	        KeypairAccounts,
+	        KeypairBlockchains
         },
+
+	    mounted(){
+		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
+		    if(!this.keypair) this.$router.push({name:RouteNames.HOME});
+
+		    this.buttons = [
+			    {text:'Export', clicked:() => this.$router.push({name:RouteNames.EXPORT_KEYPAIR, params:{id:this.keypair.id}})},
+			    {text:'Refresh', clicked:this.refreshAccounts, process:this.keypair.unique()},
+			    {text:'Remove', clicked:this.remove, process:this.keypair.unique()},
+		    ];
+	    },
+
         computed:{
             ...mapState([
                 'scatter',
             ]),
             ...mapGetters([
                 'keypairs',
+                'accounts',
             ]),
             filteredAccounts(){
             	return this.keypair.accounts()
-
+		            .reduce((acc, account) => {
+			            if(!acc.find(x => account.network().unique() === x.network().unique() && account.sendable() === x.sendable())) acc.push(account);
+			            return acc;
+		            }, [])
                     .filter(x => x.name.toLowerCase().match(this.searchTerms))
+            },
+            nameError(){
+	            if(!this.keypair.name.trim().length) return 'Enter a name for this Vault Entry';
+	            if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return 'A Vault Entry with this name already exists.';
+	            return false;
             }
         },
-        mounted(){
-        	this.buttons = [
-                {text:'Export', clicked:() => {}},
-                {text:'Refresh', clicked:() => {}},
-                {text:'Remove', clicked:this.remove},
-            ];
 
-        	this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
-        	if(!this.keypair) this.$router.push({name:RouteNames.HOME});
-        },
         methods:{
 	        back(){
 	            this.$router.push({name:RouteNames.HOME});
+            },
+	        handleScroll(e){
+	            this.scrollerAtTop = e.target.scrollTop <= 80;
             },
             async remove(){
 	            PopupService.promptGuard(Popup.prompt(
@@ -128,10 +137,30 @@
 		            }
 	            });
             },
+	        async refreshAccounts(){
+		        await AccountService.importAllAccounts(this.keypair);
+	        },
 
             ...mapActions([
 
             ])
+        },
+
+        watch:{
+        	['dashState'](){
+		        setTimeout(() => {
+			        this.scrollerAtTop = true;
+                }, 200);
+            },
+            ['keypair.name'](){
+
+	            clearTimeout(saveTimeout);
+	            if(!this.keypair) return;
+	            saveTimeout = setTimeout(async () => {
+                    if(this.nameError) return;
+		            await KeyPairService.updateKeyPair(this.keypair);
+	            }, 500);
+            },
         }
     }
 </script>
@@ -139,28 +168,36 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables";
 
-    .search {
-        margin-left:-30px;
+    .panel-container {
+        position:fixed;
+        top:170px;
+        left:0;
+        right:0;
+        bottom:0;
+        display: flex;
+        flex-direction: column;
     }
 
     .dash-switch {
-        height:80px;
+        height:60px;
         position: relative;
         margin-top:-20px;
         display:flex;
         justify-content: center;
         align-items: center;
+        transition:all 0.2s ease;
+        transition-property: height;
 
         .button {
-            height:60px;
-            line-height:60px;
+            height:40px;
+            line-height:40px;
             font-weight: bold;
             color:$mid-dark-grey;
             font-size: 14px;
             position: relative;
             cursor: pointer;
             transition:all 0.2s ease;
-            transition-property: color;
+            transition-property: color, height, line-height;
 
             &:last-child {
                 margin-left:40px;
@@ -188,20 +225,14 @@
             &.active {
                 color:$dark-blue;
 
-                &:after {
-                    opacity:1;
-                }
+                &:after { opacity:1; }
 
                 &:last-child {
-                    &:after {
-                        animation: in-left 0.3s forwards;
-                    }
+                    &:after { animation: in-left 0.3s forwards; }
                 }
 
                 &:first-child {
-                    &:after {
-                        animation: in-right 0.3s forwards;
-                    }
+                    &:after { animation: in-right 0.3s forwards; }
                 }
 
             }
@@ -238,115 +269,84 @@
             bottom:0;
             border-bottom:2px solid #f4f4f4;
         }
+
+        &.short {
+            height:40px;
+
+            .button {
+                height:20px;
+                line-height:20px;
+            }
+        }
     }
 
     .list-container {
+        flex: 1;
+        display:flex;
+        flex-direction: column;
+        position: relative;
+        margin-left:-70px;
+        margin-right:-70px;
+        margin-bottom:-40px;
+        padding-left:70px;
+        padding-right:55px;
+
+        .search {
+            margin-left:-30px;
+            border-bottom:0 solid rgba(0,0,0,0);
+            transition: border-bottom 0.3s ease;
+
+            &.short {
+                border-bottom:1px solid rgba(0,0,0,0.05);
+            }
+        }
     }
 
     .list {
-        flex:1;
-        display:flex;
-        flex-direction: column;
-        overflow-y:auto;
-        /*height:0;*/
+        position:absolute;
+        bottom:0;
+        left:0;
+        right:0;
+        overflow-y:scroll;
+        padding-left:70px;
+        padding-right:55px;
+        padding-bottom:50px;
+        transition: top 0.4s ease, padding-top 0.2s ease;
+        overflow-x:hidden;
 
-        .item {
-            flex:1;
-            border:1px solid #dfe0e1;
-            margin-bottom:20px;
-            border-radius:2px;
+        &.blockchains {
+            top:0;
+        }
 
-            .basics {
-                padding:20px;
+        &.accounts {
+            top:60px;
+
+            @media (min-width:1280px){
                 display:flex;
-                flex-direction: row;
-                justify-content: space-between;
-
-                .info {
-                    flex:1;
-
-                    .network {
-                        font-size: 11px;
-                        color: $mid-dark-grey;
-                    }
-
-                    .identifier {
-                        margin-top:5px;
-                        font-size: 22px;
-                        font-weight: 300;
-                    }
-                }
-
-                .tokens {
-                    display:flex;
-                    align-items: center;
-                    color:$dark-blue;
-                    font-weight: bold;
-                    cursor: pointer;
-
-                    i {
-                        margin-left:5px;
-                    }
-
-                    &:hover {
-                        i {
-                            animation: bounce 0.7s infinite;
-                        }
-                    }
-
-                    @keyframes bounce {
-                        0%, 100% {
-                            transform:translateX(0px);
-                        }
-
-                        50% {
-                            transform:translateX(4px);
-
-                        }
-                    }
-                }
-
+                flex-flow: column wrap;
             }
 
-            .moderations {
-                padding:20px;
-                background:#f4f5f5;
+            .item {
+                flex:1;
+                margin-bottom:20px;
+                border:1px solid #dfe0e1;
+                border-radius:2px;
 
-                .moderation {
-                    display:flex;
-                    flex-direction: row;
-                    align-items: center;
 
-                    &:not(:last-child){
-                        margin-bottom:5px;
-                    }
+                @media (min-width:1280px){
+                    width:calc(50% - 10px);
+                    flex:0 0 auto;
 
-                    .name {
-                        font-size: 14px;
-                    }
-
-                    .percentage-bar {
-                        flex:1;
-                        margin:0 10px;
-                        height:14px;
-                        border:1px solid #dfe0e1;
-                        border-radius:50px;
-                        width:100%;
-                        background:#fff;
-                        padding:3px;
-
-                        .bar {
-                            height:100%;
-                            background:$light-blue;
-                            border-radius:50px;
-                        }
-                    }
-
-                    .action {
-
-                    }
+                    margin-bottom:10px;
                 }
+
+
             }
+        }
+
+        &.scrolled {
+            top:40px;
+            padding-top:80px;
         }
     }
 

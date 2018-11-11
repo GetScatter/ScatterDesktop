@@ -1,24 +1,33 @@
 <template>
 	<section id="image-piggy-waiting">
-		<svg id="image-piggy-butt" class="animated bounceInDown" width="93px" height="110px" viewBox="0 0 93 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<svg id="image-piggy-butt" class="animated bounceInDown" width="100px" height="110px" viewBox="0 0 93 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 			<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 				<g id="gs_desktop_home_pc-firsttime" transform="translate(-354.000000, -285.000000)">
 					<g id="Group-2" transform="translate(354.000000, 282.000000)">
 						<path d="M81.976478,106.704314 L89.6003704,91.9453625 L74.9013956,99.2328414 C74.1478368,99.6064418 73.585721,100.27922 73.3520542,101.087198 C72.891755,102.678829 73.808881,104.342248 75.4005124,104.802547 L81.976478,106.704314 Z" id="Path-2-Copy-2" stroke="#393D3F" stroke-width="2" fill="#393D3F" transform="translate(82.060685, 98.794007) rotate(210.000000) translate(-82.060685, -98.794007) "></path>
-						<g id="Group-7" transform="translate(13.872931, 89.033872) scale(-1, 1) rotate(10.000000) translate(-13.872931, -89.033872) translate(1.372931, 80.033872)" fill="#FFFFFF" stroke="#393D3F" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-							<path d="M9.05919434,5.54980469 C9.05919434,10.0302734 16.0663712,13.8012695 21.2511412,11.0507812 C24.7076546,9.2171224 25.5495194,6.68733724 23.7767357,3.46142578 C22.9732452,6.72900391 20.6705695,8.36279297 16.8687085,8.36279297 C13.0668475,8.36279297 11.3518302,6.72900391 11.7236566,3.46142578 C9.94734842,1.86669922 9.05919434,2.56282552 9.05919434,5.54980469 Z" id="Path-4"></path>
-							<path d="M6.23567094,17.3183594 C19.5729708,17.3183594 21.116856,3 15.3240318,1 C9.53120767,-1 7.24580719,5.53833008 9.92410928,5.53833008 C12.6024114,5.53833008 13.7188201,5.37744141 12.1338111,8.1496582 C10.5488021,10.921875 5.57706986,11.6756375 0.591552734,10.3342285" id="Path-3"></path>
+						<g class="wag-tail" :class="{'faster':faster}">
+							<g id="Group-7" transform="translate(13.872931, 89.033872) scale(-1, 1) rotate(10.000000) translate(-13.872931, -89.033872) translate(1.372931, 80.033872)" fill="#FFFFFF" stroke="#393D3F" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+								<path d="M9.05919434,5.54980469 C9.05919434,10.0302734 16.0663712,13.8012695 21.2511412,11.0507812 C24.7076546,9.2171224 25.5495194,6.68733724 23.7767357,3.46142578 C22.9732452,6.72900391 20.6705695,8.36279297 16.8687085,8.36279297 C13.0668475,8.36279297 11.3518302,6.72900391 11.7236566,3.46142578 C9.94734842,1.86669922 9.05919434,2.56282552 9.05919434,5.54980469 Z" id="Path-4"></path>
+								<path d="M6.23567094,17.3183594 C19.5729708,17.3183594 21.116856,3 15.3240318,1 C9.53120767,-1 7.24580719,5.53833008 9.92410928,5.53833008 C12.6024114,5.53833008 13.7188201,5.37744141 12.1338111,8.1496582 C10.5488021,10.921875 5.57706986,11.6756375 0.591552734,10.3342285" id="Path-3"></path>
+							</g>
 						</g>
+
 						<g id="Group-9" transform="translate(50.500000, 55.000000) scale(-1, 1) translate(-50.500000, -55.000000) translate(11.000000, 0.000000)">
 							<path d="M9.43099072,20.3554404 L21.1004746,14.8445713 L11.5824822,11.7919221 C10.9709477,11.5957883 10.3126128,11.601076 9.70430768,11.8070075 C8.13494303,12.3382895 7.29341079,14.0412001 7.82469282,15.6105647 L9.43099072,20.3554404 Z" id="Path-2-Copy" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(15.242325, 16.193677) scale(-1, 1) rotate(80.000000) translate(-15.242325, -16.193677) "></path>
 							<path d="M40.3642812,7.9907474 C38.9637723,7.79889687 37.5518247,7.70263761 36.1382364,7.70263761 C18.9410633,7.70263761 5,21.6437009 5,38.840874 L5,63.6094181 L4.88915275,63.824798 C2.63149849,68.2114967 1.45370343,73.073786 1.45370343,78.0073575 C1.45370343,95.1241213 15.3295821,109 32.4463459,109 L38.3285897,109 C40.4745994,109 42.6169479,108.822871 44.7338169,108.470418 C65.9804423,104.932909 80.3365173,84.8413978 76.7990077,63.5947725 C76.5168407,61.9000501 76.2538551,60.1993721 76.0100505,58.4927402 C75.2947804,53.4858496 74.7787571,48.6667864 74.4620876,44.035451 C73.2009206,25.5907086 59.1627182,10.5658762 40.845969,8.05673251 L40.3642802,7.99074726 Z" id="Rectangle" stroke="#393D3F" stroke-width="2" fill="#FFFFFF"></path>
+
+
+							<g class="eye" :class="{'faster':faster}">
+								<circle id="Oval" stroke="#393D3F" stroke-width="2" fill="#393D3F" cx="45.5" cy="50.5" r="1.5"></circle>
+								<circle id="Oval-Copy-6" stroke="#393D3F" stroke-width="2" fill="#393D3F" cx="12.5" cy="48.5" r="1.5"></circle>
+							</g>
+
 							<g id="Group" transform="translate(19.500000, 63.500000) rotate(6.000000) translate(-19.500000, -63.500000) translate(6.000000, 55.000000)" fill="#FFFFFF" stroke="#393D3F" stroke-width="2">
 								<path d="M26.9097436,9.58631533 C26.9097436,14.2807357 23.1720346,17 18.45,17 L8.55,17 C3.82796539,17 2.17293817e-13,13.1944204 2.16715534e-13,8.5 C2.16137252e-13,3.80557963 3.82796539,0 8.55,0 L18.45,0" id="Rectangle-Copy-2"></path>
 								<rect id="Rectangle-Copy-4" x="6" y="6" width="1" height="5" rx="0.5"></rect>
 								<rect id="Rectangle-Copy-7" x="15" y="6" width="1" height="5" rx="0.5"></rect>
 							</g>
-							<circle id="Oval" stroke="#393D3F" stroke-width="2" fill="#393D3F" cx="45.5" cy="50.5" r="1.5"></circle>
-							<circle id="Oval-Copy-6" stroke="#393D3F" stroke-width="2" fill="#393D3F" cx="12.5" cy="48.5" r="1.5"></circle>
+
 							<path d="M49.0360285,14.0682256 L55.5626261,9.4835457 L50.7080918,6.56761861 C49.6762573,5.94783634 48.3738919,6.00477283 47.4000816,6.71223737 C46.0596256,7.68606677 45.762416,9.56216577 46.7362454,10.9026218 L49.0360285,14.0682256 Z" id="Path-2" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(51.279340, 10.295796) scale(-1, 1) rotate(30.000000) translate(-51.279340, -10.295796) "></path>
 							<polygon id="Path-Copy-2" fill="#FFFFFF" points="46.5001007 14.9781901 49.5086179 9.48795573 62 9.48795573 61.2057292 14.9781901"></polygon>
 							<path d="M63.8550098,20.3936709 C65.7646385,18.4601066 64.7357876,13.2601056 60.3909448,4.93561028 C60.2631839,4.69082689 60.0861204,4.47515029 59.8709057,4.30216357 C59.0099782,3.6101614 57.7510799,3.74710248 57.0590773,4.60803062 L49.8598346,13.5646743 C49.7326771,13.7228724 49.6219023,13.8935664 49.5292126,14.0741329 C48.7725729,15.548125 49.3541015,17.356411 50.8280918,18.1130539 C57.6627327,21.6214588 62.0092737,22.2625418 63.8550098,20.3936709 Z" id="Path-2-Copy-4" stroke="#393D3F" stroke-width="2" fill="#FFFFFF" transform="translate(56.982714, 12.639410) scale(-1, 1) rotate(21.000000) translate(-56.982714, -12.639410) "></path>
@@ -44,7 +53,9 @@
 </template>
 
 <script>
-	export default {}
+	export default {
+		props:['faster']
+	}
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
@@ -70,6 +81,29 @@
 			margin-left: -38px;
 			bottom:-20px;
 			z-index:1;
+		}
+	}
+
+	.wag-tail {
+		animation: wag 0.6s ease infinite;
+		transform-origin: 100% 100%;
+
+		&.faster {
+			animation: wag 0.25s ease infinite;
+		}
+
+		@keyframes wag {
+			0%, 100% { transform:rotateZ(0deg) skewY(0deg) translateX(0px); }
+			50% { transform:rotateZ(-15deg) skewY(-15deg) translateX(3px); }
+		}
+	}
+
+	.eye {
+		animation: blink 5.5s ease infinite;
+
+		@keyframes blink {
+			0%, 85%, 100% { transform:none; }
+			90% { transform:translateY(50px) scaleY(0); }
 		}
 	}
 </style>

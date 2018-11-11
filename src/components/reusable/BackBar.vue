@@ -10,15 +10,23 @@
             </section>
 
             <section class="buttons" v-if="buttons">
-                <btn class="button" v-for="button in buttons" :text="button.text" v-on:clicked="button.clicked"></btn>
+                <btn :key="button.text" class="button" v-for="button in buttons" :disabled="disabled(button)" :text="button.text" v-on:clicked="button.clicked"></btn>
             </section>
         </section>
     </section>
 </template>
 
 <script>
+    import Process from "../../models/Process";
+
     export default {
-        methods: { emit(){ this.$emit('back') } },
+        methods: {
+        	emit(){ this.$emit('back') },
+	        disabled(button){
+		        if(!button.hasOwnProperty('process')) return false;
+		        return Process.isProcessRunning(button.process)
+	        }
+        },
         props:['buttons'],
     }
 </script>
@@ -36,6 +44,7 @@
         width:100%;
 
         .back {
+            padding: 30px 30px 30px 0;
 
             span {
                 vertical-align: middle;

@@ -45,19 +45,14 @@ export default class VueInitializer {
                 },
                 methods: {
 	                blockchainName,
-	                newKeypair(){
-		                this.$router.push({name:RouteNames.NEW_KEYPAIR});
-	                },
-	                goToApps(){
-		                this.openInBrowser('https://get-scatter.com/Apps')
-	                },
-	                openInBrowser(url){
-		                ElectronHelpers.openLinkInBrowser(url);
-	                },
-
-
-
 	                locale:(key, ...args) => localized(key, args, store.getters.language),
+	                newKeypair(){ this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
+	                goToApps(){ this.openInBrowser('https://get-scatter.com/Apps') },
+	                openInBrowser(url){ ElectronHelpers.openLinkInBrowser(url); },
+	                setWorkingScreen(bool){ store.dispatch(Actions.SET_WORKING_SCREEN, bool); },
+
+
+
                     formatNumber(num, commaOnly = false){
                         const toComma = x => {
                             const [whole, decimal] = x.toString().split('.');
@@ -79,11 +74,6 @@ export default class VueInitializer {
 	                    const seconds = Math.trunc(milliseconds) % 60;
 		                const minutes = Math.trunc(milliseconds / 60) % 60;
                         return `${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`;
-                    },
-                    setWorkingScreen(title){
-	                    store.dispatch(Actions.SET_WORKING_SCREEN, !title ? null : {
-	                        title
-	                    });
                     },
                     bind(changed, dotNotation) {
                         let props = dotNotation.split(".");

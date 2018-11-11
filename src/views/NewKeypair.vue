@@ -16,7 +16,10 @@
 
             <!-- IMPORT KEYPAIR SELECTOR -->
             <section key="import" v-if="state === STATES.IMPORT" class="panel-container">
-                <cin big="1" label="Wallet Name" placeholder="Give this wallet a name to remember." :text="name" v-on:changed="x => name = x"></cin>
+                <cin big="1"
+                     :label="locale(langKeys.ADD_KEYS.IMPORT.NameLabel)"
+                     :placeholder="locale(langKeys.ADD_KEYS.IMPORT.NamePlaceholder)"
+                     :text="name" v-on:changed="x => name = x"></cin>
 
                 <br>
                 <br>
@@ -38,9 +41,9 @@
     import * as Actions from '../store/constants';
     import {RouteNames, Routing} from '../vue/Routing'
     import FullWidthRow from '../components/reusable/FullWidthRow';
-    import ImportTextKey from '../components/panels/keypair/ImportTextKey';
-    import ImportHardwareKey from '../components/panels/keypair/ImportHardwareKey';
-    import ImportQRKey from '../components/panels/keypair/ImportQRKey';
+    import ImportTextKey from '../components/panels/keypair/import/ImportTextKey';
+    import ImportHardwareKey from '../components/panels/keypair/import/ImportHardwareKey';
+    import ImportQRKey from '../components/panels/keypair/import/ImportQRKey';
     import IdGenerator from "../util/IdGenerator";
     import KeyPairService from "../services/KeyPairService";
     import AccountService from "../services/AccountService";
@@ -87,22 +90,19 @@
             ]),
         },
         mounted(){
+        	const locale = this.locale;
+        	const {SELECT, IMPORT} = this.langKeys.ADD_KEYS;
+
 	        this.newKeyTypes = [
-		        {icon:'', title:'Create a new key', description:`We'll create a set of keys that you can use on any blockchain.`,
-                    action:'Create a Key', handler:this.generateNewKeypair},
-		        {icon:'', title:'Import an existing key', description:'If you already have a key and want to import it into Scatter',
-                    action:'Import a Key', handler:() => this.state = STATES.IMPORT},
-		        {icon:'', title:'Create a new EOS account', description:`We'll quickly generate two keys for you`,
-                    action:'Create account', handler:() => this.state = STATES.CREATE},
+		        {icon:'', title:locale(SELECT.CreateTitle), description:locale(SELECT.CreateDescription), action:locale(SELECT.CreateButton), handler:this.generateNewKeypair},
+		        {icon:'', title:locale(SELECT.ImportTitle), description:locale(SELECT.ImportDescription), action:locale(SELECT.ImportButton), handler:() => this.state = STATES.IMPORT},
+		        {icon:'', title:locale(SELECT.CreateEosTitle), description:locale(SELECT.CreateEosDescription), action:locale(SELECT.CreateEosButton), handler:() => this.state = STATES.CREATE},
 	        ];
 
 	        this.importTypes = [
-		        {icon:'', title:'Import private key as text', description:`If you would like to type in or paste in your private key`,
-                    action:'Text', handler:() => this.importState = IMPORT_STATES.TEXT},
-		        {icon:'', title:'Import from hardware wallet', description:'If you have a supported hardware wallet',
-                    action:'Hardware', handler:() => this.importState = IMPORT_STATES.HARDWARE},
-		        {icon:'', title:'Import private key from a QR code', description:`If you have an encrypted paper wallet QR code`,
-                    action:'QR', handler:() => this.importState = IMPORT_STATES.QR},
+		        {icon:'', title:locale(IMPORT.TextTitle), description:locale(IMPORT.TextDescription), action:locale(IMPORT.TextButton), handler:() => this.importState = IMPORT_STATES.TEXT},
+		        {icon:'', title:locale(IMPORT.HardwareTitle), description:locale(IMPORT.HardwareDescription), action:locale(IMPORT.HardwareButton), handler:() => this.importState = IMPORT_STATES.HARDWARE},
+		        {icon:'', title:locale(IMPORT.QrTitle), description:locale(IMPORT.QrDescription), action:locale(IMPORT.QrButton), handler:() => this.importState = IMPORT_STATES.QR},
 	        ];
 
         },
@@ -113,14 +113,13 @@
 	            this.$router.push({name:RouteNames.HOME});
             },
             async generateNewKeypair(){
-	        	this.setWorkingScreen('Generating new Keys');
+	        	this.setWorkingScreen(true);
 	        	const keypair = Keypair.placeholder();
 	            await KeyPairService.generateKeyPair(keypair);
 	            await KeyPairService.makePublicKeys(keypair);
 	            this.insertKeypair(keypair);
             },
             async insertKeypair(keypair){
-	            this.setWorkingScreen('Checking for duplicates');
 	            const isHardware = !!keypair.external;
 	            const existing = this.keypairs.find(x => {
 		            const existingHardware = isHardware && x.external && keypair.external.publicKey === x.external.publicKey;
@@ -140,10 +139,9 @@
 	            	return 'A Vault Entry with this name already exists.';
 
 
-	            this.setWorkingScreen('Importing Accounts');
 	            await KeyPairService.saveKeyPair(keypair);
 	            await AccountService.importAllAccounts(keypair);
-	            this.setWorkingScreen(null);
+	            this.setWorkingScreen(false);
 	            this.$router.push({name:RouteNames.KEYPAIR, params:{id:keypair.id}})
 
             },

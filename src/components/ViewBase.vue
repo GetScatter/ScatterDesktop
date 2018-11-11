@@ -1,7 +1,6 @@
 <template>
     <section class="view-base">
         <section class="router-base">
-            <div style="position: absolute; bottom:0; left:0; z-index:20;">{{workingScreen ? 'ture' : 'false'}}</div>
 
             <menu-bar></menu-bar>
             <transition name="slide-up">
@@ -17,20 +16,17 @@
             </section>
 
             <section class="app-content" v-else>
-                <transition name="slide-left" mode="out-in">
+                <transition :name="route === 'login' ? 'fade' : 'slide-left'" mode="out-in">
                     <router-view></router-view>
                 </transition>
             </section>
 
             <popups></popups>
+            <processes></processes>
 
             <transition name="fade" mode="out-in">
                 <section class="working-screen" v-if="workingScreen">
-                    <section>
-                        <h5 v-if="workingScreen.hasOwnProperty('title')">{{workingScreen.title}}</h5>
-                        <br>
-                        <figure class="spinner icon-spin4 animate-spin"></figure>
-                    </section>
+                    <figure class="spinner icon-spin4 animate-spin"></figure>
                 </section>
             </transition>
 
@@ -69,7 +65,8 @@
         computed:{
             ...mapState([
                 'scatter',
-                'workingScreen'
+                'workingScreen',
+                'processes'
             ]),
             ...mapGetters([
                 'unlocked',

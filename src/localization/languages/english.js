@@ -1,5 +1,9 @@
 import KEYS from '../keys';
-const {LOGIN} = KEYS;
+const {
+	LOGIN,
+	DASHBOARD,
+	ADD_KEYS
+} = KEYS;
 
 export default {
 
@@ -31,5 +35,72 @@ export default {
 	[LOGIN.RESTORE.ChooseButton]:() => `Choose your Backup`,
 	[LOGIN.RESTORE.BackButton]:() => `I want to start from scratch`,
 
+
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                    DASHBOARD                     */
+	/*                                                  */
+	/****************************************************/
+
+	[DASHBOARD.KEYS.SearchPlaceholder]:() => `Search Wallets`,
+	[DASHBOARD.KEYS.AddKeysButton]:() => `Add Keys`,
+	[DASHBOARD.KEYS.NoKeys]:() => `Well, what are you waiting for?`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[DASHBOARD.TOOLBARS.SendButton]:() => `Send`,
+	[DASHBOARD.TOOLBARS.ReceiveButton]:() => `Receive`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[DASHBOARD.APPS.SearchPlaceholder]:() => `Search Apps`,
+	[DASHBOARD.APPS.NoAppsTitle]:() => `No apps connected`,
+	[DASHBOARD.APPS.NoAppsDescription]:() =>
+		`Apps are at the heart of what makes Scatter awesome. 
+		You can explore apps and connect to them below.`,
+	[DASHBOARD.APPS.ExploreAppsButton]:() => `Explore Apps`,
+	[DASHBOARD.APPS.EditApp]:() => `Edit`,
+	[DASHBOARD.APPS.DeleteApp]:() => `Delete`,
+	[DASHBOARD.APPS.LinkPermissionOnly]:() => `Link permission only`,
+	[DASHBOARD.APPS.NPermissions]:n => `${n} Permission${n !== 0 ? 's' : ''}`,
+
+
+
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                     ADD KEYS                     */
+	/*                                                  */
+	/****************************************************/
+
+	[ADD_KEYS.SELECT.CreateTitle]:() => `Create a new key`,
+	[ADD_KEYS.SELECT.CreateDescription]:() => `We'll create a set of keys that you can use on any blockchain.`,
+	[ADD_KEYS.SELECT.CreateButton]:() => `Create a Key`,
+	[ADD_KEYS.SELECT.ImportTitle]:() => `Import an existing key`,
+	[ADD_KEYS.SELECT.ImportDescription]:() => `If you already have a key and want to import it into Scatter`,
+	[ADD_KEYS.SELECT.ImportButton]:() => `Import a Key`,
+	[ADD_KEYS.SELECT.CreateEosTitle]:() => `Create a new EOS account`,
+	[ADD_KEYS.SELECT.CreateEosDescription]:() => `We'll quickly generate two keys for you`,
+	[ADD_KEYS.SELECT.CreateEosButton]:() => `EOS account`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[ADD_KEYS.IMPORT.NameLabel]:() => `Wallet Name`,
+	[ADD_KEYS.IMPORT.NamePlaceholder]:() => `Give this wallet a name to remember.`,
+	[ADD_KEYS.IMPORT.TextTitle]:() => `Import private key as text`,
+	[ADD_KEYS.IMPORT.TextDescription]:() => `If you would like to type in or paste in your private key`,
+	[ADD_KEYS.IMPORT.TextButton]:() => `Text`,
+	[ADD_KEYS.IMPORT.HardwareTitle]:() => `Import from a hardware wallet`,
+	[ADD_KEYS.IMPORT.HardwareDescription]:() => `If you have a supported hardware wallet`,
+	[ADD_KEYS.IMPORT.HardwareButton]:() => `Hardware`,
+	[ADD_KEYS.IMPORT.QrTitle]:() => `Import private key from a QR code`,
+	[ADD_KEYS.IMPORT.QrDescription]:() => `If you have an encrypted paper wallet QR code`,
+	[ADD_KEYS.IMPORT.QrButton]:() => `QR`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[ADD_KEYS.IMPORT_TEXT.KeyLabel]:() => `Enter a Private Key`,
+	[ADD_KEYS.IMPORT_TEXT.KeyPlaceholder]:() => `Make sure to enter it correctly`,
+
+
+
+
+
+	// [ADD_KEYS.IMPORT.QrButton]:() => ``,
 
 }
