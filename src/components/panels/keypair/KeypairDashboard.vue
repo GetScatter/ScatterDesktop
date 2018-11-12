@@ -78,12 +78,7 @@
 				'keypairs',
 			]),
 			filteredAccounts(){
-				return this.keypair.accounts()
-					.reduce((acc, account) => {
-						if(!acc.find(x => account.network().unique() === x.network().unique()
-						   && account.sendable() === x.sendable())) acc.push(account);
-						return acc;
-					}, [])
+				return this.keypair.accounts(true)
 					.filter(x => x.name.toLowerCase().match(this.searchTerms))
 			},
 			nameError(){

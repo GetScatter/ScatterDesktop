@@ -3,10 +3,8 @@
         <transition-group name="slide-right" mode="out-in">
             <section :key="process.id" class="process" v-for="process in processes">
                 <figure class="title">
-                    <transition name="fade" mode="out-in">
-                        <span key="title" v-if="process.progress < 100">{{process.title}}</span>
-                        <b key="done" v-else>Done!</b>
-                    </transition>
+                    <span key="title" v-if="process.progress < 100">{{process.title}}</span>
+                    <b key="done" v-else>Done!</b>
                 </figure>
                 <transition name="delayed-fade" mode="out-in">
                     <figure class="sub-title" v-if="process.subTitle && process.progress < 100">{{process.subTitle}}</figure>

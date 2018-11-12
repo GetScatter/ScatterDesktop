@@ -2,33 +2,35 @@
     <section class="view-base">
         <section class="router-base">
 
-            <menu-bar></menu-bar>
-            <transition name="slide-up">
-                <user-bar v-if="route === routeNames.HOME"></user-bar>
-            </transition>
+            <popups></popups>
 
-            <section v-if="onboarding">
-                <terms></terms>
-            </section>
-
-            <section v-else-if="isPopout">
+            <section v-if="isPopout">
                 <router-view></router-view>
             </section>
 
-            <section class="app-content" v-else>
-                <transition :name="route === 'login' ? 'fade' : ''" mode="out-in">
-                    <router-view></router-view>
+            <section v-else>
+                <menu-bar></menu-bar>
+
+                <transition name="slide-up">
+                    <user-bar v-if="route === routeNames.HOME"></user-bar>
                 </transition>
+
+                <section class="app-content">
+
+                    <transition :name="route === 'login' ? 'fade' : ''" mode="out-in">
+                        <router-view></router-view>
+                    </transition>
+
+                    <processes></processes>
+
+                    <transition name="fade" mode="out-in">
+                        <section class="working-screen" v-if="workingScreen">
+                            <figure class="spinner icon-spin4 animate-spin"></figure>
+                        </section>
+                    </transition>
+                </section>
             </section>
 
-            <popups></popups>
-            <processes></processes>
-
-            <transition name="fade" mode="out-in">
-                <section class="working-screen" v-if="workingScreen">
-                    <figure class="spinner icon-spin4 animate-spin"></figure>
-                </section>
-            </transition>
 
             <!--<v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>-->
         </section>

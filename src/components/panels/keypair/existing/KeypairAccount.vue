@@ -14,26 +14,24 @@
 		</section>
 
 		<section class="moderations" v-if="account && usesResources">
-			<transition name="delayed-fade" mode="out-in">
-				<section key="loading" class="loading" v-if="!accountResources">
-					<figure class="spinner icon-spin4 animate-spin"></figure>
-				</section>
-				<section key="resources" v-if="accountResources">
-					<section class="moderation" v-for="resource in accountResources">
-						<figure class="name">{{resource.name}}</figure>
-						<figure class="percentage-bar">
-							<figure class="bar" :class="{'red':resource.percentage > 80}" :style="{'width':resource.percentage + '%'}"></figure>
-						</figure>
-						<figure class="action">
-							<btn v-if="resource.actionable"
-							     v-on:clicked="() => moderateResource(resource)"
-							     small="1" :text="resource.actionText"></btn>
+			<section key="loading" class="loading" v-if="!accountResources">
+				<figure class="spinner icon-spin4 animate-spin"></figure>
+			</section>
+			<section key="resources" v-if="accountResources">
+				<section class="moderation" v-for="resource in accountResources">
+					<figure class="name">{{resource.name}}</figure>
+					<figure class="percentage-bar">
+						<figure class="bar" :class="{'red':resource.percentage > 80}" :style="{'width':resource.percentage + '%'}"></figure>
+					</figure>
+					<figure class="action">
+						<btn v-if="resource.actionable"
+						     v-on:clicked="() => moderateResource(resource)"
+						     small="1" :text="resource.actionText"></btn>
 
-							<span v-else>{{resource.text}}</span>
-						</figure>
-					</section>
+						<span v-else>{{resource.text}}</span>
+					</figure>
 				</section>
-			</transition>
+			</section>
 		</section>
 	</section>
 </template>

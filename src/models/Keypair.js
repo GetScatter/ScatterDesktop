@@ -38,8 +38,15 @@ export default class Keypair {
 
     }
 
-    accounts(){
-        return store.state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique())
+    accounts(unique = false){
+        const accounts = store.state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique());
+	    if(!unique) return accounts;
+	    return accounts.reduce((acc, account) => {
+		    if(!acc.find(x => account.network().unique() === x.network().unique()
+			    && account.sendable() === x.sendable())) acc.push(account);
+		    return acc;
+	    }, [])
+
     }
 
     unique(){ return this.id; }

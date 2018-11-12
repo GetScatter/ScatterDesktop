@@ -83,12 +83,8 @@
 	            this.$router.push({name:RouteNames.HOME});
             },
 	        async lazyLoadResources(){
-		        const accounts = this.keypair.accounts()
-			        .reduce((acc, account) => {
-				        if(!acc.find(x => account.network().unique() === x.network().unique()
-					        && account.sendable() === x.sendable())) acc.push(account);
-				        return acc;
-			        }, []).filter(x => ResourceService.usesResources(x));
+		        const accounts = this.keypair.accounts(true)
+                    .filter(x => ResourceService.usesResources(x));
 
 		        for(let i = 0; i < accounts.length; i++){
 		        	if(this.destroying) return;
