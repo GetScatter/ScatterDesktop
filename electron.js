@@ -1,4 +1,5 @@
-const {app, BrowserWindow, Tray, Menu, MenuItem} = require('electron');
+const electron = require('electron');
+const {app, BrowserWindow, Tray, Menu, MenuItem} = electron;
 const path = require("path");
 const url = require("url");
 const settings = require('electron-settings');
@@ -117,7 +118,7 @@ const createScatterInstance = () => {
   		mainWindow.focus(); 
 	});
 
-	mainWindow.openDevTools();
+	// mainWindow.openDevTools();
 	mainWindow.loadURL(mainUrl(false));
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => app.quit());
@@ -172,7 +173,6 @@ app.on('will-finish-launching', () => {
 
 
 
-
 let waitingPopup;
 class LowLevelWindowService {
 
@@ -193,14 +193,20 @@ class LowLevelWindowService {
 		let win = waitingPopup;
 		if(!win) win = await this.getWindow();
 		else waitingPopup = null;
+
 		win.setSize(width, height);
-		win.center();
+
+		// Getting the screen to display the popup based on
+		// where the user is at the time ( for dual monitors )
+		const mousePoint = electron.screen.getCursorScreenPoint();
+		let {width:screenWidth, height:screenHeight} = electron.screen.getDisplayNearestPoint(mousePoint).workAreaSize;
+		if(mousePoint.x > screenWidth) screenWidth = screenWidth * Math.ceil(mousePoint.x / screenWidth);
+		win.setPosition(screenWidth - width, screenHeight - height);
 
 		onReady(win);
 		win.show();
 		win.setAlwaysOnTop(true);
 		win.focus();
-		win.setAlwaysOnTop(false);
 
 		win.once('closed', async () => {
 			// This is a fix for MacOS systems which causes the

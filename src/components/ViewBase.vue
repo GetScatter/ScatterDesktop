@@ -1,39 +1,37 @@
 <template>
     <section class="view-base">
-        <section class="router-base">
 
-            <popups></popups>
+        <popups></popups>
 
-            <section v-if="isPopout">
-                <router-view></router-view>
-            </section>
+        <section v-if="isPopout">
+            <router-view></router-view>
+        </section>
 
-            <section v-else>
-                <menu-bar></menu-bar>
+        <section v-else>
+            <menu-bar></menu-bar>
 
-                <transition name="slide-up">
-                    <user-bar v-if="route === routeNames.HOME"></user-bar>
+            <transition name="slide-up">
+                <user-bar v-if="route === routeNames.HOME"></user-bar>
+            </transition>
+
+            <section class="app-content">
+
+                <transition :name="route === 'login' ? 'fade' : ''" mode="out-in">
+                    <router-view></router-view>
                 </transition>
 
-                <section class="app-content">
+                <processes></processes>
 
-                    <transition :name="route === 'login' ? 'fade' : ''" mode="out-in">
-                        <router-view></router-view>
-                    </transition>
-
-                    <processes></processes>
-
-                    <transition name="fade" mode="out-in">
-                        <section class="working-screen" v-if="workingScreen">
-                            <figure class="spinner icon-spin4 animate-spin"></figure>
-                        </section>
-                    </transition>
-                </section>
+                <transition name="fade" mode="out-in">
+                    <section class="working-screen" v-if="workingScreen">
+                        <figure class="spinner icon-spin4 animate-spin"></figure>
+                    </section>
+                </transition>
             </section>
-
-
-            <!--<v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>-->
         </section>
+
+
+        <!--<v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>-->
 
     </section>
 </template>
@@ -157,9 +155,6 @@
 
     .view-base {
         min-height:100vh;
-    }
-
-    .router-base {
         position: relative;
         display: flex;
         flex-direction: column;

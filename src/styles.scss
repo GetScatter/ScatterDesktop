@@ -303,3 +303,17 @@ p {
   }
 }
 
+
+
+.popout-list {
+  padding:15px 30px;
+  overflow-x:hidden;
+  overflow-y:auto;
+
+  .row {
+    &:after {
+      display:none !important;
+    }
+  }
+}
+

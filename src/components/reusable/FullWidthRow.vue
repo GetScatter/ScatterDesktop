@@ -1,17 +1,17 @@
 <template>
-	<section>
-		<section class="key-row" v-for="item in items">
-			<figure class="icon" v-if="item.icon && item.icon.length">
+	<section :class="{'popout':popout}">
+		<section class="row" v-for="item in items">
+			<figure class="icon" v-if="item.hasOwnProperty('icon') && item.icon.length">
 				<span style="font-size: 9px;">icon</span>
 			</figure>
 
-			<section class="details" :class="{'has-icon':item.icon && item.icon.length}">
+			<section class="details" :class="{'has-icon':item.hasOwnProperty('icon') && item.icon.length}">
 				<figure class="title">{{item.title}}</figure>
 				<p>{{item.description}}</p>
 			</section>
 
 			<section class="actions" :class="{'multiple':item.actions.length > 1}">
-				<btn :key="action.name" v-for="action in item.actions" :text="action.name" v-on:clicked="action.handler"></btn>
+				<btn :key="action.name" :blue="popout" v-for="action in item.actions" :text="action.name" v-on:clicked="action.handler"></btn>
 			</section>
 		</section>
 	</section>
@@ -20,7 +20,7 @@
 <script>
 
 	export default {
-		props:['items']
+		props:['items', 'popout']
 	}
 
 </script>
@@ -28,7 +28,7 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../_variables";
 
-	.key-row {
+	.row {
 		display:flex;
 		flex-direction: row;
 		width:100%;
@@ -74,6 +74,43 @@
 				bottom:0;
 				height:1px;
 				background:rgba(0,0,0,0.1);
+			}
+		}
+	}
+
+	.popout {
+
+
+		.row {
+			padding:15px 0;
+
+			.icon {
+				width:40px;
+			}
+
+			.details {
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+
+				.title { font-size:14px; }
+				p {
+					font-size:9px;
+					color:$dark-grey;
+					margin-top:0;
+				}
+			}
+
+			.actions {
+				button {
+					width:max-content;
+				}
+			}
+
+			&:not(:last-child){
+				&:after {
+					display:none;
+				}
 			}
 		}
 	}

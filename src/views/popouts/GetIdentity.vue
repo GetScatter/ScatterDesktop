@@ -212,17 +212,6 @@
 
                 this.returnResult({identity:this.selectedIdentity, accounts:this.selectedAccounts});
             },
-            backToIdentities(){
-                this.selectedAccounts = [];
-                this.selectedIdentity = null;
-            },
-            neededProperties(identity){
-                const personal = (this.fields.personal || []).map(x => identity.getPropertyValueByName(x));
-                const location = (this.fields.location || []).map(x => identity.getPropertyValueByName(x))
-                                    .map(field => typeof field === 'object' ? field.name : field);
-
-                return personal.concat(location).join(', ');
-            }
         },
         props:['payload', 'pluginOrigin']
     }

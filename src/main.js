@@ -46,10 +46,8 @@ import LinkOrCreateAccount from './components/popups/LinkOrCreateAccount.vue'
 // POP OUTS
 import GetIdentity from './views/popouts/GetIdentity.vue'
 import SignatureRequest from './views/popouts/SignatureRequest.vue'
-import SuggestNetwork from './views/popouts/SuggestNetwork.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
 import GetPublicKey from './views/popouts/GetPublicKey.vue'
-import LinkAccount from './views/popouts/LinkAccount.vue'
 import TransferRequest from './views/popouts/TransferRequest.vue'
 
 // Reusable components
@@ -104,10 +102,8 @@ class Main {
 			fragments = [
 				{tag:'get-identity', vue:GetIdentity},
 				{tag:'signature-request', vue:SignatureRequest},
-				{tag:'suggest-network', vue:SuggestNetwork},
 				{tag:'link-app', vue:LinkApp},
 				{tag:'get-public-key', vue:GetPublicKey},
-				{tag:'link-account', vue:LinkAccount},
 				{tag:'transfer-request', vue:TransferRequest},
 			]
 		} else {
@@ -168,7 +164,7 @@ class Main {
 		// !! DO NOT REMOVE !!
 		// Gathering entropy causes slowdowns,
 		// doing this when idle
-		KeyPairService.generateKeyPair(Keypair.placeholder());
+		// KeyPairService.generateKeyPair(Keypair.placeholder());
 
 
 
