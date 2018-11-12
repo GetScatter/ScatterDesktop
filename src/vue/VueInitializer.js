@@ -35,6 +35,7 @@ export default class VueInitializer {
 
             Vue.mixin({
                 data(){ return {
+	                RouteNames,
                     langKeys:LANG_KEYS,
                     now:0,
                 }},

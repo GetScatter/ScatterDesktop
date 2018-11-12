@@ -1,9 +1,10 @@
 <template>
     <section class="user-bar">
         <section class="actions">
-            <figure class="action">
-                Nathan James
-            </figure>
+            <router-link :to="{name:RouteNames.IDENTITY}" class="action">
+                Edit Identities
+            </router-link>
+
         </section>
 
         <section class="actions">
@@ -22,8 +23,17 @@
 </template>
 
 <script>
+	import { mapActions, mapGetters, mapState } from 'vuex'
+
 	export default {
-		name:'UserBar'
+		data(){return {
+
+        }},
+        computed:{
+            ...mapGetters([
+            	'identity'
+            ])
+        }
 	}
 </script>
 

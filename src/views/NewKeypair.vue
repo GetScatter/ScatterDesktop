@@ -4,7 +4,7 @@
         <back-bar v-on:back="back"></back-bar>
 
         <!-- SELECT NEW KEY TYPE -->
-        <section key="select" v-if="state === STATES.SELECT" class="panel-container limited">
+        <section v-if="state === STATES.SELECT" class="panel-container limited">
             <h1>{{locale(langKeys.DASHBOARD.KEYS.AddKeysButton)}}</h1>
 
             <br>
@@ -14,7 +14,7 @@
         </section>
 
         <!-- IMPORT KEYPAIR SELECTOR -->
-        <section key="import" v-if="state === STATES.IMPORT" class="panel-container limited">
+        <section v-if="state === STATES.IMPORT" class="panel-container limited">
             <h1>{{locale(langKeys.ADD_KEYS.SELECT.ImportButton)}}</h1>
 
             <br>
@@ -26,14 +26,17 @@
             <ImportQRKey key="text" v-if="importState === IMPORT_STATES.QR" v-on:keypair="insertKeypair" />
         </section>
 
+        <!-- IMPORT KEYPAIR SELECTOR -->
+        <CreateEosAccount v-if="state === STATES.CREATE_EOS" />
+
     </section>
 </template>
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-    import {RouteNames, Routing} from '../vue/Routing'
     import FullWidthRow from '../components/reusable/FullWidthRow';
+    import CreateEosAccount from '../components/panels/keypair/CreateEosAccount';
     import ImportTextKey from '../components/panels/keypair/import/ImportTextKey';
     import ImportHardwareKey from '../components/panels/keypair/import/ImportHardwareKey';
     import ImportQRKey from '../components/panels/keypair/import/ImportQRKey';
@@ -44,7 +47,6 @@
 
     const STATES = {
     	SELECT:'select',
-    	CREATE:'create',
         CREATE_EOS:'createEos',
         IMPORT:'import',
     };
@@ -57,6 +59,13 @@
     };
 
     export default {
+	    components:{
+		    FullWidthRow,
+		    ImportTextKey,
+		    ImportHardwareKey,
+		    ImportQRKey,
+		    CreateEosAccount
+	    },
         data () {return {
 	        name:'',
 
@@ -68,12 +77,6 @@
             importState:IMPORT_STATES.SELECT,
 	        IMPORT_STATES,
         }},
-	    components:{
-		    FullWidthRow,
-		    ImportTextKey,
-		    ImportHardwareKey,
-		    ImportQRKey
-	    },
         computed:{
             ...mapState([
                 'scatter',
@@ -89,7 +92,7 @@
 	        this.newKeyTypes = [
 		        {icon:'', title:locale(SELECT.CreateTitle), description:locale(SELECT.CreateDescription), actions:[{name:locale(SELECT.CreateButton), handler:this.generateNewKeypair}]},
 		        {icon:'', title:locale(SELECT.ImportTitle), description:locale(SELECT.ImportDescription), actions:[{name:locale(SELECT.ImportButton), handler:() => this.state = STATES.IMPORT}]},
-		        {icon:'', title:locale(SELECT.CreateEosTitle), description:locale(SELECT.CreateEosDescription), actions:[{name:locale(SELECT.CreateEosButton), handler:() => this.state = STATES.CREATE}]},
+		        {icon:'', title:locale(SELECT.CreateEosTitle), description:locale(SELECT.CreateEosDescription), actions:[{name:locale(SELECT.CreateEosButton), handler:() => this.state = STATES.CREATE_EOS}]},
 	        ];
 
 	        this.importTypes = [
@@ -103,7 +106,7 @@
 	        back(){
 	        	if(this.importState !== IMPORT_STATES.SELECT) return this.importState = IMPORT_STATES.SELECT;
 	        	if(this.state !== STATES.SELECT) return this.state = STATES.SELECT;
-	            this.$router.push({name:RouteNames.HOME});
+	            this.$router.push({name:this.RouteNames.HOME});
             },
             async generateNewKeypair(){
 	        	this.setWorkingScreen(true);
@@ -130,7 +133,7 @@
 
 	            await KeyPairService.saveKeyPair(keypair);
 	            await AccountService.importAllAccounts(keypair, isNewKeypair);
-	            this.$router.push({name:RouteNames.KEYPAIR, params:{id:keypair.id}})
+	            this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:keypair.id}})
 	            setTimeout(() => {
 		            this.setWorkingScreen(false);
                 }, 200);

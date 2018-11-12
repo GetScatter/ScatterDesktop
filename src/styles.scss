@@ -9,7 +9,7 @@ html, body {
 }
 
 *, *::after, *::before {
-  //-webkit-user-select: none;
+  -webkit-user-select: none;
   -webkit-user-drag: none;
   -webkit-app-region: no-drag;
 }
@@ -232,6 +232,11 @@ p {
 .panel-container {
   padding:40px 70px;
 
+  &.scroller {
+    max-height:calc(100vh - 170px);
+    overflow:auto;
+  }
+
   &.limited {
     max-width:1280px;
     margin:0 auto;
@@ -314,6 +319,20 @@ p {
     &:after {
       display:none !important;
     }
+  }
+}
+
+.disclaimer {
+  background:#fffde6;
+  border:1px solid #dfdecc;
+  border-radius:4px;
+  color:#979896;
+  padding:25px 35px;
+  margin-bottom:30px;
+  font-size: 14px;
+
+  p {
+    font-size: 11px;
   }
 }
 

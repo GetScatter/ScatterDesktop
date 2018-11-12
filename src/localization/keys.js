@@ -133,12 +133,54 @@ const KEYPAIR = prefixKeys('keypair', {
 	}
 });
 
+const IDENTITY = prefixKeys('identity', {
+	Title:'tit',
+	DisclaimerTitleImportant:'disclaimer_tit_imp',
+	DisclaimerTitle:'disclaimer_tit',
+	DisclaimerSubtitle:'disclaimer_sub',
+
+	NameLabel:'name_lbl',
+	NamePlaceholder:'name_plc',
+	NameError:'name_err',
+
+	PERSONAL:{
+		NameLabel:'name_lbl',
+		NamePlaceholder:'name_plc',
+		DateOfBirthLabel:'dob_lbl',
+		EmailLabel:'email_lbl',
+	},
+
+
+	LOCATION:{
+		DisclaimerTitle:'disclaimer_tit',
+		DisclaimerSubtitle:'disclaimer_sub',
+		SelectorLabel:'sel_lbl',
+		SelectorAddButton:'sel_add_button',
+		NameLabel:'name_lbl',
+		NamePlaceholder:'name_plc',
+		NameError:'name_err',
+		CountryLabel:'country_lbl',
+		CountryItemNone:'country_item_none',
+		PhoneLabel:'phone_lbl',
+		PhonePlaceholderArea:'phone_plc_a',
+		PhonePlaceholderPrefix:'phone_plc_b',
+		PhonePlaceholderSuffix:'phone_plc_c',
+		AddressLabel:'adr_lbl',
+		AddressPlaceholder:'adr_plc',
+		CityLabel:'city_lbl',
+		CityPlaceholder:'city_plc',
+		StateLabel:'state_lbl',
+		StatePlaceholder:'state_plc'
+	}
+});
+
 
 export default {
 	LOGIN,
 	DASHBOARD,
 	ADD_KEYS,
-	KEYPAIR
+	KEYPAIR,
+	IDENTITY
 }
 
 

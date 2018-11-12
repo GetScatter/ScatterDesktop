@@ -30,7 +30,6 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-    import {RouteNames} from '../vue/Routing';
 
     import Identity from '../models/Identity';
     import Keypair from '../models/Keypair';
@@ -75,7 +74,7 @@
         methods: {
             async setBackupLocation(){
                 if(await BackupService.setBackupLocation()) {
-                    this.$router.push({name: RouteNames.HOME});
+                    this.$router.push({name: this.RouteNames.HOME});
                 }
             },
             ...mapActions([

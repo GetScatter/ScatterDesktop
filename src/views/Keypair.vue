@@ -11,7 +11,6 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-    import {RouteNames, Routing} from '../vue/Routing'
 
     import KeypairDashboard from '../components/panels/keypair/KeypairDashboard';
     import KeypairExport from '../components/panels/keypair/existing/KeypairExport';
@@ -47,7 +46,7 @@
 	    mounted(){
 		    this[Actions.SET_RESOURCES]([]);
 		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
-		    if(!this.keypair) this.$router.push({name:RouteNames.HOME});
+		    if(!this.keypair) this.$router.push({name:this.RouteNames.HOME});
 
 		    const locale = this.locale;
 		    const {KEYPAIR} = this.langKeys;
@@ -80,7 +79,7 @@
         methods:{
 	        back(){
 	        	if(this.state !== STATES.DASHBOARD) return this.state = STATES.DASHBOARD;
-	            this.$router.push({name:RouteNames.HOME});
+	            this.$router.push({name:this.RouteNames.HOME});
             },
 	        async lazyLoadResources(){
 		        const accounts = this.keypair.accounts(true)
@@ -103,7 +102,7 @@
 		            if(accepted) {
 			            await KeyPairService.removeKeyPair(this.keypair);
 			            PriceService.getBalances();
-			            this.$router.push({name:RouteNames.HOME});
+			            this.$router.push({name:this.RouteNames.HOME});
 		            }
 	            });
             },

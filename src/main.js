@@ -61,8 +61,6 @@ import SwitchComponent from './components/reusable/SwitchComponent.vue'
 import SliderComponent from './components/reusable/SliderComponent.vue'
 import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
 import BackBar from './components/reusable/BackBar.vue'
-import KeyPairService from "./services/KeyPairService";
-import Keypair from "./models/Keypair";
 
 // import {remote} = window.require('electron');
 // const app = remote.app;
@@ -158,14 +156,6 @@ class Main {
 			alert(log);
 			console.log('err logged', log);
 		}
-
-
-
-		// !! DO NOT REMOVE !!
-		// Gathering entropy causes slowdowns,
-		// doing this when idle
-		// KeyPairService.generateKeyPair(Keypair.placeholder());
-
 
 
 		// window.eval = global.eval = () => {

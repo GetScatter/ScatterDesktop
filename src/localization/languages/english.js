@@ -3,7 +3,8 @@ const {
 	LOGIN,
 	DASHBOARD,
 	ADD_KEYS,
-	KEYPAIR
+	KEYPAIR,
+	IDENTITY
 } = KEYS;
 
 // You can build your own pluralizers.
@@ -139,6 +140,52 @@ const Locale = {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.EXPORT.QR.Title]:() => `QR Code Paper Wallet`,
 	[KEYPAIR.EXPORT.QR.SaveButton]:() => `Save as Image`,
+
+
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                    IDENTITIES                    */
+	/*                                                  */
+	/****************************************************/
+	[IDENTITY.Title]:() => `Identity`,
+	[IDENTITY.DisclaimerTitleImportant]:() => `Nothing here is required in order to use Scatter`,
+	[IDENTITY.DisclaimerTitle]:() =>
+		`but it might be required by some applications connecting to your Scatter, 
+		for instance when using a shopping application that needs your shipping address.`,
+	[IDENTITY.DisclaimerSubtitle]:() => `All information is stored locally on your computer and is never sent anywhere without your consent.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[IDENTITY.NameLabel]:() => `Identity Name / Username`,
+	[IDENTITY.NamePlaceholder]:() => `Your online presence`,
+	[IDENTITY.NameError]:() => `The Identity Name name can not be empty, have any spaces in it, or special characters.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[IDENTITY.PERSONAL.NameLabel]:() => `Full Name`,
+	[IDENTITY.PERSONAL.NamePlaceholder]:() => `Enter your full name`,
+	[IDENTITY.PERSONAL.DateOfBirthLabel]:() => `Date of Birth`,
+	[IDENTITY.PERSONAL.EmailLabel]:() => `Email`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[IDENTITY.LOCATION.DisclaimerTitle]:() => `You can create multiple locations.`,
+	[IDENTITY.LOCATION.DisclaimerSubtitle]:() => `For instance "Home" and "Work". You will be able to select which one to use when you need it.`,
+	[IDENTITY.LOCATION.SelectorLabel]:() => `Locations`,
+	[IDENTITY.LOCATION.SelectorAddButton]:() => `Add`,
+	[IDENTITY.LOCATION.NameLabel]:() => `Location Name`,
+	[IDENTITY.LOCATION.NamePlaceholder]:() => `Home`,
+	[IDENTITY.LOCATION.NameError]:() => `Location names must not be empty.`,
+	[IDENTITY.LOCATION.CountryLabel]:() => `Country`,
+	[IDENTITY.LOCATION.CountryItemNone]:() => `None`,
+	[IDENTITY.LOCATION.PhoneLabel]:() => `Phone Number`,
+	[IDENTITY.LOCATION.PhonePlaceholderArea]:() => `555`,
+	[IDENTITY.LOCATION.PhonePlaceholderPrefix]:() => `555`,
+	[IDENTITY.LOCATION.PhonePlaceholderSuffix]:() => `5555`,
+	[IDENTITY.LOCATION.AddressLabel]:() => `Address`,
+	[IDENTITY.LOCATION.AddressPlaceholder]:() => `5 Broadway`,
+	[IDENTITY.LOCATION.CityLabel]:() => `City`,
+	[IDENTITY.LOCATION.CityPlaceholder]:() => `New York`,
+	[IDENTITY.LOCATION.StateLabel]:() => `State`,
+	[IDENTITY.LOCATION.StatePlaceholder]:() => `NY`,
+
+
 
 	// [ADD_KEYS.IMPORT.QrButton]:() => ``,
 

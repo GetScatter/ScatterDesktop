@@ -82,7 +82,6 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../store/constants';
-	import {RouteNames} from '../vue/Routing'
 
     import OnboardingSvg from '../components/svgs/Onboarding';
 
@@ -92,6 +91,8 @@
 	import StorageService from '../services/StorageService'
 	import PopupService from "../services/PopupService";
 	import {Popup} from '../models/popups/Popup'
+	import KeyPairService from "../services/KeyPairService";
+	import Keypair from "../models/Keypair";
 	const { remote } = window.require('electron');
 	const fs = window.require('fs');
 
@@ -167,6 +168,11 @@
 				else this.dPresses = 0;
 			},
 			pushTo(route){
+				// !! DO NOT REMOVE !!
+				// Gathering entropy causes slowdowns,
+				// doing this when idle
+				KeyPairService.generateKeyPair(Keypair.placeholder());
+
 				this.$router.push({name:route});
 			},
 			async create(){
@@ -183,7 +189,7 @@
 					await this[Actions.CREATE_SCATTER](this.password);
 					this.password = '';
 					this.confirmPassword = '';
-					this.pushTo(RouteNames.ONBOARDING);
+					this.pushTo(this.RouteNames.ONBOARDING);
                 }, 100);
 			},
 			async unlock(){
@@ -203,7 +209,7 @@
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
 						await SocketService.initialize();
-						this.pushTo(RouteNames.HOME);
+						this.pushTo(this.RouteNames.HOME);
 					} else {
 						this.working = false;
 						PopupService.push(Popup.snackbar("Bad Password", "attention-circled"));

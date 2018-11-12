@@ -4,7 +4,7 @@
         <section class="full-panel home" v-if="keypairs.length">
             <section class="action-bar short">
                 <section>
-                    <btn text="Placeholder Placeholder"></btn>
+                    <btn text="placeholder"></btn>
                     <!--<btn text="Exchange"></btn>-->
                 </section>
                 <section>
@@ -41,14 +41,8 @@
     import * as Actions from '../store/constants';
 
     import PiggyWaiting from '../components/svgs/PiggyWaiting'
-
     import Apps from '../components/panels/home/Apps';
     import Wallets from '../components/panels/home/Wallets';
-
-    import PermissionService from '../services/PermissionService';
-    import ElectronHelpers from '../util/ElectronHelpers';
-    import {BlockchainsArray, blockchainName} from '../models/Blockchains';
-    import {RouteNames} from "../vue/Routing";
 
 
     export default {
@@ -59,89 +53,14 @@
 	    },
         data () {return {
 	        hoveringAddKeys:false,
-            searchTerms:'',
         }},
         computed:{
-            ...mapState([
-                'scatter',
-                'dappLogos',
-                'dappData',
-            ]),
             ...mapGetters([
-                'identity',
                 'keypairs',
-                'permissions',
-                'apps',
             ]),
-            origins(){
-                const origins = {};
-
-                this.permissions.map(p => {
-                    if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
-                    else origins[p.origin] += 1;
-                });
-
-                return Object.keys(origins).reduce((acc, origin) => {
-                    if(origin.toString().toLowerCase().indexOf(this.searchTerms.toLowerCase()) !== -1)
-                        acc[origin] = origins[origin];
-
-                    return acc;
-                }, {});
-            }
-        },
-        mounted(){
-
         },
         methods:{
 
-
-
-            getAppData(origin){
-                const emptyResult = {
-                    type:'',
-                    name:origin,
-                    description:'',
-                    logo:'',
-                    url:'',
-                };
-
-                const found = this.dappData[origin];
-                if(!found) return emptyResult;
-
-                if(!this.dappLogos.hasOwnProperty(origin)){
-                    this[Actions.SET_DAPP_LOGO]({origin, logo:null});
-                    const logo = `https://rawgit.com/GetScatter/ScatterApps/master/logos/${found.applink}.svg`;
-                    fetch(logo).then(res => {
-                        this[Actions.SET_DAPP_LOGO]({origin, logo:res.status === 200 ? logo : null});
-                        this.$forceUpdate();
-                    })
-                }
-
-                return found;
-            },
-            originLogo(origin){
-                return this.dappLogos[origin];
-            },
-            openApps(){
-                ElectronHelpers.openLinkInBrowser('https://get-scatter.com/Apps')
-            },
-            openApp(origin){
-                const data = this.getAppData(origin);
-                if(data.url.length){
-                    ElectronHelpers.openLinkInBrowser(data.url);
-                }
-
-            },
-            removePermissions(origin){
-                PermissionService.removeAllPermissionsFor(origin);
-            },
-            removeAllPermissions(){
-                PermissionService.removeAllPermissions();
-            },
-            ...mapActions([
-                Actions.SET_DAPP_LOGO,
-                Actions.SET_DAPP_DATA,
-            ])
         }
     }
 </script>
