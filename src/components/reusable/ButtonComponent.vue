@@ -1,5 +1,5 @@
 <template>
-    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'small':small}">
+    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small}">
         <i :class="icon" v-if="icon"></i>
         <span v-else>
             <i class="icon-spin4 animate-spin" v-if="loading"></i>
@@ -11,7 +11,7 @@
 <script>
     export default {
         methods: { emit(){ this.$emit('clicked') } },
-        props:['text', 'icon', 'blue', 'disabled', 'small', 'loading']
+        props:['text', 'icon', 'blue', 'red', 'disabled', 'small', 'loading']
     }
 </script>
 
@@ -32,6 +32,7 @@
         transition: all 0.15s ease;
         transition-property: background, color, border;
         background:#fff;
+        max-width:360px;
 
         &.small {
             height:32px;
@@ -45,6 +46,12 @@
             border:1px solid rgba(0,0,0,0);
             color:#fff;
             background:$dark-blue;
+        }
+
+        &.red {
+            border:1px solid $red;
+            background:$red;
+            color:#fff;
         }
 
         &:hover {

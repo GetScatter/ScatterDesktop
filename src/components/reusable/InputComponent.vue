@@ -1,5 +1,5 @@
 <template>
-    <section class="input" :class="{'big':big}">
+    <section class="input" :class="{'big':big, 'important':red, 'centered':centered}">
 
         <label v-if="error || label" :class="{'error':error}">{{error ? error : label}}</label>
 
@@ -42,7 +42,7 @@
                 })
             }
         },
-        props:['placeholder', 'label', 'error', 'type', 'maxlength', 'text', 'disabled', 'copy', 'dynamicButton', 'dynamicTooltip', 'big', 'focus', 'loaderOnDynamic'],
+        props:['placeholder', 'label', 'error', 'type', 'maxlength', 'text', 'disabled', 'copy', 'dynamicButton', 'dynamicTooltip', 'big', 'focus', 'loaderOnDynamic', 'red', 'centered'],
         watch:{
             input:function(){ this.emit(); },
             text:function(){ this.input = this.text; },
@@ -182,6 +182,20 @@
             }
 
 
+        }
+
+        &.important {
+            input {
+                border: 1px solid $red;
+            }
+        }
+
+        &.centered {
+            text-align: center;
+
+            input {
+                text-align: center;
+            }
         }
 
     }

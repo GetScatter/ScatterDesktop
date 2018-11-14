@@ -8,6 +8,9 @@
             <h1>{{locale(langKeys.DASHBOARD.KEYS.AddKeysButton)}}</h1>
 
             <br>
+            <section class="disclaimer">
+                Private keys are created locally on your computer and never touch the internet.
+            </section>
             <br>
 
             <FullWidthRow :items="newKeyTypes" />
@@ -27,7 +30,7 @@
         </section>
 
         <!-- IMPORT KEYPAIR SELECTOR -->
-        <CreateEosAccount v-if="state === STATES.CREATE_EOS" />
+        <CreateEosKeys v-if="state === STATES.CREATE_EOS" />
 
     </section>
 </template>
@@ -36,6 +39,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
     import FullWidthRow from '../components/reusable/FullWidthRow';
+    import CreateEosKeys from '../components/panels/keypair/CreateEosKeys';
     import CreateEosAccount from '../components/panels/keypair/CreateEosAccount';
     import ImportTextKey from '../components/panels/keypair/import/ImportTextKey';
     import ImportHardwareKey from '../components/panels/keypair/import/ImportHardwareKey';
@@ -64,7 +68,8 @@
 		    ImportTextKey,
 		    ImportHardwareKey,
 		    ImportQRKey,
-		    CreateEosAccount
+		    CreateEosAccount,
+		    CreateEosKeys,
 	    },
         data () {return {
 	        name:'',
@@ -92,7 +97,7 @@
 	        this.newKeyTypes = [
 		        {icon:'', title:locale(SELECT.CreateTitle), description:locale(SELECT.CreateDescription), actions:[{name:locale(SELECT.CreateButton), handler:this.generateNewKeypair}]},
 		        {icon:'', title:locale(SELECT.ImportTitle), description:locale(SELECT.ImportDescription), actions:[{name:locale(SELECT.ImportButton), handler:() => this.state = STATES.IMPORT}]},
-		        {icon:'', title:locale(SELECT.CreateEosTitle), description:locale(SELECT.CreateEosDescription), actions:[{name:locale(SELECT.CreateEosButton), handler:() => this.state = STATES.CREATE_EOS}]},
+		        {icon:'', title:locale(SELECT.CreateEosTitle), description:locale(SELECT.CreateEosDescription), actions:[{name:locale(SELECT.CreateEosButton), handler:this.createEosKeys}]},
 	        ];
 
 	        this.importTypes = [
@@ -107,6 +112,12 @@
 	        	if(this.importState !== IMPORT_STATES.SELECT) return this.importState = IMPORT_STATES.SELECT;
 	        	if(this.state !== STATES.SELECT) return this.state = STATES.SELECT;
 	            this.$router.push({name:this.RouteNames.HOME});
+            },
+            createEosKeys(){
+	        	this.setWorkingScreen(true);
+	            setTimeout(() => {
+		            this.state = STATES.CREATE_EOS;
+                }, 100);
             },
             async generateNewKeypair(){
 	        	this.setWorkingScreen(true);

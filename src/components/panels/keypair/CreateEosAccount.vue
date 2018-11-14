@@ -1,77 +1,263 @@
 <template>
-	<section class="panel-container limited">
-		<h1>Your EOS Keys</h1>
+	<section class="full-panel inner">
+
+		<section class="name-input">
+			<cin centered="1" :error="accountNameError"
+			     :label="locale(langKeys.CREATE_EOS.AccountNameLabel)"
+			     :placeholder="locale(langKeys.CREATE_EOS.AccountNamePlaceholder)"
+			     :text="accountName" v-on:changed="x => accountName = x" />
+
+		</section>
+
+		<section style="padding:0 80px 10px;">
+			<section class="disclaimer unmargin centered">
+				<b>{{locale(langKeys.CREATE_EOS.DisclaimerTitle)}}</b><br>
+				<p>{{locale(langKeys.CREATE_EOS.DisclaimerSubtitle)}}</p>
+			</section>
+		</section>
+
+
+		<!----------------------------->
+		<!------- USING ACCOUNT ------->
+		<!----------------------------->
+		<section class="dynamic-panel" v-if="state === STATES.ACCOUNT">
+			<section class="split-panel no-divider">
+				<FlatSelect class="panel" v-if="state === STATES.ACCOUNT"
+				            :label="locale(langKeys.CREATE_EOS.ACCOUNT.AccountsLabel)"
+				            :items="creators"
+				            selected-icon="icon-check"
+				            :selected="creator ? creator.unique() : null"
+				            v-on:selected="selectedCreator" />
+
+				<section class="padded square" style="flex:1; overflow:auto;">
+					<cin :label="`${locale(langKeys.CREATE_EOS.ACCOUNT.RamCostLabel)} - ( 4096 bytes )`"
+					     disabled="1" :text="`${ramPrice ? ramPrice : '0.0000'} ${systemSymbol}`" />
+					<cin :error="resourceError" :label="locale(langKeys.CREATE_EOS.ACCOUNT.ResourcesLabel)"
+					     type="number" :text="eosToUse" v-on:changed="x => eosToUse = x" />
+					<cin big="1" :label="locale(langKeys.CREATE_EOS.ACCOUNT.TotalLabel)"
+					     disabled="1" :text="`${totalPrice} ${systemSymbol}`" />
+				</section>
+			</section>
+
+			<section class="action-bar short bottom centered">
+				<btn blue="1" :disabled="!creator || resourceError || accountNameError"
+				     :text="locale(langKeys.CREATE_EOS.ACCOUNT.ActionBarButton)"
+				     v-on:clicked="createAccount" />
+			</section>
+		</section>
+
+
+		<!----------------------------->
+		<!------- USING EXCHANGE ------>
+		<!----------------------------->
+		<section class="dynamic-panel" v-if="state === STATES.EXCHANGE">
+
+			<section class="padded">
+				<section class="input-button">
+					<cin red="1" :label="locale(langKeys.CREATE_EOS.EXCHANGE.MinimumAmountLabel)"
+					     disabled="1"
+					     :text="`${minimumPrice} ${systemSymbol}`" />
+					<btn :text="locale(langKeys.CREATE_EOS.EXCHANGE.CopyButton)"
+					     v-on:clicked="copyText(`${minimumPrice} ${systemSymbol}`)" />
+				</section>
+				<section class="input-button">
+					<cin :label="locale(langKeys.CREATE_EOS.EXCHANGE.WithdrawAccountLabel)"
+					     disabled="1" text="account4free" />
+					<btn :text="locale(langKeys.CREATE_EOS.EXCHANGE.CopyButton)"
+					     v-on:clicked="copyText('account4free')" />
+				</section>
+				<section class="input-button">
+					<cin :label="locale(langKeys.CREATE_EOS.EXCHANGE.MemoLabel)"
+					     disabled="1" :text="memo" />
+					<btn :text="locale(langKeys.CREATE_EOS.EXCHANGE.CopyButton)"
+					     v-on:clicked="copyText(memo)" />
+				</section>
+			</section>
+
+			<section class="action-bar short bottom centered">
+				<btn blue="1" :disabled="accountNameError"
+				     :text="locale(langKeys.CREATE_EOS.EXCHANGE.ActionBarButton)" />
+			</section>
+		</section>
 	</section>
 </template>
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import SearchBar from '../../../components/panels/home/SearchBar';
-	import KeypairAccount from './existing/KeypairAccount';
-	import KeypairBlockchains from '../../../components/panels/keypair/existing/KeypairBlockchains';
+	import * as Actions from '../../../store/constants';
+	import {Blockchains} from "../../../models/Blockchains";
+	import FlatSelect from '../../reusable/FlatSelect';
+	import FullWidthRow from '../../reusable/FullWidthRow';
+	import PluginRepository from "../../../plugins/PluginRepository";
+	import PopupService from "../../../services/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import AccountService from "../../../services/AccountService";
 
-	import KeyPairService from "../../../services/KeyPairService";
-	import ResourceService from "../../../services/ResourceService";
-
-	let saveTimeout;
-
-	const DASH_STATES = {
-		ACCOUNTS:'accounts',
-		PUBLIC_KEYS:'publicKeys',
+	const STATES = {
+		ACCOUNT:'account',
+		EXCHANGE:'exchange',
 	};
 
 	export default {
-		props:['keypair'],
-
+		props:['ownerPublicKey', 'activePublicKey', 'ownerId', 'activeId'],
+		components:{
+			FullWidthRow,
+			FlatSelect
+		},
 		data () {return {
-			scrollerAtTop:true,
-			dashState:DASH_STATES.ACCOUNTS,
-			DASH_STATES,
+			state:STATES.EXCHANGE,
+			STATES,
 
-			searchTerms:'',
+			accountName:'',
+			accountNameError:null,
+			creator:null,
+			eosToUse:'1.0000',
+			resourceError:null,
+
+			systemSymbol:'EOS',
+			ramPrice:null,
 		}},
 
-		components:{
-			SearchBar,
-			KeypairAccount,
-			KeypairBlockchains
+		created(){
+			this.checkAccountName();
+			if(this.hasOtherEosAccounts) this.state = STATES.ACCOUNT;
+			this.getRamPrice();
 		},
 
 		computed:{
+			...mapState([
+				'seed',
+			]),
 			...mapGetters([
 				'keypairs',
+				'accounts',
+				'networks',
 			]),
-			filteredAccounts(){
-				return this.keypair.accounts(true)
-					.filter(x => x.name.toLowerCase().match(this.searchTerms))
+
+			creators(){
+				return this.accounts.filter(x => x.blockchain() === Blockchains.EOSIO).reduce((acc, account) => {
+					if(!acc.find(x => account.network().unique() === x.network().unique()
+						&& account.sendable() === x.sendable())) acc.push(account);
+					return acc;
+				}, []).map(account => ({
+					id:account.unique(),
+					title:account.name,
+					description:account.network().name,
+				}));
 			},
-			nameError(){
-				if(!this.keypair.name.trim().length) return 'Enter a name for this Vault Entry';
-				if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return 'A Vault Entry with this name already exists.';
-				return false;
+			minimumPrice(){
+				return (parseFloat(this.ramPrice ? this.ramPrice : '1.0000') + 1).toFixed(4);
+			},
+			totalPrice(){
+				return (parseFloat(this.ramPrice ? this.ramPrice : 0) + parseFloat(this.eosToUse ? this.eosToUse : 0)).toFixed(4);
+			},
+			hasOtherEosAccounts(){
+				return !!this.accounts.find(x => x.blockchain() === Blockchains.EOSIO);
+			},
+			memo(){
+				return this.ownerPublicKey;
 			}
 		},
 
 		methods:{
-			handleScroll(e){
-				this.scrollerAtTop = e.target.scrollTop <= 80;
+
+			async getNetwork(){
+				if(this.creator) return this.creator.network();
+
+				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+				const mainnetChainId = (await plugin.getEndorsedNetwork()).chainId;
+				return this.networks.find(x => x.chainId === mainnetChainId && x.blockchain === Blockchains.EOSIO);
 			},
+
+			async getRamPrice(){
+				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+				const ramPrice = await plugin.getRamPrice(await this.getNetwork());
+				this.ramPrice = (ramPrice * 4096).toFixed(4);
+				this.systemSymbol = await plugin.getSystemSymbol(await this.getNetwork());
+			},
+
+			selectedCreator(item){
+				this.creator = this.accounts.find(x => x.unique() === item.id);
+				this.checkAccountName();
+			},
+
+			async createAccount(){
+				this.resourceError = null;
+
+				if(this.accountNameError) return;
+				if(this.resourceError) return;
+
+				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+				this.eosToUse = parseFloat(this.eosToUse).toFixed(4);
+
+				this.setWorkingScreen(true);
+
+				plugin.createAccount(
+					this.creator,
+					this.accountName,
+					this.ownerPublicKey,
+					this.activePublicKey,
+					this.eosToUse
+				).then(tx => {
+					setTimeout(async () => {
+						PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, tx));
+						const owner = this.keypairs.find(x => x.id === this.ownerId);
+						const active = this.keypairs.find(x => x.id === this.activeId);
+						this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:owner ? owner.id : active.id}});
+						this.setWorkingScreen(false);
+						await AccountService.importAllAccounts(active, false, [Blockchains.EOSIO], [this.creator.network()]);
+						if(owner) await AccountService.importAllAccounts(owner, false, [Blockchains.EOSIO], [this.creator.network()]);
+					}, 500);
+				})
+				.catch(error => {
+					this.setWorkingScreen(false);
+					console.log('error', error);
+					PopupService.push(Popup.snackbar(error, 'attention'));
+				});
+			},
+
+			async checkResourceError(){
+				if(parseFloat(this.eosToUse) < 1) return this.resourceError =
+					this.locale(this.langKeys.CREATE_EOS.ACCOUNT.ResourcesLowError, `1.0000 ${this.systemSymbol}`);
+				this.resourceError = null;
+			},
+
+			async checkAccountName(){
+				if(this.accountName.length !== 12) return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameLengthError);
+				if(this.accountName.split('').filter(x => isNaN(x)).find(x => x.toUpperCase() === x))
+					return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameFormattingError);
+
+				if(this.state === STATES.ACCOUNT && !this.creator)
+					return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.SelectCreatorError);
+
+				this.accountNameError = this.locale(this.langKeys.CREATE_EOS.CheckingNameAlert);
+
+				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+				const acc = await plugin.accountData(null, await this.getNetwork(), this.accountName);
+				if(acc.hasOwnProperty('code') && acc.code === 500){
+					this.accountNameError = null;
+				} else {
+					this.accountNameError = this.locale(this.langKeys.CREATE_EOS.NameTakenAlert);
+				}
+
+
+			},
+
+			...mapActions([
+				Actions.HIDE_BACK_BTN
+			])
 		},
 
 		watch:{
-			['dashState'](){
-				setTimeout(() => {
-					this.scrollerAtTop = true;
-				}, 200);
+			['creator'](){
+				this.getRamPrice();
 			},
-			['keypair.name'](){
-				clearTimeout(saveTimeout);
-				if(!this.keypair) return;
-				saveTimeout = setTimeout(async () => {
-					if(this.nameError) return;
-					await KeyPairService.updateKeyPair(this.keypair);
-				}, 500);
+			['accountName'](){
+				this.checkAccountName();
 			},
+			['eosToUse'](){
+				this.checkResourceError();
+			}
 		}
 	}
 </script>
@@ -79,184 +265,42 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../../_variables";
 
-	.panel-container {
-		position:fixed;
-		top:170px;
-		left:0;
-		right:0;
-		bottom:0;
-		display: flex;
+	.name-input {
+		padding:30px 30px 0;
+		max-width:600px;
+		margin:0 auto;
+		width:100%;
+	}
+
+	.padded {
+		padding:30px 80px;
+
+		&.square {
+			padding:30px;
+		}
+	}
+
+	.panel {
+		flex:1;
+		position: relative;
+		display:flex;
 		flex-direction: column;
 	}
 
-	.dash-switch {
-		height:60px;
-		position: relative;
-		margin-top:-20px;
+	.input-button {
 		display:flex;
-		justify-content: center;
+		flex-direction: row;
 		align-items: center;
-		transition:all 0.2s ease;
-		transition-property: height;
 
-		.button {
-			height:40px;
-			line-height:40px;
-			font-weight: bold;
-			color:$mid-dark-grey;
-			font-size: 14px;
-			position: relative;
-			cursor: pointer;
-			transition:all 0.2s ease;
-			transition-property: color, height, line-height;
-
-			&:last-child {
-				margin-left:40px;
-			}
-
-			&:after {
-				content:'';
-				display:block;
-				position:absolute;
-				bottom:-10px;
-				left:0;
-				right:0;
-				background:$dark-blue;
-				height:2px;
-				z-index:2;
-				opacity:0;
-				transition:all 0.2s ease;
-				transition-property: opacity;
-			}
-
-			&:hover {
-				color:$dark-grey;
-			}
-
-			&.active {
-				color:$dark-blue;
-
-				&:after { opacity:1; }
-
-				&:last-child {
-					&:after { animation: in-left 0.3s forwards; }
-				}
-
-				&:first-child {
-					&:after { animation: in-right 0.3s forwards; }
-				}
-
-			}
-
-			@keyframes in-left {
-				0% {
-					transform:translateX(-120px);
-					width:120%;
-				}
-				100% {
-					transform:translateX(0px);
-					width:100%;
-				}
-			}
-
-			@keyframes in-right {
-				0% {
-					transform:translateX(280px);
-					width:30%;
-				}
-				100% {
-					transform:translateX(0px);
-					width:100%;
-				}
-			}
+		section {
+			flex:5;
 		}
 
-		&:after {
-			content:'';
-			display:block;
-			position:absolute;
-			left:-70px;
-			right:-70px;
-			bottom:0;
-			border-bottom:2px solid #f4f4f4;
-		}
-
-		&.short {
-			height:40px;
-
-			.button {
-				height:20px;
-				line-height:20px;
-			}
+		button {
+			flex:1;
+			margin-left:10px;
 		}
 	}
 
-	.list-container {
-		flex: 1;
-		display:flex;
-		flex-direction: column;
-		position: relative;
-		margin-left:-70px;
-		margin-right:-70px;
-		margin-bottom:-40px;
-		padding-left:70px;
-		padding-right:55px;
-
-		@media (min-width:1280px){
-			padding:0;
-		}
-
-		.search {
-			margin-left:-30px;
-			border-bottom:0 solid rgba(0,0,0,0);
-			transition: border-bottom 0.3s ease;
-
-			&.short {
-				border-bottom:1px solid rgba(0,0,0,0.05);
-			}
-
-			@media (min-width:1280px){
-				padding:0;
-			}
-		}
-	}
-
-	.list {
-		position:absolute;
-		bottom:0;
-		left:0;
-		right:0;
-		overflow-y:scroll;
-		padding-left:70px;
-		padding-right:55px;
-		padding-bottom:50px;
-		transition: top 0.4s ease, padding-top 0.2s ease;
-		overflow-x:hidden;
-
-		&.blockchains {
-			top:0;
-		}
-
-		&.accounts {
-			top:60px;
-
-			@media (min-width:1280px){
-				padding:0 10px;
-				padding-bottom:50px;
-			}
-
-			.item {
-				flex:1;
-				margin-bottom:20px;
-				border:1px solid #dfe0e1;
-				border-radius:2px;
-			}
-		}
-
-		&.scrolled {
-			top:40px;
-			padding-top:80px;
-		}
-	}
 
 </style>

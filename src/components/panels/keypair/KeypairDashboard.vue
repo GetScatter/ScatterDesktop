@@ -9,7 +9,7 @@
 			     :text="keypair.name"
 			     v-on:changed="x => keypair.name = x" />
 
-			<section class="dash-switch" :class="{'short':!scrollerAtTop}">
+			<section class="panel-switch" :class="{'short':!scrollerAtTop}">
 				<figure class="button" :class="{'active':dashState === DASH_STATES.ACCOUNTS}" @click="dashState = DASH_STATES.ACCOUNTS">Accounts</figure>
 				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys and Blockchains</figure>
 			</section>
@@ -115,6 +115,10 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../../_variables";
 
+	.panel-switch {
+		margin-top:-20px;
+	}
+
 	.panel-container {
 		position:fixed;
 		top:170px;
@@ -123,108 +127,6 @@
 		bottom:0;
 		display: flex;
 		flex-direction: column;
-	}
-
-	.dash-switch {
-		height:60px;
-		position: relative;
-		margin-top:-20px;
-		display:flex;
-		justify-content: center;
-		align-items: center;
-		transition:all 0.2s ease;
-		transition-property: height;
-
-		.button {
-			height:40px;
-			line-height:40px;
-			font-weight: bold;
-			color:$mid-dark-grey;
-			font-size: 14px;
-			position: relative;
-			cursor: pointer;
-			transition:all 0.2s ease;
-			transition-property: color, height, line-height;
-
-			&:last-child {
-				margin-left:40px;
-			}
-
-			&:after {
-				content:'';
-				display:block;
-				position:absolute;
-				bottom:-10px;
-				left:0;
-				right:0;
-				background:$dark-blue;
-				height:2px;
-				z-index:2;
-				opacity:0;
-				transition:all 0.2s ease;
-				transition-property: opacity;
-			}
-
-			&:hover {
-				color:$dark-grey;
-			}
-
-			&.active {
-				color:$dark-blue;
-
-				&:after { opacity:1; }
-
-				&:last-child {
-					&:after { animation: in-left 0.3s forwards; }
-				}
-
-				&:first-child {
-					&:after { animation: in-right 0.3s forwards; }
-				}
-
-			}
-
-			@keyframes in-left {
-				0% {
-					transform:translateX(-120px);
-					width:120%;
-				}
-				100% {
-					transform:translateX(0px);
-					width:100%;
-				}
-			}
-
-			@keyframes in-right {
-				0% {
-					transform:translateX(280px);
-					width:30%;
-				}
-				100% {
-					transform:translateX(0px);
-					width:100%;
-				}
-			}
-		}
-
-		&:after {
-			content:'';
-			display:block;
-			position:absolute;
-			left:-70px;
-			right:-70px;
-			bottom:0;
-			border-bottom:2px solid #f4f4f4;
-		}
-
-		&.short {
-			height:40px;
-
-			.button {
-				height:20px;
-				line-height:20px;
-			}
-		}
 	}
 
 	.list-container {

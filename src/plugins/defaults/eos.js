@@ -250,11 +250,19 @@ export default class EOS extends Plugin {
 		);
 	}
 
-	async accountData(account){
-		const eos = getCachedInstance(account.network());
+	async accountData(account, network = null, accountName = null){
+
+		const getAccount = () => {
+			return fetch(`${network ? network.fullhost() : account.network().fullhost()}/v1/chain/get_account`, {
+				method: 'POST',
+				body: JSON.stringify({account_name:accountName ? accountName : account.name})
+			})
+				.then(res => res.json())
+		};
+
 		return Promise.race([
 			new Promise(resolve => setTimeout(() => resolve(null), 2000)),
-			eos.getAccount(account.name)
+			getAccount()
 		])
 	}
 
@@ -275,6 +283,75 @@ export default class EOS extends Plugin {
 
 	defaultDecimals(){ return 4; }
 	defaultToken(){ return {symbol:'EOS', account:'eosio.token', name:'EOS', blockchain:Blockchains.EOSIO}; }
+
+	async getSystemSymbol(network){
+		return this.accountData(null, network, 'eosio.stake')
+			.then(res => res.core_liquid_balance.split(' ')[1])
+			.catch(err => {
+				console.error(err);
+				return null
+			});
+	}
+
+	async getRamPrice(network, eos = null){
+		if(!eos) eos = getCachedInstance(network);
+
+		const parseAsset = asset => asset.split(' ')[0];
+		const getRamInfo = async () => eos.getTableRows({
+			json:true,
+			code:'eosio',
+			scope:'eosio',
+			table:'rammarket'
+		}).then(res => {
+			const ramInfo = res.rows[0];
+			return [parseAsset(ramInfo.quote.balance), parseAsset(ramInfo.base.balance)];
+		});
+
+		const ramInfo = await getRamInfo();
+		return (ramInfo[0] / ramInfo[1]).toFixed(8);
+	}
+
+	async createAccount(creator, name, owner, active, eosUsed){
+		return new Promise(async (resolve, reject) => {
+			const network = creator.network();
+			const signProvider = payload => this.passThroughProvider(payload, creator, reject);
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+
+			const coreSymbol = await this.getSystemSymbol(network);
+			if(!coreSymbol) return reject(`Couldn't get core symbol`);
+
+			const ramPrice = await this.getRamPrice(null, eos);
+			if(!ramPrice) return reject(`Couldn't get RAM price`);
+
+			const net = (eosUsed/4).toFixed(4);
+			const cpu = (eosUsed-net).toFixed(4);
+
+			if(net <= 0 || cpu <= 0) return reject(`Either CPU or NET was below or equal to 0`);
+
+			eos.transaction(tr => {
+				tr.newaccount({
+					creator: creator.name,
+					name: name,
+					owner,
+					active
+				});
+				tr.buyrambytes({
+					payer:creator.name,
+					receiver:name,
+					bytes:4096
+				});
+				tr.delegatebw({
+					from: creator.name,
+					receiver: name,
+					stake_net_quantity: `${net} ${coreSymbol}`,
+					stake_cpu_quantity: `${cpu} ${coreSymbol}`,
+					transfer: 1
+				})
+			})
+				.then(trx => resolve(trx.transaction_id))
+				.catch(err => reject(err));
+		})
+	}
 
 	async fetchTokens(tokens){
 		tokens.push(this.defaultToken());
@@ -361,7 +438,7 @@ export default class EOS extends Plugin {
 
 	async buyOrSellRAM(account, bytes, network, buying = true){
 		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, network, reject);
+			const signProvider = payload => this.passThroughProvider(payload, account, reject);
 
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			if(buying) resolve(eos.buyrambytes(account.name, account.name, bytes, { authorization:[account.formatted()] })

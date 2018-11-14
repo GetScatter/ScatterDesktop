@@ -51,6 +51,7 @@ export default class VueInitializer {
 	                goToApps(){ this.openInBrowser('https://get-scatter.com/Apps') },
 	                openInBrowser(url){ ElectronHelpers.openLinkInBrowser(url); },
 	                setWorkingScreen(bool){ store.dispatch(Actions.SET_WORKING_SCREEN, bool); },
+	                copyText(text){ ElectronHelpers.copy(text) },
 
 
 

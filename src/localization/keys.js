@@ -93,7 +93,18 @@ const ADD_KEYS = prefixKeys('add_keys', {
 		KeyPlaceholder:'key_plc'
 	},
 	IMPORT_HW:{},
-	IMPORT_QR:{}
+	IMPORT_QR:{},
+	EOS_KEYS:{
+		DisclaimerTitle:'disc_tit',
+		DisclaimerSubtitle:'disc_sub',
+		OwnerDescription:'owner_desc',
+		ActiveDescription:'active_desc',
+		CreateEosAccountTitle:'create_eos_acc_tit',
+		CreateEosAccountDescription:'create_eos_acc_desc',
+		CopyButton:'copy_btn',
+		DeleteButton:'del_btn',
+		CreateEosAccountButton:'create_eos_acc_btn'
+	}
 });
 
 const KEYPAIR = prefixKeys('keypair', {
@@ -174,13 +185,45 @@ const IDENTITY = prefixKeys('identity', {
 	}
 });
 
+const CREATE_EOS = prefixKeys('create_eos', {
+	DisclaimerTitle:'disc_tit',
+	DisclaimerSubtitle:'disc_sub',
+
+	AccountNameLabel:'acc_name_lbl',
+	AccountNamePlaceholder:'acc_name_plc',
+	AccountNameLengthError:'acc_name_len_err',
+	AccountNameFormattingError:'acc_name_form_err',
+	SelectCreatorError:'sel_creator_err',
+	CheckingNameAlert:'check_name_alert',
+	NameTakenAlert:'name_taken_alert',
+
+
+	ACCOUNT:{
+		AccountsLabel:'acc_lbl',
+		RamCostLabel:'ram_cost_lbl',
+		ResourcesLabel:'resources_lbl',
+		ResourcesLowError:'res_low_err',
+		TotalLabel:'total_lbl',
+		ActionBarButton:'act_bar_btn',
+	},
+
+	EXCHANGE:{
+		CopyButton:'cpy_btn',
+		MinimumAmountLabel:'min_amnt_lbl',
+		WithdrawAccountLabel:'with_acc_lbl',
+		MemoLabel:'memo_lbl',
+		ActionBarButton:'act_bar_btn',
+	}
+});
+
 
 export default {
 	LOGIN,
 	DASHBOARD,
 	ADD_KEYS,
 	KEYPAIR,
-	IDENTITY
+	IDENTITY,
+	CREATE_EOS
 }
 
 

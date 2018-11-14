@@ -99,9 +99,9 @@
 	}
 
 	.eye {
-		animation: blink 5.5s ease infinite;
+		animation: eyeblink 5.5s ease infinite;
 
-		@keyframes blink {
+		@keyframes eyeblink {
 			0%, 85%, 100% { transform:none; }
 			90% { transform:translateY(50px) scaleY(0); }
 		}

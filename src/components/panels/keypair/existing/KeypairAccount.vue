@@ -3,7 +3,7 @@
 		<section class="basics" v-if="account">
 			<section class="info">
 				<figure class="network">{{blockchainName(account.blockchain())}} - <b>{{account.network().name}}</b></figure>
-				<figure class="identifier">{{account.sendable()}}</figure>
+				<figure class="identifier" :class="{'mainnet':isMainnet}" @click="openInExplorer">{{account.sendable()}}</figure>
 				<section class="authorities" v-if="authorities.length">
 					<figure class="authority" :class="{'red':authority === 'owner'}" v-for="authority in authorities">{{authority}}</figure>
 				</section>
@@ -41,7 +41,8 @@
 	import * as Actions from "../../../../store/constants";
 	import {Blockchains} from "../../../../models/Blockchains";
 	import ResourceService from "../../../../services/ResourceService";
-	import Account from "../../../../models/Account";
+	import ElectronHelpers from "../../../../util/ElectronHelpers";
+	import PluginRepository from "../../../../plugins/PluginRepository";
 
 	export default {
 		props:['account'],
@@ -49,10 +50,12 @@
 		data(){return {
 			Blockchains,
 			usesResources:false,
+			isMainnet:false,
 		}},
 
 		mounted(){
 			this.usesResources = ResourceService.usesResources(this.account);
+			this.setMainnet();
 		},
 
 		computed:{
@@ -61,6 +64,7 @@
 			]),
 			...mapGetters([
 				'accounts',
+				'explorers'
 			]),
 			authorities(){
 				if(!this.account.authority.length) return [];
@@ -73,9 +77,15 @@
 			}
 		},
 		methods:{
+			async setMainnet(){
+				this.isMainnet = this.account.network().chainId === (await PluginRepository.plugin(this.account.blockchain()).getEndorsedNetwork()).chainId
+			},
 			async moderateResource(resource){
 				if(await ResourceService.moderateResource(resource, this.account))
 					this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:await ResourceService.getResourcesFor(this.account)});
+			},
+			async openInExplorer(){
+				if(this.isMainnet) ElectronHelpers.openLinkInBrowser(this.explorers[this.account.blockchain()].account(this.account))
 			},
 
 			...mapActions([
@@ -114,6 +124,15 @@
 				margin-top:5px;
 				font-size: 20px;
 				font-weight: 300;
+				display:table;
+
+				&.mainnet {
+					cursor: pointer;
+
+					&:hover {
+						text-decoration: underline;
+					}
+				}
 			}
 
 			.authorities {

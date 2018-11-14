@@ -113,6 +113,7 @@
 
 
 	        enableExportKey(){
+	        	//TODO: Remove to require password authentication!!
 	        	return this.state = STATES.EXPORT;
 		        PopupService.push(Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
 			        placeholder:this.locale(this.langKeys.LOGIN.EXISTING.PasswordPlaceholder),

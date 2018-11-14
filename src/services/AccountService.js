@@ -25,21 +25,22 @@ export default class AccountService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static importAllAccounts(keypair, isNewKeypair = false){
+    static importAllAccounts(keypair, isNewKeypair = false, blockchains = null, networks = null){
         return new Promise(async resolve => {
             if(Process.isProcessRunning(keypair.unique())) return resolve(false);
 	        const process = Process.importAccounts(keypair.unique());
             let scatter = store.state.scatter.clone();
             let accounts = [];
 
-            const blockchains = keypair.blockchains;
+            if(!networks) networks = scatter.settings.networks;
+            if(!blockchains) blockchains = keypair.blockchains;
             const progressPerBlockchain = 90 / blockchains.length;
 
             await Promise.all(blockchains.map(async blockchain => {
                 const plugin = PluginRepository.plugin(blockchain);
-                const networks = scatter.settings.networks.filter(x => x.blockchain === blockchain);
+                const filteredNetworks = networks.filter(x => x.blockchain === blockchain);
                 if(isNewKeypair && plugin.accountsAreImported()) return true;
-                return AccountService.accountsFrom(plugin, networks, accounts, keypair, process, progressPerBlockchain);
+                return AccountService.accountsFrom(plugin, filteredNetworks, accounts, keypair, process, progressPerBlockchain);
             }));
 
             const uniques = accounts.map(x => x.unique());

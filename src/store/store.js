@@ -16,6 +16,7 @@ const state = {
     workingScreen:null,
     processes:[],
     resources:[],
+    hideBackButton:false,
 
     searchTerms:'',
 

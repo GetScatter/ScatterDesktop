@@ -11,7 +11,14 @@
 			</section>
 
 			<section class="actions" :class="{'multiple':item.actions.length > 1}">
-				<btn :key="action.name" :blue="popout" v-for="action in item.actions" :text="action.name" v-on:clicked="action.handler"></btn>
+				<btn :key="action.name" v-for="action in item.actions"
+				     :class="{'important':action.hasOwnProperty('important')}"
+				     :icon="action.hasOwnProperty('icon') ? action.icon : null"
+				     :text="action.name"
+				     :blue="popout || action.hasOwnProperty('blue')"
+				     :red="action.hasOwnProperty('red')"
+				     :disabled="action.hasOwnProperty('disabled')"
+				     v-on:clicked="action.handler"></btn>
 			</section>
 		</section>
 	</section>
@@ -27,6 +34,15 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../_variables";
+
+	.important {
+		animation: important 1s ease infinite;
+
+		@keyframes important {
+			0%, 100% { transform:scale(1); }
+			50% { transform:scale(1.1); }
+		}
+	}
 
 	.row {
 		display:flex;

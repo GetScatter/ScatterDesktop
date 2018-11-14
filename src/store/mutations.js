@@ -1,6 +1,7 @@
 import * as Mutations from './constants'
 
 export const mutations = {
+    [Mutations.HIDE_BACK_BTN]:(state, x) => state.hideBackButton = x,
     [Mutations.SET_WORKING_SCREEN]:(state, x) => state.workingScreen = x,
     [Mutations.SET_SEARCH_TERMS]:(state, terms) => state.searchTerms = terms,
     [Mutations.SET_SEED]:(state, seed) => state.seed = seed,

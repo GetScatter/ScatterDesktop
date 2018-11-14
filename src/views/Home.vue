@@ -13,9 +13,9 @@
                 </section>
             </section>
 
-            <section class="vertical-split">
-                <Wallets class="half" />
-                <Apps class="half" />
+            <section class="split-panel">
+                <Wallets class="panel" />
+                <Apps class="panel" />
             </section>
         </section>
 
@@ -65,25 +65,13 @@
     }
 </script>
 
-<style lang="scss" rel="stylesheet/scss">
+<style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables";
 
     .home {
         position:relative;
         display:flex;
         flex-direction: column;
-
-        .vertical-split {
-            flex:1;
-            display: flex;
-            flex-direction: row;
-
-            .half {
-                &:first-child {
-                    border-right:2px solid #f4f4f4;
-                }
-            }
-        }
         
     }
 

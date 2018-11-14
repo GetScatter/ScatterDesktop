@@ -18,6 +18,7 @@ import {Popup} from '../models/popups/Popup'
 import migrate from '../migrations/migrator'
 
 export const actions = {
+    [Actions.HIDE_BACK_BTN]:({commit}, x) => commit(Actions.HIDE_BACK_BTN, x),
     [Actions.ADD_RESOURCES]:({commit}, x) => commit(Actions.ADD_RESOURCES, x),
     [Actions.SET_RESOURCES]:({commit}, x) => commit(Actions.SET_RESOURCES, x),
     [Actions.SET_PROCESS]:({commit}, x) => commit(Actions.SET_PROCESS, x),

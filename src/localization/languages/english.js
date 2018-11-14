@@ -4,7 +4,8 @@ const {
 	DASHBOARD,
 	ADD_KEYS,
 	KEYPAIR,
-	IDENTITY
+	IDENTITY,
+	CREATE_EOS
 } = KEYS;
 
 // You can build your own pluralizers.
@@ -106,6 +107,51 @@ const Locale = {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[ADD_KEYS.IMPORT_TEXT.KeyLabel]:() => `Enter a Private Key`,
 	[ADD_KEYS.IMPORT_TEXT.KeyPlaceholder]:() => `Make sure to enter it correctly`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[ADD_KEYS.EOS_KEYS.DisclaimerTitle]:() =>
+		`You must copy and save both these keys somewhere outside Scatter to continue!`,
+	[ADD_KEYS.EOS_KEYS.DisclaimerSubtitle]:() =>
+		`If you delete a key from Scatter which you don't have saved elsewhere, you will not be able to recover it.`,
+	[ADD_KEYS.EOS_KEYS.OwnerDescription]:() =>
+		`This is your master key which has total control over your account. 
+		Do not keep it in Scatter unless you absolutely need it`,
+	[ADD_KEYS.EOS_KEYS.ActiveDescription]:() =>
+		`This is the key you will use with applications. It is what you want to keep imported into Scatter.`,
+	[ADD_KEYS.EOS_KEYS.CreateEosAccountTitle]:() => `Use these keys to create an EOS account.`,
+	[ADD_KEYS.EOS_KEYS.CreateEosAccountDescription]:() =>
+		`You can not instantly use EOS with just keys, you need to create an account with them.`,
+	[ADD_KEYS.EOS_KEYS.CopyButton]:() => `Copy Keys`,
+	[ADD_KEYS.EOS_KEYS.DeleteButton]:() => `Delete`,
+	[ADD_KEYS.EOS_KEYS.CreateEosAccountButton]:() => `Create Account`,
+
+
+	/****************************************************/
+	/*                                                  */
+	/*               CREATE EOS ACCOUNT                 */
+	/*                                                  */
+	/****************************************************/
+	[CREATE_EOS.DisclaimerTitle]:() => `Accounts on the EOS blockchain must be paid for to be able to be used.`,
+	[CREATE_EOS.DisclaimerSubtitle]:() => `Once you have another account you will be able to create accounts without an exchange.`,
+	[CREATE_EOS.AccountNameLabel]:() => `Account Name`,
+	[CREATE_EOS.AccountNamePlaceholder]:() => `account name`,
+	[CREATE_EOS.AccountNameLengthError]:() => `Account name must be 12 characters long.`,
+	[CREATE_EOS.AccountNameFormattingError]:() => `Account name must be lowercase letters only.`,
+	[CREATE_EOS.SelectCreatorError]:() => `Please select an account creator first.`,
+	[CREATE_EOS.CheckingNameAlert]:() => `Checking if name is available...`,
+	[CREATE_EOS.NameTakenAlert]:() => `This name is already taken.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[CREATE_EOS.ACCOUNT.AccountsLabel]:() => `This account will be used to create the account`,
+	[CREATE_EOS.ACCOUNT.RamCostLabel]:() => `Mandatory RAM Cost`,
+	[CREATE_EOS.ACCOUNT.ResourcesLabel]:() => `CPU and NET`,
+	[CREATE_EOS.ACCOUNT.ResourcesLowError]:(amount) => `You must allocate at least ${amount}`,
+	[CREATE_EOS.ACCOUNT.TotalLabel]:() => `Total`,
+	[CREATE_EOS.ACCOUNT.ActionBarButton]:() => `Create Account`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[CREATE_EOS.EXCHANGE.CopyButton]:() => `Copy`,
+	[CREATE_EOS.EXCHANGE.MinimumAmountLabel]:() => `Minimum amount you need to send from an exchange`,
+	[CREATE_EOS.EXCHANGE.WithdrawAccountLabel]:() => `Account to withdraw to`,
+	[CREATE_EOS.EXCHANGE.MemoLabel]:() => `Memo`,
+	[CREATE_EOS.EXCHANGE.ActionBarButton]:() => `Create`,
 
 
 

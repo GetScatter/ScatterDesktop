@@ -280,6 +280,7 @@
         background:rgba(0,0,0,0.02);
         margin-top:10px;
         border-radius:4px;
+        border:1px solid rgba(0,0,0,0.1);
     }
 
     .identity {
@@ -326,9 +327,12 @@
                         button {
                             display:inline-block;
 
-                            &:first-child {
+                            &:nth-child(1) {
                                 font-size: 12px;
-                                margin-right:10px;
+                            }
+
+                            &:nth-child(2) {
+                                margin-left:10px;
                             }
                         }
                     }

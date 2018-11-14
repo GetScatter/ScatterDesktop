@@ -7,7 +7,7 @@ import {store} from '../store/store';
 
 export default class Keypair {
 
-    constructor(){
+    constructor(blockchains){
         this.id = IdGenerator.text(24);
         this.name = '';
         this.privateKey = '';
@@ -17,10 +17,10 @@ export default class Keypair {
         this.fork = null;
 
         this.publicKeys = [];
-        this.blockchains = [Blockchains.EOSIO, Blockchains.ETH, Blockchains.TRX];
+        this.blockchains = blockchains ? blockchains : [Blockchains.EOSIO, Blockchains.ETH, Blockchains.TRX];
     }
 
-    static placeholder(){ return new Keypair(); }
+    static placeholder(blockchains){ return new Keypair(blockchains); }
     static fromJson(json){
         let p = Object.assign(this.placeholder(), json);
         if(json.hasOwnProperty('external') && !!json.external) p.external = ExternalWallet.fromJson(json.external);

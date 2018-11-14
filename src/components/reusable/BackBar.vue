@@ -1,13 +1,15 @@
 <template>
     <section class="action-bar">
         <section class="back-bar">
-            <section class="back" @click="emit">
-                <figure class="chevron">
-                    <figure></figure>
-                    <figure></figure>
-                </figure>
-                <span>Back</span>
-            </section>
+            <transition name="slide-left" mode="out-in">
+                <section key="back" class="back" @click="emit" v-if="!hideBackButton">
+                    <figure class="chevron">
+                        <figure></figure>
+                        <figure></figure>
+                    </figure>
+                    <span>Back</span>
+                </section>
+            </transition>
 
             <transition name="slide-right" mode="out-in">
                 <section key="buttons" class="buttons" v-if="buttons && buttons.length">
@@ -19,9 +21,16 @@
 </template>
 
 <script>
+	import { mapActions, mapGetters, mapState } from 'vuex'
     import Process from "../../models/Process";
 
     export default {
+	    props:['buttons'],
+        computed:{
+            ...mapState([
+            	'hideBackButton'
+            ])
+        },
         methods: {
         	emit(){ this.$emit('back') },
 	        disabled(button){
@@ -29,7 +38,6 @@
 		        return Process.isProcessRunning(button.process)
 	        }
         },
-        props:['buttons'],
     }
 </script>
 
