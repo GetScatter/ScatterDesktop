@@ -2,6 +2,7 @@
 
 div, figure, section, nav, article, input, textarea {
   padding:0; margin:0; box-sizing: border-box;
+  font-family: 'Raleway', sans-serif;
 }
 
 html, body {
@@ -267,9 +268,20 @@ p {
 
   &:not(.no-divider){
     .panel {
-      &:first-child {
-        border-right:2px solid #f4f4f4;
+      &:not(:first-child) {
+        border-left:2px solid #f4f4f4;
       }
+    }
+  }
+}
+
+.split-inputs {
+  display:flex;
+  align-items: center;
+
+  > section, > button {
+    &:not(:first-child){
+      margin-left:10px;
     }
   }
 }
@@ -285,7 +297,7 @@ p {
   display:flex;
   justify-content: center;
   align-items: center;
-  transition:all 0.2s ease;
+  transition:all 0.08s ease;
   transition-property: height;
 
   .button {
@@ -296,7 +308,7 @@ p {
     font-size: 14px;
     position: relative;
     cursor: pointer;
-    transition:all 0.2s ease;
+    transition:all 0.08s ease;
     transition-property: color, height, line-height;
 
     &:last-child {
@@ -314,7 +326,7 @@ p {
       height:2px;
       z-index:2;
       opacity:0;
-      transition:all 0.2s ease;
+      transition:all 0.08s ease;
       transition-property: opacity;
     }
 
@@ -328,11 +340,11 @@ p {
       &:after { opacity:1; }
 
       &:last-child {
-        &:after { animation: in-left 0.3s forwards; }
+        &:after { animation: in-left 0.1s forwards; }
       }
 
       &:first-child {
-        &:after { animation: in-right 0.3s forwards; }
+        &:after { animation: in-right 0.1s forwards; }
       }
 
     }
@@ -411,7 +423,9 @@ p {
   }
 
   p {
+    margin-top:3px;
     font-size:12px;
+    line-height:14px;
     color:rgba(0,0,0,0.4);
   }
 }

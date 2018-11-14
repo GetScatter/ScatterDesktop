@@ -278,9 +278,9 @@
     .selected-location {
         padding:20px;
         background:rgba(0,0,0,0.02);
-        margin-top:10px;
-        border-radius:4px;
         border:1px solid rgba(0,0,0,0.1);
+        border-radius:4px;
+        margin-top:10px;
     }
 
     .identity {

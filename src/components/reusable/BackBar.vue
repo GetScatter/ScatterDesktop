@@ -7,7 +7,7 @@
                         <figure></figure>
                         <figure></figure>
                     </figure>
-                    <span>Back</span>
+                    <span>{{text ? text : 'Back'}}</span>
                 </section>
             </transition>
 
@@ -26,7 +26,7 @@
     import Process from "../../models/Process";
 
     export default {
-	    props:['buttons'],
+	    props:['buttons', 'text'],
         computed:{
             ...mapState([
             	'hideBackButton'

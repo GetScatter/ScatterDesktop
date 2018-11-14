@@ -19,6 +19,7 @@ const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 import Web3 from 'web3';
 // import Ethers from 'ethers';
 import ethabi from 'ethereumjs-abi';
+import Token from "../../models/Token";
 
 let cachedInstances = {};
 const getCachedInstance = network => {
@@ -87,7 +88,7 @@ export default class TRX extends Plugin {
     }
 
     defaultDecimals(){ return 6; }
-    defaultToken(){ return {account:'trx', symbol:'TRX', name:'TRX', blockchain:Blockchains.TRX}; }
+    defaultToken(){ return new Token(Blockchains.TRX, 'trx', 'TRX', 'TRX', this.defaultDecimals()) }
     actionParticipants(payload){ return payload.transaction.participants }
 
     async fetchTokens(tokens){

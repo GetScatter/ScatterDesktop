@@ -3,7 +3,7 @@
 
         <label v-if="error || label" :class="{'error':error}">{{error ? error : label}}</label>
 
-        <input ref="focuser"
+        <input v-if="!textarea" ref="focuser"
                :placeholder="placeholder"
                @keyup.enter="enter"
                @blur="blur"
@@ -12,6 +12,15 @@
                :disabled="disabled || false"
                :type="type || 'text'"
                v-model="input" />
+
+        <textarea v-if="textarea" ref="focuser"
+               :placeholder="placeholder"
+               @blur="blur"
+               :class="{'pad-right':dynamicButton}"
+               :maxlength="maxlength || -1"
+               :disabled="disabled || false"
+               :type="type || 'text'"
+                  v-model="input"></textarea>
 
         <figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'labeled':label}" @click="emitDynamicButton">
             <i v-if="!loaderOnDynamic" :class="`${dynamicButton}`"></i>
@@ -42,7 +51,24 @@
                 })
             }
         },
-        props:['placeholder', 'label', 'error', 'type', 'maxlength', 'text', 'disabled', 'copy', 'dynamicButton', 'dynamicTooltip', 'big', 'focus', 'loaderOnDynamic', 'red', 'centered'],
+        props:[
+        	'placeholder',
+            'label',
+            'error',
+            'type',
+            'maxlength',
+            'text',
+            'disabled',
+            'copy',
+            'dynamicButton',
+            'dynamicTooltip',
+            'big',
+            'focus',
+            'loaderOnDynamic',
+            'red',
+            'centered',
+            'textarea'
+        ],
         watch:{
             input:function(){ this.emit(); },
             text:function(){ this.input = this.text; },
@@ -99,7 +125,7 @@
             right:30px;
         }
 
-        input {
+        input, textarea {
             outline:0;
             height:44px;
             width:100%;
@@ -108,6 +134,7 @@
             padding:0 15px;
             font-size: 18px;
             cursor: text;
+            resize: none;
 
             transition: all 0.15s ease;
             transition-property: line-height, height, padding, border;
@@ -143,9 +170,14 @@
             }
         }
 
+        textarea {
+            padding:15px;
+            height:80px;
+        }
+
         &.big {
 
-            input {
+            input, textarea {
                 line-height:68px;
                 height:68px;
                 padding:0 20px;

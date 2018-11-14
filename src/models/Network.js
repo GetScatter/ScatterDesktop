@@ -1,5 +1,7 @@
 import {Blockchains, BlockchainsArray} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
+import Token from "./Token";
+import PluginRepository from "../plugins/PluginRepository";
 
 export default class Network {
     constructor(_name = '', _protocol = 'https', _host = '', _port = 0, blockchain = Blockchains.EOSIO, chainId = ''){
@@ -13,6 +15,8 @@ export default class Network {
 
         this.fromOrigin = null;
         this.createdAt = +new Date();
+
+        this.token = null;
     }
 
     static placeholder(){ return new Network(); }
@@ -20,6 +24,7 @@ export default class Network {
     static fromJson(json){
         const p = Object.assign(Network.placeholder(), json);
         p.chainId = p.chainId ? p.chainId.toString() : '';
+        p.token = json.hasOwnProperty('token') && json.token ? Token.fromJson(json.token) : null;
         return p;
     }
 
@@ -48,4 +53,9 @@ export default class Network {
         if(![80,443].includes(parseInt(this.port))) return;
         this.port = this.protocol === 'http' ? 80 : 443;
     }
+
+	systemToken(){
+        if(this.token) return this.token;
+        return PluginRepository.plugin(this.blockchain).defaultToken();
+	}
 }

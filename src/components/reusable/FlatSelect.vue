@@ -67,7 +67,19 @@
 			}
 
 			.icon {
+				color:$dark-blue;
+				font-size: 22px;
+				border-radius:4px;
+				height:30px;
+				width:30px;
+				display:flex;
+				justify-content: center;
+				align-items: center;
 
+				&:hover {
+					background:$dark-blue;
+					color:#fff;
+				}
 			}
 
 			.selected-icon {
@@ -76,8 +88,8 @@
 				padding-right:15px;
 			}
 
-			.display {
-
+			.details {
+				flex:1;
 			}
 		}
 	}

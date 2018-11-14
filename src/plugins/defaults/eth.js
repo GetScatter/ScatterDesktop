@@ -18,6 +18,7 @@ import ObjectHelpers from '../../util/ObjectHelpers'
 
 import PopupService from '../../services/PopupService'
 import {Popup} from '../../models/popups/Popup'
+import Token from "../../models/Token";
 
 const web3util = new Web3();
 
@@ -127,7 +128,7 @@ export default class ETH extends Plugin {
     }
 
     defaultDecimals(){ return 18; }
-    defaultToken(){ return {account:'eth', symbol:'ETH', name:'ETH', blockchain:Blockchains.ETH}; }
+    defaultToken(){ return new Token(Blockchains.ETH, 'eth', 'ETH', 'ETH', this.defaultDecimals()) }
 
     actionParticipants(payload){
         return ObjectHelpers.flatten(

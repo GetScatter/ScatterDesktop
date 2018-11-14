@@ -8,7 +8,7 @@
                     <!--<btn text="Exchange"></btn>-->
                 </section>
                 <section>
-                    <btn :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
+                    <btn v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
                 </section>
             </section>
@@ -59,9 +59,6 @@
                 'keypairs',
             ]),
         },
-        methods:{
-
-        }
     }
 </script>
 

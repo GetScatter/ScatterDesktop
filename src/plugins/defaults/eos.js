@@ -19,6 +19,7 @@ import * as Actions from '../../models/api/ApiActions';
 import {store} from '../../store/store'
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs2';
 import * as numeric from "eosjs2/dist/eosjs-numeric";
+import Token from "../../models/Token";
 
 
 let cachedInstances = {};
@@ -297,7 +298,7 @@ export default class EOS extends Plugin {
 	}
 
 	defaultDecimals(){ return 4; }
-	defaultToken(){ return {symbol:'EOS', account:'eosio.token', name:'EOS', blockchain:Blockchains.EOSIO}; }
+	defaultToken(){ return new Token(Blockchains.EOSIO, 'eosio.token', 'EOS', 'EOS', this.defaultDecimals()) }
 
 	async getSystemSymbol(network){
 		return this.accountData(null, network, 'eosio.stake')
