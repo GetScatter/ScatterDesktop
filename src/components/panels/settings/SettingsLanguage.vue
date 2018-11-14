@@ -29,8 +29,8 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
-    import {LANG} from '../../localization/locales';
+    import * as Actions from '../../../store/constants';
+    import {LANG} from '../../../localization/locales';
 
     export default {
         data () {return {
@@ -61,7 +61,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables";
+    @import "../../../variables";
 
 
 </style>

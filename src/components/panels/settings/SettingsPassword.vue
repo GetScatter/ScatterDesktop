@@ -31,11 +31,11 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
+    import * as Actions from '../../../store/constants';
 
-    import PasswordService from '../../services/PasswordService';
-    import PopupService from '../../services/PopupService';
-    import {Popup} from '../../models/popups/Popup';
+    import PasswordService from '../../../services/PasswordService';
+    import PopupService from '../../../services/PopupService';
+    import {Popup} from '../../../models/popups/Popup';
 
     export default {
         data () {return {
@@ -67,7 +67,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables";
+    @import "../../../variables";
 
 
 </style>

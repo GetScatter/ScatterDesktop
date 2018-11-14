@@ -197,7 +197,6 @@ const CREATE_EOS = prefixKeys('create_eos', {
 	CheckingNameAlert:'check_name_alert',
 	NameTakenAlert:'name_taken_alert',
 
-
 	ACCOUNT:{
 		AccountsLabel:'acc_lbl',
 		RamCostLabel:'ram_cost_lbl',
@@ -216,6 +215,20 @@ const CREATE_EOS = prefixKeys('create_eos', {
 	}
 });
 
+const PERMISSIONS = prefixKeys('permissions', {
+	ListLabel:'list_lbl',
+	LoginPermission:'login_perm',
+	AccountsLabel:'accounts_lbl',
+	RequiredFieldsLabel:'req_fields_lbl',
+	MutableFieldsLabel:'mutable_fields_lbl',
+	RemoveLabel:'rem_lbl',
+	RemoveIdentityText:'rem_id_lbl',
+	RemoveWhitelistLabel:'rem_white_lbl',
+	RemoveButton:'rem_btn',
+	RemoveAllButton:'rem_all_btn',
+	ActionWhitelist:'act_whitelist'
+});
+
 
 export default {
 	LOGIN,
@@ -223,7 +236,8 @@ export default {
 	ADD_KEYS,
 	KEYPAIR,
 	IDENTITY,
-	CREATE_EOS
+	CREATE_EOS,
+	PERMISSIONS
 }
 
 

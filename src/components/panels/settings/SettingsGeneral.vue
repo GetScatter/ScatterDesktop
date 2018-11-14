@@ -51,11 +51,11 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
+    import * as Actions from '../../../store/constants';
 
-    import UpdateService from '../../services/UpdateService';
-    import WindowService from '../../services/WindowService';
-    import ElectronHelpers from '../../util/ElectronHelpers';
+    import UpdateService from '../../../services/UpdateService';
+    import WindowService from '../../../services/WindowService';
+    import ElectronHelpers from '../../../util/ElectronHelpers';
 
     const {remote} = window.require('electron');
     const app = remote.app;
@@ -101,7 +101,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables";
+    @import "../../../variables";
 
 
     .line {

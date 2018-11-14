@@ -29,8 +29,6 @@
         color:$dark-blue;
         font-size: 16px;
         font-weight: bold;
-        transition: all 0.15s ease;
-        transition-property: background, color, border;
         background:#fff;
         max-width:360px;
 
@@ -50,8 +48,7 @@
 
         &.red {
             border:1px solid $red;
-            background:$red;
-            color:#fff;
+            color:$red;
         }
 
         &:hover {
@@ -64,6 +61,12 @@
 
             &.blue {
                 color:$dark-blue;
+            }
+
+            &.red {
+                border:1px solid $red;
+                background:$red;
+                color:#fff;
             }
         }
 

@@ -24,9 +24,9 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
-    import {Blockchains, BlockchainsArray, blockchainName} from '../../models/Blockchains';
-    import PluginRepository from '../../plugins/PluginRepository'
+    import * as Actions from '../../../store/constants';
+    import {Blockchains, BlockchainsArray, blockchainName} from '../../../models/Blockchains';
+    import PluginRepository from '../../../plugins/PluginRepository'
 
 
 
@@ -62,7 +62,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables";
+    @import "../../../variables";
 
     .line {
         width:100%;

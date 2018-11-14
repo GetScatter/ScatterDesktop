@@ -1,95 +1,91 @@
 <template>
-    <section class="transfer">
-
-        <!-- ADDRESS BOOK -->
-        <section class="address-book">
-            <figure class="bg"></figure>
-
-            <section class="head">{{origin}}</section>
-
-            <!--<section class="search">-->
-                <!--&lt;!&ndash; INPUT &ndash;&gt;-->
-                <!--<section class="input">-->
-                    <!--<figure class="icon"><i class="fa fa-search"></i></figure>-->
-                    <!--<input placeholder="Search..." />-->
-                <!--</section>-->
-            <!--</section>-->
-
-            <section class="permissions">
-
-                <!-- IDENTITY PERMISSION -->
-                <section class="permission" @click="selected = identityPermission">
-                    <figure class="name">Application Link</figure>
+    <section>
+        <back-bar v-on:back="back" :buttons="buttons"></back-bar>
+        <section v-if="origin" class="panel-container limited">
+            <section class="app-details">
+                <section class="icon-wrapper">
+                    <figure class="icon">
+                        <img v-if="getAppData(origin).hasOwnProperty('img')" :src="getAppData(origin).img" />
+                    </figure>
                 </section>
 
-                <section class="permission" v-for="perm in identityRequirementPermissions" @click="selected = perm;">
-                    <figure class="name">Identity Requirements</figure>
+                <section>
+                    <h1>{{getAppData(origin).name}}</h1>
+                    <p v-if="getAppData(origin).description">{{getAppData(origin).description}}</p>
                 </section>
+            </section>
 
-                <section class="permission" v-for="perm in contractPermissions" @click="selected = perm;">
-                    <figure class="name">{{perm.contract}} -> {{perm.action}}</figure>
+            <section class="split-panel dynamic no-divider">
+                <FlatSelect class="panel"
+                            style="flex:1;"
+                            :label="locale(langKeys.PERMISSIONS.ListLabel)"
+                            :items="permissionsList"
+                            selected-icon="icon-check"
+                            :selected="selected"
+                            v-on:selected="selectPermission" />
+
+                <section class="panel" style="flex:2;">
+                    <section v-if="selected">
+                        <section class="permission-type">
+                            <section v-if="selected.isIdentity">{{locale(langKeys.PERMISSIONS.LoginPermission)}}</section>
+                            <section class="spanned" v-if="selected.isContractAction">
+                                {{selected.contract}} <span>{{selected.action}}</span>
+                            </section>
+                        </section>
+
+
+
+                        <section class="key-val" v-if="isIdentity && selected.accounts.length">
+                            <figure>{{locale(langKeys.PERMISSIONS.AccountsLabel)}}</figure>
+                            <figure>{{selected.getAccounts().map(x => x.formatted()).join(', ')}}</figure>
+                        </section>
+
+                        <section class="key-val" v-if="selected.isIdentityRequirements">
+                            <figure>{{locale(langKeys.PERMISSIONS.RequiredFieldsLabel)}}</figure>
+                            <figure>{{selected.identityRequirements.join(', ')}}</figure>
+                        </section>
+
+                        <section class="key-val" v-if="isAction">
+                            <figure>{{locale(langKeys.PERMISSIONS.MutableFieldsLabel)}}</figure>
+                            <figure>{{selected.mutableActionFields.join(', ')}}</figure>
+                        </section>
+
+
+                        <section class="remove-permission">
+                            <section class="key-val">
+                                <figure>{{locale(langKeys.PERMISSIONS.RemoveLabel)}}</figure>
+                                <figure v-if="isIdentity">{{locale(langKeys.PERMISSIONS.RemoveIdentityText)}}</figure>
+                                <figure v-if="isAction">{{locale(langKeys.PERMISSIONS.RemoveWhitelistLabel)}}</figure>
+
+                                <btn style="width:200px; float:right;"
+                                     :text="locale(langKeys.PERMISSIONS.RemoveButton)" red="1"
+                                     v-on:clicked="removeSelected" />
+                            </section>
+                        </section>
+
+
+                    </section>
                 </section>
-
             </section>
         </section>
-
-
-
-        <!-- TRANSFER DETAILS -->
-        <section class="details" v-if="selected">
-            <section class="actions">
-                <figure class="action" @click="removeAll">Clear All</figure>
-                <figure class="action" @click="removeSelected">Remove Selected</figure>
-            </section>
-
-            <section class="data">
-
-                <section class="keyval">
-                    <figure class="title">Permission Type</figure>
-                    <figure class="description">{{permissionType}}</figure>
-                </section>
-
-                <section class="keyval" v-if="isIdentity">
-                    <figure class="title">Accounts</figure>
-                    <figure class="description" v-if="selected.accounts.length">{{selected.getAccounts().map(x => x.formatted()).join(', ')}}</figure>
-                    <figure class="description" v-else>None</figure>
-                </section>
-
-                <section class="keyval" v-if="isAction">
-                    <figure class="title">Contract -> Action</figure>
-                    <figure class="description">{{selected.contract}} -> {{selected.action}}</figure>
-                </section>
-
-                <section class="keyval" v-if="isAction">
-                    <figure class="title">Mutable Fields</figure>
-                    <figure class="description">{{selected.mutableActionFields.join(', ')}}</figure>
-                </section>
-
-                <section class="keyval" v-if="selected.isIdentityRequirements">
-                    <figure class="title">Required Fields</figure>
-                    <figure class="description">{{selected.identityRequirements.join(', ')}}</figure>
-                </section>
-
-
-            </section>
-
-        </section>
-
     </section>
 </template>
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-
-    import PermissionService from '../services/PermissionService'
-    import PopupService from '../services/PopupService'
-    import {Popup} from '../models/popups/Popup';
+    import PermissionService from "../services/PermissionService";
+    import AppsService from "../services/AppsService";
+    import FlatSelect from '../components/reusable/FlatSelect';
 
     export default {
+    	components:{
+		    FlatSelect
+        },
         data () {return {
-            origin:null,
+	        origin:null,
             selected:null,
+            buttons:[],
         }},
         computed:{
             ...mapState([
@@ -98,43 +94,63 @@
             ...mapGetters([
                 'permissions',
             ]),
-            identityPermission(){
-                return this.perms.find(x => x.isIdentity);
-            },
-            contractPermissions(){
-                return this.perms.filter(x => x.isContractAction);
-            },
-            identityRequirementPermissions(){
-                return this.perms.filter(x => x.isIdentityRequirements);
-            },
-            perms(){
-                return this.permissions.filter(x => x.origin === this.origin);
-            },
-            permissionType(){
-                if(this.selected.isIdentity) return 'Application Link';
-                if(this.selected.isContractAction) return 'Action Whitelist';
-            },
-            isIdentity(){ return this.selected.isIdentity; },
-            isAction(){ return this.selected.isContractAction; },
-
+	        identityPermission(){
+		        return this.perms.find(x => x.isIdentity);
+	        },
+	        contractPermissions(){
+		        return this.perms.filter(x => x.isContractAction);
+	        },
+	        identityRequirementPermissions(){
+		        return this.perms.filter(x => x.isIdentityRequirements);
+	        },
+	        perms(){
+		        return this.permissions.filter(x => x.origin === this.origin);
+	        },
+	        isIdentity(){ return this.selected.isIdentity; },
+	        isAction(){ return this.selected.isContractAction; },
+	        permissionsList(){
+                return [this.identityPermission].concat(this.contractPermissions).map(permission => ({
+	                id:permission.id,
+	                title:this.permissionTitle(permission),
+	                description:this.permissionDescription(permission),
+                }));
+            }
         },
         mounted(){
-            this.origin = this.$route.params.origin;
-            if(!this.origin) this.$router.push({name:'home'});
-            this.selected = this.identityPermission;
+        	this.buttons = [
+		        {text:this.locale(this.langKeys.PERMISSIONS.RemoveAllButton), clicked:this.removeAll, red:true}
+            ];
+
+	        this.origin = this.$route.params.origin;
+	        if(!this.origin) return this.back();
+	        this.selected = this.identityPermission;
         },
         methods:{
-            async removeSelected(){
-                if(await PermissionService.removePermission(this.selected)){
-                    if(!this.perms.length) return this.$router.push({name:'home'});
-                    this.selected = this.perms[0];
-                }
+        	back(){
+		        this.$router.push({name:this.RouteNames.HOME});
             },
-            async removeAll(){
-                if(await PermissionService.removeAllPermissionsFor(this.origin)) {
-                    this.$router.push({name: 'home'});
-                }
-            }
+            selectPermission(item){
+        	    this.selected = this.permissions.find(x => x.id === item.id);
+            },
+            permissionTitle(permission){
+        	    return permission.isIdentity
+                    ? this.locale(this.langKeys.PERMISSIONS.LoginPermission) :
+                    `${permission.action}`;
+            },
+	        permissionDescription(permission){
+		        return permission.isContractAction ? `${this.locale(this.langKeys.PERMISSIONS.ActionWhitelist)} - ${permission.contract}` : '';
+	        },
+	        getAppData:AppsService.getAppData,
+	        async removeSelected(){
+		        if(await PermissionService.removePermission(this.selected)){
+			        if(!this.perms.length) return this.back();
+			        this.selected = this.perms[0];
+		        }
+	        },
+	        async removeAll(){
+		        if(await PermissionService.removeAllPermissionsFor(this.origin))
+			        this.back();
+	        }
         }
     }
 </script>
@@ -142,188 +158,120 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables";
 
-    .transfer {
+    .panel {
         flex:1;
+        position: relative;
         display:flex;
-        flex-direction: row;
-        background:rgba(255,255,255,0.5);
+        flex-direction: column;
+    }
 
-        .address-book {
-            flex:1;
-            display:flex;
-            flex-direction: column;
-            background:$light-blue;
+    .remove-permission {
+        background:#fafafa;
+        padding:1px 20px 20px 20px;
+        box-shadow:0 1px 2px rgba(0,0,0,0.2);
+        border-radius:4px;
+        margin-top:30px;
+        overflow: hidden;
+
+        button {
+            margin-top:30px;
+        }
+    }
+
+    .key-val {
+        margin-top:20px;
+
+        figure {
+            &:first-child {
+                font-size: 11px;
+                color:#7899a6;
+                font-weight: bold;
+                margin-bottom:8px;
+                display: block;
+            }
+
+            &:last-child {
+
+            }
+        }
+    }
+
+    .permission-type {
+        margin-top:20px;
+        display:table;
+        border-radius:4px;
+        font-size: 14px;
+        background:#fafafa;
+        overflow: hidden;
+        margin-bottom:30px;
+        box-shadow:0 1px 2px rgba(0,0,0,0.2);
+
+        span {
+            background:rgba(0,0,0,0.05);
+            padding:10px 20px;
+            margin-left:10px;
+        }
+
+        section {
+            padding:10px 20px;
+
+            &.spanned {
+                padding-right:0;
+            }
+        }
+    }
+
+
+    .app-details {
+        display:flex;
+        align-items: center;
+
+        $icon-bounds:70px;
+        .icon-wrapper {
+            width:$icon-bounds;
+            height:$icon-bounds;
             position: relative;
-            z-index:2;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            margin-right:20px;
 
-            .bg {
-                position:absolute;
-                top:10px; bottom:0; left:0; right:0;
-                background:#fff;
-                z-index:-1;
-            }
 
-            .head {
-                padding:20px 30px;
-                background:#fff;
-                font-size: 16px;
-                font-weight: 600;
-                color:$medium-grey;
-                border-top-right-radius:8px;
-                box-shadow:10px -10px 20px rgba(0,0,0,0.01);
-            }
-
-            .search {
-                flex:0 0 auto;
-                padding:0 30px;
+            .icon {
+                width:$icon-bounds;
+                height:$icon-bounds;
+                background-image: url(../assets/no_logo.png);
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: 50%;
+                background-color: #f7f7f7;
                 overflow: hidden;
-                height:40px;
-                background:#f3f3f3;
-                border-top:1px solid #e1e1e1;
-                border-bottom:1px solid #e1e1e1;
 
-                .input {
-
-                    .icon {
-                        float:left;
-                        font-size: 13px;
-                        line-height:40px;
-                        color: #aeaeae;
-                    }
-
-                    input {
-                        margin-left:10px;
-                        font-size: 11px;
-                        float:left;
-                        outline:0;
-                        border:0;
-                        height:40px;
-                        background:transparent;
-
-                    }
-                }
-
-            }
-
-            .permissions {
-                display:flex;
-                flex-direction: column;
-                overflow-y:auto;
-                overflow-x:hidden;
-                background:rgba(0,0,0,0.02);
-
-                .permission {
-                    height:40px;
-                    line-height:40px;
-                    padding:0 10px 0 30px;
-                    border-bottom:1px solid rgba(0,0,0,0.05);
-                    background:rgba(0,0,0,0);
-                    transition: all 0.2s ease;
-                    transition-property: background, padding;
-                    cursor: pointer;
-                    font-size: 13px;
-                    overflow: hidden;
-
-                    &:hover {
-                        background:#fff;
-                        padding-left:35px;
-                    }
-
-                    .name {
-                        width:calc(100% - 25px);
-                        float:left;
-                    }
-
-                    .remove {
-                        width:25px;
-                        height:25px;
-                        line-height:24px;
-                        margin-top:6px;
-                        float:left;
-                        text-align:center;
-                        border:1px solid rgba(0,0,0,0.1);
-                        border-radius: 2px;
-                        color:rgba(0,0,0,0.2);
-                        transition: all 0.2s ease;
-                        transition-property: background, border, color;
-
-                        &:hover {
-                            border:1px solid $red;
-                            background:$red;
-                            color:#fff;
-                        }
-                    }
+                img {
+                    width:100%;
+                    height:100%;
+                    border-radius:22px;
                 }
             }
         }
 
-        .details {
-            float:left;
-            flex:2.5;
-            display:flex;
-            flex-direction: column;
-            box-shadow: inset 1px 0 3px rgba(0,0,0,0.1);
+        h1 {
+            margin-bottom:0;
+            flex:1;
+        }
 
-            .actions {
-                flex:0 0 auto;
-                height:80px;
-                display: flex;
-                justify-content: space-between;
-                background:$light-blue;
-                padding:0 50px 0 30px;
-                float:left;
-                width:100%;
-
-                .action {
-                    margin-left:10px;
-                    cursor: pointer;
-                    border-radius: 2px;
-                    border:1px solid #fff;
-                    height:50px;
-                    line-height:48px;
-                    padding:0 20px;
-                    text-align:center;
-                    font-size: 24px;
-                    color:#fff;
-
-                    transition:all 0.2s ease;
-                    transition-property: background, border, color;
-
-                    &:hover {
-                        background:#fff;
-                        border:1px solid #fff;
-                        color:$light-blue;
-                    }
-                }
-            }
-
-            .data {
-                flex:1;
-                padding:40px;
-                overflow-y:auto;
-                overflow-x:hidden;
-
-                .keyval {
-                    margin-bottom:30px;
-                    border-bottom:1px solid rgba(0,0,0,0.1);
-                    padding-bottom:20px;
-                }
-
-                .title {
-                    font-size: 16px;
-                    color:$dark-grey;
-                }
-
-                .description {
-                    margin-top:5px;
-                    font-size: 24px;
-                    font-weight: bold;
-                }
-            }
+        p {
+            flex:1;
         }
 
     }
 
+    .split-panel {
+        margin-top:30px;
+        .container {
+            padding:0 30px 0 0;
+        }
+    }
 
 
 </style>

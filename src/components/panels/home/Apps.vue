@@ -29,7 +29,7 @@
 							<p v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
 
 							<section class="actions">
-								<span>
+								<span @click="goToPermission(origin)">
 									{{locale(langKeys.DASHBOARD.APPS.EditApp)}}
 								</span>
 								<span @click="removePermissions(origin)">
@@ -107,6 +107,9 @@
 			},
 			removePermissions(origin){
 				PermissionService.removeAllPermissionsFor(origin);
+			},
+			goToPermission(origin){
+				this.$router.push({name:this.RouteNames.PERMISSION, params:{origin}})
 			},
 			...mapActions([
 				Actions.SET_DAPP_LOGO,

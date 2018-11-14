@@ -125,6 +125,17 @@ export default class EOS extends Plugin {
 
 	usesResources(){ return true; }
 
+	async refund(account){
+		return new Promise(async (resolve, reject) => {
+			const signProvider = payload => this.passThroughProvider(payload, account, reject);
+			const network = account.network();
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+			return await eos.refund(account.name, {authorization:[account.formatted()]})
+				.catch(error => resolve(console.error(error)))
+				.then(res => resolve(res));
+		})
+	}
+
 	async getResourcesFor(account){
 		const data = await this.accountData(account);
 		if(!data || !data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return [];
@@ -172,7 +183,7 @@ export default class EOS extends Plugin {
 	}
 
 	async moderateResource(resource, account){
-		return new Promise(resolve => {
+		return new Promise(async resolve => {
 			const {name} = resource;
 
 			const returnResult = tx => {
@@ -186,6 +197,10 @@ export default class EOS extends Plugin {
 
 			if(name === 'RAM')
 				PopupService.push(Popup.buySellRAM(account, returnResult));
+
+			if(name === 'Refund') {
+				resolve(await this.refund(account));
+			}
 
 		})
 	}

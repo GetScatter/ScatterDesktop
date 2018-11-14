@@ -5,7 +5,8 @@ const {
 	ADD_KEYS,
 	KEYPAIR,
 	IDENTITY,
-	CREATE_EOS
+	CREATE_EOS,
+	PERMISSIONS
 } = KEYS;
 
 // You can build your own pluralizers.
@@ -230,6 +231,30 @@ const Locale = {
 	[IDENTITY.LOCATION.CityPlaceholder]:() => `New York`,
 	[IDENTITY.LOCATION.StateLabel]:() => `State`,
 	[IDENTITY.LOCATION.StatePlaceholder]:() => `NY`,
+
+
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                   PERMISSIONS                    */
+	/*                                                  */
+	/****************************************************/
+	[PERMISSIONS.ListLabel]:() => `Permissions`,
+	[PERMISSIONS.LoginPermission]:() => `Login Permission`,
+	[PERMISSIONS.AccountsLabel]:() => `Accounts Provided`,
+	[PERMISSIONS.RequiredFieldsLabel]:() => `Required Fields`,
+	[PERMISSIONS.MutableFieldsLabel]:() => `Mutable Fields`,
+	[PERMISSIONS.RemoveLabel]:() => `Remove Permission`,
+	[PERMISSIONS.RemoveIdentityText]:() =>
+		`Login permissions are what allow applications to interact with your Scatter.
+        You can force a log-out from an application by removing this permission.`,
+	[PERMISSIONS.RemoveWhitelistLabel]:() =>
+		`Action whitelists make it so you don't have to keep accepting popups to sign transactions.
+        Do you want to remove this whitelist?`,
+	[PERMISSIONS.RemoveButton]:() => `Remove`,
+	[PERMISSIONS.RemoveAllButton]:() => `Remove All`,
+	[PERMISSIONS.ActionWhitelist]:() => `Action Whitelist`,
 
 
 

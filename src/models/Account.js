@@ -12,6 +12,7 @@ export default class Account {
     }
 
     sendable(){
+        if(!this.blockchain()) return;
         return PluginRepository.plugin(this.blockchain()).accountsAreImported() ? this.name : this.publicKey;
     }
 

@@ -84,13 +84,13 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
-    import {Blockchains, BlockchainsArray, blockchainName} from '../../models/Blockchains';
-    import PluginRepository from '../../plugins/PluginRepository'
-    import Network from '../../models/Network';
-    import PopupService from '../../services/PopupService'
-    import {Popup} from '../../models/popups/Popup'
-    import NetworkService from '../../services/NetworkService';
+    import * as Actions from '../../../store/constants';
+    import {Blockchains, BlockchainsArray, blockchainName} from '../../../models/Blockchains';
+    import PluginRepository from '../../../plugins/PluginRepository'
+    import Network from '../../../models/Network';
+    import PopupService from '../../../services/PopupService'
+    import {Popup} from '../../../models/popups/Popup'
+    import NetworkService from '../../../services/NetworkService';
 
 
     export default {
@@ -185,7 +185,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables";
+    @import "../../../variables";
 
     .multi-inputs {
         display:flex;

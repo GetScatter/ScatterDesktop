@@ -259,8 +259,11 @@ p {
   flex:1;
   display: flex;
   flex-direction: row;
-  height:0;
-  overflow:auto;
+
+  &:not(.dynamic){
+    height:0;
+    overflow:auto;
+  }
 
   &:not(.no-divider){
     .panel {

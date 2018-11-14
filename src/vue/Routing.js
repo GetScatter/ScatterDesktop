@@ -53,6 +53,7 @@ const RouteViews = {
 const RoutePaths = {
 	[RouteNames.HOME]: '/',
 	[RouteNames.KEYPAIR]: '/keypair/:id',
+	[RouteNames.PERMISSION]: '/permission/:origin',
 };
 
 export class Routing {
