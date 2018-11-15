@@ -38,8 +38,6 @@
 
 				if(!KeyPairService.isValidPrivateKey(keypair)) return;
 
-				this.setWorkingScreen(true);
-
 				keypair.blockchains = KeyPairService.getImportedKeyBlockchains(this.key);
 				await KeyPairService.convertHexPrivateToBuffer(keypair);
 				await KeyPairService.makePublicKeys(keypair);

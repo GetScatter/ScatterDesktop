@@ -71,6 +71,9 @@ export default class ETH extends Plugin {
         return false;
     }
 
+	contractPlaceholder(){ return '0x.....'; }
+	recipientLabel(){ return 'Address'; } // TODO: Localize
+
     async getEndorsedNetwork(){
         return new Promise((resolve, reject) => {
             resolve(new Network('ETH Mainnet', 'https', 'ethnodes.get-scatter.com', 443, Blockchains.ETH, '1'));

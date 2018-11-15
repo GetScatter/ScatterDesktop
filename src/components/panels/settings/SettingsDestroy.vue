@@ -1,25 +1,15 @@
 <template>
     <section>
 
-        <section class="panel display">
-            <section class="head">
+        <section class="action-box top-pad">
+            <label>Destroy this Scatter Instance</label>
 
-            </section>
+            Destroying your Scatter will remove all your data including your Identities and Keypair configurations from your local machine.
+            It will not delete your blockchain accounts from the actual blockchain.
 
-            <section class="selected-item scrollable">
-                <figure class="name">Destroy this Scatter Instance</figure>
-                <figure class="description">
-                    <b style="color:red;">MAKE SURE YOU HAVE A BACKUP BEFORE YOU DO THIS!</b><br><br>
-                    Destroying your Scatter will remove all your data including your Identities and Keypair configurations from your local machine.
-                    It will <u>not</u> delete your blockchain accounts from the actual blockchain.
-                </figure>
-
-                <section class="info-box">
-                    <btn text="Destroy Scatter" red="true" v-on:clicked="destroy"></btn>
-
-                </section>
-
-            </section>
+            <br><br>
+            <b style="color:red;">MAKE SURE YOU HAVE A BACKUP BEFORE YOU DO THIS!</b>
+            <btn text="Destroy Scatter" red="true" v-on:clicked="destroy"></btn>
         </section>
 
     </section>

@@ -1,46 +1,59 @@
 <template>
-    <section class="settings">
+    <section>
 
-        <section class="menu" style="flex:1;">
-            <section class="head">
-                <figure class="description">
-                    If you don't know what a setting does don't change it.
-                </figure>
-            </section>
+        <back-bar v-on:back="back" />
 
-            <section class="items-list scrollable" v-if="selectedOption">
-                <section class="item" :class="{'active':selectedOption.name === option.name, 'flash-red':option.flash}"
-                         v-for="option in settingsOptions" @click="selectOption(option)">
-                    <figure class="title" :class="{'locked':option.locked && !unlocked}">
-                        <i v-if="option.locked && !unlocked" class="fa fa-lock"></i>
-                        {{option.name}}
-                    </figure>
-                    <figure class="description">{{option.description}}</figure>
+        <section class="full-panel inner limited" v-if="selectedOption">
+
+            <section class="split-panel dynamic no-divider">
+                <section class="panel menu padded">
+
+                    <label>Basics</label>
+
+                    <section class="group-list">
+                        <section class="item"
+                                 v-for="item in generalItems"
+                                 :class="{'selected':selectedOption.name === item.name}"
+                                 @click="selectOption(item)">
+                            {{item.name}}
+                        </section>
+                    </section>
+
+
+                    <br><br>
+
+                    <label class="red">Danger Zone</label>
+
+                    <section class="group-list danger">
+                        <section class="item"
+                                 v-for="item in lockedItems"
+                                 :class="{'selected':selectedOption.name === item.name}"
+                                 @click="selectOption(item)">
+                            {{item.name}}
+                        </section>
+                    </section>
+
                 </section>
+
+                <section class="panel">
+                    <section v-if="selectedOption" class="settings-panels padded">
+                        <br>
+                        <h1>{{selectedOption.name}}</h1>
+
+                        <SettingsGeneral v-if="selectedOption.name === settingsOptions.GENERAL.name" />
+                        <SettingsLanguage v-if="selectedOption.name === settingsOptions.LANGUAGE.name" />
+                        <SettingsExplorer v-if="selectedOption.name === settingsOptions.EXPLORER.name" />
+                        <SettingsNetworks v-if="selectedOption.name === settingsOptions.NETWORKS.name" />
+                        <SettingsPassword v-if="selectedOption.name === settingsOptions.PASSWORD.name" />
+                        <SettingsBackup v-if="selectedOption.name === settingsOptions.BACKUP.name" />
+                        <SettingsDestroy v-if="selectedOption.name === settingsOptions.DESTROY.name" />
+                        <SettingsPIN v-if="selectedOption.name === settingsOptions.PIN.name" />
+
+                    </section>
+                </section>
+
             </section>
         </section>
-
-        <section v-if="selectedOption" style="flex:3; overflow:hidden; display:flex; flex-direction: column;">
-            <figure class="panel-head">
-            </figure>
-            <section class="transitioner">
-                <transition name="slide-left" mode="out-in">
-                    <settings-general v-if="selectedOption.name === settingsOptions.GENERAL.name"></settings-general>
-                    <settings-language v-if="selectedOption.name === settingsOptions.LANGUAGE.name"></settings-language>
-                    <settings-explorer v-if="selectedOption.name === settingsOptions.EXPLORER.name"></settings-explorer>
-                    <settings-networks v-if="selectedOption.name === settingsOptions.NETWORKS.name"></settings-networks>
-                    <settings-password v-if="selectedOption.name === settingsOptions.PASSWORD.name"></settings-password>
-                    <settings-backup v-if="selectedOption.name === settingsOptions.BACKUP.name"></settings-backup>
-                    <settings-destroy v-if="selectedOption.name === settingsOptions.DESTROY.name"></settings-destroy>
-                    <!--<settings-nonce v-if="selectedOption.name === settingsOptions.NONCE.name"></settings-nonce>-->
-                    <settings-pin v-if="selectedOption.name === settingsOptions.PIN.name"></settings-pin>
-                </transition>
-            </section>
-
-        </section>
-
-
-        <!--<keypair v-if="selectedKeypair" :key="selectedKeypair.publicKey" :kp="selectedKeypair"></keypair>-->
 
     </section>
 </template>
@@ -51,9 +64,15 @@
     import {Popup} from '../models/popups/Popup'
     import PopupService from '../services/PopupService'
     import PasswordService from '../services/PasswordService'
-    import UpdateService from '../services/UpdateService'
-    import WindowService from '../services/WindowService'
-    import ElectronHelpers from '../util/ElectronHelpers'
+
+    import SettingsGeneral from '../components/panels/settings/SettingsGeneral.vue'
+    import SettingsLanguage from '../components/panels/settings/SettingsLanguage.vue'
+    import SettingsExplorer from '../components/panels/settings/SettingsExplorer.vue'
+    import SettingsNetworks from '../components/panels/settings/SettingsNetworks.vue'
+    import SettingsBackup from '../components/panels/settings/SettingsBackup.vue'
+    import SettingsDestroy from '../components/panels/settings/SettingsDestroy.vue'
+    import SettingsPassword from '../components/panels/settings/SettingsPassword.vue'
+    import SettingsPIN from '../components/panels/settings/SettingsPIN.vue'
 
     const SettingsOptions = {
         GENERAL:{ flash:false, locked:false, name:'General', description:'General Scatter settings.' },
@@ -61,14 +80,23 @@
         EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
         PIN:{ flash:false, locked:true, name:'PIN', description:'Set or disabled your secondary PIN.' },
         NETWORKS:{ flash:false, locked:true, name:'Networks', description:'Add or Remove Networks.' },
-//        NONCE:{ flash:false, locked:true, name:'Nonce', description:'Configure the popup nonce prefix.' },
         PASSWORD:{ flash:false, locked:true, name:'Password', description:'Change your password or regenerate your Mnemonic.' },
         BACKUP:{ flash:false, locked:true, name:'Backup', description:'Create a backup of your Scatter.' },
         DESTROY:{ flash:false, locked:true, name:'Destroy', description:'Destroy your instance of Scatter.' },
     };
 
     export default {
-        data () {return {
+    	components:{
+            SettingsGeneral,
+            SettingsLanguage,
+            SettingsExplorer,
+            SettingsNetworks,
+            SettingsBackup,
+            SettingsDestroy,
+            SettingsPassword,
+            SettingsPIN,
+        },
+	    data () {return {
             settingsOptions:SettingsOptions,
             selectedOption:null,
             unlocked:false,
@@ -79,12 +107,31 @@
             ]),
             ...mapGetters([
                 'version'
-            ])
+            ]),
+	        generalItems(){
+            	return [
+		            SettingsOptions.GENERAL,
+		            SettingsOptions.LANGUAGE,
+		            SettingsOptions.EXPLORER,
+                ]
+            },
+	        lockedItems(){
+            	return [
+		            SettingsOptions.PIN,
+		            SettingsOptions.NETWORKS,
+		            SettingsOptions.PASSWORD,
+		            SettingsOptions.BACKUP,
+		            SettingsOptions.DESTROY,
+                ]
+            }
         },
         mounted(){
             this.selectedOption = SettingsOptions.GENERAL;
         },
         methods: {
+	        back(){
+	            this.$router.back();
+            },
             selectOption(option){
                 if((option.locked || false) && !this.unlocked) {
                     return this.unlock(option);
@@ -106,7 +153,7 @@
                         this.unlocked = true;
                         this.selectOption(option);
                     }))
-            }
+            },
         }
     }
 </script>
@@ -114,116 +161,52 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables.scss";
 
+    .settings-panels {
+        flex:1;
+        height:0;
+        overflow:auto;
+    }
 
+    .padded {
+        padding:40px 70px;
+    }
 
-    .settings {
+    .panel {
+        flex:1;
+        position: relative;
         display:flex;
-        flex-direction: row;
-
-        .panel-head {
-            height:50px;
-            width:100%;
-            background:$light-blue;
-            flex: 0 0 auto;
-            position: relative;
-
-            .version {
-                font-size: 13px;
-                color:#fff;
-                position:absolute;
-                bottom:15px;
-                left:15px;
-                font-family: 'Open Sans', sans-serif;
-
-                .update-button {
-                    cursor: pointer;
-                    border-radius:4px;
-                    display:inline-block;
-                    padding:2px 5px 3px;
-                    margin-left:10px;
-                    background:$red;
-                    border:2px solid #fff;
-                    font-size: 11px;
-                    font-weight: bold;
-                    transition: background 0.2s ease;
-
-                    &:hover {
-                        background:transparent;
-                    }
-                }
-            }
-
-            .console {
-                font-size: 11px;
-                color:#fff;
-                position:absolute;
-                bottom:10px;
-                right:10px;
-                cursor: pointer;
-                padding:5px;
-                border:1px solid #fff;
-                border-radius:2px;
-            }
-        }
-
-        .transitioner {
-            display:flex;
-            flex-direction:row;
-            flex:1;
-            overflow-y:auto;
-            overflow-x:hidden;
-          box-shadow:inset 1px 0 3px rgba(0, 0, 0, 0.1);
-        }
+        flex-direction: column;
     }
 
     .menu {
-        flex:1;
-        display:flex;
-        flex-direction: column;
-        background:$light-blue;
-        position: relative;
-        z-index:2;
+        flex:0 0 auto;
+        width:250px;
+        padding-right:0;
 
-        .bg {
-            position:absolute;
-            top:10px; bottom:0; left:0; right:0;
-            background:#fff;
-            z-index:-1;
-        }
+        .group-list {
+            border-radius:4px;
+            border:1px solid #dfe0e1;
+            overflow:hidden;
 
+            .item {
+                cursor: pointer;
+                padding:12px 20px;
+                font-size: 14px;
+                background:#fafafa;
 
-        .head {
-            padding:40px;
-            background:#fff;
-            border-top-right-radius:8px;
-            box-shadow:10px -10px 20px rgba(0,0,0,0.01);
-            border-bottom:1px solid rgba(0,0,0,0.1);
+                &.selected {
+                    background:#fff;
+                }
 
-            .title {
-                font-size: 28px;
-                font-weight: 600;
-                margin-bottom:5px;
-                color:$black;
+                &:not(:last-child){
+                    border-bottom:1px solid #dfe0e1;
+                }
             }
 
-            .description {
-                font-size: 16px;
-                color:$dark-grey;
+            &.danger {
+                border:1px solid $red;
             }
         }
     }
 
-    .items-list {
-        background: #f8f8f8;
-
-        .locked {
-            color:$red;
-        }
-
-        .flash-red {
-            background:$red;
-            color:#fff !important;
-            * { color:#fff; }
-        }
-    }
 </style>

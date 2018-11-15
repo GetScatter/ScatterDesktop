@@ -189,20 +189,10 @@
 		        return this.tokens;
 	        },
             contractPlaceholder(){
-                switch(this.token.blockchain){
-                    case Blockchains.EOSIO: return 'eosio.token';
-                    case Blockchains.ETH:
-                    case Blockchains.TRX:
-                    	return '0x....'
-                }
+            	return PluginRepository.plugin(this.token.blockchain).contractPlaceholder();
             },
             recipientLabel(){
-                switch(this.token.blockchain){
-                    case Blockchains.EOSIO: return 'Account Name';
-                    case Blockchains.TRX:
-                    case Blockchains.ETH:
-                    	return 'Address';
-                }
+	            return PluginRepository.plugin(this.token.blockchain).recipientLabel();
             },
             isValidRecipient(){
             	return !!TransferService.blockchainFromRecipient(this.recipient);

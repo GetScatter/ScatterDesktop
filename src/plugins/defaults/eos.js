@@ -22,6 +22,8 @@ import * as numeric from "eosjs2/dist/eosjs-numeric";
 import Token from "../../models/Token";
 
 
+const mainnetChainId = 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
+
 let cachedInstances = {};
 const getCachedInstance = network => {
 	if(cachedInstances.hasOwnProperty(network.unique())) return cachedInstances[network.unique()];
@@ -33,7 +35,32 @@ const getCachedInstance = network => {
 }
 
 
-const getAccountsFromPublicKey = (publicKey, network, process, progressDelta) => {
+const getAccountsFromPublicKey = async (publicKey, network, process, progressDelta, fallbackToChain = false) => {
+	if(network.chainId === mainnetChainId && !fallbackToChain){
+		const baseUrl = 'http://fra01.net.light.xeos.me/api/key';
+		// const baseUrl = 'http://api.light.xeos.me/api/key';
+		// get from API
+		const accountsFromApi = await Promise.race([
+			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
+			fetch(`${baseUrl}/${publicKey}`).then(r => r.json()).then(res => {
+				const rawAccounts = res.eos.accounts;
+				let accounts = [];
+				Object.keys(rawAccounts).map(name => {
+					rawAccounts[name].map(acc => {
+						accounts.push({name, authority: acc.perm})
+					})
+				});
+				return accounts;
+			}).catch(err => {
+				return null;
+			})
+		]);
+
+		if(!accountsFromApi) return getAccountsFromPublicKey(publicKey, network, process, progressDelta, true);
+		else return accountsFromApi;
+	}
+
+
 	return Promise.race([
 		new Promise(resolve => setTimeout(() => resolve([]), 20000)),
 		new Promise((resolve, reject) => {
@@ -102,6 +129,9 @@ export default class EOS extends Plugin {
 		return true;
 	}
 
+	contractPlaceholder(){ return 'eosio.token'; }
+	recipientLabel(){ return 'Account Name'; } // TODO: Localize
+
 	async getEndorsedNetwork(){
 		return new Promise((resolve, reject) => {
 			resolve(new Network(
@@ -109,14 +139,13 @@ export default class EOS extends Plugin {
 				'nodes.get-scatter.com',
 				443,
 				Blockchains.EOSIO,
-				'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906'
+				mainnetChainId
 			));
 		});
 	}
 
 	async isEndorsedNetwork(network){
-		const endorsedNetwork = await this.getEndorsedNetwork();
-		return network.blockchain === Blockchains.EOSIO && network.chainId === endorsedNetwork.chainId;
+		return network.blockchain === Blockchains.EOSIO && network.chainId === mainnetChainId;
 	}
 
 	async getChainId(network){

@@ -26,9 +26,9 @@
             <i v-if="!loaderOnDynamic" :class="`${dynamicButton}`"></i>
             <i class="icon-spin4 animate-spin" v-if="loaderOnDynamic"></i>
         </figure>
-        <!--<figure class="copy" v-if="copy" :class="{'unforced':!forced}">-->
-            <!--<i class="fa fa-copy" v-tooltip="'Copy'" @click="copyText"></i>-->
-        <!--</figure>-->
+        <figure class="copy" v-if="copy">
+            <i class="fa fa-copy" v-tooltip="'Copy'" @click="copyText"></i>
+        </figure>
     </section>
 </template>
 
@@ -157,7 +157,7 @@
             }
 
             &.pad-right {
-                padding-right:30px;
+                padding-right:50px;
             }
 
             &:disabled {

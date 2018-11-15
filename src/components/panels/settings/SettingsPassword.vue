@@ -1,29 +1,26 @@
 <template>
     <section>
 
-        <section class="panel display">
-            <section class="head">
+        <section class="action-box top-pad">
+            <label>Change your Password</label>
+            Every time you change your password you will get a new Mnemonic ( Seed Phrase ) which is your alternate password for unlocking Scatter.
 
-            </section>
+            <br><br>
 
-            <section class="selected-item scrollable">
-                <figure class="name">Change your Password</figure>
-                <figure class="description">
-                    Every time you change your password you will get a new Mnemonic ( Seed Phrase ).<br>
-                    <b>Mnemonics are not used to generate keys on Scatter, they simply serve as a backup for your password.</b>
-                </figure>
+            <cin label="New Password"
+                 placeholder="Password"
+                 type="password"
+                 :text="password"
+                 v-on:changed="x => password = x" />
 
-                <section class="info-box">
+            <cin label="Confirm new Password"
+                 placeholder="Confirm Password"
+                 type="password"
+                 :text="confirmPassword"
+                 v-on:changed="x => confirmPassword = x" />
 
+            <btn red="true" v-on:clicked="changePassword" text="Change Password" />
 
-                    <cin placeholder="Password" type="password" :text="password" v-on:changed="changed => bind(changed, 'password')"></cin>
-                    <cin placeholder="Confirm Password" type="password" :text="confirmPassword" v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
-                    <btn red="true" v-on:clicked="changePassword" text="Change Password"></btn>
-
-
-                </section>
-
-            </section>
         </section>
 
     </section>

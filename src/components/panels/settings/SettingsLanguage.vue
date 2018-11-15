@@ -1,28 +1,16 @@
 <template>
     <section>
 
-        <section class="panel display">
-            <section class="head">
+        <section class="action-box top-pad">
 
-            </section>
-
-            <section class="selected-item scrollable">
-                <figure class="name">Select your Language</figure>
-                <figure class="description">Scatter is available in multiple languages, because blockchain is all about communities from all around the world.</figure>
-
-                <section class="info-box">
-
-
-                    <sel :placeholder="'Language'"
-                         :options="Object.keys(languages).map(x => languages[x])"
-                         :selected="selectedLanguage"
-                         :parser="x => x"
-                         v-on:changed="selectLanguage"></sel>
-
-                </section>
-
-            </section>
+            <sel label="Select your Language"
+                 :placeholder="'Language'"
+                 :options="Object.keys(languages).map(x => languages[x])"
+                 :selected="selectedLanguage"
+                 :parser="x => x"
+                 v-on:changed="selectLanguage" />
         </section>
+
 
     </section>
 </template>

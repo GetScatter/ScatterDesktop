@@ -86,18 +86,24 @@ export default class KeyPairService {
 
         // Removing
 	    if(keypair.blockchains.includes(blockchain)){
-		    keypair.blockchains = keypair.blockchains.filter(x => x !== blockchain);
-		    const accountsToRemove = keypair.accounts().filter(x => x.blockchain() === blockchain);
-		    await AccountService.removeAccounts(accountsToRemove);
+		    PopupService.push(Popup.prompt('Unlinking Blockchain', 'Removing blockchains also removes all associated accounts and permissions.', 'attention', 'Remove', async removed => {
+			    if(removed){
+				    keypair.blockchains = keypair.blockchains.filter(x => x !== blockchain);
+				    const accountsToRemove = keypair.accounts().filter(x => x.blockchain() === blockchain);
+				    await AccountService.removeAccounts(accountsToRemove);
+				    KeyPairService.updateKeyPair(keypair);
+			    }
+		    }, 'Cancel'))
         }
 
         // Adding
 	    else {
 		    keypair.blockchains.push(blockchain);
 		    await AccountService.importAllAccounts(keypair);
+		    KeyPairService.updateKeyPair(keypair);
         }
 
-	    KeyPairService.updateKeyPair(keypair);
+
 	    return true;
     }
 

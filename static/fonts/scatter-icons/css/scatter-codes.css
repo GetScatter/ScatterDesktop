@@ -49,7 +49,11 @@
 .icon-users:before { content: '\e82f'; } /* '' */
 .icon-emo-coffee:before { content: '\e830'; } /* '' */
 .icon-flow-tree:before { content: '\e831'; } /* '' */
+.icon-folder:before { content: '\e832'; } /* '' */
+.icon-folder-open:before { content: '\e833'; } /* '' */
 .icon-spin4:before { content: '\e834'; } /* '' */
+.icon-folder-empty:before { content: '\f114'; } /* '' */
+.icon-folder-open-empty:before { content: '\f115'; } /* '' */
 .icon-shield:before { content: '\f132'; } /* '' */
 .icon-sliders:before { content: '\f1de'; } /* '' */
 .icon-toggle-off:before { content: '\f204'; } /* '' */

@@ -18,15 +18,6 @@ import Processes from './components/Processes.vue'
 
 // Panels
 import Terms from './components/panels/Terms.vue'
-import SettingsGeneral from './components/panels/settings/SettingsGeneral.vue'
-import SettingsLanguage from './components/panels/settings/SettingsLanguage.vue'
-import SettingsExplorer from './components/panels/settings/SettingsExplorer.vue'
-import SettingsNetworks from './components/panels/settings/SettingsNetworks.vue'
-import SettingsBackup from './components/panels/settings/SettingsBackup.vue'
-import SettingsDestroy from './components/panels/settings/SettingsDestroy.vue'
-import SettingsPassword from './components/panels/settings/SettingsPassword.vue'
-import SettingsPIN from './components/panels/settings/SettingsPIN.vue'
-import SettingsNonce from './components/panels/settings/SettingsNonce.vue'
 
 // POPUPS
 import Popups from './components/Popups.vue'
@@ -115,15 +106,6 @@ class Main {
 				{tag:'radial-progress', vue:RadialProgressBar},
 
 				// PANELS
-				{tag:'settings-general', vue:SettingsGeneral},
-				{tag:'settings-language', vue:SettingsLanguage},
-				{tag:'settings-backup', vue:SettingsBackup},
-				{tag:'settings-networks', vue:SettingsNetworks},
-				{tag:'settings-destroy', vue:SettingsDestroy},
-				{tag:'settings-explorer', vue:SettingsExplorer},
-				{tag:'settings-password', vue:SettingsPassword},
-				{tag:'settings-nonce', vue:SettingsNonce},
-				{tag:'settings-pin', vue:SettingsPIN},
 				{tag:'terms', vue:Terms},
 
 				{tag:'mnemonic', vue:Mnemonic},

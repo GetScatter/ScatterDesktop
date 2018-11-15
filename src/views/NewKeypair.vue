@@ -147,7 +147,7 @@
 	            this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:keypair.id}})
 	            setTimeout(() => {
 		            this.setWorkingScreen(false);
-                }, 200);
+                }, 500);
 
             },
             ...mapActions([

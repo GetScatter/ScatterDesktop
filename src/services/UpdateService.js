@@ -7,11 +7,13 @@ import ElectronHelpers from '../util/ElectronHelpers'
 
 export default class UpdateService {
 
+    static updateUrl(){ return `https://github.com/GetScatter/ScatterDesktop/releases` }
+
     static async needsUpdate(){
         const scatter = store.state.scatter.clone();
         const update = await this.needsUpdateNoPrompt();
         if(update) PopupService.push(Popup.prompt('New Update!', 'There is a new Scatter update available. Do you want to download it? ( You should backup your scatter before updating! )', 'download', 'Yes', accepted => {
-            if(accepted) ElectronHelpers.openLinkInBrowser(`https://github.com/GetScatter/ScatterDesktop/releases`);
+            if(accepted) ElectronHelpers.openLinkInBrowser(this.updateUrl());
             else {
                 scatter.meta.lastSuggestedVersion = update[1];
                 store.dispatch(Actions.SET_SCATTER, scatter);
@@ -30,7 +32,7 @@ export default class UpdateService {
         let lastSuggested = scatter.meta.lastSuggestedVersion;
 
         if(mathematicalVersion(scatter.meta.version) < version && (!lastSuggested || lastSuggested !== version))
-            return [version, url];
+            return [version, this.updateUrl()];
         return false;
     }
 

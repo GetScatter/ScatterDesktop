@@ -10,7 +10,7 @@
 
 				<section class="details">
 					<figure class="title">{{item.title}}</figure>
-					<p>{{item.description}}</p>
+					<p v-if="item.hasOwnProperty('description')">{{item.description}}</p>
 				</section>
 
 				<figure  v-if="icon":class="icon" class="icon" @click="$emit('action', item)"></figure>

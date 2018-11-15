@@ -1,28 +1,20 @@
 <template>
     <section>
 
-        <section class="panel display">
-            <section class="head">
+        <section class="action-box top-pad">
+            <label>Change your PIN</label>
+            Your PIN is a secondary internal password for doing Transfers.<br>
+            <b class="red">Do not make your PIN the same as your password!</b>
 
-            </section>
+            <br><br>
 
-            <section class="selected-item scrollable">
-                <figure class="name">Change your PIN</figure>
-                <figure class="description">
-                    Your PIN is a secondary internal password for doing Transfers.<br>
-                    <b class="red">Do not make your PIN the same as your password!</b>
-                </figure>
-
-                <section class="info-box">
-
-                    <cin big="1" placeholder="PIN Disabled" type="password" :text="pin" v-on:changed="x => pin = x"></cin>
-
-                    <!--<b style="margin-top:10px; font-size: 11px;" v-if="!scatter.pin || !scatter.pin.length">PIN Disabled</b>-->
-
-                </section>
-
-            </section>
+            <cin style="margin-bottom:0;" big="1"
+                 placeholder="PIN Disabled"
+                 type="password"
+                 :text="pin"
+                 v-on:changed="x => pin = x" />
         </section>
+
 
     </section>
 </template>

@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'scatter';
-  src: url('../font/scatter.eot?46045905');
-  src: url('../font/scatter.eot?46045905#iefix') format('embedded-opentype'),
-       url('../font/scatter.woff2?46045905') format('woff2'),
-       url('../font/scatter.woff?46045905') format('woff'),
-       url('../font/scatter.ttf?46045905') format('truetype'),
-       url('../font/scatter.svg?46045905#scatter') format('svg');
+  src: url('../font/scatter.eot?2968991');
+  src: url('../font/scatter.eot?2968991#iefix') format('embedded-opentype'),
+       url('../font/scatter.woff2?2968991') format('woff2'),
+       url('../font/scatter.woff?2968991') format('woff'),
+       url('../font/scatter.ttf?2968991') format('truetype'),
+       url('../font/scatter.svg?2968991#scatter') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'scatter';
-    src: url('../font/scatter.svg?46045905#scatter') format('svg');
+    src: url('../font/scatter.svg?2968991#scatter') format('svg');
   }
 }
 */
@@ -105,7 +105,11 @@
 .icon-users:before { content: '\e82f'; } /* '' */
 .icon-emo-coffee:before { content: '\e830'; } /* '' */
 .icon-flow-tree:before { content: '\e831'; } /* '' */
+.icon-folder:before { content: '\e832'; } /* '' */
+.icon-folder-open:before { content: '\e833'; } /* '' */
 .icon-spin4:before { content: '\e834'; } /* '' */
+.icon-folder-empty:before { content: '\f114'; } /* '' */
+.icon-folder-open-empty:before { content: '\f115'; } /* '' */
 .icon-shield:before { content: '\f132'; } /* '' */
 .icon-sliders:before { content: '\f1de'; } /* '' */
 .icon-toggle-off:before { content: '\f204'; } /* '' */

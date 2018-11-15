@@ -1,29 +1,21 @@
 <template>
     <section>
 
-        <section class="panel display">
-            <section class="head">
+        <section class="action-box top-pad">
+            <label>Configure Backups</label>
+            Every time you change your password you will get a new Mnemonic ( Seed Phrase ) which is your alternate password for unlocking Scatter.
 
+            <br><br>
+
+            <section class="split-inputs">
+                <btn style="flex:1;" text="Auto-Backup Location" v-on:clicked="setBackupLocation()" />
+                <btn text="Create Backup" v-on:clicked="createBackup" />
             </section>
+        </section>
 
-            <section class="selected-item scrollable">
-                <figure class="name">Scatter Backup Settings</figure>
-                <figure class="description">
-                    Configure your automatic backups.
-                </figure>
-
-                <section class="info-box">
-                    <btn text="Choose Automatic Backup Location" secondary="true" large="true" v-on:clicked="setBackupLocation()"></btn>
-                    <btn text="Create Single Backup File" large="true" secondary="true" v-on:clicked="createBackup"></btn>
-                </section>
-
-                <section class="info-box">
-                    <figure class="name">Current Backup Folder</figure>
-                    <figure class="description">The location on your computer that Scatter saves it's encrypted backups to.</figure>
-                    <cin dynamic-button="folder-open" dynamic-tooltip="Open Folder" disabled="1" copy="1" :text="scatter.settings.backupLocation" v-on:dynamic="openFilePathLink"></cin>
-                </section>
-
-            </section>
+        <section class="action-box top-pad">
+            <label>Current Backup Folder</label>
+            <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty" dynamic-tooltip="Open Folder" disabled="1" :text="scatter.settings.backupLocation" v-on:dynamic="openFilePathLink"></cin>
         </section>
 
     </section>

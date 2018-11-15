@@ -1,49 +1,40 @@
 <template>
     <section>
 
-        <section class="panel display">
-            <section class="head">
+        <section class="action-box top-pad">
+            <label>Version</label>
+            <b>Scatter Desktop v{{version}}</b>
 
-            </section>
+            <btn :class="{'wiggle':needsUpdate}"
+                 :disabled="!needsUpdate"
+                 :red="needsUpdate"
+                 v-on:clicked="openUpdateLink"
+                 :text="needsUpdate
+                 ? 'Update Available'
+                 : 'No Update Needed'"
+            />
+        </section>
 
-            <section class="selected-item">
-                <figure class="name">General Settings</figure>
-                <figure class="description">
-                    Configure your automatic backups.
-                </figure>
+        <section class="action-box top-pad">
+            <label>Whitelist Notifications</label>
+            These notifications appear on certain operating systems when you auto-sign whitelisted transactions.
 
-                <figure class="line"></figure>
+            <btn v-on:clicked="toggleNotifications" :red="showNotifications" :text="!showNotifications ? 'Enable' : 'Disable'" />
+        </section>
 
-                <section class="info-box">
-                    <figure class="name">Version</figure>
-                    <b>Scatter Desktop v{{version}}</b><br>
-                    <btn :disabled="!needsUpdate" @click.native="openUpdateLink" :text="needsUpdate ? 'Update Available' : 'No Update Needed'"></btn>
-                    <section v-if="needsUpdate">
-                        <br>
-                        <span style="font-size: 11px;">Open this link in your browser if the button above doesn't work.</span>
-                        <cin style="margin-top:5px;" text="https://github.com/GetScatter/ScatterDesktop" disabled="1" copy="1"></cin>
-                    </section>
-                </section>
+        <section class="action-box top-pad">
+            <label>Data Path</label>
+            The location on your computer that Scatter saves it's encrypted data to.
 
-                <section class="info-box">
-                    <figure class="name">Whitelist Notifications</figure>
-                    <figure class="description">These notifications appear on certain operating systems when you auto-sign whitelisted transactions.</figure>
-                    <swch first="Enabled" second="Disabled" :selected="!showNotifications ? 'Enabled' : 'Disabled'" v-on:switched="toggleNotifications"></swch>
-                </section>
+            <br>
+            <br>
+            <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty" dynamic-tooltip="Open Folder" disabled="1" copy="1" :text="dataPath" v-on:dynamic="openFilePathLink"></cin>
+        </section>
 
-                <section class="info-box">
-                    <figure class="name">Data Path</figure>
-                    <figure class="description">The location on your computer that Scatter saves it's encrypted data to.</figure>
-                    <cin dynamic-button="folder-open" dynamic-tooltip="Open Folder" disabled="1" copy="1" :text="dataPath" v-on:dynamic="openFilePathLink"></cin>
-                </section>
-
-                <section class="info-box">
-                    <figure class="name">Developer Console</figure>
-                    <figure class="description">Sometimes you might need to see if Scatter is throwing any errors.</figure>
-                    <btn @click.native="openConsole" text="Open Console"></btn>
-                </section>
-
-            </section>
+        <section class="action-box top-pad">
+            <label>Developer Console</label>
+            Sometimes you might need to see if Scatter is throwing any errors.
+            <btn @click.native="openConsole" text="Open Console"></btn>
         </section>
 
     </section>
@@ -62,7 +53,7 @@
 
     export default {
         data () {return {
-            needsUpdate:false,
+            needsUpdate:true,
             dataPath:'',
         }},
         computed:{
@@ -76,16 +67,16 @@
         },
         mounted(){
         	this.dataPath = app.getPath('userData');
-            UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
-                this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
-            })
+            // UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
+            //     this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
+            // })
         },
         methods: {
         	openFilePathLink(){
         	    ElectronHelpers.openLinkInBrowser(this.dataPath);
             },
 	        openUpdateLink(){
-		        ElectronHelpers.openLinkInBrowser(this.needsUpdate);
+		        ElectronHelpers.openLinkInBrowser(UpdateService.updateUrl());
 	        },
 	        openConsole(){ WindowService.openTools(); },
             async toggleNotifications(){

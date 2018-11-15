@@ -8,7 +8,7 @@
         </section>
 
         <section class="actions">
-            <figure class="action">
+            <figure class="action" @click="goToSettings">
                 <i class="icon-cog-1"></i>
             </figure>
 
@@ -33,7 +33,12 @@
             ...mapGetters([
             	'identity'
             ])
-        }
+        },
+        methods:{
+	        goToSettings(){
+	        	this.$router.push({name:this.RouteNames.SETTINGS});
+            }
+        },
 	}
 </script>
 

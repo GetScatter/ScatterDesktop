@@ -49,6 +49,9 @@ export default class TRX extends Plugin {
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.TRX }}
     forkSupport(){ return false; }
 
+	contractPlaceholder(){ return '0x.....'; }
+	recipientLabel(){ return 'Address'; } // TODO: Localize
+
     async getEndorsedNetwork(){
         return new Promise((resolve, reject) => {
             resolve(new Network('Tron Mainnet', 'https', 'api.trongrid.io', 443, Blockchains.TRX, '1'));
