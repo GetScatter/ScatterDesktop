@@ -57,9 +57,9 @@
 
     const SettingsOptions = {
         GENERAL:{ flash:false, locked:false, name:'General', description:'General Scatter settings.' },
-        LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
+        LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\'s language.' },
         EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
-        PIN:{ flash:false, locked:true, name:'PIN', description:'Set or disabled your secondary PIN.' },
+        PIN:{ flash:false, locked:true, name:'PIN', description:'Set or disable your secondary PIN.' },
         NETWORKS:{ flash:false, locked:true, name:'Networks', description:'Add or Remove Networks.' },
 //        NONCE:{ flash:false, locked:true, name:'Nonce', description:'Configure the popup nonce prefix.' },
         PASSWORD:{ flash:false, locked:true, name:'Password', description:'Change your password or regenerate your Mnemonic.' },
