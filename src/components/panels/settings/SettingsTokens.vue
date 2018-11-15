@@ -16,8 +16,13 @@
                      :selected="{value:newToken.blockchain}"
                      :options="blockchains"
                      :parser="x => blockchainName(x.value)"
-                     v-on:changed="x => newToken.blockchain = x"></sel>
-                <cin style="flex:1; margin-bottom:0;" :placeholder="contractPlaceholder" label="Contract" />
+                     v-on:changed="x => newToken.blockchain = x" />
+
+                <cin style="flex:1; margin-bottom:0;"
+                     :placeholder="contractPlaceholder"
+                     label="Contract"
+                     :text="newToken.contract"
+                     v-on:changed="x => newToken.contract = x" />
             </section>
             <br>
             <section class="split-inputs">

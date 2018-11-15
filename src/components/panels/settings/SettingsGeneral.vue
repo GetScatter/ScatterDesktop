@@ -53,8 +53,7 @@
 
     export default {
         data () {return {
-            needsUpdate:true,
-            dataPath:'',
+            needsUpdate:null,
         }},
         computed:{
             ...mapState([
@@ -63,13 +62,15 @@
             ...mapGetters([
                 'showNotifications',
                 'version',
-            ])
+            ]),
+            dataPath(){
+            	return app.getPath('userData');
+            }
         },
         mounted(){
-        	this.dataPath = app.getPath('userData');
-            // UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
-            //     this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
-            // })
+            UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
+                this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
+            })
         },
         methods: {
         	openFilePathLink(){

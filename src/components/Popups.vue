@@ -24,7 +24,7 @@
 
         <section class="snackbar-holder" :class="{'has-snackbar':snackbars.length}">
             <transition-group name="snackbar-transition">
-                <snackbar :popup="popup" v-for="popup in snackbars" :key="popup.id"></snackbar>
+                <Snackbar :popup="popup" v-for="popup in snackbars" :key="popup.id" />
             </transition-group>
         </section>
 
@@ -43,7 +43,28 @@
     import * as Actions from '../store/constants';
     import {PopupDisplayTypes, PopupTypes} from '../models/popups/Popup'
 
+    import Snackbar from '../components/popups/Snackbar.vue'
+    import Mnemonic from '../components/popups/Mnemonic.vue'
+    import TransactionSuccess from '../components/popups/TransactionSuccess.vue'
+    import Prompt from '../components/popups/Prompt.vue'
+    import Selector from '../components/popups/Selector.vue'
+    import TextPrompt from '../components/popups/TextPrompt.vue'
+    import DelegateResources from '../components/popups/DelegateResources.vue'
+    import BuySellRAM from '../components/popups/BuySellRAM.vue'
+    import PopInHead from '../components/popups/fragments/PopInHead.vue'
+
     export default {
+    	components:{
+		    Snackbar,
+		    Mnemonic,
+		    TransactionSuccess,
+		    Prompt,
+		    Selector,
+		    TextPrompt,
+		    DelegateResources,
+		    BuySellRAM,
+		    PopInHead,
+        },
         data(){ return {
             popupTypes:PopupTypes,
             popupDisplayTypes:PopupDisplayTypes,

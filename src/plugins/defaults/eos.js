@@ -37,8 +37,8 @@ const getCachedInstance = network => {
 
 const getAccountsFromPublicKey = async (publicKey, network, process, progressDelta, fallbackToChain = false) => {
 	if(network.chainId === mainnetChainId && !fallbackToChain){
-		const baseUrl = 'http://fra01.net.light.xeos.me/api/key';
-		// const baseUrl = 'http://api.light.xeos.me/api/key';
+		const baseUrl = 'https://api.light.xeos.me/api/key';
+
 		// get from API
 		const accountsFromApi = await Promise.race([
 			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
@@ -100,20 +100,12 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 	])
 };
 
-const EXPLORERS = [
-	{
-		name:'Bloks',
-		account:account => `https://bloks.io/account/${account.name}`,
-		transaction:id => `https://bloks.io/transaction/${id}`,
-		block:id => `https://bloks.io/block/${id}`
-	},
-	{
-		name:'EOSFlare',
-		account:account => `https://eosflare.io/account/${account.name}`,
-		transaction:id => `https://eosflare.io/tx/${id}`,
-		block:id => `https://eosflare.io/block/${id}`
-	}
-];
+const EXPLORER = {
+	"name":"Bloks",
+	"account":"https://bloks.io/account/{x}",
+	"transaction":"https://bloks.io/transaction/{x}",
+	"block":"https://bloks.io/block/{x}"
+};
 
 
 
@@ -121,7 +113,7 @@ const EXPLORERS = [
 export default class EOS extends Plugin {
 
 	constructor(){ super(Blockchains.EOSIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
-	explorers(){ return EXPLORERS; }
+	defaultExplorer(){ return EXPLORER; }
 	accountFormatter(account){ return `${account.name}@${account.authority}` }
 	returnableAccount(account){ return { name:account.name, authority:account.authority, publicKey:account.publicKey, blockchain:Blockchains.EOSIO }}
 

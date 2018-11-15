@@ -174,18 +174,12 @@
 			        return acc;
 		        }, []);
 
-		        const anyAccount = [{
-		        	id:'any_account',
-                    title:'Auto-select',
-                    description:'We will automatically select the first account capable of your transfer.'
-                }]
-
-		        return anyAccount.concat(reducer(this.accounts)
+		        return reducer(this.accounts)
                     .map(account => ({
                         id:account.unique(),
                         title:account.name,
                         description:account.network().name,
-                    })))
+                    }))
             },
 	        filteredTokens(){
             	const allTokens = this.networkTokens.concat(this.tokens);

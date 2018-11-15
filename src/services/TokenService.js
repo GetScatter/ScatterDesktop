@@ -17,6 +17,7 @@ export default class TokenService {
 	    if(store.getters.networkTokens.find(x => x.unique() === token.unique())) return true;
 
         if(!token.symbol.length) return PopupService.push(Popup.prompt('Token Symbol Error', 'You must add a token symbol.', 'attention', 'Okay'));
+        if(!token.contract.length) return PopupService.push(Popup.prompt('Token Contract Error', 'You must add a token contract.', 'attention', 'Okay'));
 
         if(!blacklist && scatter.settings.tokens.find(x => x.unique() === token.unique()))
             return PopupService.push(Popup.prompt('Token Exists', 'This token already exists in your added tokens.', 'attention', 'Okay'));

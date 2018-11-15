@@ -51,19 +51,17 @@ const killCachedInstance = (network, wallet = null) => {
 
 }
 
-const EXPLORERS = [
-    {
-        name:'Etherscan',
-        account:account => `https://etherscan.io/address/${account.formatted()}`,
-        transaction:id => `https://etherscan.io/tx/${id}`,
-        block:id => `https://etherscan.io/block/${id}`
-    },
-];
+const EXPLORER = {
+	"name":"Etherscan",
+	"account":"https://etherscan.io/address/{x}",
+	"transaction":"https://etherscan.io/tx/{x}",
+	"block":"https://etherscan.io/block/{x}"
+};
 
 export default class ETH extends Plugin {
 
     constructor(){ super(Blockchains.ETH, PluginTypes.BLOCKCHAIN_SUPPORT) }
-    explorers(){ return EXPLORERS; }
+    defaultExplorer(){ return EXPLORER; }
     accountFormatter(account){ return `${account.publicKey}` }
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.ETH }}
 

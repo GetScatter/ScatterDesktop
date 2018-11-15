@@ -60,7 +60,6 @@
                 'scatter'
             ]),
             ...mapGetters([
-                'linkedApps',
                 'autoBackup',
                 'backupLocation'
             ]),

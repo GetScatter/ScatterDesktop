@@ -345,9 +345,9 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
+    import * as Actions from '../store/constants';
 
-    import StorageService from '../../services/StorageService';
+    import StorageService from '../services/StorageService';
 
     export default {
         data () {return {
@@ -386,7 +386,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables";
+    @import "../variables";
 
     .head {
         background:#fff;

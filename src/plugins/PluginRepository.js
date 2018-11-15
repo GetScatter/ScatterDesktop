@@ -39,18 +39,8 @@ class PluginRepositorySingleton {
     }
 
     defaultExplorers(){
-        const plugins = this.signatureProviders();
         return BlockchainsArray.reduce((acc,x) => {
-            const explorers = this.plugin(x.value).explorers();
-            acc[x.value] = explorers[Object.keys(explorers)[0]];
-            return acc;
-        }, {})
-    }
-
-    allExplorers(){
-        const plugins = this.signatureProviders();
-        return BlockchainsArray.reduce((acc,x) => {
-            acc[x.value] = this.plugin(x.value).explorers();
+            acc[x.value] = [this.plugin(x.value).defaultExplorer()];
             return acc;
         }, {})
     }

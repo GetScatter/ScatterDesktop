@@ -32,19 +32,17 @@ const getCachedInstance = network => {
     }
 }
 
-const EXPLORERS = [
-    {
-        name:'Tronscan',
-        account:account => `https://tronscan.org/#/address/${account.formatted()}`,
-        transaction:id => `https://tronscan.org/#/transaction/${id}`,
-        block:id => `https://tronscan.org/#/block/${id}`
-    },
-];
+const EXPLORER = {
+	"name":"Tronscan",
+	"account":"https://tronscan.org/#/address/{x}",
+	"transaction":"https://tronscan.org/#/transaction/{x}",
+	"block":"https://tronscan.org/#/block/{x}"
+};
 
 export default class TRX extends Plugin {
 
     constructor(){ super(Blockchains.TRX, PluginTypes.BLOCKCHAIN_SUPPORT) }
-    explorers(){ return EXPLORERS; }
+    defaultExplorer(){ return EXPLORER; }
     accountFormatter(account){ return `${account.publicKey}` }
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.TRX }}
     forkSupport(){ return false; }

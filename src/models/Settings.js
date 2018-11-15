@@ -2,6 +2,7 @@ import Network from './Network';
 import {LANG} from '../localization/locales';
 import PluginRepository from '../plugins/PluginRepository';
 import Token from "./Token";
+import Explorer from "./Explorer";
 
 export const BACKUP_STRATEGIES = {
     MANUAL:'manual',
@@ -15,7 +16,6 @@ export default class Settings {
         this.language = LANG.ENGLISH;
         this.autoBackup = BACKUP_STRATEGIES.AUTOMATIC;
         this.backupLocation = '';
-        this.advancedMode = false;
         this.explorers = PluginRepository.defaultExplorers();
         this.displayToken = null;
         this.tokens = [];
@@ -30,7 +30,7 @@ export default class Settings {
         if(json.hasOwnProperty('tokens')) p.tokens = json.tokens.map(x => Token.fromJson(x));
         if(json.hasOwnProperty('blacklistTokens')) p.blacklistTokens = json.blacklistTokens.map(x => Token.fromJson(x));
         if(json.hasOwnProperty('explorers')) p.explorers = Object.keys(json.explorers).reduce((acc, blockchain) => {
-            acc[blockchain] = PluginRepository.plugin(blockchain).explorers().find(x => x.name === json.explorers[blockchain].name);
+            acc[blockchain] = Explorer.fromJson(json.explorers[blockchain]);
             return acc;
         }, {});
         return p;

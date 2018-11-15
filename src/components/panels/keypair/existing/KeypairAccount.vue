@@ -85,7 +85,11 @@
 					this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:await ResourceService.getResourcesFor(this.account)});
 			},
 			async openInExplorer(){
-				if(this.isMainnet) ElectronHelpers.openLinkInBrowser(this.explorers[this.account.blockchain()].account(this.account))
+				if(this.isMainnet) {
+					const blockchain = this.account.blockchain();
+					const url = this.explorers[blockchain].parsed().account(this.account.sendable());
+					ElectronHelpers.openLinkInBrowser(url)
+				}
 			},
 
 			...mapActions([
