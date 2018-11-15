@@ -11,7 +11,7 @@ export default class UpdateService {
         const scatter = store.state.scatter.clone();
         const update = await this.needsUpdateNoPrompt();
         if(update) PopupService.push(Popup.prompt('New Update!', 'There is a new Scatter update available. Do you want to download it? ( You should backup your scatter before updating! )', 'download', 'Yes', accepted => {
-            if(accepted) ElectronHelpers.openLinkInBrowser(update[2]);
+            if(accepted) ElectronHelpers.openLinkInBrowser(`https://github.com/GetScatter/ScatterDesktop/releases`);
             else {
                 scatter.meta.lastSuggestedVersion = update[1];
                 store.dispatch(Actions.SET_SCATTER, scatter);

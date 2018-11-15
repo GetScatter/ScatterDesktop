@@ -43,6 +43,7 @@
     import PiggyWaiting from '../components/svgs/PiggyWaiting'
     import Apps from '../components/panels/home/Apps';
     import Wallets from '../components/panels/home/Wallets';
+    import AccountService from "../services/AccountService";
 
 
     export default {
@@ -57,8 +58,15 @@
         computed:{
             ...mapGetters([
                 'keypairs',
+                'accounts',
             ]),
         },
+
+        created(){
+    		console.log('accounts', this.accounts);
+    		// const account = this.accounts.find(x => x.name === 'scatterfunds');
+    		// if(account) AccountService.removeAccount(account);
+        }
     }
 </script>
 

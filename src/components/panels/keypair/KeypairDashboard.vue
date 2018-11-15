@@ -27,6 +27,26 @@
 					<section class="item" v-for="account in filteredAccounts">
 						<KeypairAccount :key="account.unique()" :account="account" />
 					</section>
+
+					<section class="action-box" v-if="hasEosBlockchain">
+						<section class="key-val">
+							<figure>{{locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountLabel)}}</figure>
+							<figure>{{locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountDescription)}}</figure>
+
+							<br>
+							<br>
+							<section class="split-inputs">
+								<sel style="flex:1; margin-left:0;" label="Network to add account to"
+								     :selected="manualAccountNetwork"
+								     :options="eosNetworks"
+								     :parser="network => network.name"
+								     v-on:changed="x => manualAccountNetwork = x"></sel>
+
+								<btn :text="locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountButton)" style="margin-top:20px; flex:0.2;"
+								     red="1" v-on:clicked="manuallyAddAccount" />
+							</section>
+						</section>
+					</section>
 				</section>
 			</section>
 
@@ -48,6 +68,11 @@
 
 	import KeyPairService from "../../../services/KeyPairService";
 	import ResourceService from "../../../services/ResourceService";
+	import PopupService from "../../../services/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import {Blockchains} from "../../../models/Blockchains";
+	import AccountService from "../../../services/AccountService";
+	import Account from "../../../models/Account";
 
 	let saveTimeout;
 
@@ -65,6 +90,7 @@
 			DASH_STATES,
 
 			searchTerms:'',
+			manualAccountNetwork:null,
 		}},
 
 		components:{
@@ -76,7 +102,14 @@
 		computed:{
 			...mapGetters([
 				'keypairs',
+				'networks',
 			]),
+			eosNetworks(){
+				return this.networks.filter(x => x.blockchain === Blockchains.EOSIO)
+			},
+			hasEosBlockchain(){
+				return this.keypair.blockchains.includes(Blockchains.EOSIO);
+			},
 			filteredAccounts(){
 				return this.keypair.accounts(true)
 					.filter(x => x.name.toLowerCase().match(this.searchTerms))
@@ -88,10 +121,35 @@
 			}
 		},
 
+		mounted(){
+			this.manualAccountNetwork = this.eosNetworks.length ? this.eosNetworks[0] : null;
+		},
+
 		methods:{
 			handleScroll(e){
 				this.scrollerAtTop = e.target.scrollTop <= 80;
 			},
+			manuallyAddAccount(){
+				PopupService.push(Popup.textPrompt(
+					'Enter account name',
+					'Enter the name of the account you think should be on this key.',
+					'user-add',
+					'Done',
+					{ placeholder:'someaccount OR someaccount@active' },
+					async formatted => {
+						if(!formatted || !formatted.length) return;
+
+						const [name, auth] = formatted.trim().toLowerCase().split('@');
+						const account = Account.fromJson({
+							keypairUnique:this.keypair.id,
+							networkUnique:this.manualAccountNetwork.unique(),
+							publicKey:this.keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key,
+							name,
+							authority:auth ? auth : 'active',
+						})
+						await AccountService.addAccount(account);
+				}))
+			}
 		},
 
 		watch:{

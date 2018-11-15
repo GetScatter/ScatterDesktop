@@ -311,8 +311,8 @@ p {
     transition:all 0.08s ease;
     transition-property: color, height, line-height;
 
-    &:last-child {
-      margin-left:40px;
+    &:not(:last-child) {
+      margin-right:40px;
     }
 
     &:after {
@@ -392,6 +392,38 @@ p {
   }
 }
 
+.action-box {
+  background:#fafafa;
+  padding:1px 20px 20px 20px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.2);
+  border-radius:4px;
+  margin-top:30px;
+
+  button {
+    margin-top:30px;
+    max-width:200px;
+    float:right;
+    width:auto !important;
+  }
+}
+
+.key-val {
+  margin-top:20px;
+
+  figure {
+    &:first-child {
+      font-size: 11px;
+      color:#7899a6;
+      font-weight: bold;
+      margin-bottom:8px;
+      display: block;
+    }
+
+    &:last-child {
+
+    }
+  }
+}
 
 .action-bar {
   height:90px;

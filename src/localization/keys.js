@@ -119,6 +119,9 @@ const KEYPAIR = prefixKeys('keypair', {
 		ViewTokens:'view_tokens',
 		EOSManageResourceButton:'eos_manage_btn',
 		EOSClaimRefundButton:'eos_refund_btn',
+		AddAccountLabel:'add_acc_lbl',
+		AddAccountDescription:'add_acc_desc',
+		AddAccountButton:'add_acc_btn'
 	},
 	BLOCKCHAINS:{
 		CopyButton:'cpy_btn',

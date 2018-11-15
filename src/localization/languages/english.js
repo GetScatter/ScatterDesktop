@@ -172,6 +172,11 @@ const Locale = {
 	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,
 	[KEYPAIR.ACCOUNTS.EOSManageResourceButton]:() => `Manage`,
 	[KEYPAIR.ACCOUNTS.EOSClaimRefundButton]:() => `Refund`,
+	[KEYPAIR.ACCOUNTS.AddAccountLabel]:() => `Manually Add Account`,
+	[KEYPAIR.ACCOUNTS.AddAccountDescription]:() =>
+		`Sometimes you need to manually add EOSIO accounts if there are network issues. 
+		You can add them by entering the account name.`,
+	[KEYPAIR.ACCOUNTS.AddAccountButton]:() => `Add`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.BLOCKCHAINS.CopyButton]:() => `Copy Public Key`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////

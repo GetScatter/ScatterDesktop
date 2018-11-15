@@ -51,7 +51,7 @@
                         </section>
 
 
-                        <section class="remove-permission">
+                        <section class="action-box">
                             <section class="key-val">
                                 <figure>{{locale(langKeys.PERMISSIONS.RemoveLabel)}}</figure>
                                 <figure v-if="isIdentity">{{locale(langKeys.PERMISSIONS.RemoveIdentityText)}}</figure>
@@ -163,37 +163,6 @@
         position: relative;
         display:flex;
         flex-direction: column;
-    }
-
-    .remove-permission {
-        background:#fafafa;
-        padding:1px 20px 20px 20px;
-        box-shadow:0 1px 2px rgba(0,0,0,0.2);
-        border-radius:4px;
-        margin-top:30px;
-        overflow: hidden;
-
-        button {
-            margin-top:30px;
-        }
-    }
-
-    .key-val {
-        margin-top:20px;
-
-        figure {
-            &:first-child {
-                font-size: 11px;
-                color:#7899a6;
-                font-weight: bold;
-                margin-bottom:8px;
-                display: block;
-            }
-
-            &:last-child {
-
-            }
-        }
     }
 
     .permission-type {
