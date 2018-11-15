@@ -1,7 +1,7 @@
 <template>
     <section>
 
-        <section class="action-box top-pad">
+        <section class="action-box top-pad" v-if="explorers">
             <section v-for="blockchain in blockchainsArray">
                 <label>{{blockchainName(blockchain.value)}}</label>
 
@@ -27,7 +27,6 @@
         data () {return {
             blockchains:Blockchains,
             blockchainsArray:BlockchainsArray,
-            allExplorers:{}
         }},
         computed:{
             ...mapState([
@@ -35,10 +34,12 @@
             ]),
             ...mapGetters([
                 'explorers',
-            ])
+            ]),
+            allExplorers(){
+	            return PluginRepository.allExplorers()
+            }
         },
         mounted(){
-            this.allExplorers = PluginRepository.allExplorers();
         },
         methods: {
             changedExplorer(blockchain, explorer){

@@ -1,6 +1,7 @@
 import Network from './Network';
 import {LANG} from '../localization/locales';
 import PluginRepository from '../plugins/PluginRepository';
+import Token from "./Token";
 
 export const BACKUP_STRATEGIES = {
     MANUAL:'manual',
@@ -17,6 +18,8 @@ export default class Settings {
         this.advancedMode = false;
         this.explorers = PluginRepository.defaultExplorers();
         this.displayToken = null;
+        this.tokens = [];
+        this.blacklistTokens = [];
         this.showNotifications = true;
     }
 
@@ -24,6 +27,8 @@ export default class Settings {
     static fromJson(json){
         let p = Object.assign(this.placeholder(), json);
         if(json.hasOwnProperty('networks')) p.networks = json.networks.map(x => Network.fromJson(x));
+        if(json.hasOwnProperty('tokens')) p.tokens = json.tokens.map(x => Token.fromJson(x));
+        if(json.hasOwnProperty('blacklistTokens')) p.blacklistTokens = json.blacklistTokens.map(x => Token.fromJson(x));
         if(json.hasOwnProperty('explorers')) p.explorers = Object.keys(json.explorers).reduce((acc, blockchain) => {
             acc[blockchain] = PluginRepository.plugin(blockchain).explorers().find(x => x.name === json.explorers[blockchain].name);
             return acc;
