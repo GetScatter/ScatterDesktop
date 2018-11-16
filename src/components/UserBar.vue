@@ -78,6 +78,10 @@
                 color:#fff;
                 display:inline-block;
 
+                i {
+                    font-size:16px;
+                }
+
                 &:hover {
                     border:1px solid rgba(0,0,0,0.22);
                 }
