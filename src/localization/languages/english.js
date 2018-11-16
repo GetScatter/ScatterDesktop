@@ -6,7 +6,8 @@ const {
 	KEYPAIR,
 	IDENTITY,
 	CREATE_EOS,
-	PERMISSIONS
+	PERMISSIONS,
+	TRANSFER
 } = KEYS;
 
 // You can build your own pluralizers.
@@ -29,20 +30,20 @@ const Locale = {
 	[LOGIN.NEW.PasswordLabel]:() => `Choose a password`,
 	[LOGIN.NEW.PasswordPlaceholder]:() => `Make sure it's a strong password!`,
 	[LOGIN.NEW.PasswordConfirmLabel]:() => `Type your password again`,
-	[LOGIN.NEW.PasswordConfirmPlaceholder]:() => `Twice is nice.`,
+	[LOGIN.NEW.PasswordConfirmPlaceholder]:() => `Twice is nice`,
 	[LOGIN.NEW.CreateButton]:() => `Let's go!`,
 	[LOGIN.NEW.RestoreBackupButton]:() => `I want to restore from a backup`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[LOGIN.EXISTING.Title]:() => `Welcome Back`,
+	[LOGIN.EXISTING.Title]:() => `Welcome back`,
 	[LOGIN.EXISTING.SubTitle]:() => `Enter your password to unlock your Scatter.`,
-	[LOGIN.EXISTING.PasswordPlaceholder]:() => `Password or Backup Phrase`,
+	[LOGIN.EXISTING.PasswordPlaceholder]:() => `Password or backup phrase`,
 	[LOGIN.EXISTING.ResetButton]:() => `I need to reset my password`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[LOGIN.RESTORE.Title]:() => `Restore from backup`,
 	[LOGIN.RESTORE.SubTitle]:() =>
 		`If you have a backup for your Scatter you can import it here by loading it into Scatter. 
         You will still need the password to unlock it.`,
-	[LOGIN.RESTORE.ChooseButton]:() => `Choose your Backup`,
+	[LOGIN.RESTORE.ChooseButton]:() => `Choose your backup`,
 	[LOGIN.RESTORE.BackButton]:() => `I want to start from scratch`,
 
 
@@ -66,8 +67,8 @@ const Locale = {
 	[DASHBOARD.APPS.NoAppsDescription]:() =>
 		`Apps are at the heart of what makes Scatter awesome. 
 		You can explore apps and connect to them below.`,
-	[DASHBOARD.APPS.ExploreAppsButton]:() => `Explore Apps`,
-	[DASHBOARD.APPS.EditApp]:() => `Edit`,
+	[DASHBOARD.APPS.ExploreAppsButton]:() => `Explore apps`,
+	[DASHBOARD.APPS.EditApp]:() => `Edit Permissions`,
 	[DASHBOARD.APPS.DeleteApp]:() => `Delete`,
 	[DASHBOARD.APPS.LinkPermissionOnly]:() => `Link permission only`,
 	[DASHBOARD.APPS.NPermissions]:n => `${n} Permission${plural_s(n)}`,
@@ -86,10 +87,10 @@ const Locale = {
 	[ADD_KEYS.SELECT.CreateDescription]:() =>
 		`If you want to create a new set of keys that you can use on any blockchain. 
 		The keys will not have any funds on them, they are brand new.`,
-	[ADD_KEYS.SELECT.CreateButton]:() => `Create a Key`,
+	[ADD_KEYS.SELECT.CreateButton]:() => `Create a key`,
 	[ADD_KEYS.SELECT.ImportTitle]:() => `Import an existing key`,
 	[ADD_KEYS.SELECT.ImportDescription]:() => `If you already have a key and want to import it into Scatter`,
-	[ADD_KEYS.SELECT.ImportButton]:() => `Import a Key`,
+	[ADD_KEYS.SELECT.ImportButton]:() => `Import a key`,
 	[ADD_KEYS.SELECT.CreateEosTitle]:() => `Create a new EOS account`,
 	[ADD_KEYS.SELECT.CreateEosDescription]:() => `We'll quickly generate two keys for you`,
 	[ADD_KEYS.SELECT.CreateEosButton]:() => `EOS account`,
@@ -106,7 +107,7 @@ const Locale = {
 	[ADD_KEYS.IMPORT.QrDescription]:() => `If you have an encrypted paper wallet QR code`,
 	[ADD_KEYS.IMPORT.QrButton]:() => `QR`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[ADD_KEYS.IMPORT_TEXT.KeyLabel]:() => `Enter a Private Key`,
+	[ADD_KEYS.IMPORT_TEXT.KeyLabel]:() => `Enter a private key`,
 	[ADD_KEYS.IMPORT_TEXT.KeyPlaceholder]:() => `Make sure to enter it correctly`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[ADD_KEYS.EOS_KEYS.DisclaimerTitle]:() =>
@@ -121,9 +122,9 @@ const Locale = {
 	[ADD_KEYS.EOS_KEYS.CreateEosAccountTitle]:() => `Use these keys to create an EOS account.`,
 	[ADD_KEYS.EOS_KEYS.CreateEosAccountDescription]:() =>
 		`You can not instantly use EOS with just keys, you need to create an account with them.`,
-	[ADD_KEYS.EOS_KEYS.CopyButton]:() => `Copy Keys`,
+	[ADD_KEYS.EOS_KEYS.CopyButton]:() => `Copy keys`,
 	[ADD_KEYS.EOS_KEYS.DeleteButton]:() => `Delete`,
-	[ADD_KEYS.EOS_KEYS.CreateEosAccountButton]:() => `Create Account`,
+	[ADD_KEYS.EOS_KEYS.CreateEosAccountButton]:() => `Create account`,
 
 
 	/****************************************************/
@@ -142,11 +143,11 @@ const Locale = {
 	[CREATE_EOS.NameTakenAlert]:() => `This name is already taken.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[CREATE_EOS.ACCOUNT.AccountsLabel]:() => `This account will be used to create the account`,
-	[CREATE_EOS.ACCOUNT.RamCostLabel]:() => `Mandatory RAM Cost`,
+	[CREATE_EOS.ACCOUNT.RamCostLabel]:() => `Mandatory RAM cost`,
 	[CREATE_EOS.ACCOUNT.ResourcesLabel]:() => `CPU and NET`,
 	[CREATE_EOS.ACCOUNT.ResourcesLowError]:(amount) => `You must allocate at least ${amount}`,
 	[CREATE_EOS.ACCOUNT.TotalLabel]:() => `Total`,
-	[CREATE_EOS.ACCOUNT.ActionBarButton]:() => `Create Account`,
+	[CREATE_EOS.ACCOUNT.ActionBarButton]:() => `Create account`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[CREATE_EOS.EXCHANGE.CopyButton]:() => `Copy`,
 	[CREATE_EOS.EXCHANGE.MinimumAmountLabel]:() => `Minimum amount you need to send from an exchange`,
@@ -168,30 +169,30 @@ const Locale = {
 	[KEYPAIR.RefreshButton]:() => `Refresh`,
 	[KEYPAIR.RemoveButton]:() => `Remove`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[KEYPAIR.ACCOUNTS.SearchPlaceholder]:() => `Search Accounts`,
+	[KEYPAIR.ACCOUNTS.SearchPlaceholder]:() => `Search accounts`,
 	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,
 	[KEYPAIR.ACCOUNTS.EOSManageResourceButton]:() => `Manage`,
 	[KEYPAIR.ACCOUNTS.EOSClaimRefundButton]:() => `Refund`,
-	[KEYPAIR.ACCOUNTS.AddAccountLabel]:() => `Manually Add Account`,
+	[KEYPAIR.ACCOUNTS.AddAccountLabel]:() => `Manually add account`,
 	[KEYPAIR.ACCOUNTS.AddAccountDescription]:() =>
 		`Sometimes you need to manually add EOSIO accounts if there are network issues. 
 		You can add them by entering the account name.`,
 	[KEYPAIR.ACCOUNTS.AddAccountButton]:() => `Add`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[KEYPAIR.BLOCKCHAINS.CopyButton]:() => `Copy Public Key`,
+	[KEYPAIR.BLOCKCHAINS.CopyButton]:() => `Copy public key`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.EXPORT.SELECT.KeyTitle]:() => `Key`,
-	[KEYPAIR.EXPORT.SELECT.KeyDescription]:() => `Export this Private Key as text`,
+	[KEYPAIR.EXPORT.SELECT.KeyDescription]:() => `Export this private key as text`,
 	[KEYPAIR.EXPORT.SELECT.QrTitle]:() => `Paper Wallet`,
-	[KEYPAIR.EXPORT.SELECT.QrDescription]:() => `Export this Private Key as an encrypted QR code`,
+	[KEYPAIR.EXPORT.SELECT.QrDescription]:() => `Export this private key as an encrypted QR code`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[KEYPAIR.EXPORT.KEY.Title]:() => `Private Key as Text`,
+	[KEYPAIR.EXPORT.KEY.Title]:() => `Private key as text`,
 	[KEYPAIR.EXPORT.KEY.CopyButton]:() => `Copy`,
 	[KEYPAIR.EXPORT.KEY.RevealButton]:() => `Reveal`,
 	[KEYPAIR.EXPORT.KEY.HideButton]:() => `Hide`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[KEYPAIR.EXPORT.QR.Title]:() => `QR Code Paper Wallet`,
-	[KEYPAIR.EXPORT.QR.SaveButton]:() => `Save as Image`,
+	[KEYPAIR.EXPORT.QR.Title]:() => `QR code paper wallet`,
+	[KEYPAIR.EXPORT.QR.SaveButton]:() => `Save as nmage`,
 
 
 
@@ -208,20 +209,20 @@ const Locale = {
 		for instance when using a shopping application that needs your shipping address.`,
 	[IDENTITY.DisclaimerSubtitle]:() => `All information is stored locally on your computer and is never sent anywhere without your consent.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[IDENTITY.NameLabel]:() => `Identity Name / Username`,
+	[IDENTITY.NameLabel]:() => `Identity name / Username`,
 	[IDENTITY.NamePlaceholder]:() => `Your online presence`,
 	[IDENTITY.NameError]:() => `The Identity Name name can not be empty, have any spaces in it, or special characters.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[IDENTITY.PERSONAL.NameLabel]:() => `Full Name`,
+	[IDENTITY.PERSONAL.NameLabel]:() => `Full name`,
 	[IDENTITY.PERSONAL.NamePlaceholder]:() => `Enter your full name`,
-	[IDENTITY.PERSONAL.DateOfBirthLabel]:() => `Date of Birth`,
+	[IDENTITY.PERSONAL.DateOfBirthLabel]:() => `Date of birth`,
 	[IDENTITY.PERSONAL.EmailLabel]:() => `Email`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[IDENTITY.LOCATION.DisclaimerTitle]:() => `You can create multiple locations.`,
 	[IDENTITY.LOCATION.DisclaimerSubtitle]:() => `For instance "Home" and "Work". You will be able to select which one to use when you need it.`,
 	[IDENTITY.LOCATION.SelectorLabel]:() => `Locations`,
 	[IDENTITY.LOCATION.SelectorAddButton]:() => `Add`,
-	[IDENTITY.LOCATION.NameLabel]:() => `Location Name`,
+	[IDENTITY.LOCATION.NameLabel]:() => `Location name`,
 	[IDENTITY.LOCATION.NamePlaceholder]:() => `Home`,
 	[IDENTITY.LOCATION.NameError]:() => `Location names must not be empty.`,
 	[IDENTITY.LOCATION.CountryLabel]:() => `Country`,
@@ -246,10 +247,10 @@ const Locale = {
 	/*                                                  */
 	/****************************************************/
 	[PERMISSIONS.ListLabel]:() => `Permissions`,
-	[PERMISSIONS.LoginPermission]:() => `Login Permission`,
-	[PERMISSIONS.AccountsLabel]:() => `Accounts Provided`,
-	[PERMISSIONS.RequiredFieldsLabel]:() => `Required Fields`,
-	[PERMISSIONS.MutableFieldsLabel]:() => `Mutable Fields`,
+	[PERMISSIONS.LoginPermission]:() => `Login permission`,
+	[PERMISSIONS.AccountsLabel]:() => `Accounts provided`,
+	[PERMISSIONS.RequiredFieldsLabel]:() => `Required fields`,
+	[PERMISSIONS.MutableFieldsLabel]:() => `Mutable fields`,
 	[PERMISSIONS.RemoveLabel]:() => `Remove Permission`,
 	[PERMISSIONS.RemoveIdentityText]:() =>
 		`Login permissions are what allow applications to interact with your Scatter.
@@ -258,8 +259,26 @@ const Locale = {
 		`Action whitelists make it so you don't have to keep accepting popups to sign transactions.
         Do you want to remove this whitelist?`,
 	[PERMISSIONS.RemoveButton]:() => `Remove`,
-	[PERMISSIONS.RemoveAllButton]:() => `Remove All`,
-	[PERMISSIONS.ActionWhitelist]:() => `Action Whitelist`,
+	[PERMISSIONS.RemoveAllButton]:() => `Remove all permissions`,
+	[PERMISSIONS.ActionWhitelist]:() => `Action whitelist`,
+
+	/****************************************************/
+	/*                                                  */
+	/*                   TRANSFER                       */
+	/*                                                  */
+	/****************************************************/
+	[TRANSFER.Send]:() => `Send`,
+	[TRANSFER.SendingAmount]:() => `Sending amount`,
+	[TRANSFER.SelectWhichAccount]:() => `Select which account`,
+	[TRANSFER.YourAccounts]:() => `Your accounts`,
+	[TRANSFER.Amount]:() => `Amount`,
+	[TRANSFER.Recipient]:() => `Recipient`,
+	[TRANSFER.Quantity]:() => `Quantity`,
+	[TRANSFER.Token]:() => `Token`,
+	[TRANSFER.Memo]:() => `Memo`,
+	[TRANSFER.SendToContact]:() => `Send to contact`,
+	[TRANSFER.SendDirectly]:() => `Send directly`,
+	[TRANSFER.Contacts]:() => `Contacts`,
 
 
 

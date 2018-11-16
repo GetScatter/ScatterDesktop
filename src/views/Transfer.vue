@@ -5,12 +5,10 @@
             <section class="split-panel" :class="{'recipient':!!account}">
 
 
-                <!----------------------->
-                <!--------- FROM -------->
-                <!----------------------->
+                <!-- From -->
                 <section class="panel">
-                    <h4 class="padded" style="padding-bottom:0;">From</h4>
-                    <FlatSelect label="Sending Account" style="padding-top:0;"
+                    <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.SelectWhichAccount)}}</h4>
+                    <FlatSelect v-bind:label="locale(langKeys.TRANSFER.YourAccounts)" style="padding-top:0;"
                                 :items="senderAccounts"
                                 :selected="account ? account.unique() : null"
                                 v-on:selected="selectAccount" />
@@ -18,15 +16,13 @@
 
 
 
-                <!----------------------->
-                <!------- TOKENS -------->
-                <!----------------------->
+                <!--Tokens -->
                 <section class="panel padded" style="flex:1; display:flex; flex-direction: column; overflow:auto;">
-                    <h4>Amount</h4>
-                    <cin :placeholder="parseFloat(1).toFixed(token.decimals)" label="Quantity"
+                    <h4>{{locale(langKeys.TRANSFER.Amount)}}</h4>
+                    <cin :placeholder="parseFloat(1).toFixed(token.decimals)" v-bind:label="locale(langKeys.TRANSFER.Quantity)"
                          big="1" type="number" />
 
-                    <sel label="Token"
+                    <sel v-bind:label="locale(langKeys.TRANSFER.Token)"
                          :selected="token"
                          :options="[{id:'custom', name:'Custom Token'}].concat(filteredTokens)"
                          :parser="t => t.name"
@@ -50,25 +46,23 @@
                         </section>
                     </section>
 
-                    <cin v-if="token.blockchain === Blockchains.EOSIO" label="Memo" textarea="1" />
+                    <cin v-if="token.blockchain === Blockchains.EOSIO" v-bind:label="locale(langKeys.TRANSFER.Memo)" textarea="1" />
                 </section>
 
 
 
-                <!----------------------->
-                <!--------- TO ---------->
-                <!----------------------->
+                <!-- To -->
                 <section class="panel">
-                    <h4 class="padded" style="padding-bottom:0;">Recipient</h4>
+                    <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.Recipient)}}</h4>
                     <section class="panel-switch">
-                        <figure class="button" :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}" @click="recipientState = RECIPIENT_STATES.CONTACT">Send to Contact</figure>
-                        <figure class="button" :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}" @click="recipientState = RECIPIENT_STATES.DIRECT">Send Directly</figure>
+                        <figure class="button" :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}" @click="recipientState = RECIPIENT_STATES.CONTACT">{{locale(langKeys.TRANSFER.SendToContact)}}</figure>
+                        <figure class="button" :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}" @click="recipientState = RECIPIENT_STATES.DIRECT">{{locale(langKeys.TRANSFER.SendDirectly)}}</figure>
                     </section>
 
 
-                    <!--------- CONTACTS ---------->
+                    <!-- CONTACTS -->
                     <FlatSelect v-if="recipientState === RECIPIENT_STATES.CONTACT"
-                                label="Contacts"
+                                v-bind:label="locale(langKeys.TRANSFER.Contacts)"
                                 :items="formattedContacts"
                                 :selected="recipient"
                                 selected-icon="icon-check"
@@ -77,7 +71,7 @@
                                 v-on:selected="selectRecipient" />
 
 
-                    <!--------- DIRECT TO ADDRESS/ACCOUNT ---------->
+                    <!--- DIRECT TO ADDRESS/ACCOUNT -->
                     <section v-if="recipientState === RECIPIENT_STATES.DIRECT" class="padded">
                         <cin placeholder="Make sure to check this twice."
                              :error="recipient.length > 0 ? recipientError : null"
@@ -100,7 +94,7 @@
 
 
             <section class="action-bar short bottom centered">
-                <btn blue="1" text="Send"></btn>
+                <btn blue="1" v-text="locale(langKeys.TRANSFER.Send)"></btn>
             </section>
         </section>
     </section>

@@ -20,7 +20,7 @@
         </section>
 
 
-        <section class="action-box top-pad" style="margin-top:10px; padding-bottom:0;">
+        <section class="action-box top-pad">
             <section v-if="network">
 
                 <sel label="Blockchain"

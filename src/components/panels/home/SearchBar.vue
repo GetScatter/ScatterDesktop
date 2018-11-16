@@ -54,8 +54,13 @@
 			padding:0 30px 0 60px;
 			font-size: $input-size;
 			cursor: text;
-			transition: all 0.4s ease;
-			transition-property: height, font-size, padding;
+			transition: all 0.14s ease-in-out;
+			transition-property: opacity, height, font-size, padding;
+			opacity:0.44;
+
+			&:hover, &active, &:focus {
+				opacity:1;
+			}
 
 			&::-webkit-input-placeholder {
 				font-size: $input-size;

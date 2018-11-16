@@ -232,6 +232,20 @@ const PERMISSIONS = prefixKeys('permissions', {
 	ActionWhitelist:'act_whitelist'
 });
 
+const TRANSFER = prefixKeys('transfer', {
+	Send:'transfer_send',
+	SendingAmount:'transfer_sendingamount',
+	SelectWhichAccount:'transfer_selectwhichaccount',
+	YourAccounts:'transfer_youraccounts',
+	Amount:'transfer_amount',
+	Recipient:'transfer_recipient',
+	Quantity:'transfer_quantity',
+	Token:'transfer_token',
+	Memo:'transfer_memo',
+	SendToContact:'transfer_sendtocontact',
+	SendDirectly:'transfer_senddirectly',
+	Contacts:'transfer_contacts',
+});
 
 export default {
 	LOGIN,
@@ -240,7 +254,8 @@ export default {
 	KEYPAIR,
 	IDENTITY,
 	CREATE_EOS,
-	PERMISSIONS
+	PERMISSIONS,
+	TRANSFER
 }
 
 

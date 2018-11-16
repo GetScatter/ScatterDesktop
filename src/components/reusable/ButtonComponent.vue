@@ -60,7 +60,9 @@
             background:rgba(0,0,0,0.04);
 
             &.blue {
-                color:$dark-blue;
+                background-color:darken($dark-blue, 6%);
+                border-color:darken($dark-blue, 12%);
+                color:#fff;
             }
 
             &.red {

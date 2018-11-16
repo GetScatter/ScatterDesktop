@@ -168,12 +168,13 @@
     .permission-type {
         margin-top:20px;
         display:table;
-        border-radius:4px;
-        font-size: 14px;
-        background:#fafafa;
+        border-radius:24px;
+        font-size: 12px;
         overflow: hidden;
         margin-bottom:30px;
-        box-shadow:0 1px 2px rgba(0,0,0,0.2);
+        background: $dark-blue;
+        color: #ffffff;
+        font-weight: bold;
 
         span {
             background:rgba(0,0,0,0.05);
