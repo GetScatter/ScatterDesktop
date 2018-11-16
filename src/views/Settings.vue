@@ -42,6 +42,7 @@
 
                         <SettingsGeneral v-if="selectedOption.name === settingsOptions.GENERAL.name" />
                         <SettingsLanguage v-if="selectedOption.name === settingsOptions.LANGUAGE.name" />
+                        <SettingsTokens v-if="selectedOption.name === settingsOptions.TOKENS.name" />
                         <SettingsExplorer v-if="selectedOption.name === settingsOptions.EXPLORER.name" />
                         <SettingsNetworks v-if="selectedOption.name === settingsOptions.NETWORKS.name" />
                         <SettingsPassword v-if="selectedOption.name === settingsOptions.PASSWORD.name" />
@@ -67,6 +68,7 @@
 
     import SettingsGeneral from '../components/panels/settings/SettingsGeneral.vue'
     import SettingsLanguage from '../components/panels/settings/SettingsLanguage.vue'
+    import SettingsTokens from '../components/panels/settings/SettingsTokens.vue'
     import SettingsExplorer from '../components/panels/settings/SettingsExplorer.vue'
     import SettingsNetworks from '../components/panels/settings/SettingsNetworks.vue'
     import SettingsBackup from '../components/panels/settings/SettingsBackup.vue'
@@ -75,20 +77,22 @@
     import SettingsPIN from '../components/panels/settings/SettingsPIN.vue'
 
     const SettingsOptions = {
-        GENERAL:{ flash:false, locked:false, name:'General', description:'General Scatter settings.' },
-        LANGUAGE:{ flash:false, locked:false, name:'Language', description:'Set Scatter\s language.' },
-        EXPLORER:{ flash:false, locked:false, name:'Explorers', description:'Select Preferred Block Explorers.' },
-        PIN:{ flash:false, locked:true, name:'PIN', description:'Set or disabled your secondary PIN.' },
-        NETWORKS:{ flash:false, locked:true, name:'Networks', description:'Add or Remove Networks.' },
-        PASSWORD:{ flash:false, locked:true, name:'Password', description:'Change your password or regenerate your Mnemonic.' },
-        BACKUP:{ flash:false, locked:true, name:'Backup', description:'Create a backup of your Scatter.' },
-        DESTROY:{ flash:false, locked:true, name:'Destroy', description:'Destroy your instance of Scatter.' },
+        GENERAL:{ locked:false, name:'General' },
+        LANGUAGE:{ locked:false, name:'Language' },
+        TOKENS:{ locked:false, name:'Tokens' },
+        EXPLORER:{ locked:false, name:'Explorers' },
+        PIN:{ locked:true, name:'PIN' },
+        NETWORKS:{ locked:true, name:'Networks' },
+        PASSWORD:{ locked:true, name:'Password' },
+        BACKUP:{ locked:true, name:'Backup' },
+        DESTROY:{ locked:true, name:'Destroy' },
     };
 
     export default {
     	components:{
             SettingsGeneral,
             SettingsLanguage,
+		    SettingsTokens,
             SettingsExplorer,
             SettingsNetworks,
             SettingsBackup,
@@ -112,6 +116,7 @@
             	return [
 		            SettingsOptions.GENERAL,
 		            SettingsOptions.LANGUAGE,
+		            SettingsOptions.TOKENS,
 		            SettingsOptions.EXPLORER,
                 ]
             },

@@ -13,10 +13,6 @@ export default class Scatter {
         this.settings = Settings.placeholder();
         this.contacts = [];
         this.hash = Hasher.unsaltedQuickHash(IdGenerator.text(2048));
-        this.bufferKeys = false;
-
-        this.nonce = 0;
-        this.noncePrefix = 'nonce';
 
         this.toured = false;
 

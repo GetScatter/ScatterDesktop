@@ -12,12 +12,12 @@
                 <i class="icon-cog-1"></i>
             </figure>
 
-            <figure class="action">
-                <i class="icon-arrows-ccw"></i>
-                <section class="percentage">
-                    <figure class="bar"></figure>
-                </section>
-            </figure>
+            <!--<figure class="action">-->
+                <!--<i class="icon-arrows-ccw"></i>-->
+                <!--<section class="percentage">-->
+                    <!--<figure class="bar"></figure>-->
+                <!--</section>-->
+            <!--</figure>-->
         </section>
     </section>
 </template>

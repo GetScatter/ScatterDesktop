@@ -25,7 +25,7 @@
                     <sel v-bind:label="locale(langKeys.TRANSFER.Token)"
                          :selected="token"
                          :options="[{id:'custom', name:'Custom Token'}].concat(filteredTokens)"
-                         :parser="t => t.name"
+                         :parser="t => `${t.name}${t.blockchain ? ` - ${blockchainName(t.blockchain)}` : ''}`"
                          v-on:changed="selectToken" />
                     <br>
 
@@ -42,7 +42,7 @@
                         <section class="split-inputs">
                             <cin placeholder="XXX" label="Symbol" :text="token.symbol" v-on:changed="x => token.symbol = x" />
                             <cin placeholder="4" type="number" label="Decimals" :text="token.decimals" v-on:changed="x => token.decimals = x" />
-                            <btn text="Save Token" />
+                            <btn text="Save Token" v-on:clicked="addToken" />
                         </section>
                     </section>
 
@@ -116,6 +116,8 @@
     import {Popup} from '../models/popups/Popup';
     import FlatSelect from "../components/reusable/FlatSelect";
     import Token from "../models/Token";
+    import TokenService from "../services/TokenService";
+    import IdGenerator from "../util/IdGenerator";
 
     const uniqueToken = x => `${x.account}${x.blockchain}${x.name}${x.symbol}`;
 
@@ -145,7 +147,6 @@
             memo:'',
 
             newContactName:'',
-            tokens:[],
         }},
         computed:{
             ...mapState([
@@ -157,6 +158,8 @@
                 'accounts',
                 'contacts',
                 'networks',
+                'tokens',
+                'networkTokens'
             ]),
 
 	        senderAccounts(){
@@ -165,22 +168,17 @@
 			        return acc;
 		        }, []);
 
-		        const anyAccount = [{
-		        	id:'any_account',
-                    title:'Auto-select',
-                    description:'We will automatically select the first account capable of your transfer.'
-                }]
-
-		        return anyAccount.concat(reducer(this.accounts)
+		        return reducer(this.accounts)
                     .map(account => ({
                         id:account.unique(),
                         title:account.name,
                         description:account.network().name,
-                    })))
+                    }))
             },
 	        filteredTokens(){
-		        if(this.account) return this.tokens.filter(x => x.blockchain === this.account.blockchain());
-		        return this.tokens;
+            	const allTokens = this.networkTokens.concat(this.tokens);
+		        if(this.account) return allTokens.filter(x => x.blockchain === this.account.blockchain());
+		        return allTokens;
 	        },
             contractPlaceholder(){
             	return PluginRepository.plugin(this.token.blockchain).contractPlaceholder();
@@ -220,14 +218,23 @@
             },
         },
         mounted(){
-            this.tokens = this.networks.map(x => x.systemToken());
-            this.token = this.tokens[0];
+            this.token = this.filteredTokens[0];
         },
         methods:{
 	    	back(){
 	    		if(this.account) return this.account = null;
 	    	    this.$router.push({name:this.RouteNames.HOME})
             },
+	        async addToken(){
+	    		const token = new Token(
+				    this.token.blockchain,
+				    this.token.contract,
+				    this.token.symbol,
+				    this.token.symbol,
+				    this.token.decimals
+			    );
+		        if(await TokenService.addToken(token)) this.token = token;
+	        },
             accountFormatter(account){
                 if(account) return `${account.network().name} - ${account.sendable()}`;
                 else return 'Any account with sufficient balance'

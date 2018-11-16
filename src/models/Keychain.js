@@ -10,7 +10,6 @@ export default class Keychain {
     constructor(){
         this.keypairs = [];
         this.accounts = [];
-        this.linkedApps = [];
         this.identities = [];
         this.permissions = [];
         this.apps = [];

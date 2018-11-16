@@ -2,7 +2,7 @@
 	<section class="container">
 		<label v-if="label">{{label}}</label>
 		<section class="items">
-			<section class="item" :key="item.id" v-for="item in items" :class="{'selected':selected && selected === item.id}" @click="$emit('selected',item)">
+			<section class="item" :key="item.id" v-for="item in items" :class="{'selected':selected && selected === item.id, 'unselectable':unselectable}" @click="$emit('selected',item)">
 				<transition name="slide-left" mode="out-in">
 					<figure v-if="selected && selected === item.id && selectedIcon" :class="selectedIcon"
 					        class="selected-icon" @click="$emit('action', item)"></figure>
@@ -22,7 +22,7 @@
 <script>
 
 	export default {
-		props:['items', 'label', 'selected', 'selectedIcon', 'icon']
+		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable', 'red']
 	}
 
 </script>
@@ -64,6 +64,10 @@
 
 			&:hover, &.selected {
 				border:1px solid #719fb6;
+			}
+
+			&.unselectable {
+				cursor: not-allowed;
 			}
 
 			.icon {

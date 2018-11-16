@@ -29,7 +29,6 @@ const state = {
 
     hardware:null,
 
-    tokens:[],
     balances:{},
     prices:{},
 };
@@ -48,7 +47,6 @@ const getters = {
     accounts:state =>       state.scatter.keychain.accounts || [],
     permissions:state =>    state.scatter.keychain.permissions || [],
     apps:state =>           state.scatter.keychain.apps || [],
-    linkedApps:state =>     state.scatter.keychain.linkedApps || [],
 
     // Settings
     version:state =>        state.scatter.meta.version,
@@ -57,6 +55,9 @@ const getters = {
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
+	networkTokens:state =>  state.scatter.settings.networks.map(x => x.systemToken()),
+	blacklistTokens:state =>  state.scatter.settings.blacklistTokens,
+	tokens:state =>         state.scatter.settings.tokens,
 
     // Popups
     popIns:state =>         state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN) || [],
@@ -64,6 +65,7 @@ const getters = {
     snackbars:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.SNACKBAR) || [],
 
     showNotifications:state => state.scatter.settings.showNotifications,
+
 
     totalTokenBalance:state => {
         let total = 0;

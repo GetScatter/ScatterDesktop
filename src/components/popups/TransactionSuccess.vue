@@ -55,7 +55,7 @@
                 this[Actions.RELEASE_POPUP](this.nextPopIn);
             },
             open(){
-                ElectronHelpers.openLinkInBrowser(this.explorers[this.blockchain].transaction(this.tx));
+                ElectronHelpers.openLinkInBrowser(this.explorers[this.blockchain].parsed().transaction(this.tx));
             },
             ...mapActions([
                 Actions.RELEASE_POPUP
