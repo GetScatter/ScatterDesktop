@@ -285,7 +285,7 @@
         methods: {
             async checkNetwork(){
                 if(!this.network) return;
-                this.isEndorsedNetwork = await PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network);
+                this.isEndorsedNetwork = PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network);
             },
             isShowingJson(message){
                 return this.showingJson.find(x => x === this.hash(message));

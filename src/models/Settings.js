@@ -17,10 +17,13 @@ export default class Settings {
         this.autoBackup = BACKUP_STRATEGIES.AUTOMATIC;
         this.backupLocation = '';
         this.explorers = PluginRepository.defaultExplorers();
+	    this.showNotifications = true;
+
+        // Tokens
+        this.showMainnetsOnly = false;
         this.displayToken = null;
         this.tokens = [];
         this.blacklistTokens = [];
-        this.showNotifications = true;
     }
 
     static placeholder(){ return new Settings(); }

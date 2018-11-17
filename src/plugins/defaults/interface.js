@@ -20,9 +20,9 @@ export default class PluginInterface extends Plugin {
 
 	recipientLabel(){}
 
-	async getEndorsedNetwork(){}
+	getEndorsedNetwork(){}
 
-	async isEndorsedNetwork(network){}
+	isEndorsedNetwork(network){}
 
 	async getChainId(network){}
 
@@ -59,8 +59,6 @@ export default class PluginInterface extends Plugin {
 	async createAccount(creator, name, owner, active, eosUsed){}
 
 	async fetchTokens(tokens){}
-
-	async tokenInfo(token){}
 
 	async passThroughProvider(payload, account, rejector){}
 

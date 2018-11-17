@@ -55,11 +55,6 @@ export default class PriceService {
         return parseFloat(value * prices[token.symbol].price).toFixed(2);
     }
 
-    static async getTokenInfo(token){
-        const plugin = PluginRepository.plugin(token.blockchain);
-        return plugin.tokenInfo(token);
-    }
-
     static tokensFor(token){
         let accountBalances = [];
         Object.keys(store.state.balances).map(accountUnique => {

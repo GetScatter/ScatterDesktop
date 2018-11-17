@@ -69,13 +69,16 @@
 			systemToken(){
 				return this.account.network().systemToken();
 			},
+			accountBalances(){
+				console.log('balances', this.balances);
+				if(!this.balances.hasOwnProperty(this.account.identifiable())) return [];
+				return this.balances[this.account.identifiable()];
+			},
 			systemTokenBalance(){
-				if(!this.balances.hasOwnProperty(this.account.identifiable())) return null;
-				return this.balances[this.account.identifiable()].find(x => x.unique() === this.systemToken.unique());
+				return this.accountBalances.find(x => x.unique() === this.systemToken.unique());
 			},
 			tokens(){
-				if(!this.balances.hasOwnProperty(this.account.identifiable())) return [];
-				return this.balances[this.account.identifiable()].filter(x => x.unique() !== this.systemToken.unique()).sort((a,b) => {
+				return this.accountBalances.filter(x => x.unique() !== this.systemToken.unique()).sort((a,b) => {
 					return parseFloat(b.amount) - parseFloat(a.amount);
 				})
 			},

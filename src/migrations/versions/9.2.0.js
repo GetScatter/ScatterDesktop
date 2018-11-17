@@ -8,13 +8,13 @@ export const m9_2_0 = async scatter => {
 
     await Promise.all(scatter.settings.networks.map(async network => {
         if(network.blockchain === Blockchains.ETH && network.host === 'ethereum.com')
-            network = await PluginRepository.plugin(Blockchains.ETH).getEndorsedNetwork();
+            network = PluginRepository.plugin(Blockchains.ETH).getEndorsedNetwork();
 
         return network;
     }));
 
     if(!scatter.settings.networks.find(x => x.blockchain === Blockchains.TRX))
-        scatter.settings.networks.push(await PluginRepository.plugin(Blockchains.TRX).getEndorsedNetwork());
+        scatter.settings.networks.push(PluginRepository.plugin(Blockchains.TRX).getEndorsedNetwork());
 
     return true;
 };

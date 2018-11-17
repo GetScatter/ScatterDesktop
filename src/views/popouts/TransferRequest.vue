@@ -154,7 +154,7 @@
         methods: {
             async checkNetwork(){
                 if(!this.network) return;
-                this.isEndorsedNetwork = await PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network);
+                this.isEndorsedNetwork = PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network);
             },
             async checkWarning(){
 //                const warn = await RIDLService.shouldWarn(RIDLService.buildEntityName('application', this.payload.origin));

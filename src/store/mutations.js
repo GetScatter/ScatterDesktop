@@ -1,4 +1,5 @@
 import * as Mutations from './constants'
+import Vue from 'vue';
 
 export const mutations = {
     [Mutations.HIDE_BACK_BTN]:(state, x) => state.hideBackButton = x,
@@ -12,7 +13,7 @@ export const mutations = {
     [Mutations.SET_HARDWARE]:(state, hardware) => state.hardware = hardware,
     [Mutations.SET_TOKENS]:(state, tokens) => state.tokens = tokens,
     [Mutations.SET_PRICES]:(state, prices) => state.prices = prices,
-    [Mutations.SET_DAPP_LOGO]:(state, {origin, logo}) => state.dappLogos[origin] = logo,
+    [Mutations.SET_DAPP_LOGO]:(state, {origin, logo}) => Vue.set(state.dappLogos, origin, logo),
     [Mutations.SET_DAPP_DATA]:(state, data) => state.dappData = data,
 	[Mutations.RELEASE_PROCESS]:(state, p) => state.processes = state.processes.filter(x => x.id !== p.id),
 
@@ -27,11 +28,11 @@ export const mutations = {
 		state.resources.push(x);
 	},
 	[Mutations.SET_BALANCES]:(state, x) => {
-		state.balances[x.account] = x.balances
+		Vue.set(state.balances, x.account, x.balances)
 	},
 	[Mutations.REMOVE_BALANCES]:(state, accountKeys) => {
 		accountKeys.map(key => {
-			delete state.balances[key];
+			Vue.delete(state.balances, key);
 		})
 	},
 };

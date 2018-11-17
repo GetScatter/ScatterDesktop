@@ -135,7 +135,7 @@
             this.network = this.networks[0].clone();
             this.originalNetwork = this.networks[0].clone();
             BlockchainsArray.map(async blockchain => {
-                this.endorsedNetworks.push(await PluginRepository.plugin(blockchain.value).getEndorsedNetwork());
+                this.endorsedNetworks.push(PluginRepository.plugin(blockchain.value).getEndorsedNetwork());
             })
         },
         methods: {

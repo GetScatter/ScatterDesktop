@@ -52,7 +52,7 @@ export default class ApiService {
             });
             if(!blockchain) return false;
 
-            if(!chainId || !chainId.length) chainId = (await PluginRepository.plugin(blockchain).getEndorsedNetwork()).chainId;
+            if(!chainId || !chainId.length) chainId = PluginRepository.plugin(blockchain).getEndorsedNetwork().chainId;
             if(!memo) memo = '';
             if(!amount || !amount.length) amount = 0;
 

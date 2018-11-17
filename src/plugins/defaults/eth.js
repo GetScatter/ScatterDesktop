@@ -68,14 +68,12 @@ export default class ETH extends Plugin {
 	contractPlaceholder(){ return '0x.....'; }
 	recipientLabel(){ return 'Address'; } // TODO: Localize
 
-    async getEndorsedNetwork(){
-        return new Promise((resolve, reject) => {
-            resolve(new Network('ETH Mainnet', 'https', 'ethnodes.get-scatter.com', 443, Blockchains.ETH, '1'));
-        });
+    getEndorsedNetwork(){
+        return new Network('ETH Mainnet', 'https', 'ethnodes.get-scatter.com', 443, Blockchains.ETH, '1')
     }
 
-    async isEndorsedNetwork(network){
-        const endorsedNetwork = await this.getEndorsedNetwork();
+    isEndorsedNetwork(network){
+        const endorsedNetwork = this.getEndorsedNetwork();
         return network.blockchain === Blockchains.ETH && network.chainId === endorsedNetwork.chainId;
     }
 
@@ -132,10 +130,6 @@ export default class ETH extends Plugin {
             token.blockchain = Blockchains.ETH;
             if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
         });
-    }
-
-    async tokenInfo(token) {
-        return null;
     }
 
 

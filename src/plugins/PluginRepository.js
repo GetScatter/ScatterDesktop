@@ -39,10 +39,6 @@ class PluginRepositorySingleton {
         return this.plugins.find(plugin => plugin.name === name);
     }
 
-    async endorsedNetworks(){
-        return await Promise.all(this.signatureProviders().map(async plugin => await plugin.getEndorsedNetwork()));
-    }
-
     defaultExplorers(){
         return BlockchainsArray.reduce((acc,x) => {
             if(this.plugin(x.value)) {

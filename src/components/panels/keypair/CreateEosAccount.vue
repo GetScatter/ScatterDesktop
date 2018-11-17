@@ -165,7 +165,7 @@
 				if(this.creator) return this.creator.network();
 
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-				const mainnetChainId = (await plugin.getEndorsedNetwork()).chainId;
+				const mainnetChainId = plugin.getEndorsedNetwork().chainId;
 				return this.networks.find(x => x.chainId === mainnetChainId && x.blockchain === Blockchains.EOSIO);
 			},
 

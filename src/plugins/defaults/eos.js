@@ -145,19 +145,11 @@ export default class EOS extends Plugin {
 	contractPlaceholder(){ return 'eosio.token'; }
 	recipientLabel(){ return 'Account Name'; } // TODO: Localize
 
-	async getEndorsedNetwork(){
-		return new Promise((resolve, reject) => {
-			resolve(new Network(
-				'EOS Mainnet', 'https',
-				'nodes.get-scatter.com',
-				443,
-				Blockchains.EOSIO,
-				mainnetChainId
-			));
-		});
+	getEndorsedNetwork(){
+		new Network('EOS Mainnet', 'https', 'nodes.get-scatter.com', 443, Blockchains.EOSIO, mainnetChainId)
 	}
 
-	async isEndorsedNetwork(network){
+	isEndorsedNetwork(network){
 		return network.blockchain === Blockchains.EOSIO && network.chainId === mainnetChainId;
 	}
 
@@ -323,6 +315,7 @@ export default class EOS extends Plugin {
 	async balanceFor(account, token){
 		const eos = getCachedInstance(account.network());
 
+
 		const balances = await eos.getTableRows({
 			json:true,
 			code:token.contract,
@@ -430,27 +423,6 @@ export default class EOS extends Plugin {
 			token.blockchain = Blockchains.EOSIO;
 			if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
 		});
-	}
-
-	async tokenInfo(token){
-		const network = await this.getEndorsedNetwork();
-		const eos = getCachedInstance(network);
-		return Promise.race([
-			new Promise(resolve => setTimeout(() => resolve(null), 500)),
-			eos.getTableRows({
-				json:true,
-				code:token.account,
-				scope:token.symbol,
-				table:'stat',
-				limit:1
-			}).then(({rows}) => {
-				if(!rows.length) return null;
-				return {
-					maxSupply:rows[0].max_supply[0],
-					supply:rows[0].supply.split(' ')[0],
-				};
-			}).catch(() => null)
-		])
 	}
 
 

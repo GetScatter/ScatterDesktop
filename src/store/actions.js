@@ -60,7 +60,7 @@ export const actions = {
             const scatter = Scatter.placeholder();
 
             await Promise.all(PluginRepository.signatureProviders().map(async plugin => {
-                const network = await plugin.getEndorsedNetwork();
+                const network = plugin.getEndorsedNetwork();
                 scatter.settings.networks.push(network);
             }));
 

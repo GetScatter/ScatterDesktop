@@ -83,7 +83,7 @@
 		},
 		methods:{
 			async setMainnet(){
-				this.isMainnet = this.account.network().chainId === (await PluginRepository.plugin(this.account.blockchain()).getEndorsedNetwork()).chainId
+				this.isMainnet = PluginRepository.plugin(this.account.blockchain()).isEndorsedNetwork(this.account.network())
 			},
 			async moderateResource(resource){
 				if(await ResourceService.moderateResource(resource, this.account))

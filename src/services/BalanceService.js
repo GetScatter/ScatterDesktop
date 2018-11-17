@@ -13,8 +13,21 @@ export default class BalanceService {
 	}
 
 	static async loadAllBalances(){
-		const accounts = store.state.scatter.keychain.accounts;
-		await Promise.all(accounts.map(account => this.loadBalancesFor(account)));
+		const accounts = store.state.scatter.keychain.accounts.reduce((acc, account) => {
+			// Filtering out permission based accounts
+			if(!acc.find(x => x.identifiable() === account.identifiable())) acc.push(account);
+			return acc;
+		}, []).sort(async account => {
+			// Sorting mainnets first.
+			const isMainnet = PluginRepository.plugin(account.blockchain()).isEndorsedNetwork(account.network());
+			return isMainnet ? -1 : 1;
+		});
+
+		for(let i = 0; i < accounts.length; i++){
+			await this.loadBalancesFor(accounts[i]);
+		}
+
+		return true;
 	}
 
 	static removeStaleBalances(){

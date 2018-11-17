@@ -5,6 +5,7 @@
             <figure class="button" :class="{'active':state === STATES.ADD_TOKEN}" @click="state = STATES.ADD_TOKEN">Add Token</figure>
             <figure class="button" :class="{'active':state === STATES.WHITELIST}" @click="state = STATES.WHITELIST">Added Tokens</figure>
             <figure class="button" :class="{'active':state === STATES.BLACKLIST}" @click="state = STATES.BLACKLIST">Filtered</figure>
+            <figure class="button" :class="{'active':state === STATES.SETTINGS}" @click="state = STATES.SETTINGS">Settings</figure>
         </section>
         <br>
 
@@ -33,6 +34,16 @@
             <section class="split-inputs">
                 <btn style="max-width:100%;" text="Whitelist Token" v-on:clicked="addToken(false)" />
                 <btn style="max-width:100%;" red="1" text="Blacklist Token" v-on:clicked="addToken(true)" />
+            </section>
+        </section>
+
+        <section v-if="state === STATES.SETTINGS">
+
+            <section class="action-box top-pad">
+                <label>Main Balance Display</label>
+                You can set whether you want to see balances for all networks in the main dashboard, or just balances for mainnets.
+
+                <btn v-on:clicked="toggleMainnetsOnly" :red="mainnetTokensOnly" :text="mainnetTokensOnly ? 'Show all networks' : 'Show only Mainnets'" />
             </section>
         </section>
 
@@ -79,6 +90,7 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
+    import * as Actions from '../../../store/constants';
 
     import PluginRepository from '../../../plugins/PluginRepository';
     import {BlockchainsArray, Blockchains, blockchainName} from '../../../models/Blockchains';
@@ -96,6 +108,7 @@
         ADD_TOKEN:'addToken',
         WHITELIST:'whitelist',
         BLACKLIST:'blacklist',
+	    SETTINGS:'settings',
     };
 
     export default {
@@ -120,6 +133,7 @@
                 'networks',
                 'networkTokens',
                 'blacklistTokens',
+                'mainnetTokensOnly',
             ]),
 	        contractPlaceholder(){
 		        return PluginRepository.plugin(this.newToken.blockchain).contractPlaceholder();
@@ -150,7 +164,16 @@
     		async removeToken(item){
     			const token = this.tokens.concat(this.networkTokens).concat(this.blacklistTokens).find(x => x.id === item.id);
 			    await TokenService.removeToken(token);
-            }
+            },
+            async toggleMainnetsOnly(){
+    			const scatter = this.scatter.clone();
+	            scatter.settings.showMainnetsOnly = !scatter.settings.showMainnetsOnly;
+	            this[Actions.SET_SCATTER](scatter);
+            },
+
+            ...mapActions([
+            	Actions.SET_SCATTER
+            ])
         }
     }
 </script>

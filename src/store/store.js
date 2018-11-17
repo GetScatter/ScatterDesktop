@@ -6,6 +6,7 @@ import {actions} from './actions';
 
 import {PopupDisplayTypes} from '../models/popups/Popup'
 import PluginRepository from '../plugins/PluginRepository'
+import Token from "../models/Token";
 
 Vue.use(Vuex);
 
@@ -57,10 +58,15 @@ const getters = {
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
-	networkTokens:state =>  state.scatter.settings.networks.map(x => x.systemToken()),
 	blacklistTokens:state =>  state.scatter.settings.blacklistTokens,
+	displayToken:state =>   state.scatter.settings.displayToken,
 	tokens:state =>         state.scatter.settings.tokens,
     allTokens:(state, getters) =>      getters.networkTokens.concat(getters.tokens),
+    mainnetTokensOnly:state =>      state.scatter.settings.showMainnetsOnly,
+	networkTokens:state =>  state.scatter.settings.networks.map(x => x.systemToken()).reduce((acc, token) => {
+		if(!acc.find(x => x.unique() === token.unique())) acc.push(token);
+		return acc;
+	}, []),
 
     // Popups
     popIns:state =>         state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN) || [],
@@ -68,6 +74,36 @@ const getters = {
     snackbars:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.SNACKBAR) || [],
 
     showNotifications:state => state.scatter.settings.showNotifications,
+
+    totalBalances:(state, getters) => {
+        const tokens = {};
+	    tokens['totals'] = {};
+
+        Object.keys(state.balances).map(async accountUnique => {
+            const account = state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique);
+
+            if(getters.mainnetTokensOnly){
+	            if(!PluginRepository.plugin(account.blockchain()).isEndorsedNetwork(account.network()))
+	                return;
+            }
+
+            if(!tokens.hasOwnProperty(account.networkUnique)){
+                tokens[account.networkUnique] = {};
+            }
+
+            state.balances[accountUnique].map(token => {
+                if(!tokens[account.networkUnique].hasOwnProperty(token.unique())) {
+	                tokens[account.networkUnique][token.unique()] = token;
+	                tokens['totals'][token.unique()] = token;
+                } else {
+	                tokens[account.networkUnique][token.unique()].add(token.amount);
+	                tokens['totals'][token.unique()].add(token.amount);
+                }
+            });
+        });
+
+        return tokens;
+    },
 };
 
 export const store = new Vuex.Store({
