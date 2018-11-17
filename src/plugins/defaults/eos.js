@@ -7,14 +7,13 @@ import KeyPairService from '../../services/KeyPairService'
 import {localized} from '../../localization/locales'
 import LANG_KEYS from '../../localization/keys'
 import Eos from 'eosjs'
-let {ecc, Fcbuffer} = Eos.modules;
+let {ecc} = Eos.modules;
 import ObjectHelpers from '../../util/ObjectHelpers'
 import * as ricardianParser from 'eos-rc-parser';
 import {Popup} from '../../models/popups/Popup'
 import PopupService from '../../services/PopupService'
 import ResourceService from '../../services/ResourceService'
 import StorageService from '../../services/StorageService'
-import ApiService from '../../services/ApiService'
 import * as Actions from '../../models/api/ApiActions';
 import {store} from '../../store/store'
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs2';

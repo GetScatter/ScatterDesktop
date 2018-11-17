@@ -15,7 +15,7 @@ import Scatter from '../models/Scatter';
 import AES from 'aes-oop';
 import PopupService from "../services/PopupService";
 import {Popup} from '../models/popups/Popup'
-import migrate from '../migrations/migrator'
+import {RUNNING_TESTS} from "../util/TestingHelper";
 
 export const actions = {
     [Actions.HIDE_BACK_BTN]:({commit}, x) => commit(Actions.HIDE_BACK_BTN, x),
@@ -45,7 +45,11 @@ export const actions = {
 
         if(await PasswordService.verifyPassword()){
             const scatter = state.scatter.clone();
-            await migrate(scatter);
+
+            if(RUNNING_TESTS){
+	            await require('../migrations/migrator')(scatter);
+            }
+
             scatter.meta.regenerateVersion();
             await dispatch(Actions.SET_SCATTER, scatter);
         }

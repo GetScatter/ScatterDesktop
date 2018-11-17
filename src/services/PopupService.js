@@ -1,6 +1,5 @@
 import {store} from '../store/store'
 import * as Actions from '../store/constants'
-const {remote, BrowserWindow, ipcMain, ipcRenderer} = window.require('electron');
 import WindowService from '../services/WindowService';
 import {PopupDisplayTypes, Popup} from '../models/popups/Popup';
 

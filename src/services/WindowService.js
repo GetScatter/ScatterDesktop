@@ -1,6 +1,8 @@
-const { ipcRenderer, remote } = window.require('electron');
+import {ipcRenderer, remote} from '../util/ElectronHelpers';
 const path = window.require("path");
 const url = window.require("url");
+
+console.log('remote', remote);
 
 const LowLevelWindowService = remote.getGlobal('appShared').LowLevelWindowService;
 
@@ -14,6 +16,7 @@ const removePending = msg => pendingMessages = pendingMessages.filter(x => x.id 
 const handlers = [];
 
 ipcRenderer.on('result', (event, result) => {
+    if(!result) return;
     const pending = getPending(result.original);
     if(!pending) return;
     pending.resolver(result.result);

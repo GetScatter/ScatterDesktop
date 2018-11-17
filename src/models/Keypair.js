@@ -35,7 +35,6 @@ export default class Keypair {
     hash(){
         if(!this.external) this.keyHash = Crypto.bufferToHash(this.privateKey);
         else this.keyHash = `${this.external.type}:${this.external.blockchain}:${this.external.addressIndex}`
-
     }
 
     accounts(unique = false){

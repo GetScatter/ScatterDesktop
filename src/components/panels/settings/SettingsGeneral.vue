@@ -48,7 +48,7 @@
     import WindowService from '../../../services/WindowService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
 
-    const {remote} = window.require('electron');
+    import {remote} from '../../../util/ElectronHelpers';
     const app = remote.app;
 
     export default {

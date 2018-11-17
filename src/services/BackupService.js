@@ -1,4 +1,4 @@
-const {remote} = window.require('electron');
+import {remote} from '../util/ElectronHelpers';
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
 import {BACKUP_STRATEGIES} from '../models/Settings';

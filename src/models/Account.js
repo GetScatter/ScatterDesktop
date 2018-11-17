@@ -1,4 +1,3 @@
-import Keypair from './Keypair';
 import PluginRepository from '../plugins/PluginRepository';
 import {store} from '../store/store'
 

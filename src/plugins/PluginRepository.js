@@ -1,8 +1,6 @@
 import * as PluginTypes from './PluginTypes';
-import EOS from './defaults/eos';
-import ETH from './defaults/eth';
-import TRX from './defaults/trx';
-import {BlockchainsArray} from '../models/Blockchains';
+import {Blockchains, BlockchainsArray} from '../models/Blockchains';
+import {RUNNING_TESTS} from "../util/TestingHelper";
 
 /***
  * Setting up for plugin based generators,
@@ -17,9 +15,16 @@ class PluginRepositorySingleton {
     }
 
     loadPlugins(){
-        this.plugins.push(new EOS());
-        this.plugins.push(new ETH());
-        this.plugins.push(new TRX());
+        // if(RUNNING_TESTS) return;
+        BlockchainsArray.map(({value:blockchain}) => {
+            if(RUNNING_TESTS){
+                // scrypt causes tests to fail due to no prebuilds
+                if(blockchain === Blockchains.ETH) return;
+            }
+
+            const plugin = require('./defaults/'+blockchain).default;
+            this.plugins.push(new plugin);
+        });
     }
 
     signatureProviders(){

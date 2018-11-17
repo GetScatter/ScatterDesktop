@@ -2,7 +2,7 @@ import WindowService from '../../services/WindowService'
 import * as Actions from '../../store/constants';
 import {store} from '../../store/store';
 import * as HARDWARE_STATES from './constants';
-const {remote} = window.require('electron');
+import {remote} from '../../util/ElectronHelpers';
 const Transport = remote.getGlobal('appShared').Transport.default;
 import bippath from 'bip32-path';
 import {EXT_WALLET_TYPES} from '../ExternalWallet';

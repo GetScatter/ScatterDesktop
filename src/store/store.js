@@ -5,7 +5,6 @@ import {mutations} from './mutations';
 import {actions} from './actions';
 
 import {PopupDisplayTypes} from '../models/popups/Popup'
-import Scatter from '../models/Scatter';
 import PluginRepository from '../plugins/PluginRepository'
 
 Vue.use(Vuex);
@@ -35,7 +34,10 @@ const state = {
 
 const getters = {
     // App State
-    unlocked:state =>       state.scatter !== null && typeof state.scatter !== 'string' && state.scatter instanceof Scatter && !state.scatter.isEncrypted(),
+    unlocked:state =>       state.scatter !== null
+                                && typeof state.scatter !== 'string'
+                                && typeof state.scatter.isEncrypted === 'function'
+                                && !state.scatter.isEncrypted(),
 
 
     contacts:state =>       state.scatter.contacts || [],

@@ -24,7 +24,8 @@
 </template>
 
 <script>
-	const { remote } = window.require('electron');
+
+	import {remote} from '../util/ElectronHelpers';
 
 	export default {
 		methods:{

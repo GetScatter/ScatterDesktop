@@ -4,8 +4,6 @@ import * as PluginTypes from '../PluginTypes';
 import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
 
-import IdGenerator from '../../util/IdGenerator';
-import Hasher from '../../util/Hasher';
 import KeyPairService from '../../services/KeyPairService';
 import {store} from '../../store/store';
 
@@ -16,9 +14,6 @@ import TronWeb from 'tronweb';
 import * as utils from 'tronweb/src/utils/crypto';
 const ethUtil = require('ethereumjs-util');
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
-import Web3 from 'web3';
-// import Ethers from 'ethers';
-import ethabi from 'ethereumjs-abi';
 import Token from "../../models/Token";
 
 let cachedInstances = {};

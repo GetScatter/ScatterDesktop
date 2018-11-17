@@ -21,7 +21,7 @@ import Account from '../models/Account';
 import Error from '../models/errors/Error'
 import Network from '../models/Network'
 
-const {remote} = window.require('electron');
+import {remote} from '../util/ElectronHelpers';
 const NotificationService = remote.getGlobal('appShared').NotificationService;
 remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
     ApiService.handleDeepLink(deepLink);

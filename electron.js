@@ -118,7 +118,7 @@ const createScatterInstance = () => {
   		mainWindow.focus(); 
 	});
 
-	// mainWindow.openDevTools();
+	mainWindow.openDevTools();
 	mainWindow.loadURL(mainUrl(false));
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => app.quit());

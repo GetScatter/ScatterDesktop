@@ -1,4 +1,5 @@
-const { remote } = window.require('electron');
+import {remote} from '../util/ElectronHelpers';
+console.log('remote', remote, process.env['NODE_ENV'])
 const { app } = remote;
 
 export default class Meta {

@@ -1,12 +1,14 @@
 import './styles.scss'
 import './tour.scss';
 
+// MUST BE LOADED FIRST
+import ElectronHelpers from './util/ElectronHelpers';
+
 import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
 import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
 import WindowService from './services/WindowService';
-import ElectronHelpers from './util/ElectronHelpers';
 ElectronHelpers.bindContextMenu();
 
 // Globals
@@ -93,10 +95,10 @@ class Main {
 
 		});
 
-		window.onerror = log => {
-			alert(log);
-			console.log('err logged', log);
-		};
+		// window.onerror = log => {
+		// 	// alert(log);
+		// 	console.log('err logged', log);
+		// };
 
 
 		// window.eval = global.eval = () => {

@@ -48,7 +48,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
     import Scatter from '../models/Scatter';
-    const { remote } = window.require('electron');
+    import {remote} from '../util/ElectronHelpers';
     import WindowService from '../services/WindowService'
     import * as ApiActions from '../models/api/ApiActions';
 

@@ -1,14 +1,25 @@
-import PopupService from "../services/PopupService";
-import {Popup} from "../models/popups/Popup";
+import {MOCK_ELECTRON, RUNNING_TESTS} from "./TestingHelper";
 
-const {clipboard, shell} = window.require('electron');
-const remote = window.require('electron').remote;
+console.log('loaded?')
+
+// import PopupService from "../services/PopupService";
+// import {Popup} from "../models/popups/Popup";
+
+let electron;
+electron = RUNNING_TESTS ? null : window.require('electron');
+console.log('electron', electron);
+if(!electron) electron = MOCK_ELECTRON;
+
+export const remote = electron.remote;
+export const ipcRenderer = electron.ipcRenderer;
+const {clipboard, shell} = electron;
+
 
 export default class ElectronHelpers {
 
     static copy(txt){
         clipboard.writeText(txt);
-	    PopupService.push(Popup.snackbar(`Copied to Clipboard`, 'check'));
+	    // PopupService.push(Popup.snackbar(`Copied to Clipboard`, 'check'));
     }
 
     static openLinkInBrowser(link){
@@ -16,9 +27,7 @@ export default class ElectronHelpers {
     }
 
     static bindContextMenu(){
-        const Menu = remote.Menu;
-
-        const InputMenu = Menu.buildFromTemplate([{
+        const InputMenu = remote.Menu.buildFromTemplate([{
             label: 'Cut',
             role: 'cut',
         }, {

@@ -93,7 +93,6 @@
 	import {Popup} from '../models/popups/Popup'
 	import KeyPairService from "../services/KeyPairService";
 	import Keypair from "../models/Keypair";
-	const { remote } = window.require('electron');
 	const fs = window.require('fs');
 
 	const lockoutTime = 1000*60*5;
@@ -206,6 +205,8 @@
 					await this[Actions.SET_SEED](this.password);
 					await this[Actions.LOAD_SCATTER]();
 
+					console.log('sctr',this.scatter);
+
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
 						await SocketService.initialize();
@@ -231,9 +232,6 @@
 					StorageService.setScatter(obj);
 					location.reload();
 				});
-			},
-			quit(){
-				remote.app.quit();
 			},
 			destroy(){
 				PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash", "Yes", async accepted => {
