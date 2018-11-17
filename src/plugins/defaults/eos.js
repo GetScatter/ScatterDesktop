@@ -21,7 +21,50 @@ import * as numeric from "eosjs2/dist/eosjs-numeric";
 import Token from "../../models/Token";
 
 
+const blockchainApiURL = 'https://api.light.xeos.me/api';
 const mainnetChainId = 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
+
+class EosTokenAccountAPI {
+	constructor(){}
+
+	static async getAccountsFromPublicKey(publicKey){
+		return await Promise.race([
+			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
+			fetch(`${blockchainApiURL}/key/${publicKey}`).then(r => r.json()).then(res => {
+				const rawAccounts = res.eos.accounts;
+				let accounts = [];
+				Object.keys(rawAccounts).map(name => {
+					rawAccounts[name].map(acc => {
+						accounts.push({name, authority: acc.perm})
+					})
+				});
+				return accounts;
+			}).catch(err => {
+				return null;
+			})
+		])
+	}
+
+	static async getAllTokens(account){
+		return await Promise.race([
+			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
+			fetch(`${blockchainApiURL}/account/eos/${account.sendable()}`).then(r => r.json()).then(res => {
+				return res.balances.map(balance => {
+					return Token.fromJson({
+						blockchain:Blockchains.EOSIO,
+						contract:balance.contract,
+						symbol:balance.currency,
+						name:balance.currency,
+						amount:balance.amount,
+						decimals:balance.decimals
+					})
+				});
+			}).catch(err => {
+				return null;
+			})
+		])
+	}
+}
 
 let cachedInstances = {};
 const getCachedInstance = network => {
@@ -36,25 +79,8 @@ const getCachedInstance = network => {
 
 const getAccountsFromPublicKey = async (publicKey, network, process, progressDelta, fallbackToChain = false) => {
 	if(network.chainId === mainnetChainId && !fallbackToChain){
-		const baseUrl = 'https://api.light.xeos.me/api/key';
 
-		// get from API
-		const accountsFromApi = await Promise.race([
-			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
-			fetch(`${baseUrl}/${publicKey}`).then(r => r.json()).then(res => {
-				const rawAccounts = res.eos.accounts;
-				let accounts = [];
-				Object.keys(rawAccounts).map(name => {
-					rawAccounts[name].map(acc => {
-						accounts.push({name, authority: acc.perm})
-					})
-				});
-				return accounts;
-			}).catch(err => {
-				return null;
-			})
-		]);
-
+		const accountsFromApi = await EosTokenAccountAPI.getAccountsFromPublicKey(publicKey);
 		if(!accountsFromApi) return getAccountsFromPublicKey(publicKey, network, process, progressDelta, true);
 		else return accountsFromApi;
 	}
@@ -115,10 +141,6 @@ export default class EOS extends Plugin {
 	defaultExplorer(){ return EXPLORER; }
 	accountFormatter(account){ return `${account.name}@${account.authority}` }
 	returnableAccount(account){ return { name:account.name, authority:account.authority, publicKey:account.publicKey, blockchain:Blockchains.EOSIO }}
-
-	forkSupport(){
-		return true;
-	}
 
 	contractPlaceholder(){ return 'eosio.token'; }
 	recipientLabel(){ return 'Account Name'; } // TODO: Localize
@@ -266,11 +288,7 @@ export default class EOS extends Plugin {
 	validPublicKey(publicKey, prefix = null){ return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
 
 	randomPrivateKey(){ return ecc.randomKey(); }
-	conformPrivateKey(privateKey){ return privateKey.trim(); }
-	convertsTo(){ return []; }
-	from_eth(privateKey){
-		return ecc.PrivateKey.fromHex(Buffer.from(privateKey, 'hex')).toString();
-	}
+
 	bufferToHexPrivate(buffer){
 		return ecc.PrivateKey.fromBuffer(new Buffer(buffer)).toString()
 	}
@@ -302,19 +320,35 @@ export default class EOS extends Plugin {
 		])
 	}
 
-	async balanceFor(account, tokenAccount, symbol){
+	async balanceFor(account, token){
 		const eos = getCachedInstance(account.network());
 
 		const balances = await eos.getTableRows({
 			json:true,
-			code:tokenAccount,
+			code:token.contract,
 			scope:account.name,
 			table:'accounts',
 			limit:500
 		}).then(res => res.rows).catch(() => []);
 
-		const row = balances.find(row => row.balance.split(" ")[1].toLowerCase() === symbol.toLowerCase());
+		const row = balances.find(row => row.balance.split(" ")[1].toLowerCase() === token.symbol.toLowerCase());
 		return row ? row.balance.split(" ")[0] : 0;
+	}
+
+	async balancesFor(account, tokens, fallback = false){
+		const network = account.network();
+		if(!fallback && network.chainId === mainnetChainId){
+			const balances = await EosTokenAccountAPI.getAllTokens(account);
+			if(!balances) return this.balanceFor(account, tokens, true);
+			const blacklist = store.getters.blacklistTokens.filter(x => x.blockchain === Blockchains.EOSIO).map(x => x.unique());
+			return balances.filter(x => !blacklist.includes(x.unique()));
+		}
+
+
+		return (await Promise.all(tokens.map(async token => {
+			token.amount = await this.balanceFor(account, token);
+			return token;
+		})));
 	}
 
 	defaultDecimals(){ return 4; }

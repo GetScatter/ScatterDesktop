@@ -1,20 +1,39 @@
 import '../helpers';
+import {testScatter} from '../mocks'
 
 import {assert} from 'chai';
 import 'mocha';
 import StorageService from "../../src/services/StorageService";
+import BalanceService from "../../src/services/BalanceService";
+import {store} from "../../src/store/store";
+import {SET_SCATTER} from "../../src/store/constants";
 
+let scatter;
+describe('BalanceService', async () => {
 
-describe('BalanceService', () => {
-
-
-	it('should work', done => {
+	it('should set scatter', done => {
 		new Promise(async() => {
-			await StorageService.setScatter({hi:'byte'});
-			const scatter = await StorageService.getScatter();
-			console.log('scatter', scatter);
+			scatter = await testScatter();
+			store.dispatch(SET_SCATTER, scatter);
 			done();
 		})
 	})
+
+	it('should be able to get balances for a single account', done => {
+		new Promise(async() => {
+			assert(Object.keys(store.state.balances).length === 0, 'Already had balances');
+			await BalanceService.loadBalancesFor(scatter.keychain.accounts[0]);
+			assert(Object.keys(store.state.balances).length === 1, `Didn't add balances`);
+			done();
+		})
+	});
+
+	it('should be able to get all balances for all accounts', done => {
+		new Promise(async() => {
+			await BalanceService.loadAllBalances();
+			assert(Object.keys(store.state.balances).length === 2, `Didn't add balances`);
+			done();
+		})
+	});
 
 });

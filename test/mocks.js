@@ -5,6 +5,7 @@ import Keychain from "../src/models/Keychain";
 import {Blockchains} from "../src/models/Blockchains";
 import Identity from "../src/models/Identity";
 import Account from "../src/models/Account";
+import PluginRepository from '../src/plugins/PluginRepository';
 
 export const testScatter = async () => {
 	const networks = await Promise.all(PluginRepository.signatureProviders().map(async plugin => {

@@ -50,7 +50,6 @@
             },
             changedExplorer(blockchain, explorer){
                 const scatter = this.scatter.clone();
-                console.log('explorer', explorer)
                 scatter.settings.explorers[blockchain] = explorer;
                 this[Actions.SET_SCATTER](scatter);
             },

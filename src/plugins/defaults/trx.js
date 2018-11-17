@@ -40,7 +40,6 @@ export default class TRX extends Plugin {
     defaultExplorer(){ return EXPLORER; }
     accountFormatter(account){ return `${account.publicKey}` }
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.TRX }}
-    forkSupport(){ return false; }
 
 	contractPlaceholder(){ return '0x.....'; }
 	recipientLabel(){ return 'Address'; } // TODO: Localize
@@ -72,16 +71,15 @@ export default class TRX extends Plugin {
     validPublicKey(publicKey){ return utils.isAddressValid(address); }
     bufferToHexPrivate(buffer){ return new Buffer(buffer).toString('hex') }
     hexPrivateToBuffer(privateKey){ return Buffer.from(privateKey, 'hex'); }
-    conformPrivateKey(privateKey){
-        privateKey = privateKey.trim();
-        return privateKey;
-    }
 
-    async balanceFor(account){
+
+    async balanceFor(account, token){
         const tron = getCachedInstance(account.network());
         const balance = await tron.trx.getBalance(account.publicKey);
         return tron.toBigNumber(balance).div(1000000).toFixed(6).toString(10);
     }
+
+	async balancesFor(account, tokens){}
 
     defaultDecimals(){ return 6; }
     defaultToken(){ return new Token(Blockchains.TRX, 'trx', 'TRX', 'TRX', this.defaultDecimals()) }

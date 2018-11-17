@@ -65,10 +65,6 @@ export default class ETH extends Plugin {
     accountFormatter(account){ return `${account.publicKey}` }
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.ETH }}
 
-    forkSupport(){
-        return false;
-    }
-
 	contractPlaceholder(){ return '0x.....'; }
 	recipientLabel(){ return 'Address'; } // TODO: Localize
 
@@ -109,24 +105,16 @@ export default class ETH extends Plugin {
     hexPrivateToBuffer(privateKey){
         return Buffer.from(privateKey, 'hex');
     }
-    conformPrivateKey(privateKey){
-        privateKey = privateKey.trim();
 
-        if(privateKey.indexOf('0x') === 0)
-            privateKey.replace('0x', '');
 
-        return privateKey;
-    }
-    convertsTo(){
-        return [Blockchains.EOSIO];
-    }
-
-    async balanceFor(account, tokenAccount, symbol){
+    async balanceFor(account, token){
         const [web3, engine] = getCachedInstance(account.network());
         let balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
         killCachedInstance(account.network());
         return balance;
     }
+
+	async balancesFor(account, tokens){}
 
     defaultDecimals(){ return 18; }
     defaultToken(){ return new Token(Blockchains.ETH, 'eth', 'ETH', 'ETH', this.defaultDecimals()) }

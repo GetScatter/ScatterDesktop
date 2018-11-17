@@ -11,7 +11,6 @@ export const mutations = {
     [Mutations.RELEASE_POPUP]:(state, popup) => state.popups = state.popups.filter(p => p.id !== popup.id),
     [Mutations.SET_HARDWARE]:(state, hardware) => state.hardware = hardware,
     [Mutations.SET_TOKENS]:(state, tokens) => state.tokens = tokens,
-    [Mutations.SET_BALANCES]:(state, balances) => state.balances = balances,
     [Mutations.SET_PRICES]:(state, prices) => state.prices = prices,
     [Mutations.SET_DAPP_LOGO]:(state, {origin, logo}) => state.dappLogos[origin] = logo,
     [Mutations.SET_DAPP_DATA]:(state, data) => state.dappData = data,
@@ -26,5 +25,8 @@ export const mutations = {
 	[Mutations.ADD_RESOURCES]:(state, x) => {
         state.resources = state.resources.filter(y => y.acc !== x.acc);
 		state.resources.push(x);
+	},
+	[Mutations.SET_BALANCES]:(state, x) => {
+		state.balances[x.account] = x.balances
 	},
 };

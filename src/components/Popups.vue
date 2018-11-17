@@ -159,21 +159,19 @@
     }
 
 
-    $speed:0.3s;
+    $speed:0.12s;
     .snackbar-transition-leave-active,
     .snackbar-transition-enter-active {
-        /*position:absolute;*/
-        /*bottom:0; left:0; right:0;*/
-        transition: $speed;
+        transition: $speed ease-in-out;
     }
 
     .snackbar-transition-enter {
         opacity:0;
-        transform: translate(0, 100%);
+        transform: translate(0, 20%);
     }
 
     .snackbar-transition-leave-to {
         opacity:0;
-        transform: translate(0, 20%);
+        transform: translate(0, 100%);
     }
 </style>

@@ -60,6 +60,7 @@ const getters = {
 	networkTokens:state =>  state.scatter.settings.networks.map(x => x.systemToken()),
 	blacklistTokens:state =>  state.scatter.settings.blacklistTokens,
 	tokens:state =>         state.scatter.settings.tokens,
+    allTokens:(state, getters) =>      getters.networkTokens.concat(getters.tokens),
 
     // Popups
     popIns:state =>         state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN) || [],
@@ -67,61 +68,6 @@ const getters = {
     snackbars:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.SNACKBAR) || [],
 
     showNotifications:state => state.scatter.settings.showNotifications,
-
-
-    totalTokenBalance:state => {
-        let total = 0;
-        Object.keys(state.balances).map(acc => {
-            state.balances[acc].map(t => {
-                total += parseFloat(t.balance);
-            })
-        });
-        return total;
-    },
-
-    allBalances(){
-        const totals = {};
-        Object.keys(state.balances).map(acc => {
-            state.balances[acc].map(t => {
-                totals[t.symbol] = (totals[t.symbol] || 0) + parseFloat(t.balance)
-            })
-        });
-        return totals;
-    },
-
-    totalBalance:state =>   {
-        const displayToken = state.scatter.settings.displayToken;
-        const symbol = displayToken ? displayToken.symbol : 'USD';
-
-        const totals = {};
-        let total = 0;
-
-        if(!displayToken){
-            Object.keys(state.balances).map(acc => {
-                state.balances[acc].map(t => {
-                    const defaultToken = PluginRepository.plugin(t.blockchain).defaultToken();
-                    if(defaultToken.symbol !== t.symbol) return;
-                    totals[t.symbol] = (totals[t.symbol] || 0) + parseFloat(t.balance)
-                })
-            });
-
-            Object.keys(totals).map(key => {
-                if(state.prices.hasOwnProperty(key)){
-                    total += state.prices[key].price * totals[key];
-                }
-            });
-        }
-
-        else {
-            Object.keys(state.balances).map(acc => {
-                state.balances[acc].filter(t => t.symbol === displayToken.symbol).map(t => {
-                    total += parseFloat(t.balance)
-                })
-            });
-        }
-
-        return [parseFloat(total).toFixed(2).toString(), symbol];
-    }
 };
 
 export const store = new Vuex.Store({

@@ -171,9 +171,10 @@
 
 			async getRamPrice(){
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-				const ramPrice = await plugin.getRamPrice(await this.getNetwork());
+				const network = await this.getNetwork();
+				const ramPrice = await plugin.getRamPrice(network);
 				this.ramPrice = (ramPrice * 4096).toFixed(4);
-				this.systemSymbol = await plugin.getSystemSymbol(await this.getNetwork());
+				this.systemSymbol = network.systemToken().symbol;
 			},
 
 			selectedCreator(item){

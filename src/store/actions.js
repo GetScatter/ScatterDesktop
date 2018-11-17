@@ -103,7 +103,7 @@ export const actions = {
     [Actions.RELEASE_POPUP]:({commit}, popup) => commit(Actions.RELEASE_POPUP, popup),
     [Actions.SET_HARDWARE]:({commit}, hardware) => commit(Actions.SET_HARDWARE, hardware),
     [Actions.SET_TOKENS]:({commit}, tokens) => commit(Actions.SET_TOKENS, tokens),
-    [Actions.SET_BALANCES]:({commit}, balances) => commit(Actions.SET_BALANCES, balances),
+    [Actions.SET_BALANCES]:({commit}, x) => commit(Actions.SET_BALANCES, x),
     [Actions.SET_PRICES]:({commit}, prices) => commit(Actions.SET_PRICES, prices),
 
 };

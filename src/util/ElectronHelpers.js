@@ -1,24 +1,28 @@
 import {MOCK_ELECTRON, RUNNING_TESTS} from "./TestingHelper";
 
-console.log('loaded?')
 
 // import PopupService from "../services/PopupService";
-// import {Popup} from "../models/popups/Popup";
+import {Popup} from "../models/popups/Popup";
 
 let electron;
 electron = RUNNING_TESTS ? null : window.require('electron');
-console.log('electron', electron);
 if(!electron) electron = MOCK_ELECTRON;
 
 export const remote = electron.remote;
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
 
+let popupService;
+const PopupService = () => {
+    if(!popupService) popupService = require("../services/PopupService").default;
+    return popupService;
+}
 
 export default class ElectronHelpers {
 
     static copy(txt){
         clipboard.writeText(txt);
+	    PopupService().push(Popup.snackbar(`Copied to Clipboard`, 'check'))
 	    // PopupService.push(Popup.snackbar(`Copied to Clipboard`, 'check'));
     }
 

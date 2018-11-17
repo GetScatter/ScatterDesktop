@@ -71,7 +71,6 @@ export class TestStore {
 
 	async set(key, val){
 		this.store[key] = val;
-		console.log('store', this.store);
 		return true;
 	}
 

@@ -149,7 +149,6 @@
             },
     		async removeToken(item){
     			const token = this.tokens.concat(this.networkTokens).concat(this.blacklistTokens).find(x => x.id === item.id);
-    			console.log('token', token);
 			    await TokenService.removeToken(token);
             }
         }

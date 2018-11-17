@@ -97,6 +97,7 @@
     import {Popup} from '../../models/popups/Popup';
     import {Blockchains} from '../../models/Blockchains';
     import PluginRepository from '../../plugins/PluginRepository'
+    import Token from "../../models/Token";
 
     export default {
         data () {return {
@@ -121,8 +122,14 @@
             options(){ return this.payload.options || {}; },
             symbol(){ return this.payload.symbol; },
             contract(){ return this.payload.contract; },
+            token(){ return Token.fromJson({
+                contract:this.contract,
+                symbol:this.symbol,
+                decimals:this.decimals,
+                blockchain:this.network.blockchain,
+            }); },
             memo(){ return this.payload.memo; },
-            decimals(){ return this.options.decimals || 4; },
+            decimals(){ return this.options.decimals || PluginRepository.plugin(this.network.blockchain).defaultDecimals(); },
             validAccounts(){
                 return this.accounts
                     .filter(x => [this.network.unique()].includes(x.networkUnique))
@@ -174,7 +181,7 @@
             },
             async getBalance(account){
                 return await PluginRepository.plugin(this.network.blockchain)
-                    .balanceFor(account, this.contract, this.symbol);
+                    .balanceFor(account, this.token);
             },
             balance(account){
                 const bal = this.balances.find(x => x.account === account.unique());

@@ -74,7 +74,6 @@ export default class StorageService {
     };
 
     static getScatter() {
-    	console.log('sca', scatterStorage())
         return scatterStorage().get('scatter');
     }
 

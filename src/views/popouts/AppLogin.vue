@@ -72,7 +72,7 @@
 	        },
         },
         created(){
-            console.log('validAccounts', this.validAccounts)
+
         },
         methods: {
 	        returnResult(result){

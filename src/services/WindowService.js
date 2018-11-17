@@ -2,8 +2,6 @@ import {ipcRenderer, remote} from '../util/ElectronHelpers';
 const path = window.require("path");
 const url = window.require("url");
 
-console.log('remote', remote);
-
 const LowLevelWindowService = remote.getGlobal('appShared').LowLevelWindowService;
 
 import WindowMessage from '../models/popups/WindowMessage';

@@ -157,7 +157,7 @@
             },
             async init(){
                 const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-                this.balance = `${(await plugin.balanceFor(this.account, 'eosio.token', 'EOS')).toString()} EOS`;
+                this.balance = `${(await plugin.balanceFor(this.account, this.account.network().systemToken())).toString()} EOS`;
 
                 plugin.accountData(this.account, this.account.network()).then(data => {
                     this.fetchedBalance = true;

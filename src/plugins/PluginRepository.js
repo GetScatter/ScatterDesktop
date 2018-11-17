@@ -45,7 +45,9 @@ class PluginRepositorySingleton {
 
     defaultExplorers(){
         return BlockchainsArray.reduce((acc,x) => {
-            acc[x.value] = [this.plugin(x.value).defaultExplorer()];
+            if(this.plugin(x.value)) {
+	            acc[x.value] = [this.plugin(x.value).defaultExplorer()];
+            }
             return acc;
         }, {})
     }
