@@ -13,13 +13,9 @@
 
             <section class="options">
                 <input ref="terms" placeholder="Search..." v-model="optionsTerms" />
-                <figure :class="isGrouped(item) ? 'group-title' : 'option'" v-for="item in filteredOptions" v-on:click="isGrouped(item) ? null : select(item)">
-                    <figure v-if="isGrouped(item) && !optionsTerms.length">{{item}}</figure>
-                    <section v-else>
-                        <img v-if="imgParser" :src="imgParser(item)" />
-                        {{parse(item)}}
-                    </section>
-
+                <figure class="option" v-for="item in filteredOptions" v-on:click="select(item)">
+                    <img v-if="imgParser" :src="imgParser(item)" />
+                    {{parse(item)}}
                 </figure>
             </section>
         </section>
@@ -29,36 +25,18 @@
 <script>
     let documentListener;
     export default {
-	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'disabled', 'imgParser', 'grouper'],
+	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'disabled', 'imgParser'],
 
         data(){ return {
             optionsTerms:'',
             selectedOption:this.selected || this.placeholder || this.options[0],
             open:false,
-            groups:[],
         }},
         mounted(){ document.addEventListener('click', this.handleDocumentClick) },
         destroyed(){ document.removeEventListener('click', this.handleDocumentClick) },
         computed:{
-            groupedOptions(){
-                if(!this.grouper) return this.options;
-                else {
-                    this.groups = [];
-                    let options = [];
-                    this.options.map(x => {
-                        const group = this.grouper(x);
-                        if(!this.groups.includes(group)){
-                            this.groups.push(group)
-                            options.push(group);
-                        }
-
-                        options.push(x);
-                    })
-                    return options;
-                }
-            },
             filteredOptions(){
-                return this.groupedOptions.filter(x => {
+                return this.options.filter(x => {
                     const parsed = this.parse(x);
                     return !parsed || parsed.toLowerCase().indexOf(this.optionsTerms.toLowerCase()) > -1
                 });
@@ -66,23 +44,20 @@
         },
         methods: {
 	    	handleDocumentClick(e){
-
-                if(e.target.className !== 'selected-option') this.open = false;
-            },
-            isGrouped(item){
-                if(!item) return false;
-                return this.groups.includes(item);
+                if(this.open) this.open = false;
             },
             toggle(){
-                if(this.disabled) return false;
-                this.open = !this.open;
+                this.$nextTick(() => {
+	                if(this.disabled) return false;
+	                this.open = !this.open;
 
-                if(this.open){
-                    this.optionsTerms = '';
-                    setTimeout(() => {
-                        this.$refs.terms.focus()
-                    }, 50);
-                }
+	                if(this.open){
+		                this.optionsTerms = '';
+		                setTimeout(() => {
+			                this.$refs.terms.focus()
+		                }, 50);
+	                }
+                })
             },
             parse(item){
                 if(typeof item === 'string') return item;

@@ -1,6 +1,6 @@
 <template>
 	<section>
-		<cin :type="keyInputType" big="1"
+		<cin :type="keyInputType" big="1" :error="error"
 		     :label="locale(langKeys.ADD_KEYS.IMPORT_TEXT.KeyLabel)"
 		     :placeholder="locale(langKeys.ADD_KEYS.IMPORT_TEXT.KeyPlaceholder)"
 		     :dynamic-button="eyeIcon"
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-
+	import {mapGetters} from 'vuex';
 	import KeyPairService from '../../../../services/KeyPairService'
 	import Keypair from "../../../../models/Keypair";
 
@@ -19,9 +19,13 @@
 	export default {
 		data(){return {
 			keyInputType:'password',
-			key:''
+			key:'',
+			error:null,
 		}},
 		computed:{
+			...mapGetters([
+				'keypairs'
+			]),
 			eyeIcon(){
 				return 'icon-eye' + (this.keyInputType === 'password' ? '' : '-off')
 			}
@@ -31,6 +35,7 @@
 				this.keyInputType = this.keyInputType === 'password' ? 'text' : 'password';
 			},
 			async testKey(){
+				this.error = null;
 				this.key = this.key.trim().replace(/\W/g, '');
 
 				const keypair = Keypair.placeholder();
@@ -43,7 +48,12 @@
 				await KeyPairService.makePublicKeys(keypair);
 				keypair.hash();
 
-				this.$emit('keypair', keypair);
+				if(this.keypairs.find(x => x.keyHash === keypair.keyHash))
+					return this.error = 'You already have this key imported.';
+
+				setTimeout(() => {
+					this.$emit('keypair', keypair);
+				}, 1);
 			}
 		},
 		watch:{
@@ -51,7 +61,7 @@
 				clearTimeout(keyTimeout);
 				keyTimeout = setTimeout(async () => {
 					this.testKey();
-				}, 500);
+				}, 200);
 			},
 		}
 	}

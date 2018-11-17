@@ -7,7 +7,10 @@
                         <figure></figure>
                         <figure></figure>
                     </figure>
-                    <span>{{text ? text : 'Back'}}</span>
+                    <section>
+                        <figure>{{text ? text : 'Back'}}</figure>
+                        <figure class="subtext" v-if="subtext">{{subtext}}</figure>
+                    </section>
                 </section>
             </transition>
 
@@ -26,7 +29,7 @@
     import Process from "../../models/Process";
 
     export default {
-	    props:['buttons', 'text'],
+	    props:['buttons', 'text', 'subtext'],
         computed:{
             ...mapState([
             	'hideBackButton'
@@ -57,9 +60,14 @@
             padding: 30px 30px 30px 0;
             cursor: pointer;
 
-            span {
+            > section {
                 vertical-align: middle;
                 display:inline-block;
+
+                .subtext {
+                    font-size: 11px;
+                    color:$dark-blue;
+                }
             }
 
             .chevron {

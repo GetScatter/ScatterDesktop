@@ -26,13 +26,14 @@ export default class ContactService {
     }
 
     static async remove(contact){
-        PopupService.push(Popup.prompt('Removing Contact', 'Are you sure you want to remove this contact?', 'attention', 'Yes', async bool => {
-            if(bool){
-                const scatter = store.state.scatter.clone();
-                scatter.contacts = scatter.contacts.filter(x => x.id !== contact.id);
-                return store.dispatch(Actions.SET_SCATTER, scatter);
-            }
-        }, 'No'))
+        return new Promise(async resolve => {
+	        PopupService.push(Popup.prompt('Removing Contact', 'Are you sure you want to remove this contact?', 'attention', 'Yes', async bool => {
+	        	if(!bool) return resolve(false);
+		        const scatter = store.state.scatter.clone();
+		        scatter.contacts = scatter.contacts.filter(x => x.id !== contact.id);
+		        return resolve(store.dispatch(Actions.SET_SCATTER, scatter));
+	        }, 'No'))
+        })
 
     }
 

@@ -33,7 +33,7 @@ export default class Settings {
         if(json.hasOwnProperty('tokens')) p.tokens = json.tokens.map(x => Token.fromJson(x));
         if(json.hasOwnProperty('blacklistTokens')) p.blacklistTokens = json.blacklistTokens.map(x => Token.fromJson(x));
         if(json.hasOwnProperty('explorers')) p.explorers = Object.keys(json.explorers).reduce((acc, blockchain) => {
-            acc[blockchain] = Explorer.fromJson(json.explorers[blockchain]);
+            acc[blockchain] = Explorer.fromRaw(json.explorers[blockchain].raw);
             return acc;
         }, {});
         return p;

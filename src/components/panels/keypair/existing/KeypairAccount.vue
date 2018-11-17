@@ -9,7 +9,7 @@
 				</section>
 			</section>
 			<section class="tokens" @click="$emit('tokens', account)">
-				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, tokens.length)}} <i class="icon-right-open-big"></i>
+				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, tokens)}} <i class="icon-right-open-big"></i>
 			</section>
 		</section>
 
@@ -77,8 +77,10 @@
 				return resource ? resource.res : null;
 			},
 			tokens(){
-				if(!this.balances.hasOwnProperty(this.account.identifiable())) return [];
-				return this.balances[this.account.identifiable()];
+				if(!this.balances) return 0;
+				if(!this.balances.hasOwnProperty(this.account.identifiable())) return 0;
+				if(!this.balances[this.account.identifiable()]) return 0;
+				return this.balances[this.account.identifiable()].length;
 			}
 		},
 		methods:{

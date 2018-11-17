@@ -51,7 +51,6 @@
         },
 
 	    mounted(){
-		    this[Actions.SET_RESOURCES]([]);
 		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
 		    if(!this.keypair) this.$router.push({name:this.RouteNames.HOME});
 
@@ -69,7 +68,6 @@
 
         destroyed(){
         	this.destroying = true;
-            this[Actions.SET_RESOURCES]([]);
         },
 
         computed:{
@@ -120,6 +118,8 @@
 		        await Promise.all(this.keypair.accounts(true).map(account => {
 		        	return BalanceService.loadBalancesFor(account);
                 }))
+		        this[Actions.SET_RESOURCES]([]);
+		        this.lazyLoadResources();
 	        },
 
 

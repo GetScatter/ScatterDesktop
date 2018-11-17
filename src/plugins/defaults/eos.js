@@ -146,7 +146,7 @@ export default class EOS extends Plugin {
 	recipientLabel(){ return 'Account Name'; } // TODO: Localize
 
 	getEndorsedNetwork(){
-		new Network('EOS Mainnet', 'https', 'nodes.get-scatter.com', 443, Blockchains.EOSIO, mainnetChainId)
+		return new Network('EOS Mainnet', 'https', 'nodes.get-scatter.com', 443, Blockchains.EOSIO, mainnetChainId)
 	}
 
 	isEndorsedNetwork(network){
@@ -315,7 +315,6 @@ export default class EOS extends Plugin {
 	async balanceFor(account, token){
 		const eos = getCachedInstance(account.network());
 
-
 		const balances = await eos.getTableRows({
 			json:true,
 			code:token.contract,
@@ -329,8 +328,7 @@ export default class EOS extends Plugin {
 	}
 
 	async balancesFor(account, tokens, fallback = false){
-		const network = account.network();
-		if(!fallback && network.chainId === mainnetChainId){
+		if(!fallback && this.isEndorsedNetwork(account.network())){
 			const balances = await EosTokenAccountAPI.getAllTokens(account);
 			if(!balances) return this.balanceFor(account, tokens, true);
 			const blacklist = store.getters.blacklistTokens.filter(x => x.blockchain === Blockchains.EOSIO).map(x => x.unique());
@@ -339,8 +337,9 @@ export default class EOS extends Plugin {
 
 
 		return (await Promise.all(tokens.map(async token => {
-			token.amount = await this.balanceFor(account, token);
-			return token;
+			const t = token.clone();
+			t.amount = await this.balanceFor(account, token);
+			return t;
 		})));
 	}
 

@@ -1,6 +1,7 @@
 import * as PluginTypes from './PluginTypes';
 import {Blockchains, BlockchainsArray} from '../models/Blockchains';
 import {RUNNING_TESTS} from "../util/TestingHelper";
+import Explorer from "../models/Explorer";
 
 /***
  * Setting up for plugin based generators,
@@ -42,7 +43,9 @@ class PluginRepositorySingleton {
     defaultExplorers(){
         return BlockchainsArray.reduce((acc,x) => {
             if(this.plugin(x.value)) {
-	            acc[x.value] = [this.plugin(x.value).defaultExplorer()];
+	            acc[x.value] = Explorer.fromJson({
+                    raw:this.plugin(x.value).defaultExplorer()
+                });
             }
             return acc;
         }, {})

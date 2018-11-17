@@ -100,7 +100,7 @@
 
 
 	#image-onboarding {
-		width:100%;
+		max-width:600px;
 		margin:2rem 0;
 	}
 </style>

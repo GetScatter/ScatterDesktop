@@ -61,6 +61,7 @@ export const actions = {
 
             await Promise.all(PluginRepository.signatureProviders().map(async plugin => {
                 const network = plugin.getEndorsedNetwork();
+                console.log('network', plugin, network);
                 scatter.settings.networks.push(network);
             }));
 

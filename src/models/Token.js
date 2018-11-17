@@ -17,6 +17,7 @@ export default class Token {
 
     static placeholder(){ return new Token(); }
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
+	clone(){ return Token.fromJson(JSON.parse(JSON.stringify(this))) }
 
     unique(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}` }
     toDecimals(){ return parseFloat(this.amount).toFixed(this.decimals); }

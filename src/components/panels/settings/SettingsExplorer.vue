@@ -38,7 +38,11 @@
                 'explorers',
             ]),
             defaultExplorers(){
-	            return PluginRepository.defaultExplorers()
+            	const explorers = PluginRepository.defaultExplorers();
+	            return Object.keys(explorers).reduce((acc, blockchain) => {
+                    acc[blockchain] = [explorers[blockchain]]
+                    return acc;
+                }, {})
             }
         },
         mounted(){

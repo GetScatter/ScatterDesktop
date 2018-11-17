@@ -1,6 +1,6 @@
 <template>
     <section>
-        <back-bar v-on:back="back" :text="account ? account.sendable() : null" />
+        <back-bar v-on:back="back" :text="account ? account.sendable() : null" :subtext="account ? account.network().name : null" />
         <section class="full-panel inner limited" v-if="token">
             <section class="split-panel" :class="{'recipient':!!account}">
 
@@ -37,7 +37,7 @@
                         <section class="split-inputs">
                             <sel style="flex:1; margin-left:0;" label="Blockchain"
                                  :selected="{value:token.blockchain}"
-                                 :options="BlockchainsArray"
+                                 :options="customTokenBlockchains"
                                  :parser="blockchain => blockchainName(blockchain.value)"
                                  v-on:changed="selectBlockchain"></sel>
                             <cin style="flex:1; margin-bottom:0;" :placeholder="contractPlaceholder" label="Contract" />
@@ -60,7 +60,7 @@
                 <!----------------------->
                 <section class="panel">
                     <h4 class="padded" style="padding-bottom:0;">Recipient</h4>
-                    <section class="panel-switch">
+                    <section class="panel-switch" v-if="contacts.length">
                         <figure class="button" :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}" @click="recipientState = RECIPIENT_STATES.CONTACT">Send to Contact</figure>
                         <figure class="button" :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}" @click="recipientState = RECIPIENT_STATES.DIRECT">Send Directly</figure>
                     </section>
@@ -169,6 +169,13 @@
                 'networkTokens'
             ]),
 
+            customTokenBlockchains(){
+            	if(!this.account) return BlockchainsArray;
+                return BlockchainsArray.filter(x => {
+                	return x.value === this.account.blockchain()
+                })
+            },
+
 	        senderAccounts(){
 		        const reducer = accs => accs.reduce((acc,x) => {
 			        if(!acc.find(y => `${y.networkUnique}${y.sendable()}` === `${x.networkUnique}${x.sendable()}`)) acc.push(x);
@@ -178,8 +185,8 @@
 		        return reducer(this.accounts)
                     .map(account => ({
                         id:account.unique(),
-                        title:account.name,
-                        description:account.network().name,
+                        title:account.sendable(),
+                        description:`${account.network().name} - ${account.keypair().name}`,
                     }))
             },
 	        filteredTokens(){
@@ -273,7 +280,7 @@
                 this.token = this.filteredTokens[0];
             },
             selectToken(token){
-	    		this.token = token.id === 'custom' ? Token.fromJson({id:token.id, name:token.name}) : token;
+	    		this.token = token.id === 'custom' ? Token.fromJson({id:token.id, name:token.name, blockchain:this.account ? this.account.blockchain() : Blockchains.EOSIO}) : token;
             },
             async addContact(){
                 if(!this.recipient.length) return;
@@ -285,6 +292,7 @@
             async removeContact(item){
 	    		const contact = this.contacts.find(x => x.name === item.title);
                 await ContactService.remove(contact);
+                if(!this.contacts.length) this.recipientState = RECIPIENT_STATES.DIRECT;
             },
             availableBalance(token){
                 if(!this.account) return PriceService.tokensFor(token).reduce((acc, x) => acc += parseFloat(x.balance), 0);

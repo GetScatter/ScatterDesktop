@@ -4,6 +4,7 @@ import * as Actions from '../store/constants';
 import AccountService from './AccountService';
 import PopupService from './PopupService';
 import {Popup} from '../models/popups/Popup'
+import BalanceService from "./BalanceService";
 
 export default class NetworkService {
 
@@ -51,6 +52,7 @@ export default class NetworkService {
                     scatter.settings.removeNetwork(network);
                     store.dispatch(Actions.SET_SCATTER, scatter);
                     PopupService.push(Popup.snackbar("Network Deleted!", "check"));
+                    BalanceService.removeStaleBalances();
                     resolve(true);
                 } else resolve(false);
             });

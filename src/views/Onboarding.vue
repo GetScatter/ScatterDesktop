@@ -93,7 +93,6 @@
     .onboarding {
         height:100vh;
         width:100%;
-        -webkit-app-region: drag;
 
         display: flex;
         justify-content: center;
@@ -108,7 +107,6 @@
         }
 
         .onboarder {
-            -webkit-app-region: no-drag;
             max-width:510px;
             margin:0 auto;
 

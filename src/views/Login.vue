@@ -3,30 +3,32 @@
         <transition name="fade" mode="out-in">
             <!-- NEW SCATTER -->
             <section key="new" class="new-scatter" v-if="isNewScatter && !restoringBackup">
-                <h1>{{locale(langKeys.LOGIN.NEW.Title)}}</h1>
-                <h5>{{locale(langKeys.LOGIN.NEW.SubTitle)}}</h5>
-                <OnboardingSvg />
+                <section>
+                    <h1>{{locale(langKeys.LOGIN.NEW.Title)}}</h1>
+                    <p class="limited-p">{{locale(langKeys.LOGIN.NEW.SubTitle)}}</p>
+                    <OnboardingSvg />
 
-                <section class="inputs">
-                    <cin :focus="true"
-                         :label="locale(langKeys.LOGIN.NEW.PasswordLabel)"
-                         :placeholder="locale(langKeys.LOGIN.NEW.PasswordPlaceholder)"
-                         type="password" v-on:enter="create" :text="password"
-                         v-on:changed="changed => bind(changed, 'password')"></cin>
+                    <section class="inputs">
+                        <cin :focus="true"
+                             :label="locale(langKeys.LOGIN.NEW.PasswordLabel)"
+                             :placeholder="locale(langKeys.LOGIN.NEW.PasswordPlaceholder)"
+                             type="password" v-on:enter="create" :text="password"
+                             v-on:changed="changed => bind(changed, 'password')"></cin>
 
-                    <section class="password-strength">
-                        <figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 100}"></figure>
+                        <section class="password-strength">
+                            <figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 100}"></figure>
+                        </section>
+
+                        <cin :label="locale(langKeys.LOGIN.NEW.PasswordConfirmLabel)"
+                             :placeholder="locale(langKeys.LOGIN.NEW.PasswordConfirmPlaceholder)"
+                             type="password" v-on:enter="create" :text="confirmPassword"
+                             v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
+
+                        <br>
+                        <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="create" text="Let's go!" blue="true"></btn>
+                        <br><br>
+                        <btn :disabled="working" v-on:clicked="restoringBackup = true" text="I want to restore from backup" small="true"></btn>
                     </section>
-
-                    <cin :label="locale(langKeys.LOGIN.NEW.PasswordConfirmLabel)"
-                         :placeholder="locale(langKeys.LOGIN.NEW.PasswordConfirmPlaceholder)"
-                         type="password" v-on:enter="create" :text="confirmPassword"
-                         v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
-
-                    <br>
-                    <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="create" text="Let's go!" blue="true"></btn>
-                    <br><br>
-                    <btn :disabled="working" v-on:clicked="restoringBackup = true" text="I want to restore from backup" small="true"></btn>
                 </section>
             </section>
 
@@ -35,7 +37,7 @@
                 <section>
                     <figure class="badge">S</figure>
                     <h1>{{locale(langKeys.LOGIN.EXISTING.Title)}}</h1>
-                    <p>{{locale(langKeys.LOGIN.EXISTING.SubTitle)}}</p>
+                    <p class="limited-p">{{locale(langKeys.LOGIN.EXISTING.SubTitle)}}</p>
                     <br>
                     <br>
                     <cin style="width:350px;" :focus="true" big="1"
@@ -56,9 +58,10 @@
             <section key="import" class="import-scatter" v-if="isNewScatter && restoringBackup">
                 <section>
                     <h1>{{locale(langKeys.LOGIN.RESTORE.Title)}}</h1>
-                    <p>{{locale(langKeys.LOGIN.RESTORE.SubTitle)}}</p>
+                    <p class="limited-p">{{locale(langKeys.LOGIN.RESTORE.SubTitle)}}</p>
 
                     <img src="../assets/import_backup.png" style="margin:10px 0 20px;" />
+                    <br>
 
                     <btn :disabled="working"
                          :loading="working"
@@ -205,8 +208,6 @@
 					await this[Actions.SET_SEED](this.password);
 					await this[Actions.LOAD_SCATTER]();
 
-					console.log('sctr',this.scatter);
-
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
 						await SocketService.initialize();
@@ -254,10 +255,20 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables";
 
+    .limited-p {
+        max-width:400px;
+        margin:0 auto;
+    }
+
     .new-scatter {
         text-align:center;
         width:100%;
         padding:60px 80px;
+
+        min-height:calc(100vh - 80px);
+        display:flex;
+        justify-content: center;
+        align-items: center;
 
         .inputs {
             max-width:400px;
