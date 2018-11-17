@@ -13,12 +13,6 @@ export default class AccountService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static async removeAccount(account){
-        const scatter = store.state.scatter.clone();
-        scatter.keychain.removeAccount(account);
-        return store.dispatch(Actions.SET_SCATTER, scatter);
-    }
-
     static async removeAccounts(accounts){
         const scatter = store.state.scatter.clone();
 	    accounts.map(account => scatter.keychain.removeAccount(account));

@@ -17,4 +17,10 @@ export default class BalanceService {
 		await Promise.all(accounts.map(account => this.loadBalancesFor(account)));
 	}
 
+	static removeStaleBalances(){
+		const accountKeys = store.state.scatter.keychain.accounts.map(x => x.identifiable());
+		const keysToRemove = Object.keys(store.state.balances).filter(key => !accountKeys.includes(key));
+		return store.dispatch(Actions.REMOVE_BALANCES, keysToRemove);
+	}
+
 }

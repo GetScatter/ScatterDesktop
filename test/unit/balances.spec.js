@@ -7,6 +7,7 @@ import StorageService from "../../src/services/StorageService";
 import BalanceService from "../../src/services/BalanceService";
 import {store} from "../../src/store/store";
 import {SET_SCATTER} from "../../src/store/constants";
+import KeyPairService from "../../src/services/KeyPairService";
 
 let scatter;
 describe('BalanceService', async () => {
@@ -32,6 +33,17 @@ describe('BalanceService', async () => {
 		new Promise(async() => {
 			await BalanceService.loadAllBalances();
 			assert(Object.keys(store.state.balances).length === 2, `Didn't add balances`);
+			done();
+		})
+	});
+
+	it('should be able to remove balances after removing a key', done => {
+		new Promise(async() => {
+			await KeyPairService.removeKeyPair(scatter.keychain.keypairs[0]);
+			assert(store.state.scatter.keychain.keypairs.length === 0, 'Did not remove keypair');
+
+			await BalanceService.removeStaleBalances();
+			assert(Object.keys(store.state.balances).length === 0, `Didn't remove balances`);
 			done();
 		})
 	});

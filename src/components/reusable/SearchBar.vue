@@ -23,7 +23,7 @@
 
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../_variables";
+	@import "../../variables";
 
 	.search-bar {
 		height:60px;

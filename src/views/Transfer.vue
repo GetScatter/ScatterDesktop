@@ -124,6 +124,7 @@
     import Token from "../models/Token";
     import TokenService from "../services/TokenService";
     import IdGenerator from "../util/IdGenerator";
+    import BalanceService from "../services/BalanceService";
 
     const uniqueToken = x => `${x.account}${x.blockchain}${x.name}${x.symbol}`;
 
@@ -363,7 +364,8 @@
                 }).catch(() => false);
                 this.sending = false;
 
-                if(sent) await PriceService.getBalances();
+                if(sent) await BalanceService.loadBalancesFor(account);
+
             },
 
         },

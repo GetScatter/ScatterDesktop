@@ -29,4 +29,9 @@ export const mutations = {
 	[Mutations.SET_BALANCES]:(state, x) => {
 		state.balances[x.account] = x.balances
 	},
+	[Mutations.REMOVE_BALANCES]:(state, accountKeys) => {
+		accountKeys.map(key => {
+			delete state.balances[key];
+		})
+	},
 };

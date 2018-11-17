@@ -25,7 +25,7 @@
 				<!-- Accounts List -->
 				<section class="list accounts" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
 					<section class="item" v-for="account in filteredAccounts">
-						<KeypairAccount :key="account.unique()" :account="account" />
+						<KeypairAccount :key="account.unique()" :account="account" v-on:tokens="x => $emit('tokens', x)" />
 					</section>
 
 					<section class="action-box" v-if="hasEosBlockchain">
@@ -62,7 +62,7 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import SearchBar from '../../../components/panels/home/SearchBar';
+	import SearchBar from '../../reusable/SearchBar';
 	import KeypairAccount from './existing/KeypairAccount';
 	import KeypairBlockchains from '../../../components/panels/keypair/existing/KeypairBlockchains';
 
@@ -146,7 +146,8 @@
 							publicKey:this.keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key,
 							name,
 							authority:auth ? auth : 'active',
-						})
+						});
+
 						await AccountService.addAccount(account);
 				}))
 			}

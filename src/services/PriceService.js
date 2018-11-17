@@ -38,55 +38,6 @@ export default class PriceService {
         ])
     }
 
-    static async getAllTokens(){
-        let tokens = [];
-        await Promise.all(BlockchainsArray.map(async ({value}) => {
-            const plugin = PluginRepository.plugin(value);
-            await plugin.fetchTokens(tokens);
-            return true;
-        }));
-
-        return store.dispatch(Actions.SET_TOKENS, tokens);
-    }
-
-    static async getBalances(){
-        const accounts = store.state.scatter.keychain.accounts
-            .reduce((acc, account) => {
-                if(!acc.find(x => x.sendable() === account.sendable())) acc.push(account);
-                return acc;
-            }, []);
-
-        const balances = {};
-        const tokens = store.state.tokens;
-
-        await Promise.all(accounts.map(async account => {
-            const plugin = PluginRepository.plugin(account.blockchain());
-
-            // Only get from endorsed networks
-            if(!await plugin.isEndorsedNetwork(account.network())) return false;
-
-            balances[account.unique()] = [];
-
-            return await Promise.all(tokens.map(async token => {
-                if(token.blockchain !== account.blockchain()) return false;
-                return Promise.race([
-                    new Promise(resolve => setTimeout(() => resolve(true), 500)),
-                    (async () => {
-                        const balance = await plugin.balanceFor(account, token.account, token.symbol);
-                        if(parseFloat(balance) > 0){
-                            balances[account.unique()].push({symbol:token.symbol, balance, account:token.account, blockchain:account.blockchain()});
-                        }
-
-                        await store.dispatch(Actions.SET_BALANCES, balances);
-                        return true;
-                    })()
-                ])
-            }));
-        }));
-
-        await store.dispatch(Actions.SET_BALANCES, balances);
-    }
-
     static tokenDecimals(token){
         const tokenBalance = ObjectHelpers.flatten(Object.keys(store.state.balances).map(x => store.state.balances[x])).find(x => x.blockchain === token.blockchain && x.account === token.account && x.symbol === token.symbol);
         return tokenBalance ? tokenBalance.balance.toString().split('.')[1].length : PluginRepository.plugin(token.blockchain).defaultDecimals();

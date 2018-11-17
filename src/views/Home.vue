@@ -44,6 +44,7 @@
     import Apps from '../components/panels/home/Apps';
     import Wallets from '../components/panels/home/Wallets';
     import AccountService from "../services/AccountService";
+    import BalanceService from "../services/BalanceService";
 
 
     export default {
@@ -56,6 +57,9 @@
 	        hoveringAddKeys:false,
         }},
         computed:{
+            ...mapState([
+	            'balances',
+            ]),
             ...mapGetters([
                 'keypairs',
                 'accounts',
@@ -63,10 +67,15 @@
         },
 
         created(){
+
+    		setTimeout(async() => {
+    			await BalanceService.loadAllBalances();
+            })
+
     		console.log('accounts', this.accounts);
     		// const account = this.accounts.find(x => x.name === 'scatterfunds');
     		// if(account) AccountService.removeAccount(account);
-        }
+        },
     }
 </script>
 

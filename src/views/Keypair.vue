@@ -2,8 +2,9 @@
     <section>
         <back-bar v-on:back="back" :buttons="state === STATES.DASHBOARD ? buttons : []"></back-bar>
         <section v-if="keypair">
-            <KeypairDashboard key="dashboard" v-if="state === STATES.DASHBOARD" :keypair="keypair" />
-            <KeypairExport key="export" v-if="state === STATES.EXPORT" :keypair="keypair" />
+            <KeypairDashboard v-if="state === STATES.DASHBOARD" :keypair="keypair" v-on:tokens="x => tokenAccount = x" />
+            <KeypairExport v-if="state === STATES.EXPORT" :keypair="keypair" />
+            <KeypairTokens v-if="state === STATES.TOKENS" :account="tokenAccount" />
         </section>
     </section>
 </template>
@@ -14,6 +15,7 @@
 
     import KeypairDashboard from '../components/panels/keypair/KeypairDashboard';
     import KeypairExport from '../components/panels/keypair/existing/KeypairExport';
+    import KeypairTokens from '../components/panels/keypair/existing/KeypairTokens';
 
     import KeyPairService from "../services/KeyPairService";
     import PopupService from "../services/PopupService";
@@ -22,10 +24,12 @@
     import AccountService from "../services/AccountService";
     import ResourceService from "../services/ResourceService";
     import PasswordService from "../services/PasswordService";
+    import BalanceService from "../services/BalanceService";
 
     const STATES = {
     	DASHBOARD:'dash',
-        EXPORT:'export'
+        EXPORT:'export',
+        TOKENS:'tokens',
     }
 
     export default {
@@ -36,11 +40,14 @@
         	buttons:[],
 	        keypair:null,
             destroying:false,
+
+	        tokenAccount:null,
         }},
 
         components:{
 	        KeypairDashboard,
-	        KeypairExport
+	        KeypairExport,
+	        KeypairTokens
         },
 
 	    mounted(){
@@ -78,6 +85,7 @@
 
         methods:{
 	        back(){
+	        	if(this.tokenAccount) return this.tokenAccount = null;
 	        	if(this.state !== STATES.DASHBOARD) return this.state = STATES.DASHBOARD;
 	            this.$router.push({name:this.RouteNames.HOME});
             },
@@ -101,7 +109,7 @@
 	            ), async accepted => {
 		            if(accepted) {
 			            await KeyPairService.removeKeyPair(this.keypair);
-			            PriceService.getBalances();
+			            await BalanceService.removeStaleBalances();
 			            this.$router.push({name:this.RouteNames.HOME});
 		            }
 	            });
@@ -109,6 +117,9 @@
 
 	        async refreshAccounts(){
 		        await AccountService.importAllAccounts(this.keypair);
+		        await Promise.all(this.keypair.accounts(true).map(account => {
+		        	return BalanceService.loadBalancesFor(account);
+                }))
 	        },
 
 
@@ -136,6 +147,13 @@
             	Actions.ADD_RESOURCES
             ])
         },
+
+        watch:{
+            ['tokenAccount'](){
+                if(this.tokenAccount) this.state = STATES.TOKENS;
+                else this.state = STATES.DASHBOARD;
+            },
+        }
     }
 </script>
 

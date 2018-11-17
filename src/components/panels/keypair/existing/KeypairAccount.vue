@@ -8,8 +8,8 @@
 					<figure class="authority" :class="{'red':authority === 'owner'}" v-for="authority in authorities">{{authority}}</figure>
 				</section>
 			</section>
-			<section class="tokens">
-				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, 4)}} <i class="icon-right-open-big"></i>
+			<section class="tokens" @click="$emit('tokens', account)">
+				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, tokens.length)}} <i class="icon-right-open-big"></i>
 			</section>
 		</section>
 
@@ -61,6 +61,7 @@
 		computed:{
 			...mapState([
 				'resources',
+				'balances',
 			]),
 			...mapGetters([
 				'accounts',
@@ -74,6 +75,10 @@
 			accountResources(){
 				const resource = this.resources.find(x => x.acc === this.account.identifiable());
 				return resource ? resource.res : null;
+			},
+			tokens(){
+				if(!this.balances.hasOwnProperty(this.account.identifiable())) return [];
+				return this.balances[this.account.identifiable()];
 			}
 		},
 		methods:{

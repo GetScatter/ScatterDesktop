@@ -61,7 +61,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import {BlockchainsArray} from '../../../models/Blockchains';
-	import SearchBar from './SearchBar';
+	import SearchBar from '../../reusable/SearchBar';
 	import PermissionService from "../../../services/PermissionService";
 	import AppsService from "../../../services/AppsService";
 

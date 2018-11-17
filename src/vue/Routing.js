@@ -7,7 +7,6 @@ const Identity = () => import('../views/Identity')
 const Transfer = () => import('../views/Transfer')
 const Receive = () => import('../views/Receive')
 const Permission = () => import('../views/Permission')
-const Tokens = () => import('../views/Tokens')
 
 
 const Home = () => import('../views/Home')
@@ -25,7 +24,6 @@ export const RouteNames = {
     IDENTITY:'identity',
     TRANSFER:'transfer',
     RECEIVE:'receive',
-    TOKENS:'tokens',
     PERMISSION:'permission',
     ONBOARDING:'onboarding',
     SETTINGS:'settings',
@@ -42,7 +40,6 @@ const RouteViews = {
     [RouteNames.KEYPAIR]:Keypair,
     [RouteNames.IDENTITY]:Identity,
     [RouteNames.TRANSFER]:Transfer,
-    [RouteNames.TOKENS]:Tokens,
     [RouteNames.RECEIVE]:Receive,
     [RouteNames.PERMISSION]:Permission,
 

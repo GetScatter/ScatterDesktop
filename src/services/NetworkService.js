@@ -48,7 +48,6 @@ export default class NetworkService {
                     // Removing accounts and permissions for this network
                     const accounts = scatter.keychain.accounts.filter(x => x.networkUnique === network.unique());
                     accounts.map(account => scatter.keychain.removeAccount(account));
-
                     scatter.settings.removeNetwork(network);
                     store.dispatch(Actions.SET_SCATTER, scatter);
                     PopupService.push(Popup.snackbar("Network Deleted!", "check"));

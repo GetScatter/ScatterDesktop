@@ -19,7 +19,7 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import SearchBar from './SearchBar';
+	import SearchBar from '../../reusable/SearchBar';
 	import {RouteNames} from "../../../vue/Routing";
 
 	export default {
