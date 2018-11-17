@@ -66,6 +66,7 @@ export default class PasswordService {
                 if(setToState) store.dispatch(Actions.SET_SCATTER, scatter);
                 resolve(true);
             } catch(e) {
+                console.log('e', e);
                 resolve(false);
                 SocketService.close();
             }

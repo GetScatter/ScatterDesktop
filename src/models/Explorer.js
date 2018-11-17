@@ -1,5 +1,3 @@
-import IdGenerator from '../util/IdGenerator'
-
 export default class Explorer {
 
     constructor(){
@@ -13,6 +11,7 @@ export default class Explorer {
     static placeholder(){ return new Explorer(); }
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
     static fromRaw(rawExplorer){
+    	if(!rawExplorer) return this.placeholder();
         return this.fromJson({
 	        raw:rawExplorer,
 	        name:rawExplorer.name,

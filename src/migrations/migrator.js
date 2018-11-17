@@ -18,7 +18,9 @@ export default async scatter => {
     const lastVersion = mathematicalVersion(scatter.meta.lastVersion);
     const nextVersions = Object.keys(migrators).filter(v => mathematicalVersion(v) > lastVersion);
     if(nextVersions.length) {
-        await Promise.all(nextVersions.map(async version => await migrators[version](scatter)));
+        for(let i = 0; i < nextVersions.length; i++){
+	        await migrators[nextVersions[i]](scatter)
+        }
         scatter.meta.lastVersion = fnToVersion(nextVersions[nextVersions.length-1]);
     }
 

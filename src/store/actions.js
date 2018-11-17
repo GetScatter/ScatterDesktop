@@ -46,13 +46,15 @@ export const actions = {
         if(await PasswordService.verifyPassword()){
             const scatter = state.scatter.clone();
 
-            if(RUNNING_TESTS){
-	            await require('../migrations/migrator')(scatter);
+            if(!RUNNING_TESTS){
+	            await require('../migrations/migrator').default(scatter);
             }
 
             scatter.meta.regenerateVersion();
             await dispatch(Actions.SET_SCATTER, scatter);
         }
+
+        return true;
     },
 
     [Actions.CREATE_SCATTER]:({state, commit, dispatch}, password) => {
@@ -61,7 +63,6 @@ export const actions = {
 
             await Promise.all(PluginRepository.signatureProviders().map(async plugin => {
                 const network = plugin.getEndorsedNetwork();
-                console.log('network', plugin, network);
                 scatter.settings.networks.push(network);
             }));
 

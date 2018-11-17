@@ -16,7 +16,6 @@ class PluginRepositorySingleton {
     }
 
     loadPlugins(){
-        // if(RUNNING_TESTS) return;
         BlockchainsArray.map(({value:blockchain}) => {
             if(RUNNING_TESTS){
                 // scrypt causes tests to fail due to no prebuilds
