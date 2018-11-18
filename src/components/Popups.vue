@@ -6,16 +6,13 @@
             <section v-for="popIn in popIns" style="position:absolute;">
                 <figure class="bg" @click="clickedFader"></figure>
                 <section class="pop-in">
-                    <prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.PROMPT"></prompt>
-                    <text-prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id"></text-prompt>
-                    <selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR"></selector>
-                    <mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC"></mnemonic>
-                    <tx-success v-if="popIn.data.type === popupTypes.TX_SUCCESS"></tx-success>
-                    <buy-sell-ram :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.BUY_SELL_RAM"></buy-sell-ram>
-                    <delegate-resources :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.DELEGATE_RESOURCES"></delegate-resources>
-                    <link-or-create-account :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.LINK_OR_CREATE_ACCOUNT"></link-or-create-account>
-
-                    <vault :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.VAULT"></vault>
+                    <Prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
+                    <TextPrompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id" />
+                    <Selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
+                    <Mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
+                    <TransactionSuccess v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
+                    <BuySellRAM :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.BUY_SELL_RAM" />
+                    <DelegateResources :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.DELEGATE_RESOURCES" />
                 </section>
             </section>
 

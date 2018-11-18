@@ -93,21 +93,27 @@ export default class TRX extends Plugin {
 
 
     async transfer({account, to, amount, promptForSignature = true}){
-        return new Promise(async (resolve, reject) => {
-            const tron = getCachedInstance(account.network());
-            tron.trx.sign = async signargs => {
-                const transaction = { transaction:signargs, participants:[account.publicKey], };
-                const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
-                return promptForSignature
-                    ? await this.passThroughProvider(payload, account, reject)
-                    : await this.signer(payload, account.publicKey);
-            };
+	    return new Promise(async (resolve, reject) => {
+		    const tron = getCachedInstance(account.network());
+		    tron.trx.sign = async signargs => {
+			    const transaction = { transaction:signargs, participants:[account.publicKey], };
+			    const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
+			    return promptForSignature
+				    ? await this.passThroughProvider(payload, account, reject)
+				    : await this.signer(payload, account.publicKey);
+		    };
 
-            const send = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
-            resolve(await tron.trx.sign(send).then(x => x).catch(error => {
-                return {error}
-            }));
-        })
+		    const unsignedTransaction = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
+		    const signed = await tron.trx.sign(unsignedTransaction)
+			    .then(x => ({success:true, result:x}))
+			    .catch(error => ({success:false, result:error}));
+
+		    if(!signed.success) return resolve({error:signed.result});
+		    else {
+			    const sent = await tron.trx.sendRawTransaction(signed.result).then(x => x.result);
+			    resolve(sent ? signed.result : {error:'Failed to send.'});
+		    }
+	    })
     }
 
     async signer(payload, publicKey, arbitrary = false, isHash = false){

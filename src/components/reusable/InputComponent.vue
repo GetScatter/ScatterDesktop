@@ -1,7 +1,10 @@
 <template>
     <section class="input" :class="{'big':big, 'important':red, 'centered':centered}">
 
-        <label v-if="error || label" :class="{'error':error}">{{error ? error : label}}</label>
+        <label v-if="error || label" :class="{'error':error}">
+            <span>{{error ? error : label}}</span>
+            <span v-if="rightText" @click="$emit('right')">{{rightText}}</span>
+        </label>
 
         <input v-if="!textarea" ref="focuser"
                :placeholder="placeholder"
@@ -67,7 +70,8 @@
             'loaderOnDynamic',
             'red',
             'centered',
-            'textarea'
+            'textarea',
+            'rightText',
         ],
         watch:{
             input:function(){ this.emit(); },
@@ -89,12 +93,28 @@
             color:#7899a6;
             font-weight: bold;
             margin-bottom:8px;
-            display: block;
+            display: flex;
+
+            span {
+                flex:2;
+
+                &:nth-child(2) {
+                    flex:1;
+                    cursor: pointer;
+                    text-align:right;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
 
             &.error {
                 color:$red;
                 animation: blink 1s ease infinite;
             }
+
+
         }
 
         .copy, .dynamic-button {

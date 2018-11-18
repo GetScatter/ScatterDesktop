@@ -16,6 +16,7 @@
                 <figure class="option" v-for="item in filteredOptions" v-on:click="select(item)">
                     <img v-if="imgParser" :src="imgParser(item)" />
                     {{parse(item)}}
+                    <span class="subtitle" v-if="subparser">{{subparser(item)}}</span>
                 </figure>
             </section>
         </section>
@@ -25,7 +26,7 @@
 <script>
     let documentListener;
     export default {
-	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'disabled', 'imgParser'],
+	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'subparser', 'disabled', 'imgParser'],
 
         data(){ return {
             optionsTerms:'',
@@ -47,6 +48,7 @@
                 if(this.open) this.open = false;
             },
             toggle(){
+	    		if(this.open) return;
                 this.$nextTick(() => {
 	                if(this.disabled) return false;
 	                this.open = !this.open;
@@ -171,9 +173,15 @@
 
             .option {
                 padding:15px;
-                font-size: 13px;
+                font-size: 16px;
                 background:transparent;
                 word-break: break-all;
+
+                .subtitle {
+                    display:block;
+                    font-size: 9px;
+                    color: $dark-grey;
+                }
 
                 img {
                     width:16px;

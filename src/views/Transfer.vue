@@ -10,6 +10,10 @@
                 <!----------------------->
                 <section class="panel">
                     <h4 class="padded" style="padding-bottom:0;">From</h4>
+
+                    <SearchBar placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                    <br>
+
                     <FlatSelect label="Sending Account" style="padding-top:0;"
                                 :items="senderAccounts"
                                 :selected="account ? account.unique() : null"
@@ -23,13 +27,25 @@
                 <!----------------------->
                 <section class="panel padded" style="flex:1; display:flex; flex-direction: column; overflow:auto;">
                     <h4>Amount</h4>
-                    <cin :placeholder="parseFloat(1).toFixed(token.decimals)" label="Quantity"
-                         big="1" type="number" />
 
+                    <!-- AMOUNT TO SEND -->
+                    <cin :placeholder="parseFloat(1).toFixed(token.decimals)"
+                         :text="amount"
+                         :error="amountError"
+                         v-on:changed="x => amount = x"
+                         label="Amount to Transfer"
+                         big="1" type="number"
+                         :right-text="tokenBalance"
+                         v-on:right="sendAllBalance"
+                         v-on:blur="amount = amount.toString().length ? parseFloat(amount).toFixed(token.decimals) : ''" />
+
+
+                    <!-- TOKEN SELECTOR -->
                     <sel label="Token"
                          :selected="token"
                          :options="[{id:'custom', name:'Custom Token'}].concat(filteredTokens)"
-                         :parser="t => `${t.name}${t.blockchain ? ` - ${blockchainName(t.blockchain)}` : ''}`"
+                         :parser="t => t.name"
+                         :subparser="t => t.id === 'custom' ? null : `${blockchainName(t.blockchain)}${totalBalanceFor(t.id) ? `- ${totalBalanceFor(t.id)}` :''}`"
                          v-on:changed="selectToken" />
                     <br>
 
@@ -40,7 +56,7 @@
                                  :options="customTokenBlockchains"
                                  :parser="blockchain => blockchainName(blockchain.value)"
                                  v-on:changed="selectBlockchain"></sel>
-                            <cin style="flex:1; margin-bottom:0;" :placeholder="contractPlaceholder" label="Contract" />
+                            <cin style="flex:1; margin-bottom:0;" :placeholder="contractPlaceholder" label="Contract" :text="token.contract" v-on:changed="x => token.contract = x" />
                         </section>
                         <br>
                         <section class="split-inputs">
@@ -50,7 +66,7 @@
                         </section>
                     </section>
 
-                    <cin v-if="token.blockchain === Blockchains.EOSIO" label="Memo" textarea="1" />
+                    <cin v-if="token.blockchain === Blockchains.EOSIO" label="Memo" textarea="1" :text="memo" v-on:changed="x => memo = x" />
                 </section>
 
 
@@ -60,16 +76,21 @@
                 <!----------------------->
                 <section class="panel">
                     <h4 class="padded" style="padding-bottom:0;">Recipient</h4>
-                    <section class="panel-switch" v-if="contacts.length">
+                    <section class="panel-switch" v-if="formattedContacts.length">
                         <figure class="button" :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}" @click="recipientState = RECIPIENT_STATES.CONTACT">Send to Contact</figure>
                         <figure class="button" :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}" @click="recipientState = RECIPIENT_STATES.DIRECT">Send Directly</figure>
                     </section>
 
 
                     <!--------- CONTACTS ---------->
-                    <FlatSelect v-if="recipientState === RECIPIENT_STATES.CONTACT"
+
+                    <SearchBar v-if="recipientState === RECIPIENT_STATES.CONTACT"
+                               placeholder="Search Contacts"
+                               v-on:terms="x => searchTermsContacts = x" />
+
+                    <FlatSelect style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.CONTACT"
                                 label="Contacts"
-                                :items="formattedContacts"
+                                :items="filteredContacts"
                                 :selected="recipient"
                                 selected-icon="icon-check"
                                 icon="icon-cancel"
@@ -86,7 +107,8 @@
                              v-on:changed="x => recipient = x" />
 
                         <transition name="slide-right" mode="out-in">
-                            <section class="split-inputs" v-if="recipient.length > 0 && !isAlreadyContact">
+                            recipientError:{{recipientError}}
+                            <section class="split-inputs" v-if="recipient.length > 0 && !isAlreadyContact && !recipientError">
                                 <cin style="flex:1;" placeholder="Contact Name"
                                      :label="`Do you want to add this ${recipientLabel} as a contact?`"
                                      :text="newContactName"
@@ -100,7 +122,7 @@
 
 
             <section class="action-bar short bottom centered">
-                <btn blue="1" text="Send"></btn>
+                <btn :loading="sending" :disabled="!canSend" blue="1" text="Send" v-on:clicked="send"></btn>
             </section>
         </section>
     </section>
@@ -110,8 +132,6 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
 
-    import ResourceService from '../services/ResourceService'
-    import PriceService from '../services/PriceService'
     import PluginRepository from '../plugins/PluginRepository'
     import TransferService from '../services/TransferService'
     import ContactService from '../services/ContactService'
@@ -120,13 +140,12 @@
     import PasswordService from '../services/PasswordService'
     import KeyPairService from '../services/KeyPairService'
     import {Popup} from '../models/popups/Popup';
-    import FlatSelect from "../components/reusable/FlatSelect";
     import Token from "../models/Token";
     import TokenService from "../services/TokenService";
-    import IdGenerator from "../util/IdGenerator";
     import BalanceService from "../services/BalanceService";
 
-    const uniqueToken = x => `${x.account}${x.blockchain}${x.name}${x.symbol}`;
+    import FlatSelect from "../components/reusable/FlatSelect";
+    import SearchBar from "../components/reusable/SearchBar";
 
     const RECIPIENT_STATES = {
     	CONTACT:'contact',
@@ -135,18 +154,20 @@
 
     export default {
 	    components: {
-		    FlatSelect
+		    FlatSelect,
+            SearchBar
         },
 	    data () {return {
 	    	recipientState:RECIPIENT_STATES.DIRECT,
 		    RECIPIENT_STATES,
-            
+
+		    searchTerms:'',
+		    searchTermsContacts:'',
+
 		    Blockchains,
 		    BlockchainsArray,
-            isSimple:false,
             sending:false,
             token:null,
-            showingAll:false,
 
             account:null,
             recipient:'',
@@ -159,15 +180,19 @@
             ...mapState([
                 'scatter',
                 'balances',
-                // 'tokens',
             ]),
             ...mapGetters([
                 'accounts',
                 'contacts',
                 'networks',
                 'tokens',
-                'networkTokens'
+                'networkTokens',
+                'totalBalances'
             ]),
+
+            /**************************/
+            /**   LISTS AND FILTERS  **/
+	        /**************************/
 
             customTokenBlockchains(){
             	if(!this.account) return BlockchainsArray;
@@ -175,14 +200,20 @@
                 	return x.value === this.account.blockchain()
                 })
             },
-
 	        senderAccounts(){
 		        const reducer = accs => accs.reduce((acc,x) => {
 			        if(!acc.find(y => `${y.networkUnique}${y.sendable()}` === `${x.networkUnique}${x.sendable()}`)) acc.push(x);
 			        return acc;
 		        }, []);
 
+		        const terms = this.searchTerms.trim().toLowerCase();
+
 		        return reducer(this.accounts)
+                    .filter(x => {
+                    	return x.blockchain().toLowerCase().match(terms)
+                            || x.sendable().toLowerCase().match(terms)
+                            || x.keypair().name.toLowerCase().match(terms)
+                    })
                     .map(account => ({
                         id:account.unique(),
                         title:account.sendable(),
@@ -190,10 +221,42 @@
                     }))
             },
 	        filteredTokens(){
-            	const allTokens = this.networkTokens.concat(this.tokens);
+		        const standardTokens = this.networkTokens.concat(this.tokens);
+		        const tokensFromBalances = (() => {
+		        	if(!this.account) return [];
+			        const accountBalances = this.balances[this.account.identifiable()];
+			        return accountBalances || [];
+                })();
+            	const allTokens = standardTokens.concat(tokensFromBalances);
 		        if(this.account) return allTokens.filter(x => x.blockchain === this.account.blockchain());
 		        return allTokens;
 	        },
+	        formattedContacts(){
+		        const contacts = this.contacts.filter(x => {
+			        if(!this.account) return false;
+			        return PluginRepository.plugin(this.account.blockchain()).isValidRecipient(x.recipient);
+		        })
+
+		        return contacts.map(x => ({
+			        id:x.recipient,
+			        title:x.name,
+			        description:x.recipient,
+		        }));
+	        },
+	        filteredContacts(){
+		        const terms = this.searchTermsContacts.trim().toLowerCase();
+		        return this.formattedContacts.filter(x => {
+			        return x.id.toLowerCase().match(terms)
+				        || x.title.toLowerCase().match(terms)
+		        })
+	        },
+
+
+
+	        /**************************/
+	        /**         MISC         **/
+	        /**************************/
+
             contractPlaceholder(){
             	return PluginRepository.plugin(this.token.blockchain).contractPlaceholder();
             },
@@ -201,35 +264,37 @@
 	            return PluginRepository.plugin(this.token.blockchain).recipientLabel();
             },
             isValidRecipient(){
-            	return !!TransferService.blockchainFromRecipient(this.recipient);
-            },
-            recipientError(){
-                if(!PluginRepository.plugin(this.token.blockchain).isValidRecipient(this.recipient)) return 'Invalid Recipient';
-                return null;
-            },
-            formattedContacts(){
-                return this.contacts.map(x => ({
-                    id:x.recipient,
-                    title:x.name,
-	                description:x.recipient,
-                }));
+            	return PluginRepository.plugin(this.token.blockchain).isValidRecipient(this.recipient);
             },
 	        isAlreadyContact(){
 		        return this.contacts.find(x => x.recipient.toLowerCase() === this.recipient.toLowerCase())
 	        },
-
-
-
-
-            filteredAccounts(){
-            	const reducer = accs => accs.reduce((acc,x) => {
-		            if(!acc.find(y => `${y.networkUnique}${y.sendable()}` === `${x.networkUnique}${x.sendable()}`)) acc.push(x);
-		            return acc;
-	            }, []);
-                if(this.showingAll) return reducer(this.accounts);
-                return reducer(this.accounts
-                    .filter(x => this.balances.hasOwnProperty(x.unique()) && this.balances[x.unique()].length));
+	        tokenBalance(){
+            	return this.totalBalanceFor(this.token);
+	        },
+            canSend(){
+            	return parseFloat(this.amount) > 0
+                    && this.isValidRecipient
+                    && this.account
+                    && this.token
+                    && !this.sending
             },
+
+
+	        /**************************/
+	        /**        ERRORS        **/
+	        /**************************/
+	        recipientError(){
+		        if(!this.isValidRecipient) return 'Invalid Recipient';
+		        return null;
+	        },
+	        amountError(){
+		        if(parseFloat(this.amount) <= 0) return `Invalid amount, must be greater than 0`;
+		        return null;
+	        },
+
+
+
         },
         mounted(){
             this.token = this.filteredTokens[0];
@@ -239,6 +304,23 @@
 	    		if(this.account) return this.account = null;
 	    	    this.$router.push({name:this.RouteNames.HOME})
             },
+            tokenFromId(id){
+	    	    return this.filteredTokens.find(x => x.id === id);
+            },
+	        totalBalanceFor(token){
+		        if(typeof token === 'string'){
+			        token = this.tokenFromId(token);
+		        }
+
+		        if(!this.account) return null;
+		        if(!token) return null;
+		        const accountBalances = this.balances[this.account.identifiable()];
+		        if(!accountBalances) return null;
+		        const balance = this.balances[this.account.identifiable()].find(x => x.unique() === token.unique());
+		        if(!balance) return null;
+
+		        return `${balance.amount} ${balance.symbol}`;
+	        },
 	        async addToken(){
 	    		const token = new Token(
 				    this.token.blockchain,
@@ -249,14 +331,6 @@
 			    );
 		        if(await TokenService.addToken(token)) this.token = token;
 	        },
-            accountFormatter(account){
-                if(account) return `${account.network().name} - ${account.sendable()}`;
-                else return 'Any account with sufficient balance'
-            },
-            grouper(account){
-                if(account) return account.keypair().name;
-                return 'General'
-            },
             selectBlockchain(blockchain){
 	            this.token.blockchain = blockchain.value;
 	            this.token.decimals = PluginRepository.plugin(this.token.blockchain).defaultDecimals();
@@ -265,19 +339,19 @@
 	    		this.recipient = item.id;
             },
             selectAccount(item){
-	    		if(this.account && item.id === this.account.unique()) this.account = null;
-	    		else {
-				    if(item.id === 'any'){
+	            this.account = this.account && item.id === this.account.unique()
+                    ? null
+                    : this.accounts.find(x => x.unique() === item.id);
 
-				    }
-				    this.account = this.accounts.find(x => x.unique() === item.id);
-				    //
-				    // if(this.token && this.token.blockchain === account.blockchain()) {
-				    //     const hasToken = !!this.filteredTokens.find(x => uniqueToken(x) === uniqueToken(this.token));
-				    //     if(hasToken) return;
-				    // }
+	            if(!this.account || this.token.blockchain !== this.account.blockchain()){
+		            this.token = this.filteredTokens[0];
                 }
-                this.token = this.filteredTokens[0];
+
+	            if(this.account && this.formattedContacts.length){
+		            this.recipientState = RECIPIENT_STATES.CONTACT;
+	            } else {
+		            this.recipientState = RECIPIENT_STATES.DIRECT;
+                }
             },
             selectToken(token){
 	    		this.token = token.id === 'custom' ? Token.fromJson({id:token.id, name:token.name, blockchain:this.account ? this.account.blockchain() : Blockchains.EOSIO}) : token;
@@ -294,85 +368,44 @@
                 await ContactService.remove(contact);
                 if(!this.contacts.length) this.recipientState = RECIPIENT_STATES.DIRECT;
             },
-            availableBalance(token){
-                if(!this.account) return PriceService.tokensFor(token).reduce((acc, x) => acc += parseFloat(x.balance), 0);
-                const bal = this.balances[this.account.unique()].find(x => x.symbol === token.symbol);
-                return bal ? bal.balance : 0;
-            },
 
-            /***
-             * Returns an account if pre-selected,
-             * If not then gets any account based on tokens needed or null if none found with
-             * sufficient value/token balance.
-             * @param tokensToSend
-             * @returns {*}
-             */
-            sendingAccount(tokensToSend){
-                if(this.account) return this.account;
-
-                let blockchain;
-                if(this.isSimple) {
-                    blockchain = TransferService.blockchainFromRecipient(this.recipient);
-                    if (!blockchain) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "attention-circled", "Okay"));
-                } else {
-                    blockchain = this.token.blockchain;
-                }
-
-                const plugin = PluginRepository.plugin(blockchain);
-                if(this.isSimple) this.token = plugin.defaultToken();
-
-                let account;
-                this.accounts.filter(x => x.blockchain() === blockchain).map(acc => {
-                    if(account) return;
-                    const balance = this.balances.hasOwnProperty(acc.unique()) ? this.balances[acc.unique()].find(x => x.symbol === this.token.symbol) : null;
-                    if(balance && parseFloat(balance.balance) > tokensToSend) account = acc;
-                })
-
-                return account;
+	        sendAllBalance(){
+	    		this.amount = parseFloat(this.tokenBalance.split(' ')[0]).toFixed(this.token.decimals);
             },
 
 
-            async switchSimple(){
-                if(this.amount > 0) {
-                    this.amount = this.isSimple ? await PriceService.valueToTokens(this.token, this.amount) : await PriceService.tokensToValue(this.token, this.amount);
-                }
-                this.isSimple = !this.isSimple;
-            },
 
             async send(){
-                if(this.sending) return false;
-                if(parseFloat(this.amount) <= 0) return PopupService.push(Popup.prompt("Invalid Amount", "You must send an amount greater than 0", "attention-circled", "Okay"));
-                if(!this.recipient.trim().length) return PopupService.push(Popup.prompt("Invalid Recipient", "You must enter a valid recipient", "attention-circled", "Okay"));
+	            const reset = () => this.sending = false;
 
-                const tokensToSend = this.isSimple ? await PriceService.valueToTokens(this.token, this.amount) : this.amount;
-                if(parseFloat(tokensToSend) <= 0) return PopupService.push(Popup.prompt("Could not calculate tokens from value.",
-                    "Scatter most likely couldn't fetch the token price from the server due to rate limiting or congestion. Please try again later.", "attention-circled", "Okay"));
+	    		if(!this.canSend) return;
+	    		this.sending = true;
 
-                const account = this.sendingAccount(tokensToSend);
-                if(!account) return PopupService.push(Popup.prompt("Overspending balance.", "You don't have any account that has enough balance to make this transfer in it's base token.", "attention-circled", "Okay"));
+	            if(!await PasswordService.verifyPIN()) return reset();
 
-                if(!await PasswordService.verifyPIN()) return;
-
-                if(KeyPairService.isHardware(account.publicKey)){
-                    const canConnect = await account.keypair().external.interface.canConnect();
+                if(KeyPairService.isHardware(this.account.publicKey)){
+                    const canConnect = await this.account.keypair().external.interface.canConnect();
                     if(canConnect !== true){
                         PopupService.push(Popup.prompt('Hardware Error', canConnect, 'attention', 'Cancel'))
-                        account.keypair().resetExternal();
-                        return;
+	                    this.account.keypair().resetExternal();
+                        return reset();
                     }
                 }
 
-                this.sending = true;
-                const sent = await TransferService[account.blockchain()]({
-                    account,
+
+                const sent = await TransferService[this.account.blockchain()]({
+                    account:this.account,
                     recipient:this.recipient,
-                    amount:tokensToSend,
+                    amount:this.amount,
                     memo:this.memo,
                     token:this.token,
                 }).catch(() => false);
-                this.sending = false;
 
-                if(sent) await BalanceService.loadBalancesFor(account);
+                reset();
+                if(sent) {
+                	await BalanceService.loadBalancesFor(this.account);
+                	this.account = null;
+                }
 
             },
 
@@ -390,6 +423,9 @@
             },
             ['token.decimals'](){
             	if(this.token.decimals > 20) this.token.decimals = 20;
+            },
+            ['token'](){
+            	this.amount = '';
             }
         }
     }

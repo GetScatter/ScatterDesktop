@@ -5,6 +5,13 @@ div, figure, section, nav, article, input, textarea {
   font-family: 'Raleway', sans-serif;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 html, body {
   height:100%;
 }
