@@ -2,10 +2,12 @@ import {store} from '../store/store';
 import * as Actions from '../store/constants';
 import PopupService from "./PopupService";
 import {Popup} from "../models/popups/Popup";
+import PriceService from "./PriceService";
 
 const filterOutToken = (scatter, token) => {
 	scatter.settings.tokens = scatter.settings.tokens.filter(x => x.unique() !== token.unique());
 	scatter.settings.blacklistTokens = scatter.settings.blacklistTokens.filter(x => x.unique() !== token.unique());
+	if(scatter.settings.displayToken === token.unique()) scatter.settings.displayToken = null;
 }
 
 export default class TokenService {
@@ -17,7 +19,7 @@ export default class TokenService {
 	    if(store.getters.networkTokens.find(x => x.unique() === token.unique())) return true;
 
         if(!token.symbol.length) return PopupService.push(Popup.prompt('Token Symbol Error', 'You must add a token symbol.', 'attention', 'Okay'));
-        if(!token.contract.length) return PopupService.push(Popup.prompt('Token Contract Error', 'You must add a token contract.', 'attention', 'Okay'));
+        if(token.needsContract() && !token.contract.length) return PopupService.push(Popup.prompt('Token Contract Error', 'You must add a token contract.', 'attention', 'Okay'));
 
         if(!blacklist && scatter.settings.tokens.find(x => x.unique() === token.unique()))
             return PopupService.push(Popup.prompt('Token Exists', 'This token already exists in your added tokens.', 'attention', 'Okay'));
@@ -51,5 +53,13 @@ export default class TokenService {
 		    store.dispatch(Actions.SET_SCATTER, scatter);
         }, 'No'))
     }
+
+	static async toggleDisplayToken(token){
+		const scatter = store.state.scatter.clone();
+		scatter.settings.displayToken = token;
+
+		// await PriceService.watchPrices(!!token);
+		return store.dispatch(Actions.SET_SCATTER, scatter);
+	}
 
 }

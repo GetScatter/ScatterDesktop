@@ -51,6 +51,7 @@ const RoutePaths = {
 	[RouteNames.HOME]: '/',
 	[RouteNames.KEYPAIR]: '/keypair/:id',
 	[RouteNames.PERMISSION]: '/permission/:origin',
+	[RouteNames.SETTINGS]: '/settings/:panel',
 };
 
 export class Routing {

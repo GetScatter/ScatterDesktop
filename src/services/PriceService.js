@@ -70,12 +70,4 @@ export default class PriceService {
         return accountBalances;
     }
 
-    static async toggleDisplayToken(token){
-        const scatter = store.state.scatter.clone();
-        if(!scatter.settings.displayToken) scatter.settings.displayToken = token;
-        else scatter.settings.displayToken = scatter.settings.displayToken.symbol !== token.symbol ? token : null;
-        await this.watchPrices(!!token);
-        return store.dispatch(Actions.SET_SCATTER, scatter);
-    }
-
 }

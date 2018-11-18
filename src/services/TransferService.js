@@ -45,8 +45,7 @@ export default class TransferService {
                 account,
                 to:recipient,
                 amount,
-                contract:token.contract,
-                symbol:token.symbol,
+                token,
                 memo
             }).catch(x => x);
 

@@ -3678,17 +3678,17 @@ ethers@4.0.0-beta.1:
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-ethers@^3.0.27:
-  version "3.0.29"
-  resolved "https://registry.yarnpkg.com/ethers/-/ethers-3.0.29.tgz#ce8139955b4ed44456eb6764b089bb117c86775d"
+ethers@^4.0.7:
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.12.tgz#290f4a5a9711feb4c573edbd991ceb6bc5cec39b"
   dependencies:
+    "@types/node" "^10.3.2"
     aes-js "3.0.0"
     bn.js "^4.4.0"
     elliptic "6.3.3"
-    hash.js "^1.0.0"
-    inherits "2.0.1"
+    hash.js "1.1.3"
     js-sha3 "0.5.7"
-    scrypt-js "2.0.3"
+    scrypt-js "2.0.4"
     setimmediate "1.0.4"
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
@@ -8486,6 +8486,10 @@ scrypt-js@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/scrypt-js/-/scrypt-js-2.0.3.tgz#bb0040be03043da9a012a2cea9fc9f852cfc87d4"
 
+scrypt-js@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/scrypt-js/-/scrypt-js-2.0.4.tgz#32f8c5149f0797672e551c07e230f834b6af5f16"
+
 scrypt.js@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/scrypt.js/-/scrypt.js-0.2.0.tgz#af8d1465b71e9990110bedfc593b9479e03a8ada"
@@ -9574,16 +9578,16 @@ trim@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/trim/-/trim-0.0.1.tgz#5858547f6b290757ee95cccc666fb50084c460dd"
 
-tronweb@^2.0.21:
-  version "2.0.24"
-  resolved "https://registry.yarnpkg.com/tronweb/-/tronweb-2.0.24.tgz#a52e5b9783b54755218fb0de8b2bd33c2acd5c12"
+tronweb@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/tronweb/-/tronweb-2.1.4.tgz#15f0fe309a302229b68bb5fb7bfa70ec6f17a554"
   dependencies:
     "@babel/runtime" "^7.0.0"
     axios "^0.18.0"
     babel-runtime "^6.26.0"
     bignumber.js "^7.2.1"
     elliptic "^6.4.1"
-    ethers "^3.0.27"
+    ethers "^4.0.7"
     eventemitter3 "^3.1.0"
     js-sha3 "^0.8.0"
     jssha "^2.3.1"

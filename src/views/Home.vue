@@ -4,11 +4,11 @@
         <section class="full-panel home" v-if="keypairs.length">
             <section class="action-bar short">
                 <section>
-                    <section class="total-balance">
+                    <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" class="total-balance">
                         <figure class="symbol">{{balance.symbol}}</figure>
                         <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
                         <figure class="chevron icon-right-open-big"></figure>
-                    </section>
+                    </router-link>
                     <!--<i class="icon-network"></i>-->
                     <!--<btn text="Exchange"></btn>-->
                 </section>
@@ -80,7 +80,12 @@
             	const totals = this.totalBalances.totals;
 
             	if(this.displayToken){
-            		return totals[this.displayToken.unique()]
+            		if(totals.hasOwnProperty(this.displayToken)) return totals[this.displayToken]
+                    else {
+                    	const token = Token.fromUnique(this.displayToken);
+                    	token.amount = parseFloat(0).toFixed(token.decimals);
+                    	return token;
+                    }
                 } else {
             		let total = 0;
             		Object.keys(this.prices).map(blockchain => {

@@ -51,12 +51,12 @@
 
                     <section class="custom-token" v-if="token.id === 'custom'">
                         <section class="split-inputs">
-                            <sel style="flex:1; margin-left:0;" label="Blockchain"
-                                 :selected="{value:token.blockchain}"
-                                 :options="customTokenBlockchains"
-                                 :parser="blockchain => blockchainName(blockchain.value)"
-                                 v-on:changed="selectBlockchain"></sel>
-                            <cin style="flex:1; margin-bottom:0;" :placeholder="contractPlaceholder" label="Contract" :text="token.contract" v-on:changed="x => token.contract = x" />
+                            <cin style="flex:1; margin-bottom:0;"
+                                 :placeholder="contractPlaceholder"
+                                 v-if="token.needsContract()"
+                                 label="Contract"
+                                 :text="token.contract"
+                                 v-on:changed="x => token.contract = x" />
                         </section>
                         <br>
                         <section class="split-inputs">

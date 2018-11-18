@@ -66,6 +66,8 @@
     import PopupService from '../services/PopupService'
     import PasswordService from '../services/PasswordService'
 
+    import {SETTINGS_OPTIONS} from '../models/Settings';
+
     import SettingsGeneral from '../components/panels/settings/SettingsGeneral.vue'
     import SettingsLanguage from '../components/panels/settings/SettingsLanguage.vue'
     import SettingsTokens from '../components/panels/settings/SettingsTokens.vue'
@@ -76,17 +78,7 @@
     import SettingsPassword from '../components/panels/settings/SettingsPassword.vue'
     import SettingsPIN from '../components/panels/settings/SettingsPIN.vue'
 
-    const SettingsOptions = {
-        GENERAL:{ locked:false, name:'General' },
-        LANGUAGE:{ locked:false, name:'Language' },
-        TOKENS:{ locked:false, name:'Tokens' },
-        EXPLORER:{ locked:false, name:'Explorers' },
-        PIN:{ locked:true, name:'PIN' },
-        NETWORKS:{ locked:true, name:'Networks' },
-        PASSWORD:{ locked:true, name:'Password' },
-        BACKUP:{ locked:true, name:'Backup' },
-        DESTROY:{ locked:true, name:'Destroy' },
-    };
+
 
     export default {
     	components:{
@@ -101,7 +93,7 @@
             SettingsPIN,
         },
 	    data () {return {
-            settingsOptions:SettingsOptions,
+            settingsOptions:SETTINGS_OPTIONS,
             selectedOption:null,
             unlocked:false,
         }},
@@ -114,24 +106,24 @@
             ]),
 	        generalItems(){
             	return [
-		            SettingsOptions.GENERAL,
-		            SettingsOptions.LANGUAGE,
-		            SettingsOptions.TOKENS,
-		            SettingsOptions.EXPLORER,
+		            SETTINGS_OPTIONS.GENERAL,
+		            SETTINGS_OPTIONS.LANGUAGE,
+		            SETTINGS_OPTIONS.TOKENS,
+		            SETTINGS_OPTIONS.EXPLORER,
                 ]
             },
 	        lockedItems(){
             	return [
-		            SettingsOptions.PIN,
-		            SettingsOptions.NETWORKS,
-		            SettingsOptions.PASSWORD,
-		            SettingsOptions.BACKUP,
-		            SettingsOptions.DESTROY,
+		            SETTINGS_OPTIONS.PIN,
+		            SETTINGS_OPTIONS.NETWORKS,
+		            SETTINGS_OPTIONS.PASSWORD,
+		            SETTINGS_OPTIONS.BACKUP,
+		            SETTINGS_OPTIONS.DESTROY,
                 ]
             }
         },
         mounted(){
-            this.selectedOption = SettingsOptions.GENERAL;
+    		this.selectedOption = this.$route.params.panel;
         },
         methods: {
 	        back(){

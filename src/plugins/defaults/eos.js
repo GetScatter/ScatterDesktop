@@ -491,7 +491,8 @@ export default class EOS extends Plugin {
 		})
 	}
 
-	async transfer({account, to, amount, contract, symbol, memo, promptForSignature = true}){
+	async transfer({account, to, amount, token, memo, promptForSignature = true}){
+		const {contract, symbol} = token;
 		return new Promise(async (resolve, reject) => {
 			const signProvider = promptForSignature
 				? payload => this.passThroughProvider(payload, account, reject)

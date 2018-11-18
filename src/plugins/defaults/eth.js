@@ -133,7 +133,8 @@ export default class ETH extends Plugin {
     }
 
 
-    async transfer({account, to, amount, contract, symbol, promptForSignature = true}){
+    async transfer({account, to, amount, token, promptForSignature = true}){
+	    const {contract, symbol} = token;
         return new Promise(async (resolve, reject) => {
             const wallet = new ScatterEthereumWallet(account, async (transaction, callback) => {
                 const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };

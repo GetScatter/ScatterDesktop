@@ -16,6 +16,8 @@ const ethUtil = require('ethereumjs-util');
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 import Token from "../../models/Token";
 
+const tron20abi = require('../../data/abis/erc20');
+
 let cachedInstances = {};
 const getCachedInstance = network => {
     if(cachedInstances.hasOwnProperty(network.unique())) return cachedInstances[network.unique()];
@@ -72,12 +74,52 @@ export default class TRX extends Plugin {
 
 
     async balanceFor(account, token){
-        const tron = getCachedInstance(account.network());
-        const balance = await tron.trx.getBalance(account.publicKey);
-        return tron.toBigNumber(balance).div(1000000).toFixed(6).toString(10);
+        console.log('getting tron balance', account, token);
+	    const tron = getCachedInstance(account.network());
+	    const clone = token.clone();
+        if(token.unique() === this.defaultToken().unique()){
+	        const bal = await tron.trx.getBalance(account.publicKey);
+	        clone.amount = tron.toBigNumber(bal).div(1000000).toFixed(6).toString(10);
+
+        } else {
+        	// console.log('c', token.contract, account.sendable())
+	        // const contract = await tron.contract().at(token.contract);
+	        // console.log('contract', contract);
+	        // const bal = await contract.balanceOf('TF2quv1hTipcZ8FJ8FRsXXLSiJ1C15dqkW').call();
+	        // console.log('bal', bal);
+	        console.log('hi', await tron.trx.getAccount("TF2quv1hTipcZ8FJ8FRsXXLSiJ1C15dqkW"))
+	        console.log('hi', await tron.trx.getTokenFromID("BitMain"))
+        }
+
+        return clone;
     }
 
-	async balancesFor(account, tokens){}
+	async balancesFor(account, tokens){
+		const tron = getCachedInstance(account.network());
+		const formatBalance = n => tron.toBigNumber(n).div(1000000).toFixed(6).toString(10);
+
+		const trxBalance = await tron.trx.getBalance(account.publicKey);
+		const trx = this.defaultToken();
+		trx.amount = formatBalance(trxBalance);
+
+		const {asset} = await tron.trx.getAccount(account.sendable()).catch(() => ({asset:[]}));
+		if(!asset) return [trx];
+		const altTokens = asset.map(({key:symbol, value}) => {
+			return Token.fromJson({
+				blockchain:Blockchains.TRX,
+				contract:'',
+				symbol,
+				name:symbol,
+				decimals:this.defaultDecimals(),
+				amount:formatBalance(value),
+			})
+		});
+
+		return [trx].concat(altTokens);
+        // return Promise.all(tokens.map(token => {
+        //     return this.balanceFor(account, token);
+        // }))
+    }
 
     defaultDecimals(){ return 6; }
     defaultToken(){ return new Token(Blockchains.TRX, 'trx', 'TRX', 'TRX', this.defaultDecimals()) }
@@ -92,9 +134,11 @@ export default class TRX extends Plugin {
     }
 
 
-    async transfer({account, to, amount, promptForSignature = true}){
+    async transfer({account, to, amount, token, promptForSignature = true}){
+	    const {symbol} = token;
 	    return new Promise(async (resolve, reject) => {
 		    const tron = getCachedInstance(account.network());
+
 		    tron.trx.sign = async signargs => {
 			    const transaction = { transaction:signargs, participants:[account.publicKey], };
 			    const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
@@ -103,15 +147,27 @@ export default class TRX extends Plugin {
 				    : await this.signer(payload, account.publicKey);
 		    };
 
-		    const unsignedTransaction = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
-		    const signed = await tron.trx.sign(unsignedTransaction)
-			    .then(x => ({success:true, result:x}))
-			    .catch(error => ({success:false, result:error}));
+		    let unsignedTransaction;
 
-		    if(!signed.success) return resolve({error:signed.result});
+		    // SENDING TRX
+		    if(token.unique() === this.defaultToken().unique()) {
+			    unsignedTransaction = await tron.transactionBuilder.sendTrx(to, amount, account.publicKey);
+		    }
+
+		    // SENDING ALT TOKEN
+		    else {
+			    tron.setAddress(account.sendable());
+			    unsignedTransaction = await tron.transactionBuilder.sendToken(to, amount, symbol);
+		    }
+
+		    const signed = await tron.trx.sign(unsignedTransaction)
+			    .then(x => ({success: true, result: x}))
+			    .catch(error => ({success: false, result: error}));
+
+		    if (!signed.success) return resolve({error: signed.result});
 		    else {
 			    const sent = await tron.trx.sendRawTransaction(signed.result).then(x => x.result);
-			    resolve(sent ? signed.result : {error:'Failed to send.'});
+			    resolve(sent ? signed.result : {error: 'Failed to send.'});
 		    }
 	    })
     }

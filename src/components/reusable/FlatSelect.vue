@@ -22,7 +22,7 @@
 <script>
 
 	export default {
-		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable', 'red']
+		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable']
 	}
 
 </script>

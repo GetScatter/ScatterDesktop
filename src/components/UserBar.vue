@@ -8,9 +8,9 @@
         </section>
 
         <section class="actions">
-            <figure class="action" @click="goToSettings">
+            <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.GENERAL}}" class="action">
                 <i class="icon-cog-1"></i>
-            </figure>
+            </router-link>
 
             <!--<figure class="action">-->
                 <!--<i class="icon-arrows-ccw"></i>-->

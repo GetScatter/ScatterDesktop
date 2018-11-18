@@ -126,7 +126,7 @@
     "sinon": "^4.0.0",
     "sinon-chai": "^2.8.0",
     "spectron": "^5.0.0",
-    "tronweb": "^2.0.21",
+    "tronweb": "^2.1.4",
     "typeface-grand-hotel": "0.0.54",
     "typeface-roboto": "0.0.54",
     "uglifyjs-webpack-plugin": "^1.3.0",

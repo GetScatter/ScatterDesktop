@@ -3,7 +3,7 @@
 
         <section class="panel-switch">
             <figure class="button" :class="{'active':state === STATES.ADD_TOKEN}" @click="state = STATES.ADD_TOKEN">Add Token</figure>
-            <figure class="button" :class="{'active':state === STATES.WHITELIST}" @click="state = STATES.WHITELIST">Added Tokens</figure>
+            <figure class="button" :class="{'active':state === STATES.WHITELIST}" @click="state = STATES.WHITELIST">Tokens</figure>
             <figure class="button" :class="{'active':state === STATES.BLACKLIST}" @click="state = STATES.BLACKLIST">Filtered</figure>
             <figure class="button" :class="{'active':state === STATES.SETTINGS}" @click="state = STATES.SETTINGS">Settings</figure>
         </section>
@@ -11,15 +11,20 @@
 
         <section v-if="state === STATES.ADD_TOKEN">
 
+            <section class="disclaimer less-pad">
+                Adding tokens will allow you to send them and fetch their balances.
+            </section>
+
             <cin placeholder="Name this token or leave empty to use it's symbol." label="Token Name" :text="newToken.name" v-on:changed="x => newToken.name = x" />
             <section class="split-inputs">
                 <sel style="flex:1; margin-left:0;" label="Blockchain"
                      :selected="{value:newToken.blockchain}"
                      :options="blockchains"
                      :parser="x => blockchainName(x.value)"
-                     v-on:changed="x => newToken.blockchain = x" />
+                     v-on:changed="x => newToken.blockchain = x.value" />
 
                 <cin style="flex:1; margin-bottom:0;"
+                     v-if="newToken.needsContract()"
                      :placeholder="contractPlaceholder"
                      label="Contract"
                      :text="newToken.contract"
@@ -49,40 +54,61 @@
 
         <section v-if="state === STATES.WHITELIST || state === STATES.BLACKLIST">
 
-            <section class="disclaimer less-pad" v-if="state === STATES.WHITELIST">
-                Added tokens will allow you to send them and fetch their balances.
-                <p>You cannot remove system tokens for your networks.</p>
-            </section>
-
-            <section class="disclaimer less-pad" v-if="state === STATES.BLACKLIST">
-                Filtered tokens will not be displayed.
-                <p>You cannot filter out system tokens for your networks.</p>
-            </section>
-
             <sel style="flex:2;" label="Filter Tokens by Blockchain"
                  :selected="blockchainName(blockchain)"
                  :options="[null].concat(blockchains)"
-                 :parser="x => x ? blockchainName(x.value) : 'No Blockchain filter'"
+                 :parser="x => x ? blockchainName(x.value) : 'No Blockchain Filter'"
                  v-on:changed="x => blockchain = x ? x.value : null" />
 
-            <br><br>
-            <label>Tokens List</label>
-            <FlatSelect style="padding:0;"
-                        v-if="state === STATES.WHITELIST"
-                        unselectable="1"
-                        :items="networkTokensList" />
+            <br>
+            <section v-if="state === STATES.WHITELIST">
+                <section class="disclaimer less-pad">
+                    <p>Select any token to make it your main display type.</p>
+                </section>
 
-            <FlatSelect style="padding:10px 0 20px 0;"
-                        v-if="state === STATES.WHITELIST"
-                        :items="tokensList"
-                        icon="icon-cancel"
-                        v-on:action="removeToken" />
+                <section v-if="blockchain === null">
+                    <FlatSelect style="padding:0;"
+                                :selected="selectedDisplayToken"
+                                label="Fiat Currencies"
+                                v-on:selected="selectDisplayToken"
+                                :items="currencyList" />
+                    <br>
+                    <br>
+                </section>
 
-            <FlatSelect style="padding:0 0 20px 0;"
-                        v-if="state === STATES.BLACKLIST"
-                        :items="blacklistTokensList"
-                        icon="icon-cancel"
-                        v-on:action="removeToken" />
+                <section v-if="networkTokensList.length">
+                    <FlatSelect style="padding:0;"
+                                label="System Tokens"
+                                :selected="selectedDisplayToken"
+                                v-on:selected="selectDisplayToken"
+                                :items="networkTokensList" />
+                    <br>
+                    <br>
+                </section>
+
+                <FlatSelect style="padding:0;" label="Custom Tokens"
+                            :items="tokensList"
+                            icon="icon-cancel"
+                            v-if="tokensList.length"
+                            :selected="selectedDisplayToken"
+                            v-on:selected="selectDisplayToken"
+                            v-on:action="removeToken" />
+            </section>
+
+            <section v-if="state === STATES.BLACKLIST">
+
+                <section class="disclaimer less-pad">
+                    Filtered tokens will not be displayed.
+                    <p>You cannot filter out system tokens for your networks.</p>
+                </section>
+
+                <FlatSelect style="padding:0 0 20px 0;"
+                            :items="blacklistTokensList"
+                            icon="icon-cancel"
+                            v-on:action="removeToken" />
+            </section>
+
+
         </section>
 
     </section>
@@ -99,7 +125,7 @@
     import TokenService from "../../../services/TokenService";
 
     const formatter = list => list.map(x => ({
-	    id:x.id,
+	    id:x.unique(),
 	    title:`${x.name} (${x.symbol})`,
 	    description:this.blockchain ? null : blockchainName(x.blockchain)
     }));
@@ -123,6 +149,8 @@
 	        blockchains:BlockchainsArray,
             newToken:Token.placeholder(),
             addingToken:false,
+
+            searchTerms:'',
         }},
         computed:{
             ...mapState([
@@ -134,7 +162,14 @@
                 'networkTokens',
                 'blacklistTokens',
                 'mainnetTokensOnly',
+                'displayToken',
             ]),
+            selectedDisplayToken(){
+                if(!this.displayToken) return 'fiat';
+                return this.displayToken;
+            },
+
+
 	        contractPlaceholder(){
 		        return PluginRepository.plugin(this.newToken.blockchain).contractPlaceholder();
 	        },
@@ -142,6 +177,13 @@
 	            if(!this.blockchain) return formatter(this.blacklistTokens);
 	            return formatter(this.blacklistTokens
 		            .filter(x => x.blockchain === this.blockchain))
+            },
+            currencyList(){
+            	return [{
+		            id:'fiat',
+		            title:'USD',
+                    description:'Display total balance in USD'
+                }];
             },
             networkTokensList(){
 	            if(!this.blockchain) return formatter(this.networkTokens);
@@ -152,17 +194,21 @@
             	if(!this.blockchain) return formatter(this.tokens);
                 return formatter(this.tokens
                     .filter(x => x.blockchain === this.blockchain))
-
             }
         },
         methods:{
+	        selectDisplayToken(token){
+	        	if(!token.id) return TokenService.toggleDisplayToken(null);
+	        	TokenService.toggleDisplayToken(token.id);
+            },
     		async addToken(blacklist = false){
+	        	this.newToken.contract = this.newToken.contract.trim();
     			if(await TokenService.addToken(this.newToken, blacklist)){
     				this.state = blacklist ? STATES.BLACKLIST : STATES.WHITELIST;
                 }
             },
     		async removeToken(item){
-    			const token = this.tokens.concat(this.networkTokens).concat(this.blacklistTokens).find(x => x.id === item.id);
+    			const token = this.tokens.concat(this.networkTokens).concat(this.blacklistTokens).find(x => x.unique() === item.id);
 			    await TokenService.removeToken(token);
             },
             async toggleMainnetsOnly(){
@@ -174,12 +220,16 @@
             ...mapActions([
             	Actions.SET_SCATTER
             ])
+        },
+        watch:{
+    		['newToken.blockchain'](){
+    			this.newToken.decimals = PluginRepository.plugin(this.newToken.blockchain).defaultDecimals();
+            }
         }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../variables";
-
 
 </style>

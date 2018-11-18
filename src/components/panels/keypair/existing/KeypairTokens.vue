@@ -70,7 +70,6 @@
 				return this.account.network().systemToken();
 			},
 			accountBalances(){
-				console.log('balances', this.balances);
 				if(!this.balances.hasOwnProperty(this.account.identifiable())) return [];
 				return this.balances[this.account.identifiable()];
 			},
@@ -105,6 +104,12 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../../../_variables";
 
+	.panel-container {
+		display: flex;
+		flex-direction: column;
+		height: calc(100vh - 170px);
+	}
+
 	.search {
 		margin-left:-30px;
 	}
@@ -122,6 +127,11 @@
 	}
 
 	.tokens-list {
+		margin-left: -70px;
+		margin-right: -70px;
+		padding: 0 70px;
+		flex: 1;
+		overflow: auto;
 		border-top:1px solid #f4f4f4;
 
 

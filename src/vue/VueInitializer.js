@@ -9,6 +9,7 @@ import {RouteNames, Routing} from './Routing';
 import {store} from '../store/store'
 import * as Actions from '../store/constants'
 import {blockchainName} from '../models/Blockchains'
+import {SETTINGS_OPTIONS} from '../models/Settings'
 import {localized} from '../localization/locales'
 import LANG_KEYS from '../localization/keys'
 import ElectronHelpers from '../util/ElectronHelpers'
@@ -36,6 +37,7 @@ export default class VueInitializer {
             Vue.mixin({
                 data(){ return {
 	                RouteNames,
+	                SETTINGS_OPTIONS,
                     langKeys:LANG_KEYS,
                     now:0,
                 }},
