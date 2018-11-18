@@ -14,10 +14,10 @@ export default class NetworkService {
         const networks = scatter.settings.networks;
         if(networks.find(x => x.id === network.id)) return;
         
-        if(!network.name.length) return false;
-        if(!network.host.length) return false;
-        if(!network.port) return false;
-        if(!network.chainId) return false;
+        if(!network.name.length) return PopupService.push(Popup.snackbar("Network must have a name", "attention-circled"));
+        if(!network.host.length) return PopupService.push(Popup.snackbar("Network must have a host", "attention-circled"));
+        if(!network.port) return PopupService.push(Popup.snackbar("Network must have a valid port", "attention-circled"));
+        if(!network.chainId) return PopupService.push(Popup.snackbar("Network must have a chain id", "attention-circled"));
 
         network.setPort();
 
@@ -25,16 +25,14 @@ export default class NetworkService {
             return PopupService.push(Popup.snackbar("A network with this chain id already exists", "attention-circled"));
 
         if(networks.find(x => x.name.toLowerCase() === network.name.toLowerCase()))
-            return PopupService.push(Popup.textPrompt("Name Exists", 'Enter a different name for this network', 'attention', 'Okay', {placeholder:'Network Name'}, name => {
-                if(!name) return false;
-                network.name = name;
-                return this.addNetwork(network);
-            }));
+	        return PopupService.push(Popup.snackbar("A network with this name already exists", "attention-circled"));
 
         scatter.settings.updateOrPushNetwork(network);
         await store.dispatch(Actions.SET_SCATTER, scatter);
         await AccountService.importAllAccountsForNetwork(network);
+        BalanceService.loadAllBalances();
         PopupService.push(Popup.snackbar("Network Saved!", "check"));
+        return true;
     }
 
     static async removeNetwork(network){

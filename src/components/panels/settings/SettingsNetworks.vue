@@ -49,6 +49,7 @@
                      :text="network.chainId"
                      :dynamic-button="!isNew ? null : 'icon-globe-1'"
                      dynamic-tooltip="Fetch Chain ID"
+                     :copy="!isNew"
                      v-on:dynamic="fetchChainId"
                      v-on:changed="changed => bind(changed, 'network.chainId')" />
 

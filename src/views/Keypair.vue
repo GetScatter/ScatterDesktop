@@ -25,6 +25,7 @@
     import ResourceService from "../services/ResourceService";
     import PasswordService from "../services/PasswordService";
     import BalanceService from "../services/BalanceService";
+    import Process from "../models/Process";
 
     const STATES = {
     	DASHBOARD:'dash',
@@ -39,7 +40,6 @@
 
         	buttons:[],
 	        keypair:null,
-            destroying:false,
 
 	        tokenAccount:null,
         }},
@@ -66,10 +66,6 @@
 		    this.lazyLoadResources();
 	    },
 
-        destroyed(){
-        	this.destroying = true;
-        },
-
         computed:{
             ...mapState([
                 'scatter',
@@ -88,14 +84,25 @@
 	            this.$router.push({name:this.RouteNames.HOME});
             },
 	        async lazyLoadResources(){
+	        	const processKey = `resources:${this.keypair.unique()}`;
+		        if(Process.isProcessRunning(processKey)) return;
+
 		        const accounts = this.keypair.accounts(true)
                     .filter(x => ResourceService.usesResources(x));
 
-		        for(let i = 0; i < accounts.length; i++){
-		        	if(this.destroying) return;
-			        const resources = await ResourceService.getResourcesFor(accounts[i]);
-			        this[Actions.ADD_RESOURCES]({acc:accounts[i].identifiable(), res:resources});
-		        }
+		        if(accounts.length){
+		        	const process = Process.loadResources(processKey);
+
+			        for(let i = 0; i < accounts.length; i++){
+				        process.updateProgress(90 / accounts.length);
+				        process.subTitle = `Accounts left: ${accounts.length - i}`;
+				        const resources = await ResourceService.getResourcesFor(accounts[i]);
+				        this[Actions.ADD_RESOURCES]({acc:accounts[i].identifiable(), res:resources});
+			        }
+
+			        process.updateProgress(100);
+                }
+
 	        },
 
 

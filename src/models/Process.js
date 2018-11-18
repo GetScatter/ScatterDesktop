@@ -4,7 +4,7 @@ import * as Actions from '../store/constants';
 
 export const PROCESS_TYPES = {
 	IMPORT_ACCOUNTS:'import_accounts',
-	LOAD_TOKENS:'load_tokens',
+	LOAD_RESOURCES:'load_resources',
 };
 
 export default class Process {
@@ -54,8 +54,8 @@ export default class Process {
 		return process;
 	}
 
-	static loadTokens(identifier){
-		let process = new Process(PROCESS_TYPES.LOAD_TOKENS, `Loading Tokens and Balances`, identifier)
+	static loadResources(identifier){
+		let process = new Process(PROCESS_TYPES.LOAD_RESOURCES, `Loading Account Resources`, identifier)
 		store.dispatch(Actions.SET_PROCESS, process);
 		return process;
 	}

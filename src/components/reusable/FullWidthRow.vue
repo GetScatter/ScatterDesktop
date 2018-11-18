@@ -2,7 +2,7 @@
 	<section :class="{'popout':popout}">
 		<section class="row" v-for="item in items">
 			<figure class="icon" v-if="item.hasOwnProperty('icon') && item.icon.length">
-				<span style="font-size: 9px;">icon</span>
+				<span :class="item.icon"></span>
 			</figure>
 
 			<section class="details" :class="{'has-icon':item.hasOwnProperty('icon') && item.icon.length}">
@@ -55,7 +55,12 @@
 		&:last-child { padding-bottom:0; }
 
 		.icon {
-			width:40px;
+			width:70px;
+			display:flex;
+			justify-content: flex-start;
+			align-items: center;
+			font-size: 36px;
+			color:$dark-grey;
 		}
 
 		.details {

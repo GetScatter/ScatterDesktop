@@ -44,7 +44,6 @@ export default class AccountService {
             // This method takes a while, re-cloning to make sure we're
             // always up to date before committing the data to storage.
 	        scatter = store.state.scatter.clone();
-
             accountsToRemove.map(account => scatter.keychain.removeAccount(account));
             accounts.map(account => scatter.keychain.addAccount(account));
 
@@ -56,7 +55,7 @@ export default class AccountService {
 
     static async importAllAccountsForNetwork(network){
         return new Promise(async resolve => {
-            const scatter = store.state.scatter.clone();
+            let scatter = store.state.scatter.clone();
             const keypairs = scatter.keychain.keypairs;
             let accounts = [];
 
@@ -66,17 +65,30 @@ export default class AccountService {
                 return AccountService.accountsFrom(plugin, [network], accounts, keypair);
             }));
 
+	        // This method takes a while, re-cloning to make sure we're
+	        // always up to date before committing the data to storage.
+	        scatter = store.state.scatter.clone();
             accounts.map(account => scatter.keychain.addAccount(account));
             await store.dispatch(Actions.SET_SCATTER, scatter);
             resolve(true);
         })
     }
 
-    static async accountsFrom(plugin, networks, accounts, keypair, process = null, progressPerBlockchain = 0){
+	/***
+     * Gets accounts from networks
+	 * @param plugin - Blockchain plugin
+	 * @param networks - Networks to fetch from
+	 * @param accounts - (OUT) accounts array to append to
+	 * @param keypair - Associated keypair
+	 * @param process - Optional process
+	 * @param progressModifier
+	 * @returns {Promise<*>}
+	 */
+    static async accountsFrom(plugin, networks, accounts, keypair, process = null, progressModifier = 0){
         return new Promise(async resolve => {
             if(plugin.accountsAreImported()){
                 (await Promise.all(networks.map(async network => {
-                    return await plugin.getImportableAccounts(keypair, network, process, progressPerBlockchain);
+                    return await plugin.getImportableAccounts(keypair, network, process, progressModifier);
                 }))).reduce((acc, arr) => {
                     arr.map(account => {
                         accounts.push(account)
@@ -97,7 +109,7 @@ export default class AccountService {
                     }
 	                if(process) process.subTitle = null;
                 });
-	            if(process) process.updateProgress(progressPerBlockchain);
+	            if(process) process.updateProgress(progressModifier);
                 resolve(true);
             }
         })

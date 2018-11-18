@@ -208,8 +208,6 @@
 					await this[Actions.SET_SEED](this.password);
 					await this[Actions.LOAD_SCATTER]();
 
-					console.log('thi', this.scatter);
-
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
 						await SocketService.initialize();

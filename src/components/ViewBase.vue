@@ -150,7 +150,6 @@
         bottom:0;
         z-index: 1;
         background: white;
-        transition:all 0.24s ease-in-out;
     }
 
     .view-base {

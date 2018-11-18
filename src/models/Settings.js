@@ -20,7 +20,7 @@ export default class Settings {
 	    this.showNotifications = true;
 
         // Tokens
-        this.showMainnetsOnly = false;
+        this.showMainnetsOnly = true;
         this.displayToken = null;
         this.tokens = [];
         this.blacklistTokens = [];

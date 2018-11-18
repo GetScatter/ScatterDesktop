@@ -79,7 +79,6 @@ const getCachedInstance = network => {
 
 const getAccountsFromPublicKey = async (publicKey, network, process, progressDelta, fallbackToChain = false) => {
 	if(network.chainId === mainnetChainId && !fallbackToChain){
-
 		const accountsFromApi = await EosTokenAccountAPI.getAccountsFromPublicKey(publicKey);
 		if(!accountsFromApi) return getAccountsFromPublicKey(publicKey, network, process, progressDelta, true);
 		else return accountsFromApi;
@@ -96,7 +95,6 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 				if(!res || !res.hasOwnProperty('account_names')){ resolve([]); return false; }
 				const {account_names} = res;
 
-				const originalTitle = process.title;
 				const setProcessTitle = () => {
 					if(process) process.subTitle = `Importing ${account_names.length} accounts from ${network.name}`;
 				};
@@ -173,6 +171,7 @@ export default class EOS extends Plugin {
 
 	async getResourcesFor(account){
 		const data = await this.accountData(account);
+
 		if(!data || !data.hasOwnProperty('cpu_limit') || !data.cpu_limit.hasOwnProperty('available')) return [];
 
 		let refund;

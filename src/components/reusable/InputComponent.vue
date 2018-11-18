@@ -7,7 +7,7 @@
                :placeholder="placeholder"
                @keyup.enter="enter"
                @blur="blur"
-               :class="{'pad-right':dynamicButton}"
+               :class="{'pad-right':dynamicButton || copy}"
                :maxlength="maxlength || -1"
                :disabled="disabled || false"
                :type="type || 'text'"
@@ -16,7 +16,7 @@
         <textarea v-if="textarea" ref="focuser"
                :placeholder="placeholder"
                @blur="blur"
-               :class="{'pad-right':dynamicButton}"
+               :class="{'pad-right':dynamicButton || copy}"
                :maxlength="maxlength || -1"
                :disabled="disabled || false"
                :type="type || 'text'"
@@ -26,8 +26,8 @@
             <i v-if="!loaderOnDynamic" :class="`${dynamicButton}`"></i>
             <i class="icon-spin4 animate-spin" v-if="loaderOnDynamic"></i>
         </figure>
-        <figure class="copy" v-if="copy">
-            <i class="fa fa-copy" v-tooltip="'Copy'" @click="copyText"></i>
+        <figure class="copy" v-if="copy" :class="{'labeled':label}">
+            <i class="icon-star-1" v-tooltip="'Copy'" @click="copyText"></i>
         </figure>
     </section>
 </template>
@@ -135,9 +135,10 @@
             font-size: 18px;
             cursor: text;
             resize: none;
+            background:rgba(0,0,0,0.005);
 
             transition: all 0.15s ease;
-            transition-property: line-height, height, padding, border;
+            transition-property: line-height, height, padding, border, background;
 
             &::-webkit-input-placeholder {
                 font-size: 18px;
@@ -167,6 +168,7 @@
 
             &:focus {
                 border:1px solid rgba(0,0,0,0.22);
+                background:rgba(0,0,0,0);
             }
         }
 

@@ -151,10 +151,6 @@ export default class SocketService {
 
     static async initialize(){
 
-        const recurse = () => setTimeout(() => {
-            this.initialize(true);
-        }, reconnectTime); // every ten minutes.
-
         if(!(await isPortOpen(50005))) return recurse();
 
         const options = { pingTimeout:100000000000000000 };
@@ -178,7 +174,6 @@ export default class SocketService {
 
 	    initialConnection = false;
         this.open();
-        recurse();
         return true;
     }
 

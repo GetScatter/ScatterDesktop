@@ -4,8 +4,14 @@ export const mathematicalVersion = version => {
     if(version === '0') return 0;
     const parts = version.replace(/[.]/g,'_').replace(/[m]/g, '').split('_');
     if(parts.length !== 3) throw new Error("Migration error, invalid version");
-    const zeroed = (x,z) => { let s = x.toString(); while(s.length < z) s += '0'; return s; };
-    return parseInt(parts.map((x,i) => i === 0 ? zeroed(x,4) : zeroed(x,2)).join(''));
+
+    let total = 0;
+    parts.map((v, i) => {
+        const multiplier = i === 0 ? 100 : i === 1 ? 10 : 1;
+        total += parseFloat(v) * multiplier;
+    });
+
+    return total;
 };
 
 const fnToVersion = fnName => fnName.replace(/[m]/g, '').replace(/[_]/g,'.');

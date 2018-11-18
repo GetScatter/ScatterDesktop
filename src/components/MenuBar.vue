@@ -1,6 +1,8 @@
 <template>
 	<section class="menu-bar">
-		<router-link :to="{name:'home'}" class="logo">Scatter</router-link>
+		<transition name="slide-up" mode="out-in">
+			<router-link v-if="loaded && $route.name !== RouteNames.LOGIN" :to="{name:RouteNames.HOME}" class="logo">Scatter</router-link>
+		</transition>
 
 		<section class="actions" v-if="isWindows">
 
@@ -28,6 +30,14 @@
 	import {remote} from '../util/ElectronHelpers';
 
 	export default {
+		data(){return {
+			loaded:false,
+		}},
+		mounted(){
+			setTimeout(() => {
+				this.loaded = true;
+			}, 500);
+		},
 		methods:{
 			quit(){
 				remote.app.quit();

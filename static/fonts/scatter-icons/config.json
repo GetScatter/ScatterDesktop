@@ -359,6 +359,24 @@
       "css": "folder-open-empty",
       "code": 61717,
       "src": "fontawesome"
+    },
+    {
+      "uid": "272e08e0e16226aadf94dcbf33aab2b2",
+      "css": "key",
+      "code": 59445,
+      "src": "elusive"
+    },
+    {
+      "uid": "04f7e0bbd0bba658464ca2b49097f37f",
+      "css": "qrcode",
+      "code": 59446,
+      "src": "elusive"
+    },
+    {
+      "uid": "1cb3652ffb3492344fa3a675c3ff3290",
+      "css": "microchip",
+      "code": 62171,
+      "src": "fontawesome"
     }
   ]
 }

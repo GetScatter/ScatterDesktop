@@ -10,14 +10,14 @@
 
                     <!-- EXPORT KEY -->
                     <section class="type" @click="state = STATES.KEY">
-                        <figure class="badge icon-attention"></figure>
+                        <figure class="badge icon-key"></figure>
                         <figure class="name">{{locale(langKeys.KEYPAIR.EXPORT.SELECT.KeyTitle)}}</figure>
                         <p>{{locale(langKeys.KEYPAIR.EXPORT.SELECT.KeyDescription)}}</p>
                     </section>
 
                     <!-- EXPORT QR -->
                     <section class="type" @click="createQR">
-                        <figure class="badge icon-attention"></figure>
+                        <figure class="badge icon-qrcode"></figure>
                         <figure class="name">{{locale(langKeys.KEYPAIR.EXPORT.SELECT.QrTitle)}}</figure>
                         <p>{{locale(langKeys.KEYPAIR.EXPORT.SELECT.QrDescription)}}</p>
                     </section>
@@ -177,7 +177,7 @@
                 background:#fff;
                 border:1px solid #e8e8e8;
                 color:$dark-grey;
-                font-size: 48px;
+                font-size: 36px;
                 display:flex;
                 justify-content: center;
                 align-items: center;

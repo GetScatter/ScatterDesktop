@@ -7,48 +7,51 @@ import Identity from "../src/models/Identity";
 import Account from "../src/models/Account";
 import PluginRepository from '../src/plugins/PluginRepository';
 
-export const testScatter = async () => {
-	const networks = await Promise.all(PluginRepository.signatureProviders().map(async plugin => {
-		return plugin.getEndorsedNetwork();
-	}));
 
-	const keypair = Keypair.fromJson({
-		name:'Testing Keypair',
-		keyHash:'testing_key',
-		blockchains:[
-			Blockchains.EOSIO,
-			Blockchains.TRX
-		],
-		publicKeys:[
-			{blockchain:Blockchains.EOSIO, key:'EOS7w5aJCv5B7y3a6f4WCwPSvs6TpCAoRGnGpiLMsSWbmxaZdKigd'},
-			{blockchain:Blockchains.TRX, key:'TF2quv1hTipcZ8FJ8FRsXXLSiJ1C15dqkW'}
-		],
-	});
+export const mockNetworks = PluginRepository.signatureProviders().map(plugin => {
+	return plugin.getEndorsedNetwork();
+});
 
-	const eosAccount = Account.fromJson({
-		keypairUnique:keypair.unique(),
-		networkUnique:networks.find(x => x.blockchain === Blockchains.EOSIO).unique(),
-		publicKey:keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key,
-		name:'ramdeathtest',
-		authority:'active'
-	});
+export const mockKeypair = Keypair.fromJson({
+	name:'Testing Keypair',
+	keyHash:'testing_key',
+	blockchains:[
+		Blockchains.EOSIO,
+		Blockchains.TRX
+	],
+	publicKeys:[
+		{blockchain:Blockchains.EOSIO, key:'EOS7w5aJCv5B7y3a6f4WCwPSvs6TpCAoRGnGpiLMsSWbmxaZdKigd'},
+		{blockchain:Blockchains.TRX, key:'TF2quv1hTipcZ8FJ8FRsXXLSiJ1C15dqkW'}
+	],
+});
 
-	const trxAccount = Account.fromJson({
-		keypairUnique:keypair.unique(),
-		networkUnique:networks.find(x => x.blockchain === Blockchains.TRX).unique(),
-		publicKey:keypair.publicKeys.find(x => x.blockchain === Blockchains.TRX).key,
-	})
+export const mockEosAccount = Account.fromJson({
+	keypairUnique:mockKeypair.unique(),
+	networkUnique:mockNetworks.find(x => x.blockchain === Blockchains.EOSIO).unique(),
+	publicKey:mockKeypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key,
+	name:'ramdeathtest',
+	authority:'active'
+});
+
+export const mockTrxAccount = Account.fromJson({
+	keypairUnique:mockKeypair.unique(),
+	networkUnique:mockNetworks.find(x => x.blockchain === Blockchains.TRX).unique(),
+	publicKey:mockKeypair.publicKeys.find(x => x.blockchain === Blockchains.TRX).key,
+})
+
+export const testScatter = async (options = {}) => {
+	const withNetworks = options.hasOwnProperty('withNetworks') ? options.withNetworks : true;
+	const withAccounts = options.hasOwnProperty('withAccounts') ? options.withAccounts : true;
+	const withKeypairs = options.hasOwnProperty('withKeypairs') ? options.withKeypairs : true;
 
 
 	const scatter = Scatter.fromJson({
 		settings:Settings.fromJson({
-			networks:await Promise.all(PluginRepository.signatureProviders().map(async plugin => {
-				return plugin.getEndorsedNetwork();
-			}))
+			networks:withNetworks ? mockNetworks : [],
 		}),
 		keychain:Keychain.fromJson({
-			keypairs:[keypair],
-			accounts:[eosAccount, trxAccount]
+			keypairs:withKeypairs ? [mockKeypair] : [],
+			accounts:withNetworks && withKeypairs && withAccounts ? [mockEosAccount, mockTrxAccount] : []
 		})
 	});
 

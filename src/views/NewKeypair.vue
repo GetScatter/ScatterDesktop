@@ -101,9 +101,9 @@
 	        ];
 
 	        this.importTypes = [
-		        {icon:'', title:locale(IMPORT.TextTitle), description:locale(IMPORT.TextDescription), actions:[{name:locale(IMPORT.TextButton), handler:() => this.importState = IMPORT_STATES.TEXT}]},
-		        {icon:'', title:locale(IMPORT.HardwareTitle), description:locale(IMPORT.HardwareDescription), actions:[{name:locale(IMPORT.HardwareButton), handler:() => this.importState = IMPORT_STATES.HARDWARE}]},
-		        {icon:'', title:locale(IMPORT.QrTitle), description:locale(IMPORT.QrDescription), actions:[{name:locale(IMPORT.QrButton), handler:() => this.importState = IMPORT_STATES.QR}]},
+		        {icon:'icon-key', title:locale(IMPORT.TextTitle), description:locale(IMPORT.TextDescription), actions:[{name:locale(IMPORT.TextButton), handler:() => this.importState = IMPORT_STATES.TEXT}]},
+		        {icon:'icon-microchip', title:locale(IMPORT.HardwareTitle), description:locale(IMPORT.HardwareDescription), actions:[{name:locale(IMPORT.HardwareButton), handler:() => this.importState = IMPORT_STATES.HARDWARE}]},
+		        {icon:'icon-qrcode', title:locale(IMPORT.QrTitle), description:locale(IMPORT.QrDescription), actions:[{name:locale(IMPORT.QrButton), handler:() => this.importState = IMPORT_STATES.QR}]},
 	        ];
 
         },

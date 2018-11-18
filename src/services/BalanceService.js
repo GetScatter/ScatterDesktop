@@ -1,6 +1,7 @@
 import PluginRepository from "../plugins/PluginRepository";
 import {store} from "../store/store";
 import * as Actions from "../store/constants";
+import Process from "../models/Process";
 
 export default class BalanceService {
 

@@ -2,6 +2,7 @@ import {store} from '../store/store'
 import * as Actions from '../store/constants'
 import WindowService from '../services/WindowService';
 import {PopupDisplayTypes, Popup} from '../models/popups/Popup';
+import {RUNNING_TESTS, SHOW_POPUPS_AS_CONSOLE} from "../util/TestingHelper";
 
 let popouts = [];
 
@@ -12,6 +13,9 @@ export default class PopupService {
     }
 
     static push(popup){
+        // Allows showing popups as a console log for unit testing.
+        if(RUNNING_TESTS && SHOW_POPUPS_AS_CONSOLE) return console.log(popup);
+
         if(store.state.popups.find(x => JSON.stringify(x.data) === JSON.stringify(popup.data)))
             return false;
 
@@ -53,6 +57,8 @@ export default class PopupService {
     }
 
     static promptGuard(prompt, callback){
+        if(RUNNING_TESTS) return callback(true);
+
         prompt.data.callback = callback;
         this.push(prompt);
     }

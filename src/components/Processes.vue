@@ -2,6 +2,7 @@
     <section class="processes">
         <transition-group name="slide-right" mode="out-in">
             <section :key="process.id" class="process" v-for="process in processes">
+                <figure class="kill icon-cancel" @click="process.kill()"></figure>
                 <figure class="title">
                     <span key="title" v-if="process.progress < 100">{{process.title}}</span>
                     <b key="done" v-else>Done!</b>
@@ -57,6 +58,23 @@
             border-radius:2px;
             border:1px solid $dark-blue;
             margin-top:2px;
+            position: relative;
+
+            .kill {
+                cursor: pointer;
+                position:absolute;
+                top:-6px;
+                right:-3px;
+                width:15px;
+                height:15px;
+                border-radius:50%;
+                background:$red;
+                color:#fff;
+                font-size: 11px;
+                display:flex;
+                justify-content: center;
+                align-items: center;
+            }
 
             .title {
                 font-size: 11px;
