@@ -3,7 +3,6 @@ import {testScatter} from '../mocks'
 
 import {assert} from 'chai';
 import 'mocha';
-import StorageService from "../../src/services/StorageService";
 import BalanceService from "../../src/services/BalanceService";
 import {store} from "../../src/store/store";
 import {SET_SCATTER} from "../../src/store/constants";

@@ -162,7 +162,7 @@
                 this.qr = await QRService.createUnEncryptedQR(this.transaction);
             },
             accountFormatter(account){
-                if(account) return account.formattedWithNetwork();
+                if(account) return account.formatted();
                 else return 'Any account with sufficient balance'
             },
             grouper(account){

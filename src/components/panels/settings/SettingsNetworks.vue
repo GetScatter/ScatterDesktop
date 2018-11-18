@@ -126,7 +126,7 @@
                 return !this.networks.find(x => x.id === this.network.id);
             },
             newNetworkReady(){
-                return this.isNew && this.network.filledNetwork()
+                return this.isNew && this.network.isValid()
             },
 	        contractPlaceholder(){
 		        return PluginRepository.plugin(this.network.token.blockchain).contractPlaceholder();

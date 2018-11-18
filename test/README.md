@@ -3,7 +3,7 @@
 ## Unit Tests
 
 Unit tests run inside a sandbox environment separated from system-level logic.
-All of the data store inside the "Storage" is mocked out as a simple object instead of
+All of the data stored inside the "Storage" is mocked out as a simple object instead of
 persistent data stored on the machine. **This means all data is lost once the test halts**.
 
 #### Running tests

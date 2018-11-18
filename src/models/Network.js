@@ -40,14 +40,12 @@ export default class Network {
     unique(){ return (`${this.blockchain}:` + (this.chainId.length ? `chain:${this.chainId}` : `${this.host}:${this.port}`)).toLowerCase(); }
     fullhost(){ return `${this.protocol}://${this.host}${this.port ? ':' : ''}${this.port}` }
     clone(){ return Network.fromJson(JSON.parse(JSON.stringify(this))) }
-    isEmpty(){ return !this.host.length; }
+
     isValid(){
         if(!BlockchainsArray.map(x => x.value).includes(this.blockchain)) return false;
-        return (this.host.length && this.port) || this.chainId.length
+        return this.host.length && this.port.toString().length && this.chainId.length
     }
-    filledNetwork(){
-        return this.name.length && this.port.toString().length && this.chainId.length && this.host.length
-    }
+
     setPort(){
         if(!this.port) this.port = 80;
         if(![80,443].includes(parseInt(this.port))) return;
