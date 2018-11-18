@@ -2,15 +2,13 @@
 
 ## Unit Tests
 
-#### Running tests
-- Full unit test - `npm run test`
-- Single file test - `npm run testfile test/unit/<filename>.spec.js`
-
 Unit tests run inside a sandbox environment separated from system-level logic.
 All of the data store inside the "Storage" is mocked out as a simple object instead of
 persistent data stored on the machine. **This means all data is lost once the test halts**.
 
----------------------------
+#### Running tests
+- Full unit test - `npm run test`
+- Single file test - `npm run testfile test/unit/<filename>.spec.js`
 
 #### Snackbars and Alerts
 
