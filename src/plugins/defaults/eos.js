@@ -89,14 +89,14 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 		new Promise(resolve => setTimeout(() => resolve([]), 20000)),
 		new Promise((resolve, reject) => {
 			const eos = getCachedInstance(network);
-			if(process) process.subTitle = `Fetching accounts from ${network.name}`;
+			if(process) process.setSubTitle(`Fetching accounts from ${network.name}`);
 			eos.getKeyAccounts(publicKey).then(res => {
 				if(process) process.updateProgress(progressDelta/3);
 				if(!res || !res.hasOwnProperty('account_names')){ resolve([]); return false; }
 				const {account_names} = res;
 
 				const setProcessTitle = () => {
-					if(process) process.subTitle = `Importing ${account_names.length} accounts from ${network.name}`;
+					if(process) process.setSubTitle(`Importing ${account_names.length} accounts from ${network.name}`);
 				};
 				setProcessTitle();
 

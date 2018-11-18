@@ -95,7 +95,7 @@
 
 			        for(let i = 0; i < accounts.length; i++){
 				        process.updateProgress(90 / accounts.length);
-				        process.subTitle = `Accounts left: ${accounts.length - i}`;
+				        process.setSubTitle(`Accounts left: ${accounts.length - i}`);
 				        const resources = await ResourceService.getResourcesFor(accounts[i]);
 				        this[Actions.ADD_RESOURCES]({acc:accounts[i].identifiable(), res:resources});
 			        }

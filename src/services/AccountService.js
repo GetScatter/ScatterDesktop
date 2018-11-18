@@ -98,7 +98,7 @@ export default class AccountService {
                 resolve(true);
             } else {
                 networks.map(network => {
-	                if(process) process.subTitle = `Importing accounts for ${network.name}`;
+	                if(process) process.setSubTitle(`Importing accounts for ${network.name}`);
                     const key = keypair.publicKeys.find(x => x.blockchain === network.blockchain);
                     if(key){
                         accounts.push(Account.fromJson({
@@ -107,7 +107,7 @@ export default class AccountService {
                             publicKey:key.key
                         }));
                     }
-	                if(process) process.subTitle = null;
+	                if(process) process.setSubTitle(null);
                 });
 	            if(process) process.updateProgress(progressModifier);
                 resolve(true);

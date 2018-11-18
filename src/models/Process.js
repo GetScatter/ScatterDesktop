@@ -16,6 +16,7 @@ export default class Process {
 		this.identifier = identifier;
 		this.subTitle = null;
 		this.progress = 0;
+		this.isKilled = false;
 
 		let interval = setInterval(() => {
 			if(this.progress >= 100) {
@@ -30,13 +31,20 @@ export default class Process {
 	static placeholder(){ return new Process(); }
 	static fromJson(json){ return Object.assign(this.placeholder(), json); }
 
+	kill(){
+		this.isKilled = true;
+		store.dispatch(Actions.RELEASE_PROCESS, this);
+	}
+
 	updateProgress(delta){
+		if(this.isKilled) return;
 		this.progress += delta;
 		store.dispatch(Actions.SET_PROCESS, this);
 	}
 
-	kill(){
-		store.dispatch(Actions.RELEASE_PROCESS, this);
+	setSubTitle(subTitle){
+		if(this.isKilled) return;
+		this.subTitle = subTitle;
 	}
 
 
