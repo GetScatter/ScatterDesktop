@@ -9,6 +9,10 @@
         </section>
         <br>
 
+
+        <!--------------------------->
+        <!------   ADD TOKEN   ------>
+        <!--------------------------->
         <section v-if="state === STATES.ADD_TOKEN">
 
             <section class="disclaimer less-pad">
@@ -42,6 +46,12 @@
             </section>
         </section>
 
+
+
+
+        <!--------------------------->
+        <!------   SETTINGS   ------->
+        <!--------------------------->
         <section v-if="state === STATES.SETTINGS">
 
             <section class="action-box top-pad">
@@ -50,8 +60,28 @@
 
                 <btn v-on:clicked="toggleMainnetsOnly" :red="mainnetTokensOnly" :text="mainnetTokensOnly ? 'Show all networks' : 'Show only Mainnets'" />
             </section>
+
+            <section class="action-box top-pad">
+                <label>Filter Small Balances</label>
+                If you want to always filter out tokens with small balances you can set a modifier here.
+                <br>
+                <br>
+
+                <cin v-for="blockchain in blockchains"
+                     :key="blockchain.value"
+                     :placeholder="defaultDecimals(blockchain.value)"
+                     :label="blockchainName(blockchain.value)"
+                     :text="balanceFilters[blockchain.value]"
+                     v-on:changed="x => balanceFilters[blockchain.value] = x"
+                     type="number" />
+            </section>
         </section>
 
+
+
+        <!---------------------------------------->
+        <!------   WHITELIST / BLACKLIST   ------->
+        <!---------------------------------------->
         <section v-if="state === STATES.WHITELIST || state === STATES.BLACKLIST">
 
             <sel style="flex:2;" label="Filter Tokens by Blockchain"
@@ -107,8 +137,6 @@
                             icon="icon-cancel"
                             v-on:action="removeToken" />
             </section>
-
-
         </section>
 
     </section>
@@ -138,6 +166,8 @@
 	    SETTINGS:'settings',
     };
 
+    let balanceFilterTimeout;
+
     export default {
     	components:{
 		    FlatSelect
@@ -153,9 +183,12 @@
 
             searchTerms:'',
             currencies:[],
+
+            balanceFilters:{},
         }},
         mounted(){
     	    PriceService.getCurrencies().then(x => this.currencies = x);
+    	    this.balanceFilters = this.scatter.settings.balanceFilters;
         },
         computed:{
             ...mapState([
@@ -202,6 +235,12 @@
             }
         },
         methods:{
+	        defaultDecimals(blockchain){
+	        	const decimals = PluginRepository.plugin(blockchain).defaultDecimals();
+	        	let stringDecimals = '0.';
+	        	for(let i = 0; i < decimals; i++){ stringDecimals+=i === (decimals-1) ? '1' : '0'; }
+	            return stringDecimals
+            },
 	        selectDisplayToken(token){
 	        	const asFiat = token.id.startsWith('fiat_');
                 if(asFiat){
@@ -236,6 +275,14 @@
         watch:{
     		['newToken.blockchain'](){
     			this.newToken.decimals = PluginRepository.plugin(this.newToken.blockchain).defaultDecimals();
+            },
+            ['balanceFilters'](){
+    			clearTimeout(balanceFilterTimeout);
+    			balanceFilterTimeout = setTimeout(() => {
+    				const scatter = this.scatter.clone();
+    				scatter.settings.balanceFilters = this.balanceFilters;
+    				this[Actions.SET_SCATTER](scatter);
+                }, 500);
             }
         }
     }

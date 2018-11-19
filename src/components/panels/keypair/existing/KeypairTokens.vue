@@ -71,6 +71,7 @@
 			]),
 			...mapGetters([
 				'accounts',
+				'balanceFilters',
 			]),
 			systemToken(){
 				return this.account.network().systemToken();
@@ -83,9 +84,14 @@
 				return this.accountBalances.find(x => x.unique() === this.systemToken.unique());
 			},
 			tokens(){
-				return this.accountBalances.filter(x => x.unique() !== this.systemToken.unique()).sort((a,b) => {
-					return parseFloat(b.amount) - parseFloat(a.amount);
-				})
+				const balanceFilter = this.balanceFilters[this.account.blockchain()];
+				return this.accountBalances
+					.filter(x => {
+						if(!balanceFilter) return true;
+						return balanceFilter <= parseFloat(x.amount);
+					})
+					.filter(x => x.unique() !== this.systemToken.unique())
+					.sort((a,b) => parseFloat(b.amount) - parseFloat(a.amount))
 			},
 			filteredTokens(){
 				const terms = this.searchTerms.trim().toLowerCase();

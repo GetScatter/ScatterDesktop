@@ -59,6 +59,7 @@ const getters = {
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
 	blacklistTokens:state =>  state.scatter.settings.blacklistTokens,
+	balanceFilters:state =>   state.scatter.settings.balanceFilters,
 	displayCurrency:state =>   state.scatter.settings.displayCurrency,
 	displayToken:state =>   state.scatter.settings.displayToken,
 	tokens:state =>         state.scatter.settings.tokens,

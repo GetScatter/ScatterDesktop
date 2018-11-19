@@ -37,6 +37,8 @@ export default class Settings {
 	    this.displayCurrency = 'USD';
 	    this.tokens = [];
 	    this.blacklistTokens = [];
+
+	    this.balanceFilters = {};
     }
 
     static placeholder(){ return new Settings(); }
