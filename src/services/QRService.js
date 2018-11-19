@@ -20,9 +20,6 @@ export default class QRService {
                     if(!pass || !pass.length) {
                         resolve(QRCode.toDataURL(JSON.stringify({data, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
                     } else {
-	                    const confirmed = await PasswordService.verifyPassword(confirm, false);
-	                    if(!confirmed) return resolve(null);
-
 	                    const oldSeed = store.state.seed;
 	                    const newSeed = (await Mnemonic.generateMnemonic(pass, StorageService.getSalt()))[1];
 	                    const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);

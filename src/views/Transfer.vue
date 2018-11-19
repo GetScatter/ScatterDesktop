@@ -14,7 +14,7 @@
                     <SearchBar placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
                     <br>
 
-                    <FlatSelect label="Sending Account" style="padding-top:0;"
+                    <FlatList label="Sending Account" style="padding-top:0;"
                                 :items="senderAccounts"
                                 :selected="account ? account.unique() : null"
                                 v-on:selected="selectAccount" />
@@ -46,6 +46,7 @@
                          :options="[{id:'custom', name:'Custom Token'}].concat(filteredTokens)"
                          :parser="t => t.name"
                          :subparser="tokenListSubParser"
+                         long="1"
                          v-on:changed="selectToken" />
                     <br>
 
@@ -88,7 +89,7 @@
                                placeholder="Search Contacts"
                                v-on:terms="x => searchTermsContacts = x" />
 
-                    <FlatSelect style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.CONTACT"
+                    <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.CONTACT"
                                 label="Contacts"
                                 :items="filteredContacts"
                                 :selected="recipient"
@@ -144,7 +145,7 @@
     import TokenService from "../services/TokenService";
     import BalanceService from "../services/BalanceService";
 
-    import FlatSelect from "../components/reusable/FlatSelect";
+    import FlatList from "../components/reusable/FlatList";
     import SearchBar from "../components/reusable/SearchBar";
 
     const RECIPIENT_STATES = {
@@ -154,7 +155,7 @@
 
     export default {
 	    components: {
-		    FlatSelect,
+		    FlatList,
             SearchBar
         },
 	    data () {return {
@@ -445,7 +446,7 @@
 
     .split-panel {
         overflow-x:hidden;
-        transition:margin-left, 0.24s ease-in;
+        transition:margin-left, 0.24s;
         width:150%;
         margin-left:0;
 

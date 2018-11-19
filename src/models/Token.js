@@ -55,4 +55,13 @@ export default class Token {
 			return null;
 		}
 	}
+
+	fiatPrice(){
+		if(store.state.prices.hasOwnProperty(this.unique())){
+			const price = parseFloat(store.state.prices[this.unique()][store.getters.displayCurrency]);
+			return `${parseFloat(price).toFixed(2)} ${store.getters.displayCurrency}`
+		} else {
+			return null;
+		}
+	}
 }

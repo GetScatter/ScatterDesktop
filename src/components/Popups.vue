@@ -3,16 +3,21 @@
 
         <section class="fader" :class="{'show':showFader}">
 
-            <section v-for="popIn in popIns" style="position:absolute;">
-                <figure class="bg" @click="clickedFader"></figure>
-                <section class="pop-in">
-                    <Prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
-                    <TextPrompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id" />
-                    <Selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
-                    <Mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
-                    <TransactionSuccess v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
-                    <BuySellRAM :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.BUY_SELL_RAM" />
-                    <DelegateResources :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.DELEGATE_RESOURCES" />
+            <section class="pop-ins" v-for="popIn in popIns" style="position:absolute;">
+                <section class="fullscreen" v-if="isFullscreen(popIn)">
+                    <ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />
+                </section>
+                <section class="overlay" v-else>
+                    <figure class="bg" @click="clickedFader"></figure>
+                    <section class="pop-in">
+                        <Prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
+                        <TextPrompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id" />
+                        <Selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
+                        <Mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
+                        <TransactionSuccess v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
+                        <BuySellRAM :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.BUY_SELL_RAM" />
+                        <DelegateResources :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.DELEGATE_RESOURCES" />
+                    </section>
                 </section>
             </section>
 
@@ -38,7 +43,7 @@
     import {RouteNames} from '../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-    import {PopupDisplayTypes, PopupTypes} from '../models/popups/Popup'
+    import {PopupDisplayTypes, PopupTypes, isFullscreen} from '../models/popups/Popup'
 
     import Snackbar from '../components/popups/Snackbar.vue'
     import Mnemonic from '../components/popups/Mnemonic.vue'
@@ -49,6 +54,8 @@
     import DelegateResources from '../components/popups/DelegateResources.vue'
     import BuySellRAM from '../components/popups/BuySellRAM.vue'
     import PopInHead from '../components/popups/fragments/PopInHead.vue'
+
+    import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
 
     export default {
     	components:{
@@ -61,6 +68,9 @@
 		    DelegateResources,
 		    BuySellRAM,
 		    PopInHead,
+
+            // FULLSCREEN
+		    ConfirmPassword
         },
         data(){ return {
             popupTypes:PopupTypes,
@@ -80,6 +90,7 @@
             }
         },
         methods:{
+	        isFullscreen,
             clickedFader(){
                 if(this.nextPopIn) {
                     this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length - 1]);
@@ -109,6 +120,17 @@
         }
     }
 
+    .fullscreen {
+        background:#fff;
+        height:calc(100vh - 80px);
+        width:100%;
+        position:fixed;
+        top:80px;
+        bottom:0;
+        left:0;
+        right:0;
+    }
+
     .pop-in {
         -webkit-app-region: no-drag;
         background:#fff;
@@ -133,7 +155,7 @@
         //background:$light-grey;
         opacity:0;
         visibility: hidden;
-        transition: all 0.1s ease;
+        transition: all 0.02s ease;
         transition-property: opacity, visibility;
 
         z-index:10000;

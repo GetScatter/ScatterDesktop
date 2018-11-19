@@ -24,7 +24,7 @@
 
                     <label class="red">Danger Zone</label>
 
-                    <section class="group-list danger">
+                    <section class="group-list" :class="{'danger':!unlocked}">
                         <section class="item"
                                  v-for="item in lockedItems"
                                  :class="{'selected':selectedOption.name === item.name}"
@@ -136,20 +136,11 @@
                 this.selectedOption = option;
             },
             unlock(option){
-                PopupService.push(
-                    Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
-                        placeholder:'Enter Password or Backup Phrase',
-                        type:'password'
-                    }, async password => {
-                        if(!password || !password.length) return;
-                        if(!await PasswordService.verifyPassword(password)){
-                            this.$router.push('/');
-                            return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "attention-circled", "Okay"));
-                        }
-
-                        this.unlocked = true;
-                        this.selectOption(option);
-                    }))
+	        	PopupService.push(Popup.verifyPassword(verified => {
+	        		if(!verified) return;
+			        this.unlocked = true;
+			        this.selectOption(option);
+                }))
             },
         }
     }

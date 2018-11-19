@@ -102,9 +102,10 @@
                     flex:1;
                     cursor: pointer;
                     text-align:right;
+                    text-decoration: underline;
 
                     &:hover {
-                        text-decoration: underline;
+                        color:$dark-blue;
                     }
                 }
             }

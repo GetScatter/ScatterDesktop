@@ -16,7 +16,7 @@
             </section>
 
             <section class="split-panel dynamic no-divider">
-                <FlatSelect class="panel"
+                <FlatList class="panel"
                             style="flex:1;"
                             :label="locale(langKeys.PERMISSIONS.ListLabel)"
                             :items="permissionsList"
@@ -76,11 +76,11 @@
     import * as Actions from '../store/constants';
     import PermissionService from "../services/PermissionService";
     import AppsService from "../services/AppsService";
-    import FlatSelect from '../components/reusable/FlatSelect';
+    import FlatList from '../components/reusable/FlatList';
 
     export default {
     	components:{
-		    FlatSelect
+		    FlatList
         },
         data () {return {
 	        origin:null,

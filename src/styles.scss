@@ -231,6 +231,10 @@ p {
     min-height:calc(100vh - 170px);
     display:flex;
     flex-direction: column;
+
+    &.with-action {
+      min-height:calc(100vh - 250px);
+    }
   }
 
   &.center-fold {

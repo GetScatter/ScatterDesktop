@@ -1,11 +1,12 @@
 <template>
 	<section class="apps">
+		<SearchBar :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
+
 		<transition name="slide-right" mode="out-in">
 
 
 			<!-- HAS APPS -->
-			<section key="apps" class="list-container" v-if="permissions.length">
-				<SearchBar :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
+			<section key="apps" class="list-container" v-if="permissions.length || searchTerms.length">
 
 
 
@@ -52,7 +53,7 @@
 
 						<figure class="breaker disclaimer less-pad" v-if="i === 0 && Object.keys(originsFromSearch).length">
 							Below are apps that you aren't linked with.<br>
-							<span>Note that these apps are not added by the Scatter team, but by the apps themselves. The display of any app is not an endorsement.</span>
+							<span>Note that these apps are not added by the Scatter team, but by the apps themselves. The display of any app is not an endorsement of any kind, just a discovery mechanism.</span>
 						</figure>
 					</section>
 
@@ -121,7 +122,8 @@
 				return Object.keys(appkeys).reduce((acc, origin) => {
 					const matchesOrigin = origin.toString().toLowerCase().match(this.searchTerms);
 					const matchesType = this.getAppData(origin).type.toLowerCase().match(this.searchTerms);
-					if(matchesOrigin || matchesType)
+					const matchesDescription = this.getAppData(origin).description.toLowerCase().match(this.searchTerms);
+					if(matchesOrigin || matchesType || matchesDescription)
 						acc[origin] = fakeCount ? 0 : appkeys[origin];
 					return acc;
 				}, {});

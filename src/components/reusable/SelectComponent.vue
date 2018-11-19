@@ -11,7 +11,7 @@
                 {{parse(selectedOption)}}
             </figure>
 
-            <section class="options">
+            <section class="options" :class="{'long':long}">
                 <input ref="terms" placeholder="Search..." v-model="optionsTerms" />
                 <figure class="option" v-for="item in filteredOptions" v-on:click="select(item)">
                     <img v-if="imgParser" :src="imgParser(item)" />
@@ -26,7 +26,7 @@
 <script>
     let documentListener;
     export default {
-	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'subparser', 'disabled', 'imgParser'],
+	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'subparser', 'disabled', 'imgParser', 'long'],
 
         data(){ return {
             optionsTerms:'',
@@ -210,6 +210,10 @@
                 visibility:visible;
                 opacity:1;
                 max-height:180px;
+
+                &.long {
+                    max-height:300px;
+                }
             }
 
             .arrow {

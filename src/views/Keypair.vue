@@ -132,20 +132,11 @@
 
 	        enableExportKey(){
 	        	//TODO: Remove to require password authentication!!
-	        	return this.state = STATES.EXPORT;
-		        PopupService.push(Popup.textPrompt("Confirm Password", "Enter your current password.", "unlock", "Okay", {
-			        placeholder:this.locale(this.langKeys.LOGIN.EXISTING.PasswordPlaceholder),
-			        type:'password'
-		        }, async password => {
-			        if(!password || !password.length) return;
-			        if(!await PasswordService.verifyPassword(password)){
-				        // this.close();
-				        // this.$router.push('/');
-				        return PopupService.push(Popup.prompt("Bad Password", "The password you entered was incorrect.", "attention", "Okay"));
-			        }
-
-			        this.state = STATES.EXPORT;
-		        }))
+	        	// return this.state = STATES.EXPORT;
+	        	PopupService.push(Popup.verifyPassword(verified => {
+	        		if(!verified) return;
+	        		this.state = STATES.EXPORT;
+                }))
 	        },
 
 

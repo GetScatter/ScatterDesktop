@@ -95,21 +95,22 @@
             <br>
             <section v-if="state === STATES.WHITELIST">
                 <section class="disclaimer less-pad">
-                    <p>Select any token to make it your main display type.</p>
+                    Select any token to make it your main display type.
                 </section>
 
                 <section v-if="blockchain === null">
-                    <FlatSelect as-rows="1" style="padding:0;"
+                    <FlatList as-rows="1" style="padding:0;"
                                 :selected="selectedDisplayToken"
                                 label="Show as fiat currency"
                                 v-on:selected="selectDisplayToken"
+                                small="1"
                                 :items="currencyList" />
                     <br>
                     <br>
                 </section>
 
                 <section v-if="networkTokensList.length">
-                    <FlatSelect style="padding:0;"
+                    <FlatList style="padding:0;"
                                 label="System Tokens"
                                 :selected="selectedDisplayToken"
                                 v-on:selected="selectDisplayToken"
@@ -118,7 +119,7 @@
                     <br>
                 </section>
 
-                <FlatSelect style="padding:0;" label="Custom Tokens"
+                <FlatList style="padding:0;" label="Custom Tokens"
                             :items="tokensList"
                             icon="icon-cancel"
                             v-if="tokensList.length"
@@ -134,7 +135,7 @@
                     <p>You cannot filter out system tokens for your networks.</p>
                 </section>
 
-                <FlatSelect style="padding:0 0 20px 0;"
+                <FlatList style="padding:0 0 20px 0;"
                             :items="blacklistTokensList"
                             icon="icon-cancel"
                             v-on:action="removeToken" />
@@ -150,17 +151,21 @@
 
     import PluginRepository from '../../../plugins/PluginRepository';
     import {BlockchainsArray, Blockchains, blockchainName} from '../../../models/Blockchains';
-    import FlatSelect from '../../reusable/FlatSelect';
+    import FlatList from '../../reusable/FlatList';
     import SearchBar from '../../reusable/SearchBar';
     import Token from "../../../models/Token";
     import TokenService from "../../../services/TokenService";
     import PriceService from "../../../services/PriceService";
 
-    const formatter = list => list.map(x => ({
-	    id:x.unique(),
-	    title:`${x.name} (${x.symbol})`,
-	    description:this.blockchain ? null : blockchainName(x.blockchain)
-    }));
+    const formatter = list => list.map(token => {
+    	const fiatPrice = token.fiatPrice();
+    	const description = `${blockchainName(token.blockchain)} ${fiatPrice ? ' - ' : ''}${fiatPrice}`;
+    	return {
+		    id:token.unique(),
+		    title:`${token.name} (${token.symbol})`,
+		    description
+	    };
+    });
 
     const STATES = {
         ADD_TOKEN:'addToken',
@@ -173,7 +178,7 @@
 
     export default {
     	components:{
-		    FlatSelect,
+		    FlatList,
 		    SearchBar
         },
         data () {return {

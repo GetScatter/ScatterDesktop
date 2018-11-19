@@ -22,7 +22,7 @@
 		<!----------------------------->
 		<section class="dynamic-panel" v-if="state === STATES.ACCOUNT">
 			<section class="split-panel no-divider">
-				<FlatSelect class="panel" v-if="state === STATES.ACCOUNT"
+				<FlatList class="panel" v-if="state === STATES.ACCOUNT"
 				            :label="locale(langKeys.CREATE_EOS.ACCOUNT.AccountsLabel)"
 				            :items="creators"
 				            selected-icon="icon-check"
@@ -86,7 +86,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import {Blockchains} from "../../../models/Blockchains";
-	import FlatSelect from '../../reusable/FlatSelect';
+	import FlatList from '../../reusable/FlatList';
 	import FullWidthRow from '../../reusable/FullWidthRow';
 	import PluginRepository from "../../../plugins/PluginRepository";
 	import PopupService from "../../../services/PopupService";
@@ -102,7 +102,7 @@
 		props:['ownerPublicKey', 'activePublicKey', 'ownerId', 'activeId'],
 		components:{
 			FullWidthRow,
-			FlatSelect
+			FlatList
 		},
 		data () {return {
 			state:STATES.EXCHANGE,

@@ -1,7 +1,7 @@
 <template>
 	<section class="container">
 		<label v-if="label">{{label}}</label>
-		<section class="items" :class="{'as-rows':asRows}">
+		<section class="items" :class="{'as-rows':asRows, 'small':small}">
 			<section class="item" :key="item.id" v-for="item in items" :class="{'selected':selected && selected === item.id, 'unselectable':unselectable}" @click="$emit('selected',item)">
 				<transition name="slide-left" mode="out-in">
 					<figure v-if="selected && selected === item.id && selectedIcon" :class="selectedIcon"
@@ -22,7 +22,7 @@
 <script>
 
 	export default {
-		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable', 'asRows']
+		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable', 'asRows', 'small']
 	}
 
 </script>
@@ -56,7 +56,11 @@
 
 			.item {
 				flex:0 0 auto;
-				margin:5px;
+				margin:2px;
+
+				&:not(:last-child){
+					margin-bottom:2px;
+				}
 			}
 		}
 
@@ -105,6 +109,14 @@
 
 			.details {
 				flex:1;
+			}
+		}
+
+		&.small {
+
+			.item {
+				font-size: 11px;
+				padding:8px 12px;
 			}
 		}
 	}

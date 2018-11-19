@@ -53,6 +53,8 @@
     import PriceService from "../services/PriceService";
     import PluginRepository from "../plugins/PluginRepository";
     import Token from "../models/Token";
+    import {Popup} from "../models/popups/Popup";
+    import PopupService from "../services/PopupService";
 
 
     export default {
@@ -109,6 +111,10 @@
         created(){
 	        PriceService.watchPrices();
 	        BalanceService.loadAllBalances();
+
+	        // PopupService.push(Popup.verifyPassword(verified => {
+	        // 	console.log('verified', verified);
+            // }));
         },
     }
 </script>

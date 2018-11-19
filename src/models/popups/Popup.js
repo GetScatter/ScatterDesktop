@@ -28,6 +28,20 @@ export class Popup {
         return {width:800, height:600};
     }
 
+
+
+
+    // FULL POP OUT ( external window )
+	static popout(data, callback){
+		return new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data, callback))
+	}
+
+
+
+
+
+
+
     static prompt(title, description, icon, buttonText, callback, denyButtonText = null){
         let params = { title, description, icon };
         if(buttonText) params.buttonText = buttonText;
@@ -41,14 +55,6 @@ export class Popup {
 
     static transactionSuccess(blockchain, tx, callback){
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
-    }
-
-    static vault(){
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VAULT, {}, () => {}))
-    }
-
-    static linkOrCreateAccount(keypair, callback){
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.LINK_OR_CREATE_ACCOUNT, {keypair}, callback))
     }
 
     static textPrompt(title, description, icon, buttonText, input, callback){
@@ -72,14 +78,6 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DELEGATE_RESOURCES, { account }, callback))
     }
 
-    static ridlRegister(callback){
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.RIDL_REGISTER, {}, callback))
-    }
-
-    static popout(data, callback){
-        return new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data, callback))
-    }
-
     static mnemonic(phrase){
         const data = {
             phrase,
@@ -91,28 +89,40 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, data, () => {}))
     };
 
-    static invalidIdentityName(){
-        return Popup.snackbar("The name you entered is invalid. Names but be between 3-20 characters and include only a-Z, 0-9 and - or _", "attention-circled");
-    };
+
+
+    /*****************************************/
+    /*********   FULLSCREEN POPINS ***********/
+    /*****************************************/
+
+	static verifyPassword(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VERIFY_PASSWORD, {}, callback))
+	}
 
 }
 
 export const PopupTypes = {
+    // OVERLAYS
     MNEMONIC:'mnemonic',
     PROMPT:'prompt',
     TEXT_PROMPT:'textPrompt',
     SELECTOR:'selector',
-    VAULT:'vault',
-    LINK_OR_CREATE_ACCOUNT:'linkOrCreateAccount',
 
-
-
+    // FULLSCREEN
+    VERIFY_PASSWORD:'verifyPassword',
 
     BUY_SELL_RAM:'buySellRAM',
     DELEGATE_RESOURCES:'delegateResources',
     TX_SUCCESS:'txSuccess',
-    RIDL_REGISTER:'ridlRegister',
 };
+
+export const isFullscreen = popup => {
+    return [
+        PopupTypes.VERIFY_PASSWORD
+    ].includes(popup.data.type);
+
+
+}
 
 export class PopupData {
 

@@ -1,0 +1,28 @@
+@import "_variables.scss";
+
+.head {
+  text-align:center;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .icon {
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    border:1px solid #d4d4d4;
+    color:$red;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    margin-bottom:20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+}
+
