@@ -90,6 +90,8 @@
                  :parser="x => x ? blockchainName(x.value) : 'No Blockchain Filter'"
                  v-on:changed="x => blockchain = x ? x.value : null" />
 
+            <SearchBar class="search" placeholder="Search Tokens" v-on:terms="x => searchTerms = x" />
+
             <br>
             <section v-if="state === STATES.WHITELIST">
                 <section class="disclaimer less-pad">
@@ -149,6 +151,7 @@
     import PluginRepository from '../../../plugins/PluginRepository';
     import {BlockchainsArray, Blockchains, blockchainName} from '../../../models/Blockchains';
     import FlatSelect from '../../reusable/FlatSelect';
+    import SearchBar from '../../reusable/SearchBar';
     import Token from "../../../models/Token";
     import TokenService from "../../../services/TokenService";
     import PriceService from "../../../services/PriceService";
@@ -170,7 +173,8 @@
 
     export default {
     	components:{
-		    FlatSelect
+		    FlatSelect,
+		    SearchBar
         },
         data () {return {
         	state:STATES.WHITELIST,
@@ -223,18 +227,32 @@
 		            title:ticker,
 	            }));
             },
+	        terms(){
+		        return this.searchTerms.trim().toLowerCase();
+	        },
             networkTokensList(){
-	            if(!this.blockchain) return formatter(this.networkTokens);
-	            return formatter(this.networkTokens
+            	const tokens = this.filterTokensByTerms(this.networkTokens);
+	            if(!this.blockchain) return formatter(tokens);
+	            return formatter(tokens
 		            .filter(x => x.blockchain === this.blockchain))
             },
             tokensList(){
-            	if(!this.blockchain) return formatter(this.tokens);
-                return formatter(this.tokens
+	            const tokens = this.filterTokensByTerms(this.tokens);
+            	if(!this.blockchain) return formatter(tokens);
+                return formatter(tokens
                     .filter(x => x.blockchain === this.blockchain))
             }
         },
         methods:{
+    		filterTokensByTerms(tokensList){
+    		    return tokensList
+                    .filter(x => {
+                    	return x.symbol.toLowerCase().match(this.terms)
+                            || x.name.toLowerCase().match(this.terms)
+                            || x.blockchain.toLowerCase().match(this.terms)
+                            || this.blockchainName(x.blockchain).toLowerCase().match(this.terms)
+                    })
+            },
 	        defaultDecimals(blockchain){
 	        	const decimals = PluginRepository.plugin(blockchain).defaultDecimals();
 	        	let stringDecimals = '0.';
@@ -296,6 +314,10 @@
             display:flex;
             flex-direction: row;
         }
+    }
+
+    .search {
+        margin-left:-30px;
     }
 
 </style>

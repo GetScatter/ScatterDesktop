@@ -194,12 +194,6 @@
             /**   LISTS AND FILTERS  **/
 	        /**************************/
 
-            customTokenBlockchains(){
-            	if(!this.account) return BlockchainsArray;
-                return BlockchainsArray.filter(x => {
-                	return x.value === this.account.blockchain()
-                })
-            },
 	        senderAccounts(){
 		        const reducer = accs => accs.reduce((acc,x) => {
 			        if(!acc.find(y => `${y.networkUnique}${y.sendable()}` === `${x.networkUnique}${x.sendable()}`)) acc.push(x);
@@ -226,7 +220,7 @@
 		        	if(!this.account) return [];
 			        const accountBalances = this.balances[this.account.identifiable()];
 			        return accountBalances || [];
-                })();
+                })().sort((a,b) => b.amount - a.amount);
             	const allTokens = standardTokens.concat(tokensFromBalances);
 		        if(this.account) return allTokens.filter(x => x.blockchain === this.account.blockchain());
 		        return allTokens;
