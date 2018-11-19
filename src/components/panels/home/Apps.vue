@@ -7,7 +7,7 @@
 			<section key="apps" class="list-container" v-if="permissions.length">
 				<SearchBar :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
 				<section class="list">
-					<section class="item" v-for="(count, origin) in origins">
+					<section class="item" v-for="(count, origin) in origins" :class="{'search-only':count === 0}">
 
 						<!-- APP ICON -->
 						<section class="icon-wrapper" @click="openApp(origin)">
@@ -27,8 +27,9 @@
 
 							<p v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
 							<p v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
+							<p v-if="count === 0">No permissions.</p>
 
-							<section class="actions">
+							<section class="actions" v-if="count !== 0">
 								<span @click="goToPermission(origin)">
 									{{locale(langKeys.DASHBOARD.APPS.EditApp)}}
 								</span>
@@ -77,23 +78,35 @@
 			...mapState([
 				'scatter',
 				'dappLogos',
+				'dappData',
 			]),
 			...mapGetters([
 				'permissions',
 			]),
 			origins(){
+				const terms = this.searchTerms.trim().toLowerCase();
 				const origins = {};
 				this.permissions.map(p => {
 					if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
 					else origins[p.origin] += 1;
 				});
 
-				return Object.keys(origins).reduce((acc, origin) => {
-					if(origin.toString().toLowerCase().indexOf(this.searchTerms.toLowerCase()) !== -1)
-						acc[origin] = origins[origin];
+				const search = (appkeys, fakeCount = false) => {
+					return Object.keys(appkeys).reduce((acc, origin) => {
+						const matchesOrigin = origin.toString().toLowerCase().match(terms);
+						const matchesType = this.getAppData(origin).type.toLowerCase().match(terms);
+						if(matchesOrigin || matchesType)
+							acc[origin] = fakeCount ? 0 : appkeys[origin];
+						return acc;
+					}, {});
+				}
 
-					return acc;
-				}, {});
+				const found = search(origins);
+				if(!terms.length) return found;
+
+				const fromGeneralSearch = search(this.dappData, true);
+				Object.keys(found).map(x => delete fromGeneralSearch[x]);
+				return Object.assign(found, fromGeneralSearch);
 			}
 
 		},
@@ -160,6 +173,14 @@
 			padding:20px 0 5px;
 			display:flex;
 			flex-direction: row;
+
+			&.search-only {
+				opacity:0.5;
+
+				&:hover {
+					opacity:1;
+				}
+			}
 
 			$icon-bounds:70px;
 

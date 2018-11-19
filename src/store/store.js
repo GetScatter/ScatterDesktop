@@ -59,6 +59,7 @@ const getters = {
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
 	blacklistTokens:state =>  state.scatter.settings.blacklistTokens,
+	displayCurrency:state =>   state.scatter.settings.displayCurrency,
 	displayToken:state =>   state.scatter.settings.displayToken,
 	tokens:state =>         state.scatter.settings.tokens,
     allTokens:(state, getters) =>      getters.networkTokens.concat(getters.tokens),
@@ -81,6 +82,8 @@ const getters = {
 
         Object.keys(state.balances).map(async accountUnique => {
             const account = state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique);
+            if(!account) return;
+
 
             if(getters.mainnetTokensOnly){
 	            if(!PluginRepository.plugin(account.blockchain()).isEndorsedNetwork(account.network()))

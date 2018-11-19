@@ -3,13 +3,13 @@
 
         <section class="full-panel home" v-if="keypairs.length">
             <section class="action-bar short">
-                <section>
+                <section class="token-buttons">
                     <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" class="total-balance">
                         <figure class="symbol">{{balance.symbol}}</figure>
                         <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
                         <figure class="chevron icon-right-open-big"></figure>
                     </router-link>
-                    <!--<i class="icon-network"></i>-->
+                    <!--<btn text="Buy"></btn>-->
                     <!--<btn text="Exchange"></btn>-->
                 </section>
                 <section>
@@ -19,8 +19,8 @@
             </section>
 
             <section class="split-panel">
-                <Wallets class="panel" />
-                <Apps class="panel" />
+                <Wallets style="flex:1;" class="panel" />
+                <Apps style="flex:2;" class="panel" />
             </section>
         </section>
 
@@ -75,6 +75,7 @@
                 'accounts',
                 'totalBalances',
                 'displayToken',
+                'displayCurrency',
             ]),
             balance(){
             	const totals = this.totalBalances.totals;
@@ -88,19 +89,17 @@
                     }
                 } else {
             		let total = 0;
-            		Object.keys(this.prices).map(blockchain => {
-            			const token = PluginRepository.plugin(blockchain.toLowerCase()).defaultToken();
-            			const balance = totals[token.unique()];
 
-            			if(balance){
-				            const price = this.prices[blockchain].price;
+            		Object.keys(this.prices).map(tokenUnique => {
+			            const balance = totals[tokenUnique];
+			            if(balance){
+				            const price = this.prices[tokenUnique][this.displayCurrency];
 				            total += parseFloat(parseFloat(balance.amount) * parseFloat(price));
-                        }
-
-                    })
+			            }
+                    });
 
 		            return Token.fromJson({
-			            symbol:'USD',
+			            symbol:this.displayCurrency,
 			            amount:total.toFixed(2),
 		            })
                 }
@@ -121,12 +120,19 @@
         position:relative;
         display:flex;
         flex-direction: column;
-        
+    }
+
+    .token-buttons {
+        display:flex;
+
+        button {
+            margin-left:5px;
+        }
     }
 
     .total-balance {
         cursor: pointer;
-        height:44px;
+        height:42px;
         padding:0 10px;
         outline:0;
         border:1px solid #dfe0e1;

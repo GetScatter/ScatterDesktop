@@ -67,9 +67,9 @@
                 </section>
 
                 <section v-if="blockchain === null">
-                    <FlatSelect style="padding:0;"
+                    <FlatSelect as-rows="1" style="padding:0;"
                                 :selected="selectedDisplayToken"
-                                label="Fiat Currencies"
+                                label="Show as fiat currency"
                                 v-on:selected="selectDisplayToken"
                                 :items="currencyList" />
                     <br>
@@ -123,6 +123,7 @@
     import FlatSelect from '../../reusable/FlatSelect';
     import Token from "../../../models/Token";
     import TokenService from "../../../services/TokenService";
+    import PriceService from "../../../services/PriceService";
 
     const formatter = list => list.map(x => ({
 	    id:x.unique(),
@@ -151,7 +152,11 @@
             addingToken:false,
 
             searchTerms:'',
+            currencies:[],
         }},
+        mounted(){
+    	    PriceService.getCurrencies().then(x => this.currencies = x);
+        },
         computed:{
             ...mapState([
                 'scatter'
@@ -163,9 +168,10 @@
                 'blacklistTokens',
                 'mainnetTokensOnly',
                 'displayToken',
+                'displayCurrency',
             ]),
             selectedDisplayToken(){
-                if(!this.displayToken) return 'fiat';
+                if(!this.displayToken) return 'fiat_'+this.displayCurrency;
                 return this.displayToken;
             },
 
@@ -179,11 +185,10 @@
 		            .filter(x => x.blockchain === this.blockchain))
             },
             currencyList(){
-            	return [{
-		            id:'fiat',
-		            title:'USD',
-                    description:'Display total balance in USD'
-                }];
+            	return this.currencies.map(ticker => ({
+		            id:`fiat_${ticker}`,
+		            title:ticker,
+	            }));
             },
             networkTokensList(){
 	            if(!this.blockchain) return formatter(this.networkTokens);
@@ -198,7 +203,14 @@
         },
         methods:{
 	        selectDisplayToken(token){
-	        	if(!token.id) return TokenService.toggleDisplayToken(null);
+	        	const asFiat = token.id.startsWith('fiat_');
+                if(asFiat){
+                	const scatter = this.scatter.clone();
+                	scatter.settings.displayCurrency = token.title;
+                	this[Actions.SET_SCATTER](scatter);
+                }
+
+	        	if(!token.id || asFiat) return TokenService.toggleDisplayToken(null);
 	        	TokenService.toggleDisplayToken(token.id);
             },
     		async addToken(blacklist = false){
@@ -231,5 +243,12 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../variables";
+
+    .fiat-currencies {
+        .items {
+            display:flex;
+            flex-direction: row;
+        }
+    }
 
 </style>

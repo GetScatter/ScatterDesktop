@@ -1,6 +1,7 @@
 import IdGenerator from "../util/IdGenerator";
 import PluginRepository from "../plugins/PluginRepository";
 import {Blockchains} from "./Blockchains";
+import {store} from "../store/store";
 
 export default class Token {
 
@@ -41,4 +42,17 @@ export default class Token {
 		    default: return true;
 	    }
     }
+
+    formatted(){
+    	return `${this.amount} ${this.symbol}`;
+    }
+
+	fiatBalance(){
+		if(store.state.prices.hasOwnProperty(this.unique())){
+			const price = parseFloat(store.state.prices[this.unique()][store.getters.displayCurrency]);
+			return `${parseFloat(price * parseFloat(this.amount)).toFixed(2)} ${store.getters.displayCurrency}`;
+		} else {
+			return null;
+		}
+	}
 }

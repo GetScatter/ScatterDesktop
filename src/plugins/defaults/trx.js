@@ -74,21 +74,11 @@ export default class TRX extends Plugin {
 
 
     async balanceFor(account, token){
-        console.log('getting tron balance', account, token);
 	    const tron = getCachedInstance(account.network());
 	    const clone = token.clone();
         if(token.unique() === this.defaultToken().unique()){
 	        const bal = await tron.trx.getBalance(account.publicKey);
 	        clone.amount = tron.toBigNumber(bal).div(1000000).toFixed(6).toString(10);
-
-        } else {
-        	// console.log('c', token.contract, account.sendable())
-	        // const contract = await tron.contract().at(token.contract);
-	        // console.log('contract', contract);
-	        // const bal = await contract.balanceOf('TF2quv1hTipcZ8FJ8FRsXXLSiJ1C15dqkW').call();
-	        // console.log('bal', bal);
-	        console.log('hi', await tron.trx.getAccount("TF2quv1hTipcZ8FJ8FRsXXLSiJ1C15dqkW"))
-	        console.log('hi', await tron.trx.getTokenFromID("BitMain"))
         }
 
         return clone;
@@ -116,9 +106,6 @@ export default class TRX extends Plugin {
 		});
 
 		return [trx].concat(altTokens);
-        // return Promise.all(tokens.map(token => {
-        //     return this.balanceFor(account, token);
-        // }))
     }
 
     defaultDecimals(){ return 6; }

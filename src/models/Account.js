@@ -39,4 +39,11 @@ export default class Account {
     asReturnable(){
         return PluginRepository.plugin(this.blockchain()).returnableAccount(this);
     }
+
+    tokenCount(){
+	    if(!store.state.balances) return 0;
+	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
+	    if(!store.state.balances[this.identifiable()]) return 0;
+	    return store.state.balances[this.identifiable()].length;
+    }
 }

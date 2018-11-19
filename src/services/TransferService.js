@@ -1,9 +1,6 @@
 import {Blockchains, BlockchainsArray} from '../models/Blockchains'
-import {store} from '../store/store';
-import * as Actions from '../store/constants';
 import PluginRepository from '../plugins/PluginRepository';
 import PopupService from './PopupService';
-import PriceService from './PriceService';
 import {Popup} from '../models/popups/Popup'
 import BigNumber from 'bignumber.js';
 

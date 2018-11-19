@@ -45,7 +45,7 @@
                          :selected="token"
                          :options="[{id:'custom', name:'Custom Token'}].concat(filteredTokens)"
                          :parser="t => t.name"
-                         :subparser="t => t.id === 'custom' ? null : `${blockchainName(t.blockchain)}${totalBalanceFor(t.id) ? `- ${totalBalanceFor(t.id)}` :''}`"
+                         :subparser="tokenListSubParser"
                          v-on:changed="selectToken" />
                     <br>
 
@@ -270,7 +270,11 @@
 		        return this.contacts.find(x => x.recipient.toLowerCase() === this.recipient.toLowerCase())
 	        },
 	        tokenBalance(){
-            	return this.totalBalanceFor(this.token);
+            	if(!this.account) return;
+
+            	const balanceToken = this.totalBalanceFor(this.token);
+            	if(!balanceToken) return;
+            	return balanceToken.formatted();
 	        },
             canSend(){
             	return parseFloat(this.amount) > 0
@@ -304,6 +308,10 @@
 	    		if(this.account) return this.account = null;
 	    	    this.$router.push({name:this.RouteNames.HOME})
             },
+            tokenListSubParser(token){
+	    		const balance = this.totalBalanceFor(token.id) ? this.totalBalanceFor(token.id).formatted() ? `- ${this.totalBalanceFor(token.id).formatted()}` :'' :'';
+	            return token.id === 'custom' ? null : `${this.blockchainName(token.blockchain)}${balance}`
+            },
             tokenFromId(id){
 	    	    return this.filteredTokens.find(x => x.id === id);
             },
@@ -316,10 +324,7 @@
 		        if(!token) return null;
 		        const accountBalances = this.balances[this.account.identifiable()];
 		        if(!accountBalances) return null;
-		        const balance = this.balances[this.account.identifiable()].find(x => x.unique() === token.unique());
-		        if(!balance) return null;
-
-		        return `${balance.amount} ${balance.symbol}`;
+		        return this.balances[this.account.identifiable()].find(x => x.unique() === token.unique());
 	        },
 	        async addToken(){
 	    		const token = new Token(

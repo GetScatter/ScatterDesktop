@@ -34,8 +34,9 @@ export default class Settings {
         // Tokens
         this.showMainnetsOnly = true;
         this.displayToken = null;
-        this.tokens = [];
-        this.blacklistTokens = [];
+	    this.displayCurrency = 'USD';
+	    this.tokens = [];
+	    this.blacklistTokens = [];
     }
 
     static placeholder(){ return new Settings(); }

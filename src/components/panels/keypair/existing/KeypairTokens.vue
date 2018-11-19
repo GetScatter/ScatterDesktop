@@ -18,7 +18,10 @@
 				<figure class="symbol">
 					<span>{{systemTokenBalance.symbol}}</span>
 				</figure>
-				<figure class="amount">{{systemTokenBalance.amount}}</figure>
+				<figure class="amount">
+					{{systemTokenBalance.amount}}
+					<span v-if="systemTokenBalance.fiatBalance()">{{systemTokenBalance.fiatBalance()}}</span>
+				</figure>
 				<section class="info">
 					<figure class="system">SYSTEM TOKEN</figure>
 					<figure>{{systemTokenBalance.contract}}</figure>
@@ -30,7 +33,10 @@
 				<figure class="symbol">
 					<span>{{token.symbol}}</span>
 				</figure>
-				<figure class="amount">{{token.amount}}</figure>
+				<figure class="amount">
+					{{token.amount}}
+					<span v-if="token.fiatBalance()">{{token.fiatBalance()}}</span>
+				</figure>
 				<section class="info">
 					<figure>{{token.contract}}</figure>
 				</section>
@@ -145,7 +151,7 @@
 			}
 
 			.symbol {
-				width:110px;
+				flex:0.5;
 
 				span {
 					font-size: 14px;
@@ -177,6 +183,11 @@
 				flex:1;
 				font-size: 24px;
 				color:$dark-grey;
+
+				span {
+					display:block;
+					font-size: 11px;
+				}
 
 			}
 		}

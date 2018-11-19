@@ -10,12 +10,13 @@
 			     v-on:changed="x => keypair.name = x" />
 
 			<section class="panel-switch" :class="{'short':!scrollerAtTop}">
+				<figure class="button" v-if="hasEosBlockchain" :class="{'active':dashState === DASH_STATES.ADD_ACCOUNT}" @click="dashState = DASH_STATES.ADD_ACCOUNT">Add Account</figure>
 				<figure class="button" :class="{'active':dashState === DASH_STATES.ACCOUNTS}" @click="dashState = DASH_STATES.ACCOUNTS">Accounts</figure>
 				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys and Blockchains</figure>
 			</section>
 
 			<!-- ACCOUNTS -->
-			<section class="list-container" key="accounts" v-if="dashState === DASH_STATES.ACCOUNTS">
+			<section class="list-container" v-if="dashState === DASH_STATES.ACCOUNTS">
 				<!-- Accounts Searchbar -->
 				<SearchBar :short="!scrollerAtTop"
 				           class="search" :class="{'short':!scrollerAtTop}"
@@ -27,34 +28,45 @@
 					<section class="item" v-for="account in filteredAccounts">
 						<KeypairAccount :key="account.unique()" :account="account" v-on:tokens="x => $emit('tokens', x)" />
 					</section>
-
-					<section class="action-box" v-if="hasEosBlockchain">
-						<section class="key-val">
-							<figure>{{locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountLabel)}}</figure>
-							<figure>{{locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountDescription)}}</figure>
-
-							<br>
-							<br>
-							<section class="split-inputs">
-								<sel style="flex:1; margin-left:0;" label="Network to add account to"
-								     :selected="manualAccountNetwork"
-								     :options="eosNetworks"
-								     :parser="network => network.name"
-								     v-on:changed="x => manualAccountNetwork = x"></sel>
-
-								<btn :text="locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountButton)" style="margin-top:20px; flex:0.2;"
-								     red="1" v-on:clicked="manuallyAddAccount" />
-							</section>
-						</section>
-					</section>
 				</section>
 			</section>
 
 			<!-- KEYS AND BLOCKCHAINS -->
-			<section class="list-container" key="keys" v-if="dashState === DASH_STATES.PUBLIC_KEYS">
+			<section class="list-container" v-if="dashState === DASH_STATES.PUBLIC_KEYS">
 				<section class="list blockchains" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
 					<KeypairBlockchains :key="keypair.unique()" :keypair="keypair" />
 				</section>
+			</section>
+
+			<!-- KEYS AND BLOCKCHAINS -->
+			<section class="list-container"v-if="dashState === DASH_STATES.ADD_ACCOUNT">
+				<br>
+				<section class="disclaimer">
+					{{locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountLabel)}}
+					<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountDescription)}}</p>
+				</section>
+
+				<section class="action-box" style="margin-top:0;">
+					<section class="key-val">
+						<section class="split-inputs">
+							<sel style="flex:1; margin-left:0;" label="Network to add account to"
+							     :selected="manualAccountNetwork"
+							     :options="eosNetworks"
+							     :parser="network => network.name"
+							     v-on:changed="x => manualAccountNetwork = x"></sel>
+
+							<cin style="margin-bottom:0; flex:1;"
+							     :text="newAccountName"
+							     v-on:changed="x => newAccountName = x"
+							     placeholder="your.account@owner"
+							     label="Account Name" />
+
+							<btn :text="locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountButton)" style="margin-top:20px; flex:0.2;"
+							     red="1" v-on:clicked="manuallyAddAccount" />
+						</section>
+					</section>
+				</section>
+
 			</section>
 		</section>
 	</section>
@@ -77,6 +89,7 @@
 	let saveTimeout;
 
 	const DASH_STATES = {
+		ADD_ACCOUNT:'addAccount',
 		ACCOUNTS:'accounts',
 		PUBLIC_KEYS:'publicKeys',
 	};
@@ -91,6 +104,8 @@
 
 			searchTerms:'',
 			manualAccountNetwork:null,
+
+			newAccountName:'',
 		}},
 
 		components:{
@@ -113,6 +128,9 @@
 			filteredAccounts(){
 				return this.keypair.accounts(true)
 					.filter(x => x.name.toLowerCase().match(this.searchTerms))
+					.sort((a,b) => {
+						return b.tokenCount() - a.tokenCount()
+					})
 			},
 			nameError(){
 				if(!this.keypair.name.trim().length) return 'Enter a name for this Vault Entry';
@@ -129,27 +147,18 @@
 			handleScroll(e){
 				this.scrollerAtTop = e.target.scrollTop <= 80;
 			},
-			manuallyAddAccount(){
-				PopupService.push(Popup.textPrompt(
-					'Enter account name',
-					'Enter the name of the account you think should be on this key.',
-					'user-add',
-					'Done',
-					{ placeholder:'someaccount OR someaccount@active' },
-					async formatted => {
-						if(!formatted || !formatted.length) return;
+			async manuallyAddAccount(){
+				const [name, auth] = this.newAccountName.trim().toLowerCase().split('@');
+				const account = Account.fromJson({
+					keypairUnique:this.keypair.id,
+					networkUnique:this.manualAccountNetwork.unique(),
+					publicKey:this.keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key,
+					name,
+					authority:auth ? auth : 'active',
+				});
 
-						const [name, auth] = formatted.trim().toLowerCase().split('@');
-						const account = Account.fromJson({
-							keypairUnique:this.keypair.id,
-							networkUnique:this.manualAccountNetwork.unique(),
-							publicKey:this.keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key,
-							name,
-							authority:auth ? auth : 'active',
-						});
-
-						await AccountService.addAccount(account);
-				}))
+				await AccountService.addAccount(account);
+				this.dashState = DASH_STATES.ACCOUNTS;
 			}
 		},
 

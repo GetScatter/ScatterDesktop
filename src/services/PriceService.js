@@ -34,40 +34,15 @@ export default class PriceService {
     static getAll(){
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-            fetch(api+'/v1/prices').then(x => x.json())
+            fetch(api+'/v1/prices?v2=true').then(x => x.json())
         ])
     }
 
-    static tokenDecimals(token){
-        const tokenBalance = ObjectHelpers.flatten(Object.keys(store.state.balances).map(x => store.state.balances[x])).find(x => x.blockchain === token.blockchain && x.account === token.account && x.symbol === token.symbol);
-        return tokenBalance ? tokenBalance.balance.toString().split('.')[1].length : PluginRepository.plugin(token.blockchain).defaultDecimals();
-    }
-
-    static async valueToTokens(token, value){
-        const prices = await PriceService.getAll();
-        if(!prices || !Object.keys(prices).length || !prices.hasOwnProperty(token.symbol)) return 0;
-        return parseFloat(value / prices[token.symbol].price).toFixed(this.tokenDecimals(token));
-    }
-
-    static async tokensToValue(token, value){
-        const prices = await PriceService.getAll();
-        if(!prices || !Object.keys(prices).length || !prices.hasOwnProperty(token.symbol)) return 0;
-        return parseFloat(value * prices[token.symbol].price).toFixed(2);
-    }
-
-    static tokensFor(token){
-        let accountBalances = [];
-        Object.keys(store.state.balances).map(accountUnique => {
-            const account = store.state.scatter.keychain.accounts.find(x => x.unique() === accountUnique);
-            const foundToken = store.state.balances[accountUnique].find(x => x.blockchain === token.blockchain && x.account === token.account && x.symbol === token.symbol);
-            if(foundToken){
-                accountBalances.push({
-                    account,
-                    balance:foundToken.balance,
-                });
-            }
-        });
-        return accountBalances;
+    static async getCurrencies(){
+        return Promise.race([
+		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
+		    fetch(api+'/v1/currencies').then(x => x.json()).catch(() => ['USD'])
+	    ])
     }
 
 }
