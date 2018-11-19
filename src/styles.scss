@@ -458,9 +458,13 @@ label {
   align-items: center;
   padding:0 30px;
 
-  $shade:rgba(0,0,0,0.03);
-  &:not(.bottom){ box-shadow:0 -15px 20px $shade, 0 6px 6px $shade; }
-  &.bottom { box-shadow:0 -15px 20px $shade, 0 -6px 6px $shade; }
+  $shade:#f4f4f4;
+  &:not(.bottom){
+    border-bottom:2px solid $shade;
+  }
+  &.bottom {
+    border-top:2px solid $shade;
+  }
   &.centered { justify-content: center; }
   &.short { height:80px; }
 

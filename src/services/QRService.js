@@ -20,20 +20,13 @@ export default class QRService {
                     if(!pass || !pass.length) {
                         resolve(QRCode.toDataURL(JSON.stringify({data, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
                     } else {
+	                    const confirmed = await PasswordService.verifyPassword(confirm, false);
+	                    if(!confirmed) return resolve(null);
 
-                        PopupService.push(Popup.textPrompt(
-                            'Confirm Password',
-                            'Since you want to use a different PIN, you must confirm your password first.',
-                            'lock',
-                            'Okay', {placeholder:'Confirm your current Password', type:'password'}, async confirm => {
-                                const confirmed = await PasswordService.verifyPassword(confirm, false);
-                                if(!confirmed) return resolve(null);
-
-                                const oldSeed = store.state.seed;
-                                const newSeed = (await Mnemonic.generateMnemonic(pass, StorageService.getSalt()))[1];
-                                const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);
-                                resolve(QRCode.toDataURL(JSON.stringify({data:dData, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
-                            }))
+	                    const oldSeed = store.state.seed;
+	                    const newSeed = (await Mnemonic.generateMnemonic(pass, StorageService.getSalt()))[1];
+	                    const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);
+	                    resolve(QRCode.toDataURL(JSON.stringify({data:dData, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
                     }
 
             }))

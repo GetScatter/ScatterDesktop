@@ -6,41 +6,60 @@
 			<!-- HAS APPS -->
 			<section key="apps" class="list-container" v-if="permissions.length">
 				<SearchBar :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
+
+
+
 				<section class="list">
-					<section class="item" v-for="(count, origin) in origins" :class="{'search-only':count === 0}">
+					<section v-for="(list, i) in [origins, originsFromSearch]">
+						<section class="item" v-for="(count, origin) in list">
 
-						<!-- APP ICON -->
-						<section class="icon-wrapper" @click="openApp(origin)">
-							<figure class="icon">
-								<img v-if="getAppData(origin).hasOwnProperty('img')" :src="getAppData(origin).img" />
-							</figure>
-							<figure class="app-type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
-						</section>
 
-						<!-- APP DETAILS -->
-						<section class="details">
-							<figure class="title"
-							        @click="openApp(origin)"
-							        :class="{'has-url':getAppData(origin).url.length}">{{getAppData(origin).name}}</figure>
+							<!-- APP ICON -->
+							<section class="icon-wrapper" @click="openApp(origin)">
+								<figure class="icon">
+									<img v-if="getAppData(origin).hasOwnProperty('img')" :src="getAppData(origin).img" />
+								</figure>
+								<figure class="app-type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
+							</section>
 
-							<p class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></p>
+							<!-- APP DETAILS -->
+							<section class="details">
+								<figure class="title"
+								        @click="openApp(origin)"
+								        :class="{'has-url':getAppData(origin).url.length}">{{getAppData(origin).name}}</figure>
 
-							<p v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
-							<p v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
-							<p v-if="count === 0">No permissions.</p>
+								<p class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></p>
 
-							<section class="actions" v-if="count !== 0">
+								<p v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
+								<p v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
+								<p v-if="count === 0">No permissions.</p>
+
+								<section class="actions" v-if="count !== 0">
 								<span @click="goToPermission(origin)">
 									{{locale(langKeys.DASHBOARD.APPS.EditApp)}}
 								</span>
-								<span @click="removePermissions(origin)">
+									<span @click="removePermissions(origin)">
 									{{locale(langKeys.DASHBOARD.APPS.DeleteApp)}}
 								</span>
+								</section>
 							</section>
+
+							<section class="button" v-if="getAppData(origin).url.length">
+								<btn text="Open" v-on:clicked="openApp(origin)" />
+							</section>
+
 						</section>
 
+						<figure class="breaker disclaimer less-pad" v-if="i === 0 && Object.keys(originsFromSearch).length">
+							Below are apps that you aren't linked with.<br>
+							<span>Note that these apps are not added by the Scatter team, but by the apps themselves. The display of any app is not an endorsement.</span>
+						</figure>
 					</section>
+
 				</section>
+
+
+
 			</section>
 
 			<!-- DOES NOT HAVE APPS -->
@@ -52,9 +71,6 @@
 				</section>
 			</section>
 		</transition>
-		<section class="action-bar short bottom centered">
-			<btn style="max-width:360px;" blue="1" text="Explore Apps" v-on:clicked="goToApps"></btn>
-		</section>
 	</section>
 </template>
 
@@ -84,33 +100,32 @@
 				'permissions',
 			]),
 			origins(){
-				const terms = this.searchTerms.trim().toLowerCase();
 				const origins = {};
 				this.permissions.map(p => {
 					if(!Object.keys(origins).includes(p.origin)) origins[p.origin] = 1;
 					else origins[p.origin] += 1;
 				});
 
-				const search = (appkeys, fakeCount = false) => {
-					return Object.keys(appkeys).reduce((acc, origin) => {
-						const matchesOrigin = origin.toString().toLowerCase().match(terms);
-						const matchesType = this.getAppData(origin).type.toLowerCase().match(terms);
-						if(matchesOrigin || matchesType)
-							acc[origin] = fakeCount ? 0 : appkeys[origin];
-						return acc;
-					}, {});
-				}
-
-				const found = search(origins);
-				if(!terms.length) return found;
-
-				const fromGeneralSearch = search(this.dappData, true);
-				Object.keys(found).map(x => delete fromGeneralSearch[x]);
-				return Object.assign(found, fromGeneralSearch);
+				return this.search(origins);
+			},
+			originsFromSearch(){
+				if(!this.searchTerms.length) return {};
+				const fromGeneralSearch = this.search(this.dappData, true);
+				Object.keys(this.origins).map(x => delete fromGeneralSearch[x]);
+				return fromGeneralSearch;
 			}
-
 		},
+
 		methods:{
+			search(appkeys, fakeCount = false){
+				return Object.keys(appkeys).reduce((acc, origin) => {
+					const matchesOrigin = origin.toString().toLowerCase().match(this.searchTerms);
+					const matchesType = this.getAppData(origin).type.toLowerCase().match(this.searchTerms);
+					if(matchesOrigin || matchesType)
+						acc[origin] = fakeCount ? 0 : appkeys[origin];
+					return acc;
+				}, {});
+			},
 			getAppData:AppsService.getAppData,
 			openApp(origin){
 				const data = this.getAppData(origin);
@@ -136,6 +151,20 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../../_variables";
+
+	.breaker {
+		margin:20px 0;
+		width:100%;
+		color: $dark-grey;
+		font-size: 14px;
+
+		span {
+			font-size: 11px;
+			font-weight: bold;
+			margin-top:5px;
+			display:block;
+		}
+	}
 
 	.apps {
 		flex:1;
@@ -173,14 +202,6 @@
 			padding:20px 0 5px;
 			display:flex;
 			flex-direction: row;
-
-			&.search-only {
-				opacity:0.5;
-
-				&:hover {
-					opacity:1;
-				}
-			}
 
 			$icon-bounds:70px;
 
@@ -241,6 +262,7 @@
 
 
 			.details {
+				flex:1;
 				padding:0 15px;
 				width:calc(100% - #{$icon-bounds});
 
@@ -277,6 +299,17 @@
 							color:$dark-blue;
 						}
 					}
+				}
+			}
+
+			.button {
+				width:100px;
+				display:flex;
+				justify-content: flex-end;
+				align-items: center;
+
+				button {
+					width:auto;
 				}
 			}
 		}
