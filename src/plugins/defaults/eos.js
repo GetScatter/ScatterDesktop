@@ -270,11 +270,12 @@ export default class EOS extends Plugin {
 				}));
 			}),
 			new AccountAction('Unlink Account', '', () => {
-				PopupService.push(Popup.prompt('Removing Account', 'This will also remove all permissions', 'attention', 'Remove', removed => {
-					if(!removed) return;
-					// Removing all permissions ( active, owner, etc )
-					AccountService.removeAccounts(accounts);
-				}, 'Cancel'))
+				PopupService.push(Popup.unlinkAccount(account, () => {}));
+				// PopupService.push(Popup.prompt('Removing Account', 'This will also remove all permissions', 'attention', 'Remove', removed => {
+				// 	if(!removed) return;
+				// 	// Removing all permissions ( active, owner, etc )
+				// 	AccountService.removeAccounts(accounts);
+				// }, 'Cancel'))
 			})
 		];
 		const ownerActions = [

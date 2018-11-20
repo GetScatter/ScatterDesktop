@@ -220,7 +220,7 @@ export default class ApiService {
      * @param request
      * @returns {Promise.<void>}
      */
-    static async [Actions.REQUEST_ADD_NETWORK](request){
+    static async [Actions.SUGGEST_NETWORK](request){
         return new Promise(async resolve => {
 
             let {network} = request.payload;

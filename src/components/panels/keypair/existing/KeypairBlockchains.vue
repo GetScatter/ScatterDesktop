@@ -27,6 +27,8 @@
 	import Process from "../../../../models/Process";
 	import ElectronHelpers from "../../../../util/ElectronHelpers";
 	import BalanceService from "../../../../services/BalanceService";
+	import PopupService from "../../../../services/PopupService";
+	import {Popup} from "../../../../models/popups/Popup";
 
 	export default {
 		data(){return {
@@ -40,10 +42,15 @@
 		methods:{
 			async addOrRemoveBlockchain(blockchain){
 				if(this.isRefreshing) return;
-				await KeyPairService.addOrRemoveBlockchain(this.keypair, blockchain);
-				await Promise.all(this.keypair.accounts(true).map(account => {
-					return BalanceService.loadBalancesFor(account);
-				}))
+
+				const removing = this.keypair.blockchains.includes(blockchain);
+				if(removing) PopupService.push(Popup.unlinkBlockchain(this.keypair, blockchain));
+				else {
+					await KeyPairService.addOrRemoveBlockchain(this.keypair, blockchain);
+					await Promise.all(this.keypair.accounts(true).map(account => {
+						return BalanceService.loadBalancesFor(account);
+					}))
+				}
 			},
 			copyPublicKey(key){
 				ElectronHelpers.copy(key);

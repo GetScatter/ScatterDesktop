@@ -9,5 +9,5 @@ export const REQUEST_TRANSFER =                 'requestTransfer';
 export const REQUEST_SIGNATURE =                'requestSignature';
 export const CREATE_TRANSACTION =               'createTransaction';
 export const REQUEST_ARBITRARY_SIGNATURE =      'requestArbitrarySignature';
-export const REQUEST_ADD_NETWORK =              'requestAddNetwork';
+export const SUGGEST_NETWORK =              'requestAddNetwork';
 export const AUTHENTICATE =                     'authenticate';

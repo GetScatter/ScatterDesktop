@@ -6,7 +6,7 @@
             <!--<get-identity v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"-->
                           <!--:payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></get-identity>-->
 
-            <!--<suggest-network v-if="popupType === apiActions.REQUEST_ADD_NETWORK"-->
+            <!--<suggest-network v-if="popupType === apiActions.SUGGEST_NETWORK"-->
                              <!--:payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></suggest-network>-->
 
             <!--<signature-request v-if="popupType === apiActions.REQUEST_SIGNATURE || popupType === apiActions.REQUEST_ARBITRARY_SIGNATURE"-->

@@ -2,9 +2,14 @@
 	<section class="container">
 		<label v-if="label">{{label}}</label>
 		<section class="items" :class="{'as-rows':asRows, 'small':small}">
-			<section class="item" :key="item.id" v-for="item in items" :class="{'selected':selected && selected === item.id, 'unselectable':unselectable}" @click="$emit('selected',item)">
+			<section class="item"
+			         :key="item.id"
+			         v-for="item in items"
+			         :class="{'selected':itemIsSelected(item), 'unselectable':unselectable, 'select-blue':selectBlue}"
+			         @click="$emit('selected',item)">
+
 				<transition name="slide-left" mode="out-in">
-					<figure v-if="selected && selected === item.id && selectedIcon" :class="selectedIcon"
+					<figure v-if="itemIsSelected(item) && selectedIcon" :class="selectedIcon"
 					        class="selected-icon" @click="$emit('action', item)"></figure>
 				</transition>
 
@@ -22,7 +27,14 @@
 <script>
 
 	export default {
-		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable', 'asRows', 'small']
+		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable', 'asRows', 'small', 'selectBlue'],
+		methods:{
+			itemIsSelected(item){
+				if(!this.selected) return false;
+				if(typeof this.selected !== 'object') return this.selected === item.id;
+				return this.selected.includes(item.id);
+			}
+		}
 	}
 
 </script>
@@ -109,6 +121,17 @@
 
 			.details {
 				flex:1;
+			}
+
+			&.selected {
+				&.select-blue {
+					background:$dark-blue;
+					.details {
+						.title {
+							color:#fff;
+						}
+					}
+				}
 			}
 		}
 

@@ -8,6 +8,8 @@
                     <ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />
                     <EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />
                     <EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />
+                    <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
+                    <UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />
                 </section>
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -60,6 +62,8 @@
     import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
     import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
     import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
+    import UnlinkAccount from '../components/popins/fullscreen/UnlinkAccount'
+    import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
 
     export default {
     	components:{
@@ -76,7 +80,9 @@
             // FULLSCREEN
 		    ConfirmPassword,
 		    EosChangePermissions,
-		    EosProxyVotes
+		    EosProxyVotes,
+		    UnlinkAccount,
+		    UnlinkBlockchain
         },
         data(){ return {
             popupTypes:PopupTypes,

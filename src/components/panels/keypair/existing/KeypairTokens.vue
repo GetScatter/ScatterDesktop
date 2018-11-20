@@ -81,10 +81,12 @@
 				return this.balances[this.account.identifiable()];
 			},
 			systemTokenBalance(){
+				if(!this.accountBalances) return null;
 				return this.accountBalances.find(x => x.unique() === this.systemToken.unique());
 			},
 			tokens(){
 				const balanceFilter = this.balanceFilters[this.account.blockchain()];
+				if(!this.accountBalances) return null;
 				return this.accountBalances
 					.filter(x => {
 						if(!balanceFilter) return true;

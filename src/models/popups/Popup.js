@@ -20,7 +20,7 @@ export class Popup {
         if(this.data.type === ApiActions.GET_OR_REQUEST_IDENTITY)   return {width:420, height:550};
         if(this.data.type === ApiActions.REQUEST_TRANSFER)          return {width:440, height:560};
         if(this.data.type === ApiActions.REQUEST_SIGNATURE)         return {width:1024, height:800};
-        if(this.data.type === ApiActions.REQUEST_ADD_NETWORK)       return {width:440, height:360};
+        if(this.data.type === ApiActions.SUGGEST_NETWORK)       return {width:440, height:360};
         if(this.data.type === ApiActions.LINK_ACCOUNT)              return {width:440, height:360};
         if(this.data.type === ApiActions.GET_PUBLIC_KEY)            return {width:440, height:600};
         if(this.data.type === 'linkApp')                            return {width:440, height:360};
@@ -107,6 +107,14 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_PROXY_VOTES, {account}, callback))
 	}
 
+	static unlinkAccount(account, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UNLINK_ACCOUNT, {account}, callback))
+	}
+
+	static unlinkBlockchain(keypair, blockchain, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UNLINK_BLOCKCHAIN, {keypair, blockchain}, callback))
+	}
+
 }
 
 export const PopupTypes = {
@@ -120,6 +128,8 @@ export const PopupTypes = {
     VERIFY_PASSWORD:'verifyPassword',
     EOS_CHANGE_PERMISSIONS:'eosChangePermissions',
 	EOS_PROXY_VOTES:'eosProxyVotes',
+	UNLINK_ACCOUNT:'unlinkAccount',
+	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 
     BUY_SELL_RAM:'buySellRAM',
     DELEGATE_RESOURCES:'delegateResources',
@@ -131,6 +141,8 @@ export const isFullscreen = popup => {
         PopupTypes.VERIFY_PASSWORD,
         PopupTypes.EOS_CHANGE_PERMISSIONS,
         PopupTypes.EOS_PROXY_VOTES,
+        PopupTypes.UNLINK_ACCOUNT,
+        PopupTypes.UNLINK_BLOCKCHAIN,
     ].includes(popup.data.type);
 
 

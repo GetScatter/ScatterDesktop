@@ -38,7 +38,7 @@ export default class AccountService {
             }));
 
             const uniques = accounts.map(x => x.unique());
-            const accountsToRemove = scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique() && !uniques.includes(x.unique()));
+            const accountsToRemove = scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique() && !uniques.includes(x.unique()) && blockchains.includes(x.blockchain));
 
 
             // This method takes a while, re-cloning to make sure we're

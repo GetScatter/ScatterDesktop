@@ -118,11 +118,4 @@
 		}
 	}
 
-	.list {
-		max-width:700px;
-		width:100%;
-		text-align:left;
-
-	}
-
 </style>
