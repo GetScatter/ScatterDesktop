@@ -19,7 +19,7 @@ export default class AccountService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static importAllAccounts(keypair, isNewKeypair = false, blockchains = null, networks = null){
+    static async importAllAccounts(keypair, isNewKeypair = false, blockchains = null, networks = null){
         return new Promise(async resolve => {
             if(Process.isProcessRunning(keypair.unique())) return resolve(false);
 	        const process = Process.importAccounts(keypair.unique());

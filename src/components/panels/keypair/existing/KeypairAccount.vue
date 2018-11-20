@@ -72,7 +72,8 @@
 			]),
 			authorities(){
 				if(!this.account.authority.length) return [];
-				return this.accounts.filter(x => x.sendable() === this.account.sendable() && x.network().unique() === this.account.network().unique())
+				console.log('wtf', this.accounts.filter(x => x.identifiable() === this.account.identifiable() && x.keypairUnique === this.account.keypairUnique))
+				return this.accounts.filter(x => x.identifiable() === this.account.identifiable() && x.keypairUnique === this.account.keypairUnique)
 					.map(x => x.authority)
 			},
 			accountResources(){

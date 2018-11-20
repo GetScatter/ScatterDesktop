@@ -151,11 +151,13 @@
 
 				let keypair = this.keypairs.find(x => x.id === this[keyType+'Id']);
 				keypair.decrypt(this.seed);
-				this.copyPrivateKey(keypair.privateKey);
+				const publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
+				this.copyPrivateKey(keyType, keypair.privateKey, publicKey);
 				keypair = null;
 			},
-			copyPrivateKey(privateKey){
-				ElectronHelpers.copy(Crypto.bufferToPrivateKey(privateKey, Blockchains.EOSIO));
+			copyPrivateKey(keyType, privateKeyBuffer, publicKey){
+				const privateKey = Crypto.bufferToPrivateKey(privateKeyBuffer, Blockchains.EOSIO);
+				ElectronHelpers.copy(`${keyType}\nPrivate: ${privateKey} \nPublic: ${publicKey}`);
 			},
 			async deleteOwner(){
 				await KeyPairService.removeKeyPair(this.keypairs.find(x => x.id === this.ownerId));

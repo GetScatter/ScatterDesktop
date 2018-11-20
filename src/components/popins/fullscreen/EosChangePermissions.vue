@@ -79,7 +79,6 @@
 			},
 			otherKeys(){
 				return this.keypairs
-					.filter(x => x.unique() !== this.account.keypairUnique)
 					.filter(x => x.publicKeys.some(key => key.blockchain === Blockchains.EOSIO))
 			}
 		},

@@ -125,7 +125,7 @@
 					const matchesOrigin = origin.toString().toLowerCase().match(this.searchTerms);
 					const matchesType = appdata.type.toLowerCase().match(this.searchTerms);
 					const matchesDescription = appdata.description.toLowerCase().match(this.searchTerms);
-					const matchesBlockchain = appdata.blockchain.toLowerCase().match(this.searchTerms);
+					const matchesBlockchain = appdata.hasOwnProperty('blockchain') ? appdata.blockchain.toLowerCase().match(this.searchTerms) : false;
 					if(matchesOrigin || matchesType || matchesDescription || matchesBlockchain)
 						acc[origin] = fakeCount ? 0 : appkeys[origin];
 					return acc;

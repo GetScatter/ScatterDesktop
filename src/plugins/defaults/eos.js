@@ -37,9 +37,13 @@ class EosTokenAccountAPI {
 				const rawAccounts = res.eos.accounts;
 				let accounts = [];
 				Object.keys(rawAccounts).map(name => {
-					rawAccounts[name].map(acc => {
-						accounts.push({name, authority: acc.perm})
-					})
+					rawAccounts[name]
+						.filter(acc => {
+							return acc.auth.some(x => x.keys.find(({pubkey}) => pubkey === publicKey));
+						})
+						.map(acc => {
+							accounts.push({name, authority: acc.perm})
+						})
 				});
 				return accounts;
 			}).catch(err => {
@@ -176,8 +180,80 @@ export default class EOS extends Plugin {
 
 	}
 
+	async changePermissions(account, keys){
+		if(!keys) return;
+		return new Promise(async (resolve, reject) => {
+			const signProvider = payload => this.passThroughProvider(payload, account, reject);
+			const network = account.network();
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+
+			const perms = Object.keys(keys).map(permission => {
+				if(!keys[permission].length) return;
+
+				const keyOrAccount = keys[permission];
+				let auth = {
+					accounts:[],
+					keys:[],
+					threshold:1,
+					waits:[],
+				};
+
+				// Public Key
+				if(this.validPublicKey(keyOrAccount)) auth.keys.push({
+					key:keyOrAccount,
+					weight:1
+				});
+
+				// Account
+				else {
+					const [actor, perm] = keyOrAccount.split('@');
+					auth.accounts.push({
+						actor,
+						permission:perm ? perm : 'active'
+					})
+				}
+
+				const parent = permission === 'owner' ? '' : 'owner';
+
+				return {
+					account:account.name,
+					permission,
+					parent,
+					auth,
+				}
+			}).filter(x => !!x);
+
+			const options = {authorization:[`${account.name}@owner`]};
+			return eos.transaction(tr => perms.map(perm => tr.updateauth(perm, options)))
+				.catch(error => resolve(console.error(error)))
+				.then(async res => {
+					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, res.transaction_id));
+
+					const keypairs = [account.keypair()];
+
+					const authorities = Object.keys(keys).filter(x => keys[x].length);
+					const accounts = store.getters.accounts.filter(x => x.identifiable() === account.identifiable() && authorities.includes(x.authority));
+					await AccountService.removeAccounts(accounts);
+
+					const addAccount = async (keypair, authority) => {
+						const acc = account.clone();
+						acc.keypairUnique = keypair.unique();
+						acc.authority = authority;
+						return AccountService.addAccount(acc);
+					};
+
+					const activeKeypair = store.state.scatter.keychain.getKeyPairByPublicKey(keys.active);
+					const ownerKeypair = store.state.scatter.keychain.getKeyPairByPublicKey(keys.owner);
+					if(activeKeypair) await addAccount(activeKeypair, 'active');
+					if(ownerKeypair) await addAccount(ownerKeypair, 'owner');
+					resolve(true)
+				});
+		})
+
+	}
+
 	accountActions(account){
-		const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable());
+		const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable() && x.keypairUnique === account.keypairUnique);
 
 		let availableActions = [
 			new AccountAction('Proxy Votes', '', () => {
@@ -196,7 +272,6 @@ export default class EOS extends Plugin {
 				PopupService.push(Popup.prompt('Removing Account', 'This will also remove all permissions', 'attention', 'Remove', removed => {
 					if(!removed) return;
 					// Removing all permissions ( active, owner, etc )
-					const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable());
 					AccountService.removeAccounts(accounts);
 				}, 'Cancel'))
 			})
@@ -205,18 +280,17 @@ export default class EOS extends Plugin {
 			new AccountAction('Change Permissions', '', () => {
 				PopupService.push(Popup.verifyPassword(verified => {
 					if(!verified) return;
-					PopupService.push(Popup.eosChangePermissions(account, permissions => {
-						console.log('permissions', permissions);
-
+					PopupService.push(Popup.eosChangePermissions(account, async permissions => {
+						await this.changePermissions(account, permissions);
 					}));
 				}));
 				console.log('changin account keys')
 			})
 		];
 
-		if(accounts.some(x => x.authority === 'owner')){
+		// Adding owner only actions.
+		if(accounts.some(x => x.authority === 'owner'))
 			availableActions = ownerActions.concat(availableActions);
-		}
 
 		return availableActions;
 	}

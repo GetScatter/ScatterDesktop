@@ -241,8 +241,6 @@
 					body:JSON.stringify(payload)
 				}).then(r => r.json()).catch(error => ({error}));
 
-				console.log('result', result);
-
 				if(!result || result.hasOwnProperty('error')){
 					this.setWorkingScreen(false);
 					return PopupService.push(Popup.snackbar(result.error));
