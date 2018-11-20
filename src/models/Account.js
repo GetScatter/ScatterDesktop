@@ -8,6 +8,8 @@ export default class Account {
         this.publicKey = '';
         this.name = '';
         this.authority = '';
+
+        this.logins = 0;
     }
 
     sendable(){

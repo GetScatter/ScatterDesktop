@@ -120,6 +120,8 @@ export default class ApiService {
                 const returnableIdentity = identity.asOnlyRequiredFields(request.payload.fields);
                 returnableIdentity.accounts = accounts.map(x => x.asReturnable());
 
+                AccountService.incrementAccountLogins(accounts);
+
                 resolve({id:request.id, result:returnableIdentity});
             }));
         })

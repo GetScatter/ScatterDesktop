@@ -114,4 +114,11 @@ export default class AccountService {
             }
         })
     }
+
+    static async incrementAccountLogins(accounts){
+        const ids = accounts.map(x => x.unique());
+        const scatter = store.state.scatter.clone();
+        scatter.keychain.accounts.filter(x => ids.includes(x.unique())).map(x => x.logins++);
+        return store.dispatch(Actions.SET_SCATTER, scatter);
+    }
 }

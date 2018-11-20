@@ -48,6 +48,7 @@
 			        .filter(x => neededBlockchains.includes(x.blockchain().toLowerCase()))
 			        .filter(x => !alreadySelectedUniques.includes(x.unique()))
 			        .filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
+                    .sort((a,b) => b.logins - a.logins)
                     .map(account => ({
                         icon:'',
                     	title:account.formatted(),
