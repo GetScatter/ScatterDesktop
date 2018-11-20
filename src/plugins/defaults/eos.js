@@ -181,12 +181,14 @@ export default class EOS extends Plugin {
 
 		let availableActions = [
 			new AccountAction('Proxy Votes', '', () => {
-				PopupService.push(Popup.eosProxyVotes(account, async proxyAccount => {
-					if(!proxyAccount) return;
-					const result = await this.proxyVote(account, proxyAccount, true);
+				PopupService.push(Popup.eosProxyVotes(account, async promptResult => {
+					if(!promptResult) return;
+					const {proxy, auto} = promptResult;
+					const result = await this.proxyVote(account, proxy, true);
 					if(result) {
 						PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, result.transaction_id));
-						RecurringService.addProxy(account, proxyAccount);
+						if(auto) RecurringService.addProxy(account, proxy);
+						else RecurringService.removeProxies([account]);
 					}
 				}));
 			}),

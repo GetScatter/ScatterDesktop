@@ -114,6 +114,7 @@
 		        await PriceService.watchPrices();
 		        await BalanceService.loadAllBalances();
 		        await RecurringService.checkProxies();
+		        console.log('this', this.scatter.recurring)
             })
 
 	        // PopupService.push(Popup.verifyPassword(verified => {

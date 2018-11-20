@@ -19,7 +19,7 @@ export default class RecurringService {
 	static async removeProxies(accounts){
 		const scatter = store.state.scatter.clone();
 		const ids = accounts.map(x => x.identifiable());
-		scatter.recurring = scatter.recurring.proxies.filter(x => !ids.includes(x.account));
+		scatter.recurring.proxies = scatter.recurring.proxies.filter(x => !ids.includes(x.account));
 		return store.dispatch(Actions.SET_SCATTER, scatter);
 	}
 

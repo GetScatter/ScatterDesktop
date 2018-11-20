@@ -79,42 +79,6 @@
 			}
 		}
 
-		.switch {
-			width:50px;
-			height:34px;
-			border:1px solid rgba(0,0,0,0.1);
-			background:rgba(0,0,0,0.03);
-			border-radius:50px;
-			padding:2px;
-			cursor: pointer;
-			opacity:1;
-			transition: all 0.2s ease;
-			transition-property: opacity;
-
-			&.disabled {
-				opacity:0.2;
-				cursor: not-allowed;
-			}
-
-			.dot {
-				width:28px;
-				height:28px;
-				margin-left:0;
-				border-radius:50%;
-				background:$light-blue;
-				background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
-
-				transition: all 0.3s ease;
-				transition-property: margin-left, background;
-
-				&.disabled {
-					margin-left:15px;
-					background:$light-blue;
-					background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
-				}
-			}
-		}
-
 		.info {
 			flex: 1;
 			padding:0 40px;

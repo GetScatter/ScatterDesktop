@@ -7,14 +7,19 @@
 				<figure class="title">Proxy Votes</figure>
 				<p>{{account.sendable()}}</p>
 				<br>
-				<section class="disclaimer less-pad red">
-					Proxying your votes allows someone else to vote for Block Producers for you.
-					<p>
-						We will automatically re-proxy for you periodically without notification to keep your vote weight up.
-						<b style="text-decoration: underline;">By accepting the initial transaction you are accepting all of those transactions too.</b>
-					</p>
+				<br>
+			</section>
+
+			<section class="auto-vote">
+				<section class="switch" @click="autoVote = !autoVote">
+					<figure class="dot" :class="{'disabled':!autoVote}"></figure>
+				</section>
+				<section class="details">
+					<figure class="title">Do you want to automatically re-proxy every 7 days?</figure>
+					<p>If you enable this, accepting the initial transaction also accepts all future transactions too.</p>
 				</section>
 			</section>
+			<br>
 
 			<section class="list">
 				<FlatList label="Proxies" :selected="selectedProxy" :items="proxyList" v-on:selected="x => selectedProxy = x.id" />
@@ -48,6 +53,7 @@
 		data () {return {
 			proxies:{},
 			selectedProxy:null,
+			autoVote:true,
 		}},
 		mounted(){
 			setTimeout(async () => {
@@ -80,7 +86,7 @@
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			setProxy(){
-				this.returnResult(this.selectedProxy)
+				this.returnResult({proxy:this.selectedProxy, auto:this.autoVote})
 			},
 
 			...mapActions([
@@ -96,6 +102,20 @@
 	.panel-container {
 		overflow: auto;
 		height: calc(100vh - 250px);
+	}
+
+	.auto-vote {
+		max-width:600px;
+		margin:0 auto;
+		display:flex;
+
+		.switch {
+
+		}
+
+		.details {
+			padding-left:20px;
+		}
 	}
 
 	.list {
