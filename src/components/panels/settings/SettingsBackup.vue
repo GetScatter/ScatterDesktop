@@ -3,7 +3,7 @@
 
         <section class="action-box top-pad">
             <label>Configure Backups</label>
-            Every time you change your password you will get a new Mnemonic ( Seed Phrase ) which is your alternate password for unlocking Scatter.
+            <p>Every time you change your password you will get a new Mnemonic ( Seed Phrase ) which is your alternate password for unlocking Scatter.</p>
 
             <br><br>
 

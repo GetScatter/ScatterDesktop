@@ -67,8 +67,8 @@
 				active.name = `EOS-Active-${randomName}`;
 				owner.name = `EOS-Owner-${randomName}`;
 
-				// await KeyPairService.saveKeyPair(active);
-				// await KeyPairService.saveKeyPair(owner);
+				await KeyPairService.saveKeyPair(active);
+				await KeyPairService.saveKeyPair(owner);
 
 				this.ownerPublicKey = owner.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
 				this.activePublicKey = active.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;

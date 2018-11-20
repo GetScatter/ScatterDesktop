@@ -225,6 +225,8 @@ p {
     margin-bottom:80px;
     display:flex;
     flex-direction: column;
+    overflow: auto;
+    height:0;
   }
 
   &.inner {
@@ -450,6 +452,10 @@ p {
 
   &.top-pad {
     padding-top:20px;
+  }
+
+  .red {
+    color:$red;
   }
 
   button {

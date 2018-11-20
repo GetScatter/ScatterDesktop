@@ -62,7 +62,7 @@
         <section class="action-box top-pad" style="margin-top:10px;" v-if="network && (isNew || network.token)">
             <label>Custom System Token</label>
             <section v-if="isNew">
-                In some cases you might need to change the system token.
+                <p>In some cases you might need to change the system token.</p>
 
                 <btn :red="!!network.token" style="float:right;"
                      :text="network.token
@@ -71,7 +71,7 @@
                      v-on:clicked="useCustomToken" />
             </section>
             <section v-else>
-                This network is using a custom token.
+                <p>This network is using a custom token.</p>
             </section>
 
             <section v-if="network.token">

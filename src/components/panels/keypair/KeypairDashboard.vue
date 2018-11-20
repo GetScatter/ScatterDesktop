@@ -11,8 +11,8 @@
 
 			<section class="panel-switch" :class="{'short':!scrollerAtTop}">
 				<figure class="button" v-if="hasEosBlockchain" :class="{'active':dashState === DASH_STATES.ADD_ACCOUNT}" @click="dashState = DASH_STATES.ADD_ACCOUNT">Add Account</figure>
-				<figure class="button" :class="{'active':dashState === DASH_STATES.ACCOUNTS}" @click="dashState = DASH_STATES.ACCOUNTS">Accounts</figure>
-				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys and Blockchains</figure>
+				<figure class="button" :class="{'active':dashState === DASH_STATES.ACCOUNTS}" @click="dashState = DASH_STATES.ACCOUNTS">Linked Accounts</figure>
+				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys & Chains</figure>
 			</section>
 
 			<!-- ACCOUNTS -->
@@ -31,6 +31,9 @@
 				</section>
 			</section>
 
+
+
+
 			<!-- KEYS AND BLOCKCHAINS -->
 			<section class="list-container" v-if="dashState === DASH_STATES.PUBLIC_KEYS">
 				<section class="list blockchains" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
@@ -38,15 +41,24 @@
 				</section>
 			</section>
 
-			<!-- KEYS AND BLOCKCHAINS -->
+
+
+
+			<!-- ADD / CREATE EOSIO ACCOUNT -->
 			<section class="list-container"v-if="dashState === DASH_STATES.ADD_ACCOUNT">
-				<br>
-				<section class="disclaimer">
-					{{locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountLabel)}}
-					<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountDescription)}}</p>
+
+				<section class="action-box top-pad">
+					<label>Create a new EOS account</label>
+					<p>If you want to create a new EOS account on top of this key.</p>
+					<btn text="Create Account" v-on:clicked="$emit('createeos')" />
 				</section>
 
-				<section class="action-box" style="margin-top:0;">
+				<section class="action-box top-pad">
+					<label>Link existing EOS account</label>
+					<p>If you already have an EOS account, but it's not being imported automatically.</p>
+					<br>
+					<br>
+
 					<section class="key-val">
 						<section class="split-inputs">
 							<sel style="flex:1; margin-left:0;" label="Network to add account to"
@@ -68,6 +80,10 @@
 				</section>
 
 			</section>
+
+
+
+
 		</section>
 	</section>
 </template>
@@ -76,6 +92,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import SearchBar from '../../reusable/SearchBar';
 	import KeypairAccount from './existing/KeypairAccount';
+	import CreateEosAccount from './CreateEosAccount';
 	import KeypairBlockchains from '../../../components/panels/keypair/existing/KeypairBlockchains';
 
 	import KeyPairService from "../../../services/KeyPairService";
@@ -96,6 +113,11 @@
 
 	export default {
 		props:['keypair'],
+		components:{
+			SearchBar,
+			KeypairAccount,
+			KeypairBlockchains,
+		},
 
 		data () {return {
 			scrollerAtTop:true,
@@ -107,12 +129,6 @@
 
 			newAccountName:'',
 		}},
-
-		components:{
-			SearchBar,
-			KeypairAccount,
-			KeypairBlockchains
-		},
 
 		computed:{
 			...mapGetters([
@@ -136,7 +152,7 @@
 				if(!this.keypair.name.trim().length) return 'Enter a name for this Vault Entry';
 				if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return 'A Vault Entry with this name already exists.';
 				return false;
-			}
+			},
 		},
 
 		mounted(){
@@ -159,6 +175,9 @@
 
 				await AccountService.addAccount(account);
 				this.dashState = DASH_STATES.ACCOUNTS;
+			},
+			createEosAccount(){
+
 			}
 		},
 

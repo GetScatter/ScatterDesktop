@@ -1,33 +1,39 @@
 @import "_variables.scss";
 
-.head {
-  display:flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align:center;
+.pop-ins {
 
-  .icon {
-    width:70px;
-    height:70px;
-    border-radius:50%;
-    border:1px solid #d4d4d4;
-    color:$red;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px;
-    margin-bottom:20px;
+  .fullscreen {
+    .head {
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align:center;
+
+      .icon {
+        width:70px;
+        height:70px;
+        border-radius:50%;
+        border:1px solid #d4d4d4;
+        color:$red;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+        margin-bottom:20px;
+      }
+
+      .title {
+        font-size: 24px;
+        max-width:400px;
+      }
+
+    }
+
+    .disclaimer {
+      max-width:600px;
+    }
   }
 
-  .title {
-    font-size: 24px;
-    max-width:400px;
-  }
-
-}
-
-.disclaimer {
-  max-width:600px;
 }
 

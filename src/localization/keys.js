@@ -119,8 +119,6 @@ const KEYPAIR = prefixKeys('keypair', {
 		ViewTokens:'view_tokens',
 		EOSManageResourceButton:'eos_manage_btn',
 		EOSClaimRefundButton:'eos_refund_btn',
-		AddAccountLabel:'add_acc_lbl',
-		AddAccountDescription:'add_acc_desc',
 		AddAccountButton:'add_acc_btn'
 	},
 	BLOCKCHAINS:{
@@ -190,7 +188,6 @@ const IDENTITY = prefixKeys('identity', {
 
 const CREATE_EOS = prefixKeys('create_eos', {
 	DisclaimerTitle:'disc_tit',
-	DisclaimerSubtitle:'disc_sub',
 
 	AccountNameLabel:'acc_name_lbl',
 	AccountNamePlaceholder:'acc_name_plc',

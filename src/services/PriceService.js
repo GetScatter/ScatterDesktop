@@ -7,7 +7,7 @@ import ObjectHelpers from '../util/ObjectHelpers'
 const api = "https://api.get-scatter.com";
 
 // Once every 30 minutes.
-const intervalTime = 60000 * 10;
+const intervalTime = 60000 * 30;
 let priceInterval;
 
 

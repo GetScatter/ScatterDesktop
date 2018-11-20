@@ -17,14 +17,14 @@
 
         <section class="action-box top-pad">
             <label>Whitelist Notifications</label>
-            These notifications appear on certain operating systems when you auto-sign whitelisted transactions.
+            <p>These notifications appear on certain operating systems when you auto-sign whitelisted transactions.</p>
 
             <btn v-on:clicked="toggleNotifications" :red="showNotifications" :text="!showNotifications ? 'Enable' : 'Disable'" />
         </section>
 
         <section class="action-box top-pad">
             <label>Data Path</label>
-            The location on your computer that Scatter saves it's encrypted data to.
+            <p>The location on your computer that Scatter saves it's encrypted data to.</p>
 
             <br>
             <br>
@@ -33,7 +33,7 @@
 
         <section class="action-box top-pad">
             <label>Developer Console</label>
-            Sometimes you might need to see if Scatter is throwing any errors.
+            <p>Sometimes you might need to see if Scatter is throwing any errors.</p>
             <btn @click.native="openConsole" text="Open Console"></btn>
         </section>
 

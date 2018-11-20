@@ -1,20 +1,20 @@
 <template>
-	<section class="full-panel inner">
+	<section class="full-panel inner limited">
 
 		<section class="name-input">
 			<cin centered="1" :error="accountNameError"
+			     big="1"
 			     :label="locale(langKeys.CREATE_EOS.AccountNameLabel)"
 			     :placeholder="locale(langKeys.CREATE_EOS.AccountNamePlaceholder)"
 			     :text="accountName" v-on:changed="x => accountName = x" />
 
 		</section>
 
-		<section style="padding:0 80px 10px;">
-			<section class="disclaimer unmargin centered">
-				<b>{{locale(langKeys.CREATE_EOS.DisclaimerTitle)}}</b><br>
-				<p>{{locale(langKeys.CREATE_EOS.DisclaimerSubtitle)}}</p>
-			</section>
-		</section>
+		<!--<section style="padding:0 80px 10px;">-->
+			<!--<section class="disclaimer less-pad unmargin centered">-->
+				<!--<b>{{locale(langKeys.CREATE_EOS.DisclaimerTitle)}}</b>-->
+			<!--</section>-->
+		<!--</section>-->
 
 
 		<!----------------------------->
@@ -36,6 +36,15 @@
 					     type="number" :text="eosToUse" v-on:changed="x => eosToUse = x" />
 					<cin big="1" :label="locale(langKeys.CREATE_EOS.ACCOUNT.TotalLabel)"
 					     disabled="1" :text="`${totalPrice} ${systemSymbol}`" />
+
+					<section v-if="showKeys">
+						<br>
+
+						<cin label="Owner"
+						     :text="ownerPublicKey" />
+						<cin label="Active"
+						     :text="activePublicKey" />
+					</section>
 				</section>
 			</section>
 
@@ -62,9 +71,9 @@
 				</section>
 				<section class="input-button">
 					<cin :label="locale(langKeys.CREATE_EOS.EXCHANGE.WithdrawAccountLabel)"
-					     disabled="1" text="account4free" />
+					     disabled="1" text="makeaccounts" />
 					<btn :text="locale(langKeys.CREATE_EOS.EXCHANGE.CopyButton)"
-					     v-on:clicked="copyText('account4free')" />
+					     v-on:clicked="copyText('makeaccounts')" />
 				</section>
 				<section class="input-button">
 					<cin :label="locale(langKeys.CREATE_EOS.EXCHANGE.MemoLabel)"
@@ -72,11 +81,18 @@
 					<btn :text="locale(langKeys.CREATE_EOS.EXCHANGE.CopyButton)"
 					     v-on:clicked="copyText(memo)" />
 				</section>
+
+				<section class="disclaimer less-pad red">
+					Once you have sent EOS to the details above, copy the Transaction ID from the exchange and put it in
+					the field below.
+				</section>
+
+				<cin label="Transaction ID" big="1" :text="transactionId" v-on:changed="x => transactionId = x" />
 			</section>
 
 			<section class="action-bar short bottom centered">
-				<btn blue="1" :disabled="accountNameError"
-				     :text="locale(langKeys.CREATE_EOS.EXCHANGE.ActionBarButton)" />
+				<btn blue="1" :disabled="accountNameError || !transactionId.length"
+				     :text="locale(langKeys.CREATE_EOS.EXCHANGE.ActionBarButton)" v-on:clicked="createExchangeAccount" />
 			</section>
 		</section>
 	</section>
@@ -98,8 +114,10 @@
 		EXCHANGE:'exchange',
 	};
 
+	let accountTimeout;
+
 	export default {
-		props:['ownerPublicKey', 'activePublicKey', 'ownerId', 'activeId'],
+		props:['ownerPublicKey', 'activePublicKey', 'ownerId', 'activeId', 'showKeys'],
 		components:{
 			FullWidthRow,
 			FlatList
@@ -116,6 +134,8 @@
 
 			systemSymbol:'EOS',
 			ramPrice:null,
+
+			transactionId:'',
 		}},
 
 		created(){
@@ -155,7 +175,7 @@
 				return !!this.accounts.find(x => x.blockchain() === Blockchains.EOSIO);
 			},
 			memo(){
-				return this.ownerPublicKey;
+				return this.activePublicKey;
 			}
 		},
 
@@ -182,6 +202,56 @@
 				this.checkAccountName();
 			},
 
+			finishedAccountCreation(tx, network){
+				setTimeout(async () => {
+					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, tx));
+					const owner = this.keypairs.find(x => x.id === this.ownerId);
+					const active = this.keypairs.find(x => x.id === this.activeId);
+					this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:owner ? owner.id : active.id}});
+					this.setWorkingScreen(false);
+
+					const networks = network ? [network] : [];
+					await AccountService.importAllAccounts(owner ? owner : active, false, [Blockchains.EOSIO], networks);
+				}, 500);
+			},
+
+			async createExchangeAccount(){
+				if(this.accountNameError) return;
+				this.setWorkingScreen(true);
+
+				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+				const signature = await plugin.signer({data:this.activePublicKey}, this.activePublicKey, true);
+
+				const payload = {
+					transaction_id:this.transactionId,
+					signature,
+					keys:{
+						active:this.activePublicKey,
+						owner:this.ownerPublicKey
+					},
+					account_name:this.accountName
+				};
+
+				const result = await fetch(`http://localhost:6545/v1/create_eos`, {
+					method: 'POST',
+					headers:{
+						'Accept': 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body:JSON.stringify(payload)
+				}).then(r => r.json()).catch(error => ({error}));
+
+				console.log('result', result);
+
+				if(!result || result.hasOwnProperty('error')){
+					this.setWorkingScreen(false);
+					return PopupService.push(Popup.snackbar(result.error));
+				}
+
+				const network = this.networks.find(x => plugin.isEndorsedNetwork(x));
+				this.finishedAccountCreation(result.created, network);
+			},
+
 			async createAccount(){
 				this.resourceError = null;
 
@@ -200,15 +270,7 @@
 					this.activePublicKey,
 					this.eosToUse
 				).then(tx => {
-					setTimeout(async () => {
-						PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, tx));
-						const owner = this.keypairs.find(x => x.id === this.ownerId);
-						const active = this.keypairs.find(x => x.id === this.activeId);
-						this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:owner ? owner.id : active.id}});
-						this.setWorkingScreen(false);
-						await AccountService.importAllAccounts(active, false, [Blockchains.EOSIO], [this.creator.network()]);
-						if(owner) await AccountService.importAllAccounts(owner, false, [Blockchains.EOSIO], [this.creator.network()]);
-					}, 500);
+					this.finishedAccountCreation(tx, this.creator.network());
 				})
 				.catch(error => {
 					this.setWorkingScreen(false);
@@ -224,24 +286,25 @@
 			},
 
 			async checkAccountName(){
-				if(this.accountName.length !== 12) return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameLengthError);
-				if(this.accountName.split('').filter(x => isNaN(x)).find(x => x.toUpperCase() === x))
-					return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameFormattingError);
+				clearTimeout(accountTimeout);
+				accountTimeout = setTimeout(async () => {
+					if(this.accountName.length !== 12) return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameLengthError);
+					if(this.accountName.split('').filter(x => isNaN(x)).find(x => x.toUpperCase() === x))
+						return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameFormattingError);
 
-				if(this.state === STATES.ACCOUNT && !this.creator)
-					return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.SelectCreatorError);
+					if(this.state === STATES.ACCOUNT && !this.creator)
+						return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.SelectCreatorError);
 
-				this.accountNameError = this.locale(this.langKeys.CREATE_EOS.CheckingNameAlert);
+					this.accountNameError = this.locale(this.langKeys.CREATE_EOS.CheckingNameAlert);
 
-				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-				const acc = await plugin.accountData(null, await this.getNetwork(), this.accountName);
-				if(acc.hasOwnProperty('code') && acc.code === 500){
-					this.accountNameError = null;
-				} else {
-					this.accountNameError = this.locale(this.langKeys.CREATE_EOS.NameTakenAlert);
-				}
-
-
+					const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+					const acc = await plugin.accountData(null, await this.getNetwork(), this.accountName);
+					if(acc.hasOwnProperty('code') && acc.code === 500){
+						this.accountNameError = null;
+					} else {
+						this.accountNameError = this.locale(this.langKeys.CREATE_EOS.NameTakenAlert);
+					}
+				}, 250);
 			},
 
 			...mapActions([

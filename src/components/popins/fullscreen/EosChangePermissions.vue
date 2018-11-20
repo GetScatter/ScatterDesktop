@@ -84,8 +84,8 @@
 			}
 		},
 		methods:{
-			returnResult(truthy){
-				this.popin.data.callback(truthy);
+			returnResult(result){
+				this.popin.data.callback(result);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			publicKeyForKeypair(keypair){
@@ -96,7 +96,10 @@
 				return plugin.validPublicKey(keyOrAccountName) || plugin.isValidRecipient(keyOrAccountName);
 			},
 			changePermissions(){
-
+				this.returnResult({
+					owner:this.ownerKey,
+					active:this.activeKey,
+				})
 			},
 
 			...mapActions([

@@ -56,14 +56,14 @@
 
             <section class="action-box top-pad">
                 <label>Main Balance Display</label>
-                You can set whether you want to see balances for all networks in the main dashboard, or just balances for mainnets.
+                <p>You can set whether you want to see balances for all networks in the main dashboard, or just balances for mainnets.</p>
 
                 <btn v-on:clicked="toggleMainnetsOnly" :red="mainnetTokensOnly" :text="mainnetTokensOnly ? 'Show all networks' : 'Show only Mainnets'" />
             </section>
 
             <section class="action-box top-pad">
                 <label>Filter Small Balances</label>
-                If you want to always filter out tokens with small balances you can set a modifier here.
+                <p>If you want to always filter out tokens with small balances you can set a modifier here.</p>
                 <br>
                 <br>
 

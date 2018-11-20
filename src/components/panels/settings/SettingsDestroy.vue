@@ -4,8 +4,10 @@
         <section class="action-box top-pad">
             <label>Destroy this Scatter Instance</label>
 
-            Destroying your Scatter will remove all your data including your Identities and Keypair configurations from your local machine.
-            It will not delete your blockchain accounts from the actual blockchain.
+            <p>
+                Destroying your Scatter will remove all your data including your Identities and Keypair configurations from your local machine.
+                It will not delete your blockchain accounts from the actual blockchain.
+            </p>
 
             <br><br>
             <b style="color:red;">MAKE SURE YOU HAVE A BACKUP BEFORE YOU DO THIS!</b>

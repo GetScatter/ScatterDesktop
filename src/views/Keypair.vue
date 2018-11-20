@@ -2,9 +2,19 @@
     <section>
         <back-bar v-on:back="back" :buttons="state === STATES.DASHBOARD ? buttons : []"></back-bar>
         <section v-if="keypair">
-            <KeypairDashboard v-if="state === STATES.DASHBOARD" :keypair="keypair" v-on:tokens="x => tokenAccount = x" />
+            <KeypairDashboard v-if="state === STATES.DASHBOARD"
+                              :keypair="keypair"
+                              v-on:tokens="x => tokenAccount = x"
+                              v-on:createeos="state = STATES.CREATE_EOS_ACCOUNT" />
+
             <KeypairExport v-if="state === STATES.EXPORT" :keypair="keypair" />
             <KeypairTokens v-if="state === STATES.TOKENS" :account="tokenAccount" />
+            <CreateEosAccount v-if="state === STATES.CREATE_EOS_ACCOUNT"
+                              show-keys="1"
+                              :owner-id="keypair.id"
+                              :active-id="keypair.id"
+                              :active-public-key="eosKey"
+                              :owner-public-key="eosKey" />
         </section>
     </section>
 </template>
@@ -16,6 +26,7 @@
     import KeypairDashboard from '../components/panels/keypair/KeypairDashboard';
     import KeypairExport from '../components/panels/keypair/existing/KeypairExport';
     import KeypairTokens from '../components/panels/keypair/existing/KeypairTokens';
+    import CreateEosAccount from '../components/panels/keypair/CreateEosAccount';
 
     import KeyPairService from "../services/KeyPairService";
     import PopupService from "../services/PopupService";
@@ -26,11 +37,13 @@
     import PasswordService from "../services/PasswordService";
     import BalanceService from "../services/BalanceService";
     import Process from "../models/Process";
+    import {Blockchains} from "../models/Blockchains";
 
     const STATES = {
     	DASHBOARD:'dash',
         EXPORT:'export',
         TOKENS:'tokens',
+        CREATE_EOS_ACCOUNT:'createEosAccount',
     }
 
     export default {
@@ -47,7 +60,8 @@
         components:{
 	        KeypairDashboard,
 	        KeypairExport,
-	        KeypairTokens
+	        KeypairTokens,
+	        CreateEosAccount
         },
 
 	    mounted(){
@@ -75,6 +89,13 @@
                 'keypairs',
                 'accounts',
             ]),
+
+	        eosKey(){
+            	if(!this.keypair) return;
+		        const publicKey = this.keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO);
+		        if(!publicKey) return;
+		        return publicKey.key;
+	        }
         },
 
         methods:{
@@ -90,17 +111,27 @@
 		        const accounts = this.keypair.accounts(true)
                     .filter(x => ResourceService.usesResources(x));
 
+
 		        if(accounts.length){
-		        	const process = Process.loadResources(processKey);
+
+		        	let process;
+
+		        	// We're only going to show a process for the first time, as it becomes annoying
+                    // to see if every time you go into a wallet.
+			        const alreadyHasResources = this.resources.find(x => x.acc === accounts[0].identifiable());
+			        if(!alreadyHasResources) process = Process.loadResources(processKey);
 
 			        for(let i = 0; i < accounts.length; i++){
-				        process.updateProgress(90 / accounts.length);
-				        process.setSubTitle(`Accounts left: ${accounts.length - i}`);
+			        	if(process){
+					        process.updateProgress(90 / accounts.length);
+					        process.setSubTitle(`Accounts left: ${accounts.length - i}`);
+                        }
+
 				        const resources = await ResourceService.getResourcesFor(accounts[i]);
 				        this[Actions.ADD_RESOURCES]({acc:accounts[i].identifiable(), res:resources});
 			        }
 
-			        process.updateProgress(100);
+			        if(process) process.updateProgress(100);
                 }
 
 	        },

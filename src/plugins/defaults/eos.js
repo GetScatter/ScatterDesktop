@@ -192,7 +192,7 @@ export default class EOS extends Plugin {
 					}
 				}));
 			}),
-			new AccountAction('Remove Account', '', () => {
+			new AccountAction('Unlink Account', '', () => {
 				PopupService.push(Popup.prompt('Removing Account', 'This will also remove all permissions', 'attention', 'Remove', removed => {
 					if(!removed) return;
 					// Removing all permissions ( active, owner, etc )
@@ -206,6 +206,7 @@ export default class EOS extends Plugin {
 				PopupService.push(Popup.verifyPassword(verified => {
 					if(!verified) return;
 					PopupService.push(Popup.eosChangePermissions(account, permissions => {
+						console.log('permissions', permissions);
 
 					}));
 				}));
@@ -335,7 +336,7 @@ export default class EOS extends Plugin {
 		})
 	}
 
-	isValidRecipient(name){ return /(^[a-z0-9.]{1,11}[a-z0-9]$)|(^[a-z0-9.]{12}[a-j0-9]$)/g.test(name); }
+	isValidRecipient(name){ return /(^[a-z1-5.]{1,11}[a-z1-5]$)|(^[a-z1-5.]{12}[a-j1-5]$)/g.test(name); }
 	privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
 	validPrivateKey(privateKey){ return privateKey.length >= 50 && ecc.isValidPrivate(privateKey); }
 	validPublicKey(publicKey, prefix = null){
@@ -447,11 +448,6 @@ export default class EOS extends Plugin {
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
 			const coreSymbol = network.systemToken().symbol;
-			// const coreSymbol = await this.getSystemSymbol(network);
-			// if(!coreSymbol) return reject(`Couldn't get core symbol`);
-
-			const ramPrice = await this.getRamPrice(null, eos);
-			if(!ramPrice) return reject(`Couldn't get RAM price`);
 
 			const net = (eosUsed/4).toFixed(4);
 			const cpu = (eosUsed-net).toFixed(4);

@@ -82,6 +82,7 @@
 	import SearchBar from '../../reusable/SearchBar';
 	import PermissionService from "../../../services/PermissionService";
 	import AppsService from "../../../services/AppsService";
+	import ObjectHelpers from "../../../util/ObjectHelpers";
 
 	export default {
 		data(){return {
@@ -113,17 +114,19 @@
 				if(!this.searchTerms.length) return {};
 				const fromGeneralSearch = this.search(this.dappData, true);
 				Object.keys(this.origins).map(x => delete fromGeneralSearch[x]);
-				return fromGeneralSearch;
+				return ObjectHelpers.objectTake(fromGeneralSearch, 25);
 			}
 		},
 
 		methods:{
 			search(appkeys, fakeCount = false){
 				return Object.keys(appkeys).reduce((acc, origin) => {
+					const appdata = this.getAppData(origin);
 					const matchesOrigin = origin.toString().toLowerCase().match(this.searchTerms);
-					const matchesType = this.getAppData(origin).type.toLowerCase().match(this.searchTerms);
-					const matchesDescription = this.getAppData(origin).description.toLowerCase().match(this.searchTerms);
-					if(matchesOrigin || matchesType || matchesDescription)
+					const matchesType = appdata.type.toLowerCase().match(this.searchTerms);
+					const matchesDescription = appdata.description.toLowerCase().match(this.searchTerms);
+					const matchesBlockchain = appdata.blockchain.toLowerCase().match(this.searchTerms);
+					if(matchesOrigin || matchesType || matchesDescription || matchesBlockchain)
 						acc[origin] = fakeCount ? 0 : appkeys[origin];
 					return acc;
 				}, {});

@@ -132,7 +132,6 @@ const Locale = {
 	/*                                                  */
 	/****************************************************/
 	[CREATE_EOS.DisclaimerTitle]:() => `Accounts on the EOS blockchain must be paid for to be able to be used.`,
-	[CREATE_EOS.DisclaimerSubtitle]:() => `Once you have another account you will be able to create accounts without an exchange.`,
 	[CREATE_EOS.AccountNameLabel]:() => `Account Name`,
 	[CREATE_EOS.AccountNamePlaceholder]:() => `account name`,
 	[CREATE_EOS.AccountNameLengthError]:() => `Account name must be 12 characters long.`,
@@ -172,10 +171,6 @@ const Locale = {
 	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,
 	[KEYPAIR.ACCOUNTS.EOSManageResourceButton]:() => `Manage`,
 	[KEYPAIR.ACCOUNTS.EOSClaimRefundButton]:() => `Refund`,
-	[KEYPAIR.ACCOUNTS.AddAccountLabel]:() => `Manually Add Account`,
-	[KEYPAIR.ACCOUNTS.AddAccountDescription]:() =>
-		`Sometimes you need to manually add EOSIO accounts if there are network issues. 
-		You can add them by entering the account name.`,
 	[KEYPAIR.ACCOUNTS.AddAccountButton]:() => `Add`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.BLOCKCHAINS.CopyButton]:() => `Copy Public Key`,

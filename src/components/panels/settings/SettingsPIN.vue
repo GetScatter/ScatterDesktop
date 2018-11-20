@@ -3,8 +3,10 @@
 
         <section class="action-box top-pad">
             <label>Change your PIN</label>
-            Your PIN is a secondary internal password for doing Transfers.<br>
-            <b class="red">Do not make your PIN the same as your password!</b>
+            <p>
+                Your PIN is a secondary internal password for doing Transfers.<br>
+                <b class="red">Do not make your PIN the same as your password!</b>
+            </p>
 
             <br><br>
 

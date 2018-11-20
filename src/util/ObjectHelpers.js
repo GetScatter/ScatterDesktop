@@ -44,4 +44,14 @@ export default class ObjectHelpers {
 		return a;
 	}
 
+	static objectTake(obj, limit){
+		let limited = {};
+		if(Object.keys(obj).length < limit) return obj;
+		Object.keys(obj).map(key => {
+			if(Object.keys(limited).length >= limit) return;
+			limited[key] = obj[key];
+		});
+		return limited;
+	}
+
 }
