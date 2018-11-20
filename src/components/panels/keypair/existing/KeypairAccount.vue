@@ -72,7 +72,6 @@
 			]),
 			authorities(){
 				if(!this.account.authority.length) return [];
-				console.log('wtf', this.accounts.filter(x => x.identifiable() === this.account.identifiable() && x.keypairUnique === this.account.keypairUnique))
 				return this.accounts.filter(x => x.identifiable() === this.account.identifiable() && x.keypairUnique === this.account.keypairUnique)
 					.map(x => x.authority)
 			},

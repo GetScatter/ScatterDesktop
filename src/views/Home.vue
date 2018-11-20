@@ -56,6 +56,7 @@
     import {Popup} from "../models/popups/Popup";
     import PopupService from "../services/PopupService";
     import RecurringService from "../services/RecurringService";
+    import {store} from "../store/store";
 
 
     export default {

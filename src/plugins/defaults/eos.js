@@ -237,6 +237,7 @@ export default class EOS extends Plugin {
 
 					const addAccount = async (keypair, authority) => {
 						const acc = account.clone();
+						acc.publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key,
 						acc.keypairUnique = keypair.unique();
 						acc.authority = authority;
 						return AccountService.addAccount(acc);
@@ -284,7 +285,6 @@ export default class EOS extends Plugin {
 						await this.changePermissions(account, permissions);
 					}));
 				}));
-				console.log('changin account keys')
 			})
 		];
 

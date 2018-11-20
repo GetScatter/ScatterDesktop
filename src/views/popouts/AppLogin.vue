@@ -3,6 +3,7 @@
         <PopOutHead :origin="payload.origin" v-on:closed="returnResult" action="log in" />
 
         <section class="popout-list">
+            <SearchBar placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
             <FullWidthRow :items="validAccounts" popout="1" />
         </section>
 
@@ -13,6 +14,7 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import PopOutHead from '../../components/reusable/PopOutHead';
+    import SearchBar from '../../components/reusable/SearchBar';
     import FullWidthRow from '../../components/reusable/FullWidthRow';
     import {IdentityRequiredFields} from "../../models/Identity";
     import Network from "../../models/Network";
@@ -20,7 +22,8 @@
     export default {
 	    components:{
 		    PopOutHead,
-		    FullWidthRow
+		    FullWidthRow,
+            SearchBar,
 	    },
         data () {return {
 	        selectedAccounts:[],
@@ -93,5 +96,11 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../variables";
+
+    .popout-list {
+        .search-bar {
+            margin-left:-30px;
+        }
+    }
 
 </style>

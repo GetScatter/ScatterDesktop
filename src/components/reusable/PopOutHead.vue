@@ -25,7 +25,7 @@
 	@import "../../variables";
 
 	.pop-out-head {
-		height:90px;
+		height:70px;
 		width:100%;
 		display:flex;
 		align-items: center;
@@ -35,7 +35,7 @@
 		.logo {
 			flex:2;
 			font-family: 'Grand Hotel', sans-serif;
-			font-size: 36px;
+			font-size: 30px;
 			color:$dark-blue;
 		}
 
