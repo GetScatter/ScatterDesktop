@@ -4,6 +4,7 @@ import Settings from './Settings';
 import AES from 'aes-oop';
 import Hasher from '../util/Hasher'
 import IdGenerator from '../util/IdGenerator'
+import Recurring from "./Recurring";
 
 export default class Scatter {
 
@@ -13,6 +14,8 @@ export default class Scatter {
         this.settings = Settings.placeholder();
         this.contacts = [];
         this.hash = Hasher.unsaltedQuickHash(IdGenerator.text(2048));
+
+        this.recurring = Recurring.placeholder();
 
         this.toured = false;
 

@@ -151,7 +151,7 @@ export default class SocketService {
 
     static async initialize(){
 
-        if(!(await isPortOpen(50005))) return recurse();
+        if(!(await isPortOpen(50005))) return;
 
         const options = { pingTimeout:100000000000000000 };
 

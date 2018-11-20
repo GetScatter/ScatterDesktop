@@ -55,6 +55,7 @@
     import Token from "../models/Token";
     import {Popup} from "../models/popups/Popup";
     import PopupService from "../services/PopupService";
+    import RecurringService from "../services/RecurringService";
 
 
     export default {
@@ -109,8 +110,11 @@
         },
 
         created(){
-	        PriceService.watchPrices();
-	        BalanceService.loadAllBalances();
+	        setTimeout(async() => {
+		        await PriceService.watchPrices();
+		        await BalanceService.loadAllBalances();
+		        await RecurringService.checkProxies();
+            })
 
 	        // PopupService.push(Popup.verifyPassword(verified => {
 	        // 	console.log('verified', verified);

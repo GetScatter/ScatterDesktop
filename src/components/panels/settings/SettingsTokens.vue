@@ -94,11 +94,11 @@
 
             <br>
             <section v-if="state === STATES.WHITELIST">
-                <section class="disclaimer less-pad">
-                    Select any token to make it your main display type.
+                <section class="disclaimer less-pad" v-if="!searchTerms.length">
+                    Select any token or currency to make it your main display type.
                 </section>
 
-                <section v-if="blockchain === null">
+                <section v-if="blockchain === null && !searchTerms.length">
                     <FlatList as-rows="1" style="padding:0;"
                                 :selected="selectedDisplayToken"
                                 label="Show as fiat currency"
@@ -130,7 +130,7 @@
 
             <section v-if="state === STATES.BLACKLIST">
 
-                <section class="disclaimer less-pad">
+                <section class="disclaimer less-pad" v-if="!searchTerms.length">
                     Filtered tokens will not be displayed.
                     <p>You cannot filter out system tokens for your networks.</p>
                 </section>

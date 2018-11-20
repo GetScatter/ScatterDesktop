@@ -99,6 +99,14 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VERIFY_PASSWORD, {}, callback))
 	}
 
+	static eosChangePermissions(account, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_CHANGE_PERMISSIONS, {account}, callback))
+	}
+
+	static eosProxyVotes(account, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_PROXY_VOTES, {account}, callback))
+	}
+
 }
 
 export const PopupTypes = {
@@ -110,6 +118,8 @@ export const PopupTypes = {
 
     // FULLSCREEN
     VERIFY_PASSWORD:'verifyPassword',
+    EOS_CHANGE_PERMISSIONS:'eosChangePermissions',
+	EOS_PROXY_VOTES:'eosProxyVotes',
 
     BUY_SELL_RAM:'buySellRAM',
     DELEGATE_RESOURCES:'delegateResources',
@@ -118,7 +128,9 @@ export const PopupTypes = {
 
 export const isFullscreen = popup => {
     return [
-        PopupTypes.VERIFY_PASSWORD
+        PopupTypes.VERIFY_PASSWORD,
+        PopupTypes.EOS_CHANGE_PERMISSIONS,
+        PopupTypes.EOS_PROXY_VOTES,
     ].includes(popup.data.type);
 
 

@@ -84,6 +84,7 @@ export default class ETH extends Plugin {
     }
 
     usesResources(){ return false; }
+	hasAccountActions(){ return true; }
 
     accountsAreImported(){ return false; }
     isValidRecipient(address){ return this.validPublicKey(address); }
@@ -122,14 +123,6 @@ export default class ETH extends Plugin {
             payload.messages
                 .map(message => message.authorization)
         );
-    }
-
-    async fetchTokens(tokens){
-        const ethTokens = [this.defaultToken()];
-        ethTokens.map(token => {
-            token.blockchain = Blockchains.ETH;
-            if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
-        });
     }
 
 

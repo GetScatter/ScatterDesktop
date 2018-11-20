@@ -65,7 +65,7 @@ const Locale = {
 	[DASHBOARD.APPS.NoAppsTitle]:() => `No apps connected`,
 	[DASHBOARD.APPS.NoAppsDescription]:() =>
 		`Apps are at the heart of what makes Scatter awesome. 
-		You can explore apps and connect to them below.`,
+		You can explore apps by searching for things above.`,
 	[DASHBOARD.APPS.ExploreAppsButton]:() => `Explore Apps`,
 	[DASHBOARD.APPS.EditApp]:() => `Edit`,
 	[DASHBOARD.APPS.DeleteApp]:() => `Delete`,

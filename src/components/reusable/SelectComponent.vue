@@ -101,6 +101,7 @@
     }
 
     .select {
+        text-align:left;
         cursor: pointer;
         height:44px;
         position: relative;

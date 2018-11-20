@@ -1,11 +1,11 @@
 @import "_variables.scss";
 
 .head {
-  text-align:center;
   display:flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align:center;
 
   .icon {
     width:70px;
@@ -22,7 +22,12 @@
 
   .title {
     font-size: 24px;
+    max-width:400px;
   }
 
+}
+
+.disclaimer {
+  max-width:600px;
 }
 

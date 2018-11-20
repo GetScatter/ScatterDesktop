@@ -6,6 +6,8 @@
             <section class="pop-ins" v-for="popIn in popIns" style="position:absolute;">
                 <section class="fullscreen" v-if="isFullscreen(popIn)">
                     <ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />
+                    <EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />
+                    <EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />
                 </section>
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -55,6 +57,8 @@
     import BuySellRAM from '../components/popups/BuySellRAM.vue'
     import PopInHead from '../components/popups/fragments/PopInHead.vue'
 
+    import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
+    import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
     import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
 
     export default {
@@ -70,7 +74,9 @@
 		    PopInHead,
 
             // FULLSCREEN
-		    ConfirmPassword
+		    ConfirmPassword,
+		    EosChangePermissions,
+		    EosProxyVotes
         },
         data(){ return {
             popupTypes:PopupTypes,

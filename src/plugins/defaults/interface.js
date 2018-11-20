@@ -26,6 +26,8 @@ export default class PluginInterface extends Plugin {
 
 	async getChainId(network){}
 
+	hasAccountActions(){}
+
 	usesResources(){ return false; }
 
 	accountsAreImported(){ return false; }
@@ -53,12 +55,6 @@ export default class PluginInterface extends Plugin {
 	defaultDecimals(){}
 
 	defaultToken(){}
-
-	async getSystemSymbol(network){}
-
-	async createAccount(creator, name, owner, active, eosUsed){}
-
-	async fetchTokens(tokens){}
 
 	async passThroughProvider(payload, account, rejector){}
 

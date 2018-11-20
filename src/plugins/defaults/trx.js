@@ -60,6 +60,7 @@ export default class TRX extends Plugin {
     }
 
     usesResources(){ return false; }
+	hasAccountActions(){ return true; }
 
     accountsAreImported(){ return false; }
     isValidRecipient(address){ return utils.isAddressValid(address); }
@@ -111,14 +112,6 @@ export default class TRX extends Plugin {
     defaultDecimals(){ return 6; }
     defaultToken(){ return new Token(Blockchains.TRX, 'trx', 'TRX', 'TRX', this.defaultDecimals()) }
     actionParticipants(payload){ return payload.transaction.participants }
-
-    async fetchTokens(tokens){
-        const ethTokens = [this.defaultToken()];
-        ethTokens.map(token => {
-            token.blockchain = Blockchains.TRX;
-            if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
-        });
-    }
 
 
     async transfer({account, to, amount, token, promptForSignature = true}){

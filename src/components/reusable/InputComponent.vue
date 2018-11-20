@@ -121,7 +121,7 @@
         .copy, .dynamic-button {
             cursor: pointer;
             position: absolute;
-            right:20px;
+            right:10px;
             bottom:0;
             top:0;
             display:flex;
@@ -132,7 +132,7 @@
             color:$light-blue;
 
             &.labeled {
-                bottom:-15px;
+                bottom:-20px;
             }
 
             transition: all 0.2s ease;
@@ -179,7 +179,7 @@
             }
 
             &.pad-right {
-                padding-right:50px;
+                padding-right:40px;
             }
 
             &:disabled {

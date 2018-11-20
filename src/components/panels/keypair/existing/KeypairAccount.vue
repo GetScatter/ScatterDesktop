@@ -32,6 +32,9 @@
 					</figure>
 				</section>
 			</section>
+			<section class="actions" v-if="accountActions">
+				<btn small="1" :key="action.id" v-for="action in accountActions" :text="action.title" v-on:clicked="action.onclick" />
+			</section>
 		</section>
 	</section>
 </template>
@@ -76,6 +79,12 @@
 				const resource = this.resources.find(x => x.acc === this.account.identifiable());
 				return resource ? resource.res : null;
 			},
+			accountActions(){
+				const plugin = PluginRepository.plugin(this.account.blockchain());
+				const hasActions = plugin.hasAccountActions();
+				if(!hasActions) return null;
+				return plugin.accountActions(this.account);
+			}
 		},
 		methods:{
 			async setMainnet(){
@@ -234,6 +243,18 @@
 					display:inline-block;
 					padding-right:1px;
 				}
+			}
+		}
+	}
+
+	.actions {
+		margin-top:10px;
+		padding-top:10px;
+		border-top:1px solid rgba(0,0,0,0.1);
+
+		button {
+			&:not(:first-child){
+				margin-left:5px;
 			}
 		}
 	}

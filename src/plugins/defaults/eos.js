@@ -19,6 +19,9 @@ import {store} from '../../store/store'
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs2';
 import * as numeric from "eosjs2/dist/eosjs-numeric";
 import Token from "../../models/Token";
+import AccountAction from "../../models/AccountAction";
+import AccountService from "../../services/AccountService";
+import RecurringService from "../../services/RecurringService";
 
 
 const blockchainApiURL = 'https://api.light.xeos.me/api';
@@ -157,6 +160,63 @@ export default class EOS extends Plugin {
 	}
 
 	usesResources(){ return true; }
+	hasAccountActions(){ return true; }
+
+	async proxyVote(account, proxyAccount, prompt = false){
+		return new Promise(async (resolve, reject) => {
+			const signProvider = prompt
+				? payload => this.passThroughProvider(payload, account, reject)
+				: payload => this.signer(payload, account.publicKey);
+			const network = account.network();
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+			return await eos.voteproducer(account.name, proxyAccount, [], {authorization:[account.formatted()]})
+				.catch(error => resolve(console.error(error)))
+				.then(res => resolve(res));
+		})
+
+	}
+
+	accountActions(account){
+		const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable());
+
+		let availableActions = [
+			new AccountAction('Proxy Votes', '', () => {
+				PopupService.push(Popup.eosProxyVotes(account, async proxyAccount => {
+					if(!proxyAccount) return;
+					const result = await this.proxyVote(account, proxyAccount, true);
+					if(result) {
+						PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, result.transaction_id));
+						RecurringService.addProxy(account, proxyAccount);
+					}
+				}));
+			}),
+			new AccountAction('Remove Account', '', () => {
+				PopupService.push(Popup.prompt('Removing Account', 'This will also remove all permissions', 'attention', 'Remove', removed => {
+					if(!removed) return;
+					// Removing all permissions ( active, owner, etc )
+					const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable());
+					AccountService.removeAccounts(accounts);
+				}, 'Cancel'))
+			})
+		];
+		const ownerActions = [
+			new AccountAction('Change Permissions', '', () => {
+				PopupService.push(Popup.verifyPassword(verified => {
+					if(!verified) return;
+					PopupService.push(Popup.eosChangePermissions(account, permissions => {
+
+					}));
+				}));
+				console.log('changin account keys')
+			})
+		];
+
+		if(accounts.some(x => x.authority === 'owner')){
+			availableActions = ownerActions.concat(availableActions);
+		}
+
+		return availableActions;
+	}
 
 	async refund(account){
 		return new Promise(async (resolve, reject) => {
@@ -276,7 +336,13 @@ export default class EOS extends Plugin {
 	isValidRecipient(name){ return /(^[a-z0-9.]{1,11}[a-z0-9]$)|(^[a-z0-9.]{12}[a-j0-9]$)/g.test(name); }
 	privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
 	validPrivateKey(privateKey){ return privateKey.length >= 50 && ecc.isValidPrivate(privateKey); }
-	validPublicKey(publicKey, prefix = null){ return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
+	validPublicKey(publicKey, prefix = null){
+		try {
+			return ecc.PublicKey.fromStringOrThrow(publicKey, prefix ? prefix : Blockchains.EOSIO.toUpperCase());
+		} catch(e){
+			return false;
+		}
+	}
 
 	randomPrivateKey(){ return ecc.randomKey(); }
 
@@ -378,8 +444,9 @@ export default class EOS extends Plugin {
 			const signProvider = payload => this.passThroughProvider(payload, creator, reject);
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
-			const coreSymbol = await this.getSystemSymbol(network);
-			if(!coreSymbol) return reject(`Couldn't get core symbol`);
+			const coreSymbol = network.systemToken().symbol;
+			// const coreSymbol = await this.getSystemSymbol(network);
+			// if(!coreSymbol) return reject(`Couldn't get core symbol`);
 
 			const ramPrice = await this.getRamPrice(null, eos);
 			if(!ramPrice) return reject(`Couldn't get RAM price`);
@@ -412,15 +479,6 @@ export default class EOS extends Plugin {
 				.then(trx => resolve(trx.transaction_id))
 				.catch(err => reject(err));
 		})
-	}
-
-	async fetchTokens(tokens){
-		tokens.push(this.defaultToken());
-		const eosTokens = await fetch("https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json").then(res => res.json()).catch(() => []);
-		eosTokens.map(token => {
-			token.blockchain = Blockchains.EOSIO;
-			if(!tokens.find(x => `${x.symbol}:${x.account}` === `${token.symbol}:${token.account}`)) tokens.push(token);
-		});
 	}
 
 

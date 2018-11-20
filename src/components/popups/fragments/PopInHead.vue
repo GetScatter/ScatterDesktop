@@ -10,8 +10,8 @@
             <figure class="description">{{nextPopIn.data.props.description}}</figure>
         </section>
         <section v-if="nextPopIn.data.props.hasOwnProperty('buttonText')">
-            <btn v-if="nextPopIn.data.props.hasOwnProperty('denyButtonText')" :text="nextPopIn.data.props.denyButtonText" red="1" v-on:clicked="returnResult(false)"></btn>
-            <btn v-if="nextPopIn.data.props.buttonText.length" :text="nextPopIn.data.props.buttonText" :red="!nextPopIn.data.props.hasOwnProperty('denyButtonText')" v-on:clicked="returnResult(true)"></btn>
+            <btn small="1" v-if="nextPopIn.data.props.hasOwnProperty('denyButtonText')" :text="nextPopIn.data.props.denyButtonText" red="1" v-on:clicked="returnResult(false)"></btn>
+            <btn small="1" v-if="nextPopIn.data.props.buttonText.length" :text="nextPopIn.data.props.buttonText" :red="!nextPopIn.data.props.hasOwnProperty('denyButtonText')" v-on:clicked="returnResult(true)"></btn>
         </section>
     </section>
 </template>
