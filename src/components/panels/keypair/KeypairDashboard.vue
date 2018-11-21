@@ -94,7 +94,6 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import SearchBar from '../../reusable/SearchBar';
 	import KeypairAccount from './existing/KeypairAccount';
-	import CreateEosAccount from './CreateEosAccount';
 	import KeypairBlockchains from '../../../components/panels/keypair/existing/KeypairBlockchains';
 
 	import KeyPairService from "../../../services/KeyPairService";
@@ -178,9 +177,6 @@
 				await AccountService.addAccount(account);
 				this.dashState = DASH_STATES.ACCOUNTS;
 			},
-			createEosAccount(){
-
-			}
 		},
 
 		watch:{

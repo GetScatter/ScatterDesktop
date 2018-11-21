@@ -23,6 +23,14 @@
 
         </section>
 
+        <section class="action-box top-pad">
+            <label>View Mnemonic</label>
+            <p>If you've lost your password's mnemonic alternative you can view it here.</p>
+
+            <btn v-on:clicked="viewMnemonic" text="View Mnemonic" />
+
+        </section>
+
     </section>
 </template>
 
@@ -55,6 +63,9 @@
                 PopupService.push(Popup.prompt("New Password Set!", "You have set a new password", "asterisk", "Okay"));
                 this.password = '';
                 this.confirmPassword = '';
+            },
+	        viewMnemonic(){
+                PasswordService.showCurrentMnemonic();
             },
             ...mapActions([
                 Actions.SET_SCATTER

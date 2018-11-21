@@ -78,7 +78,7 @@
 
 		.logo {
 			font-family: 'Grand Hotel', sans-serif;
-			font-size: 50px;
+			font-size: 45px;
 			display:inline-block;
 			height:80px;
 			line-height: 80px;
@@ -99,7 +99,7 @@
 			padding:0 35px;
 			-webkit-app-region: no-drag;
 
-			$action:20px;
+			$action:15px;
 
 			.action {
 				float:right;
@@ -111,11 +111,11 @@
 				justify-content: center;
 
 				&:not(:first-child){
-					margin-left:50px;
+					margin-left:40px;
 				}
 
 				.x1, .x2 {
-					width:25px;
+					width:18px;
 					height:2px;
 					background:#fff;
 					transform-origin: center center;

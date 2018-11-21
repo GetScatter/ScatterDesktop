@@ -150,7 +150,7 @@ const Locale = {
 	[CREATE_EOS.EXCHANGE.MinimumAmountLabel]:() => `Minimum amount you need to send from an exchange`,
 	[CREATE_EOS.EXCHANGE.WithdrawAccountLabel]:() => `Account to withdraw to`,
 	[CREATE_EOS.EXCHANGE.MemoLabel]:() => `Memo`,
-	[CREATE_EOS.EXCHANGE.ActionBarButton]:() => `Create`,
+	[CREATE_EOS.EXCHANGE.ActionBarButton]:() => `Create Account`,
 
 
 

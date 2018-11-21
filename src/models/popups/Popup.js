@@ -107,6 +107,16 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_MODERATE_CPU_NET, {account}, callback))
 	}
 
+	static eosCreateAccount(activePublicKey, ownerPublicKey, activeId, ownerId, showKeys = false, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_CREATE_ACCOUNT, {
+			activePublicKey,
+			ownerPublicKey,
+			activeId,
+			ownerId,
+			showKeys
+		}, callback))
+	}
+
 	static unlinkAccount(account, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UNLINK_ACCOUNT, {account}, callback))
 	}
@@ -130,6 +140,7 @@ export const PopupTypes = {
 	EOS_PROXY_VOTES:'eosProxyVotes',
 	EOS_MODERATE_RAM:'eosModerateRam',
 	EOS_MODERATE_CPU_NET:'eosModerateCpuNet',
+	EOS_CREATE_ACCOUNT:'eosCreateAccount',
 	UNLINK_ACCOUNT:'unlinkAccount',
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 
@@ -145,6 +156,7 @@ export const isFullscreen = popup => {
         PopupTypes.UNLINK_BLOCKCHAIN,
         PopupTypes.EOS_MODERATE_RAM,
         PopupTypes.EOS_MODERATE_CPU_NET,
+        PopupTypes.EOS_CREATE_ACCOUNT,
     ].includes(popup.data.type);
 
 

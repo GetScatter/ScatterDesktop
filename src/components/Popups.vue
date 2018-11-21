@@ -10,8 +10,10 @@
                     <EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />
                     <EosModerateRam :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_RAM" />
                     <EosModerateCpuNet :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_CPU_NET" />
+                    <EosCreateAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CREATE_ACCOUNT" />
                     <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
                     <UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />
+                    <Mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
                 </section>
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -19,7 +21,6 @@
                         <Prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
                         <TextPrompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id" />
                         <Selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
-                        <Mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
                         <TransactionSuccess v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                     </section>
                 </section>
@@ -50,7 +51,7 @@
     import {PopupDisplayTypes, PopupTypes, isFullscreen} from '../models/popups/Popup'
 
     import Snackbar from '../components/popups/Snackbar.vue'
-    import Mnemonic from '../components/popups/Mnemonic.vue'
+    // import Mnemonic from '../components/popups/Mnemonic.vue'
     import TransactionSuccess from '../components/popups/TransactionSuccess.vue'
     import Prompt from '../components/popups/Prompt.vue'
     import Selector from '../components/popups/Selector.vue'
@@ -64,11 +65,12 @@
     import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
     import UnlinkAccount from '../components/popins/fullscreen/UnlinkAccount'
     import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
+    import Mnemonic from '../components/popins/fullscreen/Mnemonic'
+    import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
 
     export default {
     	components:{
 		    Snackbar,
-		    Mnemonic,
 		    TransactionSuccess,
 		    Prompt,
 		    Selector,
@@ -81,8 +83,10 @@
 		    EosProxyVotes,
 		    EosModerateRam,
 		    EosModerateCpuNet,
+		    EosCreateAccount,
 		    UnlinkAccount,
-		    UnlinkBlockchain
+		    UnlinkBlockchain,
+		    Mnemonic,
         },
         data(){ return {
             popupTypes:PopupTypes,

@@ -7,7 +7,6 @@
             <FullWidthRow :items="validAccounts" popout="1" />
         </section>
 
-
     </section>
 </template>
 

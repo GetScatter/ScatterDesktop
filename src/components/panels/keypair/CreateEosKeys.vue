@@ -1,6 +1,6 @@
 <template>
 	<section>
-		<section class="panel-container limited" v-if="!creatingAccount">
+		<section class="panel-container limited">
 			<section class="centered">
 				<!--<h1>Your EOS Keys</h1>-->
 				<img class="eos-logo" src="../../../assets/create_eos.png" />
@@ -16,12 +16,6 @@
 			<FullWidthRow :items="keysItems" />
 		</section>
 
-		<CreateEosAccount v-if="creatingAccount"
-		                  :owner-id="ownerId"
-		                  :active-id="activeId"
-		                  :active-public-key="activePublicKey"
-		                  :owner-public-key="ownerPublicKey" />
-
 
 	</section>
 </template>
@@ -30,18 +24,18 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import {Blockchains} from "../../../models/Blockchains";
-	import CreateEosAccount from '../../panels/keypair/CreateEosAccount';
 	import FullWidthRow from '../../reusable/FullWidthRow';
 	import Keypair from "../../../models/Keypair";
 	import KeyPairService from "../../../services/KeyPairService";
 	import IdGenerator from "../../../util/IdGenerator";
 	import ElectronHelpers from "../../../util/ElectronHelpers";
 	import Crypto from "../../../util/Crypto";
+	import PopupService from "../../../services/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
 
 	export default {
 		components:{
 			FullWidthRow,
-			CreateEosAccount
 		},
 		data () {return {
 			keysItems:[],
@@ -51,7 +45,6 @@
 			activeId:null,
 			copied:{},
 			copiedAll:false,
-			creatingAccount:false,
 		}},
 
 		created(){
@@ -137,7 +130,14 @@
 						actions:[
 							{
 								name:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountButton),
-								handler:() => this.creatingAccount = true
+								handler:() => {
+									PopupService.push(Popup.eosCreateAccount(
+										this.activePublicKey,
+										this.ownerPublicKey,
+										this.activeId,
+										this.ownerId,
+									))
+								}
 							}
 						]
 					})

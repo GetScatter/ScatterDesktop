@@ -40,7 +40,6 @@
     import * as Actions from '../store/constants';
     import FullWidthRow from '../components/reusable/FullWidthRow';
     import CreateEosKeys from '../components/panels/keypair/CreateEosKeys';
-    import CreateEosAccount from '../components/panels/keypair/CreateEosAccount';
     import ImportTextKey from '../components/panels/keypair/import/ImportTextKey';
     import ImportHardwareKey from '../components/panels/keypair/import/ImportHardwareKey';
     import ImportQRKey from '../components/panels/keypair/import/ImportQRKey';
@@ -68,7 +67,6 @@
 		    ImportTextKey,
 		    ImportHardwareKey,
 		    ImportQRKey,
-		    CreateEosAccount,
 		    CreateEosKeys,
 	    },
         data () {return {

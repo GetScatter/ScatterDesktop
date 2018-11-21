@@ -5,16 +5,10 @@
             <KeypairDashboard v-if="state === STATES.DASHBOARD"
                               :keypair="keypair"
                               v-on:tokens="x => tokenAccount = x"
-                              v-on:createeos="state = STATES.CREATE_EOS_ACCOUNT" />
+                              v-on:createeos="createEosAccount" />
 
             <KeypairExport v-if="state === STATES.EXPORT" :keypair="keypair" />
             <KeypairTokens v-if="state === STATES.TOKENS" :account="tokenAccount" />
-            <CreateEosAccount v-if="state === STATES.CREATE_EOS_ACCOUNT"
-                              show-keys="1"
-                              :owner-id="keypair.id"
-                              :active-id="keypair.id"
-                              :active-public-key="eosKey"
-                              :owner-public-key="eosKey" />
         </section>
     </section>
 </template>
@@ -26,7 +20,6 @@
     import KeypairDashboard from '../components/panels/keypair/KeypairDashboard';
     import KeypairExport from '../components/panels/keypair/existing/KeypairExport';
     import KeypairTokens from '../components/panels/keypair/existing/KeypairTokens';
-    import CreateEosAccount from '../components/panels/keypair/CreateEosAccount';
 
     import KeyPairService from "../services/KeyPairService";
     import PopupService from "../services/PopupService";
@@ -43,7 +36,6 @@
     	DASHBOARD:'dash',
         EXPORT:'export',
         TOKENS:'tokens',
-        CREATE_EOS_ACCOUNT:'createEosAccount',
     }
 
     export default {
@@ -61,7 +53,6 @@
 	        KeypairDashboard,
 	        KeypairExport,
 	        KeypairTokens,
-	        CreateEosAccount
         },
 
 	    mounted(){
@@ -169,6 +160,17 @@
 	        		this.state = STATES.EXPORT;
                 }))
 	        },
+
+
+            createEosAccount(){
+	            PopupService.push(Popup.eosCreateAccount(
+		            this.eosKey,
+		            this.eosKey,
+	            	this.keypair.id,
+                    this.keypair.id,
+                    true
+                ))
+            },
 
 
             ...mapActions([

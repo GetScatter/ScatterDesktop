@@ -1,101 +1,153 @@
 <template>
-	<section class="full-panel inner limited">
 
-		<section class="name-input">
-			<cin centered="1" :error="accountNameError"
-			     big="1"
-			     :label="locale(langKeys.CREATE_EOS.AccountNameLabel)"
-			     :placeholder="locale(langKeys.CREATE_EOS.AccountNamePlaceholder)"
-			     :text="accountName" v-on:changed="x => accountName = x" />
-
-		</section>
-
-		<!--<section style="padding:0 80px 10px;">-->
-			<!--<section class="disclaimer less-pad unmargin centered">-->
-				<!--<b>{{locale(langKeys.CREATE_EOS.DisclaimerTitle)}}</b>-->
-			<!--</section>-->
-		<!--</section>-->
-
+	<section>
+		<back-bar v-on:back="back" />
 
 		<!----------------------------->
 		<!------- USING ACCOUNT ------->
 		<!----------------------------->
-		<section class="dynamic-panel" v-if="state === STATES.ACCOUNT">
-			<section class="split-panel no-divider">
-				<FlatList class="panel" v-if="state === STATES.ACCOUNT"
-				            :label="locale(langKeys.CREATE_EOS.ACCOUNT.AccountsLabel)"
-				            :items="creators"
-				            selected-icon="icon-check"
-				            :selected="creator ? creator.unique() : null"
-				            v-on:selected="selectedCreator" />
+		<section class="full-panel inner limited" v-if="state === STATES.ACCOUNT">
+			<section class="name-input">
+				<cin centered="1" :error="accountNameError"
+				     big="1"
+				     :label="locale(langKeys.CREATE_EOS.AccountNameLabel)"
+				     :placeholder="locale(langKeys.CREATE_EOS.AccountNamePlaceholder)"
+				     :text="accountName" v-on:changed="x => accountName = x" />
+			</section>
 
-				<section class="padded square" style="flex:1; overflow:auto;">
-					<cin :label="`${locale(langKeys.CREATE_EOS.ACCOUNT.RamCostLabel)} - ( 4096 bytes )`"
-					     disabled="1" :text="`${ramPrice ? ramPrice : '0.0000'} ${systemSymbol}`" />
-					<cin :error="resourceError" :label="locale(langKeys.CREATE_EOS.ACCOUNT.ResourcesLabel)"
-					     type="number" :text="eosToUse" v-on:changed="x => eosToUse = x" />
-					<cin big="1" :label="locale(langKeys.CREATE_EOS.ACCOUNT.TotalLabel)"
-					     disabled="1" :text="`${totalPrice} ${systemSymbol}`" />
+			<section class="dynamic-panel" v-if="state === STATES.ACCOUNT">
+				<section class="split-panel no-divider">
+					<FlatList class="panel" v-if="state === STATES.ACCOUNT"
+					          :label="locale(langKeys.CREATE_EOS.ACCOUNT.AccountsLabel)"
+					          :items="creators"
+					          selected-icon="icon-check"
+					          :selected="creator ? creator.unique() : null"
+					          v-on:selected="selectedCreator" />
 
-					<section v-if="showKeys">
-						<br>
+					<section class="padded square" style="flex:1; overflow:auto;">
+						<cin :label="`${locale(langKeys.CREATE_EOS.ACCOUNT.RamCostLabel)} - ( 4096 bytes )`"
+						     disabled="1" :text="`${ramPrice ? ramPrice : '0.0000'} ${systemSymbol}`" />
+						<cin :error="resourceError" :label="locale(langKeys.CREATE_EOS.ACCOUNT.ResourcesLabel)"
+						     type="number" :text="eosToUse" v-on:changed="x => eosToUse = x" />
+						<cin big="1" :label="locale(langKeys.CREATE_EOS.ACCOUNT.TotalLabel)"
+						     disabled="1" :text="`${totalPrice} ${systemSymbol}`" />
 
-						<cin label="Owner"
-						     :text="ownerPublicKey" />
-						<cin label="Active"
-						     :text="activePublicKey" />
+						<section v-if="showKeys">
+							<br>
+
+							<cin label="Owner"
+							     :text="ownerPublicKey" />
+							<cin label="Active"
+							     :text="activePublicKey" />
+						</section>
 					</section>
 				</section>
-			</section>
 
-			<section class="action-bar short bottom centered">
-				<btn blue="1" :disabled="!creator || resourceError || accountNameError"
-				     :text="locale(langKeys.CREATE_EOS.ACCOUNT.ActionBarButton)"
-				     v-on:clicked="createAccount" />
+				<section class="action-bar short bottom centered">
+					<btn blue="1" :disabled="!creator || resourceError || accountNameError"
+					     :text="locale(langKeys.CREATE_EOS.ACCOUNT.ActionBarButton)"
+					     v-on:clicked="createAccount" />
+				</section>
 			</section>
 		</section>
+
+
+
+
+
 
 
 		<!----------------------------->
 		<!------- USING EXCHANGE ------>
 		<!----------------------------->
-		<section class="dynamic-panel" v-if="state === STATES.EXCHANGE">
+		<section class="full-panel center-fold inner limited" v-if="state === STATES.EXCHANGE">
 
-			<section class="padded">
-				<section class="input-button">
-					<cin red="1" :label="locale(langKeys.CREATE_EOS.EXCHANGE.MinimumAmountLabel)"
-					     disabled="1"
-					     :text="`${minimumPrice} ${systemSymbol}`" />
-					<btn :text="locale(langKeys.CREATE_EOS.EXCHANGE.CopyButton)"
-					     v-on:clicked="copyText(`${minimumPrice} ${systemSymbol}`)" />
-				</section>
-				<section class="input-button">
-					<cin :label="locale(langKeys.CREATE_EOS.EXCHANGE.WithdrawAccountLabel)"
-					     disabled="1" text="makeaccounts" />
-					<btn :text="locale(langKeys.CREATE_EOS.EXCHANGE.CopyButton)"
-					     v-on:clicked="copyText('makeaccounts')" />
-				</section>
-				<section class="input-button">
-					<cin :label="locale(langKeys.CREATE_EOS.EXCHANGE.MemoLabel)"
-					     disabled="1" :text="memo" />
-					<btn :text="locale(langKeys.CREATE_EOS.EXCHANGE.CopyButton)"
-					     v-on:clicked="copyText(memo)" />
-				</section>
-
-				<section class="disclaimer less-pad red">
-					Once you have sent EOS to the details above, copy the Transaction ID from the exchange and put it in
-					the field below.
-				</section>
-
-				<cin label="Transaction ID" big="1" :text="transactionId" v-on:changed="x => transactionId = x" />
+			<img src="../../../assets/piggy_bank.png" style="margin-top:-50px;" />
+			<br>
+			<section class="name-input" style="padding-top:0; max-width:400px;">
+				<cin centered="1" :error="accountNameError"
+				     big="1"
+				     :label="locale(langKeys.CREATE_EOS.AccountNameLabel)"
+				     :placeholder="locale(langKeys.CREATE_EOS.AccountNamePlaceholder)"
+				     :text="accountName" v-on:changed="x => accountName = x" />
 			</section>
+
+			<section class="action-bar short bottom centered">
+				<btn blue="1" :disabled="accountNameError"
+				     text="Use Name"
+				     v-on:clicked="state = STATES.SEND_AMOUNT" />
+			</section>
+		</section>
+
+		<section class="full-panel center-fold inner with-action limited" v-if="state === STATES.SEND_AMOUNT">
+			<section class="padded">
+				<section style="margin:0 auto;" class="disclaimer less-pad">
+					You need to pay for the resources needed to create <b>{{accountName}}</b>.
+					<p>All of the extra funds you send will be transferred to the account.</p>
+				</section>
+				<!--<section class="disclaimer less-pad">-->
+					<!--EOS accounts need to be paid for so that they can exist on the network.-->
+					<!--<p>All of the extra funds you send will be transferred to the account.</p>-->
+				<!--</section>-->
+				<figure class="line"></figure>
+
+				<!--<section class="details">-->
+					<!--<figure class="title">Please send Nudes</figure>-->
+				<!--</section>-->
+
+				<section class="details" style="display:flex;">
+					<figure class="title inline-input">
+						Send at least
+					</figure>
+					<cin style="margin-bottom:0; flex:1;" disabled="1"
+					     :text="`${minimumPrice} ${systemSymbol}`" copy="1" />
+					<figure class="title inline-input">
+						to account
+					</figure>
+					<cin style="margin-bottom:0; flex:1;" disabled="1"
+					     text="makeaccounts" copy="1" />
+				</section>
+
+				<br>
+				<section class="details" style="display:flex;">
+					<figure class="title inline-input">
+						with
+					</figure>
+					<cin red="1" style="margin-bottom:0; flex:1;" disabled="1"
+					     :text="memo" copy="1" />
+					<figure class="title inline-input" style="margin-right:0;">
+						as the Memo
+					</figure>
+				</section>
+
+				<figure class="line"></figure>
+
+				<section class="details less-pad" style="display:block;">
+					<section class="title">After sending EOS from an exchange with the above details, copy the transaction ID here.</section>
+					<p>You must wait for the transaction to be irreversible, this takes around 3 minutes.</p>
+				</section>
+				<br>
+				<cin placeholder="Transaction ID" big="1" :text="transactionId" v-on:changed="x => transactionId = x" />
+
+			</section>
+
+
 
 			<section class="action-bar short bottom centered">
 				<btn blue="1" :disabled="accountNameError || !transactionId.length"
 				     :text="locale(langKeys.CREATE_EOS.EXCHANGE.ActionBarButton)" v-on:clicked="createExchangeAccount" />
 			</section>
 		</section>
+
+
+
+
+
+
 	</section>
+
+
+
 </template>
 
 <script>
@@ -108,26 +160,29 @@
 	import PopupService from "../../../services/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import AccountService from "../../../services/AccountService";
+	import Onboarding from '../../svgs/Onboarding';
 
 	const STATES = {
 		ACCOUNT:'account',
 		EXCHANGE:'exchange',
+		SEND_AMOUNT:'sendAmount',
 	};
 
 	let accountTimeout;
 
 	export default {
-		props:['ownerPublicKey', 'activePublicKey', 'ownerId', 'activeId', 'showKeys'],
+		props:['popin'],
 		components:{
 			FullWidthRow,
-			FlatList
+			FlatList,
+			Onboarding
 		},
 		data () {return {
 			state:STATES.EXCHANGE,
 			STATES,
 
 			accountName:'',
-			accountNameError:null,
+			accountNameError:' ',
 			creator:null,
 			eosToUse:'1.0000',
 			resourceError:null,
@@ -139,6 +194,7 @@
 		}},
 
 		created(){
+
 			this.checkAccountName();
 			if(this.hasOtherEosAccounts) this.state = STATES.ACCOUNT;
 			this.getRamPrice();
@@ -153,6 +209,12 @@
 				'accounts',
 				'networks',
 			]),
+
+			ownerPublicKey(){ return this.popin.data.props.ownerPublicKey; },
+			activePublicKey(){ return this.popin.data.props.activePublicKey; },
+			ownerId(){ return this.popin.data.props.ownerId; },
+			activeId(){ return this.popin.data.props.activeId; },
+			showKeys(){ return this.popin.data.props.showKeys; },
 
 			creators(){
 				return this.accounts.filter(x => x.blockchain() === Blockchains.EOSIO).reduce((acc, account) => {
@@ -180,6 +242,14 @@
 		},
 
 		methods:{
+			returnResult(truthy){
+				this.popin.data.callback(truthy);
+				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			back(){
+				if(this.state === STATES.SEND_AMOUNT) return this.state = STATES.EXCHANGE;
+				return this.returnResult(null);
+			},
 
 			async getNetwork(){
 				if(this.creator) return this.creator.network();
@@ -306,7 +376,7 @@
 			},
 
 			...mapActions([
-				Actions.HIDE_BACK_BTN
+				Actions.RELEASE_POPUP
 			])
 		},
 
@@ -325,7 +395,14 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../_variables";
+	@import "../../../variables";
+
+	.line {
+		width:100%;
+		height:1px;
+		background:rgba(0,0,0,0.1);
+		margin:30px 0;
+	}
 
 	.name-input {
 		padding:30px 30px 0;
@@ -361,6 +438,27 @@
 		button {
 			flex:1;
 			margin-left:10px;
+		}
+	}
+
+	.details {
+		display:flex;
+		justify-content: center;
+		align-items: center;
+
+
+		.title {
+			&.inline-input {
+				flex:0 0 auto;
+
+				&:first-child {
+					margin-right:20px;
+				}
+
+				&:not(:first-child){
+					margin:0 20px;
+				}
+			}
 		}
 	}
 

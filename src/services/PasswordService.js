@@ -25,6 +25,10 @@ export default class PasswordService {
         return true;
     }
 
+    static async showCurrentMnemonic(seed){
+        const mnemonic = Mnemonic.seedToMnemonic(seed);
+    }
+
     static async seedPassword(password, setToState = true){
         return new Promise(async (resolve, reject) => {
             try {
