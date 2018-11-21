@@ -1,19 +1,31 @@
 <template>
     <section class="percentage-bar">
-        <figure class="bar instant" :class="{'red':val > max - max/6}" :style="{'width':(val/max)*100 + '%'}"></figure>
-        <input type="range" :class="{'red':val > max - max/6}" :step="step ? step : 1" :min="min" :max="max" v-model="val">
+        <figure class="bar instant" :class="{'red':isRed}" :style="{'width':percentage + '%'}"></figure>
+        <input type="range" :class="{'red':isRed}" :step="step ? step : 1" :min="min" :max="max" v-model="val">
     </section>
 </template>
 
 <script>
     export default {
+	    props:['min', 'max', 'value', 'step', 'red'],
         data(){return {
             val:0,
         }},
         mounted(){
             this.val = this.value;
         },
-        props:['min', 'max', 'value', 'step', 'red'],
+        computed:{
+	        percentage(){
+	        	if(this.min === this.max) return 100;
+	        	if(this.val < 0) return ((Math.abs(this.val)/Math.abs(this.min))*100);
+	        	return (this.val/this.max)*100;
+            },
+            isRed(){
+	        	if(this.min === this.max) return true;
+	            if(this.val < 0) return Math.abs(this.val) > Math.abs(this.min) - Math.abs(this.min)/6;
+	        	return this.val > this.max - this.max/6
+            }
+        },
         watch:{
             val(){
                 this.$emit('changed', this.val);

@@ -70,14 +70,6 @@ export class Popup {
         return new Popup(PopupDisplayTypes.SNACKBAR, new PopupData('', { message, icon, timeout }))
     }
 
-    static buySellRAM(account, callback){
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.BUY_SELL_RAM, { account }, callback))
-    }
-
-    static delegateResources(account, callback){
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DELEGATE_RESOURCES, { account }, callback))
-    }
-
     static mnemonic(phrase){
         const data = {
             phrase,
@@ -111,6 +103,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_MODERATE_RAM, {account}, callback))
 	}
 
+	static eosModerateCpuNet(account, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_MODERATE_CPU_NET, {account}, callback))
+	}
+
 	static unlinkAccount(account, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UNLINK_ACCOUNT, {account}, callback))
 	}
@@ -133,11 +129,10 @@ export const PopupTypes = {
     EOS_CHANGE_PERMISSIONS:'eosChangePermissions',
 	EOS_PROXY_VOTES:'eosProxyVotes',
 	EOS_MODERATE_RAM:'eosModerateRam',
+	EOS_MODERATE_CPU_NET:'eosModerateCpuNet',
 	UNLINK_ACCOUNT:'unlinkAccount',
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 
-    BUY_SELL_RAM:'buySellRAM',
-    DELEGATE_RESOURCES:'delegateResources',
     TX_SUCCESS:'txSuccess',
 };
 
@@ -149,6 +144,7 @@ export const isFullscreen = popup => {
         PopupTypes.UNLINK_ACCOUNT,
         PopupTypes.UNLINK_BLOCKCHAIN,
         PopupTypes.EOS_MODERATE_RAM,
+        PopupTypes.EOS_MODERATE_CPU_NET,
     ].includes(popup.data.type);
 
 

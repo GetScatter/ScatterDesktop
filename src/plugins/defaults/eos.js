@@ -351,7 +351,7 @@ export default class EOS extends Plugin {
 			}
 
 			if(['CPU', 'NET'].includes(name))
-				PopupService.push(Popup.delegateResources(account, returnResult));
+				PopupService.push(Popup.eosModerateCpuNet(account, returnResult));
 
 			if(name === 'RAM')
 				PopupService.push(Popup.eosModerateRam(account, returnResult));
@@ -580,14 +580,14 @@ export default class EOS extends Plugin {
 
 	async stakeOrUnstake(account, cpu, net, network, staking = true){
 		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, network, reject);
+			const signProvider = payload => this.passThroughProvider(payload, account, reject);
 
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-			if(staking) resolve(eos.delegatebw(account.name, account.name, net, cpu, 0, { authorization:[account.formatted()] })
+			if(staking) resolve(await eos.delegatebw(account.name, account.name, net, cpu, 0, { authorization:[account.formatted()] })
 				.catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
 				.then(res => res));
 
-			else resolve(eos.undelegatebw(account.name, account.name, net, cpu, { authorization:[account.formatted()] })
+			else resolve(await eos.undelegatebw(account.name, account.name, net, cpu, { authorization:[account.formatted()] })
 				.catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
 				.then(res => res));
 		})

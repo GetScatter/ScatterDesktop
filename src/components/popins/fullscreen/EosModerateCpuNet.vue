@@ -1,0 +1,240 @@
+<template>
+	<section>
+		<back-bar v-on:back="returnResult(null)" />
+		<section class="full-panel inner with-action center-fold limited">
+			<section class="head">
+				<figure class="icon icon-network"></figure>
+				<figure class="title">CPU & NET</figure>
+				<p>{{account.sendable()}}</p>
+			</section>
+
+			<section class="panel-switch">
+				<figure class="button" :class="{'active':state === STATES.STAKE}" @click="switchState(STATES.STAKE)">Stake</figure>
+				<figure class="button" :class="{'active':state === STATES.UNSTAKE}" @click="switchState(STATES.UNSTAKE)">Unstake</figure>
+			</section>
+
+			<br>
+			<section v-if="state === STATES.STAKE" class="disclaimer less-pad">
+				Self staking CPU & NET will allow this account to do more on the blockchain.
+			</section>
+			<section v-if="state === STATES.UNSTAKE" class="disclaimer less-pad">
+				Unstaking CPU & NET will reclaim tokens, but will let you do less.
+			</section>
+
+			<section class="resource-moderator">
+				<section class="split-inputs">
+					<section class="split-inputs" style="width:300px;">
+						<cin label="CPU"
+						     type="number"
+						     v-on:changed="x => cpu = x"
+						     :text="cpu" />
+						<cin label="NET"
+						     type="number"
+						     v-on:changed="x => net = x"
+						     :text="net" />
+					</section>
+
+					<section style="flex:1;"></section>
+
+					<section style="width:200px; align-self: flex-end;">
+						<cin v-if="state === STATES.STAKE"
+						     :label="`Available ${systemToken.symbol}`"
+						     :text="parseFloat(balance - cpu - net).toFixed(systemToken.decimals)"
+						     v-on:changed="" />
+
+						<cin v-if="state === STATES.UNSTAKE"
+						     :label="`Reclaiming ${systemToken.symbol}`"
+						     :text="parseFloat(cpu + net).toFixed(systemToken.decimals)"
+						     v-on:changed="" />
+					</section>
+
+				</section>
+
+				<section v-if="state === STATES.STAKE">
+					<section class="split-inputs">
+						<figure class="resource">CPU</figure>
+						<slider :min="0" :max="balance - this.net" step="0.0001" :value="cpu" v-on:changed="x => cpu = x"></slider>
+					</section>
+					<section class="split-inputs">
+						<figure class="resource">NET</figure>
+						<slider :min="0" :max="balance - this.cpu" step="0.0001" :value="net" v-on:changed="x => net = x"></slider>
+					</section>
+				</section>
+
+				<section v-if="state === STATES.UNSTAKE">
+					<section class="split-inputs">
+						<figure class="resource">CPU</figure>
+						<slider :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)"></slider>
+						<figure class="resource">{{parseFloat(availableCPU - cpu).toFixed(4)}}</figure>
+					</section>
+					<section class="split-inputs">
+						<figure class="resource">NET</figure>
+						<slider :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)"></slider>
+						<figure class="resource">{{parseFloat(availableNET - net).toFixed(4)}}</figure>
+					</section>
+				</section>
+			</section>
+
+
+		</section>
+		<section class="action-bar short bottom centered">
+			<btn text="Confirm" blue="1" v-on:clicked="stakeOrUnstake" />
+		</section>
+	</section>
+</template>
+
+<script>
+	import { mapActions, mapGetters, mapState } from 'vuex'
+	import * as Actions from '../../../store/constants';
+	import '../../../fullscreen-popins.scss';
+	import {Blockchains} from "../../../models/Blockchains";
+	import PluginRepository from "../../../plugins/PluginRepository";
+	import PopupService from "../../../services/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+
+	const STATES = {
+		STAKE:'stake',
+		UNSTAKE:'unstake',
+	}
+
+	export default {
+		props:['popin'],
+		data () {return {
+			state:STATES.STAKE,
+			STATES,
+
+			balance:0,
+
+			cpu:0,
+			net:0,
+		}},
+		created(){
+			this.init()
+		},
+		computed:{
+			...mapState([
+
+			]),
+			...mapGetters([
+				'keypairs',
+				'accounts',
+			]),
+			account(){
+				return this.accounts.find(x => x.unique() === this.popin.data.props.account.unique());
+			},
+
+			systemToken(){
+				return this.account.network().systemToken();
+			},
+
+			availableCPU(){
+				if(!this.accountData) return 0;
+				if(!this.accountData.self_delegated_bandwidth) return 0;
+				return this.accountData.self_delegated_bandwidth.cpu_weight.split(' ')[0];
+			},
+			availableNET(){
+				if(!this.accountData) return 0;
+				if(!this.accountData.self_delegated_bandwidth) return 0;
+				return this.accountData.self_delegated_bandwidth.net_weight.split(' ')[0];
+			},
+
+		},
+		methods:{
+			returnResult(proxy){
+				this.popin.data.callback(proxy);
+				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			stakeOrUnstake(){
+				if(this.cpu < 0 || this.net < 0) return null;
+				if(this.cpu <= 0 && this.net <= 0) return null;
+
+				this.setWorkingScreen(true);
+
+				const cpu = `${parseFloat(this.cpu).toFixed(this.systemToken.decimals)} ${this.systemToken.symbol}`;
+				const net = `${parseFloat(this.net).toFixed(this.systemToken.decimals)} ${this.systemToken.symbol}`;
+
+				const isStaking = this.state === STATES.STAKE;
+				PluginRepository.plugin(Blockchains.EOSIO).stakeOrUnstake(this.account, cpu, net, this.account.network(), isStaking).then(res => {
+					this.setWorkingScreen(false);
+					if(!res || !res.hasOwnProperty('transaction_id')) {
+						return false;
+					}
+					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, res.transaction_id));
+					this.returnResult(res);
+				}).catch(err => {
+					this.setWorkingScreen(false);
+					if(err.hasOwnProperty('error') && err.error === 'Could not get signature') return;
+					console.error(err);
+					return PopupService.push(Popup.snackbar("Error submitting to blockchain. Check console (f12)", 'attention'));
+				})
+
+			},
+
+			async init(){
+				this.setWorkingScreen(false);
+				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+				const network = this.account.network();
+				const token = this.systemToken;
+				this.balance = await plugin.balanceFor(this.account, token);
+
+				plugin.accountData(this.account).then(data => {
+					this.accountData = data;
+				});
+			},
+
+
+
+			switchState(state){
+				this.state = state;
+				this.cpu = 0;
+				this.net = 0;
+
+			},
+
+			...mapActions([
+				Actions.RELEASE_POPUP
+			])
+		},
+		watch:{
+			['ram.quantity'](){
+				if(!this.ram.quantity.toString().length) this.ram.quantity = 0;
+			}
+		}
+	}
+</script>
+
+<style scoped lang="scss" rel="stylesheet/scss">
+	@import "../../../variables";
+
+	.panel-container {
+		overflow: auto;
+		height: calc(100vh - 250px);
+	}
+
+	.resource-moderator {
+		.input {
+			margin-bottom:0;
+		}
+	}
+
+	.resource {
+		font-size: 11px;
+		font-weight: bold;
+		color:$mid-dark-grey;
+		flex:0 0 auto;
+		margin:20px 10px 0;
+		max-width:150px;
+
+		&:first-child {
+			margin-left:0;
+		}
+
+		&:last-child {
+			margin-right:0;
+			min-width:50px;
+			text-align:right;
+		}
+	}
+
+
+</style>
