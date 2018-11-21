@@ -25,10 +25,6 @@ export default class PasswordService {
         return true;
     }
 
-    static async showCurrentMnemonic(seed){
-        const mnemonic = Mnemonic.seedToMnemonic(seed);
-    }
-
     static async seedPassword(password, setToState = true){
         return new Promise(async (resolve, reject) => {
             try {
@@ -53,7 +49,7 @@ export default class PasswordService {
     static async verifyPassword(password = null){
         return new Promise(async resolve => {
 
-            const testPassword = (setToState, seed) => {
+            const testPassword = (setToState, seed, mnemonic = false) => {
 	            try {
 		            let scatter = StorageService.getScatter();
 		            scatter = AES.decrypt(scatter, seed);
@@ -64,7 +60,7 @@ export default class PasswordService {
 		            scatter = Scatter.fromJson(scatter);
 		            scatter.decrypt(seed);
 		            if(setToState) store.dispatch(Actions.SET_SCATTER, scatter);
-		            resolve(true);
+		            resolve(mnemonic ? mnemonic : true);
 	            } catch(e) {
 		            console.log('e', e);
 		            resolve(false);
@@ -74,8 +70,8 @@ export default class PasswordService {
             if(!password){
 	            testPassword(true, store.state.seed);
             } else {
-                const [_, seed] = await PasswordService.seedPassword(password, false);
-	            testPassword(false, seed);
+                const [mnemonic, seed] = await PasswordService.seedPassword(password, false);
+	            testPassword(false, seed, mnemonic);
             }
 
         })

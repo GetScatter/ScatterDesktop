@@ -1,7 +1,9 @@
 <template>
 
 	<section>
-		<back-bar v-on:back="back" />
+		<back-bar :text="state === STATES.SEND_AMOUNT ? accountName : null"
+		          :subtext="state === STATES.SEND_AMOUNT ? 'Want to change names?' : null"
+		          v-on:back="back" />
 
 		<!----------------------------->
 		<!------- USING ACCOUNT ------->
@@ -82,7 +84,7 @@
 		<section class="full-panel center-fold inner with-action limited" v-if="state === STATES.SEND_AMOUNT">
 			<section class="padded">
 				<section style="margin:0 auto;" class="disclaimer less-pad">
-					You need to pay for the resources needed to create <b>{{accountName}}</b>.
+					You need to pay for the resources needed to create accounts on the EOS blockchain.
 					<p>All of the extra funds you send will be transferred to the account.</p>
 				</section>
 				<!--<section class="disclaimer less-pad">-->

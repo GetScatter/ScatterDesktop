@@ -1,24 +1,24 @@
 <template>
     <section>
-        <back-bar v-on:back="returnResult(null)" />
-        <section class="full-panel inner with-action center-fold limited">
-            <section>
-                <section class="head">
-                    <figure class="icon icon-lock"></figure>
-                    <figure class="title">Confirm Password</figure>
-
-                    <br>
-                    <br>
-                    <cin style="width:350px;" big="1"
-                         :text="password"
-                         v-on:changed="x => password = x"
-                         type="password"
-                         label="Enter password or backup phrase" />
-                </section>
+        <back-bar text="Done" subtext="Did you copy your phrase?" v-on:back="returnResult(null)" />
+        <section class="full-panel inner center-fold limited">
+            <h4>Password Alternative</h4>
+            <section class="disclaimer less-pad red">
+                This phrase is a backup for <b>your password</b>. It is not used to generate keys.
+                <p>You can paste this phrase into any field that accepts a password in Scatter.</p>
             </section>
 
-            <section class="action-bar short bottom centered">
-                <btn :disabled="password.trim().length === 0" text="Confirm" blue="1" v-on:clicked="verify" />
+
+
+            <section class="mnemonic">
+                <cin :text="phraseArray.join(' ')" copy="1" />
+                <section class="phrase-box">
+                    <section class="word" v-for="(word, index) in phraseArray">
+                        <figure class="text">{{word}}</figure>
+                        <figure class="num">{{index+1}}</figure>
+
+                    </section>
+                </section>
             </section>
         </section>
     </section>
@@ -44,17 +44,14 @@
 			...mapGetters([
 
 			]),
+			phraseArray(){
+				return this.popin.data.props.mnemonic.split(' ');
+			}
 		},
 		methods:{
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
 				this[Actions.RELEASE_POPUP](this.popin);
-			},
-			async verify(){
-				if(!this.password.length) return;
-				const verified = await PasswordService.verifyPassword(this.password, false);
-				if(!verified) PopupService.push(Popup.snackbar('Bad Password', 'lock'));
-				this.returnResult(verified);
 			},
 
 			...mapActions([
@@ -67,6 +64,38 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../variables";
 
+    .mnemonic {
+
+        .phrase-box {
+            border-top:1px solid rgba(0,0,0,0.1);
+            max-height:280px;
+            overflow:hidden;
+            padding:20px;
+
+            .word {
+                width: 25%;
+                float:left;
+                padding:15px 0;
+                text-align:center;
+                border:1px solid rgba(0,0,0,0.1);
+
+                .text {
+                    display:block;
+                    color:rgba(0,0,0,0.8);
+                    font-weight: 600;
+                }
+
+                .num {
+                    display:block;
+                    font-size: 11px;
+                    color:rgba(0,0,0,0.5);
+                }
+
+
+            }
+        }
+
+    }
 
 
 </style>

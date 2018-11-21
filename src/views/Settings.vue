@@ -45,7 +45,7 @@
                         <SettingsTokens v-if="selectedOption.name === settingsOptions.TOKENS.name" />
                         <SettingsExplorer v-if="selectedOption.name === settingsOptions.EXPLORER.name" />
                         <SettingsNetworks v-if="selectedOption.name === settingsOptions.NETWORKS.name" />
-                        <SettingsPassword v-if="selectedOption.name === settingsOptions.PASSWORD.name" />
+                        <SettingsPassword :mnemonic="mnemonic" v-on:mnemonic="x => mnemonic = x" v-if="selectedOption.name === settingsOptions.PASSWORD.name" />
                         <SettingsBackup v-if="selectedOption.name === settingsOptions.BACKUP.name" />
                         <SettingsDestroy v-if="selectedOption.name === settingsOptions.DESTROY.name" />
                         <SettingsPIN v-if="selectedOption.name === settingsOptions.PIN.name" />
@@ -96,6 +96,7 @@
             settingsOptions:SETTINGS_OPTIONS,
             selectedOption:null,
             unlocked:false,
+		    mnemonic:null,
         }},
         computed: {
             ...mapState([
@@ -138,6 +139,7 @@
             unlock(option){
 	        	PopupService.push(Popup.verifyPassword(verified => {
 	        		if(!verified) return;
+	        		this.mnemonic = verified;
 			        this.unlocked = true;
 			        this.selectOption(option);
                 }))

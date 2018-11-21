@@ -70,17 +70,6 @@ export class Popup {
         return new Popup(PopupDisplayTypes.SNACKBAR, new PopupData('', { message, icon, timeout }))
     }
 
-    static mnemonic(phrase){
-        const data = {
-            phrase,
-            icon:'key',
-            title:'Your Password Backup',
-            description:'This Mnemonic phrase is only a backup for your password, it will not regenerate your keys.',
-            buttonText:'Okay'
-        };
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, data, () => {}))
-    };
-
 
 
     /*****************************************/
@@ -125,11 +114,14 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UNLINK_BLOCKCHAIN, {keypair, blockchain}, callback))
 	}
 
+	static mnemonic(mnemonic){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, {mnemonic}, () => {}))
+	};
+
 }
 
 export const PopupTypes = {
     // OVERLAYS
-    MNEMONIC:'mnemonic',
     PROMPT:'prompt',
     TEXT_PROMPT:'textPrompt',
     SELECTOR:'selector',
@@ -143,6 +135,7 @@ export const PopupTypes = {
 	EOS_CREATE_ACCOUNT:'eosCreateAccount',
 	UNLINK_ACCOUNT:'unlinkAccount',
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
+	MNEMONIC:'mnemonic',
 
     TX_SUCCESS:'txSuccess',
 };
@@ -157,6 +150,7 @@ export const isFullscreen = popup => {
         PopupTypes.EOS_MODERATE_RAM,
         PopupTypes.EOS_MODERATE_CPU_NET,
         PopupTypes.EOS_CREATE_ACCOUNT,
+        PopupTypes.MNEMONIC,
     ].includes(popup.data.type);
 
 

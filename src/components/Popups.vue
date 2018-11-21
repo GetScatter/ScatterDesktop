@@ -13,7 +13,7 @@
                     <EosCreateAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CREATE_ACCOUNT" />
                     <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
                     <UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />
-                    <Mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
+                    <Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
                 </section>
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -51,7 +51,6 @@
     import {PopupDisplayTypes, PopupTypes, isFullscreen} from '../models/popups/Popup'
 
     import Snackbar from '../components/popups/Snackbar.vue'
-    // import Mnemonic from '../components/popups/Mnemonic.vue'
     import TransactionSuccess from '../components/popups/TransactionSuccess.vue'
     import Prompt from '../components/popups/Prompt.vue'
     import Selector from '../components/popups/Selector.vue'

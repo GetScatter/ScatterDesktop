@@ -18,10 +18,6 @@ export class Mnemonic {
     static async mnemonicToSeed(mnemonic){
         return bip39.mnemonicToSeedHex(mnemonic);
     }
-
-    static async seedToMnemonic(seed){
-        return bip39.entropyToMnemonic(seed);
-    }
 }
 
 export default Mnemonic;

@@ -43,12 +43,14 @@
     import {Popup} from '../../../models/popups/Popup';
 
     export default {
+    	props:['mnemonic'],
         data () {return {
             password:'',
             confirmPassword:''
         }},
         computed:{
             ...mapState([
+            	'seed',
                 'scatter'
             ])
         },
@@ -59,13 +61,14 @@
                 if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) return false;
 
                 const mnemonic = await PasswordService.changePassword(this.password);
+                this.$emit('mnemonic', mnemonic);
                 PopupService.push(Popup.mnemonic(mnemonic));
-                PopupService.push(Popup.prompt("New Password Set!", "You have set a new password", "asterisk", "Okay"));
+                PopupService.push(Popup.snackbar("Changed password", "lock"));
                 this.password = '';
                 this.confirmPassword = '';
             },
 	        viewMnemonic(){
-                PasswordService.showCurrentMnemonic();
+                PopupService.push(Popup.mnemonic(this.mnemonic));
             },
             ...mapActions([
                 Actions.SET_SCATTER
