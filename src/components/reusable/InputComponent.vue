@@ -39,7 +39,7 @@
     import ElectronHelpers from '../../util/ElectronHelpers'
 
     export default {
-        data(){ return { input:this.text || '' }},
+        data(){ return { input:this.text }},
         methods: {
             enter(){ this.$emit('enter') },
             emit(){ this.$emit('changed', this.input) },

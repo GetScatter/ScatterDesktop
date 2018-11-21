@@ -258,24 +258,10 @@ export default class EOS extends Plugin {
 
 		let availableActions = [
 			new AccountAction('Proxy Votes', '', () => {
-				PopupService.push(Popup.eosProxyVotes(account, async promptResult => {
-					if(!promptResult) return;
-					const {proxy, auto} = promptResult;
-					const result = await this.proxyVote(account, proxy, true);
-					if(result) {
-						PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, result.transaction_id));
-						if(auto) RecurringService.addProxy(account, proxy);
-						else RecurringService.removeProxies([account]);
-					}
-				}));
+				PopupService.push(Popup.eosProxyVotes(account, () => {}));
 			}),
 			new AccountAction('Unlink Account', '', () => {
 				PopupService.push(Popup.unlinkAccount(account, () => {}));
-				// PopupService.push(Popup.prompt('Removing Account', 'This will also remove all permissions', 'attention', 'Remove', removed => {
-				// 	if(!removed) return;
-				// 	// Removing all permissions ( active, owner, etc )
-				// 	AccountService.removeAccounts(accounts);
-				// }, 'Cancel'))
 			})
 		];
 		const ownerActions = [
@@ -359,16 +345,16 @@ export default class EOS extends Plugin {
 			const {name} = resource;
 
 			const returnResult = tx => {
-				if(!tx) return resolve(false);
+				// if(!tx) return resolve(false);
 				// PopupService.push(Popup.transactionSuccess(account.blockchain(), tx.transaction_id));
-				resolve(true);
+				resolve(tx);
 			}
 
 			if(['CPU', 'NET'].includes(name))
 				PopupService.push(Popup.delegateResources(account, returnResult));
 
 			if(name === 'RAM')
-				PopupService.push(Popup.buySellRAM(account, returnResult));
+				PopupService.push(Popup.eosModerateRam(account, returnResult));
 
 			if(name === 'Refund') {
 				resolve(await this.refund(account));
@@ -612,11 +598,12 @@ export default class EOS extends Plugin {
 			const signProvider = payload => this.passThroughProvider(payload, account, reject);
 
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-			if(buying) resolve(eos.buyrambytes(account.name, account.name, bytes, { authorization:[account.formatted()] })
+
+			if(buying) resolve(await eos.buyrambytes(account.name, account.name, bytes, { authorization:[account.formatted()] })
 				.catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
 				.then(res => res));
 
-			else resolve(eos.sellram(account.name, bytes, { authorization:[account.formatted()] })
+			else resolve(await eos.sellram(account.name, bytes, { authorization:[account.formatted()] })
 				.catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
 				.then(res => res));
 		})

@@ -65,7 +65,7 @@
 
 			<!-- DOES NOT HAVE APPS -->
 			<section key="empty" class="placeholder" v-else>
-				<section>
+				<section style="margin-top:-50px;">
 					<img src="../../../assets/rocketship.png" />
 					<h5>{{locale(langKeys.DASHBOARD.APPS.NoAppsTitle)}}</h5>
 					<p>{{locale(langKeys.DASHBOARD.APPS.NoAppsDescription)}}</p>

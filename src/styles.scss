@@ -342,6 +342,7 @@ p {
 
 .panel-switch {
   height:60px;
+  width:100%;
   position: relative;
   display:flex;
   justify-content: center;
@@ -557,8 +558,16 @@ label {
     max-width:100%;
     background:$light-blue;
     border-radius:50px;
-    transition: all 0.5s ease;
-    transition-property: width, background;
+
+    &:not(.instant){
+      transition: all 0.5s ease;
+      transition-property: width, background;
+    }
+
+    &.instant {
+      transition: all 0.3s ease;
+      transition-property: background;
+    }
 
     &.red {
       background: $red;

@@ -93,6 +93,7 @@
         font-weight: bold;
         margin-bottom:5px;
         display: block;
+        text-align:left;
 
         &.error {
             color:$red;
@@ -124,7 +125,7 @@
         }
 
         &:not(:first-child){
-            margin-top:10px;
+            margin-top:8px;
         }
 
         .arrow {

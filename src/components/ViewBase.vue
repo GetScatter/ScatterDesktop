@@ -1,7 +1,7 @@
 <template>
     <section class="view-base">
 
-        <popups></popups>
+        <Popups />
 
         <section v-if="isPopout">
             <router-view></router-view>
@@ -20,15 +20,15 @@
                     <router-view></router-view>
                 </transition>
 
-                <processes></processes>
-
-                <transition name="fade" mode="out-in">
-                    <section class="working-screen" v-if="workingScreen">
-                        <figure class="spinner icon-spin4 animate-spin"></figure>
-                    </section>
-                </transition>
+                <Processes />
             </section>
         </section>
+
+        <transition name="fade" mode="out-in">
+            <section class="working-screen" v-if="workingScreen">
+                <figure class="spinner icon-spin4 animate-spin"></figure>
+            </section>
+        </transition>
 
 
         <!--<v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>-->
@@ -41,7 +41,14 @@
     import * as Actions from '../store/constants';
     import {RouteNames, Routing} from '../vue/Routing'
 
+    import Processes from './Processes';
+    import Popups from './Popups';
+
     export default {
+    	components:{
+		    Popups,
+		    Processes
+        },
         data(){ return {
             routeNames:RouteNames,
 

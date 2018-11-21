@@ -19,7 +19,7 @@ export default class AccountService {
         return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static async importAllAccounts(keypair, isNewKeypair = false, blockchains = null, networks = null){
+    static async importAllAccounts(keypair, isNewKeypair = false, blockchains = null, networks = null, addOnly = false){
         return new Promise(async resolve => {
             if(Process.isProcessRunning(keypair.unique())) return resolve(false);
 	        const process = Process.importAccounts(keypair.unique());
@@ -44,7 +44,7 @@ export default class AccountService {
             // This method takes a while, re-cloning to make sure we're
             // always up to date before committing the data to storage.
 	        scatter = store.state.scatter.clone();
-            accountsToRemove.map(account => scatter.keychain.removeAccount(account));
+            if(!addOnly) accountsToRemove.map(account => scatter.keychain.removeAccount(account));
             accounts.map(account => scatter.keychain.addAccount(account));
 
             await store.dispatch(Actions.SET_SCATTER, scatter);

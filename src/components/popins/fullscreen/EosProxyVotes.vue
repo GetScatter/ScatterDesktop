@@ -44,6 +44,7 @@
 	import FlatList from '../../reusable/FlatList';
 	import ProxyService from "../../../services/ProxyService";
 	import ObjectHelpers from "../../../util/ObjectHelpers";
+	import RecurringService from "../../../services/RecurringService";
 
 	export default {
 		props:['popin'],
@@ -81,12 +82,20 @@
 			},
 		},
 		methods:{
-			returnResult(proxy){
-				this.popin.data.callback(proxy);
+			returnResult(truthy){
+				this.popin.data.callback(truthy);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
-			setProxy(){
-				this.returnResult({proxy:this.selectedProxy, auto:this.autoVote})
+			async setProxy(){
+				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+				const result = await plugin.proxyVote(this.account, this.selectedProxy, true);
+				if(result) {
+					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, result.transaction_id));
+					if(this.autoVote) await RecurringService.addProxy(this.account, this.selectedProxy);
+					else await RecurringService.removeProxies([this.account]);
+				}
+
+				this.returnResult(true)
 			},
 
 			...mapActions([

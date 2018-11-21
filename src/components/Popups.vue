@@ -8,6 +8,7 @@
                     <ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />
                     <EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />
                     <EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />
+                    <EosModerateRam :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_RAM" />
                     <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
                     <UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />
                 </section>
@@ -19,7 +20,6 @@
                         <Selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
                         <Mnemonic :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
                         <TransactionSuccess v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
-                        <BuySellRAM :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.BUY_SELL_RAM" />
                         <DelegateResources :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.DELEGATE_RESOURCES" />
                     </section>
                 </section>
@@ -56,11 +56,11 @@
     import Selector from '../components/popups/Selector.vue'
     import TextPrompt from '../components/popups/TextPrompt.vue'
     import DelegateResources from '../components/popups/DelegateResources.vue'
-    import BuySellRAM from '../components/popups/BuySellRAM.vue'
     import PopInHead from '../components/popups/fragments/PopInHead.vue'
 
     import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
     import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
+    import EosModerateRam from './popins/fullscreen/EosModerateRam'
     import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
     import UnlinkAccount from '../components/popins/fullscreen/UnlinkAccount'
     import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
@@ -74,13 +74,13 @@
 		    Selector,
 		    TextPrompt,
 		    DelegateResources,
-		    BuySellRAM,
 		    PopInHead,
 
             // FULLSCREEN
 		    ConfirmPassword,
 		    EosChangePermissions,
 		    EosProxyVotes,
+		    EosModerateRam,
 		    UnlinkAccount,
 		    UnlinkBlockchain
         },

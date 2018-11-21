@@ -15,10 +15,8 @@ ElectronHelpers.bindContextMenu();
 import MenuBar from './components/MenuBar.vue'
 import UserBar from './components/UserBar.vue'
 import ViewBase from './components/ViewBase.vue'
-import Processes from './components/Processes.vue'
 
 // POPUPS
-import Popups from './components/Popups.vue'
 import PopInHead from './components/popups/fragments/PopInHead.vue'
 
 // POP OUTS
@@ -34,7 +32,6 @@ import ButtonComponent from './components/reusable/ButtonComponent.vue'
 import SelectComponent from './components/reusable/SelectComponent.vue'
 import SwitchComponent from './components/reusable/SwitchComponent.vue'
 import SliderComponent from './components/reusable/SliderComponent.vue'
-import PercentageBarComponent from './components/reusable/PercentageBarComponent.vue'
 import BackBar from './components/reusable/BackBar.vue'
 
 // f12 to open console from anywhere.
@@ -49,7 +46,6 @@ class Main {
 		const hash = location.hash.replace("#/", '');
 
 		const shared = [
-			{tag:'popups', vue:Popups},
 			{tag:'pop-in-head', vue:PopInHead},
 			{tag:'btn', vue:ButtonComponent},
 			{tag:'cin', vue:InputComponent},
@@ -60,7 +56,6 @@ class Main {
 			{tag:'menu-bar', vue:MenuBar},
 			{tag:'user-bar', vue:UserBar},
 			{tag:'view-base', vue:ViewBase},
-			{tag:'processes', vue:Processes},
 		];
 
 		let fragments;
@@ -74,7 +69,6 @@ class Main {
 			]
 		} else {
 			fragments = [
-				{tag:'p-bar', vue:PercentageBarComponent},
 				{tag:'slider', vue:SliderComponent},
 				{tag:'qr-reader', vue:QrcodeReader},
 			]

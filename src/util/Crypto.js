@@ -1,6 +1,5 @@
 import ecc from 'eosjs-ecc';
 const {PrivateKey} = ecc;
-import bip39 from 'bip39'
 
 import PluginRepository from '../plugins/PluginRepository';
 

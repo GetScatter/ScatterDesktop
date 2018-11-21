@@ -12,7 +12,7 @@
 			<section class="panel-switch" :class="{'short':!scrollerAtTop}">
 				<figure class="button" v-if="hasEosBlockchain" :class="{'active':dashState === DASH_STATES.ADD_ACCOUNT}" @click="dashState = DASH_STATES.ADD_ACCOUNT">Add Account</figure>
 				<figure class="button" :class="{'active':dashState === DASH_STATES.ACCOUNTS}" @click="dashState = DASH_STATES.ACCOUNTS">Linked Accounts</figure>
-				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys & Chains</figure>
+				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys & Blockchains</figure>
 			</section>
 
 			<!-- ACCOUNTS -->
@@ -45,36 +45,38 @@
 
 
 			<!-- ADD / CREATE EOSIO ACCOUNT -->
-			<section class="list-container"v-if="dashState === DASH_STATES.ADD_ACCOUNT">
+			<section class="list-container" style="overflow:auto;" v-if="dashState === DASH_STATES.ADD_ACCOUNT">
 
-				<section class="action-box top-pad">
-					<label>Create a new EOS account</label>
-					<p>If you want to create a new EOS account on top of this key.</p>
-					<btn text="Create Account" v-on:clicked="$emit('createeos')" />
-				</section>
+				<section style="padding-bottom:20px;">
+					<section class="action-box top-pad">
+						<label>Create a new EOS account</label>
+						<p>If you want to create a new EOS account on top of this key.</p>
+						<btn text="Create Account" v-on:clicked="$emit('createeos')" />
+					</section>
 
-				<section class="action-box top-pad">
-					<label>Link existing EOS account</label>
-					<p>If you already have an EOS account, but it's not being imported automatically.</p>
-					<br>
-					<br>
+					<section class="action-box top-pad">
+						<label>Link existing EOS account</label>
+						<p>If you already have an EOS account, but it's not being imported automatically.</p>
+						<br>
+						<br>
 
-					<section class="key-val">
-						<section class="split-inputs">
-							<sel style="flex:1; margin-left:0;" label="Network to add account to"
-							     :selected="manualAccountNetwork"
-							     :options="eosNetworks"
-							     :parser="network => network.name"
-							     v-on:changed="x => manualAccountNetwork = x"></sel>
+						<section class="key-val">
+							<section class="split-inputs">
+								<sel style="flex:1; margin-left:0;" label="Network to add account to"
+								     :selected="manualAccountNetwork"
+								     :options="eosNetworks"
+								     :parser="network => network.name"
+								     v-on:changed="x => manualAccountNetwork = x"></sel>
 
-							<cin style="margin-bottom:0; flex:1;"
-							     :text="newAccountName"
-							     v-on:changed="x => newAccountName = x"
-							     placeholder="your.account@owner"
-							     label="Account Name" />
+								<cin style="margin-bottom:0; flex:1;"
+								     :text="newAccountName"
+								     v-on:changed="x => newAccountName = x"
+								     placeholder="your.account@owner"
+								     label="Account Name" />
 
-							<btn :text="locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountButton)" style="margin-top:20px; flex:0.2;"
-							     red="1" v-on:clicked="manuallyAddAccount" />
+								<btn :text="locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountButton)" style="margin-top:20px; flex:0.2;"
+								     red="1" v-on:clicked="manuallyAddAccount" />
+							</section>
 						</section>
 					</section>
 				</section>

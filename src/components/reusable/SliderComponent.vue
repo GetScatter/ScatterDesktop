@@ -1,6 +1,7 @@
 <template>
-    <section class="slider">
-        <input type="range" :class="{'red':red}" :step="step ? step : 1" :min="min" :max="max" v-model="val">
+    <section class="percentage-bar">
+        <figure class="bar instant" :class="{'red':val > max - max/6}" :style="{'width':(val/max)*100 + '%'}"></figure>
+        <input type="range" :class="{'red':val > max - max/6}" :step="step ? step : 1" :min="min" :max="max" v-model="val">
     </section>
 </template>
 
@@ -27,47 +28,65 @@
 <style scoped lang="scss">
     @import "../../_variables";
 
-    .slider {
+    .percentage-bar {
         width: 100%;
-        margin-top:20px;
+        margin:20px 0 0;
+        position: relative;
+
 
         input {
             -webkit-appearance: none;  /* Override default CSS styles */
             appearance: none;
+            cursor: pointer;
             width: 100%;
-            height: 15px;
-            background: $light-grey;
+            background: transparent;
+            height:14px;
             outline: none;
-            border-radius: 20px;
+            border-radius:50px;
+            position:absolute;
+            top:0;
+            bottom:0;
+            left:0;
+            right:0;
 
 
             $slider-button:24px;
-            $slider-button-w:44px;
 
             &::-webkit-slider-thumb {
                 -webkit-appearance: none;
                 appearance: none;
-                width: $slider-button-w;
+                width: $slider-button;
                 height: $slider-button;
-                background: $dark-blue;
+                background: $light-blue;
                 cursor: pointer;
-                border-radius: 2px;
-                transition: background 1s ease, opacity 0.4s ease;
+                margin-top:-2px;
 
-                opacity: 0.3;
-                &:hover { opacity: 1; }
+                border:3px solid #fff;
+                box-shadow:0 2px 10px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.2);
+                border-radius:50px;
+                padding:3px;
+
+                transition:all 0.2s ease;
+                transition-property: background;
+
             }
 
             &::-moz-range-thumb {
-                width: $slider-button-w;
+                -webkit-appearance: none;
+                appearance: none;
+                width: $slider-button;
                 height: $slider-button;
-                background: $dark-blue;
+                background: $light-blue;
                 cursor: pointer;
-                border-radius: 2px;
-                transition: background 1s ease, opacity 0.4s ease;
+                margin-top:-2px;
 
-                opacity: 0.3;
-                &:hover { opacity: 1; }
+                border:3px solid #fff;
+                box-shadow:0 2px 10px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.2);
+                border-radius:50px;
+                padding:3px;
+
+                transition:all 0.2s ease;
+                transition-property: background;
             }
 
             &.red {

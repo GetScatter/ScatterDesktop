@@ -210,7 +210,7 @@ export default class ApiService {
             let existingNetwork = scatter.settings.networks.find(x => x.unique() === network.unique());
             if(!existingNetwork) return resolve({id:request.id, result:Error.noNetwork()});
 
-            await AccountService.importAllAccountsForNetwork(network);
+            await AccountService.importAllAccounts(keypair, false, [network.blockchain], [network], true);
             return resolve({id:request.id, result:true});
         })
     }
