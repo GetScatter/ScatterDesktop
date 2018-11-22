@@ -32,6 +32,13 @@ export default class Account {
         return this.keypair().publicKeys.find(x => x.key === this.publicKey).blockchain;
     }
 
+    authorities(){
+	    if(!this.authority.length) return [];
+	    return store.getters.accounts
+            .filter(x => x.identifiable() === this.identifiable() && x.keypairUnique === this.keypairUnique)
+            .sort((a,b) => a.authority.localeCompare(b.authority));
+    }
+
     static placeholder(){ return new Account(); }
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
     unique(){ return this.keypairUnique + this.networkUnique + this.name + this.authority + this.publicKey; }

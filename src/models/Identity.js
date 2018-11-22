@@ -93,7 +93,9 @@ export class LocationInformation {
     }
     static placeholder(){ return new LocationInformation(); }
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
+	clone(){ return LocationInformation.fromJson(JSON.parse(JSON.stringify(this))) }
     findFields(fields){
+        console.log('fields', fields);
         let foundFields = fields.filter(field => field !== LocationFields.country)
             .filter(field => this.hasOwnProperty(field) && this[field].length);
 
@@ -165,9 +167,10 @@ export default class Identity {
      * Checks if an Identity has specified fields.
      * This is used when an interacting application requires specific information.
      * @param fields - The fields to check for
+     * @param selectedLocation
      * @returns {boolean}
      */
-    hasRequiredFields(fields){
+    hasRequiredFields(fields, selectedLocation = null){
         const requiredFields = IdentityRequiredFields.fromJson(fields);
         if(!requiredFields.isValid()) return false;
 
@@ -175,9 +178,14 @@ export default class Identity {
             if(!requiredFields.personal.every(field => this.personal[field].length))
                 return false;
 
-        if(requiredFields.location.length)
-            if(!this.locations.find(location => location.hasFields(requiredFields.location)))
-                return false;
+        if(selectedLocation){
+            if(!selectedLocation.hasFields(fields.location)) return false;
+        } else {
+	        if(requiredFields.location.length)
+		        if(!this.locations.find(location => location.hasFields(requiredFields.location)))
+			        return false;
+        }
+
 
         return true;
     }

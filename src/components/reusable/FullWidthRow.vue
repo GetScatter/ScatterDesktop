@@ -15,9 +15,10 @@
 				     :class="{'important':action.hasOwnProperty('important')}"
 				     :icon="action.hasOwnProperty('icon') ? action.icon : null"
 				     :text="action.name"
-				     :blue="popout || action.hasOwnProperty('blue')"
-				     :red="action.hasOwnProperty('red')"
-				     :disabled="action.hasOwnProperty('disabled')"
+				     :small="action.hasOwnProperty('small') && action.small"
+				     :blue="action.hasOwnProperty('blue') && action.blue"
+				     :red="action.hasOwnProperty('red') && action.red"
+				     :disabled="action.hasOwnProperty('disabled') && action.disabled"
 				     v-on:clicked="action.handler"></btn>
 			</section>
 		</section>
@@ -77,9 +78,15 @@
 			justify-content: flex-end;
 
 			&.multiple {
+				flex-wrap: wrap;
+				max-width: 50%;
+				width: 100%;
+				flex: 0 0 auto;
+
 				button {
 					display:inline-block;
 					margin-left:5px;
+					margin-bottom:5px;
 					width:max-content;
 				}
 			}

@@ -1,5 +1,5 @@
 <template>
-    <section class="input" :class="{'big':big, 'important':red, 'centered':centered}">
+    <section class="input" :class="{'big':big, 'small':small, 'important':red, 'centered':centered}">
 
         <label v-if="error || label" :class="{'error':error}">
             <span>{{error ? error : label}}</span>
@@ -72,6 +72,7 @@
             'centered',
             'textarea',
             'rightText',
+            'small',
         ],
         watch:{
             input:function(){ this.emit(); },
@@ -238,8 +239,39 @@
                     bottom:-15px;
                 }
             }
+        }
 
+        &.small {
+            $smaller-font:13px;
+            margin-bottom:5px;
 
+            input, textarea {
+                height:30px;
+                padding:0 10px;
+                font-size: $smaller-font;
+                display: inline-block;
+
+                &::-webkit-input-placeholder {
+                    font-size: $smaller-font;
+                    color:$placeholder-color;
+                }
+                &::-moz-placeholder {
+                    font-size: $smaller-font;
+                    color:$placeholder-color;
+                }
+                &:-ms-input-placeholder {
+                    font-size: $smaller-font;
+                    color:$placeholder-color;
+                }
+                &:-moz-placeholder {
+                    font-size: $smaller-font;
+                    color:$placeholder-color;
+                }
+
+                &.pad-right {
+                    padding-right:50px;
+                }
+            }
         }
 
         &.important {

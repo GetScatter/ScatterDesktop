@@ -24,7 +24,7 @@
 
         <section v-if="windowMessage" class="popout">
 
-            <AppLogin v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult" />
+            <AppLogin v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY" :popup="popup" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult" />
 
             <!--<get-identity v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"-->
                           <!--:payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></get-identity>-->
@@ -51,6 +51,7 @@
     import {remote} from '../util/ElectronHelpers';
     import WindowService from '../services/WindowService'
     import * as ApiActions from '../models/api/ApiActions';
+    import {Popup} from "../models/popups/Popup";
 
     export default {
         data () {return {
@@ -81,12 +82,9 @@
                 'scatter',
             ]),
             pluginOrigin(){ return this.windowMessage.data.popup.data.props.plugin },
+            popup(){ return Popup.fromJson(this.windowMessage.data.popup) },
             payload(){ return this.windowMessage.data.popup.data.props.payload },
             popupType(){ return this.windowMessage.data.popup.data.type },
-            showNonce(){
-                return this.popupType === ApiActions.REQUEST_SIGNATURE ||
-                       this.popupType === ApiActions.REQUEST_ARBITRARY_SIGNATURE
-            }
         },
         methods: {
             returnResult(result){
@@ -108,6 +106,9 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
+        border-top:1px solid #dadada;
+        border-left:1px solid #dadada;
+        overflow:hidden;
 
         section {
             display: flex;

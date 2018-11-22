@@ -74,8 +74,7 @@
 				'explorers'
 			]),
 			authorities(){
-				if(!this.account.authority.length) return [];
-				return this.accounts.filter(x => x.identifiable() === this.account.identifiable() && x.keypairUnique === this.account.keypairUnique)
+				return this.account.authorities()
 					.map(x => x.authority)
 			},
 			accountResources(){

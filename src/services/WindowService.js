@@ -58,4 +58,13 @@ export default class WindowService {
         return LowLevelWindowService.openPopOut(onReady, onClosed, width, height);
     }
 
+	static changeWindowSize(height, width, win = null){
+		if(!win) win = remote.getCurrentWindow();
+		const mousePoint = remote.screen.getCursorScreenPoint();
+		let {width:screenWidth, height:screenHeight} = remote.screen.getDisplayNearestPoint(mousePoint).workAreaSize;
+		if(mousePoint.x > screenWidth) screenWidth = screenWidth * Math.ceil(mousePoint.x / screenWidth);
+		win.setSize(width, height);
+		win.setPosition(screenWidth - width, screenHeight - height);
+	}
+
 }

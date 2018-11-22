@@ -482,6 +482,10 @@ label {
 .key-val {
   margin-top:20px;
 
+  &.nested {
+    margin-top:0;
+  }
+
   figure {
     &:first-child {
       font-size: 11px;
@@ -493,6 +497,48 @@ label {
 
     &:last-child {
 
+    }
+
+    &.clickable {
+      cursor: pointer;
+      font-size: 13px;
+      color:$dark-blue;
+      padding:8px 12px;
+      border:1px solid $dark-blue;
+      border-radius:4px;
+      margin-top:4px;
+      margin-bottom:2px;
+      display:table;
+
+      &:hover {
+        background:$dark-blue;
+        color:#fff;
+      }
+    }
+  }
+
+  &.split-inputs {
+    font-size: 11px;
+    margin-bottom:4px;
+    padding-bottom:4px;
+    padding-top:4px;
+
+
+    figure {
+      margin-bottom:0;
+
+      &:first-child {
+        flex:0 0 auto;
+        font-weight: 500;
+        color:$dark-grey;
+        padding-right:10px;
+      }
+
+      &:last-child {
+        color:$dark-blue;
+        flex:1;
+        text-align:right;
+      }
     }
   }
 }

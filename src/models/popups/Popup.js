@@ -16,6 +16,8 @@ export class Popup {
         this.data = _data;
     }
 
+	static fromJson(json){ return Object.assign(new Popup(), json); }
+
     dimensions(){
         if(this.data.type === ApiActions.GET_OR_REQUEST_IDENTITY)   return {width:420, height:550};
         if(this.data.type === ApiActions.REQUEST_TRANSFER)          return {width:440, height:560};
