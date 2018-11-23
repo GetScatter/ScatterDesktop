@@ -159,7 +159,7 @@
 
     const formatter = list => list.map(token => {
     	const fiatPrice = token.fiatPrice();
-    	const description = `${blockchainName(token.blockchain)} ${fiatPrice ? ' - ' : ''}${fiatPrice}`;
+    	const description = `${blockchainName(token.blockchain)} ${fiatPrice ? ' - '+fiatPrice : ''}`;
     	return {
 		    id:token.unique(),
 		    title:`${token.name} (${token.symbol})`,

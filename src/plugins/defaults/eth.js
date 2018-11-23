@@ -111,12 +111,6 @@ export default class ETH extends Plugin {
 
 
     async balanceFor(account, token, web3 = null){
-	    const formatAmount = amount => {
-		    let decimalString = '';
-		    for(let i = 0; i < token.decimals; i++){ decimalString += '0'; }
-		    return new BigNumber(amount.toString(10), 10).div(`1${decimalString}`).toString(10);
-	    };
-
 
         const killInstance = !web3;
         let balance;
@@ -130,7 +124,12 @@ export default class ETH extends Plugin {
 	        balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
         } else {
             const contract = new web3.eth.Contract(erc20abi, token.contract);
-            balance = formatAmount(await contract.methods.balanceOf(account.sendable()).call());
+            try {
+	            balance = TokenService.formatAmount(await contract.methods.balanceOf(account.sendable()).call(), token, true);
+            } catch(e){
+                console.log(`${token.name} is not an ERC20 token`, e);
+                balance = TokenService.formatAmount('0', token, true);
+            }
         }
 
 	    if(killInstance) killCachedInstance(account.network());
@@ -248,6 +247,7 @@ export default class ETH extends Plugin {
         if(abi){
             methodABI = abi.find(method => transaction.data.indexOf(method.signature) !== -1);
             if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
+
 
             params = web3util.eth.abi.decodeParameters(methodABI.inputs, transaction.data.replace(methodABI.signature, ''));
             params = Object.keys(params).reduce((acc, key) => {

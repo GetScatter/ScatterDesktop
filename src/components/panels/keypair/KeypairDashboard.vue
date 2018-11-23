@@ -141,6 +141,7 @@
 				return this.networks.filter(x => x.blockchain === Blockchains.EOSIO)
 			},
 			hasEosBlockchain(){
+				console.log('this.keypair.blockchains', this.keypair.blockchains);
 				return this.keypair.blockchains.includes(Blockchains.EOSIO);
 			},
 			filteredAccounts(){

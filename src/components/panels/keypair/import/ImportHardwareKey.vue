@@ -8,7 +8,7 @@
 			<sel :selected="blockchain" label="Available Blockchains"
 			     :parser="x => blockchainName(x)"
 			     :options="availableBlockchains"
-			     v-on:changed="(x) => blockchain = x"></sel>
+			     v-on:changed="selectBlockchain"></sel>
 		</section>
 
 
@@ -69,16 +69,24 @@
 		},
 
 		methods:{
+			resetExternal(){
+				this.external = new ExternalWallet(this.hardwareType, this.blockchain);
+				this.external.interface.open();
+			},
+			selectBlockchain(blockchain){
+				this.blockchain = blockchain;
+				this.resetExternal();
+			},
 			changeHardwareType(type){
 				this.hardwareType = type;
 				this.blockchain = this.availableBlockchains[0];
-				this.external = new ExternalWallet(this.hardwareType, this.blockchain);
-				this.external.interface.open();
+				this.resetExternal();
 			},
 			async importKey(){
 				this.importing = true;
 				const keypair = Keypair.placeholder();
 				keypair.external = this.external;
+				keypair.blockchains = [this.external.blockchain];
 				if(await KeyPairService.loadFromHardware(keypair)) {
 					const found = this.keypairs.find(x => x.keyHash === keypair.keyHash);
 					if(this.keypairs.find(x => x.keyHash === keypair.keyHash)) {
