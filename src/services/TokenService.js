@@ -3,6 +3,7 @@ import * as Actions from '../store/constants';
 import PopupService from "./PopupService";
 import {Popup} from "../models/popups/Popup";
 import PriceService from "./PriceService";
+import BigNumber from "bignumber.js";
 
 const filterOutToken = (scatter, token) => {
 	scatter.settings.tokens = scatter.settings.tokens.filter(x => x.unique() !== token.unique());
@@ -60,6 +61,14 @@ export default class TokenService {
 
 		// await PriceService.watchPrices(!!token);
 		return store.dispatch(Actions.SET_SCATTER, scatter);
+	}
+
+
+	static formatAmount(amount, token, div = false){
+    	const operator = div ? 'div' : 'times';
+		let decimalString = '';
+		for(let i = 0; i < token.decimals; i++){ decimalString += '0'; }
+		return new BigNumber(amount.toString(10), 10)[operator](`1${decimalString}`).toString(10);
 	}
 
 }

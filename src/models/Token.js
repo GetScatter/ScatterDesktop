@@ -2,6 +2,7 @@ import IdGenerator from "../util/IdGenerator";
 import PluginRepository from "../plugins/PluginRepository";
 import {Blockchains} from "./Blockchains";
 import {store} from "../store/store";
+import BigNumber from "bignumber.js";
 
 export default class Token {
 

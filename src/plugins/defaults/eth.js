@@ -20,6 +20,9 @@ import PopupService from '../../services/PopupService'
 import {Popup} from '../../models/popups/Popup'
 import Token from "../../models/Token";
 import HardwareService from "../../services/HardwareService";
+import BigNumber from "bignumber.js";
+import TokenService from "../../services/TokenService";
+const erc20abi = require('../../data/abis/erc20');
 
 const web3util = new Web3();
 
@@ -107,14 +110,47 @@ export default class ETH extends Plugin {
     }
 
 
-    async balanceFor(account, token){
-        const [web3, engine] = getCachedInstance(account.network());
-        let balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
-        killCachedInstance(account.network());
-        return balance;
+    async balanceFor(account, token, web3 = null){
+	    const formatAmount = amount => {
+		    let decimalString = '';
+		    for(let i = 0; i < token.decimals; i++){ decimalString += '0'; }
+		    return new BigNumber(amount.toString(10), 10).div(`1${decimalString}`).toString(10);
+	    };
+
+
+        const killInstance = !web3;
+        let balance;
+        if(!web3){
+	        const [w, e] = getCachedInstance(account.network());
+	        web3 = e;
+        }
+
+
+        if(token.unique() === this.defaultToken().unique()){
+	        balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
+        } else {
+            const contract = new web3.eth.Contract(erc20abi, token.contract);
+            balance = formatAmount(await contract.methods.balanceOf(account.sendable()).call());
+        }
+
+	    if(killInstance) killCachedInstance(account.network());
+	    return balance;
+
     }
 
-	async balancesFor(account, tokens){}
+	async balancesFor(account, tokens){
+        const [web3, engine] = getCachedInstance(account.network());
+
+        let balances = [];
+        for(let i = 0; i < tokens.length; i++){
+            const t = tokens[i].clone();
+	        t.amount = await this.balanceFor(account, tokens[i], web3);
+	        balances.push(t);
+        }
+
+		killCachedInstance(account.network());
+        return balances;
+    }
 
     defaultDecimals(){ return 18; }
     defaultToken(){ return new Token(Blockchains.ETH, 'eth', 'ETH', 'ETH', this.defaultDecimals()) }
@@ -129,11 +165,12 @@ export default class ETH extends Plugin {
 
     async transfer({account, to, amount, token, promptForSignature = true}){
 	    const {contract, symbol} = token;
+	    const isEth = token.unique() === this.defaultToken().unique();
         return new Promise(async (resolve, reject) => {
             const wallet = new ScatterEthereumWallet(account, async (transaction, callback) => {
-                const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
+                const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{}, abi:isEth ? null : erc20abi };
                 const signatures = promptForSignature
-                    ? await this.passThroughProvider(payload, account, x => finished(x))
+                    ? await this.passThroughProvider(payload, account, x => finished(x), token)
                     : await this.signer(payload.transaction, account.publicKey);
 
                 if(callback) callback(null, signatures);
@@ -146,10 +183,20 @@ export default class ETH extends Plugin {
             };
 
             const [web3, engine] = getCachedInstance(account.network(), wallet);
-            const value = web3util.utils.toWei(amount.toString());
-            web3.eth.sendTransaction({from:account.publicKey, to, value})
-                .on('transactionHash', transactionHash => finished({transactionHash}))
-                .on('error', error => finished({error}));
+
+            if(isEth){
+	            const value = web3util.utils.toWei(amount.toString());
+	            web3.eth.sendTransaction({from:account.publicKey, to, value})
+		            .on('transactionHash', transactionHash => finished({transactionHash}))
+		            .on('error', error => finished({error}));
+            } else {
+	            const value = TokenService.formatAmount(amount.toString(), token, true);
+	            const contract = new web3.eth.Contract(erc20abi, token.contract, {from:account.sendable()});
+	            contract.methods.transfer(to, value).send({gasLimit: 250000})
+		            .on('transactionHash', transactionHash => finished({transactionHash}))
+		            .on('error', error => finished({error}));
+            }
+
         })
     }
 
@@ -163,9 +210,9 @@ export default class ETH extends Plugin {
         return ethUtil.addHexPrefix(tx.serialize().toString('hex'));
     }
 
-    async passThroughProvider(payload, account, rejector){
+    async passThroughProvider(payload, account, rejector, token = null){
         return new Promise(async resolve => {
-            payload.messages = await this.requestParser(payload.transaction);
+            payload.messages = await this.requestParser(payload.transaction, payload.hasOwnProperty('abi') ? payload.abi : null, token);
             payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
             payload.participants = [account];
             payload.network = account.network();
@@ -194,9 +241,10 @@ export default class ETH extends Plugin {
         })
     }
 
-    async requestParser(transaction, abi){
+    async requestParser(transaction, abi, token = null){
         let params = {};
         let methodABI;
+
         if(abi){
             methodABI = abi.find(method => transaction.data.indexOf(method.signature) !== -1);
             if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
@@ -222,7 +270,7 @@ export default class ETH extends Plugin {
 
         return [{
             data,
-            code:transaction.to,
+            code:token ? token.name : transaction.to,
             type:abi ? methodABI.name : 'transfer',
             authorization:transaction.from
         }];

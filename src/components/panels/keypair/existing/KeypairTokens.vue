@@ -5,6 +5,9 @@
 			<p>{{blockchainName(account.blockchain())}} - <b>{{account.network().name}}</b></p>
 			<br>
 			<br>
+			<router-link tag="p" :to="{name:RouteNames.SETTINGS, params:{panel:{name:'Tokens'}}}" v-if="hiddenTokenCount">
+				<u style="cursor:pointer;">{{hiddenTokenCount}} tokens filtered out by your token spam filter.</u>
+			</router-link>
 		</section>
 
 		<SearchBar class="search" :placeholder="locale(langKeys.KEYPAIR.ACCOUNTS.SearchPlaceholder)"
@@ -38,7 +41,7 @@
 					<span v-if="token.fiatBalance()">{{token.fiatBalance()}}</span>
 				</figure>
 				<section class="info">
-					<figure>{{token.contract}}</figure>
+					<figure :class="{'small':token.contract.length > 20}">{{token.contract}}</figure>
 				</section>
 			</section>
 
@@ -83,6 +86,15 @@
 			systemTokenBalance(){
 				if(!this.accountBalances) return null;
 				return this.accountBalances.find(x => x.unique() === this.systemToken.unique());
+			},
+			hiddenTokenCount(){
+				const balanceFilter = this.balanceFilters[this.account.blockchain()];
+				if(!balanceFilter) return 0;
+				if(!this.accountBalances) return 0;
+				return this.accountBalances
+					.filter(x => {
+						return balanceFilter > parseFloat(x.amount);
+					}).length
 			},
 			tokens(){
 				const balanceFilter = this.balanceFilters[this.account.blockchain()];
@@ -183,6 +195,10 @@
 					display:inline-block;
 					padding-bottom:5px;
 					margin-bottom:5px;
+				}
+
+				.small {
+					font-size: 11px;
 				}
 
 			}

@@ -3,29 +3,17 @@ import PluginRepository from '../plugins/PluginRepository';
 import PopupService from './PopupService';
 import {Popup} from '../models/popups/Popup'
 import BigNumber from 'bignumber.js';
-
-/***
- * Some blockchains need the amount to be parsed into a
- * string multiplied by their decimals.
- * @param amount
- * @param token
- * @returns {string}
- */
-const formatAmount = (amount, token) => {
-    let decimalString = '';
-    for(let i = 0; i < token.decimals; i++){ decimalString += '0'; }
-    return new BigNumber(amount.toString(10), 10).times(`1${decimalString}`).toString(10);
-};
+import TokenService from "./TokenService";
 
 export default class TransferService {
 
     static async [Blockchains.ETH](params){
-	    params.amount = formatAmount(params.amount, params.token);
+	    params.amount = TokenService.formatAmount(params.amount, params.token);
         return this.baseTransfer(params);
     }
 
     static async [Blockchains.TRX](params){
-        params.amount = formatAmount(params.amount, params.token);
+        params.amount = TokenService.formatAmount(params.amount, params.token);
         return this.baseTransfer(params);
     }
 

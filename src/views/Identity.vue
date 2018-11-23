@@ -235,7 +235,9 @@
 
                 const names = this.fullname.trim().split(' ');
                 this.identity.personal.firstname = names.slice(0, names.length > 1 ? names.length-1 : 1).join(' ').trim();
-                if(names.length > 1) this.identity.personal.lastname = names[names.length-1].trim();
+
+                this.identity.personal.lastname = names.length > 1 ? names[names.length-1].trim() : '';
+
             },
             'identity':{
                 handler(a,b){

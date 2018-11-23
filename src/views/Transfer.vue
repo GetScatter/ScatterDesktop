@@ -224,8 +224,14 @@
 			        return accountBalances || [];
                 })().sort((a,b) => b.amount - a.amount);
             	const allTokens = standardTokens.concat(tokensFromBalances);
-		        if(this.account) return allTokens.filter(x => x.blockchain === this.account.blockchain());
-		        return allTokens;
+
+            	const uniqueTokens = allTokens.reduce((acc,token) => {
+            		if(!acc.find(x => x.unique() === token.unique())) acc.push(token);
+            		return acc;
+                }, [])
+
+		        if(this.account) return uniqueTokens.filter(x => x.blockchain === this.account.blockchain());
+		        return uniqueTokens;
 	        },
 	        formattedContacts(){
 		        const contacts = this.contacts.filter(x => {

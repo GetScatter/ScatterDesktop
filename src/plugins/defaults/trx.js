@@ -17,8 +17,6 @@ const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 import Token from "../../models/Token";
 import HardwareService from "../../services/HardwareService";
 
-const tron20abi = require('../../data/abis/erc20');
-
 let cachedInstances = {};
 const getCachedInstance = network => {
     if(cachedInstances.hasOwnProperty(network.unique())) return cachedInstances[network.unique()];
