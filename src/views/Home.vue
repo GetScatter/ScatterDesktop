@@ -57,6 +57,10 @@
     import PopupService from "../services/PopupService";
     import RecurringService from "../services/RecurringService";
     import {store} from "../store/store";
+    import HardwareService from "../services/HardwareService";
+    import Keypair from "../models/Keypair";
+    import ExternalWallet, {EXT_WALLET_TYPES} from "../models/hardware/ExternalWallet";
+    import KeyPairService from "../services/KeyPairService";
 
 
     export default {
@@ -112,6 +116,18 @@
 
         mounted(){
 	        setTimeout(async() => {
+
+                // const hardwareKeypair = Keypair.fromJson({
+	            //     name:'Ledger test',
+                //     blockchains:['eos'],
+                //     publicKeys:[{blockchain:'eos', key:'EOS8kUtzfPsPryvfJJMzn58481oV6pR9NEiPNQNjqvUBszKHsoVSp'}],
+	            //     external:new ExternalWallet(EXT_WALLET_TYPES.LEDGER, 'eos')
+                // });
+		        // hardwareKeypair.hash()
+                // KeyPairService.saveKeyPair(hardwareKeypair);
+		        // console.log(this.keypairs);
+
+	        	HardwareService.openConnections(true);
 		        await PriceService.watchPrices();
 		        await BalanceService.loadAllBalances();
 		        await RecurringService.checkProxies();

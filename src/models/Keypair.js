@@ -2,7 +2,7 @@ import AES from 'aes-oop';
 import {Blockchains} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
 import Crypto from '../util/Crypto';
-import ExternalWallet from './ExternalWallet';
+import ExternalWallet from './hardware/ExternalWallet';
 import {store} from '../store/store';
 
 export default class Keypair {
@@ -28,13 +28,14 @@ export default class Keypair {
     }
 
     resetExternal(){
-        this.external.interface.reset();
-        this.external = ExternalWallet.fromJson(this.external);
+        this.external.interface.close();
+        this.external.interface.open();
+        // this.external = ExternalWallet.fromJson(this.external);
     }
 
     hash(){
         if(!this.external) this.keyHash = Crypto.bufferToHash(this.privateKey);
-        else this.keyHash = `${this.external.type}:${this.external.blockchain}:${this.external.addressIndex}`
+        else this.keyHash = `${this.external.type}:${this.external.publicKey}`
     }
 
     accounts(unique = false){

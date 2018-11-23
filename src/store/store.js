@@ -27,7 +27,7 @@ const state = {
 
     popups:[],
 
-    hardware:null,
+    hardware:{},
 
     balances:{},
     prices:{},

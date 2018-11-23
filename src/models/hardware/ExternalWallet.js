@@ -1,9 +1,9 @@
-import IdGenerator from '../util/IdGenerator';
+import IdGenerator from '../../util/IdGenerator';
 import ecc from 'eosjs-ecc'
 
-import {Blockchains} from './Blockchains'
-import LedgerWallet from './hardware/LedgerWallet';
-import LiquidEOS from './hardware/LiquidEOS';
+import {Blockchains} from '../Blockchains'
+import LedgerWallet from './LedgerWallet';
+import LiquidEOS from './LiquidEOS';
 
 export const EXT_WALLET_TYPES = {
     LEDGER:'Ledger Nano S',
@@ -26,7 +26,7 @@ export default class ExternalWallet {
     static fromJson(json){
         let p = Object.assign(this.placeholder(), json);
         p.interface = getInterface(p.type, p.blockchain);
-        p.interface.setAddressIndex(p.addressIndex);
+        // p.interface.setAddressIndex(p.addressIndex);
         return p;
     }
 }
@@ -44,16 +44,24 @@ export class ExternalWalletInterface {
         this.handler = handler;
     }
 
-    async sign(publicKey, trx, abi){
-        return await this.handler.sign(publicKey, trx, abi);
+    async open(){
+        return await this.handler.open();
+    }
+
+    async close(){
+	    return await this.handler.close();
+    }
+
+    async canConnect(){
+	    return await this.handler.canConnect();
+    }
+
+    async sign(publicKey, trx, abi, network){
+        return await this.handler.sign(publicKey, trx, abi, network);
     }
 
     async getPublicKey(){
         return await this.handler.getPublicKey();
-    }
-
-    canConnect(){
-        return this.handler.canConnect();
     }
 
     setAddressIndex(path){
@@ -62,10 +70,6 @@ export class ExternalWalletInterface {
 
     availableBlockchains(){
         return this.handler.availableBlockchains();
-    }
-
-    reset(){
-        return this.handler.reset();
     }
 
 }

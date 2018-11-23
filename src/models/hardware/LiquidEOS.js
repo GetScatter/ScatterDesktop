@@ -1,4 +1,4 @@
-import {ExternalWalletInterface} from '../ExternalWallet'
+import {ExternalWalletInterface} from './ExternalWallet'
 import * as Http from '../../util/Http'
 import PopupService from '../../services/PopupService';
 import {Popup} from '../popups/Popup';

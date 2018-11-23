@@ -21,6 +21,7 @@ export const SET_PROCESS =      'addProcess';
 export const RELEASE_PROCESS =  'releaseProcess';
 
 export const SET_HARDWARE =     'setHardware';
+export const REMOVE_HARDWARE =  'removeHardware';
 
 export const SET_TOKENS =       'setTokens';
 export const SET_BALANCES =     'setBalances';

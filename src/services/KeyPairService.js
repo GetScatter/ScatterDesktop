@@ -10,6 +10,7 @@ import {store} from '../store/store';
 import Keypair from '../models/Keypair';
 import Account from '../models/Account'
 import AccountService from "./AccountService";
+import HardwareService from "./HardwareService";
 
 export default class KeyPairService {
 
@@ -148,7 +149,8 @@ export default class KeyPairService {
         return keypair.external !== null;
     }
 
-    static async loadFromHardware(keypair){
+    static async loadFromHardware(keypair, tries = 0){
+        if(tries >= 5) return false;
         return keypair.external.interface.getPublicKey().then(key => {
             if(PluginRepository.plugin(keypair.external.blockchain).validPublicKey(key)){
                 keypair.external.publicKey = key;
@@ -156,7 +158,11 @@ export default class KeyPairService {
                 keypair.hash();
                 return true;
             } else return false;
-        }).catch(() => {
+        }).catch(async err => {
+            if(err.toString().match('Cannot write to HID device')){
+                await HardwareService.openConnections();
+                return this.loadFromHardware(keypair, tries++);
+            }
             return false;
         })
     }

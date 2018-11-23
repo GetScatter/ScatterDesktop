@@ -1,11 +1,6 @@
 import WindowService from '../../services/WindowService'
-import * as Actions from '../../store/constants';
 import {store} from '../../store/store';
-import * as HARDWARE_STATES from './constants';
-import {remote} from '../../util/ElectronHelpers';
-const Transport = remote.getGlobal('appShared').Transport.default;
 import bippath from 'bip32-path';
-import {EXT_WALLET_TYPES} from '../ExternalWallet';
 import {Blockchains} from '../Blockchains';
 import PopupService from '../../services/PopupService';
 import {Popup} from '../popups/Popup';
@@ -17,6 +12,7 @@ import Eos from 'eosjs';
 
 const EthTx = require('ethereumjs-tx')
 import Eth from "@ledgerhq/hw-app-eth";
+import {EXT_WALLET_TYPES} from "./ExternalWallet";
 
 const throwErr = () => PopupService.push(Popup.prompt(
     'No Hardware Available',
@@ -30,79 +26,47 @@ export const LEDGER_PATHS = {
     [Blockchains.ETH]:(index = 0) => `44'/60'/0'/0/${index}`,
 }
 
-export const cache = {};
+const getTransport = () => {
+    if(!store.state.hardware.hasOwnProperty(EXT_WALLET_TYPES.LEDGER)) return null;
+    return store.state.hardware[EXT_WALLET_TYPES.LEDGER];
+}
 
 export default class LedgerWallet {
 
     constructor(blockchain){
         this.blockchain = blockchain;
         this.api = null;
-        this.init();
     }
 
     static typeToInterface(blockchain){
-        if(!cache.hasOwnProperty(blockchain)) cache[blockchain] = new LedgerWallet(blockchain);
-        return cache[blockchain];
+        return new LedgerWallet(blockchain);
     };
 
-    async init(){
-        this.getPublicKey = async () => { return throwErr(); };
-        this.sign = async () => { return throwErr(); };
-        this.canConnect = async () => { return 'Open and unlock your Ledger.'; };
-        this.setAddressIndex = index => { return null; };
-        this.availableBlockchains = () => [Blockchains.EOSIO, Blockchains.ETH];
-        this.reset = () => this.init();
-
-        const handleEvents = ({type, device}) => this[type](device);
-        const setHardware = async () => {
-            const hardware = {
-                type:EXT_WALLET_TYPES.LEDGER,
-                transport:null,
-                subscriber:Transport.listen({ next:event => handleEvents(event) }),
-                disconnect:async () => {
-                    if(store.state.hardware.transport)
-                        await store.state.hardware.transport.close();
-                    if(store.state.hardware.subscriber)
-                        await store.state.hardware.subscriber.unsubscribe();
-
-                    store.dispatch(Actions.SET_HARDWARE, null);
-                    delete cache[this.blockchain];
-                }
-            }
-
-            return store.dispatch(Actions.SET_HARDWARE, hardware);
-        }
-
-        if(store.state.hardware && store.state.hardware.type !== EXT_WALLET_TYPES.LEDGER){
-            await store.state.hardware.disconnect();
-            return await setHardware();
-        } else return await setHardware();
+    availableBlockchains(){
+        return [Blockchains.EOSIO, Blockchains.ETH];
     }
 
-    async add(device){
-        const {path} = device;
-
-        if(!store.state.hardware.transport) {
-            const clone = Object.assign(store.state.hardware, {transport: await Transport.open(path)});
-            await store.dispatch(Actions.SET_HARDWARE, clone);
-        }
-
+    open(){
         this.api = new LedgerAPI(this.blockchain);
-        this.getPublicKey = this.api.getPublicKey;
-        this.sign = this.api.signTransaction;
-        this.canConnect = this.api.getAppConfiguration;
-        this.setAddressIndex = this.api.setAddressIndex;
+	    this.getPublicKey = this.api.getPublicKey;
+	    this.sign = this.api.signTransaction;
+	    this.canConnect = this.api.getAppConfiguration;
+	    this.setAddressIndex = this.api.setAddressIndex;
     }
 
-    async remove(device){
-        await store.state.hardware.disconnect();
+    close(){
+        this.api = null;
+	    delete this.getPublicKey;
+	    delete this.sign;
+	    delete this.canConnect;
+	    delete this.setAddressIndex;
     }
 
 }
 
 
 
-const CODE = {
+const EOSIO_CODES = {
     CLA:0xD4,
     INFO:0x06,
     PK:0x02,
@@ -126,7 +90,7 @@ class LedgerAPI {
             case Blockchains.EOSIO: scrambleKey = "e0s"; break;
             case Blockchains.ETH: scrambleKey = "eth"; break;
         }
-        store.state.hardware.transport.decorateAppAPIMethods(
+	    getTransport().decorateAppAPIMethods(
             this,
             [ "getPublicKey", "signTransaction", "getAppConfiguration" ],
             scrambleKey
@@ -177,12 +141,12 @@ class LedgerAPI {
                 const popup = Popup.checkHardwareWalletScreen();
                 PopupService.push(popup);
 
-                return store.state.hardware.transport
+                return getTransport()
                     .send(
-                        CODE.CLA,
-                        CODE.PK,
-                        CODE.YES, // Trigger on-screen approval
-                        CODE.NO, // chaincode
+                        EOSIO_CODES.CLA,
+                        EOSIO_CODES.PK,
+                        EOSIO_CODES.YES, // Trigger on-screen approval
+                        EOSIO_CODES.NO, // chaincode
                         buffer
                     )
                     .then(response => {
@@ -210,7 +174,7 @@ class LedgerAPI {
             const popup = Popup.checkHardwareWalletScreen();
             PopupService.push(popup);
             const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
-            const eth = new Eth(store.state.hardware.transport);
+            const eth = new Eth(getTransport());
             eth.getAddress(path, true)
                 .then(response => {
                     PopupService.remove(popup);
@@ -278,8 +242,8 @@ class LedgerAPI {
         PopupService.push(popup);
 
         return foreach(toSend, (data, i) =>
-            store.state.hardware.transport
-                .send(CODE.CLA, CODE.SIGN, i === 0 ? CODE.FIRST : CODE.MORE, 0x00, data)
+	        getTransport()
+                .send(EOSIO_CODES.CLA, EOSIO_CODES.SIGN, i === 0 ? EOSIO_CODES.FIRST : EOSIO_CODES.MORE, 0x00, data)
                 .then(apduResponse => {
                     response = apduResponse;
                     return response;
@@ -299,7 +263,7 @@ class LedgerAPI {
     async [`signTransaction`+Blockchains.ETH](publicKey, payload, abi, network){
         const {transaction} = payload;
         const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
-        const eth = new Eth(store.state.hardware.transport);
+        const eth = new Eth(getTransport());
         const popup = Popup.checkHardwareWalletScreen();
         PopupService.push(popup);
         const chainIdHex = '0x'+(network.chainId.length === 1 ? '0'+ network.chainId : network.chainId).toString();
@@ -330,24 +294,20 @@ class LedgerAPI {
     /*************************************************/
 
     [`getAppConfiguration`+Blockchains.EOSIO](){
-        if(!store.state.hardware) return 'Hardware wallet disconnected';
-
-        return store.state.hardware.transport.send(CODE.CLA, CODE.INFO, CODE.NO, CODE.NO).then(res => {
+        return getTransport().send(EOSIO_CODES.CLA, EOSIO_CODES.INFO, EOSIO_CODES.NO, EOSIO_CODES.NO).then(res => {
             return true;
         }).catch(err => {
-            delete cache[this.blockchain];
-            return `You must open the ${this.blockchain.toUpperCase()} Ledger App in order to use it with Scatter`;
+            return `Open the ${this.blockchain.toUpperCase()} Ledger App before you continue.`;
         })
     }
 
     async [`getAppConfiguration`+Blockchains.ETH](){
         const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
-        const eth = new Eth(store.state.hardware.transport);
+        const eth = new Eth(getTransport());
         return eth.getAppConfiguration().then(res => {
             return true;
         }).catch(err => {
-            delete cache[this.blockchain];
-            return `You must open the ${this.blockchain.toUpperCase()} Ledger App in order to use it with Scatter`;
+            return `You must open the ${this.blockchain.toUpperCase()} Ledger App before you continue.`;
         })
     }
 

@@ -147,6 +147,7 @@
 
     import FlatList from "../components/reusable/FlatList";
     import SearchBar from "../components/reusable/SearchBar";
+    import HardwareService from "../services/HardwareService";
 
     const RECIPIENT_STATES = {
     	CONTACT:'contact',
@@ -385,10 +386,16 @@
 
                 if(KeyPairService.isHardware(this.account.publicKey)){
                     const canConnect = await this.account.keypair().external.interface.canConnect();
+                    console.log('canConnect', canConnect);
                     if(canConnect !== true){
-                        PopupService.push(Popup.prompt('Hardware Error', canConnect, 'attention', 'Cancel'))
-	                    this.account.keypair().resetExternal();
-                        return reset();
+                        return PopupService.push(Popup.prompt('Hardware Error', canConnect, 'attention', 'Opened', async opened => {
+                        	if(!opened) return reset();
+	                        this.account.keypair().resetExternal();
+	                        await HardwareService.openConnections();
+	                        reset();
+	                        this.send();
+                        }, 'Cancel'))
+
                     }
                 }
 
