@@ -1,9 +1,9 @@
 <template>
 	<section>
 		<sel :selected="hardwareType" label="Select a Hardware Wallet"
-		     :options="EXT_WALLET_TYPES_ARR" v-on:changed="(x) => hardwareType = x"></sel>
+		     :options="EXT_WALLET_TYPES_ARR" v-on:changed="changeHardwareType"></sel>
 
-		<section v-if="availableBlockchains.length">
+		<section v-if="availableBlockchains.length > 1">
 			<br>
 			<sel :selected="blockchain" label="Available Blockchains"
 			     :parser="x => blockchainName(x)"
@@ -14,11 +14,18 @@
 
 		<br>
 
-		<cin v-if="hardwareType === EXT_WALLET_TYPES.LEDGER" label="Ledger Key/Address Index"></cin>
+		<cin v-if="hardwareType === EXT_WALLET_TYPES.LEDGER"
+		     big="1"
+		     :text="external.addressIndex"
+		     v-on:changed="x => external.addressIndex = x"
+		     type="number"
+		     label="Ledger Key/Address Index"></cin>
 
 		<section class="action-bar-holder">
 			<section class="action-bar short bottom centered">
 				<btn v-on:clicked="importKey" blue="1"
+				     :loading="importing"
+				     :disabled="importing"
 				     style="width:300px;"
 				     text="Import Key"></btn>
 			</section>
@@ -42,6 +49,7 @@
 			EXT_WALLET_TYPES_ARR,
 			blockchain:Blockchains.EOSIO,
 			external:null,
+			importing:false,
 		}},
 
 		created(){
@@ -61,19 +69,30 @@
 		},
 
 		methods:{
+			changeHardwareType(type){
+				this.hardwareType = type;
+				this.blockchain = this.availableBlockchains[0];
+				this.external = new ExternalWallet(this.hardwareType, this.blockchain);
+				this.external.interface.open();
+			},
 			async importKey(){
+				this.importing = true;
 				const keypair = Keypair.placeholder();
 				keypair.external = this.external;
 				if(await KeyPairService.loadFromHardware(keypair)) {
 					const found = this.keypairs.find(x => x.keyHash === keypair.keyHash);
-					if(this.keypairs.find(x => x.keyHash === keypair.keyHash))
-						return this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:found.id}});
+					if(this.keypairs.find(x => x.keyHash === keypair.keyHash)) {
+						this.importing = false;
+						return this.$router.push({name: this.RouteNames.KEYPAIR, params: {id: found.id}});
+					}
 
 					setTimeout(() => {
+						this.importing = false;
 						this.setWorkingScreen(true);
 						this.$emit('keypair', keypair);
 					}, 1);
 				} else {
+					this.importing = false;
 					const Messages = {
 						[EXT_WALLET_TYPES.LEDGER]:`You need to unlock your ledger and open the ${this.blockchainName(this.blockchain)} Ledger App.`,
 						[EXT_WALLET_TYPES.LIQUID_EOS]:`You need to unlock your Liquid EOS Hardware Wallet.`
@@ -85,6 +104,12 @@
 						'Okay'
 					))
 				}
+			}
+		},
+
+		watch:{
+			['external.addressIndex'](){
+				this.external.interface.setAddressIndex(this.external.addressIndex);
 			}
 		}
 	}

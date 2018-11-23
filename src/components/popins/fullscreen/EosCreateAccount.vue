@@ -219,7 +219,10 @@
 			showKeys(){ return this.popin.data.props.showKeys; },
 
 			creators(){
-				return this.accounts.filter(x => x.blockchain() === Blockchains.EOSIO).reduce((acc, account) => {
+				return this.accounts
+					.filter(x => x.blockchain() === Blockchains.EOSIO)
+					.filter(x => !x.keypair().external)
+				.reduce((acc, account) => {
 					if(!acc.find(x => account.network().unique() === x.network().unique()
 						&& account.sendable() === x.sendable())) acc.push(account);
 					return acc;

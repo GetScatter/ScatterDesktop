@@ -32,7 +32,8 @@ export default class LiquidEOS {
             async canConnect(){ return true; },
             setAddressIndex(){ return true; },
             availableBlockchains(){ return [Blockchains.EOSIO] },
-            reset(){ return true; }
+            open(){},
+            close(){},
         });
     };
 

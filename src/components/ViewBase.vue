@@ -135,7 +135,7 @@
         left:0;
         right:0;
         bottom:0;
-        z-index:9999999;
+        z-index:9999;
         display:flex;
         justify-content: center;
         align-items: center;

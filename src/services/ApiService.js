@@ -22,6 +22,7 @@ import Error from '../models/errors/Error'
 import Network from '../models/Network'
 
 import {remote} from '../util/ElectronHelpers';
+import HardwareService from "./HardwareService";
 const NotificationService = remote.getGlobal('appShared').NotificationService;
 remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
     ApiService.handleDeepLink(deepLink);
@@ -365,12 +366,10 @@ export default class ApiService {
 
 
             const signAndReturn = async (selectedLocation) => {
-                const signatures = await Promise.all(participants.map(x => {
-                    if(KeyPairService.isHardware(x.publicKey)){
-                        const keypair = KeyPairService.getKeyPairFromPublicKey(x.publicKey);
-                        keypair.external.interface.setAddressIndex(keypair.external.addressIndex);
-                        return keypair.external.interface.sign(x.publicKey, payload, payload.abi, network);
-                    } else return plugin.signer(payload, x.publicKey)
+                const signatures = await Promise.all(participants.map(async account => {
+                    if(KeyPairService.isHardware(account.publicKey)){
+                        return HardwareService.sign(account, payload);
+                    } else return plugin.signer(payload, account.publicKey)
                 }));
 
                 if(signatures.length !== participants.length) return resolve({id:request.id, result:Error.signatureAccountMissing()});

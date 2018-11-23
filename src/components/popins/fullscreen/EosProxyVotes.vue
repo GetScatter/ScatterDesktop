@@ -10,7 +10,7 @@
 				<br>
 			</section>
 
-			<section class="auto-vote">
+			<section class="auto-vote" v-if="!isHardware">
 				<section class="switch" @click="autoVote = !autoVote">
 					<figure class="dot" :class="{'disabled':!autoVote}"></figure>
 				</section>
@@ -18,8 +18,8 @@
 					<figure class="title">Do you want to automatically re-proxy every 7 days?</figure>
 					<p>If you enable this, accepting the initial transaction also accepts all future transactions too.</p>
 				</section>
+				<br>
 			</section>
-			<br>
 
 			<section class="list">
 				<FlatList label="Proxies" :selected="selectedProxy" :items="proxyList" v-on:selected="x => selectedProxy = x.id" />
@@ -57,6 +57,7 @@
 			autoVote:true,
 		}},
 		mounted(){
+			if(this.isHardware) this.autoVote = false;
 			setTimeout(async () => {
 				this.proxies = await ProxyService.getProxyList();
 			})
@@ -80,6 +81,9 @@
 					description:proxy.description,
 				})));
 			},
+			isHardware(){
+				return !!this.account.keypair().external
+			}
 		},
 		methods:{
 			returnResult(truthy){

@@ -1,8 +1,8 @@
 <template>
 	<section>
-		<section class="item" v-for="blockchain in Blockchains">
+		<section class="item" v-for="blockchain in availableBlockchains">
 
-			<section class="switch" :class="{'disabled':isRefreshing}" @click="addOrRemoveBlockchain(blockchain)">
+			<section class="switch" :class="{'disabled':isRefreshing || isHardware}" @click="addOrRemoveBlockchain(blockchain)">
 				<figure class="dot" :class="{'disabled':!keypair.blockchains.includes(blockchain)}"></figure>
 			</section>
 
@@ -37,10 +37,20 @@
 		computed:{
 			isRefreshing(){
 				return Process.isProcessRunning(this.keypair.unique());
+			},
+			availableBlockchains(){
+				if(this.keypair.external){
+					return this.keypair.external.interface.availableBlockchains()
+						.filter(blockchain => this.keypair.publicKeys.find(x => x.blockchain === blockchain));
+				} else return Blockchains;
+			},
+			isHardware(){
+				return !!this.keypair.external;
 			}
 		},
 		methods:{
 			async addOrRemoveBlockchain(blockchain){
+				if(this.isHardware) return;
 				if(this.isRefreshing) return;
 
 				const removing = this.keypair.blockchains.includes(blockchain);

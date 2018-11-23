@@ -118,7 +118,7 @@ export default class KeyPairService {
     }
 
     static getKeyPairFromPublicKey(publicKey, decrypt = false){
-        const keypair = store.state.scatter.keychain.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
+        const keypair = store.getters.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
         if(keypair) {
             if(decrypt) keypair.decrypt(store.state.seed);
             return keypair;
@@ -143,12 +143,6 @@ export default class KeyPairService {
         return null;
     }
 
-    static isHardware(publicKey){
-        const keypair = this.getKeyPairFromPublicKey(publicKey);
-        if(!keypair) throw new Error('Keypair doesnt exist on keychain');
-        return keypair.external !== null;
-    }
-
     static async loadFromHardware(keypair, tries = 0){
         if(tries >= 5) return false;
         return keypair.external.interface.getPublicKey().then(key => {
@@ -166,5 +160,11 @@ export default class KeyPairService {
             return false;
         })
     }
+
+	static isHardware(publicKey){
+		const keypair = this.getKeyPairFromPublicKey(publicKey);
+		if(!keypair) throw new Error('Keypair doesnt exist on keychain');
+		return keypair.external !== null;
+	}
     
 }

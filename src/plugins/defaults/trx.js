@@ -15,6 +15,7 @@ import * as utils from 'tronweb/src/utils/crypto';
 const ethUtil = require('ethereumjs-util');
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 import Token from "../../models/Token";
+import HardwareService from "../../services/HardwareService";
 
 const tron20abi = require('../../data/abis/erc20');
 
@@ -182,9 +183,7 @@ export default class TRX extends Plugin {
 
                 let signature = null;
                 if(KeyPairService.isHardware(account.publicKey)){
-                    const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
-                    keypair.external.interface.setAddressIndex(keypair.external.addressIndex);
-                    signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi, account.network());
+                	signature = await HardwareService.sign(account, payload);
                 } else signature = await this.signer(payload, account.publicKey);
 
                 if(!signature) return rejector({error:'Could not get signature'});

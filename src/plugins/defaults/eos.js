@@ -22,6 +22,7 @@ import Token from "../../models/Token";
 import AccountAction from "../../models/AccountAction";
 import AccountService from "../../services/AccountService";
 import RecurringService from "../../services/RecurringService";
+import HardwareService from "../../services/HardwareService";
 
 
 const blockchainApiURL = 'https://api.light.xeos.me/api';
@@ -515,26 +516,28 @@ export default class EOS extends Plugin {
 
 			if(net <= 0 || cpu <= 0) return reject(`Either CPU or NET was below or equal to 0`);
 
+			const options = {authorization:[creator.formatted()]};
+
 			eos.transaction(tr => {
 				tr.newaccount({
 					creator: creator.name,
 					name: name,
 					owner,
 					active
-				});
+				}, options);
 				tr.buyrambytes({
 					payer:creator.name,
 					receiver:name,
 					bytes:4096
-				});
+				}, options);
 				tr.delegatebw({
 					from: creator.name,
 					receiver: name,
 					stake_net_quantity: `${net} ${coreSymbol}`,
 					stake_cpu_quantity: `${cpu} ${coreSymbol}`,
 					transfer: 1
-				})
-			})
+				}, options)
+			}, options)
 				.then(trx => resolve(trx.transaction_id))
 				.catch(err => reject(err));
 		})
@@ -563,9 +566,7 @@ export default class EOS extends Plugin {
 
 				let signature = null;
 				if(KeyPairService.isHardware(account.publicKey)){
-					const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
-					keypair.external.interface.setAddressIndex(keypair.external.addressIndex);
-					signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi, account.network());
+					signature = await HardwareService.sign(account, payload);
 				} else signature = await this.signer({data:payload.buf}, account.publicKey, true);
 
 				if(!signature) return rejector({error:'Could not get signature'});

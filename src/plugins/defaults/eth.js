@@ -19,6 +19,7 @@ import ObjectHelpers from '../../util/ObjectHelpers'
 import PopupService from '../../services/PopupService'
 import {Popup} from '../../models/popups/Popup'
 import Token from "../../models/Token";
+import HardwareService from "../../services/HardwareService";
 
 const web3util = new Web3();
 
@@ -183,9 +184,7 @@ export default class ETH extends Plugin {
 
                 let signature = null;
                 if(KeyPairService.isHardware(account.publicKey)){
-                    const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
-                    keypair.external.interface.setAddressIndex(keypair.external.addressIndex);
-                    signature = await keypair.external.interface.sign(account.publicKey, payload, payload.abi, account.network());
+                    signature = await HardwareService.sign(account, payload);
                 } else signature = await this.signer(payload.transaction, account.publicKey, true);
 
                 if(!signature) return rejector({error:'Could not get signature'});

@@ -48,7 +48,7 @@
 			<section class="list-container" style="overflow:auto;" v-if="dashState === DASH_STATES.ADD_ACCOUNT">
 
 				<section style="padding-bottom:20px;">
-					<section class="action-box top-pad">
+					<section class="action-box top-pad" v-if="canCreateAccounts">
 						<label>Create a new EOS account</label>
 						<p>If you want to create a new EOS account on top of this key.</p>
 						<btn text="Create Account" v-on:clicked="$emit('createeos')" />
@@ -134,6 +134,7 @@
 		computed:{
 			...mapGetters([
 				'keypairs',
+				'accounts',
 				'networks',
 			]),
 			eosNetworks(){
@@ -154,10 +155,22 @@
 				if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return 'A Vault Entry with this name already exists.';
 				return false;
 			},
+			canCreateAccounts(){
+				if(!this.keypair.external) return true;
+				if(this.accounts.find(x => x.blockchain() === Blockchains.EOSIO && !x.keypair().external)) return true;
+				return false;
+			}
 		},
 
 		mounted(){
 			this.manualAccountNetwork = this.eosNetworks.length ? this.eosNetworks[0] : null;
+
+
+			if(!this.keypair.accounts().length){
+				if(this.keypair.blockchains.includes(Blockchains.EOSIO)){
+					this.dashState = DASH_STATES.ADD_ACCOUNT;
+				}
+			}
 		},
 
 		methods:{

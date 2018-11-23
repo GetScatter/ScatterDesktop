@@ -384,21 +384,7 @@
 
 	            if(!await PasswordService.verifyPIN()) return reset();
 
-                if(KeyPairService.isHardware(this.account.publicKey)){
-                    const canConnect = await this.account.keypair().external.interface.canConnect();
-                    console.log('canConnect', canConnect);
-                    if(canConnect !== true){
-                        return PopupService.push(Popup.prompt('Hardware Error', canConnect, 'attention', 'Opened', async opened => {
-                        	if(!opened) return reset();
-	                        this.account.keypair().resetExternal();
-	                        await HardwareService.openConnections();
-	                        reset();
-	                        this.send();
-                        }, 'Cancel'))
-
-                    }
-                }
-
+	            // if(!await HardwareService.checkHardware(this.account)) return false;
 
                 const sent = await TransferService[this.account.blockchain()]({
                     account:this.account,

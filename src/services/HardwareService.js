@@ -4,6 +4,9 @@ const Transport = remote.getGlobal('appShared').Transport.default;
 import {store} from '../store/store';
 import * as Actions from "../store/constants";
 import {EXT_WALLET_TYPES} from "../models/hardware/ExternalWallet";
+import PopupService from "./PopupService";
+import {Popup} from "../models/popups/Popup";
+import KeyPairService from "./KeyPairService";
 
 const isLedgerConnected = () => store.state.hardware.hasOwnProperty(EXT_WALLET_TYPES.LEDGER);
 const hardwareKeypairs = (type) => store.getters.keypairs.filter(x => !!x.external && x.external.type === type);
@@ -44,6 +47,42 @@ export default class HardwareService {
 			await store.dispatch(Actions.REMOVE_HARDWARE, EXT_WALLET_TYPES.LEDGER);
 			Transport.listen({next:({type, device}) => this[type](device)});
 		}
+	}
+
+
+
+
+
+
+
+
+
+
+	static async checkHardware(account){
+		const popup = canConnect => new Promise(resolve => {
+			PopupService.push(Popup.prompt('Hardware Error', canConnect, 'attention', 'Opened', async opened => {
+				if(!opened) return resolve(false);
+				account.keypair().resetExternal();
+				await HardwareService.openConnections();
+				resolve(this.checkHardware(account));
+			}, 'Cancel'))
+		});
+
+		if(KeyPairService.isHardware(account.publicKey)){
+			account.keypair().external.interface.open();
+			const canConnect = await account.keypair().external.interface.canConnect();
+			if(canConnect !== true) return await popup(canConnect);
+			return true;
+		} else return true;
+	}
+
+	static async sign(account, payload){
+		const canConnect = await this.checkHardware(account);
+		if(!canConnect) return false;
+
+		const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
+		keypair.external.interface.setAddressIndex(keypair.external.addressIndex);
+		return keypair.external.interface.sign(account.publicKey, payload, payload.abi, account.network());
 	}
 
 }
