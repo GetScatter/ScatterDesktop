@@ -62,8 +62,8 @@
                 })
             },
             parse(item){
+	            if(typeof item === 'string' && !this.parser) return item;
 	            if(this.parser) return this.parser(item);
-	            if(typeof item === 'string') return item;
 
                 let props = this.prop.split(".");
                 const lastKey = props.pop();

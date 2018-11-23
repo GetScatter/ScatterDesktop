@@ -229,6 +229,11 @@ export default class ApiService {
             network = Network.fromJson(network);
             network.name = request.payload.origin + IdGenerator.text(4);
 
+	        if(network.hasOwnProperty('token') && network.token){
+		        network.token.blockchain = network.blockchain;
+		        network.token.name = network.token.name.length ? network.token.name : network.token.symbol;
+	        }
+
             if(!network.isValid())
                 return resolve({id:request.id, result:new Error("bad_network", "The network being suggested is invalid")});
 

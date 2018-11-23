@@ -25,7 +25,7 @@
 
                 <sel label="Blockchain"
                      :disabled="!isNew"
-                     :selected="blockchainName(network.blockchain)"
+                     :selected="{value:network.blockchain}"
                      :options="blockchains"
                      :parser="blockchain => blockchainName(blockchain.value)"
                      v-on:changed="blockchain => network.blockchain = blockchain.value"></sel>
@@ -208,6 +208,7 @@
                 }
             },
 	        ['network.token.decimals'](){
+            	if(!this.network.token) return;
 		        if(this.network.token.decimals > 20) this.token.decimals = 20;
 	        }
         }
