@@ -17,7 +17,7 @@ import UserBar from './components/UserBar.vue'
 import ViewBase from './components/ViewBase.vue'
 
 // POPUPS
-import PopInHead from './components/popups/fragments/PopInHead.vue'
+import PopInHead from './components/popins/overlay/fragments/PopInHead.vue'
 
 // POP OUTS
 import GetIdentity from './views/popouts/GetIdentity.vue'

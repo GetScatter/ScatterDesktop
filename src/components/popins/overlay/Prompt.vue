@@ -9,10 +9,10 @@
 </template>
 
 <script>
-    import {RouteNames} from '../../vue/Routing'
+    import {RouteNames} from '../../../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
-    import {PopupDisplayTypes} from '../../models/popups/Popup'
+    import * as Actions from '../../../store/constants';
+    import {PopupDisplayTypes} from '../../../models/popups/Popup'
 
     export default {
         data(){ return {
@@ -39,7 +39,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables";
+    @import "../../../variables";
 
     .prompt {
 

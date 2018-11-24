@@ -51,10 +51,6 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
     }
 
-    static checkHardwareWalletScreen(){
-        return Popup.prompt('Check Hardware Wallet', 'Please check your hardware wallet screen.', 'eye');
-    }
-
     static transactionSuccess(blockchain, tx, callback){
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
     }
@@ -124,6 +120,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, {mnemonic}, () => {}))
 	}
 
+	static checkHardwareWalletScreen(){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHECK_HARDWARE, {}, () => {}))
+	}
+
 }
 
 export const PopupTypes = {
@@ -143,6 +143,7 @@ export const PopupTypes = {
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 	REMOVE_KEYPAIR:'removeKeypair',
 	MNEMONIC:'mnemonic',
+	CHECK_HARDWARE:'checkHardware',
 
     TX_SUCCESS:'txSuccess',
 };
@@ -159,6 +160,7 @@ export const isFullscreen = popup => {
         PopupTypes.EOS_MODERATE_CPU_NET,
         PopupTypes.EOS_CREATE_ACCOUNT,
         PopupTypes.MNEMONIC,
+        PopupTypes.CHECK_HARDWARE,
     ].includes(popup.data.type);
 
 

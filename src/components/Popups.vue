@@ -15,6 +15,7 @@
                     <UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />
                     <Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
                     <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
+                    <CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />
                 </section>
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -51,12 +52,12 @@
     import * as Actions from '../store/constants';
     import {PopupDisplayTypes, PopupTypes, isFullscreen} from '../models/popups/Popup'
 
-    import Snackbar from '../components/popups/Snackbar.vue'
-    import TransactionSuccess from '../components/popups/TransactionSuccess.vue'
-    import Prompt from '../components/popups/Prompt.vue'
-    import Selector from '../components/popups/Selector.vue'
-    import TextPrompt from '../components/popups/TextPrompt.vue'
-    import PopInHead from '../components/popups/fragments/PopInHead.vue'
+    import Snackbar from './popins/overlay/Snackbar.vue'
+    import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
+    import Prompt from './popins/overlay/Prompt.vue'
+    import Selector from './popins/overlay/Selector.vue'
+    import TextPrompt from './popins/overlay/TextPrompt.vue'
+    import PopInHead from './popins/overlay/fragments/PopInHead.vue'
 
     import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
     import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
@@ -68,6 +69,7 @@
     import Mnemonic from '../components/popins/fullscreen/Mnemonic'
     import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
+    import CheckHardware from "./popins/fullscreen/CheckHardware";
 
     export default {
     	components:{
@@ -89,6 +91,7 @@
 		    UnlinkBlockchain,
 		    Mnemonic,
 		    RemoveKeypair,
+		    CheckHardware,
         },
         data(){ return {
             popupTypes:PopupTypes,
@@ -152,11 +155,12 @@
     .pop-in {
         -webkit-app-region: no-drag;
         background:#fff;
-        border-radius:2px;
         box-shadow:0 10px 50px rgba(0,0,0,0.1), 0 0 250px rgba(0,0,0,0.1);
         max-width:100%;
         margin:0 40px;
         position: relative;
+        border-radius:4px;
+        overflow:hidden;
     }
 
     .fader {

@@ -13,7 +13,7 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
+    import * as Actions from '../../../store/constants';
 
     export default {
         computed:{
@@ -34,7 +34,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables";
+    @import "../../../variables";
 
     .snackbar {
         cursor: pointer;

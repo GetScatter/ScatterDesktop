@@ -5,13 +5,17 @@
                 <i :class="`icon-${nextPopIn.data.props.icon}`"></i>
             </figure>
         </section>
-        <section :class="{'no-third':!nextPopIn.data.props.hasOwnProperty('buttonText')}">
+        <section>
             <figure class="title">{{nextPopIn.data.props.title}}</figure>
             <figure class="description">{{nextPopIn.data.props.description}}</figure>
         </section>
-        <section v-if="nextPopIn.data.props.hasOwnProperty('buttonText')">
-            <btn small="1" v-if="nextPopIn.data.props.hasOwnProperty('denyButtonText')" :text="nextPopIn.data.props.denyButtonText" red="1" v-on:clicked="returnResult(false)"></btn>
-            <btn small="1" v-if="nextPopIn.data.props.buttonText.length" :text="nextPopIn.data.props.buttonText" :red="!nextPopIn.data.props.hasOwnProperty('denyButtonText')" v-on:clicked="returnResult(true)"></btn>
+        <section>
+            <btn :text="nextPopIn.data.props.buttonText" :red="true" v-on:clicked="returnResult(returnedText)"></btn>
+        </section>
+        <section>
+            <cin :focus="true" :placeholder="input.placeholder" :type="input.type || 'text'"
+                 v-on:enter="returnResult(returnedText)" :text="returnedText"
+                 v-on:changed="x => returnedText = x"></cin>
         </section>
     </section>
 </template>
@@ -21,8 +25,15 @@
     import * as Actions from '../../../store/constants';
 
     export default {
+        data(){return {
+            returnedText:'',
+        }},
         computed:{
+            input(){
+                return this.nextPopIn.data.props.input
+            },
             ...mapGetters([
+
             ])
         },
         methods:{
@@ -39,6 +50,27 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../_variables";
+    @import "../../../variables";
+
+    .pop-in-head {
+
+        section {
+
+            &:nth-child(4) {
+                display:block;
+                padding-top:0;
+                width:100%;
+                flex:0 0 auto;
+
+                section {
+                    width:100%;
+                    text-align:left;
+                    padding:0;
+                    margin:0;
+                }
+            }
+
+        }
+    }
 
 </style>

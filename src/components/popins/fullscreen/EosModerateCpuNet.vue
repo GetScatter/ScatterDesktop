@@ -65,12 +65,12 @@
 					<section class="split-inputs">
 						<figure class="resource">CPU</figure>
 						<slider :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)"></slider>
-						<figure class="resource">{{parseFloat(availableCPU - cpu).toFixed(4)}}</figure>
+						<figure class="resource">{{parseFloat(availableCPU - cpu).toFixed(this.account.network().systemToken().decimals)}}</figure>
 					</section>
 					<section class="split-inputs">
 						<figure class="resource">NET</figure>
 						<slider :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)"></slider>
-						<figure class="resource">{{parseFloat(availableNET - net).toFixed(4)}}</figure>
+						<figure class="resource">{{parseFloat(availableNET - net).toFixed(this.account.network().systemToken().decimals)}}</figure>
 					</section>
 				</section>
 			</section>

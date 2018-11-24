@@ -30,6 +30,8 @@
 						<cin :label="`${locale(langKeys.CREATE_EOS.ACCOUNT.RamCostLabel)} - ( 4096 bytes )`"
 						     disabled="1" :text="`${ramPrice ? ramPrice : '0.0000'} ${systemSymbol}`" />
 						<cin :error="resourceError" :label="locale(langKeys.CREATE_EOS.ACCOUNT.ResourcesLabel)"
+						     :right-text="tokenBalance"
+						     v-on:right="eosToUse = tokenBalance.split(' ')[0]"
 						     type="number" :text="eosToUse" v-on:changed="x => eosToUse = x" />
 						<cin big="1" :label="locale(langKeys.CREATE_EOS.ACCOUNT.TotalLabel)"
 						     disabled="1" :text="`${totalPrice} ${systemSymbol}`" />
@@ -205,6 +207,7 @@
 		computed:{
 			...mapState([
 				'seed',
+				'balances'
 			]),
 			...mapGetters([
 				'keypairs',
@@ -233,17 +236,29 @@
 				}));
 			},
 			minimumPrice(){
-				return (parseFloat(this.ramPrice ? this.ramPrice : '1.0000') + 1).toFixed(4);
+				return (parseFloat(this.ramPrice ? this.ramPrice : '1.0000') + 1).toFixed(this.decimals);
+			},
+			decimals(){
+				return !this.creator ? 4 : this.creator.network().systemToken().symbol;
 			},
 			totalPrice(){
-				return (parseFloat(this.ramPrice ? this.ramPrice : 0) + parseFloat(this.eosToUse ? this.eosToUse : 0)).toFixed(4);
+				return (parseFloat(this.ramPrice ? this.ramPrice : 0) + parseFloat(this.eosToUse ? this.eosToUse : 0)).toFixed(this.decimals);
 			},
 			hasOtherEosAccounts(){
 				return !!this.accounts.find(x => x.blockchain() === Blockchains.EOSIO);
 			},
 			memo(){
 				return this.activePublicKey;
-			}
+			},
+			tokenBalance(){
+				if(!this.creator) return;
+				const network = this.creator.network();
+				const accountBalances = this.balances[this.creator.identifiable()];
+				if(!accountBalances) return null;
+				const balance = this.balances[this.creator.identifiable()].find(x => x.unique() === network.systemToken().unique());
+				if(!balance) return null;
+				return `${balance.amount} ${balance.symbol}`;
+			},
 		},
 
 		methods:{
@@ -268,12 +283,13 @@
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
 				const network = await this.getNetwork();
 				const ramPrice = await plugin.getRamPrice(network);
-				this.ramPrice = (ramPrice * 4096).toFixed(4);
+				this.ramPrice = (ramPrice * 4096).toFixed(this.decimals);
 				this.systemSymbol = network.systemToken().symbol;
 			},
 
 			selectedCreator(item){
 				this.creator = this.accounts.find(x => x.unique() === item.id);
+				this.eosToUse = '1.0000';
 				this.checkAccountName();
 			},
 
@@ -332,7 +348,7 @@
 				if(this.resourceError) return;
 
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-				this.eosToUse = parseFloat(this.eosToUse).toFixed(4);
+				this.eosToUse = parseFloat(this.eosToUse).toFixed(this.decimals);
 
 				this.setWorkingScreen(true);
 

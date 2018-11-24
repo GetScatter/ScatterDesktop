@@ -511,8 +511,8 @@ export default class EOS extends Plugin {
 
 			const coreSymbol = network.systemToken().symbol;
 
-			const net = (eosUsed/4).toFixed(4);
-			const cpu = (eosUsed-net).toFixed(4);
+			const net = (eosUsed/4).toFixed(creator.network().systemToken().decimals);
+			const cpu = (eosUsed-net).toFixed(creator.network().systemToken().decimals);
 
 			if(net <= 0 || cpu <= 0) return reject(`Either CPU or NET was below or equal to 0`);
 
