@@ -11,7 +11,7 @@
                 <section class="panel">
                     <h4 class="padded" style="padding-bottom:0;">From</h4>
 
-                    <SearchBar placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                    <SearchBar short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
                     <br>
 
                     <FlatList label="Sending Account" style="padding-top:0;"

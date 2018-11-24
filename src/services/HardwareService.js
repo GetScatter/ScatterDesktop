@@ -11,6 +11,8 @@ import KeyPairService from "./KeyPairService";
 const isLedgerConnected = () => store.state.hardware.hasOwnProperty(EXT_WALLET_TYPES.LEDGER);
 const hardwareKeypairs = (type) => store.getters.keypairs.filter(x => !!x.external && x.external.type === type);
 
+let transport = null;
+
 export default class HardwareService {
 
 	static async openConnections(onlyIfDisconnected = false){
@@ -18,10 +20,10 @@ export default class HardwareService {
 	}
 
 	static async checkLedgerConnection(onlyIfDisconnected = false){
-		if(!onlyIfDisconnected || !isLedgerConnected()){
+		if(!onlyIfDisconnected || (!isLedgerConnected() && !transport)){
 			console.log('conecting')
 			return new Promise(resolve => {
-				Transport.listen({next:({type, device}) => this[type+'Ledger'](device)});
+				transport = Transport.listen({next:({type, device}) => this[type+'Ledger'](device)});
 				setTimeout(() => {
 					resolve(true);
 				}, 1000);
@@ -43,9 +45,11 @@ export default class HardwareService {
 
 	static async removeLedger(device){
 		if(isLedgerConnected()){
-			await store.state.hardware[EXT_WALLET_TYPES.LEDGER].disconnect();
+			if(store.state.hardware.hasOwnProperty(EXT_WALLET_TYPES.LEDGER))
+				await store.state.hardware[EXT_WALLET_TYPES.LEDGER].disconnect();
+
 			await store.dispatch(Actions.REMOVE_HARDWARE, EXT_WALLET_TYPES.LEDGER);
-			Transport.listen({next:({type, device}) => this[type](device)});
+			transport = Transport.listen({next:({type, device}) => this[type](device)});
 		}
 	}
 

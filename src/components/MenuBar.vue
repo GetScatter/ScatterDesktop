@@ -8,18 +8,24 @@
 
 			<!-- MINIMIZE -->
 			<section class="action" @click="minimize">
-				<figure class="line"></figure>
+				<section class="action-inner">
+					<figure class="line"></figure>
+				</section>
 			</section>
 
 			<!-- EXPAND / CONTRACT -->
 			<section class="action" @click="maximize">
-				<figure class="sqr"></figure>
+				<section class="action-inner">
+					<figure class="sqr"></figure>
+				</section>
 			</section>
 
 			<!-- QUIT -->
 			<section class="action" @click="quit">
-				<figure class="x1"></figure>
-				<figure class="x2"></figure>
+				<section class="action-inner">
+					<figure class="x1"></figure>
+					<figure class="x2"></figure>
+				</section>
 			</section>
 		</section>
 	</section>
@@ -103,15 +109,29 @@
 
 			.action {
 				float:right;
-				width:$action;
-				height:$action;
+				padding:10px;
 				cursor: pointer;
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
+				align-items: center;
+				border-radius:4px;
+
+				&:hover {
+					background:rgba(255,255,255,0.1);
+				}
+
+				.action-inner {
+					width:$action;
+					height:$action;
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+				}
 
 				&:not(:first-child){
-					margin-left:40px;
+					margin-left:25px;
 				}
 
 				.x1, .x2 {
@@ -126,11 +146,13 @@
 
 				.sqr {
 					height:$action;
+					width:$action;
 					border:2px solid #fff;
 				}
 
 				.line {
 					height:2px;
+					width:$action;
 					background:#fff;
 				}
 			}

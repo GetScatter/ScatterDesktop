@@ -78,8 +78,8 @@ export class Popup {
     /*********   FULLSCREEN POPINS ***********/
     /*****************************************/
 
-	static verifyPassword(callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VERIFY_PASSWORD, {}, callback))
+	static verifyPassword(callback, returnOnly = false){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VERIFY_PASSWORD, {returnOnly}, callback))
 	}
 
 	static eosChangePermissions(account, callback){
@@ -116,9 +116,13 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UNLINK_BLOCKCHAIN, {keypair, blockchain}, callback))
 	}
 
+	static removeKeypair(keypair, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_KEYPAIR, {keypair}, callback))
+	}
+
 	static mnemonic(mnemonic){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, {mnemonic}, () => {}))
-	};
+	}
 
 }
 
@@ -137,6 +141,7 @@ export const PopupTypes = {
 	EOS_CREATE_ACCOUNT:'eosCreateAccount',
 	UNLINK_ACCOUNT:'unlinkAccount',
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
+	REMOVE_KEYPAIR:'removeKeypair',
 	MNEMONIC:'mnemonic',
 
     TX_SUCCESS:'txSuccess',
@@ -149,6 +154,7 @@ export const isFullscreen = popup => {
         PopupTypes.EOS_PROXY_VOTES,
         PopupTypes.UNLINK_ACCOUNT,
         PopupTypes.UNLINK_BLOCKCHAIN,
+        PopupTypes.REMOVE_KEYPAIR,
         PopupTypes.EOS_MODERATE_RAM,
         PopupTypes.EOS_MODERATE_CPU_NET,
         PopupTypes.EOS_CREATE_ACCOUNT,

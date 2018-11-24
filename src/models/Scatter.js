@@ -5,6 +5,8 @@ import AES from 'aes-oop';
 import Hasher from '../util/Hasher'
 import IdGenerator from '../util/IdGenerator'
 import Recurring from "./Recurring";
+import PluginRepository from "../plugins/PluginRepository";
+import Identity from "./Identity";
 
 export default class Scatter {
 
@@ -22,6 +24,21 @@ export default class Scatter {
         this.pin = null;
     }
 
+    static async create(){
+        const scatter = new Scatter();
+	    await Promise.all(PluginRepository.signatureProviders().map(async plugin => {
+		    const network = plugin.getEndorsedNetwork();
+		    scatter.settings.networks.push(network);
+	    }));
+
+	    const firstIdentity = Identity.placeholder();
+	    await firstIdentity.initialize(scatter.hash);
+
+	    //TODO: Testing
+	    firstIdentity.name = 'MyFirstIdentity';
+	    scatter.keychain.updateOrPushIdentity(firstIdentity);
+	    return scatter;
+    }
     static placeholder(){ return new Scatter(); }
     static fromJson(json){
         let p = Object.assign(this.placeholder(), json);

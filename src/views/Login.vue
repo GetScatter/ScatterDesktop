@@ -2,7 +2,7 @@
     <section>
         <transition name="fade" mode="out-in">
             <!-- NEW SCATTER -->
-            <section key="new" class="new-scatter" v-if="isNewScatter && !restoringBackup">
+            <section key="new" class="new-scatter" v-if="isNewScatter && state === STATES.LOGIN_OR_NEW && !restoringBackup">
                 <section>
                     <h1>{{locale(langKeys.LOGIN.NEW.Title)}}</h1>
                     <p class="limited-p">{{locale(langKeys.LOGIN.NEW.SubTitle)}}</p>
@@ -27,7 +27,7 @@
                         <br>
                         <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="create" text="Let's go!" blue="true"></btn>
                         <br><br>
-                        <btn :disabled="working" v-on:clicked="restoringBackup = true" text="I want to restore from backup" small="true"></btn>
+                        <btn :disabled="working" v-on:clicked="state = STATES.RESTORE" text="I want to restore from backup" small="true"></btn>
                     </section>
                 </section>
             </section>
@@ -55,7 +55,7 @@
             </section>
 
             <!-- IMPORT -->
-            <section key="import" class="import-scatter" v-if="isNewScatter && restoringBackup">
+            <section key="import" class="import-scatter" v-if="isNewScatter && state === STATES.RESTORE">
                 <section>
                     <h1>{{locale(langKeys.LOGIN.RESTORE.Title)}}</h1>
                     <p class="limited-p">{{locale(langKeys.LOGIN.RESTORE.SubTitle)}}</p>
@@ -72,7 +72,7 @@
                     <br>
                     <br>
                     <btn :disabled="working"
-                         v-on:clicked="restoringBackup = false"
+                         v-on:clicked="state = STATES.LOGIN_OR_NEW"
                          :text="locale(langKeys.LOGIN.RESTORE.BackButton)"
                          small="true"></btn>
                 </section>
@@ -96,7 +96,12 @@
 	import {Popup} from '../models/popups/Popup'
 	import KeyPairService from "../services/KeyPairService";
 	import Keypair from "../models/Keypair";
+	import Mnemonic from "../util/Mnemonic";
 	const fs = window.require('fs');
+	import AES from 'aes-oop';
+	import Crypto from "../util/Crypto";
+	import Scatter from "../models/Scatter";
+	import AccountService from "../services/AccountService";
 
 	const lockoutTime = 1000*60*5;
 	const resetLockout = () => window.localStorage.removeItem('lockout');
@@ -108,9 +113,18 @@
 		return window.localStorage.setItem('lockout', JSON.stringify(lockout));
     };
 
+
+	const STATES = {
+        LOGIN_OR_NEW:'loginOrNew',
+        RESTORE:'restore',
+    }
+
 	export default {
 		components:{ OnboardingSvg },
 		data () {return {
+			state:STATES.LOGIN_OR_NEW,
+            STATES,
+
 			password:'',
 			confirmPassword:'',
             working:false,
@@ -220,19 +234,118 @@
 				}, 400)
 			},
 			importBackup(){
-				const file = getFileLocation()[0];
-				if(!file) return;
+				const unrestore = () => {
+					this.setWorkingScreen(false);
+					this.restoringBackup = false;
+				}
+
+				if(this.restoringBackup) return;
+				this.setWorkingScreen(true);
+				this.restoringBackup = true;
+				const possibleFile = getFileLocation();
+				if(!possibleFile) return unrestore();
+				const file = possibleFile[0];
+				if(!file) return unrestore();
+
+				const importDesktopBackup = async (data, password) => {
+					const [obj, salt] = data.split('|SLT|');
+					if(!obj || !salt) {
+						unrestore();
+						return alert("Error parsing backup");
+					}
+
+					const [_, seed] = await Mnemonic.generateMnemonic(password, salt);
+					const decrypted = AES.decrypt(obj, seed);
+
+                    if(typeof decrypted === 'object' && decrypted.hasOwnProperty('keychain')){
+                    	decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
+	                    StorageService.setSalt(salt);
+	                    await this[Actions.SET_SEED](password);
+	                    await this[Actions.SET_SCATTER](Scatter.fromJson(decrypted));
+	                    resetLockout();
+	                    unrestore();
+	                    this.pushTo(this.RouteNames.HOME);
+                    } else {
+	                    unrestore();
+	                    return alert("Error decrypting backup");
+                    }
+
+                };
+
+				const importExtensionBackup = async (data, password) => {
+					const [obj, salt] = data.split('|SSLT|');
+					if(!obj || !salt) {
+						unrestore();
+						return alert("Error parsing backup");
+					}
+
+					const [_, seed] = await Mnemonic.generateMnemonic(password, salt);
+					const decrypted = AES.decrypt(obj, seed);
+					if(typeof decrypted === 'object' && decrypted.hasOwnProperty('keychain')){
+						const keypairs = await Promise.all(decrypted.keychain.keypairs
+							.map(x => {
+								x.privateKey = AES.decrypt(x.privateKey, seed)
+								return x;
+							})
+							.map(async x => {
+								console.log('x', x);
+								const keypair = Keypair.fromJson({
+									name:x.name,
+									blockchains:[x.blockchain],
+									privateKey:Crypto.privateKeyToBuffer(x.privateKey, x.blockchain),
+								});
+								keypair.hash();
+								await KeyPairService.makePublicKeys(keypair);
+								return keypair;
+							}));
+
+						const scatter = await Scatter.create();
+						scatter.keychain.keypairs = keypairs;
+
+						StorageService.setSalt(salt);
+						await this[Actions.SET_SEED](password);
+						await this[Actions.SET_SCATTER](scatter);
+
+						unrestore();
+						resetLockout();
+						this.pushTo(this.RouteNames.HOME);
+						await Promise.all(keypairs.map(keypair => {
+							return AccountService.importAllAccounts(keypair);
+						}));
+					} else {
+						unrestore();
+						return alert("Error decrypting backup");
+					}
+
+
+                }
 
 				fs.readFile(file, 'utf-8', (err, data) => {
-					if(err) return alert("Could not read the backup file.");
 
-					const [obj, salt] = data.split('|SLT|');
-					if(!obj || !salt) return alert("Error parsing backup");
+					console.log('file', file);
+					const fileExtension = file.split('.')[file.split('.').length-1];
+					console.log('extension', fileExtension);
 
-					StorageService.setSalt(salt);
-					StorageService.setScatter(obj);
-					resetLockout();
-					location.reload();
+					if(err) {
+						unrestore();
+						return alert("Could not read the backup file.");
+					}
+
+					PopupService.push(Popup.verifyPassword(async password => {
+						if(!password || !password.length) return;
+
+						try {
+							switch(fileExtension){
+								case 'json': return await importDesktopBackup(data, password);
+								case 'txt': return await importExtensionBackup(data, password);
+							}
+                        } catch(e){
+							unrestore();
+							return alert("Error decrypting backup");
+                        }
+					}, true))
+
+
 				});
 			},
 			destroy(){
@@ -248,6 +361,7 @@
 				Actions.SET_SEED,
 				Actions.CREATE_SCATTER,
 				Actions.LOAD_SCATTER,
+                Actions.SET_SCATTER,
 			])
 		}
 	}

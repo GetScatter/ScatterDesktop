@@ -21,6 +21,7 @@
 			keyInputType:'password',
 			key:'',
 			error:null,
+			importing:false,
 		}},
 		computed:{
 			...mapGetters([
@@ -35,24 +36,31 @@
 				this.keyInputType = this.keyInputType === 'password' ? 'text' : 'password';
 			},
 			async testKey(){
+				if(this.importing) return;
+				this.importing = true;
 				this.error = null;
-				this.key = this.key.trim().replace(/\W/g, '');
+				const key = this.key.trim().replace(/\W/g, '');
 
 				const keypair = Keypair.placeholder();
-				keypair.privateKey = this.key;
+				keypair.privateKey = key;
 
-				if(!KeyPairService.isValidPrivateKey(keypair)) return;
+				if(!KeyPairService.isValidPrivateKey(keypair)) return this.importing = false;
 
-				keypair.blockchains = KeyPairService.getImportedKeyBlockchains(this.key);
+				keypair.blockchains = KeyPairService.getImportedKeyBlockchains(key);
 				await KeyPairService.convertHexPrivateToBuffer(keypair);
 				await KeyPairService.makePublicKeys(keypair);
 				keypair.hash();
 
-				if(this.keypairs.find(x => x.keyHash === keypair.keyHash))
-					return this.error = 'You already have this key imported.';
+				const existing = this.keypairs.find(x => x.keyHash === keypair.keyHash);
+				if(existing){
+					this.importing = false;
+					return this.error = `You already have this key imported under ${existing.name}.`;
+				}
+
 
 				setTimeout(() => {
 					this.$emit('keypair', keypair);
+					this.importing = false;
 				}, 1);
 			}
 		},

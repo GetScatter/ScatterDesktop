@@ -59,21 +59,7 @@ export const actions = {
 
     [Actions.CREATE_SCATTER]:({state, commit, dispatch}, password) => {
         return new Promise(async (resolve, reject) => {
-            const scatter = Scatter.placeholder();
-
-            await Promise.all(PluginRepository.signatureProviders().map(async plugin => {
-                const network = plugin.getEndorsedNetwork();
-                scatter.settings.networks.push(network);
-            }));
-
-            const firstIdentity = Identity.placeholder();
-            await firstIdentity.initialize(scatter.hash);
-
-            //TODO: Testing
-            firstIdentity.name = 'MyFirstIdentity';
-            scatter.keychain.updateOrPushIdentity(firstIdentity);
-
-            //TODO: Add first automatic keypair
+            const scatter = await Scatter.create();
 
             await SocketService.initialize();
 

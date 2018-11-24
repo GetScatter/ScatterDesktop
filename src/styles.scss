@@ -324,7 +324,7 @@ p {
   .dot {
     width:28px;
     height:28px;
-    margin-left:0;
+    margin-left:15px;
     border-radius:50%;
     background:$light-blue;
     background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
@@ -333,7 +333,7 @@ p {
     transition-property: margin-left, background;
 
     &.disabled {
-      margin-left:15px;
+      margin-left:0;
       background:$light-blue;
       background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
     }

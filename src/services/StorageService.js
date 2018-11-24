@@ -59,7 +59,7 @@ const safeSetScatter = async (scatter, resolver) => {
 		if(err) return retry();
 		resolver(true);
 	});
-}
+};
 
 export default class StorageService {
 

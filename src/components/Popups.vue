@@ -14,6 +14,7 @@
                     <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
                     <UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />
                     <Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
+                    <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
                 </section>
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -66,6 +67,7 @@
     import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
     import Mnemonic from '../components/popins/fullscreen/Mnemonic'
     import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
+    import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
 
     export default {
     	components:{
@@ -86,6 +88,7 @@
 		    UnlinkAccount,
 		    UnlinkBlockchain,
 		    Mnemonic,
+		    RemoveKeypair,
         },
         data(){ return {
             popupTypes:PopupTypes,

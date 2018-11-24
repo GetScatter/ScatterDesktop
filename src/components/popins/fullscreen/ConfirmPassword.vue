@@ -44,6 +44,9 @@
 			...mapGetters([
 
 			]),
+			returnOnly(){
+				return this.popin.data.props.returnOnly;
+			}
 		},
 		methods:{
 			returnResult(truthy){
@@ -52,6 +55,8 @@
 			},
 			async verify(){
 				if(!this.password.length) return;
+				if(this.returnOnly) return this.returnResult(this.password);
+
 				const verified = await PasswordService.verifyPassword(this.password, false);
 				if(!verified) PopupService.push(Popup.snackbar('Bad Password', 'lock'));
 				this.returnResult(verified);

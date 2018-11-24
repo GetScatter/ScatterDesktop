@@ -14,6 +14,7 @@ export default class Crypto {
     }
 
     static privateKeyToBuffer(privateKey, blockchain){
+        console.log('blockchain', blockchain);
         return PluginRepository.plugin(blockchain).hexPrivateToBuffer(privateKey);
     }
 
