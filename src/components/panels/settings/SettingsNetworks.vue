@@ -1,91 +1,122 @@
 <template>
     <section>
 
-        <section class="split-inputs">
-
-            <sel :disabled="isNew" :options="networks" style="flex:3;"
-                 :selected="network"
-                 :parser="x => x.name"
-                 v-on:changed="x => selectNetwork(x)"></sel>
-
-            <section style="flex:1.5;" class="split-inputs" v-if="isNew || networkChanged">
-                <btn style="flex:1; font-size: 11px;" text="Save" v-on:clicked="save" :blue="newNetworkReady || !isNew" />
-                <btn style="flex:0.1;" icon="icon-cancel" v-on:clicked="cancelAdd" />
-            </section>
-
-            <section style="flex:1.5;" class="split-inputs" v-else>
-                <btn style="flex:1; font-size: 11px;" text="Add" v-on:clicked="addNetwork" />
-                <btn style="flex:0.1;" icon="icon-cancel" v-on:clicked="removeNetwork" />
-            </section>
+        <section class="panel-switch" v-if="addableNetworks.length">
+            <figure class="button" :class="{'active':state === STATES.KNOWN}" @click="state = STATES.KNOWN">Known Networks</figure>
+            <figure class="button" :class="{'active':state === STATES.CUSTOM}" @click="state = STATES.CUSTOM">Your Networks</figure>
         </section>
 
+        <br>
+        <br>
 
-        <section class="action-box top-pad" style="margin-top:10px; padding-bottom:0;">
-            <section v-if="network">
+        <section v-if="state === STATES.KNOWN">
 
-                <sel label="Blockchain"
-                     :disabled="!isNew"
-                     :selected="{value:network.blockchain}"
-                     :options="blockchains"
-                     :parser="blockchain => blockchainName(blockchain.value)"
-                     v-on:changed="blockchain => network.blockchain = blockchain.value"></sel>
+            <section class="action-box top-pad" style="margin-top:0;">
+                <label>Add a known network</label>
+                You can add highly used blockchain networks easily without having to enter their details manually.
+                <br><br>
                 <br>
-
                 <section class="split-inputs">
-                    <cin label="Name" placeholder="Local Network" :text="network.name" v-on:changed="changed => bind(changed, 'network.name')"></cin>
-                    <cin label="Host ( domain.com or IP )" placeholder="127.0.0.1" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
+
+                    <sel :options="addableNetworks" style="flex:3;"
+                         :selected="knownNetwork"
+                         :parser="x => x.name"
+                         :subparser="x => blockchainName(x.blockchain)"
+                         v-on:changed="x => knownNetwork = x"></sel>
+
+                    <btn style="flex:1; font-size: 11px; margin-top:0;" text="Add Network" v-on:clicked="addKnownNetwork" />
                 </section>
-
-                <section class="split-inputs">
-                    <sel style="flex:1;" label="Protocol" :selected="network.protocol" :options="['http', 'https']" v-on:changed="x => network.protocol = x"></sel>
-                    <cin style="flex:1; margin-bottom:0;" label="Port" placeholder="Port" type="number" :text="network.port > 0 ? network.port : ''" v-on:changed="changed => bind(changed, 'network.port')"></cin>
-                </section>
-
-                <br>
-
-                <cin label="Chain ID"
-                     :disabled="!isNew"
-                     placeholder="Chain ID"
-                     :text="network.chainId"
-                     :dynamic-button="!isNew ? null : 'icon-globe-1'"
-                     dynamic-tooltip="Fetch Chain ID"
-                     :copy="!isNew"
-                     v-on:dynamic="fetchChainId"
-                     v-on:changed="changed => bind(changed, 'network.chainId')" />
-
-                <cin :disabled="true" v-if="!isNew && network.fromOrigin" placeholder="From Origin" :text="network.fromOrigin" />
-                <cin :disabled="true" v-if="!isNew && network.fromOrigin" placeholder="Timestamp" :text="new Date(network.createdAt).toLocaleString()" />
-
             </section>
+
         </section>
 
-        <section class="action-box top-pad" style="margin-top:10px;" v-if="network && (isNew || network.token)">
-            <label>Custom System Token</label>
-            <section v-if="isNew">
-                <p>In some cases you might need to change the system token.</p>
+        <section v-if="state === STATES.CUSTOM">
+            <section class="split-inputs">
 
-                <btn :red="!!network.token" style="float:right;"
-                     :text="network.token
+                <sel :disabled="isNew" :options="networks" style="flex:3;"
+                     :selected="network"
+                     :parser="x => x.name"
+                     v-on:changed="x => selectNetwork(x)"></sel>
+
+                <section style="flex:1.5;" class="split-inputs" v-if="isNew || networkChanged">
+                    <btn style="flex:1; font-size: 11px;" text="Save" v-on:clicked="save" :blue="newNetworkReady || !isNew" />
+                    <btn style="flex:0.1;" icon="icon-cancel" v-on:clicked="cancelAdd" />
+                </section>
+
+                <section style="flex:1.5;" class="split-inputs" v-else>
+                    <btn style="flex:1; font-size: 11px;" text="Add" v-on:clicked="addNetwork" />
+                    <btn style="flex:0.1;" icon="icon-cancel" v-on:clicked="removeNetwork" />
+                </section>
+            </section>
+
+
+            <section class="action-box top-pad" style="margin-top:10px; padding-bottom:0;">
+                <section v-if="network">
+
+                    <sel label="Blockchain"
+                         :disabled="!isNew"
+                         :selected="{value:network.blockchain}"
+                         :options="blockchains"
+                         :parser="blockchain => blockchainName(blockchain.value)"
+                         v-on:changed="blockchain => network.blockchain = blockchain.value"></sel>
+                    <br>
+
+                    <section class="split-inputs">
+                        <cin label="Name" placeholder="Local Network" :text="network.name" v-on:changed="changed => bind(changed, 'network.name')"></cin>
+                        <cin label="Host ( domain.com or IP )" placeholder="127.0.0.1" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
+                    </section>
+
+                    <section class="split-inputs">
+                        <sel style="flex:1;" label="Protocol" :selected="network.protocol" :options="['http', 'https']" v-on:changed="x => network.protocol = x"></sel>
+                        <cin style="flex:1; margin-bottom:0;" label="Port" placeholder="Port" type="number" :text="network.port > 0 ? network.port : ''" v-on:changed="changed => bind(changed, 'network.port')"></cin>
+                    </section>
+
+                    <br>
+
+                    <cin label="Chain ID"
+                         :disabled="!isNew"
+                         placeholder="Chain ID"
+                         :text="network.chainId"
+                         :dynamic-button="!isNew ? null : 'icon-globe-1'"
+                         dynamic-tooltip="Fetch Chain ID"
+                         :copy="!isNew"
+                         v-on:dynamic="fetchChainId"
+                         v-on:changed="changed => bind(changed, 'network.chainId')" />
+
+                    <cin :disabled="true" v-if="!isNew && network.fromOrigin" placeholder="From Origin" :text="network.fromOrigin" />
+                    <cin :disabled="true" v-if="!isNew && network.fromOrigin" placeholder="Timestamp" :text="new Date(network.createdAt).toLocaleString()" />
+
+                </section>
+            </section>
+
+            <section class="action-box top-pad" style="margin-top:10px;" v-if="network && (isNew || network.token)">
+                <label>Custom System Token</label>
+                <section v-if="isNew">
+                    <p>In some cases you might need to change the system token.</p>
+
+                    <btn :red="!!network.token" style="float:right;"
+                         :text="network.token
                      ? 'Use Default System Token'
                      : 'Use Custom System Token'"
-                     v-on:clicked="useCustomToken" />
-            </section>
-            <section v-else>
-                <p>This network is using a custom token.</p>
-            </section>
+                         v-on:clicked="useCustomToken" />
+                </section>
+                <section v-else>
+                    <p>This network is using a custom token.</p>
+                </section>
 
-            <section v-if="network.token">
-                <br>
-                <cin style="flex:1; margin-bottom:0;"
-                     :placeholder="contractPlaceholder"
-                     :text="network.token.contract"
-                     :disabled="!isNew"
-                     v-on:changed="x => network.token.contract = x"
-                     label="Contract" />
-                <br>
-                <section class="split-inputs">
-                    <cin :disabled="!isNew" placeholder="XXX" label="Symbol" :text="network.token.symbol" v-on:changed="x => network.token.symbol = x" />
-                    <cin :disabled="!isNew" placeholder="4" type="number" label="Decimals" :text="network.token.decimals" v-on:changed="x => network.token.decimals = x" />
+                <section v-if="network.token">
+                    <br>
+                    <cin style="flex:1; margin-bottom:0;"
+                         :placeholder="contractPlaceholder"
+                         :text="network.token.contract"
+                         :disabled="!isNew"
+                         v-on:changed="x => network.token.contract = x"
+                         label="Contract" />
+                    <br>
+                    <section class="split-inputs">
+                        <cin :disabled="!isNew" placeholder="XXX" label="Symbol" :text="network.token.symbol" v-on:changed="x => network.token.symbol = x" />
+                        <cin :disabled="!isNew" placeholder="4" type="number" label="Decimals" :text="network.token.decimals" v-on:changed="x => network.token.decimals = x" />
+                    </section>
                 </section>
             </section>
         </section>
@@ -105,14 +136,25 @@
     import Token from "../../../models/Token";
 
 
+    const STATES = {
+        KNOWN:'known',
+        CUSTOM:'custom',
+    };
+
     export default {
         data () {return {
+        	state:STATES.CUSTOM,
+	        STATES,
+
             blockchains:BlockchainsArray,
             network:null,
             endorsedNetworks:[],
             working:false,
             originalNetwork:null,
             networkChanged:false,
+
+            knownNetworks:[],
+	        knownNetwork:null,
         }},
         computed:{
             ...mapState([
@@ -131,6 +173,11 @@
 	        contractPlaceholder(){
 		        return PluginRepository.plugin(this.network.token.blockchain).contractPlaceholder();
 	        },
+            addableNetworks(){
+	            const existingUniques = this.networks.map(x => x.unique());
+            	return this.knownNetworks
+		            .filter(x => !existingUniques.includes(x.unique()));
+            }
         },
         mounted(){
             this.network = this.networks[0].clone();
@@ -138,6 +185,14 @@
             BlockchainsArray.map(async blockchain => {
                 this.endorsedNetworks.push(PluginRepository.plugin(blockchain.value).getEndorsedNetwork());
             })
+
+            fetch(`https://api.get-scatter.com/v1/networks?flat=true`).then(r => r.json())
+                .then(networks => {
+                	this.knownNetworks = networks
+                        .map(x => Network.fromJson(x));
+
+                	if(this.addableNetworks.length) this.knownNetwork = this.addableNetworks[0];
+                }).catch(() => {});
         },
         methods: {
         	useCustomToken(){
@@ -178,10 +233,16 @@
                 if(await NetworkService.removeNetwork(this.network))
                     setTimeout(() => this.network = this.networks[0], 250);
 
+	            if(this.addableNetworks.length) this.knownNetwork = this.addableNetworks[0];
                 this.working = false;
             },
             checkNetworkChanged(){
                 this.networkChanged = JSON.stringify(this.network) !== JSON.stringify(this.originalNetwork);
+            },
+            async addKnownNetwork(){
+                this.network = this.knownNetwork.clone();
+                await this.save();
+                this.state = STATES.CUSTOM;
             },
             ...mapActions([
                 Actions.SET_SCATTER
