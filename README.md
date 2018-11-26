@@ -1,29 +1,17 @@
-# Scatter Desktop
+分散桌面
+安装
+这些包都没有签名。确保你只从这个GitHub和NOWHERE ELSE下载Scatter Desktop 。
 
-## Installation
+点击这里并获取最新发布
+在开发模式下运行
+这与node v9.8.0和electron v1.8.2
 
-**None of these package are signed yet.** Make sure you only download 
-Scatter Desktop from this GitHub, and **NOWHERE ELSE**.
-
-#### [CLICK HERE AND GRAB THE LATEST RELEASE](https://github.com/GetScatter/ScatterDesktop/releases)
-
-### Running in development mode
-
-This runs best with `node v9.8.0` and `electron v1.8.2`
-
-- clone the repo
-- run `yarn install` to install the dependencies. **Important: You can only use yarn to install right now as there's two versions of eosjs being pulled in and only yarn supports aliasing**.
-- run `npm start` to start the local server with hot-reloading
-- run `electron .` or `./node_modules/bin/electron .` from the directory to start electron.
-
-
-### Building
-
-- `npm run build`
-- `npm run release-mac` or `npm run release-windows` or `npm run release-linux` ( you must build from the target machine )
-
-
-## Creating Apps for Scatter 
-### Check out the [Documentation](https://get-scatter.com/docs/examples-interaction-flow)
-
-
+克隆回购
+运行yarn install以安装依赖项。重要提示：您现在只能使用纱线安装，因为有两个版本的eosjs被拉入并且只有纱线支持锯齿。
+运行npm start以使用热重新启动本地服务器
+运行electron .或./node_modules/bin/electron .从目录中启动电子。
+建造
+npm run build
+npm run release-mac或者（npm run release-windows或者npm run release-linux你必须从目标机器构建）
+为Scatter创建应用程序
+查看文档
