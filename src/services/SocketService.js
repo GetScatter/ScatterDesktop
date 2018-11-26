@@ -53,7 +53,7 @@ const socketHandler = (socket) => {
 
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async request => {
-	    if(!request.plugin) return socket.emit('api', {id:request.id, result:null});
+	    if(!request.plugin || request.plugin.length > 35) return socket.emit('api', {id:request.id, result:null});
 	    request.plugin = request.plugin.replace(/\s/g, "");
 
         // 2 way authentication
