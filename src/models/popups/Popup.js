@@ -1,5 +1,7 @@
 import IdGenerator from '../../util/IdGenerator';
 import * as ApiActions from '../api/ApiActions';
+import {localizedState} from "../../localization/locales";
+import LANG_KEYS from "../../localization/keys";
 
 export const PopupDisplayTypes = {
     POP_IN:'popin',
@@ -68,6 +70,21 @@ export class Popup {
         return new Popup(PopupDisplayTypes.SNACKBAR, new PopupData('', { message, icon, timeout }))
     }
 
+	static enterPIN(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENTER_PIN, {}, callback))
+	}
+
+
+
+    /*****************************************/
+    /*********      SNACKBARS      ***********/
+    /*****************************************/
+
+	static snackbarBadPassword(timeout = 3000){
+		const message = localizedState(LANG_KEYS.SNACKBARS.BadPassword);
+		const icon = 'attention';
+		return new Popup(PopupDisplayTypes.SNACKBAR, new PopupData('', { message, icon, timeout }))
+	}
 
 
     /*****************************************/
@@ -139,6 +156,7 @@ export const PopupTypes = {
     PROMPT:'prompt',
     TEXT_PROMPT:'textPrompt',
     SELECTOR:'selector',
+    ENTER_PIN:'enterPIN',
 
     // FULLSCREEN
     VERIFY_PASSWORD:'verifyPassword',

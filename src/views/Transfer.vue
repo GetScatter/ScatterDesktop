@@ -12,7 +12,7 @@
                 <!--------- FROM -------->
                 <!----------------------->
                 <section class="panel">
-                    <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.FromLabel)}}</h4>
+                    <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.FROM.FromLabel)}}</h4>
 
                     <SearchBar short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
                     <br>
@@ -91,17 +91,17 @@
                 <!--------- TO ---------->
                 <!----------------------->
                 <section class="panel">
-                    <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.RECIPIENT.RecipientLabel)}}</h4>
+                    <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.RECIPIENT.RecipientLabel)}}</h4>
                     <section class="panel-switch" v-if="formattedContacts.length">
                         <figure class="button"
                                 :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}"
                                 @click="recipientState = RECIPIENT_STATES.CONTACT">
-                            {{locale(langKeys.RECIPIENT.SendToContact)}}
+                            {{locale(langKeys.TRANSFER.RECIPIENT.SendToContact)}}
                         </figure>
                         <figure class="button"
                                 :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}"
                                 @click="recipientState = RECIPIENT_STATES.DIRECT">
-                            {{locale(langKeys.RECIPIENT.SendDirectly)}}
+                            {{locale(langKeys.TRANSFER.RECIPIENT.SendDirectly)}}
                         </figure>
                     </section>
 
@@ -109,11 +109,11 @@
                     <!--------- CONTACTS ---------->
 
                     <SearchBar v-if="recipientState === RECIPIENT_STATES.CONTACT"
-                               :placeholder="locale(langKeys.RECIPIENT.SearchContactsPlaceholder)"
+                               :placeholder="locale(langKeys.TRANSFER.RECIPIENT.SearchContactsPlaceholder)"
                                v-on:terms="x => searchTermsContacts = x" />
 
                     <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.CONTACT"
-                                :label="locale(langKeys.RECIPIENT.ContactsLabel)"
+                                :label="locale(langKeys.TRANSFER.RECIPIENT.ContactsLabel)"
                                 :items="filteredContacts"
                                 :selected="recipient"
                                 selected-icon="icon-check"
@@ -124,7 +124,7 @@
 
                     <!--------- DIRECT TO ADDRESS/ACCOUNT ---------->
                     <section v-if="recipientState === RECIPIENT_STATES.DIRECT" class="padded">
-                        <cin :placeholder="locale(langKeys.RECIPIENT.VerifyRecipient)"
+                        <cin :placeholder="locale(langKeys.TRANSFER.RECIPIENT.VerifyRecipient)"
                              :error="recipient.length > 0 ? recipientError : null"
                              :label="recipientLabel"
                              :text="recipient"
@@ -133,8 +133,8 @@
                         <transition name="slide-right" mode="out-in">
                             recipientError:{{recipientError}}
                             <section class="split-inputs" v-if="recipient.length > 0 && !isAlreadyContact && !recipientError">
-                                <cin style="flex:1;" :placeholder="locale(langKeys.RECIPIENT.ContactNamePlaceholder)"
-                                     :label="locale(langKeys.RECIPIENT.ContactNameLabel, recipientLabel)"
+                                <cin style="flex:1;" :placeholder="locale(langKeys.TRANSFER.RECIPIENT.ContactNamePlaceholder)"
+                                     :label="locale(langKeys.TRANSFER.RECIPIENT.ContactNameLabel, recipientLabel)"
                                      :text="newContactName"
                                      v-on:changed="x => newContactName = x" />
                                 <btn style="width:50px;" icon="icon-user-add" v-on:clicked="addContact" />

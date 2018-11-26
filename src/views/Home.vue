@@ -115,27 +115,13 @@
         },
 
         mounted(){
+    		PopupService.push(Popup.enterPIN());
 	        setTimeout(async() => {
-
-                // const hardwareKeypair = Keypair.fromJson({
-	            //     name:'Ledger test',
-                //     blockchains:['eos'],
-                //     publicKeys:[{blockchain:'eos', key:'EOS8kUtzfPsPryvfJJMzn58481oV6pR9NEiPNQNjqvUBszKHsoVSp'}],
-	            //     external:new ExternalWallet(EXT_WALLET_TYPES.LEDGER, 'eos')
-                // });
-		        // hardwareKeypair.hash()
-                // KeyPairService.saveKeyPair(hardwareKeypair);
-		        // console.log(this.keypairs);
-
 	        	HardwareService.openConnections(true);
 		        await PriceService.watchPrices();
 		        await BalanceService.loadAllBalances();
 		        await RecurringService.checkProxies();
             })
-
-	        // PopupService.push(Popup.verifyPassword(verified => {
-	        // 	console.log('verified', verified);
-            // }));
         },
     }
 </script>

@@ -22,6 +22,8 @@ import Token from "../../models/Token";
 import HardwareService from "../../services/HardwareService";
 import BigNumber from "bignumber.js";
 import TokenService from "../../services/TokenService";
+import {localizedState} from "../../localization/locales";
+import LANG_KEYS from "../../localization/keys";
 const erc20abi = require('../../data/abis/erc20');
 
 const web3util = new Web3();
@@ -70,7 +72,7 @@ export default class ETH extends Plugin {
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.ETH }}
 
 	contractPlaceholder(){ return '0x.....'; }
-	recipientLabel(){ return 'Address'; } // TODO: Localize
+	recipientLabel(){ return localizedState(LANG_KEYS.GENERIC.Address); }
 
     getEndorsedNetwork(){
         return new Network('ETH Mainnet', 'https', 'ethnodes.get-scatter.com', 443, Blockchains.ETH, '1')
@@ -215,7 +217,7 @@ export default class ETH extends Plugin {
             payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
             payload.participants = [account];
             payload.network = account.network();
-            payload.origin = 'Internal Scatter Transfer';
+            payload.origin = 'Scatter';
             const request = {
                 payload,
                 origin:payload.origin,

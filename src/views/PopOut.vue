@@ -52,6 +52,8 @@
     import WindowService from '../services/WindowService'
     import * as ApiActions from '../models/api/ApiActions';
     import {Popup} from "../models/popups/Popup";
+    import PopupService from "../services/PopupService";
+    import PasswordService from "../services/PasswordService";
 
     export default {
         data () {return {
@@ -75,6 +77,20 @@
 
                 this[Actions.HOLD_SCATTER](Scatter.fromJson(scatter));
                 console.log('popupType', this.popupType);
+
+                const needsPIN = [
+                    ApiActions.REQUEST_ARBITRARY_SIGNATURE,
+                    ApiActions.REQUEST_SIGNATURE,
+                    ApiActions.REQUEST_TRANSFER
+                ];
+
+                setTimeout(async () => {
+	                if(this.scatter.pinForAll && needsPIN.includes(this.popup.data.type)){
+		                if(! await PasswordService.verifyPIN()){
+		                	this.returnResult(null);
+                        }
+	                }
+                })
             });
         },
         computed:{

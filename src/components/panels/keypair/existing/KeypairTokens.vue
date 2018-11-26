@@ -6,7 +6,7 @@
 			<br>
 			<br>
 			<router-link tag="p" :to="{name:RouteNames.SETTINGS, params:{panel:{name:'Tokens'}}}" v-if="hiddenTokenCount">
-				<u style="cursor:pointer;">{{hiddenTokenCount}} tokens filtered out by your token spam filter.</u>
+				<u style="cursor:pointer;">{{locale(langKeys.KEYPAIR.TOKENS.HiddenTokensCount, hiddenTokenCount)}}</u>
 			</router-link>
 		</section>
 

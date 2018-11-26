@@ -9,7 +9,10 @@ const {
 	CREATE_EOS,
 	PERMISSIONS,
 	SETTINGS,
-	TRANSFER
+	TRANSFER,
+	USER_BAR,
+	PROCESSES,
+	SNACKBARS
 } = KEYS;
 
 // You can build your own pluralizers.
@@ -128,8 +131,6 @@ const Locale = {
 
 
 
-
-
 	/****************************************************/
 	/*                                                  */
 	/*                     ADD KEYS                     */
@@ -219,7 +220,8 @@ const Locale = {
 	[CREATE_EOS.EXCHANGE.SentSubtitle]:() => `You must wait for the transaction to be irreversible, this takes around 3 minutes.`,
 	[CREATE_EOS.EXCHANGE.TransactionIDLabel]:() => `Transaction ID`,
 	[CREATE_EOS.EXCHANGE.ActionBarButton]:() => `Create Account`,
-
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[CREATE_EOS.ERRORS.InvalidResources]:() => `Either CPU or NET was below or equal to 0`,
 
 
 
@@ -230,15 +232,25 @@ const Locale = {
 	/****************************************************/
 	[KEYPAIR.NameLabel]:() => Locale[ADD_KEYS.IMPORT.NameLabel](),
 	[KEYPAIR.NamePlaceholder]:() => Locale[ADD_KEYS.IMPORT.NamePlaceholder](),
-	[KEYPAIR.ExportButton]:() => `Export`,
-	[KEYPAIR.RefreshButton]:() => `Refresh`,
-	[KEYPAIR.RemoveButton]:() => `Remove`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[KEYPAIR.DASHBOARD.STATES.AddAccount]:() => `Add Account`,
+	[KEYPAIR.DASHBOARD.STATES.LinkedAccounts]:() => `Linked Accounts`,
+	[KEYPAIR.DASHBOARD.STATES.KeysAndBlockchains]:() => `Keys & Blockchains`,
+	[KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountLabel]:() => `Create a new EOS account`,
+	[KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountDescription]:() =>
+		`If you want to create a new EOS account on top of this key.`,
+	[KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountButton]:() => `Create Account`,
+	[KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountLabel]:() => `Link existing EOS account`,
+	[KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountDescription]:() =>
+		`If you already have an EOS account, but it's not being imported automatically.`,
+	[KEYPAIR.DASHBOARD.ADD_ACCOUNT.AccountNetworkLabel]:() => `Link existing EOS account`,
+	[KEYPAIR.DASHBOARD.ERRORS.InvalidWalletName]:() => `Enter a name for this Wallet`,
+	[KEYPAIR.DASHBOARD.ERRORS.WalletNameExists]:() => `A Wallet with this name already exists`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[KEYPAIR.TOKENS.HiddenTokensCount]:(n) => `${n} tokens filtered out by your token spam filter.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.ACCOUNTS.SearchPlaceholder]:() => `Search Accounts`,
 	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,
-	[KEYPAIR.ACCOUNTS.EOSManageResourceButton]:() => `Manage`,
-	[KEYPAIR.ACCOUNTS.EOSClaimRefundButton]:() => `Refund`,
-	[KEYPAIR.ACCOUNTS.AddAccountButton]:() => `Add`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.BLOCKCHAINS.CopyButton]:() => `Copy Public Key`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,6 +401,8 @@ const Locale = {
 	[SETTINGS.PIN.DescriptionRed]:() => `Do not make your PIN the same as your password!`,
 	[SETTINGS.PIN.Placeholder]:() => `PIN Disabled`,
 	[SETTINGS.PIN.SavedSnackbar]:() => `Saved PIN`,
+	[SETTINGS.PIN.PinForAllTitle]:() => `Use PIN for all interactions.`,
+	[SETTINGS.PIN.PinForAllDescription]:() => `If you enable this you will also need to enter your PIN for every popup.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[SETTINGS.NETWORKS.SWITCH.Known]:() => `Known Networks`,
 	[SETTINGS.NETWORKS.SWITCH.Custom]:() => `Your Networks`,
@@ -446,7 +460,7 @@ const Locale = {
 	/*                     TRANSFER                     */
 	/*                                                  */
 	/****************************************************/
-	[TRANSFER.SendButton]:() => `Permissions`,
+	[TRANSFER.SendButton]:() => `Send`,
 	[TRANSFER.FROM.FromLabel]:() => `From`,
 	[TRANSFER.FROM.SendingAccountsLabel]:() => `Sending Account`,
 	[TRANSFER.TOKENS.AmountLabel]:() => `Amount to Transfer`,
@@ -462,6 +476,35 @@ const Locale = {
 	[TRANSFER.RECIPIENT.ContactNameLabel]:(x) => `Do you want to add this ${x} as a contact?`,
 	[TRANSFER.ERRORS.InvalidRecipient]:() => `Invalid Recipient`,
 	[TRANSFER.ERRORS.InvalidAmount]:() => `Invalid amount, must be greater than 0`,
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                     USER BAR                     */
+	/*                                                  */
+	/****************************************************/
+	[USER_BAR.ManageIdentity]:() => `Manage Identity`,
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                    PROCESSES                     */
+	/*                                                  */
+	/****************************************************/
+	[PROCESSES.FetchAccountsFromNetwork]:x => `Fetching accounts for ${x}`,
+	[PROCESSES.ImportingAccountsFromNetwork]:x => `Importing ${x[0]} accounts for ${x[1]}`,
+	[PROCESSES.ImportingAccounts]:() => `Importing Accounts`,
+	[PROCESSES.LoadingResources]:() => `Loading Account Resources`,
+	[PROCESSES.AccountsLeft]:(x) => `Accounts left: ${x}`,
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                    SNACKBARS                     */
+	/*                                                  */
+	/****************************************************/
+	[SNACKBARS.CopiedToClipboard]:() => `Copied to Clipboard`,
+	[SNACKBARS.BadPassword]:() => `Bad Password`,
 
 
 

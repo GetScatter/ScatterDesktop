@@ -6,7 +6,6 @@ import {actions} from './actions';
 
 import {PopupDisplayTypes} from '../models/popups/Popup'
 import PluginRepository from '../plugins/PluginRepository'
-import Token from "../models/Token";
 
 Vue.use(Vuex);
 

@@ -1,7 +1,5 @@
 import {MOCK_ELECTRON, RUNNING_TESTS} from "./TestingHelper";
 
-
-// import PopupService from "../services/PopupService";
 import {Popup} from "../models/popups/Popup";
 
 let electron;
@@ -22,8 +20,7 @@ export default class ElectronHelpers {
 
     static copy(txt){
         clipboard.writeText(txt);
-	    PopupService().push(Popup.snackbar(`Copied to Clipboard`, 'check'))
-	    // PopupService.push(Popup.snackbar(`Copied to Clipboard`, 'check'));
+	    // PopupService().push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.CopiedToClipboard), 'check'))
     }
 
     static openLinkInBrowser(link){

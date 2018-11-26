@@ -15,6 +15,20 @@
                  type="password"
                  :text="pin"
                  v-on:changed="x => pin = x" />
+
+            <section>
+                <br>
+                <br>
+                <section class="split-inputs">
+                    <section class="switch" @click="togglePinForAll()">
+                        <figure class="dot" :class="{'disabled':!scatter.pinForAll}"></figure>
+                    </section>
+                    <section class="details">
+                        <figure class="title">{{locale(langKeys.SETTINGS.PIN.PinForAllTitle)}}</figure>
+                        <p>{{locale(langKeys.SETTINGS.PIN.PinForAllDescription)}}</p>
+                    </section>
+                </section>
+            </section>
         </section>
 
 
@@ -52,6 +66,11 @@
                     	this.locale(this.langKeys.SETTINGS.PIN.SavedSnackbar)
                     ))
                 }, 500);
+            },
+            togglePinForAll(){
+            	const scatter = this.scatter.clone();
+                scatter.pinForAll = !scatter.pinForAll;
+                this[Actions.SET_SCATTER](scatter);
             },
             ...mapActions([
                 Actions.SET_SCATTER

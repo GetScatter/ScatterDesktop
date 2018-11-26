@@ -140,9 +140,9 @@
 
 
 	            await KeyPairService.saveKeyPair(keypair);
-	            await AccountService.importAllAccounts(keypair, isNewKeypair);
-	            this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:keypair.id}})
-	            setTimeout(() => {
+	            AccountService.importAllAccounts(keypair, isNewKeypair);
+	            setTimeout(async () => {
+		            this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:keypair.id}});
 		            this.setWorkingScreen(false);
                 }, 500);
 

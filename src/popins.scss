@@ -2,6 +2,23 @@
 
 .pop-ins {
 
+  .overlay {
+    width:500px;
+
+    .panel {
+      padding:10px;
+
+      .input {
+        margin-bottom:10px;
+      }
+
+      button {
+        width:100%;
+        max-width:none;
+      }
+    }
+  }
+
   .fullscreen {
     .head {
       display:flex;

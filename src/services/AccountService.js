@@ -4,6 +4,8 @@ import * as Actions from '../store/constants'
 import {store} from '../store/store'
 import {BlockchainsArray} from '../models/Blockchains'
 import Process from "../models/Process";
+import {localizedState} from "../localization/locales";
+import LANG_KEYS from "../localization/keys";
 
 export default class AccountService {
 
@@ -98,7 +100,7 @@ export default class AccountService {
                 resolve(true);
             } else {
                 networks.map(network => {
-	                if(process) process.setSubTitle(`Importing accounts for ${network.name}`);
+	                if(process) process.setSubTitle(localizedState(LANG_KEYS.PROCESSES.ImportingAccountsFromNetwork, [1,network.name]));
                     const key = keypair.publicKeys.find(x => x.blockchain === network.blockchain);
                     if(key){
                         accounts.push(Account.fromJson({

@@ -22,6 +22,7 @@ export default class Scatter {
         this.toured = false;
 
         this.pin = null;
+        this.pinForAll = false;
     }
 
     static async create(){

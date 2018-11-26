@@ -225,7 +225,7 @@
 						this.pushTo(this.RouteNames.HOME);
 					} else {
 						this.working = false;
-						PopupService.push(Popup.snackbar("Bad Password", "attention-circled"));
+						PopupService.push(Popup.snackbarBadPassword());
 						setLockout();
 					}
 				}, 400)

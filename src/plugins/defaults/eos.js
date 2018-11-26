@@ -4,7 +4,7 @@ import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
 import Account from '../../models/Account'
 import KeyPairService from '../../services/KeyPairService'
-import {localized} from '../../localization/locales'
+import {localized, localizedState} from '../../localization/locales'
 import LANG_KEYS from '../../localization/keys'
 import Eos from 'eosjs'
 let {ecc} = Eos.modules;
@@ -97,14 +97,14 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 		new Promise(resolve => setTimeout(() => resolve([]), 20000)),
 		new Promise((resolve, reject) => {
 			const eos = getCachedInstance(network);
-			if(process) process.setSubTitle(`Fetching accounts from ${network.name}`);
+			if(process) process.setSubTitle(localizedState(LANG_KEYS.PROCESSES.FetchAccountsFromNetwork, network.name));
 			eos.getKeyAccounts(publicKey).then(res => {
 				if(process) process.updateProgress(progressDelta/3);
 				if(!res || !res.hasOwnProperty('account_names')){ resolve([]); return false; }
 				const {account_names} = res;
 
 				const setProcessTitle = () => {
-					if(process) process.setSubTitle(`Importing ${account_names.length} accounts from ${network.name}`);
+					if(process) process.setSubTitle(localizedState(LANG_KEYS.PROCESSES.ImportingAccountsFromNetwork, [account_names.length, network.name]));
 				};
 				setProcessTitle();
 
@@ -149,7 +149,7 @@ export default class EOS extends Plugin {
 	returnableAccount(account){ return { name:account.name, authority:account.authority, publicKey:account.publicKey, blockchain:Blockchains.EOSIO }}
 
 	contractPlaceholder(){ return 'eosio.token'; }
-	recipientLabel(){ return 'Account Name'; } // TODO: Localize
+	recipientLabel(){ return localizedState(LANG_KEYS.GENERIC.AccountName); }
 
 	getEndorsedNetwork(){
 		return new Network('EOS Mainnet', 'https', 'nodes.get-scatter.com', 443, Blockchains.EOSIO, mainnetChainId)
@@ -308,11 +308,11 @@ export default class EOS extends Plugin {
 				text:(new Date((+new Date(data.refund_request.request_time)) + (86400*3*1000))).toLocaleDateString(),
 				percentage,
 				actionable:percentage >= 100,
-				actionText:localized(LANG_KEYS.KEYPAIR.ACCOUNTS.EOSClaimRefundButton, null, store.getters.language),
+				actionText:localizedState(LANG_KEYS.KEYPAIR.ACCOUNTS.EOSClaimRefundButton, null),
 			}
 		}
 
-		const actionText = localized(LANG_KEYS.KEYPAIR.ACCOUNTS.EOSManageResourceButton, null, store.getters.language);
+		const actionText = localizedState(LANG_KEYS.GENERIC.Manage, null);
 		const resources = [{
 			name:'CPU',
 			available:data.cpu_limit.available,
@@ -345,11 +345,7 @@ export default class EOS extends Plugin {
 		return new Promise(async resolve => {
 			const {name} = resource;
 
-			const returnResult = tx => {
-				// if(!tx) return resolve(false);
-				// PopupService.push(Popup.transactionSuccess(account.blockchain(), tx.transaction_id));
-				resolve(tx);
-			}
+			const returnResult = tx => resolve(tx)
 
 			if(['CPU', 'NET'].includes(name))
 				PopupService.push(Popup.eosModerateCpuNet(account, returnResult));
@@ -371,6 +367,7 @@ export default class EOS extends Plugin {
 		return resources.find(x => x.name === 'CPU').available < 6000;
 	}
 
+	// TODO: Fix System Token & make into slider
 	async addResources(account){
 		const signProvider = payload => this.signer(payload, account.publicKey);
 		const network = account.network();
@@ -514,7 +511,7 @@ export default class EOS extends Plugin {
 			const net = (eosUsed/4).toFixed(creator.network().systemToken().decimals);
 			const cpu = (eosUsed-net).toFixed(creator.network().systemToken().decimals);
 
-			if(net <= 0 || cpu <= 0) return reject(`Either CPU or NET was below or equal to 0`);
+			if(net <= 0 || cpu <= 0) return reject(localizedState(LANG_KEYS.CREATE_EOS.ERRORS.InvalidResources, null));
 
 			const options = {authorization:[creator.formatted()]};
 
@@ -551,7 +548,7 @@ export default class EOS extends Plugin {
 			payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
 			payload.participants = [account];
 			payload.network = account.network();
-			payload.origin = 'Internal Scatter Transfer';
+			payload.origin = 'Scatter';
 			const request = {
 				payload,
 				origin:payload.origin,

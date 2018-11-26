@@ -1,5 +1,6 @@
 import KEYS from './keys';
 import ObjectHelpers from '../util/ObjectHelpers'
+import {store} from '../store/store'
 
 
 /*************************************/
@@ -49,5 +50,13 @@ export const localized = (key, args, language) => {
     if(!language) language = LANG.ENGLISH;
     let locale = locales()[language];
     if(!locale || !locale.hasOwnProperty(key)) locale = locales()[LANG.ENGLISH];
+    if(!locale.hasOwnProperty(key)) {
+        console.error('translation error', key);
+        return 'NO TRANSLATION';
+    }
     return locale[key](args);
+};
+
+export const localizedState = (key, args) => {
+    return localized(key, args, store.getters.language);
 }

@@ -163,19 +163,40 @@ const ADD_KEYS = prefixKeys('add_keys', {
 const KEYPAIR = prefixKeys('keypair', {
 	NameLabel:'name_lbl',
 	NamePlaceholder:'name_plc',
-	ExportButton:'export_btn',
-	RefreshButton:'refresh_btn',
-	RemoveButton:'remove_btn',
+
+	DASHBOARD:{
+		STATES:{
+			AddAccount:'add',
+			LinkedAccounts:'linked',
+			KeysAndBlockchains:'keys',
+		},
+
+		ADD_ACCOUNT:{
+			CreateEosAccountLabel:'create_eos_lbl',
+			CreateEosAccountDescription:'create_eos_desc',
+			CreateEosAccountButton:'create_eos_btn',
+			LinkEosAccountLabel:'link_eos_lbl',
+			LinkEosAccountDescription:'link_eos_desc',
+			AccountNetworkLabel:'net_acc_lbl',
+		},
+
+		ERRORS:{
+			InvalidWalletName:'invalid_wallet_name',
+			WalletNameExists:'wallet_name_exists',
+		}
+	},
 
 	ACCOUNTS:{
 		SearchPlaceholder:'search_plc',
 		ViewTokens:'view_tokens',
-		EOSManageResourceButton:'eos_manage_btn',
 		EOSClaimRefundButton:'eos_refund_btn',
-		AddAccountButton:'add_acc_btn'
 	},
 	BLOCKCHAINS:{
 		CopyButton:'cpy_btn',
+	},
+
+	TOKENS:{
+		HiddenTokensCount:'hidden_tokens',
 	},
 
 	EXPORT:{
@@ -267,6 +288,10 @@ const CREATE_EOS = prefixKeys('create_eos', {
 		SentSubtitle:'sent_sub',
 		TransactionIDLabel:'tx_id_lbl',
 		ActionBarButton:'act_bar_btn',
+	},
+
+	ERRORS:{
+		InvalidResources:'invalid_res',
 	}
 });
 
@@ -361,7 +386,9 @@ const SETTINGS = prefixKeys('settings', {
 		Description:'desc',
 		DescriptionRed:'desc_red',
 		Placeholder:'placeholder',
-		SavedSnackbar:'save_snack'
+		SavedSnackbar:'save_snack',
+		PinForAllTitle:'pin_4_all_tit',
+		PinForAllDescription:'pin_4_all_desc',
 	},
 
 	NETWORKS:{
@@ -451,6 +478,23 @@ const TRANSFER = prefixKeys('transfer', {
 	}
 });
 
+const USER_BAR = prefixKeys('user_bar', {
+	ManageIdentity:'manage_id',
+});
+
+const PROCESSES = prefixKeys('processes', {
+	FetchAccountsFromNetwork:'fetch_acc_net',
+	ImportingAccountsFromNetwork:'import_acc_net',
+	ImportingAccounts:'imp_accs',
+	LoadingResources:'load_res',
+	AccountsLeft:'acc_left',
+});
+
+const SNACKBARS = prefixKeys('snackbar', {
+	CopiedToClipboard:'cop_to_clip',
+	BadPassword:'bad_pass',
+})
+
 export default {
 	GENERIC,
 	LOGIN,
@@ -461,7 +505,10 @@ export default {
 	CREATE_EOS,
 	PERMISSIONS,
 	SETTINGS,
-	TRANSFER
+	TRANSFER,
+	USER_BAR,
+	PROCESSES,
+	SNACKBARS
 }
 
 

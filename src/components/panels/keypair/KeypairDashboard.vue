@@ -10,9 +10,12 @@
 			     v-on:changed="x => keypair.name = x" />
 
 			<section class="panel-switch" :class="{'short':!scrollerAtTop}">
-				<figure class="button" v-if="hasEosBlockchain" :class="{'active':dashState === DASH_STATES.ADD_ACCOUNT}" @click="dashState = DASH_STATES.ADD_ACCOUNT">Add Account</figure>
-				<figure class="button" :class="{'active':dashState === DASH_STATES.ACCOUNTS}" @click="dashState = DASH_STATES.ACCOUNTS">Linked Accounts</figure>
-				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}" @click="dashState = DASH_STATES.PUBLIC_KEYS">Keys & Blockchains</figure>
+				<figure class="button" v-if="hasEosBlockchain" :class="{'active':dashState === DASH_STATES.ADD_ACCOUNT}"
+				        @click="dashState = DASH_STATES.ADD_ACCOUNT">{{locale(langKeys.KEYPAIR.DASHBOARD.STATES.AddAccount)}}</figure>
+				<figure class="button" :class="{'active':dashState === DASH_STATES.ACCOUNTS}"
+				        @click="dashState = DASH_STATES.ACCOUNTS">{{locale(langKeys.KEYPAIR.DASHBOARD.STATES.LinkedAccounts)}}</figure>
+				<figure class="button" :class="{'active':dashState === DASH_STATES.PUBLIC_KEYS}"
+				        @click="dashState = DASH_STATES.PUBLIC_KEYS">{{locale(langKeys.KEYPAIR.DASHBOARD.STATES.KeysAndBlockchains)}}</figure>
 			</section>
 
 			<!-- ACCOUNTS -->
@@ -49,20 +52,20 @@
 
 				<section style="padding-bottom:20px;">
 					<section class="action-box top-pad" v-if="canCreateAccounts">
-						<label>Create a new EOS account</label>
-						<p>If you want to create a new EOS account on top of this key.</p>
-						<btn text="Create Account" v-on:clicked="$emit('createeos')" />
+						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountLabel)}}</label>
+						<p>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountDescription)}}</p>
+						<btn :text="locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountButton)" v-on:clicked="$emit('createeos')" />
 					</section>
 
 					<section class="action-box top-pad">
-						<label>Link existing EOS account</label>
-						<p>If you already have an EOS account, but it's not being imported automatically.</p>
+						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountLabel)}}</label>
+						<p>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountDescription)}}</p>
 						<br>
 						<br>
 
 						<section class="key-val">
 							<section class="split-inputs">
-								<sel style="flex:1; margin-left:0;" label="Network to add account to"
+								<sel style="flex:1; margin-left:0;" :label="locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.AccountNetworkLabel)"
 								     :selected="manualAccountNetwork"
 								     :options="eosNetworks"
 								     :parser="network => network.name"
@@ -72,9 +75,9 @@
 								     :text="newAccountName"
 								     v-on:changed="x => newAccountName = x"
 								     placeholder="your.account@owner"
-								     label="Account Name" />
+								     :label="locale(langKeys.GENERIC.AccountName)" />
 
-								<btn :text="locale(langKeys.KEYPAIR.ACCOUNTS.AddAccountButton)" style="margin-top:20px; flex:0.2;"
+								<btn :text="locale(langKeys.GENERIC.Add)" style="margin-top:20px; flex:0.2;"
 								     red="1" v-on:clicked="manuallyAddAccount" />
 							</section>
 						</section>
@@ -151,8 +154,8 @@
 					})
 			},
 			nameError(){
-				if(!this.keypair.name.trim().length) return 'Enter a name for this Vault Entry';
-				if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return 'A Vault Entry with this name already exists.';
+				if(!this.keypair.name.trim().length) return this.locale(this.langKeys.KEYPAIR.DASHBOARD.ERRORS.InvalidWalletName);
+				if(this.keypairs.find(x => x.id !== this.keypair.id && x.name.toLowerCase() === this.keypair.name.toLowerCase())) return this.locale(this.langKeys.KEYPAIR.DASHBOARD.ERRORS.WalletNameExists);
 				return false;
 			},
 			canCreateAccounts(){

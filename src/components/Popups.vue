@@ -22,6 +22,7 @@
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
                     <section class="pop-in">
+                        <EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />
                         <Prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
                         <TextPrompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id" />
                         <Selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
@@ -54,6 +55,7 @@
     import * as Actions from '../store/constants';
     import {PopupDisplayTypes, PopupTypes, isFullscreen} from '../models/popups/Popup'
 
+    import EnterPIN from './popins/overlay/EnterPIN.vue'
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
     import Prompt from './popins/overlay/Prompt.vue'
@@ -77,8 +79,7 @@
 
     export default {
     	components:{
-		    DestroyScatter,
-		    RemoveLocation,
+    		EnterPIN,
 		    Snackbar,
 		    TransactionSuccess,
 		    Prompt,
@@ -87,6 +88,8 @@
 		    PopInHead,
 
             // FULLSCREEN
+		    DestroyScatter,
+		    RemoveLocation,
 		    ConfirmPassword,
 		    EosChangePermissions,
 		    EosProxyVotes,

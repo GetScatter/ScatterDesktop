@@ -4,7 +4,7 @@
 
             <!-- SELECT EXPORT TYPE -->
             <section key="select" v-if="state === STATES.SELECT">
-                <h1>{{locale(langKeys.KEYPAIR.ExportButton)}} "{{keypair.name}}"</h1>
+                <h1>{{locale(langKeys.GENERIC.Export)}} "{{keypair.name}}"</h1>
 
                 <section class="types">
 

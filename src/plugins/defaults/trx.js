@@ -16,6 +16,8 @@ const ethUtil = require('ethereumjs-util');
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 import Token from "../../models/Token";
 import HardwareService from "../../services/HardwareService";
+import {localizedState} from "../../localization/locales";
+import LANG_KEYS from "../../localization/keys";
 
 let cachedInstances = {};
 const getCachedInstance = network => {
@@ -43,7 +45,7 @@ export default class TRX extends Plugin {
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.TRX }}
 
 	contractPlaceholder(){ return '0x.....'; }
-	recipientLabel(){ return 'Address'; } // TODO: Localize
+	recipientLabel(){ return localizedState(LANG_KEYS.GENERIC.Address); }
 
     getEndorsedNetwork(){
         return new Network('Tron Mainnet', 'https', 'api.trongrid.io', 443, Blockchains.TRX, '1');
@@ -166,7 +168,7 @@ export default class TRX extends Plugin {
             payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
             payload.participants = [account];
             payload.network = account.network();
-            payload.origin = 'Internal Scatter Transfer';
+            payload.origin = 'Scatter';
             const request = {
                 payload,
                 origin:payload.origin,

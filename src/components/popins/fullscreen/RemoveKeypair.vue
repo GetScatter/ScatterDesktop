@@ -23,7 +23,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../fullscreen-popins.scss';
+	import '../../../popins.scss';
 	import {Blockchains} from "../../../models/Blockchains";
 	import FlatList from '../../reusable/FlatList';
 	import AccountService from "../../../services/AccountService";

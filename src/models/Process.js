@@ -1,6 +1,8 @@
 import IdGenerator from "../util/IdGenerator";
 import {store} from "../store/store";
 import * as Actions from '../store/constants';
+import {localizedState} from "../localization/locales";
+import LANG_KEYS from "../localization/keys";
 
 export const PROCESS_TYPES = {
 	IMPORT_ACCOUNTS:'import_accounts',
@@ -57,13 +59,13 @@ export default class Process {
 	}
 
 	static importAccounts(identifier){
-		let process = new Process(PROCESS_TYPES.IMPORT_ACCOUNTS, `Importing Accounts`, identifier)
+		let process = new Process(PROCESS_TYPES.IMPORT_ACCOUNTS, localizedState(LANG_KEYS.PROCESSES.ImportingAccounts), identifier)
 		store.dispatch(Actions.SET_PROCESS, process);
 		return process;
 	}
 
 	static loadResources(identifier){
-		let process = new Process(PROCESS_TYPES.LOAD_RESOURCES, `Loading Account Resources`, identifier)
+		let process = new Process(PROCESS_TYPES.LOAD_RESOURCES, localizedState(LANG_KEYS.PROCESSES.LoadingResources), identifier)
 		store.dispatch(Actions.SET_PROCESS, process);
 		return process;
 	}

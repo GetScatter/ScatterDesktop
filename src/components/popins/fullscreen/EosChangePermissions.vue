@@ -53,7 +53,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../fullscreen-popins.scss';
+	import '../../../popins.scss';
 	import PasswordService from "../../../services/PasswordService";
 	import PopupService from "../../../services/PopupService";
 	import {Popup} from "../../../models/popups/Popup";

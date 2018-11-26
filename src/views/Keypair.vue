@@ -115,7 +115,7 @@
 			        for(let i = 0; i < accounts.length; i++){
 			        	if(process){
 					        process.updateProgress(90 / accounts.length);
-					        process.setSubTitle(`Accounts left: ${accounts.length - i}`);
+					        process.setSubTitle(this.locale(this.langKeys.PROCESSES.AccountsLeft, accounts.length - i));
                         }
 
 				        const resources = await ResourceService.getResourcesFor(accounts[i]);

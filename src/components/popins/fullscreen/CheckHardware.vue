@@ -16,7 +16,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../fullscreen-popins.scss';
+	import '../../../popins.scss';
 	export default {
 		props:['popin'],
 		data () {return {

@@ -125,25 +125,9 @@ export default class PasswordService {
 
     static async verifyPIN(){
         return new Promise(resolve => {
-            const scatter = store.state.scatter;
-
-            const check = async pin => {
-                if(pin === null) resolve(true);
-                else {
-                    if(scatter.pin !== Hasher.unsaltedQuickHash(pin)){
-                        PopupService.push(Popup.prompt("Bad PIN.", "The PIN you entered is invalid. If you can't remember your PIN go to Settings and change it using your Password.", "attention-circled", "Okay"));
-                        resolve(false);
-                    } else resolve(true);
-                }
-            };
-
-            if(!scatter.pin || !scatter.pin.length) return check(null);
-            else PopupService.push(Popup.textPrompt(
-                'Enter PIN',
-                'In order to do this you must enter your PIN',
-                'lock',
-                'Okay', {placeholder:'Enter your PIN', type:'password'},
-                async pin => check(pin ? pin : '')));
+            PopupService.push(Popup.enterPIN(verified => {
+                resolve(verified);
+            }))
         })
     }
 

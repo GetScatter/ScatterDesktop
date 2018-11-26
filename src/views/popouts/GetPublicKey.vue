@@ -163,7 +163,6 @@
             },
             copyKeyPair(){
                 ElectronHelpers.copy(this.keypair.privateKey.toString('hex'));
-                PopupService.push(Popup.snackbar("Keypair copied to clipboard!", "key"))
             },
         },
         props:['payload', 'pluginOrigin'],

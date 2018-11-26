@@ -21,7 +21,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../fullscreen-popins.scss';
+	import '../../../popins.scss';
 	import SocketService from "../../../services/SocketService";
 	import StorageService from "../../../services/StorageService";
 

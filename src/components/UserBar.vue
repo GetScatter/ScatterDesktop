@@ -2,7 +2,7 @@
     <section class="user-bar">
         <section class="actions">
             <router-link :to="{name:RouteNames.IDENTITY}" class="action">
-                Manage Identities
+                {{locale(langKeys.USER_BAR.ManageIdentity)}}
             </router-link>
 
         </section>
