@@ -120,6 +120,14 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, {mnemonic}, () => {}))
 	}
 
+	static removeLocation(identity, location, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_LOCATION, {identity, location}, callback))
+	}
+
+	static destroyScatter(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DESTROY_SCATTER, {}, callback))
+	}
+
 	static checkHardwareWalletScreen(){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHECK_HARDWARE, {}, () => {}))
 	}
@@ -143,6 +151,8 @@ export const PopupTypes = {
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 	REMOVE_KEYPAIR:'removeKeypair',
 	MNEMONIC:'mnemonic',
+	REMOVE_LOCATION:'removeLocation',
+	DESTROY_SCATTER:'destroyScatter',
 	CHECK_HARDWARE:'checkHardware',
 
     TX_SUCCESS:'txSuccess',
@@ -160,6 +170,8 @@ export const isFullscreen = popup => {
         PopupTypes.EOS_MODERATE_CPU_NET,
         PopupTypes.EOS_CREATE_ACCOUNT,
         PopupTypes.MNEMONIC,
+        PopupTypes.REMOVE_LOCATION,
+        PopupTypes.DESTROY_SCATTER,
         PopupTypes.CHECK_HARDWARE,
     ].includes(popup.data.type);
 

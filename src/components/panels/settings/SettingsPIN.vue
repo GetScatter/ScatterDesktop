@@ -2,16 +2,16 @@
     <section>
 
         <section class="action-box top-pad">
-            <label>Change your PIN</label>
+            <label>{{locale(langKeys.SETTINGS.PIN.Label)}}</label>
             <p>
-                Your PIN is a secondary internal password for doing Transfers.<br>
-                <b class="red">Do not make your PIN the same as your password!</b>
+                {{locale(langKeys.SETTINGS.PIN.Description)}}<br>
+                <b class="red">{{locale(langKeys.SETTINGS.PIN.DescriptionRed)}}</b>
             </p>
 
             <br><br>
 
             <cin style="margin-bottom:0;" big="1"
-                 placeholder="PIN Disabled"
+                 :placeholder="locale(langKeys.SETTINGS.PIN.Placeholder)"
                  type="password"
                  :text="pin"
                  v-on:changed="x => pin = x" />
@@ -48,7 +48,9 @@
                 clearTimeout(saveTimeout);
                 saveTimeout = setTimeout(async () => {
                     await PasswordService.setPIN(this.pin, false);
-                    PopupService.push(Popup.snackbar('Saved PIN'))
+                    PopupService.push(Popup.snackbar(
+                    	this.locale(this.langKeys.SETTINGS.PIN.SavedSnackbar)
+                    ))
                 }, 500);
             },
             ...mapActions([

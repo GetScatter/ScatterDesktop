@@ -9,7 +9,7 @@
 
             <br>
             <section class="disclaimer">
-                Private keys are created locally on your computer and never touch the internet.
+                {{locale(langKeys.ADD_KEYS.SELECT.Disclaimer)}}
             </section>
             <br>
 
@@ -133,8 +133,7 @@
 
 	            if(existing){
 		            this.status = null;
-		            this.error = `This Private Key already exists under the name ${existing.name}`;
-		            return false;
+		            return this.$router.push({name: this.RouteNames.KEYPAIR, params: {id: existing.id}});
 	            }
 
 	            keypair.name = `Wallet-${IdGenerator.text(10)}`;

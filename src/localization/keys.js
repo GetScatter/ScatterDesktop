@@ -15,6 +15,52 @@ const prefixKeys = (name, obj, prefix = null) => {
 	return obj;
 };
 
+const GENERIC = prefixKeys('generic', {
+	Back:'back',
+	Confirm:'confirm',
+	Deny:'deny',
+	Okay:'okay',
+	Cancel:'cancel',
+	Open:'open',
+	Yes:'yes',
+	No:'no',
+	Enable:'enable',
+	Disable:'disable',
+	Select:'select',
+	Edit:'edit',
+	Add:'add',
+	Save:'save',
+	New:'new',
+	Delete:'delete',
+	Remove:'remove',
+	RemoveAll:'remove_all',
+	Copy:'copy',
+	Import:'import',
+	Export:'export',
+	Refresh:'refresh',
+	Manage:'manage',
+	PrivateKey:'private_key',
+	PublicKey:'public_key',
+	Keys:'keys',
+	Hide:'hide',
+	Reveal:'reveal',
+	Identity:'identity',
+	Tokens:'tokens',
+	Blockchain:'blockchain',
+	Contract:'contract',
+	Memo:'memo',
+	Symbol:'symbol',
+	Decimals:'decimals',
+	PasswordOrPhrase:'password_or_phrase',
+	Timestamp:'timestamp',
+	ChainID:'chain_id',
+	Name:'name',
+
+	Accounts:'account',
+	AccountName:'account_name',
+	Address:'address',
+});
+
 const LOGIN = prefixKeys('login', {
 	NEW:{
 		Title:'tit',
@@ -28,7 +74,6 @@ const LOGIN = prefixKeys('login', {
 	},
 	EXISTING:{
 		Title:'tit',
-		SubTitle:'sub',
 		PasswordPlaceholder:'password_plc',
 		ResetButton:'reset_btn',
 	},
@@ -45,17 +90,17 @@ const DASHBOARD = prefixKeys('dashboard', {
 		SearchPlaceholder:'search_plc',
 		AddKeysButton:'add_keys',
 		NoKeys:'no_keys',
-		Accounts:'accounts'
+		LinkedAccounts:'linked_accounts',
 	},
 	APPS:{
 		SearchPlaceholder:'search_plc',
 		NoAppsTitle:'no_apps_tit',
 		NoAppsDescription:'no_apps_desc',
-		ExploreAppsButton:'explore_apps_btn',
-		EditApp:'edit_app',
-		DeleteApp:'del_app',
 		LinkPermissionOnly:'link_perm_only',
-		NPermissions:'n_permissions'
+		NPermissions:'n_permissions',
+		NoPermissions:'no_permissions',
+		UnlinkedAppsTitle:'unlinked_apps_tit',
+		UnlinkedAppsSubtitle:'unlinked_apps_sub'
 	},
 	TOOLBARS:{
 		SendButton:'send',
@@ -65,6 +110,7 @@ const DASHBOARD = prefixKeys('dashboard', {
 
 const ADD_KEYS = prefixKeys('add_keys', {
 	SELECT:{
+		Disclaimer:'disclaimer',
 		CreateTitle:'create_tit',
 		CreateDescription:'create_desc',
 		CreateButton:'create_btn',
@@ -92,7 +138,14 @@ const ADD_KEYS = prefixKeys('add_keys', {
 		KeyLabel:'key_lbl',
 		KeyPlaceholder:'key_plc'
 	},
-	IMPORT_HW:{},
+	IMPORT_HW:{
+		SelectHardwareLabel:'sel_hard_lbl',
+		AvailableBlockchainsLabel:'avail_blok_lbl',
+		IndexLabel:'idx_lbl',
+		HardwareError:'hw_err',
+		UnlockLedgerError:'unlock_ledger_err',
+		UnlockedLiquidEOSError:'unlock_liq_eos_err',
+	},
 	IMPORT_QR:{},
 	EOS_KEYS:{
 		DisclaimerTitle:'disc_tit',
@@ -189,8 +242,6 @@ const IDENTITY = prefixKeys('identity', {
 const CREATE_EOS = prefixKeys('create_eos', {
 	DisclaimerTitle:'disc_tit',
 
-	AccountNameLabel:'acc_name_lbl',
-	AccountNamePlaceholder:'acc_name_plc',
 	AccountNameLengthError:'acc_name_len_err',
 	AccountNameFormattingError:'acc_name_form_err',
 	SelectCreatorError:'sel_creator_err',
@@ -207,10 +258,14 @@ const CREATE_EOS = prefixKeys('create_eos', {
 	},
 
 	EXCHANGE:{
-		CopyButton:'cpy_btn',
-		MinimumAmountLabel:'min_amnt_lbl',
-		WithdrawAccountLabel:'with_acc_lbl',
-		MemoLabel:'memo_lbl',
+		ChangeName:'change_name',
+		InfoTitle:'info_tit',
+		InfoSubtitle:'info_sub',
+		UseNameButton:'use_name_btn',
+		ExchangeFieldParts:'ex_field_parts',
+		SentTitle:'sent_tit',
+		SentSubtitle:'sent_sub',
+		TransactionIDLabel:'tx_id_lbl',
 		ActionBarButton:'act_bar_btn',
 	}
 });
@@ -229,15 +284,184 @@ const PERMISSIONS = prefixKeys('permissions', {
 	ActionWhitelist:'act_whitelist'
 });
 
+const SETTINGS = prefixKeys('settings', {
+	Basics:'basics',
+	DangerZone:'danger_zone',
+
+	MENU:{
+		General:'general',
+		Language:'language',
+		Tokens:'tokens',
+		Explorers:'explorers',
+		PIN:'pin',
+		Networks:'networks',
+		Password:'password',
+		Backup:'backup',
+		Destroy:'destroy'
+	},
+
+	GENERAL:{
+		VersionLabel:'version_lbl',
+		UpdateAvailable:'update_avail',
+		NoUpdateAvailable:'no_update_avail',
+		WhitelistNotificationsLabel:'white_noti_lbl',
+		WhitelistNotificationsDescription:'white_noti_desc',
+		DataPathLabel:'data_path_lbl',
+		DataPathDescription:'data_path_desc',
+		DeveloperConsoleLabel:'dev_console_lbl',
+		DeveloperConsoleDescription:'dev_console_desc',
+		DeveloperConsoleButton:'dev_console_btn',
+	},
+
+	TOKENS:{
+		SWITCH:{
+			ADD_TOKEN:'add_token',
+			WHITELIST:'whitelist',
+			BLACKLIST:'blacklist',
+			SETTINGS:'settings',
+		},
+
+		ADD_TOKEN:{
+			Disclaimer:'disclaimer',
+			TokenNamePlaceholder:'tok_name_plc',
+			TokenNameLabel:'tok_name_lbl',
+			WhitelistTokenButton:'white_tok_btn',
+			BlacklistTokenButton:'black_tok_btn',
+		},
+
+		SETTINGS: {
+			MainBalanceDisplayLabel:'main_bal_dis_lbl',
+			MainBalanceDisplayDescription:'main_bal_dis_desc',
+			MainBalanceDisplayMainnetButton:'main_bal_dis_main_btn',
+			MainBalanceDisplayAllNetworksButton:'main_bal_dis_all_btn',
+			FilterSmallBalancesLabel:'filter_small_bal_lbl',
+			FilterSmallBalancesDescription:'filter_small_bal_desc',
+		},
+
+		WHITE_BLACK:{
+			TokenFilterLabel:'tok_filter_lbl',
+			TokenSearchPlaceholder:'tok_search_plc',
+
+			WHITELIST:{
+				Disclaimer:'disclaimer',
+				FiatCurrencyLabel:'fiat_curr_lbl',
+				SystemTokensLabel:'sys_tok_lbl',
+				CustomTokensLabel:'cus_tok_lbl',
+			},
+
+			BLACKLIST:{
+				Disclaimer:'disclaimer',
+				DisclaimerSubtitle:'disclaimer',
+			},
+		},
+	},
+
+	PIN:{
+		Label:'label',
+		Description:'desc',
+		DescriptionRed:'desc_red',
+		Placeholder:'placeholder',
+		SavedSnackbar:'save_snack'
+	},
+
+	NETWORKS:{
+		SWITCH:{
+			Known:'known',
+			Custom:'custom',
+		},
+
+		KNOWN:{
+			AddLabel:'add_label',
+			AddDescription:'add_desc',
+		},
+
+		CUSTOM:{
+			NamePlaceholder:'name_plc',
+			HostLabel:'host_lbl',
+			ProtocolLabel:'proto_lbl',
+			PortLabel:'port_lbl',
+			ChainIdTooltip:'chain_id_tool',
+			FromOriginPlaceholder:'from_origin_plc',
+			CustomSystemTokenLabel:'cus_sys_tok_lbl',
+			CustomSystemTokenDescription:'cus_sys_tok_desc',
+			CustomSystemTokenUseDefaultButton:'cus_sys_tok_def_btn',
+			CustomSystemTokenUseCustomButton:'cus_sys_tok_use_cus_btn',
+			UsingCustomSystemToken:'using_cus_sys_tok',
+		}
+	},
+
+	PASSWORD:{
+		ChangePasswordLabel:'cng_pass_lbl',
+		ChangePasswordDescription:'cng_pass_desc',
+		NewPasswordLabel:'new_pass_lbl',
+		NewPasswordPlaceholder:'new_pass_plc',
+		ConfirmPasswordLabel:'conf_pass_lbl',
+		ConfirmPasswordPlaceholder:'conf_pass_plc',
+		ChangePasswordButton:'cng_pass_btn',
+		ViewMnemonicLabel:'view_mne_lbl',
+		ViewMnemonicDescription:'view_mne_desc',
+		ViewMnemonicButton:'view_mne_btn',
+		ChangedPasswordSnackbar:'changed_pass_snack'
+	},
+
+	BACKUP:{
+		Label:'lbl',
+		Description:'desc',
+		AutoBackupLocationLabel:'auto_backup_lbl',
+		CreateBackupButton:'create_backup_btn',
+		CurrentBackupFolderLabel:'curr_backup_lbl',
+	},
+
+	DESTROY:{
+		Label:'lbl',
+		Description:'desc',
+		Important:'imp',
+		Button:'btn',
+	}
+});
+
+const TRANSFER = prefixKeys('transfer', {
+	SendButton:'send_btn',
+
+	FROM:{
+		FromLabel:'from_lbl',
+		SendingAccountsLabel:'send_acc_lbl',
+	},
+
+	TOKENS:{
+		AmountLabel:'amount_lbl',
+		CustomTokenLabel:'cus_tok_lbl',
+		SaveTokenButton:'save_tok_btn',
+	},
+
+	RECIPIENT:{
+		RecipientLabel:'rec_lbl',
+		SendToContact:'send_to_contact',
+		SendDirectly:'send_directly',
+		SearchContactsPlaceholder:'search_contacts_plc',
+		ContactsLabel:'contacts_lbl',
+		VerifyRecipient:'verify_recipient',
+		ContactNamePlaceholder:'contact_name_plc',
+		ContactNameLabel:'contact_name_lbl',
+	},
+
+	ERRORS:{
+		InvalidRecipient:'invalid_rec',
+		InvalidAmount:'invalid_amnt'
+	}
+});
 
 export default {
+	GENERIC,
 	LOGIN,
 	DASHBOARD,
 	ADD_KEYS,
 	KEYPAIR,
 	IDENTITY,
 	CREATE_EOS,
-	PERMISSIONS
+	PERMISSIONS,
+	SETTINGS,
+	TRANSFER
 }
 
 

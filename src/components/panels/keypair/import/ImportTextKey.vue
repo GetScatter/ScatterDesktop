@@ -54,7 +54,7 @@
 				const existing = this.keypairs.find(x => x.keyHash === keypair.keyHash);
 				if(existing){
 					this.importing = false;
-					return this.error = `You already have this key imported under ${existing.name}.`;
+					return this.$router.push({name: this.RouteNames.KEYPAIR, params: {id: existing.id}});
 				}
 
 

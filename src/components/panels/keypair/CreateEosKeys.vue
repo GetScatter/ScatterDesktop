@@ -76,7 +76,7 @@
 						description:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.OwnerDescription),
 						actions:[
 							{
-								name:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CopyButton),
+								name:this.locale(this.langKeys.GENERIC.Copy),
 								handler:() => this.copy('owner'),
 								important:true
 							}
@@ -89,7 +89,7 @@
 						description:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.ActiveDescription),
 						actions:[
 							{
-								name:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CopyButton),
+								name:this.locale(this.langKeys.GENERIC.Copy),
 								handler:() => this.copy('active'),
 								important:true
 							}
@@ -144,7 +144,7 @@
 				}
 
 				if(keyType === 'owner'){
-					item.actions = [{name:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.DeleteButton), handler:this.deleteOwner, red:true, important:true}]
+					item.actions = [{name:this.locale(this.langKeys.GENERIC.Remove), handler:this.deleteOwner, red:true, important:true}]
 				} else {
 					item.actions = [{icon:'icon-check', name:'', handler:() => this.copy(keyType), blue:true}];
 				}

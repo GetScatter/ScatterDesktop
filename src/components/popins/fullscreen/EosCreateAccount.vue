@@ -2,7 +2,7 @@
 
 	<section>
 		<back-bar :text="state === STATES.SEND_AMOUNT ? accountName : null"
-		          :subtext="state === STATES.SEND_AMOUNT ? 'Want to change names?' : null"
+		          :subtext="state === STATES.SEND_AMOUNT ? locale(langKeys.CREATE_EOS.EXCHANGE.ChangeName) : null"
 		          v-on:back="back" />
 
 		<!----------------------------->
@@ -12,8 +12,8 @@
 			<section class="name-input">
 				<cin centered="1" :error="accountNameError"
 				     big="1"
-				     :label="locale(langKeys.CREATE_EOS.AccountNameLabel)"
-				     :placeholder="locale(langKeys.CREATE_EOS.AccountNamePlaceholder)"
+				     :label="locale(langKeys.GENERIC.AccountName)"
+				     :placeholder="locale(langKeys.GENERIC.AccountName)"
 				     :text="accountName" v-on:changed="x => accountName = x" />
 			</section>
 
@@ -69,16 +69,18 @@
 			<img src="../../../assets/piggy_bank.png" style="margin-top:-50px;" />
 			<br>
 			<section class="name-input" style="padding-top:0; max-width:400px;">
-				<cin centered="1" :error="accountNameError"
+				<cin centered="1"
+				     :error="accountNameError"
 				     big="1"
-				     :label="locale(langKeys.CREATE_EOS.AccountNameLabel)"
-				     :placeholder="locale(langKeys.CREATE_EOS.AccountNamePlaceholder)"
+				     :label="locale(langKeys.GENERIC.AccountName)"
+				     :placeholder="locale(langKeys.GENERIC.AccountName)"
 				     :text="accountName" v-on:changed="x => accountName = x" />
 			</section>
 
 			<section class="action-bar short bottom centered">
-				<btn blue="1" :disabled="accountNameError"
-				     text="Use Name"
+				<btn blue="1"
+				     :disabled="accountNameError"
+				     :text="locale(langKeys.CREATE_EOS.EXCHANGE.UseNameButton)"
 				     v-on:clicked="state = STATES.SEND_AMOUNT" />
 			</section>
 		</section>
@@ -86,27 +88,20 @@
 		<section class="full-panel center-fold inner with-action limited" v-if="state === STATES.SEND_AMOUNT">
 			<section class="padded">
 				<section style="margin:0 auto;" class="disclaimer less-pad">
-					You need to pay for the resources needed to create accounts on the EOS blockchain.
-					<p>All of the extra funds you send will be transferred to the account.</p>
+					{{locale(langKeys.CREATE_EOS.EXCHANGE.InfoTitle)}}
+					<p>{{locale(langKeys.CREATE_EOS.EXCHANGE.InfoSubtitle)}}</p>
 				</section>
-				<!--<section class="disclaimer less-pad">-->
-					<!--EOS accounts need to be paid for so that they can exist on the network.-->
-					<!--<p>All of the extra funds you send will be transferred to the account.</p>-->
-				<!--</section>-->
-				<figure class="line"></figure>
 
-				<!--<section class="details">-->
-					<!--<figure class="title">Please send Nudes</figure>-->
-				<!--</section>-->
+				<figure class="line"></figure>
 
 				<section class="details" style="display:flex;">
 					<figure class="title inline-input">
-						Send at least
+						{{locale(langKeys.CREATE_EOS.EXCHANGE.ExchangeFieldParts)[0]}}
 					</figure>
 					<cin style="margin-bottom:0; flex:1;" disabled="1"
 					     :text="`${minimumPrice} ${systemSymbol}`" copy="1" />
 					<figure class="title inline-input">
-						to account
+						{{locale(langKeys.CREATE_EOS.EXCHANGE.ExchangeFieldParts)[1]}}
 					</figure>
 					<cin style="margin-bottom:0; flex:1;" disabled="1"
 					     text="makeaccounts" copy="1" />
@@ -115,31 +110,36 @@
 				<br>
 				<section class="details" style="display:flex;">
 					<figure class="title inline-input">
-						with
+						{{locale(langKeys.CREATE_EOS.EXCHANGE.ExchangeFieldParts)[2]}}
 					</figure>
 					<cin red="1" style="margin-bottom:0; flex:1;" disabled="1"
 					     :text="memo" copy="1" />
 					<figure class="title inline-input" style="margin-right:0;">
-						as the Memo
+						{{locale(langKeys.CREATE_EOS.EXCHANGE.ExchangeFieldParts)[3]}}
 					</figure>
 				</section>
 
 				<figure class="line"></figure>
 
 				<section class="details less-pad" style="display:block;">
-					<section class="title">After sending EOS from an exchange with the above details, copy the transaction ID here.</section>
-					<p>You must wait for the transaction to be irreversible, this takes around 3 minutes.</p>
+					<section class="title">{{locale(langKeys.CREATE_EOS.EXCHANGE.SentTitle)}}</section>
+					<p>{{locale(langKeys.CREATE_EOS.EXCHANGE.SentSubtitle)}}</p>
 				</section>
 				<br>
-				<cin placeholder="Transaction ID" big="1" :text="transactionId" v-on:changed="x => transactionId = x" />
+				<cin :placeholder="locale(langKeys.CREATE_EOS.EXCHANGE.TransactionIDLabel)"
+				     big="1"
+				     :text="transactionId"
+				     v-on:changed="x => transactionId = x" />
 
 			</section>
 
 
 
 			<section class="action-bar short bottom centered">
-				<btn blue="1" :disabled="accountNameError || !transactionId.length"
-				     :text="locale(langKeys.CREATE_EOS.EXCHANGE.ActionBarButton)" v-on:clicked="createExchangeAccount" />
+				<btn blue="1"
+				     :disabled="accountNameError || !transactionId.length"
+				     :text="locale(langKeys.CREATE_EOS.EXCHANGE.ActionBarButton)"
+				     v-on:clicked="createExchangeAccount" />
 			</section>
 		</section>
 

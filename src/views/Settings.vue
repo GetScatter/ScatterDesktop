@@ -8,28 +8,28 @@
             <section class="split-panel dynamic no-divider">
                 <section class="panel menu padded">
 
-                    <label>Basics</label>
+                    <label>{{locale(langKeys.SETTINGS.Basics)}}</label>
 
                     <section class="group-list">
                         <section class="item"
                                  v-for="item in generalItems"
                                  :class="{'selected':selectedOption.name === item.name}"
                                  @click="selectOption(item)">
-                            {{item.name}}
+                            {{translate(item)}}
                         </section>
                     </section>
 
 
                     <br><br>
 
-                    <label class="red">Danger Zone</label>
+                    <label class="red">{{locale(langKeys.SETTINGS.DangerZone)}}</label>
 
                     <section class="group-list" :class="{'danger':!unlocked}">
                         <section class="item"
                                  v-for="item in lockedItems"
                                  :class="{'selected':selectedOption.name === item.name}"
                                  @click="selectOption(item)">
-                            {{item.name}}
+                            {{translate(item)}}
                         </section>
                     </section>
 
@@ -38,7 +38,7 @@
                 <section class="panel">
                     <section v-if="selectedOption" class="settings-panels padded">
                         <br>
-                        <h1>{{selectedOption.name}}</h1>
+                        <h1>{{translate(selectedOption)}}</h1>
 
                         <SettingsGeneral v-if="selectedOption.name === settingsOptions.GENERAL.name" />
                         <SettingsLanguage v-if="selectedOption.name === settingsOptions.LANGUAGE.name" />
@@ -64,7 +64,6 @@
     import * as Actions from '../store/constants';
     import {Popup} from '../models/popups/Popup'
     import PopupService from '../services/PopupService'
-    import PasswordService from '../services/PasswordService'
 
     import {SETTINGS_OPTIONS} from '../models/Settings';
 
@@ -144,6 +143,9 @@
 			        this.selectOption(option);
                 }))
             },
+	        translate(option){
+	        	return this.locale(this.langKeys.SETTINGS.MENU[option.name]);
+            }
         }
     }
 </script>

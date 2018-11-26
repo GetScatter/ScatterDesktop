@@ -2,7 +2,7 @@
     <section>
 
         <section class="action-box top-pad">
-            <label>Version</label>
+            <label>{{locale(langKeys.SETTINGS.GENERAL.VersionLabel)}}</label>
             <b>Scatter Desktop v{{version}}</b>
 
             <btn :class="{'wiggle':needsUpdate}"
@@ -10,31 +10,38 @@
                  :red="needsUpdate"
                  v-on:clicked="openUpdateLink"
                  :text="needsUpdate
-                 ? 'Update Available'
-                 : 'No Update Needed'"
+                 ? locale(langKeys.SETTINGS.GENERAL.UpdateAvailable)
+                 : locale(langKeys.SETTINGS.GENERAL.NoUpdateAvailable)"
             />
         </section>
 
         <section class="action-box top-pad">
-            <label>Whitelist Notifications</label>
-            <p>These notifications appear on certain operating systems when you auto-sign whitelisted transactions.</p>
+            <label>{{locale(langKeys.SETTINGS.GENERAL.WhitelistNotificationsLabel)}}</label>
+            <p>{{locale(langKeys.SETTINGS.GENERAL.WhitelistNotificationsDescription)}}</p>
 
-            <btn v-on:clicked="toggleNotifications" :red="showNotifications" :text="!showNotifications ? 'Enable' : 'Disable'" />
+            <btn v-on:clicked="toggleNotifications"
+                 :red="showNotifications"
+                 :text="!showNotifications
+                    ? locale(langKeys.GENERIC.Enable)
+                    : locale(langKeys.GENERIC.Disable)" />
         </section>
 
         <section class="action-box top-pad">
-            <label>Data Path</label>
-            <p>The location on your computer that Scatter saves it's encrypted data to.</p>
+            <label>{{locale(langKeys.SETTINGS.GENERAL.DataPathLabel)}}</label>
+            <p>{{locale(langKeys.SETTINGS.GENERAL.DataPathDescription)}}</p>
 
             <br>
             <br>
-            <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty" dynamic-tooltip="Open Folder" disabled="1" copy="1" :text="dataPath" v-on:dynamic="openFilePathLink"></cin>
+            <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty"
+                 disabled="1" copy="1" :text="dataPath"
+                 v-on:dynamic="openFilePathLink"></cin>
         </section>
 
         <section class="action-box top-pad">
-            <label>Developer Console</label>
-            <p>Sometimes you might need to see if Scatter is throwing any errors.</p>
-            <btn @click.native="openConsole" text="Open Console"></btn>
+            <label>{{locale(langKeys.SETTINGS.GENERAL.DeveloperConsoleLabel)}}</label>
+            <p>{{locale(langKeys.SETTINGS.GENERAL.DeveloperConsoleDescription)}}</p>
+            <btn @click.native="openConsole"
+                 :text="locale(langKeys.SETTINGS.GENERAL.DeveloperConsoleButton)"></btn>
         </section>
 
     </section>

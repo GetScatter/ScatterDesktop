@@ -2,8 +2,8 @@
     <section>
 
         <section class="panel-switch" v-if="addableNetworks.length">
-            <figure class="button" :class="{'active':state === STATES.KNOWN}" @click="state = STATES.KNOWN">Known Networks</figure>
-            <figure class="button" :class="{'active':state === STATES.CUSTOM}" @click="state = STATES.CUSTOM">Your Networks</figure>
+            <figure class="button" :class="{'active':state === STATES.KNOWN}" @click="state = STATES.KNOWN">{{locale(langKeys.SETTINGS.NETWORKS.SWITCH.Known)}}</figure>
+            <figure class="button" :class="{'active':state === STATES.CUSTOM}" @click="state = STATES.CUSTOM">{{locale(langKeys.SETTINGS.NETWORKS.SWITCH.Custom)}}</figure>
         </section>
 
         <br>
@@ -12,8 +12,8 @@
         <section v-if="state === STATES.KNOWN">
 
             <section class="action-box top-pad" style="margin-top:0;">
-                <label>Add a known network</label>
-                You can add highly used blockchain networks easily without having to enter their details manually.
+                <label>{{locale(langKeys.SETTINGS.NETWORKS.KNOWN.AddLabel)}}</label>
+                {{locale(langKeys.SETTINGS.NETWORKS.KNOWN.AddDescription)}}
                 <br><br>
                 <br>
                 <section class="split-inputs">
@@ -22,9 +22,10 @@
                          :selected="knownNetwork"
                          :parser="x => x.name"
                          :subparser="x => blockchainName(x.blockchain)"
-                         v-on:changed="x => knownNetwork = x"></sel>
+                         v-on:changed="x => knownNetwork = x" />
 
-                    <btn style="flex:1; font-size: 11px; margin-top:0;" text="Add Network" v-on:clicked="addKnownNetwork" />
+                    <btn style="flex:1; font-size: 11px; margin-top:0;"
+                         :text="locale(langKeys.GENERIC.Add)" v-on:clicked="addKnownNetwork" />
                 </section>
             </section>
 
@@ -36,15 +37,15 @@
                 <sel :disabled="isNew" :options="networks" style="flex:3;"
                      :selected="network"
                      :parser="x => x.name"
-                     v-on:changed="x => selectNetwork(x)"></sel>
+                     v-on:changed="x => selectNetwork(x)" />
 
                 <section style="flex:1.5;" class="split-inputs" v-if="isNew || networkChanged">
-                    <btn style="flex:1; font-size: 11px;" text="Save" v-on:clicked="save" :blue="newNetworkReady || !isNew" />
+                    <btn style="flex:1; font-size: 11px;" :text="locale(langKeys.GENERIC.Save)" v-on:clicked="save" :blue="newNetworkReady || !isNew" />
                     <btn style="flex:0.1;" icon="icon-cancel" v-on:clicked="cancelAdd" />
                 </section>
 
                 <section style="flex:1.5;" class="split-inputs" v-else>
-                    <btn style="flex:1; font-size: 11px;" text="Add" v-on:clicked="addNetwork" />
+                    <btn style="flex:1; font-size: 11px;" :text="locale(langKeys.GENERIC.Add)" v-on:clicked="addNetwork" />
                     <btn style="flex:0.1;" icon="icon-cancel" v-on:clicked="removeNetwork" />
                 </section>
             </section>
@@ -53,55 +54,75 @@
             <section class="action-box top-pad" style="margin-top:10px; padding-bottom:0;">
                 <section v-if="network">
 
-                    <sel label="Blockchain"
+                    <sel :label="locale(langKeys.GENERIC.Blockchain)"
                          :disabled="!isNew"
                          :selected="{value:network.blockchain}"
                          :options="blockchains"
                          :parser="blockchain => blockchainName(blockchain.value)"
-                         v-on:changed="blockchain => network.blockchain = blockchain.value"></sel>
+                         v-on:changed="blockchain => network.blockchain = blockchain.value" />
                     <br>
 
                     <section class="split-inputs">
-                        <cin label="Name" placeholder="Local Network" :text="network.name" v-on:changed="changed => bind(changed, 'network.name')"></cin>
-                        <cin label="Host ( domain.com or IP )" placeholder="127.0.0.1" :text="network.host" v-on:changed="changed => bind(changed, 'network.host')"></cin>
+                        <cin :label="locale(langKeys.GENERIC.Name)"
+                             :placeholder="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.NamePlaceholder)"
+                             :text="network.name"
+                             v-on:changed="changed => bind(changed, 'network.name')"></cin>
+                        <cin :label="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.HostLabel)"
+                             placeholder="127.0.0.1"
+                             :text="network.host"
+                             v-on:changed="changed => bind(changed, 'network.host')"></cin>
                     </section>
 
                     <section class="split-inputs">
-                        <sel style="flex:1;" label="Protocol" :selected="network.protocol" :options="['http', 'https']" v-on:changed="x => network.protocol = x"></sel>
-                        <cin style="flex:1; margin-bottom:0;" label="Port" placeholder="Port" type="number" :text="network.port > 0 ? network.port : ''" v-on:changed="changed => bind(changed, 'network.port')"></cin>
+                        <sel style="flex:1;"
+                             :label="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.ProtocolLabel)"
+                             :selected="network.protocol"
+                             :options="['http', 'https']"
+                             v-on:changed="x => network.protocol = x" />
+
+                        <cin style="flex:1; margin-bottom:0;"
+                             :label="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.PortLabel)"
+                             placeholder="443"
+                             type="number"
+                             :text="network.port > 0 ? network.port : ''"
+                             v-on:changed="changed => bind(changed, 'network.port')" />
                     </section>
 
                     <br>
 
-                    <cin label="Chain ID"
+                    <cin :label="locale(langKeys.GENERIC.ChainID)"
                          :disabled="!isNew"
-                         placeholder="Chain ID"
+                         placeholder="x..."
                          :text="network.chainId"
                          :dynamic-button="!isNew ? null : 'icon-globe-1'"
-                         dynamic-tooltip="Fetch Chain ID"
+                         :dynamic-tooltip="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.ChainIdTooltip)"
                          :copy="!isNew"
                          v-on:dynamic="fetchChainId"
                          v-on:changed="changed => bind(changed, 'network.chainId')" />
 
-                    <cin :disabled="true" v-if="!isNew && network.fromOrigin" placeholder="From Origin" :text="network.fromOrigin" />
-                    <cin :disabled="true" v-if="!isNew && network.fromOrigin" placeholder="Timestamp" :text="new Date(network.createdAt).toLocaleString()" />
+                    <cin :disabled="true" v-if="!isNew && network.fromOrigin"
+                         :placeholder="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.FromOriginPlaceholder)"
+                         :text="network.fromOrigin" />
+                    <cin :disabled="true" v-if="!isNew && network.fromOrigin"
+                         :placeholder="locale(langKeys.GENERIC.Timestamp)"
+                         :text="new Date(network.createdAt).toLocaleString()" />
 
                 </section>
             </section>
 
             <section class="action-box top-pad" style="margin-top:10px;" v-if="network && (isNew || network.token)">
-                <label>Custom System Token</label>
+                <label>{{locale(langKeys.SETTINGS.NETWORKS.CUSTOM.CustomSystemTokenLabel)}}</label>
                 <section v-if="isNew">
-                    <p>In some cases you might need to change the system token.</p>
+                    <p>{{locale(langKeys.SETTINGS.NETWORKS.CUSTOM.CustomSystemTokenDescription)}}</p>
 
                     <btn :red="!!network.token" style="float:right;"
                          :text="network.token
-                     ? 'Use Default System Token'
-                     : 'Use Custom System Token'"
+                     ? locale(langKeys.SETTINGS.NETWORKS.CUSTOM.CustomSystemTokenUseDefaultButton)
+                     : locale(langKeys.SETTINGS.NETWORKS.CUSTOM.CustomSystemTokenUseCustomButton)"
                          v-on:clicked="useCustomToken" />
                 </section>
                 <section v-else>
-                    <p>This network is using a custom token.</p>
+                    <p>{{locale(langKeys.SETTINGS.NETWORKS.CUSTOM.UsingCustomSystemToken)}}</p>
                 </section>
 
                 <section v-if="network.token">
@@ -111,11 +132,16 @@
                          :text="network.token.contract"
                          :disabled="!isNew"
                          v-on:changed="x => network.token.contract = x"
-                         label="Contract" />
+                         :label="locale(langKeys.GENERIC.Contract)" />
                     <br>
                     <section class="split-inputs">
-                        <cin :disabled="!isNew" placeholder="XXX" label="Symbol" :text="network.token.symbol" v-on:changed="x => network.token.symbol = x" />
-                        <cin :disabled="!isNew" placeholder="4" type="number" label="Decimals" :text="network.token.decimals" v-on:changed="x => network.token.decimals = x" />
+                        <cin :disabled="!isNew" placeholder="XXX"
+                             :label="locale(langKeys.GENERIC.Symbol)"
+                             :text="network.token.symbol"
+                             v-on:changed="x => network.token.symbol = x" />
+                        <cin :disabled="!isNew" placeholder="4" type="number"
+                             :label="locale(langKeys.GENERIC.Decimals)"
+                             :text="network.token.decimals" v-on:changed="x => network.token.decimals = x" />
                     </section>
                 </section>
             </section>

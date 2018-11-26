@@ -13,7 +13,7 @@
 
 			<btn small="1"
 			     v-on:clicked="copyPublicKey(keypair.publicKeys.find(x => x.blockchain === blockchain).key)"
-			     :text="locale(langKeys.KEYPAIR.BLOCKCHAINS.CopyButton)"></btn>
+			     :text="locale(langKeys.GENERIC.Copy)"></btn>
 
 		</section>
 	</section>

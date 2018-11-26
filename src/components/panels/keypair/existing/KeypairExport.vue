@@ -87,7 +87,7 @@
 		                    handler:() => this.revealPrivateKey(blockchain)
 	                    },
                         {
-	                        name:this.locale(this.langKeys.KEYPAIR.EXPORT.KEY.CopyButton),
+	                        name:this.locale(this.langKeys.GENERIC.Copy),
 	                        handler:() => this.copyPrivateKey(blockchain)
                         },
                     ]

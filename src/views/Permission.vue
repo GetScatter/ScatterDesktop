@@ -21,7 +21,7 @@
                             :label="locale(langKeys.PERMISSIONS.ListLabel)"
                             :items="permissionsList"
                             selected-icon="icon-check"
-                            :selected="selected"
+                            :selected="selected.id"
                             v-on:selected="selectPermission" />
 
                 <section class="panel" style="flex:2;">
@@ -58,7 +58,7 @@
                                 <figure v-if="isAction">{{locale(langKeys.PERMISSIONS.RemoveWhitelistLabel)}}</figure>
 
                                 <btn style="width:200px; float:right;"
-                                     :text="locale(langKeys.PERMISSIONS.RemoveButton)" red="1"
+                                     :text="locale(langKeys.GENERIC.Remove)" red="1"
                                      v-on:clicked="removeSelected" />
                             </section>
                         </section>
@@ -118,7 +118,7 @@
         },
         mounted(){
         	this.buttons = [
-		        {text:this.locale(this.langKeys.PERMISSIONS.RemoveAllButton), clicked:this.removeAll, red:true}
+		        {text:this.locale(this.langKeys.GENERIC.RemoveAll), clicked:this.removeAll, red:true}
             ];
 
 	        this.origin = this.$route.params.origin;

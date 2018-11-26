@@ -60,12 +60,12 @@
 		    if(!this.keypair) this.$router.push({name:this.RouteNames.HOME});
 
 		    const locale = this.locale;
-		    const {KEYPAIR} = this.langKeys;
+		    const {GENERIC} = this.langKeys;
 
 		    this.buttons = [
-			    {text:locale(KEYPAIR.ExportButton), clicked:this.enableExportKey},
-			    {text:locale(KEYPAIR.RefreshButton), clicked:this.refreshAccounts, process:this.keypair.unique()},
-			    {text:locale(KEYPAIR.RemoveButton), clicked:this.remove, process:this.keypair.unique()},
+			    {text:locale(GENERIC.Export), clicked:this.enableExportKey},
+			    {text:locale(GENERIC.Refresh), clicked:this.refreshAccounts, process:this.keypair.unique()},
+			    {text:locale(GENERIC.Remove), clicked:this.remove, process:this.keypair.unique()},
 		    ];
 
 		    this.lazyLoadResources();

@@ -4,16 +4,12 @@
 
 		<transition name="slide-right" mode="out-in">
 
-
 			<!-- HAS APPS -->
 			<section key="apps" class="list-container" v-if="permissions.length || searchTerms.length">
-
-
 
 				<section class="list">
 					<section v-for="(list, i) in [origins, originsFromSearch]">
 						<section class="item" v-for="(count, origin) in list">
-
 
 							<!-- APP ICON -->
 							<section class="icon-wrapper" @click="openApp(origin)">
@@ -33,27 +29,27 @@
 
 								<p v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
 								<p v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
-								<p v-if="count === 0">No permissions.</p>
+								<p v-if="count === 0">{{locale(langKeys.DASHBOARD.APPS.NoPermissions)}}</p>
 
 								<section class="actions" v-if="count !== 0">
 								<span @click="goToPermission(origin)">
-									{{locale(langKeys.DASHBOARD.APPS.EditApp)}}
+									{{locale(langKeys.GENERIC.Edit)}}
 								</span>
 									<span @click="removePermissions(origin)">
-									{{locale(langKeys.DASHBOARD.APPS.DeleteApp)}}
+									{{locale(langKeys.GENERIC.Remove)}}
 								</span>
 								</section>
 							</section>
 
 							<section class="button" v-if="getAppData(origin).url.length">
-								<btn text="Open" v-on:clicked="openApp(origin)" />
+								<btn :text="locale(langKeys.GENERIC.Open)" v-on:clicked="openApp(origin)" />
 							</section>
 
 						</section>
 
 						<figure class="breaker disclaimer less-pad" v-if="i === 0 && Object.keys(originsFromSearch).length">
-							Below are apps that you aren't linked with.<br>
-							<span>Note that these apps are not added by the Scatter team, but by the apps themselves. The display of any app is not an endorsement of any kind, just a discovery mechanism.</span>
+							{{locale(langKeys.DASHBOARD.APPS.UnlinkedAppsTitle)}}<br>
+							<span>{{locale(langKeys.DASHBOARD.APPS.UnlinkedAppsSubtitle)}}</span>
 						</figure>
 					</section>
 

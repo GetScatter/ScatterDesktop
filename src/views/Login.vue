@@ -37,9 +37,6 @@
                 <section>
                     <figure class="badge">S</figure>
                     <h1>{{locale(langKeys.LOGIN.EXISTING.Title)}}</h1>
-                    <p class="limited-p">{{locale(langKeys.LOGIN.EXISTING.SubTitle)}}</p>
-                    <br>
-                    <br>
                     <cin style="width:350px;" :focus="true" big="1"
                          :placeholder="locale(langKeys.LOGIN.EXISTING.PasswordPlaceholder)"
                          type="password" :disabled="isLockedOut"
@@ -288,7 +285,6 @@
 								return x;
 							})
 							.map(async x => {
-								console.log('x', x);
 								const keypair = Keypair.fromJson({
 									name:x.name,
 									blockchains:[x.blockchain],
@@ -322,9 +318,7 @@
 
 				fs.readFile(file, 'utf-8', (err, data) => {
 
-					console.log('file', file);
 					const fileExtension = file.split('.')[file.split('.').length-1];
-					console.log('extension', fileExtension);
 
 					if(err) {
 						unrestore();
@@ -332,7 +326,7 @@
 					}
 
 					PopupService.push(Popup.verifyPassword(async password => {
-						if(!password || !password.length) return;
+						if(!password || !password.length) return unrestore();
 
 						try {
 							switch(fileExtension){

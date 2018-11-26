@@ -16,6 +16,8 @@
                     <Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />
                     <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
                     <CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />
+                    <RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />
+                    <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                 </section>
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -70,9 +72,13 @@
     import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
     import CheckHardware from "./popins/fullscreen/CheckHardware";
+    import RemoveLocation from "./popins/fullscreen/RemoveLocation";
+    import DestroyScatter from "./popins/fullscreen/DestroyScatter";
 
     export default {
     	components:{
+		    DestroyScatter,
+		    RemoveLocation,
 		    Snackbar,
 		    TransactionSuccess,
 		    Prompt,

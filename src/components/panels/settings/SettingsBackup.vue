@@ -2,20 +2,24 @@
     <section>
 
         <section class="action-box top-pad">
-            <label>Configure Backups</label>
-            <p>Every time you change your password you will get a new Mnemonic ( Seed Phrase ) which is your alternate password for unlocking Scatter.</p>
+            <label>{{locale(langKeys.SETTINGS.BACKUP.Label)}}</label>
+            <p>{{locale(langKeys.SETTINGS.BACKUP.Description)}}</p>
 
             <br><br>
 
             <section class="split-inputs">
-                <btn style="flex:1;" text="Auto-Backup Location" v-on:clicked="setBackupLocation()" />
-                <btn text="Create Backup" v-on:clicked="createBackup" />
+                <btn style="flex:1;" :text="locale(langKeys.SETTINGS.BACKUP.AutoBackupLocationLabel)"
+                     v-on:clicked="setBackupLocation()" />
+                <btn :text="locale(langKeys.SETTINGS.BACKUP.CreateBackupButton)"
+                     v-on:clicked="createBackup" />
             </section>
         </section>
 
         <section class="action-box top-pad">
-            <label>Current Backup Folder</label>
-            <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty" dynamic-tooltip="Open Folder" disabled="1" :text="scatter.settings.backupLocation" v-on:dynamic="openFilePathLink"></cin>
+            <label>{{locale(langKeys.SETTINGS.BACKUP.CurrentBackupFolderLabel)}}</label>
+            <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty"
+                 disabled="1" :text="scatter.settings.backupLocation"
+                 v-on:dynamic="openFilePathLink"></cin>
         </section>
 
     </section>

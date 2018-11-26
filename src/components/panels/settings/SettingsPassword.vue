@@ -2,32 +2,33 @@
     <section>
 
         <section class="action-box top-pad">
-            <label>Change your Password</label>
-            <p>Every time you change your password you will get a new Mnemonic ( Seed Phrase ) which is your alternate password for unlocking Scatter.</p>
+            <label>{{locale(langKeys.SETTINGS.PASSWORD.ChangePasswordLabel)}}</label>
+            <p>{{locale(langKeys.SETTINGS.PASSWORD.ChangePasswordDescription)}}</p>
 
             <br><br>
 
-            <cin label="New Password"
-                 placeholder="Password"
+            <cin :label="locale(langKeys.SETTINGS.PASSWORD.NewPasswordLabel)"
+                 :placeholder="locale(langKeys.SETTINGS.PASSWORD.NewPasswordPlaceholder)"
                  type="password"
                  :text="password"
                  v-on:changed="x => password = x" />
 
-            <cin label="Confirm new Password"
-                 placeholder="Confirm Password"
+            <cin :label="locale(langKeys.SETTINGS.PASSWORD.ConfirmPasswordLabel)"
+                 :placeholder="locale(langKeys.SETTINGS.PASSWORD.ConfirmPasswordPlaceholder)"
                  type="password"
                  :text="confirmPassword"
                  v-on:changed="x => confirmPassword = x" />
 
-            <btn red="true" v-on:clicked="changePassword" text="Change Password" />
+            <btn red="true" v-on:clicked="changePassword"
+                 :text="locale(langKeys.SETTINGS.PASSWORD.ChangePasswordButton)" />
 
         </section>
 
         <section class="action-box top-pad">
-            <label>View Mnemonic</label>
-            <p>If you've lost your password's mnemonic alternative you can view it here.</p>
+            <label>{{locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicLabel)}}</label>
+            <p>{{locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicDescription)}}</p>
 
-            <btn v-on:clicked="viewMnemonic" text="View Mnemonic" />
+            <btn v-on:clicked="viewMnemonic" :text="locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicButton)" />
 
         </section>
 
@@ -63,7 +64,7 @@
                 const mnemonic = await PasswordService.changePassword(this.password);
                 this.$emit('mnemonic', mnemonic);
                 PopupService.push(Popup.mnemonic(mnemonic));
-                PopupService.push(Popup.snackbar("Changed password", "lock"));
+                PopupService.push(Popup.snackbar(this.locale(this.langKeys.SETTINGS.PASSWORD.ChangedPasswordSnackbar), "lock"));
                 this.password = '';
                 this.confirmPassword = '';
             },

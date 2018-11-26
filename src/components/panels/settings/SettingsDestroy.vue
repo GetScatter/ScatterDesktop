@@ -2,16 +2,13 @@
     <section>
 
         <section class="action-box top-pad">
-            <label>Destroy this Scatter Instance</label>
+            <label>{{locale(langKeys.SETTINGS.DESTROY.Label)}}</label>
 
-            <p>
-                Destroying your Scatter will remove all your data including your Identities and Keypair configurations from your local machine.
-                It will not delete your blockchain accounts from the actual blockchain.
-            </p>
+            <p>{{locale(langKeys.SETTINGS.DESTROY.Description)}}</p>
 
             <br><br>
-            <b style="color:red;">MAKE SURE YOU HAVE A BACKUP BEFORE YOU DO THIS!</b>
-            <btn text="Destroy Scatter" red="true" v-on:clicked="destroy"></btn>
+            <b style="color:red;">{{locale(langKeys.SETTINGS.DESTROY.Important)}}</b>
+            <btn :text="locale(langKeys.SETTINGS.DESTROY.Button)" red="true" v-on:clicked="destroy"></btn>
         </section>
 
     </section>
@@ -40,13 +37,7 @@
         },
         methods: {
             destroy(){
-                PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash", "Yes", async accepted => {
-                    if(!accepted) return false;
-
-                    await SocketService.close();
-                    await StorageService.removeScatter();
-                    this.$router.push('/');
-                }, "No"))
+                PopupService.push(Popup.destroyScatter());
             },
             ...mapActions([
                 Actions.SET_SCATTER

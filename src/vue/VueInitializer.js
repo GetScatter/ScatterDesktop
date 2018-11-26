@@ -48,7 +48,7 @@ export default class VueInitializer {
                 },
                 methods: {
 	                blockchainName,
-	                locale:(key, ...args) => localized(key, args, store.getters.language),
+	                locale:(key, args) => localized(key, args, store.getters.language),
 	                newKeypair(){ this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
 	                goToApps(){ this.openInBrowser('https://get-scatter.com/Apps') },
 	                openInBrowser(url){ ElectronHelpers.openLinkInBrowser(url); },

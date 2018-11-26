@@ -102,7 +102,6 @@
                              style="flex:2"
                              :text="phone.area" :maxlength="3"
                              type="number" v-on:changed="x => phone.area = x" />
-                        <!--<figure class="prefix" style="bottom:11px;"><i class="fa fa-plus"></i></figure>-->
 
                         <cin :placeholder="locale(langKeys.IDENTITY.LOCATION.PhonePlaceholderPrefix)"
                              style="flex:3" :text="phone.prefix" type="number" v-on:changed="x => phone.prefix = x" />
@@ -215,11 +214,11 @@
             },
             removeLocation(){
                 if(this.identity.locations.length <= 1) return;
-                PopupService.push(Popup.prompt('Removing Location', 'Are you sure you wish to remove this location?', 'attention', 'Yes', removed => {
-                    if(!removed) return;
-                    this.identity.locations = this.identity.locations.filter(x => x.id !== this.location.id);
-                    this.location = this.identity.locations[0];
-                }, 'No'))
+                PopupService.push(Popup.removeLocation(this.identity, this.location, removed => {
+                	if(!removed) return;
+	                this.identity.locations = this.identity.locations.filter(x => x.id !== this.location.id);
+	                this.location = this.identity.locations[0];
+                }));
             },
             ...mapActions([
                 Actions.SET_SCATTER

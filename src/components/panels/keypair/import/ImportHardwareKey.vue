@@ -1,14 +1,17 @@
 <template>
 	<section>
-		<sel :selected="hardwareType" label="Select a Hardware Wallet"
-		     :options="EXT_WALLET_TYPES_ARR" v-on:changed="changeHardwareType"></sel>
+		<sel :selected="hardwareType"
+		     :label="locale(langKeys.ADD_KEYS.IMPORT_HW.SelectHardwareLabel)"
+		     :options="EXT_WALLET_TYPES_ARR"
+		     v-on:changed="changeHardwareType" />
 
 		<section v-if="availableBlockchains.length > 1">
 			<br>
-			<sel :selected="blockchain" label="Available Blockchains"
+			<sel :selected="blockchain"
+			     :label="locale(langKeys.ADD_KEYS.IMPORT_HW.AvailableBlockchainsLabel)"
 			     :parser="x => blockchainName(x)"
 			     :options="availableBlockchains"
-			     v-on:changed="selectBlockchain"></sel>
+			     v-on:changed="selectBlockchain" />
 		</section>
 
 
@@ -19,7 +22,7 @@
 		     :text="external.addressIndex"
 		     v-on:changed="x => external.addressIndex = x"
 		     type="number"
-		     label="Ledger Key/Address Index"></cin>
+		     :label="locale(langKeys.ADD_KEYS.IMPORT_HW.IndexLabel)" />
 
 		<section class="action-bar-holder">
 			<section class="action-bar short bottom centered">
@@ -27,7 +30,7 @@
 				     :loading="importing"
 				     :disabled="importing"
 				     style="width:300px;"
-				     text="Import Key"></btn>
+				     :text="locale(langKeys.ADD_KEYS.SELECT.ImportButton)" />
 			</section>
 		</section>
 	</section>
@@ -102,14 +105,14 @@
 				} else {
 					this.importing = false;
 					const Messages = {
-						[EXT_WALLET_TYPES.LEDGER]:`You need to unlock your ledger and open the ${this.blockchainName(this.blockchain)} Ledger App.`,
-						[EXT_WALLET_TYPES.LIQUID_EOS]:`You need to unlock your Liquid EOS Hardware Wallet.`
+						[EXT_WALLET_TYPES.LEDGER]:this.locale(this.langKeys.ADD_KEYS.IMPORT_HW.UnlockLedgerError, this.blockchainName(this.blockchain)),
+						[EXT_WALLET_TYPES.LIQUID_EOS]:this.locale(this.langKeys.ADD_KEYS.IMPORT_HW.UnlockedLiquidEOSError)
 					}
 					PopupService.push(Popup.prompt(
-						'Hardware Error',
+						this.locale(this.langKeys.ADD_KEYS.IMPORT_HW.HardwareError),
 						Messages[this.hardwareType],
 						'attention',
-						'Okay'
+						this.locale(this.langKeys.GENERIC.Okay)
 					))
 				}
 			}
