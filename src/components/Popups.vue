@@ -22,10 +22,9 @@
                 <section class="overlay" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
                     <section class="pop-in">
+                        <RemoveApp :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_APP" />
                         <EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />
-                        <Prompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
-                        <TextPrompt :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.TEXT_PROMPT" :key="popIn.id" />
-                        <Selector :next-pop-in="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
+                        <Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
                         <TransactionSuccess v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                     </section>
                 </section>
@@ -59,8 +58,6 @@
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
     import Prompt from './popins/overlay/Prompt.vue'
-    import Selector from './popins/overlay/Selector.vue'
-    import TextPrompt from './popins/overlay/TextPrompt.vue'
     import PopInHead from './popins/overlay/fragments/PopInHead.vue'
 
     import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
@@ -76,15 +73,15 @@
     import CheckHardware from "./popins/fullscreen/CheckHardware";
     import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
+    import RemoveApp from "./popins/overlay/RemoveApp";
 
     export default {
     	components:{
+		    RemoveApp,
     		EnterPIN,
 		    Snackbar,
 		    TransactionSuccess,
 		    Prompt,
-		    Selector,
-		    TextPrompt,
 		    PopInHead,
 
             // FULLSCREEN

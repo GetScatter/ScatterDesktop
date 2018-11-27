@@ -233,7 +233,6 @@
         },
         mounted(){
 //            WindowService.openTools()
-            this.checkWarning();
             this.checkNetwork();
 
             let id = this.scatter.keychain.identities.find(x => x.publicKey === this.payload.identityKey);
@@ -245,7 +244,7 @@
             if(!hasAllRequiredFields){
                 PopupService.push(Popup.prompt(
                     "Missing Required Fields",
-                    "You are missing some required fields", "attention-circled", "Okay", () => {
+                    "You are missing some required fields", () => {
                         this.returnResult(null);
                     }
                 ))
@@ -320,31 +319,6 @@
                     elem.appendChild(formatter.render());
                 });
             },
-            async checkWarning(){
-
-                const contracts = this.payload.messages.map(x => x.code).reduce((acc, x) => {
-                    if(!acc.includes(x)) acc.push(x);
-                    return acc;
-                }, []);
-
-                const warnings = (await Promise.all(contracts.map(contract => RIDLService.shouldWarn(RIDLService.buildEntityName('contract', contract)).then(x => {
-                    if(x && x.length) return x.map(y => {
-                        y.contract = contract;
-                        return y;
-                    });
-                    return false;
-                })))).filter(x => !!x)
-                    .reduce((acc,x) => {
-                        x.map(y => acc.push(y));
-                        return x;
-                    },[]);
-
-                if(warnings.length)
-                    PopupService.push(Popup.selector('Warning',
-                        `The contract you are interacting with has been given a bad reputation by the users of RIDL.
-                        If you decide to interact with this contract make sure you read the parameters and fully understand your liability.`,
-                        'attention', warnings, x => `${x.contract} -> ${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
-            },
             checkScroll(e){
                 this.scrollTop = e.target.scrollTop;
             },
@@ -395,14 +369,11 @@
                         PopupService.push(Popup.prompt(
                             'Whitelist Warning',
                             `You are about to whitelist a transfer action. This can be dangerous as you will get no notification of an Application using your funds. Are you sure you want to do this?`,
-                            'attention',
-                            'Yes',
                             accepted => {
                                 if(accepted){
                                     this.whitelists.push(whitelist);
                                 }
                             },
-                            'No'
                         ))
                     } else this.whitelists.push(whitelist);
                 }

@@ -10,9 +10,9 @@ import {store} from '../store/store'
 import * as Actions from '../store/constants'
 import {blockchainName} from '../models/Blockchains'
 import {SETTINGS_OPTIONS} from '../models/Settings'
+import ElectronHelpers from '../util/ElectronHelpers'
 import {localized} from '../localization/locales'
 import LANG_KEYS from '../localization/keys'
-import ElectronHelpers from '../util/ElectronHelpers'
 
 Vue.config.productionTip = false
 

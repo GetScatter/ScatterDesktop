@@ -54,6 +54,7 @@
             font-size: 13px;
             padding:5px 3px;
             background:rgba(255,255,255,0.3);
+            box-shadow:0 2px 4px rgba(0,0,0,0.05);
             color:$dark-blue;
             border-radius:4px;
 

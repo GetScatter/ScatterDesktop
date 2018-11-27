@@ -1,6 +1,6 @@
 <template>
     <section>
-        <Head :popin="popin" name="Confirm PIN" />
+        <PopinHead :popin="popin" name="Confirm PIN" />
         <section class="panel">
             <section class="split-inputs">
                 <cin style="margin-bottom:0; flex:3;"
@@ -21,11 +21,11 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
-    import Head from "./Head";
+    import PopinHead from "./PopinHead";
     import Hasher from "../../../util/Hasher";
 
     export default {
-	    components: {Head},
+	    components: {PopinHead},
 	    props:['popin'],
         data(){return {
             text:'',

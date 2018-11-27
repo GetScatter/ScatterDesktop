@@ -16,9 +16,7 @@ import {EXT_WALLET_TYPES} from "./ExternalWallet";
 
 const throwErr = () => PopupService.push(Popup.prompt(
     'No Hardware Available',
-    'You either need to plug in your Ledger, or select the appropriate App.',
-    'attention',
-    'Okay'
+    'You either need to plug in your Ledger, or select the appropriate App.'
 ));
 
 export const LEDGER_PATHS = {
@@ -210,7 +208,7 @@ class LedgerAPI {
             b = serialize(network.chainId, rawTxHex.transaction, fc.types).toString('hex');
         } catch(e){
             WindowService.flashWindow();
-            PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App', 'attention', 'Okay'));
+            PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
             return null;
         }
         const rawTx = Buffer.from(b, "hex");

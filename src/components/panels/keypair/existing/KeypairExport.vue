@@ -35,7 +35,15 @@
             <!-- EXPORT AS QR -->
             <section key="text" v-if="state === STATES.QR">
                 <h1>{{locale(langKeys.KEYPAIR.EXPORT.QR.Title)}}</h1>
-                <br><br>
+                <section class="disclaimer less-pad" style="margin:0 auto 10px; max-width:500px;">
+                    You can either leave this field blank to use your current Scatter password, or enter another PIN or password here to re-encrypt this QR code.
+                </section>
+                <cin style="max-width:500px; margin:0 auto;"
+                     placeholder="Alternative Password"
+                     type="password"
+                     :text="pass"
+                     v-on:changed="x => pass = x" />
+                <br>
                 <section class="qr">
                     <img :src="qr" />
                 </section>
@@ -66,7 +74,7 @@
 	        STATES,
 
             keys:[],
-            pkeys:[],
+	        pass:'',
         }},
 
         components:{
@@ -130,10 +138,15 @@
 		        display.isPublic = !display.isPublic;
             },
 	        async createQR(){
-		        this.qr = await QRService.createQR(this.keypair.privateKey);
+		        this.qr = await QRService.createQR(this.keypair.privateKey, this.pass);
 		        this.state = STATES.QR;
 	        },
         },
+        watch:{
+    		['pass'](){
+    			this.createQR();
+            }
+        }
     }
 </script>
 

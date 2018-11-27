@@ -1,6 +1,12 @@
 import KEYS from './keys';
 import ObjectHelpers from '../util/ObjectHelpers'
-import {store} from '../store/store'
+// import {store} from '../store/store'
+
+let store;
+const getStore = () => {
+	if(!store) store = require('../store/store').store;
+	return store;
+}
 
 
 /*************************************/
@@ -58,5 +64,5 @@ export const localized = (key, args, language) => {
 };
 
 export const localizedState = (key, args) => {
-    return localized(key, args, store.getters.language);
+    return localized(key, args, getStore().getters.language);
 }

@@ -184,15 +184,8 @@
                 return;
             }
 
-//            this.checkWarning();
         },
         methods: {
-            async checkWarning(){
-                const warn = await RIDLService.shouldWarn(RIDLService.buildEntityName('application', this.payload.origin));
-                if(warn.length)
-                    PopupService.push(Popup.selector('Warning', 'This entity has a negative reputation. Be careful interacting with it.',
-                        'attention', warn, x => `${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
-            },
             returnResult(result){
                 this.$emit('returned', result);
             },

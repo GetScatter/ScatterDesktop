@@ -1,14 +1,23 @@
 <template>
     <section>
 
-        <PopinHead :popin="popin" :name="popin.data.props.title" />
+        <PopinHead :popin="popin" name="Removing Application" />
         <section class="panel centered">
-            <br>
-            <figure class="description">{{popin.data.props.description}}</figure>
+            <section class="split-inputs">
+                <figure class="icon" v-if="appData.hasOwnProperty('img')">
+                    <img :src="appData.img" />
+                </figure>
+
+                <section class="details">
+                    <figure class="title">{{appData.name}}</figure>
+                    <p>You are about to remove this application from your Scatter. This will also remove all whitelist permissions.</p>
+
+                </section>
+            </section>
 
             <br>
-            <br>
-            <btn :text="locale(langKeys.GENERIC.Confirm)"
+
+            <btn :text="locale(langKeys.GENERIC.Remove)"
                  v-on:clicked="returnResult(true)" />
         </section>
 
@@ -21,6 +30,7 @@
     import * as Actions from '../../../store/constants';
     import {PopupDisplayTypes} from '../../../models/popups/Popup'
     import PopinHead from "./PopinHead";
+    import AppsService from "../../../services/AppsService";
 
     export default {
 	    components: {PopinHead},
@@ -36,7 +46,10 @@
             ]),
             ...mapGetters([
 
-            ])
+            ]),
+            appData(){
+            	return AppsService.getAppData(this.popin.data.props.origin);
+            }
         },
         methods:{
 	        returnResult(truthy){
@@ -54,9 +67,13 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../variables";
 
-    .description {
-        font-size: 16px;
-        text-align:center;
+    .icon {
+        width:120px;
+        padding-right:5px;
+
+        img {
+            width:100%;
+        }
     }
 
 </style>

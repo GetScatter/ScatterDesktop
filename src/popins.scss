@@ -8,6 +8,14 @@
     .panel {
       padding:10px;
 
+      &.centered {
+        padding:20px;
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
       .input {
         margin-bottom:10px;
       }

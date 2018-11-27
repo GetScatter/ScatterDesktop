@@ -7,8 +7,12 @@ electron = RUNNING_TESTS ? null : window.require('electron');
 if(!electron) electron = MOCK_ELECTRON;
 
 export const remote = electron.remote;
+console.log('remote', remote);
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
+
+import {localizedState} from "../localization/locales";
+import LANG_KEYS from "../localization/keys";
 
 let popupService;
 const PopupService = () => {
@@ -20,7 +24,7 @@ export default class ElectronHelpers {
 
     static copy(txt){
         clipboard.writeText(txt);
-	    // PopupService().push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.CopiedToClipboard), 'check'))
+	    PopupService().push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.CopiedToClipboard), 'check'))
     }
 
     static openLinkInBrowser(link){

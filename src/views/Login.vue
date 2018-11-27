@@ -168,7 +168,7 @@
 			this.confirmPassword = '';
 
 			const lockout = getLockout();
-			this.lockedOutTime = lockout.stamp > 0 ? lockout.stamp + lockoutTime : 0;
+			this.lockedOutTime = lockout.tried >= 5 ? lockout.stamp > 0 ? lockout.stamp + lockoutTime : 0 : 0;
 
 			document.addEventListener('keydown', this.modifyDPresses, true);
 		},
@@ -343,13 +343,7 @@
 				});
 			},
 			destroy(){
-				PopupService.push(Popup.prompt("Destroying Scatter", "This action is irreversible. Are you sure you want to destroy your Scatter?", "trash", "Yes", async accepted => {
-					if(!accepted) return false;
-
-					await SocketService.close();
-					await StorageService.removeScatter();
-					this.$router.push('/');
-				}, "No"))
+				PopupService.push(Popup.destroyScatter());
 			},
 			...mapActions([
 				Actions.SET_SEED,

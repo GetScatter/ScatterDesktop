@@ -37,23 +37,20 @@ export default class NetworkService {
 
     static async removeNetwork(network){
         return new Promise(resolve => {
-            PopupService.promptGuard(Popup.prompt(
-                "Deleting Network", "This will delete this network, as well as all associated accounts and their permissions.",
-                "trash", "Delete Network"
-            ), async accepted => {
-                if(accepted) {
-                    const scatter = store.state.scatter.clone();
+            PopupService.push(Popup.prompt("Deleting Network", "This will delete this network, as well as all associated accounts and their permissions.", async accepted => {
+	            if(accepted) {
+		            const scatter = store.state.scatter.clone();
 
-                    // Removing accounts and permissions for this network
-                    const accounts = scatter.keychain.accounts.filter(x => x.networkUnique === network.unique());
-                    accounts.map(account => scatter.keychain.removeAccount(account));
-                    scatter.settings.removeNetwork(network);
-                    store.dispatch(Actions.SET_SCATTER, scatter);
-                    PopupService.push(Popup.snackbar("Network Deleted!", "check"));
-                    BalanceService.removeStaleBalances();
-                    resolve(true);
-                } else resolve(false);
-            });
+		            // Removing accounts and permissions for this network
+		            const accounts = scatter.keychain.accounts.filter(x => x.networkUnique === network.unique());
+		            accounts.map(account => scatter.keychain.removeAccount(account));
+		            scatter.settings.removeNetwork(network);
+		            store.dispatch(Actions.SET_SCATTER, scatter);
+		            PopupService.push(Popup.snackbar("Network Deleted!", "check"));
+		            BalanceService.removeStaleBalances();
+		            resolve(true);
+	            } else resolve(false);
+            }))
         })
     }
 

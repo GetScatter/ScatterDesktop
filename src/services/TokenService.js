@@ -19,14 +19,14 @@ export default class TokenService {
 	    // Never adding system tokens.
 	    if(store.getters.networkTokens.find(x => x.unique() === token.unique())) return true;
 
-        if(!token.symbol.length) return PopupService.push(Popup.prompt('Token Symbol Error', 'You must add a token symbol.', 'attention', 'Okay'));
-        if(token.needsContract() && !token.contract.length) return PopupService.push(Popup.prompt('Token Contract Error', 'You must add a token contract.', 'attention', 'Okay'));
+        if(!token.symbol.length) return PopupService.push(Popup.prompt('Token Symbol Error', 'You must add a token symbol.'));
+        if(token.needsContract() && !token.contract.length) return PopupService.push(Popup.prompt('Token Contract Error', 'You must add a token contract.'));
 
         if(!blacklist && scatter.settings.tokens.find(x => x.unique() === token.unique()))
-            return PopupService.push(Popup.prompt('Token Exists', 'This token already exists in your added tokens.', 'attention', 'Okay'));
+            return PopupService.push(Popup.prompt('Token Exists', 'This token already exists in your added tokens.'));
 
         if(blacklist && scatter.settings.blacklistTokens.find(x => x.unique() === token.unique()))
-            return PopupService.push(Popup.prompt('Token Exists', 'This token already exists in your filtered tokens.', 'attention', 'Okay'));
+            return PopupService.push(Popup.prompt('Token Exists', 'This token already exists in your filtered tokens.'));
 
         if(!token.name.trim().length) token.name = token.symbol;
 
@@ -47,12 +47,12 @@ export default class TokenService {
 	    // Never removing system tokens.
 	    if(store.getters.networkTokens.find(x => x.unique() === token.unique())) return true;
 
-	    PopupService.push(Popup.prompt('Removing Token', 'Are you sure?', 'trash', 'Yes', async removed => {
+	    PopupService.push(Popup.prompt('Removing Token', 'Are you sure?', async removed => {
 	        if(!removed) return false;
 
 		    filterOutToken(scatter, token);
 		    store.dispatch(Actions.SET_SCATTER, scatter);
-        }, 'No'))
+        }))
     }
 
 	static async toggleDisplayToken(token){

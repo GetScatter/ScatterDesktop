@@ -16,10 +16,10 @@ export default class ContactService {
         const scatter = store.state.scatter.clone();
 
         if(scatter.contacts.find(x => x.recipient.toLowerCase() === recipient.toLowerCase()))
-            return PopupService.push(Popup.prompt('Contact Exists', 'Another contact already has this recipient account.', 'attention', 'Okay'))
+            return PopupService.push(Popup.prompt('Contact Exists', 'Another contact already has this recipient account.'))
 
 	    if(scatter.contacts.find(x => x.name.toLowerCase() === name.toLowerCase()))
-		    return PopupService.push(Popup.prompt('Contact Name Exists', 'Another contact already has this name.', 'attention', 'Okay'))
+		    return PopupService.push(Popup.prompt('Contact Name Exists', 'Another contact already has this name.'))
 
 	    scatter.contacts.push(new Contact(name, recipient));
 	    return store.dispatch(Actions.SET_SCATTER, scatter);
@@ -27,12 +27,12 @@ export default class ContactService {
 
     static async remove(contact){
         return new Promise(async resolve => {
-	        PopupService.push(Popup.prompt('Removing Contact', 'Are you sure you want to remove this contact?', 'attention', 'Yes', async bool => {
+	        PopupService.push(Popup.prompt('Removing Contact', 'Are you sure you want to remove this contact?', async bool => {
 	        	if(!bool) return resolve(false);
 		        const scatter = store.state.scatter.clone();
 		        scatter.contacts = scatter.contacts.filter(x => x.id !== contact.id);
 		        return resolve(store.dispatch(Actions.SET_SCATTER, scatter));
-	        }, 'No'))
+	        }))
         })
 
     }

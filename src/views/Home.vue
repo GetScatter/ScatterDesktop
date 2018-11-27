@@ -115,7 +115,6 @@
         },
 
         mounted(){
-    		PopupService.push(Popup.enterPIN());
 	        setTimeout(async() => {
 	        	HardwareService.openConnections(true);
 		        await PriceService.watchPrices();

@@ -8,10 +8,8 @@
 			         :class="{'selected':itemIsSelected(item), 'unselectable':unselectable, 'select-blue':selectBlue}"
 			         @click="$emit('selected',item)">
 
-				<transition name="slide-left" mode="out-in">
-					<figure v-if="itemIsSelected(item) && selectedIcon" :class="selectedIcon"
-					        class="selected-icon" @click="$emit('action', item)"></figure>
-				</transition>
+				<figure v-if="itemIsSelected(item) && selectedIcon" :class="selectedIcon"
+				        class="selected-icon"></figure>
 
 				<section class="details">
 					<figure class="title">{{item.title}}</figure>

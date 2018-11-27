@@ -13,12 +13,12 @@ export default class PasswordService {
 
     static isValidPassword(password, confirmPassword = null){
         if(!password || password.length < 8) {
-            PopupService.push(Popup.prompt("Invalid Password", "Passwords must be at least 8 characters long.", "attention-circled", "Okay"));
+            PopupService.push(Popup.prompt("Invalid Password", "Passwords must be at least 8 characters long."));
             return false;
         }
 
         if(confirmPassword !== null && password !== confirmPassword) {
-          PopupService.push(Popup.prompt("Confirmation Mismatch", "The confirmation password does not match.", "attention-circled", "Okay"));
+          PopupService.push(Popup.prompt("Confirmation Mismatch", "The confirmation password does not match."));
             return false;
         }
 
@@ -124,6 +124,7 @@ export default class PasswordService {
     }
 
     static async verifyPIN(){
+        if(!store.state.scatter.pin || !store.state.scatter.pin.length) return true;
         return new Promise(resolve => {
             PopupService.push(Popup.enterPIN(verified => {
                 resolve(verified);

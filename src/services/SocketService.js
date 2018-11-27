@@ -53,30 +53,30 @@ const socketHandler = (socket) => {
 
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async request => {
+	    if(!request.plugin || request.plugin.length > 35) return socket.emit('api', {id:request.id, result:null});
+	    request.plugin = request.plugin.replace(/\s/g, "");
 
         // 2 way authentication
-        if(request.data.hasOwnProperty('appkey')){
-            const existingApp = store.state.scatter.keychain.findApp(request.data.payload.origin);
+	    const existingApp = store.state.scatter.keychain.findApp(request.data.payload.origin);
 
-            const updateNonce = async () => {
-                const clone = store.state.scatter.clone();
-                existingApp.nextNonce = request.data.nextNonce;
-                clone.keychain.updateOrPushApp(existingApp);
-                return store.dispatch(Actions.SET_SCATTER, clone);
-            };
+	    const updateNonce = async () => {
+		    const clone = store.state.scatter.clone();
+		    existingApp.nextNonce = request.data.nextNonce;
+		    clone.keychain.updateOrPushApp(existingApp);
+		    return store.dispatch(Actions.SET_SCATTER, clone);
+	    };
 
-            const removeAppPermissions = async () => {
-                const clone = store.state.scatter.clone();
-                clone.keychain.removeApp(existingApp);
-                return store.dispatch(Actions.SET_SCATTER, clone);
-            };
+	    const removeAppPermissions = async () => {
+		    const clone = store.state.scatter.clone();
+		    clone.keychain.removeApp(existingApp);
+		    return store.dispatch(Actions.SET_SCATTER, clone);
+	    };
 
 
-            if(!existingApp) return;
-            if(!existingApp.checkKey(request.data.appkey)) return;
-            if(existingApp.nextNonce.length && !existingApp.checkNonce(request.data.nonce)) await removeAppPermissions();
-            else await updateNonce();
-        }
+	    if(!existingApp) return;
+	    if(!existingApp.checkKey(request.data.appkey)) return;
+	    if(existingApp.nextNonce.length && !existingApp.checkNonce(request.data.nonce)) await removeAppPermissions();
+	    else await updateNonce();
 
         socket.emit('api', await ApiService.handler(Object.assign(request.data, {plugin:request.plugin})));
     });
@@ -168,8 +168,7 @@ export default class SocketService {
             io.attach(httpsServer,options);
         } else {
             if(initialConnection) PopupService.push(Popup.prompt("Couldn't fetch certificates",
-                'There was an issue trying to fetch the certificates which allow Scatter to run on SSL. This is usually caused by proxies, firewalls, and anti-viruses.',
-                'attention', 'Okay'))
+                'There was an issue trying to fetch the certificates which allow Scatter to run on SSL. This is usually caused by proxies, firewalls, and anti-viruses.'))
         }
 
 	    initialConnection = false;

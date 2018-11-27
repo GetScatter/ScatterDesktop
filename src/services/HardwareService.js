@@ -64,12 +64,12 @@ export default class HardwareService {
 
 	static async checkHardware(account){
 		const popup = canConnect => new Promise(resolve => {
-			PopupService.push(Popup.prompt('Hardware Error', canConnect, 'attention', 'Opened', async opened => {
+			PopupService.push(Popup.prompt('Hardware Error', canConnect, async opened => {
 				if(!opened) return resolve(false);
 				account.keypair().resetExternal();
 				await HardwareService.openConnections();
 				resolve(this.checkHardware(account));
-			}, 'Cancel'))
+			}))
 		});
 
 		if(KeyPairService.isHardware(account.publicKey)){

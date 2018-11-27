@@ -110,9 +110,7 @@
 					}
 					PopupService.push(Popup.prompt(
 						this.locale(this.langKeys.ADD_KEYS.IMPORT_HW.HardwareError),
-						Messages[this.hardwareType],
-						'attention',
-						this.locale(this.langKeys.GENERIC.Okay)
+						Messages[this.hardwareType]
 					))
 				}
 			}

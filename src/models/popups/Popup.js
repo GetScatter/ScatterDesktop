@@ -46,24 +46,13 @@ export class Popup {
 
 
 
-    static prompt(title, description, icon, buttonText, callback, denyButtonText = null){
-        let params = { title, description, icon };
-        if(buttonText) params.buttonText = buttonText;
-        if(denyButtonText) params.denyButtonText = denyButtonText;
+    static prompt(title, description, callback){
+        let params = { title, description };
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
     }
 
     static transactionSuccess(blockchain, tx, callback){
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
-    }
-
-    static textPrompt(title, description, icon, buttonText, input, callback){
-        let params = { title, description, icon, buttonText, input };
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TEXT_PROMPT, params, callback))
-    }
-
-    static selector(title, description, icon, items, parser, callback, warning = false){
-        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECTOR, { title, description, icon, items, parser, warning }, callback))
     }
 
     static snackbar(message, icon, timeout = 3000){
@@ -74,6 +63,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENTER_PIN, {}, callback))
 	}
 
+	static removeApp(origin, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_APP, {origin}, callback))
+	}
+
 
 
     /*****************************************/
@@ -82,8 +75,7 @@ export class Popup {
 
 	static snackbarBadPassword(timeout = 3000){
 		const message = localizedState(LANG_KEYS.SNACKBARS.BadPassword);
-		const icon = 'attention';
-		return new Popup(PopupDisplayTypes.SNACKBAR, new PopupData('', { message, icon, timeout }))
+		return new Popup(PopupDisplayTypes.SNACKBAR, new PopupData('', { message, icon:'attention', timeout }))
 	}
 
 
@@ -154,9 +146,8 @@ export class Popup {
 export const PopupTypes = {
     // OVERLAYS
     PROMPT:'prompt',
-    TEXT_PROMPT:'textPrompt',
-    SELECTOR:'selector',
     ENTER_PIN:'enterPIN',
+    REMOVE_APP:'removeApp',
 
     // FULLSCREEN
     VERIFY_PASSWORD:'verifyPassword',

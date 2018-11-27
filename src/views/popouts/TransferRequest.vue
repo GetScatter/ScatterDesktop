@@ -166,7 +166,7 @@
                 let returned = null;
                 if(result){
                     let amount = this.displayAmount;
-                    if(parseFloat(amount) <= 0) return PopupService.push(Popup.prompt('Invalid Amount', `You can not send 0 ${this.symbol}`, 'attention', 'Okay'));
+                    if(parseFloat(amount) <= 0) return PopupService.push(Popup.prompt('Invalid Amount', `You can not send 0 ${this.symbol}`));
 
                     returned = {
                         account:this.selectedAccount,

@@ -10,23 +10,16 @@ import Mnemonic from '../util/Mnemonic'
 
 export default class QRService {
 
-    static createQR(data){
-        return new Promise(resolve => {
-            PopupService.push(Popup.textPrompt(
-                'Enter a PIN',
-                'You can either leave this blank to use your existing password as the encryption key or enter a new one to re-encrypt it with.',
-                'key',
-                'Okay', {placeholder:'Enter a Password or PIN', type:'password'}, async pass => {
-                    if(!pass || !pass.length) {
-                        resolve(QRCode.toDataURL(JSON.stringify({data, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
-                    } else {
-	                    const oldSeed = store.state.seed;
-	                    const newSeed = (await Mnemonic.generateMnemonic(pass, StorageService.getSalt()))[1];
-	                    const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);
-	                    resolve(QRCode.toDataURL(JSON.stringify({data:dData, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
-                    }
-
-            }))
+    static createQR(data, pass = null){
+        return new Promise(async resolve => {
+	        if(!pass || !pass.length) {
+		        resolve(QRCode.toDataURL(JSON.stringify({data, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
+	        } else {
+		        const oldSeed = store.state.seed;
+		        const newSeed = (await Mnemonic.generateMnemonic(pass, StorageService.getSalt()))[1];
+		        const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);
+		        resolve(QRCode.toDataURL(JSON.stringify({data:dData, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
+	        }
         })
     }
 
