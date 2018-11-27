@@ -21,7 +21,7 @@ export class Popup {
 	static fromJson(json){ return Object.assign(new Popup(), json); }
 
     dimensions(){
-        if(this.data.type === ApiActions.GET_OR_REQUEST_IDENTITY)   return {width:420, height:550};
+        if(this.data.type === ApiActions.GET_OR_REQUEST_IDENTITY)   return {width:420, height:600};
         if(this.data.type === ApiActions.REQUEST_TRANSFER)          return {width:440, height:560};
         if(this.data.type === ApiActions.REQUEST_SIGNATURE)         return {width:1024, height:800};
         if(this.data.type === ApiActions.SUGGEST_NETWORK)       return {width:440, height:360};
@@ -50,6 +50,11 @@ export class Popup {
         let params = { title, description };
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
     }
+
+	static selector(title, items, callback){
+		let params = { title, items };
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECTOR, params, callback))
+	}
 
     static transactionSuccess(blockchain, tx, callback){
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
@@ -146,6 +151,7 @@ export class Popup {
 export const PopupTypes = {
     // OVERLAYS
     PROMPT:'prompt',
+	SELECTOR:'selector',
     ENTER_PIN:'enterPIN',
     REMOVE_APP:'removeApp',
 

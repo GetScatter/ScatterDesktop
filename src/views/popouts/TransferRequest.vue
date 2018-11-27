@@ -30,7 +30,7 @@
             <section class="transfer-data">
                 <figure v-if="amount <= 0" :forced="customAmount > 0" style="width:200px; margin:0 auto; padding-bottom:10px; text-align:left;">
                     <section style="position:relative;">
-                        <cin type="number" placeholder="Amount" :text="customAmount" v-on:changed="changed => bind(changed, 'customAmount')"></cin>
+                        <cin type="number" placeholder="Amount" :text="customAmount" v-on:changed="x => customAmount = x"></cin>
                         <section style="position:absolute; top:8px; right:0; font-size:14px;">
                             {{symbol}}
                         </section>

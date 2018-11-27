@@ -1,9 +1,17 @@
 @import "_variables.scss";
 
 .pop-ins {
+  width:100%;
 
   .overlay {
     width:500px;
+    margin:0 auto;
+
+
+    &.wide {
+      width:80%;
+    }
+
 
     .panel {
       padding:10px;

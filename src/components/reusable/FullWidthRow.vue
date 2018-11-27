@@ -110,7 +110,11 @@
 
 
 		.row {
-			padding:15px 0;
+			padding:15px;
+			background:#fff;
+			border:1px solid #e0e0e0;
+			border-radius:4px;
+			margin-bottom:10px;
 
 			.icon {
 				width:40px;

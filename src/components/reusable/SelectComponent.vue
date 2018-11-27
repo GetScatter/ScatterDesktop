@@ -8,10 +8,10 @@
             </figure>
 
             <figure class="selected-option" v-on:click="toggle">
-                {{parse(selectedOption)}}
+                {{parse(selectedOption, true)}}
             </figure>
 
-            <section class="options" :class="{'long':long}">
+            <section class="options" :class="{'long':long}" v-if="!asButton">
                 <input ref="terms" placeholder="Search..." v-model="optionsTerms" />
                 <figure class="option" v-for="item in filteredOptions" v-on:click="select(item)">
                     <img v-if="imgParser" :src="imgParser(item)" />
@@ -26,7 +26,7 @@
 <script>
     let documentListener;
     export default {
-	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'subparser', 'disabled', 'imgParser', 'long'],
+	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'subparser', 'disabled', 'imgParser', 'long', 'asButton'],
 
         data(){ return {
             optionsTerms:'',
@@ -48,6 +48,7 @@
                 if(this.open) this.open = false;
             },
             toggle(){
+	    		if(this.asButton) return this.$emit('clicked', true);
 	    		if(this.open) return;
                 this.$nextTick(() => {
 	                if(this.disabled) return false;
@@ -61,7 +62,8 @@
 	                }
                 })
             },
-            parse(item){
+            parse(item, selected = false){
+	    		if(this.asButton && !selected) return;
 	            if(typeof item === 'string' && !this.parser) return item;
 	            if(this.parser) return this.parser(item);
 

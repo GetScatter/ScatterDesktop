@@ -68,7 +68,7 @@
                     </section>
 
                     <section style="padding:20px;">
-                        <cin :key="id" type="password" placeholder="Account Secret" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'keypair.privateKey')"></cin>
+                        <cin :key="id" type="password" placeholder="Account Secret" :text="keypair.privateKey" v-on:changed="x => keypair.privateKey = x"></cin>
                         <figure class="existing-key" v-if="keyExists">This key already exists in your keychain under the name "{{keyExists.name}}".</figure>
                     </section>
                 </section>

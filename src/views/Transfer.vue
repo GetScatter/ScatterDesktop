@@ -44,14 +44,7 @@
                          v-on:blur="amount = amount.toString().length ? parseFloat(amount).toFixed(token.decimals) : ''" />
 
 
-                    <!-- TOKEN SELECTOR -->
-                    <sel :label="locale(langKeys.GENERIC.Tokens, 1)"
-                         :selected="token"
-                         :options="[{id:'custom', name:locale(langKeys.TRANSFER.TOKENS.CustomTokenLabel)}].concat(filteredTokens)"
-                         :parser="t => t.name"
-                         :subparser="tokenListSubParser"
-                         long="1"
-                         v-on:changed="selectToken" />
+                    <sel :selected="token" :parser="x => x.name" :items="[]" as-button="1" v-on:clicked="openTokenSelector" />
                     <br>
 
                     <section class="custom-token" v-if="token.id === 'custom'">
@@ -337,9 +330,25 @@
 	    		if(this.account) return this.account = null;
 	    	    this.$router.push({name:this.RouteNames.HOME})
             },
-            tokenListSubParser(token){
-	    		const balance = this.totalBalanceFor(token.id) ? this.totalBalanceFor(token.id).formatted() ? `- ${this.totalBalanceFor(token.id).formatted()}` :'' :'';
-	            return token.id === 'custom' ? null : `${this.blockchainName(token.blockchain)}${balance}`
+            openTokenSelector(){
+
+	    		let items = [{id:'custom', name:this.locale(this.langKeys.TRANSFER.TOKENS.CustomTokenLabel)}].concat(this.filteredTokens)
+                    .map(token => {
+	                    const balance = this.totalBalanceFor(token.id) ? this.totalBalanceFor(token.id).formatted() ? this.totalBalanceFor(token.id).formatted() :'' :'';
+	                    const description = token.id === 'custom' ? null : balance
+                    	return {
+		                    id: token.id,
+		                    title: token.name,
+                            description
+	                    }
+                    })
+
+	    	    PopupService.push(Popup.selector('Select a Token', items, token => {
+	    	    	if(!token) return;
+			        this.token = token.id === 'custom'
+                        ? Token.fromJson({id:token.id, name:token.title, blockchain:this.account ? this.account.blockchain() : Blockchains.EOSIO})
+                        : this.filteredTokens.find(x => x.id === token.id);
+                }))
             },
             tokenFromId(id){
 	    	    return this.filteredTokens.find(x => x.id === id);

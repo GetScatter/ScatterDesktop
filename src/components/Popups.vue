@@ -19,12 +19,13 @@
                     <RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                 </section>
-                <section class="overlay" v-else>
+                <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
                     <section class="pop-in">
                         <RemoveApp :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_APP" />
                         <EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />
                         <Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
+                        <Selector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
                         <TransactionSuccess v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                     </section>
                 </section>
@@ -74,9 +75,11 @@
     import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
     import RemoveApp from "./popins/overlay/RemoveApp";
+    import Selector from "./popins/overlay/Selector";
 
     export default {
     	components:{
+		    Selector,
 		    RemoveApp,
     		EnterPIN,
 		    Snackbar,
@@ -123,6 +126,10 @@
                     this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length - 1]);
                     if(this.$tours['scatter']) this.$tours['scatter'].previousStep();
                 }
+            },
+	        isWide(popIn){
+	        	const wides = [PopupTypes.SELECTOR];
+	            return wides.includes(popIn.data.type);
             },
             ...mapActions([
                 Actions.RELEASE_POPUP

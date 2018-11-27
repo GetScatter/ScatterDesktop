@@ -13,7 +13,7 @@
                              :label="locale(langKeys.LOGIN.NEW.PasswordLabel)"
                              :placeholder="locale(langKeys.LOGIN.NEW.PasswordPlaceholder)"
                              type="password" v-on:enter="create" :text="password"
-                             v-on:changed="changed => bind(changed, 'password')"></cin>
+                             v-on:changed="x => password = x"></cin>
 
                         <section class="password-strength">
                             <figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 100}"></figure>
@@ -22,7 +22,7 @@
                         <cin :label="locale(langKeys.LOGIN.NEW.PasswordConfirmLabel)"
                              :placeholder="locale(langKeys.LOGIN.NEW.PasswordConfirmPlaceholder)"
                              type="password" v-on:enter="create" :text="confirmPassword"
-                             v-on:changed="changed => bind(changed, 'confirmPassword')"></cin>
+                             v-on:changed="x => confirmPassword = x"></cin>
 
                         <br>
                         <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="create" text="Let's go!" blue="true"></btn>
@@ -41,7 +41,7 @@
                          :placeholder="locale(langKeys.LOGIN.EXISTING.PasswordPlaceholder)"
                          type="password" :disabled="isLockedOut"
                          :loader-on-dynamic="working"
-                         :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="changed => bind(changed, 'password')"
+                         :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="x => password = x"
                          :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'"
                     ></cin>
                     <span class="locked" v-if="isLockedOut">Locked: {{formatTime(lockedTimeLeft)}}</span>

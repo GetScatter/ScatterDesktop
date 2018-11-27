@@ -72,7 +72,7 @@
                                     <sel :selected="selectedLocation"
                                          :options="viableLocations"
                                          :parser="location => location.name"
-                                         v-on:changed="changed => bind(changed, 'selectedLocation')"></sel>
+                                         v-on:changed="x => selectedLocation = x"></sel>
                                 </section>
                             </section>
 

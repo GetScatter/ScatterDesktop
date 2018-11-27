@@ -79,11 +79,6 @@ export default class VueInitializer {
 		                const minutes = Math.trunc(milliseconds / 60) % 60;
                         return `${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`;
                     },
-                    bind(changed, dotNotation) {
-                        let props = dotNotation.split(".");
-                        const lastKey = props.pop();
-                        props.reduce((obj,key)=> obj[key], this)[lastKey] = changed;
-                    },
                 }
             })
 

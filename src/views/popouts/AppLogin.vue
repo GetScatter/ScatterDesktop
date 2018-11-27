@@ -2,53 +2,41 @@
     <section>
         <PopOutHead v-on:closed="returnResult" />
         <section class="flex-row">
-            <section class="flex-col">
+            <section class="login-selector">
                 <PopOutAction :origin="payload.origin" action="log in" />
 
-                <section class="missing-fields" v-if="accountFields.length === selectedAccounts.length">
-                    <section class="details">
-                        <figure class="title">You're missing some fields!</figure>
-                        <p>
-                            This application is requiring additional information which you do not have on your Identity.
-                            <b>Fill out the red fields on the right before you continue.</b>
-                        </p>
-                        <br><br>
-                    </section>
 
-                    <cin placeholder="field" />
-                    <cin placeholder="field" />
-                    <br>
-                    <br>
-                    <btn blue="1" :disabled="!isValidIdentity" text="Continue" />
+                <section class="required-networks" v-if="accountNetworks.length > 1">
+                    <figure class="requirements">It requires access to these networks</figure>
+                    <section class="list">
+                        <figure class="split-inputs" v-for="item in accountNetworks">
+                            <!--<i class="icon-check" v-if="item.count - selectedOfNetwork(item.network).length === 0"></i>-->
+                            <figure style="flex:3;">{{item.network.name}}</figure>
+                            <figure class="bubble" v-if="item.count - selectedOfNetwork(item.network).length !== 0">{{item.count - selectedOfNetwork(item.network).length}}</figure>
+                            <figure class="bubble blue" v-else><i class="icon-check"></i></figure>
+                        </figure>
+                    </section>
                 </section>
-                <section class="popout-list" v-else>
-                    <SearchBar placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+
+                <section class="split-inputs" style="flex:0 0 auto;">
+                    <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                    <figure class="advanced-button" @click="showingAll = !showingAll">
+                        {{showingAll ? 'Filter' : 'Show All'}}
+                    </figure>
+                </section>
+
+                <section class="popout-list">
                     <FullWidthRow :items="validAccounts" popout="1" />
                 </section>
             </section>
 
 
-            <!-- SIDE PANEL -->
-            <figure class="side-bar" :class="expanded ? 'icon-right-open-big' : 'icon-left-open-big'" @click="expandOrContract"></figure>
+             <!--SIDE PANEL-->
+            <figure class="side-bar" v-if="personalFields.length || locationFields.length"
+                    :class="expanded ? 'icon-right-open-big' : 'icon-left-open-big'"
+                    @click="expandOrContract"></figure>
+
             <section class="side-panel" v-if="expanded">
-
-                <!-- ACCOUNT NETWORKS -->
-                <section class="key-val" v-if="accountNetworks.length">
-                    <figure>Requires Accounts For</figure>
-                    <figure v-for="item in accountNetworks" style="margin-bottom:10px;">
-                        <i class="icon-check" v-if="item.count - selectedOfNetwork(item.network).length === 0"></i>
-                        {{item.network.name}}
-                        <span style="font-size: 11px;" v-if="item.count - selectedOfNetwork(item.network).length !== 0">({{item.count - selectedOfNetwork(item.network).length}})</span>
-                    </figure>
-
-                    <section v-if="selectedAccounts.length">
-                        <label>Selected Accounts</label>
-                        <figure class="clickable" v-for="account in selectedAccounts" @click="unselectAccount(account)">
-                            {{account.formatted()}}
-                        </figure>
-                        <br>
-                    </section>
-                </section>
 
                 <section class="key-val" v-if="personalFields.length">
                     <figure>Personal Info</figure>
@@ -111,14 +99,18 @@
 	        selectedLocation:null,
             clonedLocation:null,
             selectedIdentity:null,
+            showingAll:false,
         }},
 	    created(){
 	    	this.selectedIdentity = this.identity.clone();
 	    	this.selectedLocation = this.selectedIdentity.locations[0];
 	    	this.clonedLocation = this.selectedIdentity.locations[0].clone();
-		    this.expanded = true;
-		    const {width, height} = this.popup.dimensions();
-		    WindowService.changeWindowSize(height, width+(this.expanded ? 300 : 0));
+
+	    	if(this.locationFields.length || this.personalFields.length){
+			    this.expanded = true;
+			    const {width, height} = this.popup.dimensions();
+			    WindowService.changeWindowSize(height, width+(this.expanded ? 300 : 0));
+            }
 	    },
         computed: {
 	        ...mapState([
@@ -132,63 +124,46 @@
 	        ]),
 	        validAccounts() {
 		        const alreadySelectedUniques = this.selectedAccounts.map(x => x.unique());
-
-		        let neededBlockchains = this.accountRequirements.map(x => x.blockchain.toLowerCase());
 		        let neededNetworks = this.accountRequirements.map(x => Network.fromJson(x).unique());
 
 		        this.selectedAccounts.map(acc => {
-		        	neededBlockchains.splice(neededBlockchains.indexOf(acc.blockchain), 1);
 			        neededNetworks.splice(neededNetworks.indexOf(acc.network().unique()), 1);
                 });
 
 		        return this.accounts
-			        .filter(x => neededNetworks.includes(x.networkUnique))
-			        .filter(x => neededBlockchains.includes(x.blockchain().toLowerCase()))
-			        .filter(x => !alreadySelectedUniques.includes(x.unique()))
+			        .filter(x => {
+			        	return alreadySelectedUniques.includes(x.unique())
+                            || neededNetworks.includes(x.networkUnique)
+			        })
 			        .filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
 			        .reduce((acc, account) => {
-				        if(!acc.find(x => account.network().unique() === x.network().unique()
-					        && account.sendable() === x.sendable())) acc.push(account);
+			        	if(this.showingAll) acc.push(account);
+			        	else {
+					        if(!acc.find(x => account.network().unique() === x.network().unique()
+						        && account.sendable() === x.sendable())) acc.push(account);
+                        }
+
 				        return acc;
 			        }, [])
                     .sort((a,b) => b.logins - a.logins)
                     .map(account => {
-                    	let description = `${account.network().name}`;
-
-                    	let actions = [];
-                    	const authorities = account.authorities();
-
-                    	// No authorities
-                    	if(authorities.length < 2){
-                    		actions.push({
-			                    name:'Login',
-			                    handler:() => this.selectAccount(account),
-		                    });
-                        }
-
-                        // Multiple authorities
-                        else {
-                            account.authorities().map(acc => {
-                            	const authAccount = this.accounts.find(x => x.unique() === acc.unique());
-                            	if(alreadySelectedUniques.includes(authAccount.unique())) return false;
-                            	actions.push({
-		                            name:`Login with ${acc.authority}`,
-		                            handler:() => this.selectAccount(authAccount),
-		                            small:true,
-                                    red:authAccount.authority === 'owner',
-                                    blue:authAccount.authority !== 'owner',
-	                            })
-                            });
-                        }
-
-	                    actions = actions.filter(x => !!x);
-
+	                    let description = `${account.network().name}`;
+	                    let actions = [];
+	                    const actionName = alreadySelectedUniques.includes(account.unique()) ? 'Remove'
+                            : neededNetworks.length === 1 ? 'Login'
+                            : neededNetworks.length === alreadySelectedUniques.length ? 'Login'
+                            : 'Select';
+	                    actions.push({
+		                    name:actionName,
+		                    handler:() => this.selectAccount(account),
+                            blue:1,
+                            small:1,
+	                    });
                     	return {
-		                    icon:'',
-		                    title:account.sendable(),
-		                    description,
-		                    actions
-	                    }
+                    		title:this.showingAll ? account.formatted() : account.sendable(),
+                            description,
+                            actions
+                        }
                     })
 	        },
 	        isValidIdentity() {
@@ -249,6 +224,10 @@
 
             },
 	        selectAccount(account){
+	        	if(this.selectedAccounts.find(x => x.unique() === account.unique())){
+	        	    return this.unselectAccount(account);
+                }
+
 		        this.selectedAccounts.push(account);
 		        if(this.accountRequirements.length > this.selectedAccounts.length)
 			        return;
@@ -288,32 +267,81 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../variables";
 
-    .side-panel {
-        width:300px;
-        padding:10px 30px 40px;
-        display:flex;
-        flex-direction: column;
-        overflow:auto;
 
-        .line {
-            width:100%;
-            height:1px;
-            background:rgba(0,0,0,0.1);
-            margin:10px 0;
+    .required-networks {
+        display:flex;
+        flex:0 0 auto;
+        padding:0 30px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom:10px;
+        margin-top:-10px;
+
+        .requirements {
+            font-size: 13px;
+            font-weight: bold;
         }
 
+        .list {
+            margin-top:10px;
+            width:100%;
+            height:45px;
+            overflow: auto;
+            padding-right:10px;
+
+            .split-inputs {
+                width:100%;
+
+                &:not(:last-child){
+                    margin-bottom:5px;
+                }
+
+                figure {
+                    font-size: 13px;
+                    font-weight: bold;
+                }
+
+                .bubble {
+                    font-size: 11px;
+                    background:#fff;
+                    border:1px solid rgba(0,0,0,0.2);
+                    padding:3px 10px;
+                    border-radius:20px;
+                    font-weight: bold;
+
+                    &.blue {
+                        background:$light-blue;
+                        border:1px solid $dark-blue;
+                        color:#fff;
+                    }
+                }
+            }
+        }
     }
 
     .flex-row {
         display: flex;
         flex-direction: row;
         flex:1;
+
+        background:#fafafa;
     }
 
-    .flex-col {
+    .login-selector {
         display: flex;
         flex-direction: column;
         flex:1;
+        width:calc(100% - 320px);
+    }
+
+    .side-panel {
+        width:300px;
+        padding:10px 30px 40px;
+        display:flex;
+        flex-direction: column;
+        overflow:auto;
+        flex:0 0 auto;
     }
 
     .side-bar {
@@ -330,7 +358,21 @@
         padding-right:3px;
     }
 
+    .advanced-button {
+        font-size: 11px;
+        text-decoration: underline;
+        padding-right:30px;
+        cursor: pointer;
+
+        &:hover {
+            color:$dark-blue;
+        }
+    }
+
     .popout-list {
+        padding-top:0;
+
+
         .search-bar {
             margin-left:-30px;
         }

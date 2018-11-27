@@ -9,7 +9,7 @@
 
 				<section class="list">
 					<section v-for="(list, i) in [origins, originsFromSearch]">
-						<section class="item" v-for="(count, origin) in list">
+						<section class="item" v-for="(count, origin) in list" :key="origin">
 
 							<!-- APP ICON -->
 							<section class="icon-wrapper" @click="openApp(origin)">

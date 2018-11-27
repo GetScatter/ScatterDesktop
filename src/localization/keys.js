@@ -55,6 +55,7 @@ const GENERIC = prefixKeys('generic', {
 	Timestamp:'timestamp',
 	ChainID:'chain_id',
 	Name:'name',
+	Search:'search',
 
 	Accounts:'account',
 	AccountName:'account_name',

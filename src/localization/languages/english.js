@@ -70,6 +70,7 @@ const Locale = {
 	[GENERIC.Accounts]:(n = 0) => `Account${plural_s(n)}`,
 	[GENERIC.AccountName]:() => `Account Name`,
 	[GENERIC.Address]:() => `Address`,
+	[GENERIC.Search]:() => `Search`,
 
 	
 

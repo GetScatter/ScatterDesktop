@@ -1,6 +1,6 @@
 <template>
 	<section class="action-info" v-if="action">
-		<span class="origin">{{origin}}</span><br>
+		<figure class="origin" :title="origin">{{origin}}</figure>
 		wants to <b>{{action}}</b>
 	</section>
 </template>
@@ -18,15 +18,18 @@
 	@import "../../variables";
 
 	.action-info {
-		padding:30px 60px;
+		padding:40px 60px 30px;
 		text-align:center;
 		font-size: 22px;
 		line-height: 24px;
-		border-bottom:1px solid #dfe0e1;
-		background:rgba(0,0,0,0.02);
+		background:#fafafa;
 
 		.origin {
 			color:$dark-blue;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width:300px;
 		}
 
 		b {

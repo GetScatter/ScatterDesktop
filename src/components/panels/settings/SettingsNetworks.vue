@@ -66,11 +66,11 @@
                         <cin :label="locale(langKeys.GENERIC.Name)"
                              :placeholder="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.NamePlaceholder)"
                              :text="network.name"
-                             v-on:changed="changed => bind(changed, 'network.name')"></cin>
+                             v-on:changed="x => network.name = x"></cin>
                         <cin :label="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.HostLabel)"
                              placeholder="127.0.0.1"
                              :text="network.host"
-                             v-on:changed="changed => bind(changed, 'network.host')"></cin>
+                             v-on:changed="x => network.host = x"></cin>
                     </section>
 
                     <section class="split-inputs">
@@ -85,7 +85,7 @@
                              placeholder="443"
                              type="number"
                              :text="network.port > 0 ? network.port : ''"
-                             v-on:changed="changed => bind(changed, 'network.port')" />
+                             v-on:changed="x => network.port = x" />
                     </section>
 
                     <br>
@@ -98,7 +98,7 @@
                          :dynamic-tooltip="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.ChainIdTooltip)"
                          :copy="!isNew"
                          v-on:dynamic="fetchChainId"
-                         v-on:changed="changed => bind(changed, 'network.chainId')" />
+                         v-on:changed="x => network.chainId = x" />
 
                     <cin :disabled="true" v-if="!isNew && network.fromOrigin"
                          :placeholder="locale(langKeys.SETTINGS.NETWORKS.CUSTOM.FromOriginPlaceholder)"
