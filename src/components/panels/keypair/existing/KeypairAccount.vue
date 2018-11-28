@@ -26,7 +26,7 @@
 					<figure class="percentage-bar">
 						<figure class="bar" :class="{'red':resource.percentage > 80}" :style="{'width':resource.percentage + '%'}"></figure>
 					</figure>
-					<figure class="action">
+					<figure class="action" v-if="account.authority !== 'watch'">
 						<btn v-if="resource.actionable"
 						     v-on:clicked="() => moderateResource(resource)"
 						     small="1" :text="resource.actionText"></btn>

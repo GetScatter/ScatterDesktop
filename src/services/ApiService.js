@@ -16,7 +16,7 @@ import PluginRepository from '../plugins/PluginRepository';
 import {Blockchains, BlockchainsArray} from '../models/Blockchains';
 
 import Keypair from '../models/Keypair';
-import Identity from '../models/Identity';
+import Identity, {LocationInformation} from '../models/Identity';
 import Account from '../models/Account';
 import Error from '../models/errors/Error'
 import Network from '../models/Network'
@@ -109,16 +109,32 @@ export default class ApiService {
             const possibleId = PermissionService.identityFromPermissions(request.payload.origin);
             if(possibleId) return resolve({id:request.id, result:possibleId});
 
-            PopupService.push(Popup.popout(request, ({result}) => {
+            PopupService.push(Popup.popout(request, async ({result}) => {
                 if(!result) return resolve({id:request.id, result:Error.signatureError("identity_rejected", "User rejected the provision of an Identity")});
 
+                console.log('result', result);
+
                 const identity = Identity.fromJson(result.identity);
+                const location = LocationInformation.fromJson(result.location);
+                if(result.missingFields){
+                    const scatter = store.state.scatter.clone();
+                    const oldIdentity = scatter.keychain.identities.find(x => x.id === identity.id);
+                    oldIdentity.personal = identity.personal;
+
+                    oldIdentity.locations = oldIdentity.locations.filter(x => x.id !== location.id);
+                    oldIdentity.locations.unshift(location);
+
+	                scatter.keychain.updateOrPushIdentity(identity);
+                    await store.dispatch(StoreActions.SET_SCATTER, scatter);
+                }
+
+
                 const accounts = (result.accounts || []).map(x => Account.fromJson(x));
                 PermissionService.addIdentityOriginPermission(identity, accounts, request.payload.fields, request.payload.origin);
 
 
                 // const returnableIdentity = Identity.asReturnedFields(request.payload.fields, identity);
-                const returnableIdentity = identity.asOnlyRequiredFields(request.payload.fields);
+                const returnableIdentity = identity.asOnlyRequiredFields(request.payload.fields, location);
                 returnableIdentity.accounts = accounts.map(x => x.asReturnable());
 
                 AccountService.incrementAccountLogins(accounts);

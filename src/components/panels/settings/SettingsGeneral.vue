@@ -33,7 +33,7 @@
             <br>
             <br>
             <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty"
-                 disabled="1" copy="1" :text="dataPath"
+                 disabled="1" :text="dataPath"
                  v-on:dynamic="openFilePathLink"></cin>
         </section>
 

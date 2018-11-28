@@ -77,7 +77,7 @@
 								     placeholder="your.account@owner"
 								     :label="locale(langKeys.GENERIC.AccountName)" />
 
-								<btn :text="locale(langKeys.GENERIC.Add)" style="margin-top:20px; flex:0.2;"
+								<btn :disabled="invalidNewAccountName" :text="locale(langKeys.GENERIC.Add)" style="margin-top:20px; flex:0.2;"
 								     red="1" v-on:clicked="manuallyAddAccount" />
 							</section>
 						</section>
@@ -106,6 +106,7 @@
 	import {Blockchains} from "../../../models/Blockchains";
 	import AccountService from "../../../services/AccountService";
 	import Account from "../../../models/Account";
+	import PluginRepository from "../../../plugins/PluginRepository";
 
 	let saveTimeout;
 
@@ -162,6 +163,9 @@
 				if(!this.keypair.external) return true;
 				if(this.accounts.find(x => x.blockchain() === Blockchains.EOSIO && !x.keypair().external)) return true;
 				return false;
+			},
+			invalidNewAccountName(){
+				return !PluginRepository.plugin(Blockchains.EOSIO).isValidRecipient(this.newAccountName.split('@')[0]);
 			}
 		},
 

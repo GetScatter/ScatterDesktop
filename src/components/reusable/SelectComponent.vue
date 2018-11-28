@@ -124,6 +124,7 @@
 
         &.disabled {
             background: #f5f5f5;
+            cursor: not-allowed;
         }
 
         &:not(:first-child){

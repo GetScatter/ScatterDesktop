@@ -95,7 +95,6 @@ export class LocationInformation {
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
 	clone(){ return LocationInformation.fromJson(JSON.parse(JSON.stringify(this))) }
     findFields(fields){
-        console.log('fields', fields);
         let foundFields = fields.filter(field => field !== LocationFields.country)
             .filter(field => this.hasOwnProperty(field) && this[field].length);
 

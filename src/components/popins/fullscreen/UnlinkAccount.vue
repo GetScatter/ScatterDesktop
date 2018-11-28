@@ -26,7 +26,7 @@
 
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn :disabled="authorities.length && !selectedAuthorities.length" text="Confirm" blue="1" v-on:clicked="unlinkAccount" />
+			<btn :disabled="authorities.length > 1 && !selectedAuthorities.length" text="Confirm" blue="1" v-on:clicked="unlinkAccount" />
 		</section>
 	</section>
 </template>
@@ -48,7 +48,7 @@
 			selectedAuthorities:[],
 		}},
 		mounted(){
-
+			if(this.authorities.length <= 1) this.authorities.map(this.addOrRemoveAuthority);
 		},
 		computed:{
 			...mapState([
@@ -128,6 +128,7 @@
 
 	.list {
 		max-width:700px;
+		margin:0 auto;
 		width:100%;
 		text-align:left;
 

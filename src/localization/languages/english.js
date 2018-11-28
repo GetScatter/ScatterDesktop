@@ -165,6 +165,7 @@ const Locale = {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[ADD_KEYS.IMPORT_TEXT.KeyLabel]:() => `Enter a Private Key`,
 	[ADD_KEYS.IMPORT_TEXT.KeyPlaceholder]:() => `Make sure to enter it correctly`,
+	[ADD_KEYS.IMPORT_TEXT.ERRORS.InvalidKeyLength]:x => `Private key not long enough (${x})`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[ADD_KEYS.IMPORT_HW.SelectHardwareLabel]:() => `Select a Hardware Wallet`,
 	[ADD_KEYS.IMPORT_HW.AvailableBlockchainsLabel]:() => `Available Blockchains`,

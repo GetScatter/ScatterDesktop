@@ -44,7 +44,7 @@
                          v-on:blur="amount = amount.toString().length ? parseFloat(amount).toFixed(token.decimals) : ''" />
 
 
-                    <sel :selected="token" :parser="x => x.name" :items="[]" as-button="1" v-on:clicked="openTokenSelector" />
+                    <sel :disabled="!account" :selected="token" :parser="x => x.name" :items="[]" as-button="1" v-on:clicked="openTokenSelector" />
                     <br>
 
                     <section class="custom-token" v-if="token.id === 'custom'">
@@ -230,6 +230,7 @@
                             || x.sendable().toLowerCase().match(terms)
                             || x.keypair().name.toLowerCase().match(terms)
                     })
+                    .filter(x => x.authority !== 'watch')
                     .map(account => ({
                         id:account.unique(),
                         title:account.sendable(),
@@ -331,6 +332,7 @@
 	    	    this.$router.push({name:this.RouteNames.HOME})
             },
             openTokenSelector(){
+	    		if(!this.account) return;
 
 	    		let items = [{id:'custom', name:this.locale(this.langKeys.TRANSFER.TOKENS.CustomTokenLabel)}].concat(this.filteredTokens)
                     .map(token => {

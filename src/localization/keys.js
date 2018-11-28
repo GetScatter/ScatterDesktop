@@ -137,7 +137,10 @@ const ADD_KEYS = prefixKeys('add_keys', {
 	},
 	IMPORT_TEXT:{
 		KeyLabel:'key_lbl',
-		KeyPlaceholder:'key_plc'
+		KeyPlaceholder:'key_plc',
+		ERRORS:{
+			InvalidKeyLength:'invalid_key_len',
+		}
 	},
 	IMPORT_HW:{
 		SelectHardwareLabel:'sel_hard_lbl',
@@ -157,7 +160,7 @@ const ADD_KEYS = prefixKeys('add_keys', {
 		CreateEosAccountDescription:'create_eos_acc_desc',
 		CopyButton:'copy_btn',
 		DeleteButton:'del_btn',
-		CreateEosAccountButton:'create_eos_acc_btn'
+		CreateEosAccountButton:'create_eos_acc_btn',
 	}
 });
 

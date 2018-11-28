@@ -5,27 +5,36 @@
             <section class="login-selector">
                 <PopOutAction :origin="payload.origin" action="log in" />
 
-
-                <section class="required-networks" v-if="accountNetworks.length > 1">
+                <section class="required-networks" v-if="accountNetworks.length > 1 || (accountNetworks.length === 1 && accountNetworks[0].count > 1)">
                     <figure class="requirements">It requires access to these networks</figure>
                     <section class="list">
                         <figure class="split-inputs" v-for="item in accountNetworks">
                             <!--<i class="icon-check" v-if="item.count - selectedOfNetwork(item.network).length === 0"></i>-->
                             <figure style="flex:3;">{{item.network.name}}</figure>
-                            <figure class="bubble" v-if="item.count - selectedOfNetwork(item.network).length !== 0">{{item.count - selectedOfNetwork(item.network).length}}</figure>
+                            <figure class="bubble" :class="{'red':networkAccountsCount(item.network.unique()) === 0}"
+                                    v-if="item.count - selectedOfNetwork(item.network).length !== 0">{{item.count - selectedOfNetwork(item.network).length}}</figure>
                             <figure class="bubble blue" v-else><i class="icon-check"></i></figure>
                         </figure>
                     </section>
                 </section>
 
-                <section class="split-inputs" style="flex:0 0 auto;">
+                <br v-if="stillNeedsFields" />
+
+                <section style="padding:0 30px;" v-if="stillNeedsFields">
+                    <btn text="Login" :disabled="!isValidIdentity" />
+                </section>
+
+
+                <section class="split-inputs" style="flex:0 0 auto;" v-if="!stillNeedsFields">
                     <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
                     <figure class="advanced-button" @click="showingAll = !showingAll">
                         {{showingAll ? 'Filter' : 'Show All'}}
                     </figure>
                 </section>
 
-                <section class="popout-list">
+                <br v-if="stillNeedsFields" />
+
+                <section class="popout-list" :class="{'done':stillNeedsFields}">
                     <FullWidthRow :items="validAccounts" popout="1" />
                 </section>
             </section>
@@ -37,6 +46,11 @@
                     @click="expandOrContract"></figure>
 
             <section class="side-panel" v-if="expanded">
+
+                <section class="disclaimer less-pad" style="margin-top:20px; margin-bottom:10px;" v-if="missingFields">
+                    You are missing some fields!
+                    <p>Fill out the inputs below which will add those fields to your Identity for later use and also return them to the application.</p>
+                </section>
 
                 <section class="key-val" v-if="personalFields.length">
                     <figure>Personal Info</figure>
@@ -135,6 +149,7 @@
 			        	return alreadySelectedUniques.includes(x.unique())
                             || neededNetworks.includes(x.networkUnique)
 			        })
+			        .filter(x => x.authority !== 'watch')
 			        .filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
 			        .reduce((acc, account) => {
 			        	if(this.showingAll) acc.push(account);
@@ -182,6 +197,13 @@
 	        locationFields(){
 	            return this.fields.location;
             },
+            missingFields(){
+	        	if(!this.personalFields.length && !this.locationFields.length) return false;
+	            return !this.identity.hasRequiredFields(this.fields);
+            },
+            stillNeedsFields(){
+	        	return this.accountRequirements.length === this.selectedAccounts.length && this.missingFields
+            },
 
 
 	        accountNetworks(){
@@ -218,11 +240,6 @@
 	            this.selectedLocation = location;
 	            this.clonedLocation = location.clone();
             },
-            returnedIdentity(){
-
-
-
-            },
 	        selectAccount(account){
 	        	if(this.selectedAccounts.find(x => x.unique() === account.unique())){
 	        	    return this.unselectAccount(account);
@@ -234,7 +251,12 @@
 
 		        if(this.isValidIdentity) {
 
-		        	this.returnResult({identity:this.selectedIdentity, accounts:this.selectedAccounts});
+		        	this.returnResult({
+                        identity:this.selectedIdentity,
+                        location:this.selectedLocation,
+                        accounts:this.selectedAccounts,
+                        missingFields:this.missingFields
+		        	});
 		        }
 	        },
 	        unselectAccount(account){
@@ -242,6 +264,9 @@
             },
             selectedOfNetwork(network){
 	        	return this.selectedAccounts.filter(x => x.network().unique() === network.unique())
+            },
+            networkAccountsCount(networkUnique){
+	            return this.accounts.filter(x => x.networkUnique === networkUnique).length;
             },
 
 
@@ -286,7 +311,7 @@
         .list {
             margin-top:10px;
             width:100%;
-            height:45px;
+            max-height:45px;
             overflow: auto;
             padding-right:10px;
 
@@ -310,8 +335,16 @@
                     border-radius:20px;
                     font-weight: bold;
 
+                    &.red {
+                        background:$red;
+                        background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
+                        border:1px solid #c93c3b;
+                        color:#fff;
+                    }
+
                     &.blue {
                         background:$light-blue;
+                        background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
                         border:1px solid $dark-blue;
                         color:#fff;
                     }
@@ -372,17 +405,18 @@
     .popout-list {
         padding-top:0;
 
+        &.done {
+            opacity:0.3;
+
+            &:hover {
+                opacity:1;
+            }
+        }
+
 
         .search-bar {
             margin-left:-30px;
         }
-    }
-
-    .missing-fields {
-        padding:40px;
-        text-align:center;
-        flex:1;
-        overflow:auto;
     }
 
 </style>

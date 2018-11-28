@@ -258,13 +258,17 @@ export default class EOS extends Plugin {
 		const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable() && x.keypairUnique === account.keypairUnique);
 
 		let availableActions = [
-			new AccountAction('Proxy Votes', '', () => {
-				PopupService.push(Popup.eosProxyVotes(account, () => {}));
-			}),
 			new AccountAction('Unlink Account', '', () => {
 				PopupService.push(Popup.unlinkAccount(account, () => {}));
 			})
 		];
+
+		const nonWatchActions = [
+			new AccountAction('Proxy Votes', '', () => {
+				PopupService.push(Popup.eosProxyVotes(account, () => {}));
+			}),
+		];
+
 		const ownerActions = [
 			new AccountAction('Change Permissions', '', () => {
 				PopupService.push(Popup.verifyPassword(verified => {
@@ -277,6 +281,8 @@ export default class EOS extends Plugin {
 		];
 
 		// Adding owner only actions.
+		if(accounts.some(x => x.authority !== 'watch'))
+			availableActions = nonWatchActions.concat(availableActions);
 		if(accounts.some(x => x.authority === 'owner'))
 			availableActions = ownerActions.concat(availableActions);
 

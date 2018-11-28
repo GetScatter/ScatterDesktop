@@ -1,6 +1,6 @@
 <template>
 	<section>
-		<cin :type="keyInputType" big="1" :error="error"
+		<cin :type="keyInputType" big="1" :error="keyLengthError || error"
 		     :label="locale(langKeys.ADD_KEYS.IMPORT_TEXT.KeyLabel)"
 		     :placeholder="locale(langKeys.ADD_KEYS.IMPORT_TEXT.KeyPlaceholder)"
 		     :dynamic-button="eyeIcon"
@@ -29,7 +29,12 @@
 			]),
 			eyeIcon(){
 				return 'icon-eye' + (this.keyInputType === 'password' ? '' : '-off')
-			}
+			},
+			keyLengthError(){
+				return this.key.length !== 0 && this.key.length <= 50
+					? this.locale(this.langKeys.ADD_KEYS.IMPORT_TEXT.ERRORS.InvalidKeyLength, this.key.length)
+					: null;
+			},
 		},
 		methods:{
 			toggleKeyInputType(){
@@ -78,5 +83,6 @@
 
 
 <style scoped lang="scss" rel="stylesheet/scss">
+
 
 </style>

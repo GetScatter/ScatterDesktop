@@ -25,11 +25,11 @@
         width:100%;
         outline:0;
         border:1px solid #dfe0e1;
+        background:#fff;
         border-radius:4px;
         color:$dark-blue;
         font-size: 16px;
         font-weight: bold;
-        background:#fff;
         max-width:360px;
 
         &.small {
@@ -44,6 +44,7 @@
             border:1px solid rgba(0,0,0,0);
             color:#fff;
             background:$dark-blue;
+            background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
         }
 
         &.red {
@@ -55,23 +56,28 @@
             border:1px solid rgba(0,0,0,0.22);
         }
 
-        &:active {
-            border:1px solid $dark-blue;
-            background:rgba(0,0,0,0.04);
+        &:not(:disabled){
+            &:active {
+                border:1px solid $dark-blue;
+                background:rgba(0,0,0,0.04);
 
-            &.blue {
-                color:$dark-blue;
-            }
+                &.blue {
+                    color:$dark-blue;
+                }
 
-            &.red {
-                border:1px solid $red;
-                background:$red;
-                color:#fff;
+                &.red {
+                    border:1px solid $red;
+                    background:$red;
+                    background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
+                    color:#fff;
+                }
             }
         }
 
         &:disabled {
-            opacity:0.4;
+            border:1px solid #c6c7c8;
+            background: #e3e3e3;
+            color: #c7c7c7;
             cursor: not-allowed;
         }
 
