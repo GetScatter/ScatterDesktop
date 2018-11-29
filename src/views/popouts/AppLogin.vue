@@ -21,7 +21,7 @@
                 <br v-if="stillNeedsFields" />
 
                 <section style="padding:0 30px;" v-if="stillNeedsFields">
-                    <btn text="Login" v-on:clicked="selectAccount" :disabled="!isValidIdentity" />
+                    <btn text="Login" blue="1" v-on:clicked="selectAccount" :disabled="!isValidIdentity" />
                 </section>
 
 

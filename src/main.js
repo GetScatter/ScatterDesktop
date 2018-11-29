@@ -20,9 +20,7 @@ import ViewBase from './components/ViewBase.vue'
 import PopInHead from './components/popins/overlay/fragments/PopInHead.vue'
 
 // POP OUTS
-import SignatureRequest from './views/popouts/SignatureRequest.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
-import GetPublicKey from './views/popouts/GetPublicKey.vue'
 import TransferRequest from './views/popouts/TransferRequest.vue'
 
 // Reusable components
@@ -60,9 +58,7 @@ class Main {
 		let fragments;
 		if(hash === 'popout'){
 			fragments = [
-				{tag:'signature-request', vue:SignatureRequest},
 				{tag:'link-app', vue:LinkApp},
-				{tag:'get-public-key', vue:GetPublicKey},
 				{tag:'transfer-request', vue:TransferRequest},
 			]
 		} else {

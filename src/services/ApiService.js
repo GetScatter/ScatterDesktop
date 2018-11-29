@@ -21,8 +21,11 @@ import Account from '../models/Account';
 import Error from '../models/errors/Error'
 import Network from '../models/Network'
 
+import {router} from "../vue/VueInitializer";
+
 import {remote} from '../util/ElectronHelpers';
 import HardwareService from "./HardwareService";
+import {RouteNames} from "../vue/Routing";
 const NotificationService = remote.getGlobal('appShared').NotificationService;
 remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
     ApiService.handleDeepLink(deepLink);
@@ -126,6 +129,10 @@ export default class ApiService {
 
     static async [Actions.GET_OR_REQUEST_IDENTITY](request){
         return new Promise((resolve) => {
+	        const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
+	        if(Object.keys(request.payload).length !== 2) return badResult();
+	        if(!request.payload.hasOwnProperty('fields')) return badResult();
+	        if(typeof request.payload.fields !== 'object') return badResult();
 
             const possibleId = PermissionService.identityFromPermissions(request.payload.origin);
             if(possibleId) return resolve({id:request.id, result:possibleId});
@@ -151,7 +158,6 @@ export default class ApiService {
     }
 
 	static async [Actions.REQUEST_SIGNATURE](request){
-
 		return new Promise(async resolve => {
 
 			const {payload} = request;
@@ -241,7 +247,11 @@ export default class ApiService {
 		return new Promise(async resolve => {
 
 			const {payload} = request;
-			const {origin, publicKey, data, whatFor, isHash} = request.payload;
+			const {origin, publicKey, data} = request.payload;
+
+			if(data.split(' ').some(x => x.length > 12))
+				return resolve({id:request.id, result:Error.malicious('You can not sign strings where any of the words are over 12 characters.')});
+
 
 			if(identityKey) payload.identityKey = identityKey;
 			else {
@@ -270,7 +280,7 @@ export default class ApiService {
 			PopupService.push(Popup.popout(Object.assign(request, {}), async ({result}) => {
 				if(!result || (!result.accepted || false)) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
-				resolve({id:request.id, result:await plugin.signer(payload, publicKey, true, isHash)});
+				resolve({id:request.id, result:await plugin.signer(payload, publicKey, true, false)});
 			}));
 		});
 	}
@@ -328,7 +338,6 @@ export default class ApiService {
 
     static async [Actions.GET_PUBLIC_KEY](request){
         return new Promise((resolve, reject) => {
-            console.log('req', request);
             const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
             if(Object.keys(request.payload).length !== 2) return badResult();
             if(!request.payload.hasOwnProperty('blockchain')) return badResult();
@@ -343,7 +352,7 @@ export default class ApiService {
 
                 if(result.isNew) {
                     await KeyPairService.saveKeyPair(keypair);
-                    await AccountService.importAllAccounts(keypair);
+	                router.push({name:RouteNames.KEYPAIR, params:{id:keypair.id}});
                     resolve({id:request.id, result:publicKey});
                 }
                 else resolve({id:request.id, result:publicKey});

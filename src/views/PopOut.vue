@@ -34,9 +34,12 @@
                       v-on:expanded="expandOrContract" :expanded="expanded"
                       v-on:returned="returnResult" />
 
+            <GetPublicKey v-if="popupType === apiActions.GET_PUBLIC_KEY"
+                          :popup="popup"
+                          v-on:returned="returnResult" />
+
             <link-app v-if="popupType === 'linkApp'" v-on:returned="returnResult"></link-app>
 
-            <get-public-key :popup="popup" v-if="popupType === apiActions.GET_PUBLIC_KEY" v-on:returned="returnResult"></get-public-key>
 
             <transfer-request v-if="popupType === apiActions.REQUEST_TRANSFER" v-on:returned="returnResult"></transfer-request>
 
@@ -57,6 +60,7 @@
     import * as ApiActions from '../models/api/ApiActions';
     import {Popup} from "../models/popups/Popup";
     import PasswordService from "../services/PasswordService";
+    import GetPublicKey from "./popouts/GetPublicKey";
 
     export default {
         data () {return {
@@ -65,6 +69,7 @@
 	        expanded:false,
         }},
         components:{
+	        GetPublicKey,
             AppLogin:() => import('./popouts/AppLogin'),
             Signature:() => import('./popouts/Signature'),
         },

@@ -16,6 +16,8 @@ import LANG_KEYS from '../localization/keys'
 
 Vue.config.productionTip = false
 
+export let router;
+
 /***
  * Sets up an instance of Vue.
  * This is shared between the popup.js and prompt.js scripts.
@@ -28,7 +30,7 @@ export default class VueInitializer {
                 routerCallback = () => {}){
         this.setupVuePlugins();
         this.registerComponents(components);
-        const router = this.setupRouting(routes, middleware);
+        router = this.setupRouting(routes, middleware);
 
         store.dispatch(Actions.LOAD_SCATTER).then(async () => {
 

@@ -62,7 +62,6 @@
 					return this.$router.push({name: this.RouteNames.KEYPAIR, params: {id: existing.id}});
 				}
 
-
 				setTimeout(() => {
 					this.$emit('keypair', keypair);
 					this.importing = false;
