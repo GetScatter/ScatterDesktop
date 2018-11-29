@@ -18,6 +18,7 @@
                     <CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />
                     <RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
+                    <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -74,6 +75,7 @@
     import CheckHardware from "./popins/fullscreen/CheckHardware";
     import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
+    import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
     import RemoveApp from "./popins/overlay/RemoveApp";
     import Selector from "./popins/overlay/Selector";
 
@@ -101,6 +103,7 @@
 		    Mnemonic,
 		    RemoveKeypair,
 		    CheckHardware,
+		    EnableWhitelist,
         },
         data(){ return {
             popupTypes:PopupTypes,

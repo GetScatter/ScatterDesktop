@@ -18,7 +18,7 @@
 
 	.pop-out-head {
 		flex:0 0 auto;
-		height:70px;
+		height:79px;
 		width:100%;
 		display:flex;
 		align-items: center;

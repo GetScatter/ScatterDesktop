@@ -1,0 +1,111 @@
+<template>
+	<section>
+		<section class="full-panel inner center-fold limited">
+			<section>
+				<section class="head">
+					<figure class="title">Enabled Whitelist</figure>
+					<p>
+						Whitelisting actions makes it so you don't have to keep approving actions you trust.
+						When you whitelist actions you will see a checkbox appear next to each action and all it's values.
+					</p>
+
+					<br>
+
+					<section class="mock-props">
+						<label><b class="red">entire action is whitelisted</b></label>
+						<section class="details split-inputs">
+							<input checked disabled="true" type="checkbox" />
+							<figure class="title" style="font-size: 13px;">eosio.token <i class="contract-split icon-right-open-big"></i> transfer</figure>
+						</section>
+						<br>
+
+						<section class="mock-props">
+							<label>Amount <b class="red">( this value will be able to change without a popup )</b></label>
+							<section class="split-inputs">
+								<input checked disabled="true" type="checkbox" />
+								<figure class="value">1 TOKENS</figure>
+							</section>
+						</section>
+
+						<section class="mock-props">
+							<label>Recipient <b class="red">( if this changes you will have to approve the action again )</b></label>
+							<section class="split-inputs">
+								<input disabled="true" type="checkbox" />
+								<figure class="value">xxxxxxxxxxxxx</figure>
+							</section>
+						</section>
+					</section>
+
+				</section>
+			</section>
+
+			<section class="action-bar short bottom centered">
+				<btn :text="locale(langKeys.GENERIC.Okay)" blue="1" v-on:clicked="returnResult(true)" />
+			</section>
+		</section>
+	</section>
+</template>
+
+<script>
+	import { mapActions, mapGetters, mapState } from 'vuex'
+	import * as Actions from '../../../store/constants';
+	import '../../../popins.scss';
+	import PasswordService from "../../../services/PasswordService";
+	import PopupService from "../../../services/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+
+	export default {
+		props:['popin'],
+		data () {return {
+			password:'',
+		}},
+		computed:{
+			...mapState([
+
+			]),
+			...mapGetters([
+
+			]),
+			returnOnly(){
+				return this.popin.data.props.returnOnly;
+			}
+		},
+		methods:{
+			returnResult(truthy){
+				this.popin.data.callback(truthy);
+				this[Actions.RELEASE_POPUP](this.popin);
+			},
+
+			...mapActions([
+				Actions.RELEASE_POPUP
+			])
+		},
+	}
+</script>
+
+<style scoped lang="scss" rel="stylesheet/scss">
+	@import "../../../variables";
+
+	.mock-props {
+		max-width:500px;
+		width:100%;
+		text-align:left;
+		padding:10px;
+		border:1px solid rgba(0,0,0,0.1);
+		border-radius:4px;
+		margin-bottom:5px;
+
+		input {
+			width:20px;
+			height:20px;
+			margin-right:10px;
+		}
+
+		label {
+			.red {
+				color:$red;
+			}
+		}
+	}
+
+</style>

@@ -208,6 +208,8 @@ class LowLevelWindowService {
 		win.setAlwaysOnTop(true);
 		win.focus();
 
+		waitingPopup = await this.getWindow(1, 1);
+
 		win.once('closed', async () => {
 			// This is a fix for MacOS systems which causes the
 			// main window to always pop up after popups closing.
@@ -218,8 +220,6 @@ class LowLevelWindowService {
 
 			onClosed(win);
 			win = null;
-			waitingPopup = await this.getWindow(1, 1);
-
 		});
 
 		return win;

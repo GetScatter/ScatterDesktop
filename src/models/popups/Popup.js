@@ -21,17 +21,27 @@ export class Popup {
 	static fromJson(json){ return Object.assign(new Popup(), json); }
 
     dimensions(){
-        if(this.data.type === ApiActions.GET_OR_REQUEST_IDENTITY)   return {width:420, height:600};
-        if(this.data.type === ApiActions.REQUEST_TRANSFER)          return {width:440, height:560};
-        if(this.data.type === ApiActions.REQUEST_SIGNATURE)         return {width:1024, height:800};
-        if(this.data.type === ApiActions.SUGGEST_NETWORK)       return {width:440, height:360};
-        if(this.data.type === ApiActions.LINK_ACCOUNT)              return {width:440, height:360};
-        if(this.data.type === ApiActions.GET_PUBLIC_KEY)            return {width:440, height:600};
-        if(this.data.type === 'linkApp')                            return {width:440, height:360};
-
-        return {width:800, height:600};
+    	switch (this.data.type) {
+		    case ApiActions.GET_OR_REQUEST_IDENTITY:
+		    case ApiActions.GET_PUBLIC_KEY:
+			    return {width:420, height:600};
+		    case ApiActions.REQUEST_TRANSFER:
+		    case ApiActions.REQUEST_SIGNATURE:
+			    return {width:920, height:600};
+		    default:
+			    return {width:800, height:600};
+	    }
     }
 
+
+
+	appData(){ return this.data.props.appData }
+	payload(){ return this.data.props.payload }
+	origin(){
+    	const app = this.appData();
+    	if(app) return app.name;
+		return this.data.props.plugin
+	}
 
 
 
@@ -146,6 +156,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHECK_HARDWARE, {}, () => {}))
 	}
 
+	static enableWhitelist(){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, () => {}))
+	}
+
 }
 
 export const PopupTypes = {
@@ -169,6 +183,7 @@ export const PopupTypes = {
 	REMOVE_LOCATION:'removeLocation',
 	DESTROY_SCATTER:'destroyScatter',
 	CHECK_HARDWARE:'checkHardware',
+	ENABLE_WHITELIST:'enableWhitelist',
 
     TX_SUCCESS:'txSuccess',
 };
@@ -188,6 +203,7 @@ export const isFullscreen = popup => {
         PopupTypes.REMOVE_LOCATION,
         PopupTypes.DESTROY_SCATTER,
         PopupTypes.CHECK_HARDWARE,
+        PopupTypes.ENABLE_WHITELIST,
     ].includes(popup.data.type);
 
 

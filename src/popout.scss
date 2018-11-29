@@ -1,0 +1,59 @@
+@import "_variables.scss";
+
+.popout {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border-top:1px solid #dadada;
+  border-left:1px solid #dadada;
+  overflow:hidden;
+
+  > section {
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .multi-pane {
+    display: flex;
+    flex-direction: row;
+    flex:1;
+
+    background:#fafafa;
+
+    .main-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex:1;
+      width:calc(100% - 320px);
+    }
+
+    .side-panel {
+      width:calc(100% - 420px);
+      padding:10px 30px 40px;
+      display:flex;
+      flex-direction: column;
+      overflow:auto;
+      flex:0 0 auto;
+    }
+
+    .side-bar {
+      cursor: pointer;
+      height:calc(100vh - 70px);
+      width:20px;
+      background:$light-blue;
+      border-left:1px solid $dark-blue;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      color:#fff;
+      font-size: 11px;
+      padding-right:3px;
+    }
+  }
+
+
+}
+

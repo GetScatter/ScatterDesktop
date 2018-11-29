@@ -62,7 +62,13 @@ export default class WindowService {
 		if(!win) win = remote.getCurrentWindow();
 		const mousePoint = remote.screen.getCursorScreenPoint();
 		let {width:screenWidth, height:screenHeight} = remote.screen.getDisplayNearestPoint(mousePoint).workAreaSize;
+
+		// Never want to go out of screen bounds.
+		console.log('screenWidth', screenWidth, width);
+		if(screenWidth < width) width = screenWidth;
+
 		if(mousePoint.x > screenWidth) screenWidth = screenWidth * Math.ceil(mousePoint.x / screenWidth);
+
 		win.setSize(width, height);
 		win.setPosition(screenWidth - width, screenHeight - height);
 	}

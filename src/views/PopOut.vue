@@ -24,19 +24,21 @@
 
         <section v-if="windowMessage" class="popout">
 
-            <AppLogin v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY" :popup="popup" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult" />
+            <AppLogin v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"
+                      :popup="popup"
+                      v-on:expanded="expandOrContract" :expanded="expanded"
+                      v-on:returned="returnResult" />
 
-            <!--<get-identity v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"-->
-                          <!--:payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></get-identity>-->
+            <Signature v-if="popupType === apiActions.REQUEST_SIGNATURE || popupType === apiActions.REQUEST_ARBITRARY_SIGNATURE"
+                      :popup="popup"
+                      v-on:expanded="expandOrContract" :expanded="expanded"
+                      v-on:returned="returnResult" />
 
-            <signature-request v-if="popupType === apiActions.REQUEST_SIGNATURE || popupType === apiActions.REQUEST_ARBITRARY_SIGNATURE"
-                               :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></signature-request>
+            <link-app v-if="popupType === 'linkApp'" v-on:returned="returnResult"></link-app>
 
-            <link-app v-if="popupType === 'linkApp'" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></link-app>
+            <get-public-key v-if="popupType === apiActions.GET_PUBLIC_KEY" v-on:returned="returnResult"></get-public-key>
 
-            <get-public-key v-if="popupType === apiActions.GET_PUBLIC_KEY" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></get-public-key>
-
-            <transfer-request v-if="popupType === apiActions.REQUEST_TRANSFER" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></transfer-request>
+            <transfer-request v-if="popupType === apiActions.REQUEST_TRANSFER" v-on:returned="returnResult"></transfer-request>
 
         </section>
 
@@ -45,6 +47,8 @@
 </template>
 
 <script>
+    import '../popout.scss';
+
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
     import Scatter from '../models/Scatter';
@@ -52,16 +56,17 @@
     import WindowService from '../services/WindowService'
     import * as ApiActions from '../models/api/ApiActions';
     import {Popup} from "../models/popups/Popup";
-    import PopupService from "../services/PopupService";
     import PasswordService from "../services/PasswordService";
 
     export default {
         data () {return {
             apiActions:ApiActions,
             windowMessage:null,
+	        expanded:false,
         }},
         components:{
-            AppLogin:() => import('./popouts/AppLogin')
+            AppLogin:() => import('./popouts/AppLogin'),
+            Signature:() => import('./popouts/Signature'),
         },
         mounted(){
             WindowService.watch('popup', windowMessage => {
@@ -97,7 +102,6 @@
             ...mapState([
                 'scatter',
             ]),
-            pluginOrigin(){ return this.windowMessage.data.popup.data.props.plugin },
             popup(){ return Popup.fromJson(this.windowMessage.data.popup) },
             payload(){ return this.windowMessage.data.popup.data.props.payload },
             popupType(){ return this.windowMessage.data.popup.data.type },
@@ -107,6 +111,15 @@
                 WindowService.sendResult(this.windowMessage, result);
                 setTimeout(() => remote.getCurrentWindow().close(), 50);
             },
+
+	        expandOrContract(deltaWidth = 300, forced = null, subtracted = null){
+            	if(forced !== null) this.expanded = forced;
+		        else this.expanded = !this.expanded;
+
+		        const {width, height} = this.popup.dimensions();
+		        const delta = (this.expanded ? deltaWidth : 0);
+		        WindowService.changeWindowSize(height, subtracted ? width-delta : width+delta);
+	        },
             ...mapActions([
                 Actions.HOLD_SCATTER
             ])
@@ -117,19 +130,6 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables.scss";
 
-    .popout {
-        position: relative;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        border-top:1px solid #dadada;
-        border-left:1px solid #dadada;
-        overflow:hidden;
 
-        section {
-            display: flex;
-            flex-direction: column;
-        }
-    }
 
 </style>

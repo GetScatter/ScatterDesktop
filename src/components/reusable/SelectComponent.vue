@@ -2,7 +2,7 @@
     <section>
         <label v-if="label">{{label}}</label>
 
-        <section class="select" :class="{'open':open, 'disabled':disabled}">
+        <section class="select" :class="{'open':open, 'disabled':disabled, 'short':short}">
             <figure class="arrow">
                 <i class="icon-down-open-big"></i>
             </figure>
@@ -26,7 +26,7 @@
 <script>
     let documentListener;
     export default {
-	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'subparser', 'disabled', 'imgParser', 'long', 'asButton'],
+	    props:['placeholder', 'label', 'options', 'selected', 'prop', 'parser', 'subparser', 'disabled', 'imgParser', 'long', 'asButton', 'short'],
 
         data(){ return {
             optionsTerms:'',
@@ -231,6 +231,26 @@
 
             .arrow {
                 opacity:1;
+            }
+        }
+
+        $short-height:32px;
+        &.short {
+            height:$short-height;
+
+            .arrow {
+                height:$short-height;
+                line-height:$short-height;
+            }
+
+            .selected-option {
+                height:$short-height;
+                line-height:$short-height;
+                font-size:13px;
+            }
+
+            .options {
+                top:30px;
             }
         }
     }

@@ -29,7 +29,7 @@
     import Process from "../../models/Process";
 
     export default {
-	    props:['buttons', 'text', 'subtext'],
+	    props:['buttons', 'text', 'subtext', 'short'],
         computed:{
             ...mapState([
             	'hideBackButton'

@@ -1,5 +1,5 @@
 <template>
-	<section :class="{'popout':popout}">
+	<section :class="{'for-popout':popout}">
 		<section class="row" v-for="item in items">
 			<figure class="icon" v-if="item.hasOwnProperty('icon') && item.icon.length">
 				<span :class="item.icon"></span>
@@ -106,7 +106,7 @@
 		}
 	}
 
-	.popout {
+	.for-popout {
 
 
 		.row {

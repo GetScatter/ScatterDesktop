@@ -3,6 +3,7 @@ import * as Actions from '../store/constants'
 import WindowService from '../services/WindowService';
 import {PopupDisplayTypes, Popup} from '../models/popups/Popup';
 import {RUNNING_TESTS, SHOW_POPUPS_AS_CONSOLE} from "../util/TestingHelper";
+import AppsService from "./AppsService";
 
 let popouts = [];
 
@@ -41,6 +42,8 @@ export default class PopupService {
         // Rate limiting: One open pop out at a time per origin.
         if(popouts.find(x => x.data.props.payload.origin === popup.data.props.payload.origin))
             return false;
+
+	    popup.data.props.appData = AppsService.getAppData(popup.data.props.payload.origin);
 
         popouts.push(popup);
 

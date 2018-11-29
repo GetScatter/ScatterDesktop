@@ -36,7 +36,8 @@
             <section key="text" v-if="state === STATES.QR">
                 <h1>{{locale(langKeys.KEYPAIR.EXPORT.QR.Title)}}</h1>
                 <section class="disclaimer less-pad" style="margin:0 auto 10px; max-width:500px;">
-                    You can either leave this field blank to use your current Scatter password, or enter another PIN or password here to re-encrypt this QR code.
+                    You can either leave this field blank to use your current Scatter password, or enter another PIN or password here to re-encrypt this QR code with something
+                    that is easier to remember, or to type into a mobile device.
                 </section>
                 <cin style="max-width:500px; margin:0 auto;"
                      placeholder="Alternative Password"

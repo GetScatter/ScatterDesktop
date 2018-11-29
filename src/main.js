@@ -20,7 +20,6 @@ import ViewBase from './components/ViewBase.vue'
 import PopInHead from './components/popins/overlay/fragments/PopInHead.vue'
 
 // POP OUTS
-import GetIdentity from './views/popouts/GetIdentity.vue'
 import SignatureRequest from './views/popouts/SignatureRequest.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
 import GetPublicKey from './views/popouts/GetPublicKey.vue'
@@ -61,7 +60,6 @@ class Main {
 		let fragments;
 		if(hash === 'popout'){
 			fragments = [
-				{tag:'get-identity', vue:GetIdentity},
 				{tag:'signature-request', vue:SignatureRequest},
 				{tag:'link-app', vue:LinkApp},
 				{tag:'get-public-key', vue:GetPublicKey},

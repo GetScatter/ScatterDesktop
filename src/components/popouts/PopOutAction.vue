@@ -1,7 +1,9 @@
 <template>
 	<section class="action-info" v-if="action">
 		<figure class="origin" :title="origin">{{origin}}</figure>
-		wants to <b>{{action}}</b>
+		<figure class="action">
+			<b>{{action}}</b>
+		</figure>
 	</section>
 </template>
 
@@ -29,7 +31,13 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			width:300px;
+			width:100%;
+		}
+
+		.action {
+			display:inline-block;
+			max-height:50px;
+			overflow:hidden;
 		}
 
 		b {

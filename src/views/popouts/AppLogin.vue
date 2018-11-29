@@ -1,9 +1,9 @@
 <template>
     <section>
         <PopOutHead v-on:closed="returnResult" />
-        <section class="flex-row">
-            <section class="login-selector">
-                <PopOutAction :origin="payload.origin" action="log in" />
+        <section class="multi-pane">
+            <section class="main-panel">
+                <PopOutAction :origin="popup.origin()" action="login" />
 
                 <section class="required-networks" v-if="accountNetworks.length > 1 || (accountNetworks.length === 1 && accountNetworks[0].count > 1)">
                     <figure class="requirements">It requires access to these networks</figure>
@@ -21,7 +21,7 @@
                 <br v-if="stillNeedsFields" />
 
                 <section style="padding:0 30px;" v-if="stillNeedsFields">
-                    <btn text="Login" :disabled="!isValidIdentity" />
+                    <btn text="Login" v-on:clicked="selectAccount" :disabled="!isValidIdentity" />
                 </section>
 
 
@@ -43,45 +43,23 @@
              <!--SIDE PANEL-->
             <figure class="side-bar" v-if="personalFields.length || locationFields.length"
                     :class="expanded ? 'icon-right-open-big' : 'icon-left-open-big'"
-                    @click="expandOrContract"></figure>
+                    @click="$emit('expanded')"></figure>
 
             <section class="side-panel" v-if="expanded">
 
-                <section class="disclaimer less-pad" style="margin-top:20px; margin-bottom:10px;" v-if="missingFields">
+                <section class="disclaimer less-pad" :class="{'red':stillNeedsFields}" style="margin-top:20px; margin-bottom:10px;" v-if="missingFields">
                     You are missing some fields!
                     <p>Fill out the inputs below which will add those fields to your Identity for later use and also return them to the application.</p>
                 </section>
 
-                <section class="key-val" v-if="personalFields.length">
-                    <figure>Personal Info</figure>
-                    <figure v-for="field in personalFields" class="key-val nested split-inputs">
-                        <figure>{{field}}</figure>
-                        <figure v-if="fieldValueFor(field, true).length">{{fieldValueFor(field)}}</figure>
-                        <cin red="1" v-else small="1"
-                             :text="selectedIdentity.personal[field]"
-                             v-on:changed="x => selectedIdentity.personal[field] = x"
-                             :placeholder="field" />
-                    </figure>
-                </section>
+                <RequiredFields :identity="identity" :fields="fields"
+                                :selected-identity="selectedIdentity"
+                                :cloned-location="clonedLocation"
+                                :selected-location="selectedLocation"
+                                v-on:selectLocation="x => {selectedLocation = x; clonedLocation = x.clone(); }"
+                                v-on:locationField="(key, val) => clonedLocation[key] = val"
+                                v-on:personalField="(key, val) => selectedIdentity.personal[key] = val" />
 
-                <section class="key-val" v-if="locationFields.length">
-                    <sel :selected="selectedLocation" label="Select a Location"
-                         :options="selectedIdentity.locations"
-                         :parser="location => location.name"
-                         v-on:changed="selectLocation"></sel>
-                    <br>
-                    <label>Location Info</label>
-                    <figure v-for="field in locationFields" class="key-val nested split-inputs">
-                        <figure>{{field}}</figure>
-                        <figure v-if="fieldValueFor(field, true).length">{{fieldValueFor(field)}}</figure>
-                        <cin red="1" v-else small="1"
-                             :text="clonedLocation[field]"
-                             v-on:changed="x => clonedLocation[field] = x"
-                             :placeholder="field" />
-                    </figure>
-                    <br>
-                    <br>
-                </section>
             </section>
         </section>
 
@@ -96,11 +74,12 @@
     import FullWidthRow from '../../components/reusable/FullWidthRow';
     import {IdentityRequiredFields} from "../../models/Identity";
     import Network from "../../models/Network";
-    import WindowService from "../../services/WindowService";
+    import RequiredFields from "../../components/popouts/RequiredFields";
 
     export default {
-	    props:['popup', 'payload', 'pluginOrigin'],
+	    props:['popup', 'expanded'],
 	    components:{
+		    RequiredFields,
 		    PopOutHead,
 		    PopOutAction,
 		    FullWidthRow,
@@ -109,7 +88,6 @@
         data () {return {
 	        selectedAccounts:[],
 	        searchTerms:'',
-            expanded:false,
 	        selectedLocation:null,
             clonedLocation:null,
             selectedIdentity:null,
@@ -121,9 +99,7 @@
 	    	this.clonedLocation = this.selectedIdentity.locations[0].clone();
 
 	    	if(this.locationFields.length || this.personalFields.length){
-			    this.expanded = true;
-			    const {width, height} = this.popup.dimensions();
-			    WindowService.changeWindowSize(height, width+(this.expanded ? 300 : 0));
+	    		this.$emit('expanded');
             }
 	    },
         computed: {
@@ -136,6 +112,7 @@
 		        'accounts',
 		        'networks',
 	        ]),
+            payload(){ return this.popup.payload(); },
 	        validAccounts() {
 		        const alreadySelectedUniques = this.selectedAccounts.map(x => x.unique());
 		        let neededNetworks = this.accountRequirements.map(x => Network.fromJson(x).unique());
@@ -228,9 +205,6 @@
 	        accountRequirements() {
 		        return this.fields.accounts || [];
 	        },
-	        printableAccountRequirements() {
-		        return this.accountRequirements.map(x => this.networks.find(y => y.chainId === x.chainId).name).join(' / ')
-	        },
         },
         methods: {
 	        returnResult(result){
@@ -241,48 +215,39 @@
 	            this.clonedLocation = location.clone();
             },
 	        selectAccount(account){
-	        	if(this.selectedAccounts.find(x => x.unique() === account.unique())){
-	        	    return this.unselectAccount(account);
+	        	if(account){
+			        if(this.selectedAccounts.find(x => x.unique() === account.unique())){
+				        return this.selectedAccounts = this.selectedAccounts
+					        .filter(x => x.unique() !== account.unique());
+			        }
+
+			        this.selectedAccounts.push(account);
                 }
 
-		        this.selectedAccounts.push(account);
-		        if(this.accountRequirements.length > this.selectedAccounts.length)
-			        return;
+		        if(this.accountRequirements.length > this.selectedAccounts.length) return;
+
+		        console.log('this.stillNeedsFields', this.stillNeedsFields);
+		        if(this.stillNeedsFields){
+			        if(!this.expanded){
+				        this.$emit('expanded', 300, true);
+			        }
+                }
 
 		        if(this.isValidIdentity) {
 
 		        	this.returnResult({
                         identity:this.selectedIdentity,
-                        location:this.selectedLocation,
+                        location:this.clonedLocation,
                         accounts:this.selectedAccounts,
                         missingFields:this.missingFields
 		        	});
 		        }
 	        },
-	        unselectAccount(account){
-	        	this.selectedAccounts = this.selectedAccounts.filter(x => x.unique() !== account.unique());
-            },
             selectedOfNetwork(network){
 	        	return this.selectedAccounts.filter(x => x.network().unique() === network.unique())
             },
             networkAccountsCount(networkUnique){
 	            return this.accounts.filter(x => x.networkUnique === networkUnique).length;
-            },
-
-
-            fieldValueFor(field, useUnclonedIdentity = false){
-	        	if(useUnclonedIdentity){
-	        		return this.identity.getPropertyValueByName(field, this.selectedLocation);
-                } else {
-			        return this.selectedIdentity.getPropertyValueByName(field, this.clonedLocation);
-                }
-
-            },
-
-	        expandOrContract(){
-	        	this.expanded = !this.expanded;
-	        	const {width, height} = this.popup.dimensions();
-	            WindowService.changeWindowSize(height, width+(this.expanded ? 300 : 0));
             },
 
         }
@@ -353,43 +318,9 @@
         }
     }
 
-    .flex-row {
-        display: flex;
-        flex-direction: row;
-        flex:1;
 
-        background:#fafafa;
-    }
 
-    .login-selector {
-        display: flex;
-        flex-direction: column;
-        flex:1;
-        width:calc(100% - 320px);
-    }
 
-    .side-panel {
-        width:300px;
-        padding:10px 30px 40px;
-        display:flex;
-        flex-direction: column;
-        overflow:auto;
-        flex:0 0 auto;
-    }
-
-    .side-bar {
-        cursor: pointer;
-        height:calc(100vh - 70px);
-        width:20px;
-        background:$light-blue;
-        border-left:1px solid $dark-blue;
-        display:flex;
-        justify-content: center;
-        align-items: center;
-        color:#fff;
-        font-size: 11px;
-        padding-right:3px;
-    }
 
     .advanced-button {
         font-size: 11px;
