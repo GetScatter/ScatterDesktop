@@ -9,7 +9,7 @@
                     <figure class="logo">S</figure>
                     <figure class="info">
                         <figure>App is requesting a Public Key</figure>
-                        <figure>{{pluginOrigin}} - {{payload.origin}}</figure>
+                        <figure>{{payload.origin}}</figure>
                     </figure>
                     <figure class="close" @click="returnResult(null)">
                         <i class="fa fa-times"></i>
@@ -120,6 +120,9 @@
             },
             blockchain(){
                 return this.payload.blockchain;
+            },
+            payload(){
+            	return this.popup.payload;
             }
         },
         mounted(){
@@ -157,7 +160,7 @@
                 ElectronHelpers.copy(this.keypair.privateKey.toString('hex'));
             },
         },
-        props:['payload', 'pluginOrigin'],
+        props:['popup'],
         watch:{
             async ['keypair.privateKey'](){
                 if(await this.makePublicKeys()){

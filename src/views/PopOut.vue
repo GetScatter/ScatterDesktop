@@ -36,7 +36,7 @@
 
             <link-app v-if="popupType === 'linkApp'" v-on:returned="returnResult"></link-app>
 
-            <get-public-key v-if="popupType === apiActions.GET_PUBLIC_KEY" v-on:returned="returnResult"></get-public-key>
+            <get-public-key :popup="popup" v-if="popupType === apiActions.GET_PUBLIC_KEY" v-on:returned="returnResult"></get-public-key>
 
             <transfer-request v-if="popupType === apiActions.REQUEST_TRANSFER" v-on:returned="returnResult"></transfer-request>
 

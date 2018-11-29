@@ -328,8 +328,15 @@ export default class ApiService {
 
     static async [Actions.GET_PUBLIC_KEY](request){
         return new Promise((resolve, reject) => {
+            console.log('req', request);
+            const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
+            if(Object.keys(request.payload).length !== 2) return badResult();
+            if(!request.payload.hasOwnProperty('blockchain')) return badResult();
+            if(typeof request.payload.blockchain !== 'string') return badResult();
+            if(!BlockchainsArray.map(x => x.value).includes(request.payload.blockchain)) return badResult('no such blockchain');
+
             PopupService.push(Popup.popout(request, async ({result}) => {
-                if(!result) return resolve({id:request.id, result:null});
+                if(!result) return resolve({id:request.id, result:Error.rejected()});
 
                 const keypair = Keypair.fromJson(result.keypair);
                 const publicKey = keypair.publicKeys.find(x => x.blockchain === request.payload.blockchain).key;

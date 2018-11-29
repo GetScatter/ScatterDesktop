@@ -6,7 +6,7 @@
                 <PopOutAction :origin="popup.origin()" action="login" />
 
                 <section class="required-networks" v-if="accountNetworks.length > 1 || (accountNetworks.length === 1 && accountNetworks[0].count > 1)">
-                    <figure class="requirements">It requires access to these networks</figure>
+                    <figure class="requirements">App requires accounts for these networks</figure>
                     <section class="list">
                         <figure class="split-inputs" v-for="item in accountNetworks">
                             <!--<i class="icon-check" v-if="item.count - selectedOfNetwork(item.network).length === 0"></i>-->
@@ -137,7 +137,11 @@
 
 				        return acc;
 			        }, [])
-                    .sort((a,b) => b.logins - a.logins)
+                    .sort((a,b) => {
+                    	const selected = this.selectedAccounts.find(x => x.unique() === b.unique()) ? 1
+                            : this.selectedAccounts.find(x => x.unique() === a.unique()) ? -1 : 0;
+                    	return selected || b.logins - a.logins
+                    })
                     .map(account => {
 	                    let description = `${account.network().name}`;
 	                    let actions = [];
@@ -269,7 +273,7 @@
         margin-top:-10px;
 
         .requirements {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: bold;
         }
 

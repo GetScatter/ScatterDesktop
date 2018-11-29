@@ -26,6 +26,14 @@ export default class Error {
         return new Error(_type, _message, ErrorCodes.NO_SIGNATURE)
     }
 
+    static malicious(_message){
+        return new Error(ErrorTypes.MALICIOUS, _message, ErrorCodes.FORBIDDEN)
+    }
+
+    static rejected(){
+        return new Error(ErrorTypes.REJECTED, 'The user rejected the request.', ErrorCodes.NO_SIGNATURE)
+    }
+
     static identityMissing(){
         return this.signatureError("identity_missing", "Identity no longer exists on the user's keychain");
     }

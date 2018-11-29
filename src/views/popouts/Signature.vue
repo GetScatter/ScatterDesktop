@@ -59,7 +59,7 @@
 
                 <section class="scroller">
 
-                    <section class="required-fields" v-if="!isArbitrarySignature && Object.keys(payload.requiredFields).length">
+                    <section class="required-fields" v-if="!isArbitrarySignature && (personalFields.length || locationFields.length)">
                         <section class="disclaimer less-pad">
                             This application requires some additional fields.
                         </section>
@@ -381,6 +381,7 @@
     }
 
     input[type=checkbox] {
+        flex:0 0 auto;
         align-self: flex-start;
         margin-right:10px;
         width:20px;
