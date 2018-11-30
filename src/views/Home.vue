@@ -157,6 +157,16 @@
 
         &:hover {
             border:1px solid rgba(0,0,0,0.22);
+
+            .chevron {
+
+                animation: hover-bounce 0.7s ease infinite;
+            }
+
+            @keyframes hover-bounce {
+                0%, 100% { transform:translateX(-2px) }
+                50% { transform:translateX(2px) }
+            }
         }
 
         &:active {

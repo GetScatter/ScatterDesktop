@@ -11,7 +11,7 @@
                     <br>
                 </section>
 
-                <SearchBar style="flex:1;" short="1" placeholder="Search Keys" v-on:terms="x => searchTerms = x" />
+                <SearchBar short="1" placeholder="Search Keys" v-on:terms="x => searchTerms = x" />
 
                 <section class="popout-list">
                     <FullWidthRow :items="validKeys" popout="1" />

@@ -92,7 +92,7 @@
         <section v-if="state === STATES.WHITELIST || state === STATES.BLACKLIST">
 
             <sel style="flex:2;" :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.TokenFilterLabel)"
-                 :selected="blockchainName(blockchain)"
+                 :selected="blockchain ? {value:blockchain} : null"
                  :options="[null].concat(blockchains)"
                  :parser="x => x ? blockchainName(x.value) : 'No Blockchain Filter'"
                  v-on:changed="x => blockchain = x ? x.value : null" />

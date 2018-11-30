@@ -10,6 +10,9 @@ export default class Account {
         this.authority = '';
 
         this.logins = 0;
+
+        this.createdAt = +new Date();
+        this.fromOrigin = null;
     }
 
     sendable(){

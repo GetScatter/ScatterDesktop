@@ -173,7 +173,8 @@ export default class ApiService {
 			// Blockchain specific plugin
 			const plugin = PluginRepository.plugin(blockchain);
 
-			const network = Network.fromJson(payload.network);
+			const network = store.state.scatter.settings.networks.find(x => x.unique() === Network.fromJson(payload.network).unique());
+			if(!network) return resolve({id:request.id, result:Error.noNetwork()});
 
 			// Convert buf and abi to messages
 			switch(blockchain){
@@ -293,8 +294,8 @@ export default class ApiService {
 			let {to, network, amount, options} = request.payload;
 			if(!options) options = {};
 
-			network = Network.fromJson(network);
-			if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
+			network = store.state.scatter.settings.networks.find(x => x.unique() === Network.fromJson(network).unique());
+			if(!network) return resolve({id:request.id, result:Error.noNetwork()});
 
 			let symbol = '';
 			if(options.hasOwnProperty('symbol')) symbol = options.symbol;
@@ -431,25 +432,44 @@ export default class ApiService {
 
     static async [Actions.LINK_ACCOUNT](request){
         return new Promise(async (resolve, reject) => {
-            const scatter = store.state.scatter;
-            let {publicKey, network, origin} = request.payload;
+	        const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
+	        if(Object.keys(request.payload).length !== 3) return badResult();
+	        if(!request.payload.hasOwnProperty('account')) return badResult();
+	        if(!request.payload.hasOwnProperty('network')) return badResult();
+	        if(!request.payload.account.hasOwnProperty('publicKey')) return badResult();
 
-            network = Network.fromJson(Object.assign(network, {name:origin}));
-            if(!network.isValid()) return resolve({id:request.id, result:Error.badNetwork()});
+            const scatter = store.state.scatter.clone();
+            let {account, network, origin} = request.payload;
 
-            const keypair = scatter.keychain.keypairs.find(x => x.publicKeys.map(x => x.key).includes(publicKey));
+	        network = store.state.scatter.settings.networks.find(x => x.unique() === Network.fromJson(network).unique());
+	        if(!network) return resolve({id:request.id, result:Error.noNetwork()});
+
+            const keypair = scatter.keychain.keypairs.find(x => x.publicKeys.some(x => x.key === account.publicKey));
             if(!keypair) return resolve({id:request.id, result:Error.noKeypair()});
 
-            let existingNetwork = scatter.settings.networks.find(x => x.unique() === network.unique());
-            if(!existingNetwork) return resolve({id:request.id, result:Error.noNetwork()});
+            const newAccount = Account.fromJson({
+	            keypairUnique:keypair.unique(),
+	            networkUnique:network.unique(),
+	            publicKey:account.publicKey,
+	            name:account.name || '',
+	            authority:account.authority || '',
+	            fromOrigin:origin,
+            });
 
-            await AccountService.importAllAccounts(keypair, false, [network.blockchain], [network], true);
+	        // Applications can only add one network every hour.
+	        if(scatter.keychain.accounts.find(x => x.fromOrigin === origin && x.createdAt > (+new Date() - (3600*1000))))
+		        return resolve({id:request.id, result:new Error("link_account_timeout", "You can only add 1 account every hour.")});
+
+            await AccountService.addAccount(newAccount);
             return resolve({id:request.id, result:true});
         })
     }
 
     static async [Actions.SUGGEST_NETWORK](request){
         return new Promise(async resolve => {
+	        const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
+	        if(Object.keys(request.payload).length !== 2) return badResult();
+	        if(!request.payload.hasOwnProperty('network')) return badResult();
 
             let {network} = request.payload;
 
@@ -467,9 +487,9 @@ export default class ApiService {
             if(store.state.scatter.settings.networks.find(x => x.unique() === network.unique()))
                 return resolve({id:request.id, result:true});
 
-            // Applications can only add one network every 24 hours.
+            // Applications can only add one network every 12 hours.
             if(store.state.scatter.settings.networks.find(x => x.fromOrigin === request.payload.origin && x.createdAt > (+new Date() - ((3600 * 12)*1000))))
-                return resolve({id:request.id, result:new Error("network_timeout", "You can only add 1 network every 24 hours.")});
+                return resolve({id:request.id, result:new Error("network_timeout", "You can only add 1 network every 12 hours.")});
 
             network.fromOrigin = request.payload.origin;
             const scatter = store.state.scatter.clone();
@@ -483,16 +503,16 @@ export default class ApiService {
 
     static async [Actions.HAS_ACCOUNT_FOR](request){
         return new Promise(resolve => {
-            request.payload.network = Network.fromJson(request.payload.network);
-            const {network} = request.payload;
-            const {blockchain} = network;
+	        const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
+	        if(Object.keys(request.payload).length !== 2) return badResult();
+	        if(!request.payload.hasOwnProperty('network')) return badResult();
 
-            if(!network.isValid()) return resolve({id:request.id, result:new Error("bad_network", "The network provided is invalid")});
+	        let {network} = request.payload;
 
-            const existingNetwork = store.state.scatter.settings.networks.find(x => x.unique() === network.unique());
-            if(!existingNetwork) return resolve({id:request.id, result:Error.noNetwork()});
+	        network = store.state.scatter.settings.networks.find(x => x.unique() === Network.fromJson(network).unique());
+	        if(!network) return resolve({id:request.id, result:Error.noNetwork()});
 
-            resolve({id:request.id, result:!!store.state.scatter.keychain.accounts.find(x => x.blockchain() === blockchain && x.networkUnique === existingNetwork.unique())});
+            resolve({id:request.id, result:!!store.state.scatter.keychain.accounts.find(x => x.networkUnique === network.unique())});
         })
     }
 

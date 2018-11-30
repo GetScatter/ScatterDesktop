@@ -110,6 +110,8 @@
 				if(!this.searchTerms.length) return {};
 				const fromGeneralSearch = this.search(this.dappData, true);
 				Object.keys(this.origins).map(x => delete fromGeneralSearch[x]);
+
+
 				return ObjectHelpers.objectTake(fromGeneralSearch, 25);
 			}
 		},
