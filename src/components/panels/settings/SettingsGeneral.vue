@@ -76,7 +76,7 @@
         },
         mounted(){
             UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
-                this.needsUpdate = needsUpdate ? needsUpdate[1] : false;
+                this.needsUpdate = needsUpdate ? needsUpdate.url : false;
             })
         },
         methods: {

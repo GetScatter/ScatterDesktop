@@ -61,6 +61,7 @@
     import Keypair from "../models/Keypair";
     import ExternalWallet, {EXT_WALLET_TYPES} from "../models/hardware/ExternalWallet";
     import KeyPairService from "../services/KeyPairService";
+    import UpdateService from "../services/UpdateService";
 
 
     export default {
@@ -116,6 +117,7 @@
 
         mounted(){
 	        setTimeout(async() => {
+	        	UpdateService.needsUpdate();
 	        	HardwareService.openConnections(true);
 		        await PriceService.watchPrices();
 		        await BalanceService.loadAllBalances();

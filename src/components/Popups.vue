@@ -28,6 +28,7 @@
                         <Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
                         <Selector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
                         <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
+                        <UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />
                     </section>
                 </section>
             </section>
@@ -78,9 +79,11 @@
     import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
     import RemoveApp from "./popins/overlay/RemoveApp";
     import Selector from "./popins/overlay/Selector";
+    import UpdateAvailable from "./popins/overlay/UpdateAvailable";
 
     export default {
     	components:{
+		    UpdateAvailable,
 		    Selector,
 		    RemoveApp,
     		EnterPIN,
@@ -131,7 +134,7 @@
                 }
             },
 	        isWide(popIn){
-	        	const wides = [PopupTypes.SELECTOR];
+	        	const wides = [PopupTypes.SELECTOR, PopupTypes.UPDATE_AVAILABLE];
 	            return wides.includes(popIn.data.type);
             },
             ...mapActions([

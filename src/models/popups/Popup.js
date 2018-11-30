@@ -82,6 +82,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_APP, {origin}, callback))
 	}
 
+	static updateAvailable(update, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UPDATE_AVAILABLE, {update}, callback))
+	}
+
 
 
     /*****************************************/
@@ -168,6 +172,7 @@ export const PopupTypes = {
 	SELECTOR:'selector',
     ENTER_PIN:'enterPIN',
     REMOVE_APP:'removeApp',
+    UPDATE_AVAILABLE:'updateAvailable',
 
     // FULLSCREEN
     VERIFY_PASSWORD:'verifyPassword',
