@@ -111,6 +111,7 @@ export default class ETH extends Plugin {
         return Buffer.from(privateKey, 'hex');
     }
 
+	hasUntouchableTokens(){ return false; }
 
     async balanceFor(account, token, web3 = null){
 

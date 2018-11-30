@@ -445,6 +445,16 @@ export default class EOS extends Plugin {
 		])
 	}
 
+	hasUntouchableTokens(){ return true; }
+	async untouchableBalance(account){
+		const accData = await this.accountData(account).catch(() => null);
+		if(!accData || !accData.hasOwnProperty('self_delegated_bandwidth') || !accData.self_delegated_bandwidth) return null;
+		const token = account.network().systemToken().clone();
+		token.amount = parseFloat(parseFloat(accData.self_delegated_bandwidth.cpu_weight.split(' ')[0]) + parseFloat(accData.self_delegated_bandwidth.net_weight.split(' ')[0])).toFixed(token.decimals);
+		token.unusable = 'CPU / NET';
+		return token;
+	}
+
 	async balanceFor(account, token){
 		const eos = getCachedInstance(account.network());
 

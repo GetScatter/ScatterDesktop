@@ -1,17 +1,20 @@
 <template>
-	<section class="panel-container limited">
-		<h1>{{account.sendable()}}</h1>
-		<section class="account-info">
-			<p>{{blockchainName(account.blockchain())}} - <b>{{account.network().name}}</b></p>
-			<br>
-			<br>
-			<router-link tag="p" :to="{name:RouteNames.SETTINGS, params:{panel:{name:'Tokens'}}}" v-if="hiddenTokenCount">
-				<u style="cursor:pointer;">{{locale(langKeys.KEYPAIR.TOKENS.HiddenTokensCount, hiddenTokenCount)}}</u>
-			</router-link>
-		</section>
+	<section class="panel-container limited" style="padding-bottom:0;">
+		<section>
+			<h1>{{account.sendable()}}</h1>
+			<section class="account-info">
+				<p>{{blockchainName(account.blockchain())}} - <b>{{account.network().name}}</b></p>
+				<p>{{totalFiatBalance}} <b>{{displayCurrency}}</b></p>
+				<br>
+				<br>
+				<router-link tag="p" :to="{name:RouteNames.SETTINGS, params:{panel:{name:'Tokens'}}}" v-if="hiddenTokenCount">
+					<u style="cursor:pointer;">{{locale(langKeys.KEYPAIR.TOKENS.HiddenTokensCount, hiddenTokenCount)}}</u>
+				</router-link>
+			</section>
 
-		<SearchBar class="search" :placeholder="locale(langKeys.KEYPAIR.ACCOUNTS.SearchPlaceholder)"
-		           v-on:terms="x => searchTerms = x" />
+			<SearchBar class="search" :placeholder="locale(langKeys.KEYPAIR.TOKENS.SearchPlaceholder)"
+			           v-on:terms="x => searchTerms = x" />
+		</section>
 
 		<section class="tokens-list">
 
@@ -28,6 +31,21 @@
 				<section class="info">
 					<figure class="system">SYSTEM TOKEN</figure>
 					<figure>{{systemTokenBalance.contract}}</figure>
+				</section>
+			</section>
+
+			<!-- UNTOUCHABLE TOKENS -->
+			<section class="token" v-if="untouchableTokens && matchesToken(searchTerms.trim().toLowerCase(), untouchableTokens)">
+				<figure class="symbol">
+					<span>{{untouchableTokens.symbol}}</span>
+				</figure>
+				<figure class="amount">
+					{{untouchableTokens.amount}}
+					<span v-if="untouchableTokens.fiatBalance()">{{untouchableTokens.fiatBalance()}}</span>
+				</figure>
+				<section class="info">
+					<figure class="system">{{untouchableTokens.unusable}}</figure>
+					<figure>{{untouchableTokens.contract}}</figure>
 				</section>
 			</section>
 
@@ -56,6 +74,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import SearchBar from '../../../reusable/SearchBar'
 	import FullWidthRow from '../../../reusable/FullWidthRow'
+	import PluginRepository from "../../../../plugins/PluginRepository";
 
 	export default {
 		props:['account'],
@@ -65,6 +84,7 @@
 		},
 		data () {return {
 			searchTerms:'',
+			untouchableTokens:null,
 		}},
 		computed:{
 			...mapState([
@@ -75,6 +95,7 @@
 			...mapGetters([
 				'accounts',
 				'balanceFilters',
+				'displayCurrency',
 			]),
 			systemToken(){
 				return this.account.network().systemToken();
@@ -111,10 +132,27 @@
 				const terms = this.searchTerms.trim().toLowerCase();
 				if(!terms.length) return this.tokens;
 				return this.tokens.filter(x => this.matchesToken(terms, x));
+			},
+			totalFiatBalance(){
+				let total = 0;
+				this.tokens.map(token => {
+					if(token.fiatBalance()) acc += parseFloat(token.fiatBalance().split(' ')[0]);
+				});
+
+				if(this.systemTokenBalance && this.systemTokenBalance.fiatBalance()) total += parseFloat(this.systemTokenBalance.fiatBalance().split(' ')[0]);
+				if(this.untouchableTokens && this.untouchableTokens.fiatBalance()) total += parseFloat(this.untouchableTokens.fiatBalance().split(' ')[0]);
+
+				return parseFloat(total).toFixed(2);
 			}
 		},
 		created(){
-
+			const plugin = PluginRepository.plugin(this.account.blockchain());
+			if(plugin.hasUntouchableTokens()){
+				plugin.untouchableBalance(this.account).then(token => {
+					if(!token) return;
+					this.untouchableTokens = token;
+				})
+			}
 		},
 		methods:{
 			matchesToken(terms, token){

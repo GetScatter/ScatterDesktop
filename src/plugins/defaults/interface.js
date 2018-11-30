@@ -48,6 +48,8 @@ export default class PluginInterface extends Plugin {
 
 	actionParticipants(payload){}
 
+	hasUntouchableTokens(){ return false; }
+
 	async balanceFor(account, tokenAccount, symbol){}
 
 	async balancesFor(account, tokens){}

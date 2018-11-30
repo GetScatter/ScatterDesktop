@@ -28,6 +28,7 @@ import HardwareService from "./HardwareService";
 import {RouteNames} from "../vue/Routing";
 import Token from "../models/Token";
 import TransferService from "./TransferService";
+import WindowService from "./WindowService";
 const NotificationService = remote.getGlobal('appShared').NotificationService;
 remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
     ApiService.handleDeepLink(deepLink);
@@ -340,8 +341,10 @@ export default class ApiService {
 					promptForSignature:false
 				}).catch(error => ({error}));
 
-				if(!sent.hasOwnProperty('error'))
+				if(!sent.hasOwnProperty('error')){
 					TransferService.transferSuccessPopup(sent, network.blockchain);
+					WindowService.flashWindow();
+				}
 
 
 				resolve({id:request.id, result:sent})

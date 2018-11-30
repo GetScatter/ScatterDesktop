@@ -250,6 +250,7 @@ const Locale = {
 	[KEYPAIR.DASHBOARD.ERRORS.WalletNameExists]:() => `A Wallet with this name already exists`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.TOKENS.HiddenTokensCount]:(n) => `${n} tokens filtered out by your token spam filter.`,
+	[KEYPAIR.TOKENS.SearchPlaceholder]:() => `Search Tokens`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.ACCOUNTS.SearchPlaceholder]:() => `Search Accounts`,
 	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,

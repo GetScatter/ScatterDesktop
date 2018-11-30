@@ -201,6 +201,7 @@ const KEYPAIR = prefixKeys('keypair', {
 
 	TOKENS:{
 		HiddenTokensCount:'hidden_tokens',
+		SearchPlaceholder:'search_tokens',
 	},
 
 	EXPORT:{

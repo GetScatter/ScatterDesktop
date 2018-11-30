@@ -75,6 +75,8 @@ export default class TRX extends Plugin {
     hexPrivateToBuffer(privateKey){ return Buffer.from(privateKey, 'hex'); }
 
 
+	hasUntouchableTokens(){ return false; }
+
     async balanceFor(account, token){
 	    const tron = getCachedInstance(account.network());
 	    const clone = token.clone();
