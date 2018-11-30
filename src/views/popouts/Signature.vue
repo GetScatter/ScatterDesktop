@@ -17,7 +17,7 @@
                     <section class="participant">{{arbitraryKeypair.name}} -- {{payload.publicKey.substr(0,6)}}.....{{payload.publicKey.substr(payload.publicKey.length - 5)}}</section>
                 </section>
 
-                <section class="actions">
+                <section class="fixed-actions">
 
                     <section v-if="cannotSignArbitrary" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
                         Arbitrary signing disabled!
@@ -59,20 +59,15 @@
 
                 <section class="scroller">
 
-                    <section class="required-fields" v-if="!isArbitrarySignature && (personalFields.length || locationFields.length)">
-                        <section class="disclaimer less-pad">
-                            This application requires some additional fields.
-                        </section>
-
-
-                        <RequiredFields :identity="identity" :fields="fields"
-                                        :selected-identity="selectedIdentity"
-                                        :cloned-location="clonedLocation"
-                                        :selected-location="selectedLocation"
-                                        v-on:selectLocation="x => { selectedLocation = x; clonedLocation = x.clone(); }"
-                                        v-on:locationField="(key, val) => clonedLocation[key] = val"
-                                        v-on:personalField="(key, val) => selectedIdentity.personal[key] = val" />
-                    </section>
+                    <RequiredFields v-if="!isArbitrarySignature && (personalFields.length || locationFields.length)"
+                                    :identity="identity" :fields="fields"
+                                    :selected-identity="selectedIdentity"
+                                    :cloned-location="clonedLocation"
+                                    :selected-location="selectedLocation"
+                                    split-panels="1"
+                                    v-on:selectLocation="x => { selectedLocation = x; clonedLocation = x.clone(); }"
+                                    v-on:locationField="(key, val) => clonedLocation[key] = val"
+                                    v-on:personalField="(key, val) => selectedIdentity.personal[key] = val" />
 
                     <section class="messages" :ref="`message_${index}`" v-for="(message, index) in messages">
 
@@ -365,11 +360,6 @@
         padding:0 30px;
     }
 
-    .required-fields {
-        padding:20px 0;
-
-    }
-
     .view-types {
         position: relative;
         margin-top:-10px;
@@ -399,41 +389,6 @@
         display:table;
         padding:3px 6px;
         margin:-25px auto 0;
-    }
-
-    .participants {
-        padding:0 30px;
-        text-align:center;
-        margin-top:20px;
-
-        &.top-less {
-            margin-top:-25px;
-        }
-
-        .participant {
-            font-size:11px;
-            color:#fff;
-            border-radius:4px;
-            border:1px solid $dark-blue;
-            background:$light-blue;
-            display:inline-block;
-            padding:3px 6px;
-        }
-    }
-
-    .actions {
-        position:absolute;
-        bottom:0;
-        left:0;
-        right:0;
-
-        padding:30px;
-
-        button {
-            &:not(:last-child){
-                margin-bottom:5px;
-            }
-        }
     }
 
     .messages {

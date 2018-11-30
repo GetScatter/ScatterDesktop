@@ -26,6 +26,8 @@ import {router} from "../vue/VueInitializer";
 import {remote} from '../util/ElectronHelpers';
 import HardwareService from "./HardwareService";
 import {RouteNames} from "../vue/Routing";
+import Token from "../models/Token";
+import TransferService from "./TransferService";
 const NotificationService = remote.getGlobal('appShared').NotificationService;
 remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
     ApiService.handleDeepLink(deepLink);
@@ -322,15 +324,26 @@ export default class ApiService {
 				if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the transfer request")});
 				const account = Account.fromJson(result.account);
 				const plugin = PluginRepository.plugin(network.blockchain);
+				const options = request.payload || {};
+				const token = Token.fromJson({
+					contract:contract,
+					blockchain:network.blockchain,
+					symbol,
+					decimals:options.decimals || PluginRepository.plugin(network.blockchain).defaultDecimals(),
+				});
 				const sent = await PluginRepository.plugin(network.blockchain).transfer({
 					account,
 					to,
 					amount:result.amount,
-					contract,
-					symbol,
+					token,
 					memo:request.payload.memo,
 					promptForSignature:false
-				});
+				}).catch(error => ({error}));
+
+				if(!sent.hasOwnProperty('error'))
+					TransferService.transferSuccessPopup(sent, network.blockchain);
+
+
 				resolve({id:request.id, result:sent})
 			}));
 		})

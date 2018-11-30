@@ -2,7 +2,7 @@
 	<section class="action-info" v-if="action">
 		<figure class="origin" :title="origin">{{origin}}</figure>
 		<figure class="action">
-			<b>{{action}}</b>
+			<span v-if="preAction">{{preAction}}</span> <b>{{action}}</b>
 		</figure>
 	</section>
 </template>
@@ -11,7 +11,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 
 	export default {
-		props:['origin', 'action']
+		props:['origin', 'action', 'preAction']
 
 	}
 </script>

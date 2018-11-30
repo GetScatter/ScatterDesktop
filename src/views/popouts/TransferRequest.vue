@@ -1,455 +1,261 @@
 <template>
     <section>
+        <PopOutHead v-on:closed="returnResult(null)" />
+        <section class="multi-pane">
+            <section class="main-panel">
 
-        <section class="popup">
-
-            <section class="top-section">
-                <!-- HEADER -->
-                <section class="head">
-                    <figure class="logo">S</figure>
-                    <figure class="info">
-                        <figure>Transfer Request</figure>
-                        <figure>
-                            <b>{{network.name}}</b>
-                            <i class="endorsed-network" v-if="isEndorsedNetwork">
-                                <i class="fa fa-shield"></i>
-                            </i>
-                        </figure>
-                    </figure>
-                    <figure class="close" @click="returnResult(null)">
-                        <i class="fa fa-times"></i>
-                    </figure>
-                </section>
-
-                <!--<section class="search-bar">-->
-                    <!--<figure class="icon"><i class="fa fa-search"></i></figure>-->
-                    <!--<input placeholder="Search" v-model="searchTerms" />-->
-                <!--</section>-->
-            </section>
-
-            <section class="transfer-data">
-                <figure v-if="amount <= 0" :forced="customAmount > 0" style="width:200px; margin:0 auto; padding-bottom:10px; text-align:left;">
-                    <section style="position:relative;">
-                        <cin type="number" placeholder="Amount" :text="customAmount" v-on:changed="x => customAmount = x"></cin>
-                        <section style="position:absolute; top:8px; right:0; font-size:14px;">
-                            {{symbol}}
+                <section v-if="!account">
+                    <section class="participants">
+                        <section class="participant">{{network.name}}</section>
+                    </section>
+                    <br>
+                    <section class="padded">
+                        <section class="transfer-details">
+                            <span class="blue">{{popup.origin()}}</span>
+                            <span>sending {{token.symbol}} to</span>
+                            <span class="bold" :class="{'small':to.length > 12}">{{to}}</span>
                         </section>
                     </section>
 
-                </figure>
-                <figure class="to"><span style="font-size:11px; display:block;">to</span> {{to}}</figure><br>
-                <figure v-if="amount > 0">{{parseFloat(amount).toFixed(decimals)}}</figure>
 
-                <span v-if="memo.length" class="memo">Memo: <b>{{memo}}</b></span>
-            </section>
+                    <br>
 
-            <section class="lists">
-                <section class="list">
-                    <section class="breadcrumbs" v-if="!selectedAccount">
-                        <figure class="breadcrumb">Select an Account</figure>
+                    <section class="padded">
+                        <cin :disabled="amount > 0"
+                             :red="inputError"
+                             big="1"
+                             centered="1"
+                             :text="amount > 0 ? amount : customAmount"
+                             v-on:changed="x => customAmount = x"
+                             :placeholder="parseFloat(1).toFixed(decimals)" />
                     </section>
 
-                    <section class="breadcrumbs" v-else>
-                        <figure class="breadcrumb button" @click="selectedAccount = null">Back to Accounts</figure>
-                        <figure class="breadcrumb">Confirm Transfer</figure>
-                    </section>
+                    <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
 
-                    <section v-if="!selectedAccount" class="item" :class="{'disabled':balance(account) < amount}"
-                             v-for="account in validAccounts" @click="selectAccount(account)">
-                        <figure class="title">{{account.formatted()}}</figure>
-                        <figure class="sub-title" :class="{'not-enough':balance(account) < amount}">{{balance(account)}} {{symbol}}</figure>
-                        <figure class="chevron">
-                            <i class="fa fa-check"></i>
-                        </figure>
-                    </section>
-
-                    <section v-if="selectedAccount" class="approve-transfer">
-                        <figure class="header">
-                            <b>{{selectedAccount.formatted()}}</b>
-                            <figure class="line"></figure>
-                            You are about to transfer <b>{{displayAmount}} {{symbol}}</b> to <b>{{to}}</b>.
-                            Are you sure?
-                        </figure>
-                        <section class="action-buttons">
-                            <btn class="button" text="Deny" red="1" full="1" large="1" v-on:clicked="returnResult(null)"></btn>
-                            <btn class="button" text="Approve" full="1" large="1" v-on:clicked="returnResult(true)"></btn>
-                        </section>
+                    <section class="popout-list">
+                        <FullWidthRow :items="validAccounts" popout="1" />
                     </section>
                 </section>
+
+                <section class="padded" v-else>
+                    <br>
+                    <br>
+                    <section class="transfer-details">
+                        <div v-if="amount > 0">{{parseFloat(amount).toFixed(decimals)}} {{token.symbol}}</div>
+                        <div v-else>{{customAmount}} {{token.symbol}}</div>
+                        <span :class="{'small':to.length > 12}">{{to}}</span>
+
+                    </section>
+                    <section class="memo" v-if="memo && memo.length">
+                        <section class="info-line">
+                            <span>Memo</span>
+                        </section>
+                        <span>{{memo}}</span>
+                    </section>
+
+
+
+                    <section class="info-line">
+                        <span>From</span>
+                    </section>
+
+                    <FullWidthRow :items="selectedAccounts" popout="1" />
+
+                    <section class="fixed-actions">
+                        <btn blue="1" text="Accept" v-on:clicked="returnResult(true)" />
+                        <btn text="Deny" v-on:clicked="returnResult(null)" />
+                    </section>
+                </section>
+
+
             </section>
+
+
         </section>
-
-
 
     </section>
 </template>
 
 <script>
-    import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
-    import Account from '../../models/Account'
-    import Network from '../../models/Network'
-    import {IdentityRequiredFields} from '../../models/Identity'
+	import { mapActions, mapGetters, mapState } from 'vuex'
+	import PopOutHead from '../../components/popouts/PopOutHead';
+	import PopOutAction from '../../components/popouts/PopOutAction';
+	import SearchBar from '../../components/reusable/SearchBar';
+	import FullWidthRow from '../../components/reusable/FullWidthRow';
+	import {IdentityRequiredFields} from "../../models/Identity";
+	import Network from "../../models/Network";
+	import RequiredFields from "../../components/popouts/RequiredFields";
+	import KeyPairService from "../../services/KeyPairService";
+	import Keypair from "../../models/Keypair";
+	import IdGenerator from "../../util/IdGenerator";
+	import Token from "../../models/Token";
+	import {Blockchains} from "../../models/Blockchains";
+	import TokenService from "../../services/TokenService";
 
-    import RIDLService from '../../services/RIDLService';
-    import WindowService from '../../services/WindowService';
-    import PopupService from '../../services/PopupService';
-    import {Popup} from '../../models/popups/Popup';
-    import {Blockchains} from '../../models/Blockchains';
-    import PluginRepository from '../../plugins/PluginRepository'
-    import Token from "../../models/Token";
-
-    export default {
-        data () {return {
-            selectedAccount:null,
-            searchTerms:'',
-            balances:[],
-            customAmount:0,
-            isEndorsedNetwork:false,
-        }},
-        computed:{
-            ...mapState([
-                'state',
-                'scatter'
-            ]),
-            ...mapGetters([
-                'identities',
-                'accounts',
-            ]),
-            network(){ return Network.fromJson(this.payload.network); },
-            to(){ return this.payload.to; },
-            amount(){ return parseFloat(this.payload.amount); },
-            options(){ return this.payload.options || {}; },
-            symbol(){ return this.payload.symbol; },
-            contract(){ return this.payload.contract; },
-            token(){ return Token.fromJson({
-                contract:this.contract,
-                symbol:this.symbol,
-                decimals:this.decimals,
-                blockchain:this.network.blockchain,
-            }); },
-            memo(){ return this.payload.memo; },
-            decimals(){ return this.options.decimals || PluginRepository.plugin(this.network.blockchain).defaultDecimals(); },
-            validAccounts(){
-                return this.accounts
-                    .filter(x => [this.network.unique()].includes(x.networkUnique))
-                    .filter(x => [this.network.blockchain].includes(x.blockchain().toLowerCase()))
-                    .filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1);
+	export default {
+		props:['popup', 'expanded'],
+		components:{
+			RequiredFields,
+			PopOutHead,
+			PopOutAction,
+			FullWidthRow,
+			SearchBar,
+		},
+		data () {return {
+			searchTerms:'',
+            account:null,
+			customAmount:0,
+			inputError:false,
+		}},
+		created(){
+            this.customAmount = parseFloat(0).toFixed(this.decimals);
+		},
+		computed: {
+			...mapState([
+				'scatter'
+			]),
+			...mapGetters([
+				'identity',
+				'identities',
+				'accounts',
+				'networks',
+				'keypairs',
+			]),
+			payload(){ return this.popup.payload(); },
+			network(){ return this.networks.find(x => x.unique() === Network.fromJson(this.payload.network).unique()); },
+            blockchain(){ return this.network.blockchain; },
+			to(){ return this.payload.to; },
+			amount(){ return parseFloat(this.payload.amount).toFixed(this.decimals); },
+			options(){ return this.payload.options || {}; },
+			memo(){ return this.payload.memo; },
+			decimals(){ return this.options.decimals || 4; },
+            token(){
+			    return Token.fromJson({
+                    contract:this.payload.contract,
+				    blockchain:this.blockchain,
+				    symbol:this.payload.symbol,
+                    decimals:this.options.decimals || PluginRepository.plugin(this.blockchain).defaultDecimals(),
+                    name:this.payload.symbol
+                })
             },
-            displayAmount(){
-                const amount = this.amount > 0 ? parseFloat(this.amount).toFixed(this.decimals) : parseFloat(this.customAmount).toFixed(this.decimals)
-                return !isNaN(amount) ? amount : 0;
+			validAccounts(){
+				return this.accounts
+					.filter(x => [this.network.unique()].includes(x.networkUnique))
+					.filter(x => [this.network.blockchain].includes(x.blockchain().toLowerCase()))
+					.filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
+					.reduce((acc, account) => {
+						if(!acc.find(x => account.network().unique() === x.network().unique()
+							&& account.sendable() === x.sendable())) acc.push(account);
+
+						return acc;
+					}, [])
+                    .map(x => this.formatAccount(x, true))
+			},
+            selectedAccounts(){
+                return [this.account]
+	                .map(x => this.formatAccount(x, false))
             }
-        },
-        mounted(){
-            this.checkNetwork();
-            this.checkWarning();
-            this.validAccounts.map(async account => {
-                this.balances.push({
-                    account:account.unique(),
-                    balance:await this.getBalance(account)
-                });
-            })
-        },
-        methods: {
-            async checkNetwork(){
-                if(!this.network) return;
-                this.isEndorsedNetwork = PluginRepository.plugin(this.network.blockchain).isEndorsedNetwork(this.network);
-            },
-            async checkWarning(){
-//                const warn = await RIDLService.shouldWarn(RIDLService.buildEntityName('application', this.payload.origin));
-//                if(warn.length)
-//                    PopupService.push(Popup.selector('Warning', 'This entity has a negative reputation. Be careful interacting with it.',
-//                        'attention', warn, x => `${x.type}: ${x.reputation*100}% REP ( ${x.total_reputes} users )`, () => {}, true))
-            },
-            returnResult(result){
-                let returned = null;
-                if(result){
-                    let amount = this.displayAmount;
-                    if(parseFloat(amount) <= 0) return PopupService.push(Popup.prompt('Invalid Amount', `You can not send 0 ${this.symbol}`));
+		},
+		methods: {
+			returnResult(result){
+				if(!result) return this.$emit('returned', null);
 
-                    returned = {
-                        account:this.selectedAccount,
-                        amount
-                    }
-                }
-                this.$emit('returned', returned);
-            },
-            selectAccount(account){
-                if(this.balance(account) < this.amount) return;
-                this.selectedAccount = account;
-            },
-            async getBalance(account){
-                return await PluginRepository.plugin(this.network.blockchain)
-                    .balanceFor(account, this.token);
-            },
-            balance(account){
-                const bal = this.balances.find(x => x.account === account.unique());
-                if(!bal) return 0;
-                return bal.balance;
+				let amount = this.amount > 0 ? this.amount : this.customAmount;
+				if(this.blockchain === Blockchains.EOSIO){
+					amount = parseFloat(amount).toFixed(this.decimals);
+				} else {
+					amount = TokenService.formatAmount(amount, this.token);
+				}
+				this.$emit('returned', {
+					account:this.account,
+					amount
+				});
+			},
+			selectAccount(account){
+				this.inputError = false;
+				if(account && this.customAmount <= 0)
+					return this.inputError = true;
+
+                this.account = account;
+			},
+            formatAccount(account, select = true){
+	            return {
+		            title:account.sendable(),
+		            description:``,
+		            actions:[{
+			            name:select ? 'Select' : 'Re-Select',
+			            handler:() => this.selectAccount(select ? account : null),
+			            blue:select,
+                        red:!select,
+			            small:1,
+		            }]
+	            }
             }
-        },
-        props:['payload', 'pluginOrigin']
-    }
+		},
+        watch:{
+			['customAmount'](){
+				this.inputError = false;
+            }
+        }
+	}
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../_variables.scss";
+    @import "../../variables";
 
-    .pop-in {
-        width:200px;
-    }
+    .memo {
+        text-align:center;
 
-    .endorsed-network {
-        display:inline-block;
-        font-size: 11px;
-        animation: attention 1s ease-out;
-        animation-iteration-count: infinite;
-        margin-left:3px;
-    }
-
-    .popup {
-        background:$very-light-blue;
-        width:440px;
-        height:560px;
-        display: flex;
-        flex-flow: column;
-
-        .top-section {
-            flex: 0 1 auto;
-        }
-
-        .head, .requirements, .search-bar {
-            background:#fff;
-            margin-bottom:1px;
-        }
-
-        .head {
-            -webkit-app-region: drag;
-            padding:20px;
-            overflow: hidden;
-
-            .logo {
-                line-height: 40px;
-                height:36px;
-                width:36px;
-                background:$light-blue;
-                color:#fff;
-                font-family: 'Grand Hotel', sans-serif;
-                font-size:24px;
-                border-radius:50%;
-                text-align:center;
-                float:left;
-                padding-right: 1px;
-            }
-
-            .info {
-                float:left;
-                width:calc(100% - 36px);
-                padding-left:20px;
-                overflow: hidden;
-
-                figure {
-                    float:left;
-
-                    &:first-child {
-                        font-size:16px;
-                        font-weight: 600;
-                        width:100%;
-                        padding-top:2px;
-                    }
-
-                    &:last-child {
-                        font-size:11px;
-                        color:$dark-grey;
-                        margin-top:2px;
-                    }
-                }
-            }
-
-            .close {
-                -webkit-app-region: no-drag;
-                position:absolute;
-                top:20px;
-                right:20px;
-                font-size:24px;
-                color:$mid-light-grey;
-                transition: color 0.2s ease;
-                cursor: pointer;
-
-                &:hover {
-                    color:$light-blue;
-                }
-            }
-        }
-
-        .transfer-data {
-            background:#fff;
-            margin-bottom:1px;
-            padding:20px;
-            text-align:center;
-            font-size:24px;
-            font-family: 'Roboto', sans-serif;
+        > span {
+            font-size: 13px;
+            color:$dark-blue;
             font-weight: bold;
-
-            box-shadow:0 0 50px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.05);
-
-            .to {
-                display:inline-block;
-                padding:5px 10px;
-                border-radius:4px;
-                background:$red;
-                color:#fff;
-                font-size: 18px;
-                font-weight: 300;
-                margin-bottom:10px;
-            }
-
-            .memo {
-                font-size: 11px;
-                width:100%;
-                display:block;
-                font-weight: 400;
-            }
         }
-
-        .lists {
-            position:relative;
-            flex: 1 1 auto;
-            overflow-y:auto;
-
-            .list {
-                padding-bottom:30px;
-                overflow-y:auto;
-                position: relative;
-                height:100%;
-
-                .breadcrumbs {
-                    padding:15px 20px;
-
-                    .breadcrumb {
-                        padding:6px 10px;
-                        font-size:11px;
-                        font-style: italic;
-                        font-weight: 600;
-                        color:$dark-grey;
-                        border-radius:4px;
-                        border: 1px dashed $medium-grey;
-                        display:inline-block;
-
-                        &.button {
-                            cursor: pointer;
-                            background:#fff;
-                            border: 0;
-                            box-shadow:0 1px 2px rgba(0,0,0,0.1);
-                            transform:translateY(0px);
-                            transition: box-shadow 0.1s ease, transform 0.1s ease;
-
-                            &:hover {
-                                transform:translateY(-1px);
-                                box-shadow:0 3px 7px rgba(0,0,0,0.08);
-                            }
-
-                            &:active {
-                                transform:translateY(1px);
-                                box-shadow:0 1px 2px rgba(0,0,0,0.2);
-                            }
-                        }
-                    }
-                }
-
-
-                .item {
-                    cursor: pointer;
-                    margin:0 20px;
-                    padding:30px;
-                    background:#fff;
-                    color:$dark-grey;
-                    border-radius:4px;
-                    box-shadow:0 1px 2px rgba(0,0,0,0.1);
-                    transform:translateY(0px);
-                    transition: box-shadow 0.2s ease, transform 0.2s ease;
-                    margin-bottom:10px;
-                    padding-right:50px;
-
-                    .title {
-                        font-size:18px;
-                        color:$dark-grey;
-                        font-weight: 600;
-                        margin-bottom:5px;
-                    }
-
-                    .sub-title {
-                        font-size:14px;
-                        font-weight: bold;
-                        font-family: 'Roboto', sans-serif;
-                        color:$light-blue;
-
-                        &.not-enough {
-                            color:$red;
-                        }
-                    }
-
-                    .chevron {
-                        position:absolute;
-                        right:20px;
-                        top:0;
-                        bottom:0;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        color:$mid-light-grey;
-                    }
-
-                    &:hover {
-                        transform:translateY(-1px);
-                        box-shadow:0 3px 7px rgba(0,0,0,0.08);
-                    }
-
-                    &:active {
-                        transform:translateY(1px);
-                        box-shadow:0 1px 2px rgba(0,0,0,0.2);
-                    }
-
-                    &.disabled {
-                        opacity:0.5;
-                    }
-                }
-            }
-
-        }
-
-        .approve-transfer {
-            margin:0 20px 20px;
-
-            .header {
-                padding:20px;
-                border:1px solid rgba(0,0,0,0.1);
-                border-radius:4px;
-                font-size:18px;
-                text-align:center;
-
-                .line {
-                    width:100%;
-                    height:1px;
-                    background:rgba(0,0,0,0.1);
-                    margin:10px 0;
-                }
-            }
-
-            .action-buttons {
-                overflow: hidden;
-
-                .button {
-                    width:calc(50% - 10px);
-                    float:left;
-
-                    &:first-child{
-                        margin-right:20px;
-                    }
-                }
-            }
-        }
-
     }
+
+    .padded {
+        padding:0 30px;
+    }
+
+    .transfer-details {
+        text-align:center;
+        span {
+            display:block;
+            font-size: 22px;
+        }
+
+        div {
+            font-size: 36px;
+        }
+
+        .blue {
+            color:$dark-blue;
+        }
+
+        .small {
+            font-size: 13px;
+        }
+
+        .bold {
+            font-weight: 800;
+        }
+    }
+
+    .popout-list {
+        padding-top:0;
+
+        &.done {
+            opacity:0.3;
+
+            &:hover {
+                opacity:1;
+            }
+        }
+
+
+        .search-bar {
+            margin-left:-30px;
+        }
+    }
+
 </style>

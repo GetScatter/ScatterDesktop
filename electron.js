@@ -2,7 +2,6 @@ const electron = require('electron');
 const {app, BrowserWindow, Tray, Menu, MenuItem} = electron;
 const path = require("path");
 const url = require("url");
-const settings = require('electron-settings');
 
 const isDev = process.mainModule.filename.indexOf('app.asar') === -1;
 
@@ -76,15 +75,6 @@ const setupTray = () => {
 	})
 };
 
-app.on('ready', () => {
-
-	// first time run
-	settings.set('windowSettings', {
-		theme: 'light'
-	});
-
-});
-
 const createScatterInstance = () => {
 	app.setAsDefaultProtocolClient('scatter');
 
@@ -118,7 +108,7 @@ const createScatterInstance = () => {
   		mainWindow.focus(); 
 	});
 
-	mainWindow.openDevTools();
+	// mainWindow.openDevTools();
 	mainWindow.loadURL(mainUrl(false));
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => app.quit());

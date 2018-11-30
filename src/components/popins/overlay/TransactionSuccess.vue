@@ -1,22 +1,20 @@
 <template>
     <section>
 
-        <section class="prompt" v-if="nextPopIn">
-            <section class="pop-in-head">
-                <section>
-                    <figure class="bubble-icon">
-                        <i class="fa fa-check"></i>
-                    </figure>
-                </section>
-                <section>
-                    <figure class="title">Success!</figure>
-                    <figure class="description" style="cursor:pointer;" @click="open"><u>{{tx}}</u></figure>
-                </section>
-                <section>
-                    <btn text="Okay" v-on:clicked="returnResult(true)"></btn>
-                </section>
-            </section>
+        <PopinHead :popin="popin" name="Transaction Success!" />
+        <section class="panel centered">
+            <br>
+            <img src="../../../assets/piggy_bank.png" />
+            <br>
+            <label>Click link below to view on {{explorer.name}}</label>
+            <figure class="description" style="cursor:pointer;" @click="open"><u>{{tx}}</u></figure>
+
+            <br>
+            <br>
+            <btn :text="locale(langKeys.GENERIC.Okay)"
+                 v-on:clicked="returnResult(true)" />
         </section>
+
 
     </section>
 </template>
@@ -26,8 +24,11 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
     import ElectronHelpers from '../../../util/ElectronHelpers'
+    import PopinHead from "./PopinHead";
 
     export default {
+	    components: {PopinHead},
+	    props:['popin'],
         data(){ return {
 
         }},
@@ -35,27 +36,26 @@
 
         },
         computed:{
-            ...mapState([
-                'popups'
-            ]),
             ...mapGetters([
-                'nextPopIn',
                 'explorers',
             ]),
             tx(){
-                return this.nextPopIn.data.props.tx
+                return this.popin.data.props.tx
             },
             blockchain(){
-                return this.nextPopIn.data.props.blockchain
+                return this.popin.data.props.blockchain
+            },
+	        explorer(){
+            	return this.explorers[this.blockchain].parsed()
             }
         },
         methods:{
             returnResult(truthy){
-                this.nextPopIn.data.callback(truthy);
-                this[Actions.RELEASE_POPUP](this.nextPopIn);
+                this.popin.data.callback(truthy);
+                this[Actions.RELEASE_POPUP](this.popin);
             },
             open(){
-                ElectronHelpers.openLinkInBrowser(this.explorers[this.blockchain].parsed().transaction(this.tx));
+                ElectronHelpers.openLinkInBrowser(this.explorer.transaction(this.tx));
             },
             ...mapActions([
                 Actions.RELEASE_POPUP
@@ -67,10 +67,14 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../variables";
 
-    .prompt {
+    .description {
+        color:$dark-blue;
+        text-align:center;
+        font-size: 9px;
 
-
-
+        &:hover {
+            color:$light-blue;
+        }
     }
 
 </style>

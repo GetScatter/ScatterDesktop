@@ -11,6 +11,7 @@
 					<br>
 					<cin style="width:350px;" big="1"
 					     :text="password"
+					     v-on:enter="verify"
 					     v-on:changed="x => password = x"
 					     type="password"
 					     label="Enter password or backup phrase" />

@@ -27,7 +27,7 @@
                         <EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />
                         <Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
                         <Selector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />
-                        <TransactionSuccess v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
+                        <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                     </section>
                 </section>
             </section>

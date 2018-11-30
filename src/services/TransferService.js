@@ -41,22 +41,25 @@ export default class TransferService {
                 return false;
             }
             else {
-                switch(token.blockchain){
-                    case Blockchains.EOSIO:
-                        PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.transaction_id))
-                        break;
-                    case Blockchains.TRX:
-                        PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.txID))
-                        break;
-                    case Blockchains.ETH:
-                        PopupService.push(Popup.transactionSuccess(token.blockchain, transfer.transactionHash))
-                        break;
-                }
-
+                this.transferSuccessPopup(transfer, token.blockchain);
                 return true;
             }
         }
 
+    }
+
+    static transferSuccessPopup(transfer, blockchain){
+	    switch(blockchain){
+		    case Blockchains.EOSIO:
+			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.transaction_id))
+			    break;
+		    case Blockchains.TRX:
+			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.txID))
+			    break;
+		    case Blockchains.ETH:
+			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.transactionHash))
+			    break;
+	    }
     }
 
 }
