@@ -3,8 +3,7 @@
 
         <section class="action-box top-pad">
 
-            <sel label="Select your Language"
-                 :placeholder="'Language'"
+            <sel :label="locale(langKeys.SETTINGS.LANGUAGE.Label)"
                  :options="Object.keys(languages).map(x => languages[x])"
                  :selected="selectedLanguage"
                  :parser="x => x"
@@ -39,7 +38,9 @@
         },
         methods: {
             selectLanguage(language){
-
+                const scatter = this.scatter.clone();
+                scatter.settings.language = language;
+                this[Actions.SET_SCATTER](scatter);
             },
             ...mapActions([
                 Actions.SET_SCATTER

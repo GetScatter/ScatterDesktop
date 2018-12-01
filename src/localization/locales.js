@@ -13,6 +13,7 @@ const getStore = () => {
 /*          Add imports here         */
 /*************************************/
 
+import tester from './languages/tester';
 import english from './languages/english';
 
 
@@ -21,10 +22,12 @@ import english from './languages/english';
 /*************************************/
 
 export const LANG = {
+    // TESTER: 'Tester',
     ENGLISH: 'English',
 };
 
 const languages = {
+    // [LANG.TESTER]:tester,
     [LANG.ENGLISH]:english,
 };
 
@@ -55,9 +58,8 @@ const locales = () => {
 export const localized = (key, args, language) => {
     if(!language) language = LANG.ENGLISH;
     let locale = locales()[language];
-    if(!locale || !locale.hasOwnProperty(key)) locale = locales()[LANG.ENGLISH];
-    if(!locale.hasOwnProperty(key)) {
-        console.error('translation error', key);
+    if(!locale || (language !== 'Tester' && !locale.hasOwnProperty(key))) locale = locales()[LANG.ENGLISH];
+    if(!locale.hasOwnProperty(key) || typeof locale[key] !== 'function') {
         return 'NO TRANSLATION';
     }
     return locale[key](args);

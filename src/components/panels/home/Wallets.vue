@@ -12,7 +12,7 @@
 			</section>
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn style="max-width:360px;" text="Add Keys" v-on:clicked="newKeypair"></btn>
+			<btn style="max-width:360px;" :text="locale(langKeys.DASHBOARD.KEYS.AddKeysButton)" v-on:clicked="newKeypair"></btn>
 		</section>
 	</section>
 </template>

@@ -344,6 +344,10 @@ const SETTINGS = prefixKeys('settings', {
 		DeveloperConsoleButton:'dev_console_btn',
 	},
 
+	LANGUAGE:{
+		Label:'lbl',
+	},
+
 	TOKENS:{
 		SWITCH:{
 			ADD_TOKEN:'add_token',

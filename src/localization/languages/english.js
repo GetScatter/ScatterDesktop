@@ -372,6 +372,8 @@ const Locale = {
 		`Sometimes you might need to see if Scatter is throwing any errors.`,
 	[SETTINGS.GENERAL.DeveloperConsoleButton]:() => `Open Console`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[SETTINGS.LANGUAGE.Label]:() => `Select your Language`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[SETTINGS.TOKENS.SWITCH.ADD_TOKEN]:() => `Add Token`,
 	[SETTINGS.TOKENS.SWITCH.WHITELIST]:() => `Tokens`,
 	[SETTINGS.TOKENS.SWITCH.BLACKLIST]:() => `Filtered`,
