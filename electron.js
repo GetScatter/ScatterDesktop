@@ -162,7 +162,7 @@ app.on('will-finish-launching', () => {
 
 
 
-
+const isMac = process.platform === 'darwin';
 let waitingPopup;
 class LowLevelWindowService {
 
@@ -195,6 +195,7 @@ class LowLevelWindowService {
 
 		onReady(win);
 		win.show();
+		app.dock.hide();
 		win.setAlwaysOnTop(true, "floating");
 		win.setVisibleOnAllWorkspaces(true);
 		win.focus();
@@ -202,9 +203,11 @@ class LowLevelWindowService {
 		waitingPopup = await this.getWindow(1, 1);
 
 		win.once('closed', async () => {
+			app.dock.show();
+
 			// This is a fix for MacOS systems which causes the
 			// main window to always pop up after popups closing.
-			if (!dontHide && process.platform === 'darwin') {
+			if (!dontHide && isMac) {
 				mainWindow.hide();
 				app.hide();
 			}

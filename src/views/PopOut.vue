@@ -42,7 +42,7 @@
                              :popup="popup" :pinning="pinning"
                              v-on:returned="returnResult" />
 
-            <link-app v-if="popupType === 'linkApp'" v-on:returned="returnResult"></link-app>
+            <LinkApp :popup="popup" v-if="popupType === 'linkApp'" v-on:returned="returnResult" />
 
 
         </section>
@@ -75,6 +75,7 @@
 	        TransferRequest:() => import('./popouts/TransferRequest'),
             AppLogin:() => import('./popouts/AppLogin'),
             Signature:() => import('./popouts/Signature'),
+            LinkApp:() => import('./popouts/LinkApp'),
         },
         mounted(){
             WindowService.watch('popup', windowMessage => {

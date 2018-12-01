@@ -31,7 +31,7 @@ export class Popup {
 		    case ApiActions.REQUEST_SIGNATURE:
 			    return {width:920, height:600};
 		    case 'linkApp':
-			    return {width:420, height:300};
+			    return {width:420, height:500};
 		    default:
 			    return {width:800, height:600};
 	    }

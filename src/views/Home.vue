@@ -48,20 +48,11 @@
     import PiggyWaiting from '../components/svgs/PiggyWaiting'
     import Apps from '../components/panels/home/Apps';
     import Wallets from '../components/panels/home/Wallets';
-    import AccountService from "../services/AccountService";
     import BalanceService from "../services/BalanceService";
     import PriceService from "../services/PriceService";
-    import PluginRepository from "../plugins/PluginRepository";
     import Token from "../models/Token";
-    import {Popup} from "../models/popups/Popup";
-    import PopupService from "../services/PopupService";
     import RecurringService from "../services/RecurringService";
-    import {store} from "../store/store";
     import HardwareService from "../services/HardwareService";
-    import Keypair from "../models/Keypair";
-    import ExternalWallet, {EXT_WALLET_TYPES} from "../models/hardware/ExternalWallet";
-    import KeyPairService from "../services/KeyPairService";
-    import UpdateService from "../services/UpdateService";
 
 
     export default {
@@ -122,17 +113,6 @@
 		        await BalanceService.loadAllBalances();
 		        await RecurringService.checkProxies();
             })
-
-            const linkApp = {
-	            type:'linkApp',
-	            payload:{
-	            	origin:'hello',
-                    appkey:'appkey',
-                }
-            }
-	        PopupService.push(Popup.popout(linkApp, async ({result}) => {
-
-	        }))
         },
     }
 </script>

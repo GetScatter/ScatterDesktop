@@ -1,40 +1,70 @@
 <template>
     <section>
         <PopOutHead v-on:closed="returnResult" />
+        <PopOutAction :origin="popup.origin()" action="link application" />
 
-        <section class="popup">
+        <section class="multi-pane">
+            <section class="main-panel">
+                <section style="padding:0 30px; width:100%; text-align:center;">
+                    <label>App Key</label>
+                    <p>{{payload.appkey}}</p>
 
-            <section class="top-section">
-                <!-- HEADER -->
-                <section class="head">
-                    <figure class="logo">S</figure>
-                    <figure class="info">
-                        <figure>Link New App</figure>
-                    </figure>
-                    <section class="buttons">
-                        <btn text="Link" v-on:clicked="returnResult(true)"></btn>
-                        <btn red="true" text="Deny" v-on:clicked="returnResult(false)"></btn>
+                    <br>
+                    <br>
+                    <section class="disclaimer less-pad red">
+                        Make sure the application name is an application you are interacting with right now.
                     </section>
                 </section>
 
-            </section>
 
-            <section class="lists">
+                <section class="fixed-actions">
 
-                <section class="list">
-                    <section class="breadcrumbs">
-                        <figure class="breadcrumb">Application Details</figure>
-                    </section>
+                    <!-- ACCEPT TRANSACTION -->
+                    <btn blue="1"
+                         text="Allow"
+                         v-on:clicked="returnResult(true)" />
 
-                    <section class="item">
-                        <!--{{payload}}-->
-                        <figure class="title">{{app.origin}}</figure>
-                        <figure class="sub-title">{{app.appkey}}</figure>
-                    </section>
+                    <!-- DENY TRANSACTION -->
+                    <btn text="Deny"
+                         v-on:clicked="returnResult(false)" />
+
                 </section>
-
             </section>
         </section>
+
+        <!--<section class="popup">-->
+
+            <!--<section class="top-section">-->
+                <!--&lt;!&ndash; HEADER &ndash;&gt;-->
+                <!--<section class="head">-->
+                    <!--<figure class="logo">S</figure>-->
+                    <!--<figure class="info">-->
+                        <!--<figure>Link New App</figure>-->
+                    <!--</figure>-->
+                    <!--<section class="buttons">-->
+                        <!--<btn text="Link" v-on:clicked="returnResult(true)"></btn>-->
+                        <!--<btn red="true" text="Deny" v-on:clicked="returnResult(false)"></btn>-->
+                    <!--</section>-->
+                <!--</section>-->
+
+            <!--</section>-->
+
+            <!--<section class="lists">-->
+
+                <!--<section class="list">-->
+                    <!--<section class="breadcrumbs">-->
+                        <!--<figure class="breadcrumb">Application Details</figure>-->
+                    <!--</section>-->
+
+                    <!--<section class="item">-->
+                        <!--&lt;!&ndash;{{payload}}&ndash;&gt;-->
+                        <!--<figure class="title">{{app.origin}}</figure>-->
+                        <!--<figure class="sub-title">{{app.appkey}}</figure>-->
+                    <!--</section>-->
+                <!--</section>-->
+
+            <!--</section>-->
+        <!--</section>-->
 
 
 
@@ -64,6 +94,7 @@
                 'identities',
                 'accounts',
             ]),
+	        payload(){ return this.popup.payload(); },
             app(){
                 return AuthorizedApp.fromJson(this.payload);
             }
@@ -76,7 +107,7 @@
                 this.$emit('returned', result);
             },
         },
-        props:['payload', 'pluginOrigin']
+        props:['popup']
     }
 </script>
 
