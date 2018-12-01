@@ -64,7 +64,8 @@ class EosTokenAccountAPI {
 						symbol:balance.currency,
 						name:balance.currency,
 						amount:balance.amount,
-						decimals:balance.decimals
+						decimals:balance.decimals,
+						chainId:account.network().chainId
 					})
 				});
 			}).catch(err => {
@@ -482,6 +483,7 @@ export default class EOS extends Plugin {
 		return (await Promise.all(tokens.map(async token => {
 			const t = token.clone();
 			t.amount = await this.balanceFor(account, token);
+			t.chainId = account.network().chainId;
 			return t;
 		})));
 	}

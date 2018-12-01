@@ -25,13 +25,13 @@
                     </section>
 
                     <!-- ACCEPT TRANSACTION -->
-                    <btn blue="1"
+                    <btn blue="1" v-if="!pinning"
                          :disabled="!isValidIdentity || cannotSignArbitrary"
                          text="Allow"
                          v-on:clicked="accepted" />
 
                     <!-- DENY TRANSACTION -->
-                    <btn text="Deny"
+                    <btn text="Deny" v-if="!pinning"
                          v-on:clicked="returnResult(false)" />
 
                     <section v-if="!isArbitrarySignature">
@@ -148,7 +148,7 @@
     };
 
 	export default {
-		props:['popup', 'expanded'],
+		props:['popup', 'expanded', 'pinning'],
 		components:{
 			RequiredFields,
 			PopOutHead,

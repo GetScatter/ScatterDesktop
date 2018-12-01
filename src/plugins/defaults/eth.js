@@ -147,6 +147,7 @@ export default class ETH extends Plugin {
         for(let i = 0; i < tokens.length; i++){
             const t = tokens[i].clone();
 	        t.amount = await this.balanceFor(account, tokens[i], web3);
+	        t.chainId = account.network().chainId;
 	        balances.push(t);
         }
 

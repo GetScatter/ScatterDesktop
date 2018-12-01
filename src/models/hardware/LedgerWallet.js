@@ -88,29 +88,36 @@ class LedgerAPI {
             case Blockchains.EOSIO: scrambleKey = "e0s"; break;
             case Blockchains.ETH: scrambleKey = "eth"; break;
         }
-	    getTransport().decorateAppAPIMethods(
-            this,
-            [ "getPublicKey", "signTransaction", "getAppConfiguration" ],
-            scrambleKey
-        );
+
+        try {
+	        getTransport().decorateAppAPIMethods(
+		        this,
+		        [ "getPublicKey", "signTransaction", "getAppConfiguration" ],
+		        scrambleKey
+	        );
+        } catch(e){}
     }
 
-    setAddressIndex(index){
+    async setAddressIndex(index){
+    	if(!getTransport()) return;
         const prefix = this.api ? this.api : this;
         prefix.addressIndex = index;
     }
 
-    getPublicKey(){
+	async getPublicKey(){
+	    if(!getTransport()) return;
         const prefix = this.api ? this.api : this;
         return prefix[`getPublicKey`+this.blockchain]();
     }
 
-    getAppConfiguration(){
+	async getAppConfiguration(){
+	    if(!getTransport()) return;
         const prefix = this.api ? this.api : this;
         return prefix[`getAppConfiguration`+this.blockchain]();
     }
 
     async signTransaction(publicKey, rawTxHex, abi, network){
+	    if(!getTransport()) return;
         const prefix = this.api ? this.api : this;
         return prefix[`signTransaction`+this.blockchain](publicKey, rawTxHex, abi, network);
     }

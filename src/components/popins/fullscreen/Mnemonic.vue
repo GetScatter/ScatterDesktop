@@ -1,6 +1,5 @@
 <template>
     <section>
-        <back-bar text="Done" subtext="Did you copy your phrase?" v-on:back="returnResult(null)" />
         <section class="full-panel inner center-fold limited">
             <h4>Password Alternative</h4>
             <section class="disclaimer less-pad red">
@@ -20,6 +19,10 @@
                     </section>
                 </section>
             </section>
+        </section>
+
+        <section class="action-bar short bottom centered">
+            <btn text="Done" blue="1" v-on:clicked="returnResult(null)" />
         </section>
     </section>
 </template>
@@ -64,6 +67,10 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../variables";
 
+    .full-panel {
+        min-height:calc(100vh - 160px);
+    }
+
     .mnemonic {
 
         .phrase-box {
@@ -71,6 +78,7 @@
             max-height:280px;
             overflow:hidden;
             padding:20px;
+            padding-bottom:0;
 
             .word {
                 width: 25%;

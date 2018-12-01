@@ -58,6 +58,7 @@ const Locale = {
 	[GENERIC.Hide]:() => `Hide`,
 	[GENERIC.Reveal]:() => `Reveal`,
 	[GENERIC.Tokens]:(n = 0) => `Token${plural_s(n)}`,
+	[GENERIC.Network]:(n = 1) => `Network${plural_s(n)}`,
 	[GENERIC.Blockchain]:(n = 1) => `Blockchain${plural_s(n)}`,
 	[GENERIC.Contract]:(n = 1) => `Contract${plural_s(n)}`,
 	[GENERIC.Memo]:() => `Memo`,

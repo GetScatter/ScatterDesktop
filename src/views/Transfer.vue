@@ -53,7 +53,10 @@
                          v-on:blur="amount = amount.toString().length ? parseFloat(amount).toFixed(token.decimals) : ''" />
 
 
-                    <sel :disabled="!account" :selected="token" :parser="x => x.name" :items="[]" as-button="1" v-on:clicked="openTokenSelector" />
+                    <sel :disabled="!account" :selected="token"
+                         :parser="x => x.name"
+                         :items="[]" as-button="1"
+                         v-on:clicked="openTokenSelector" />
                     <br>
 
                     <section class="custom-token" v-if="token.id === 'custom'">
@@ -261,6 +264,7 @@
                     })
                     .filter(x => !this.networkFilter ? true : x.networkUnique === this.networkFilter.unique())
                     .filter(x => x.authority !== 'watch')
+                    .sort((a,b) => b.logins - a.logins)
                     .map(account => ({
                         id:account.unique(),
                         title:account.sendable(),
@@ -268,10 +272,12 @@
                     }))
             },
 	        filteredTokens(){
-		        const standardTokens = this.networkTokens.concat(this.tokens);
+		        const standardTokens = this.networkTokens.filter(x => !this.account ? true : x.network().unique() === this.account.network().unique())
+                    .concat(this.tokens);
+
 		        const tokensFromBalances = (() => {
 		        	if(!this.account) return [];
-			        const accountBalances = this.balances[this.account.identifiable()];
+			        const accountBalances = this.balances[this.account.identifiable()].filter(x => x.chainId === this.account.network().chainId);
 			        return accountBalances || [];
                 })().sort((a,b) => b.amount - a.amount);
             	const allTokens = standardTokens.concat(tokensFromBalances);
@@ -392,9 +398,7 @@
 
 	    	    PopupService.push(Popup.selector('Select a Token', items, token => {
 	    	    	if(!token) return;
-			        this.token = token.id === 'custom'
-                        ? Token.fromJson({id:token.id, name:token.title, blockchain:this.account ? this.account.blockchain() : Blockchains.EOSIO})
-                        : this.filteredTokens.find(x => x.id === token.id);
+	    	    	this.selectToken(token);
                 }))
             },
             tokenFromId(id){
@@ -421,10 +425,6 @@
 			    );
 		        if(await TokenService.addToken(token)) this.token = token;
 	        },
-            selectBlockchain(blockchain){
-	            this.token.blockchain = blockchain.value;
-	            this.token.decimals = PluginRepository.plugin(this.token.blockchain).defaultDecimals();
-            },
 	        selectRecipient(item){
 	    		this.recipient = item.id;
             },
@@ -444,7 +444,14 @@
                 }
             },
             selectToken(token){
-	    		this.token = token.id === 'custom' ? Token.fromJson({id:token.id, name:token.name, blockchain:this.account ? this.account.blockchain() : Blockchains.EOSIO}) : token;
+	            this.token = token.id === 'custom'
+		            ? Token.fromJson({id:token.id, name:token.title, blockchain:this.account ? this.account.blockchain() : Blockchains.EOSIO})
+		            : this.filteredTokens.find(x => x.id === token.id);
+	    		if(this.token.id === 'custom'){
+	    			console.log('custom')
+				    this.token.blockchain = this.account.blockchain();
+				    this.token.decimals = PluginRepository.plugin(this.token.blockchain).defaultDecimals();
+                }
             },
             async addContact(){
                 if(!this.recipient.length) return;
@@ -491,6 +498,13 @@
 
         },
         watch:{
+	    	['account'](){
+	    	    if(this.account){
+			        if(this.token.blockchain === this.account.blockchain() && this.filteredTokens.find(x => x.unique() === this.token.unique())) return;
+			        const token = this.filteredTokens.find(x => x.blockchain === this.account.blockchain());
+			        if(token) this.selectToken(token);
+                }
+            },
             ['recipient'](){
                 BlockchainsArray.map(({value}) => {
                     const plugin = PluginRepository.plugin(value);
@@ -507,6 +521,10 @@
             ['token'](){
             	this.amount = '';
             },
+            ['networkFilter'](){
+	            const token = this.filteredTokens[0];
+	            if(token) this.selectToken(token);
+            }
         }
     }
 </script>

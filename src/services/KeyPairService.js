@@ -144,6 +144,8 @@ export default class KeyPairService {
     }
 
     static async loadFromHardware(keypair, tries = 0){
+        if(typeof keypair.external.interface.getPublicKey !== 'function') return false;
+
         if(tries >= 5) return false;
         return keypair.external.interface.getPublicKey().then(key => {
             if(PluginRepository.plugin(keypair.external.blockchain).validPublicKey(key)){

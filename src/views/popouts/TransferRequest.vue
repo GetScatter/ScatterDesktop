@@ -61,7 +61,7 @@
 
                     <FullWidthRow :items="selectedAccounts" popout="1" />
 
-                    <section class="fixed-actions">
+                    <section class="fixed-actions" v-if="!pinning">
                         <btn blue="1" text="Accept" v-on:clicked="returnResult(true)" />
                         <btn text="Deny" v-on:clicked="returnResult(null)" />
                     </section>
@@ -93,7 +93,7 @@
 	import TokenService from "../../services/TokenService";
 
 	export default {
-		props:['popup', 'expanded'],
+		props:['popup', 'expanded', 'pinning'],
 		components:{
 			RequiredFields,
 			PopOutHead,

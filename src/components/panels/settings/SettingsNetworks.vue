@@ -292,6 +292,12 @@
             	if(this.network.token){
             		this.network.token.blockchain = this.network.blockchain;
 		            this.network.token.decimals = PluginRepository.plugin(this.network.token.blockchain).defaultDecimals();
+		            this.network.token.chainId = this.network.chainId;
+                }
+            },
+            ['network.chainId'](){
+            	if(this.network.token){
+		            this.network.token.chainId = this.network.chainId;
                 }
             },
 	        ['network.token.decimals'](){

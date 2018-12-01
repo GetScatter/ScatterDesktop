@@ -30,7 +30,7 @@ export default class NetworkService {
         scatter.settings.updateOrPushNetwork(network);
         await store.dispatch(Actions.SET_SCATTER, scatter);
         await AccountService.importAllAccountsForNetwork(network);
-        BalanceService.loadAllBalances();
+        BalanceService.loadAllBalances(true);
         PopupService.push(Popup.snackbar("Network Saved!", "check"));
         return true;
     }

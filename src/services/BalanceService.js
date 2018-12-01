@@ -1,19 +1,23 @@
 import PluginRepository from "../plugins/PluginRepository";
 import {store} from "../store/store";
 import * as Actions from "../store/constants";
-import Process from "../models/Process";
+
+let lastBalanceTime;
 
 export default class BalanceService {
 
 	static async loadBalancesFor(account){
 		const blockchain = account.blockchain();
 		const plugin = PluginRepository.plugin(blockchain);
-		const tokens = store.getters.allTokens.filter(x => x.blockchain === blockchain);
+		const tokens = store.getters.allTokens.filter(x => x.blockchain === blockchain)
+			.filter(x => x.chainId === account.network().chainId);
 		const balances = await plugin.balancesFor(account, tokens);
 		return store.dispatch(Actions.SET_BALANCES, {account:account.identifiable(), balances});
 	}
 
-	static async loadAllBalances(){
+	static async loadAllBalances(force = false){
+		if(!force && lastBalanceTime < (+new Date()+1000*60*5)) return;
+		lastBalanceTime = +new Date();
 		const accounts = store.state.scatter.keychain.accounts.reduce((acc, account) => {
 			// Filtering out permission based accounts
 			if(!acc.find(x => x.identifiable() === account.identifiable())) acc.push(account);

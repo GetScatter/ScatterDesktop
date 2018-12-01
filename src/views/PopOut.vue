@@ -30,7 +30,7 @@
                       v-on:returned="returnResult" />
 
             <Signature v-if="popupType === apiActions.REQUEST_SIGNATURE || popupType === apiActions.REQUEST_ARBITRARY_SIGNATURE"
-                      :popup="popup"
+                      :popup="popup" :pinning="pinning"
                       v-on:expanded="expandOrContract" :expanded="expanded"
                       v-on:returned="returnResult" />
 
@@ -39,7 +39,7 @@
                           v-on:returned="returnResult" />
 
             <TransferRequest v-if="popupType === apiActions.REQUEST_TRANSFER"
-                             :popup="popup"
+                             :popup="popup" :pinning="pinning"
                              v-on:returned="returnResult" />
 
             <link-app v-if="popupType === 'linkApp'" v-on:returned="returnResult"></link-app>
@@ -68,6 +68,7 @@
             apiActions:ApiActions,
             windowMessage:null,
 	        expanded:false,
+            pinning:false,
         }},
         components:{
 	        GetPublicKey:() => import('./popouts/GetPublicKey'),
@@ -98,9 +99,11 @@
 
                 setTimeout(async () => {
 	                if(this.scatter.pinForAll && needsPIN.includes(this.popup.data.type)){
+	                	this.pinning = true;
 		                if(! await PasswordService.verifyPIN()){
 		                	this.returnResult(null);
                         }
+		                this.pinning = false;
 	                }
                 })
             });

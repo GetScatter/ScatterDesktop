@@ -19,9 +19,18 @@
                 {{locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.Disclaimer)}}
             </section>
 
-            <cin :placeholder="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder)"
-                 :label="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNameLabel)"
-                 :text="newToken.name" v-on:changed="x => newToken.name = x" />
+            <section class="split-inputs">
+                <sel style="flex:1; margin-left:0;" :label="locale(langKeys.GENERIC.Network)"
+                     :selected="filteredNetworks.find(x => x.chainId === newToken.chainId)"
+                     :options="filteredNetworks"
+                     :parser="x => x.name"
+                     v-on:changed="x => newToken.chainId = x.chainId" />
+
+                <cin style="flex:1; margin-bottom:0;" :placeholder="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder)"
+                     :label="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNameLabel)"
+                     :text="newToken.name" v-on:changed="x => newToken.name = x" />
+            </section>
+            <br>
 
             <section class="split-inputs">
                 <sel style="flex:1; margin-left:0;" :label="locale(langKeys.GENERIC.Blockchain)"
@@ -172,7 +181,7 @@
 		const description = `${blockchainName(token.blockchain)} ${fiatPrice ? ' - '+fiatPrice : ''}`;
 		return {
 			id:token.unique(),
-			title:`${token.name} (${token.symbol})`,
+			title:`${token.name} (${token.network() ? token.network().name : ''})`,
 			description
 		};
 	});
@@ -206,6 +215,7 @@
 			balanceFilters:{},
 		}},
 		mounted(){
+			this.newToken.chainId = PluginRepository.plugin(Blockchains.EOSIO).getEndorsedNetwork().chainId;
 			PriceService.getCurrencies().then(x => this.currencies = x);
 			this.balanceFilters = this.scatter.settings.balanceFilters;
 		},
@@ -256,7 +266,10 @@
 				if(!this.blockchain) return formatter(tokens);
 				return formatter(tokens
 					.filter(x => x.blockchain === this.blockchain))
-			}
+			},
+            filteredNetworks(){
+				return this.networks.filter(x => x.blockchain === this.newToken.blockchain);
+            }
 		},
 		methods:{
 			filterTokensByTerms(tokensList){
@@ -308,6 +321,7 @@
 		watch:{
 			['newToken.blockchain'](){
 				this.newToken.decimals = PluginRepository.plugin(this.newToken.blockchain).defaultDecimals();
+				this.newToken.chainId = this.filteredNetworks[0].chainId;
 			},
 			['balanceFilters'](){
 				clearTimeout(balanceFilterTimeout);

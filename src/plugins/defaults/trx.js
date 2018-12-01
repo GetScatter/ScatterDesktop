@@ -106,6 +106,7 @@ export default class TRX extends Plugin {
 				name:symbol,
 				decimals:this.defaultDecimals(),
 				amount:formatBalance(value),
+				chainId:account.network().chainId,
 			})
 		});
 

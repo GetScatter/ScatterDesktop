@@ -15,10 +15,16 @@ export default class Token {
 	    this.decimals = decimals ? decimals : PluginRepository.plugin(blockchain).defaultDecimals();
 
 	    this.amount = 0;
+
+	    this.chainId = '';
     }
 
     static placeholder(){ return new Token(); }
-    static fromJson(json){ return Object.assign(this.placeholder(), json); }
+    static fromJson(json){
+	    const p = Object.assign(this.placeholder(), json);
+	    if(!json.hasOwnProperty('name') || !json.name.length) p.name = json.symbol;
+	    return p;
+    }
     static fromUnique(unique){
     	const p = this.placeholder();
     	const [blockchain, contract, symbol] = unique.split(':');
@@ -36,6 +42,12 @@ export default class Token {
 
     add(quantity){
 	    this.amount = (parseFloat(this.amount) + parseFloat(quantity)).toFixed(this.decimals);
+    }
+
+    network(){
+    	const networks = store.state.scatter.settings.networks;
+    	if(!this.chainId || !this.chainId.length) return networks.find(x => x.unique() === PluginRepository.plugin(this.blockchain).getEndorsedNetwork().unique());
+    	return networks.find(x => x.chainId === this.chainId);
     }
 
     needsContract(){

@@ -21,7 +21,6 @@ export default class HardwareService {
 
 	static async checkLedgerConnection(onlyIfDisconnected = false){
 		if(!onlyIfDisconnected || (!isLedgerConnected() && !transport)){
-			console.log('conecting')
 			return new Promise(resolve => {
 				transport = Transport.listen({next:({type, device}) => this[type+'Ledger'](device)});
 				setTimeout(() => {

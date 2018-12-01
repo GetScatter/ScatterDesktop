@@ -46,6 +46,7 @@ const GENERIC = prefixKeys('generic', {
 	Reveal:'reveal',
 	Identity:'identity',
 	Tokens:'tokens',
+	Network:'network',
 	Blockchain:'blockchain',
 	Contract:'contract',
 	Memo:'memo',
