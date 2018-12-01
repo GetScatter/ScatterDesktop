@@ -177,9 +177,7 @@
 				    const filename = `${location}/${this.keypair.name}.png`;
 
 				    remote.getCurrentWindow().capturePage(img => {
-					    console.log('hi', img);
 					    remote.require('fs').writeFile(filename, img.toPng(), saved => {
-						    console.log('saved', saved);
 						    PopupService.push(Popup.snackbar('Saved Image'));
 						    ElectronHelpers.openLinkInBrowser(location);
 						    setTimeout(() => {

@@ -29,7 +29,12 @@ export default class QRService {
 
     static async decryptQR(data, salt, password){
         const [mnemonic, seed] = await Mnemonic.generateMnemonic(password, salt);
-        return AES.decrypt(data, seed);
+        try {
+	        return AES.decrypt(data, seed)
+        } catch(e){
+        	console.error('Error decrypting QR: ', e);
+        	return null;
+        }
     }
 
 }
