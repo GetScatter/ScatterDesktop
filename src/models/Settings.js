@@ -15,6 +15,7 @@ export const SETTINGS_OPTIONS = {
 	TOKENS:{ locked:false, name:'Tokens' },
 	EXPLORER:{ locked:false, name:'Explorers' },
 	PIN:{ locked:true, name:'PIN' },
+	FIREWALL:{ locked:true, name:'Firewall' },
 	NETWORKS:{ locked:true, name:'Networks' },
 	PASSWORD:{ locked:true, name:'Password' },
 	BACKUP:{ locked:true, name:'Backup' },

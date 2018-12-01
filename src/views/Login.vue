@@ -6,8 +6,12 @@
                 <section>
                     <h1>{{locale(langKeys.LOGIN.NEW.Title)}}</h1>
                     <p class="limited-p">{{locale(langKeys.LOGIN.NEW.SubTitle)}}</p>
-                    <OnboardingSvg />
+                    <!--<OnboardingSvg />-->
 
+                    <br>
+                    <br>
+                    <br>
+                    <br>
                     <section class="inputs">
                         <cin :focus="true"
                              :label="locale(langKeys.LOGIN.NEW.PasswordLabel)"
@@ -57,7 +61,9 @@
                     <h1>{{locale(langKeys.LOGIN.RESTORE.Title)}}</h1>
                     <p class="limited-p">{{locale(langKeys.LOGIN.RESTORE.SubTitle)}}</p>
 
-                    <img src="../assets/import_backup.png" style="margin:10px 0 20px;" />
+                    <br>
+                    <img src="../assets/import_backup.png" style="margin:10px 0 20px; width:200px;" />
+                    <br>
                     <br>
 
                     <btn :disabled="working"
@@ -99,6 +105,7 @@
 	import Crypto from "../util/Crypto";
 	import Scatter from "../models/Scatter";
 	import AccountService from "../services/AccountService";
+	import UpdateService from "../services/UpdateService";
 
 	const lockoutTime = 1000*60*5;
 	const resetLockout = () => window.localStorage.removeItem('lockout');
@@ -128,6 +135,8 @@
             restoringBackup:false,
 			dPresses:0,
             lockedOutTime:0,
+
+            now:0,
 		}},
 		computed: {
 			...mapState([
@@ -164,6 +173,10 @@
             }
 		},
 		mounted(){
+			setInterval(() => {
+				this.now = +new Date();
+			}, 1000);
+
 			this.password = '';
 			this.confirmPassword = '';
 
@@ -222,7 +235,11 @@
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
 						await SocketService.initialize();
-						this.pushTo(this.RouteNames.HOME);
+						UpdateService.needsUpdate();
+
+						if(this.scatter.settings.backupLocation === ''){
+							this.pushTo(this.RouteNames.ONBOARDING);
+                        } else this.pushTo(this.RouteNames.HOME);
 					} else {
 						this.working = false;
 						PopupService.push(Popup.snackbarBadPassword());
@@ -256,12 +273,13 @@
 
                     if(typeof decrypted === 'object' && decrypted.hasOwnProperty('keychain')){
                     	decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
+                    	decrypted.settings.backupLocation = '';
 	                    StorageService.setSalt(salt);
 	                    await this[Actions.SET_SEED](password);
 	                    await this[Actions.SET_SCATTER](Scatter.fromJson(decrypted));
 	                    resetLockout();
 	                    unrestore();
-	                    this.pushTo(this.RouteNames.HOME);
+	                    this.pushTo(this.RouteNames.ONBOARDING);
                     } else {
 	                    unrestore();
 	                    return alert("Error decrypting backup");
@@ -304,7 +322,7 @@
 
 						unrestore();
 						resetLockout();
-						this.pushTo(this.RouteNames.HOME);
+						this.pushTo(this.RouteNames.ONBOARDING);
 						await Promise.all(keypairs.map(keypair => {
 							return AccountService.importAllAccounts(keypair);
 						}));
@@ -314,7 +332,7 @@
 					}
 
 
-                }
+                };
 
 				fs.readFile(file, 'utf-8', (err, data) => {
 

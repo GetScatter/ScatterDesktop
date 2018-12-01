@@ -80,13 +80,13 @@
                         <section :class="{'previous-whitelist':isPreviouslyWhitelisted(message)}">
 
                             <section class="details">
-                                <figure class="title" @click="collapse(message)">
+                                <figure class="title">
                                     <input v-if="whitelisted && !isPreviouslyWhitelisted(message)"
                                            :checked="!!getWhitelist(message)"
                                            type="checkbox"
                                            @change="addWhitelist(message)" />
 
-                                    {{message.code}} <i class="contract-split icon-right-open-big"></i> {{message.type}}
+                                    <span @click="collapse(message)">{{message.code}} <i class="contract-split icon-right-open-big"></i> {{message.type}}</span>
                                 </figure>
                             </section>
 

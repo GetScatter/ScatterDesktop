@@ -111,29 +111,9 @@ const getCerts = async () => {
 
 
 const ip = '127.0.0.1';
-const isPortOpen = async port => new Promise(resolve => {
-    const httpServer = http.createServer();
-    httpServer.on('error', error => {
-        resolve(false);
-    })
-
-    httpServer.listen(50005,ip);
-
-    setTimeout(() => {
-        httpServer.close();
-        resolve(true);
-    }, 400);
-});
-
-// Every 2 minutes.
-const reconnectTime = 1000*60*2;
-let initialConnection = true;
-
 export default class SocketService {
 
     static async initialize(){
-
-        if(!(await isPortOpen(50005))) return;
 
         const options = { pingTimeout:100000000000000000 };
 
@@ -149,18 +129,13 @@ export default class SocketService {
             httpsServer.listen(50006, ip);
             io.attach(httpsServer,options);
         } else {
-            if(initialConnection) PopupService.push(Popup.prompt("Couldn't fetch certificates",
+            PopupService.push(Popup.prompt("Couldn't fetch certificates",
                 'There was an issue trying to fetch the certificates which allow Scatter to run on SSL. This is usually caused by proxies, firewalls, and anti-viruses.'))
         }
 
-	    initialConnection = false;
-        this.open();
+	    const namespace = io.of(`/scatter`);
+	    namespace.on('connection', socket => socketHandler(socket));
         return true;
-    }
-
-    static open(){
-        const namespace = io.of(`/scatter`);
-        namespace.on('connection', socket => socketHandler(socket))
     }
 
     static async close(){
@@ -180,7 +155,7 @@ export default class SocketService {
         // available namespaces for connections
         delete io.nsps[`/scatter`];
 
-        return true;
+	    return true;
     }
 
 }

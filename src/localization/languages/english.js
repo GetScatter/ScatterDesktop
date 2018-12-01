@@ -82,7 +82,7 @@ const Locale = {
 
 	[LOGIN.NEW.Title]:() => `You must be new here!`,
 	[LOGIN.NEW.SubTitle]:() =>
-		`Just a few easy steps and we'll walk you through them. Let's start with your password.`,
+		`Just a few easy steps to get going. Let's start with your password.`,
 	[LOGIN.NEW.PasswordLabel]:() => `Choose a password`,
 	[LOGIN.NEW.PasswordPlaceholder]:() => `Make sure it's a strong password!`,
 	[LOGIN.NEW.PasswordConfirmLabel]:() => `Type your password again`,
@@ -99,7 +99,7 @@ const Locale = {
 		`If you have a backup for your Scatter you can import it here by loading it into Scatter. 
         You will still need the password to unlock it.`,
 	[LOGIN.RESTORE.ChooseButton]:() => `Choose your Backup`,
-	[LOGIN.RESTORE.BackButton]:() => `I want to start from scratch`,
+	[LOGIN.RESTORE.BackButton]:() => `Go back and start from scratch`,
 
 
 
@@ -352,6 +352,7 @@ const Locale = {
 	[SETTINGS.MENU.Tokens]:() => `Tokens`,
 	[SETTINGS.MENU.Explorers]:() => `Explorers`,
 	[SETTINGS.MENU.PIN]:() => `PIN`,
+	[SETTINGS.MENU.Firewall]:() => `Firewall`,
 	[SETTINGS.MENU.Networks]:() => `Networks`,
 	[SETTINGS.MENU.Password]:() => `Password`,
 	[SETTINGS.MENU.Backup]:() => `Backup`,
@@ -446,6 +447,10 @@ const Locale = {
 	[SETTINGS.BACKUP.AutoBackupLocationLabel]:() => `Auto-Backup Location`,
 	[SETTINGS.BACKUP.CreateBackupButton]:() => `Create Backup`,
 	[SETTINGS.BACKUP.CurrentBackupFolderLabel]:() => `Current Backup Folder`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[SETTINGS.FIREWALL.ENABLED.Label]:() => `Enable Firewall`,
+	[SETTINGS.FIREWALL.ENABLED.Description]:() =>
+		`RIDL Defender is Scatter's proprietary decentralized firewall system. It helps protect you from malicious websites, applications, and accounts.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[SETTINGS.DESTROY.Label]:() => `Configure`,
 	[SETTINGS.DESTROY.Description]:() =>

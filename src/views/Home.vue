@@ -30,7 +30,7 @@
                 <p>{{locale(langKeys.DASHBOARD.KEYS.NoKeys)}}</p>
             </section>
             <section class="action-bar short bottom centered">
-                <btn @mouseover.native="hoveringAddKeys = true"
+                <btn id="tour1" @mouseover.native="hoveringAddKeys = true"
                      @mouseout.native="hoveringAddKeys = false"
                      v-on:clicked="newKeypair" blue="1"
                      style="width:300px;"
@@ -117,7 +117,6 @@
 
         mounted(){
 	        setTimeout(async() => {
-	        	UpdateService.needsUpdate();
 	        	HardwareService.openConnections(true);
 		        await PriceService.watchPrices();
 		        await BalanceService.loadAllBalances();

@@ -324,6 +324,7 @@ const SETTINGS = prefixKeys('settings', {
 		Tokens:'tokens',
 		Explorers:'explorers',
 		PIN:'pin',
+		Firewall:'firewall',
 		Networks:'networks',
 		Password:'password',
 		Backup:'backup',
@@ -442,6 +443,13 @@ const SETTINGS = prefixKeys('settings', {
 		AutoBackupLocationLabel:'auto_backup_lbl',
 		CreateBackupButton:'create_backup_btn',
 		CurrentBackupFolderLabel:'curr_backup_lbl',
+	},
+
+	FIREWALL:{
+		ENABLED:{
+			Label:'lbl',
+			Description:'desc',
+		}
 	},
 
 	DESTROY:{

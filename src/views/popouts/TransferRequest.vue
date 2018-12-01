@@ -154,13 +154,16 @@
             selectedAccounts(){
                 return [this.account]
 	                .map(x => this.formatAccount(x, false))
+            },
+            currentAmount(){
+	            return this.amount > 0 ? this.amount : this.customAmount;
             }
 		},
 		methods: {
 			returnResult(result){
 				if(!result) return this.$emit('returned', null);
 
-				let amount = this.amount > 0 ? this.amount : this.customAmount;
+				let amount = this.currentAmount;
 				if(this.blockchain === Blockchains.EOSIO){
 					amount = parseFloat(amount).toFixed(this.decimals);
 				} else {
@@ -173,7 +176,7 @@
 			},
 			selectAccount(account){
 				this.inputError = false;
-				if(account && this.customAmount <= 0)
+				if(account && this.currentAmount <= 0)
 					return this.inputError = true;
 
                 this.account = account;

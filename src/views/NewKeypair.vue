@@ -5,7 +5,7 @@
 
         <!-- SELECT NEW KEY TYPE -->
         <section v-if="state === STATES.SELECT" class="panel-container limited">
-            <h1>{{locale(langKeys.DASHBOARD.KEYS.AddKeysButton)}}</h1>
+            <h1 id="tour2">{{locale(langKeys.DASHBOARD.KEYS.AddKeysButton)}}</h1>
 
             <br>
             <section class="disclaimer">

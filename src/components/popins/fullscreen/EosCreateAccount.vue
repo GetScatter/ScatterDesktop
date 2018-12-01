@@ -239,7 +239,7 @@
 				return (parseFloat(this.ramPrice ? this.ramPrice : '1.0000') + 1).toFixed(this.decimals);
 			},
 			decimals(){
-				return !this.creator ? 4 : this.creator.network().systemToken().symbol;
+				return !this.creator ? 4 : this.creator.network().systemToken().decimals;
 			},
 			totalPrice(){
 				return (parseFloat(this.ramPrice ? this.ramPrice : 0) + parseFloat(this.eosToUse ? this.eosToUse : 0)).toFixed(this.decimals);

@@ -5,8 +5,12 @@
 			<section class="head">
 				<figure class="icon icon-attention"></figure>
 				<figure class="title">Destroy Scatter</figure>
+				<br>
+				<section class="disclaimer less-pad red" style="margin-bottom:10px;">
+					Before doing this, make sure you have all of your Private Keys backed up.
+				</section>
 				<p>
-					Before doing this, make sure you have all of your Private Keys backed up. Destroying your Scatter is
+					Destroying your Scatter is
 					irreversible, and you will not be able to restore any data without backups.
 				</p>
 			</section>
@@ -30,7 +34,7 @@
 		data () {return {
 
 		}},
-		mounted(){
+		created(){
 
 		},
 		computed:{
@@ -49,9 +53,11 @@
 			},
 			async destroy(){
 				await SocketService.close();
-				await StorageService.removeScatter();
-				this.$router.push('/');
-				this.returnResult(true);
+
+				setTimeout(async () => {
+					await StorageService.removeScatter();
+					location.reload();
+				}, 500);
 			},
 
 			...mapActions([

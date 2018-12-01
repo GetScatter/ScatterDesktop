@@ -1,14 +1,33 @@
 @import './_variables.scss';
 
 .v-step{
-    background:$black;
-    color:#fff;
-    max-width:320px;
-    border-radius:4px;
+    background:#fff;
+    color:$black;
+    width:330px;
+    border-radius:8px;
     padding:20px;
-    text-align:center;
     z-index:999999999;
-    font-size: 22px;
+    box-shadow:0 10px 40px rgba(98, 208, 253, 0.5);
+    position: relative;
+
+    div {
+        font-size: 20px;
+        margin-bottom:10px;
+    }
+
+    span {
+        font-size: 14px;
+    }
+
+    figure {
+        position:absolute;
+        right:10px;
+        top:10px;
+        font-size: 18px;
+        cursor: pointer;
+        pointer-events: none;
+        color:rgba(0,0,0,0.3);
+    }
 }
 .v-step .v-step__arrow{
     width:0;
@@ -16,13 +35,14 @@
     border-style:solid;
     position:absolute;
     margin:.5rem;
-    border-color:$black
+    border-color:#fff;
+    box-shadow:0 10px 40px $light-blue;
 }
 .v-step .v-step__arrow--dark{
     border-color:#454d5d
 }
 .v-step[x-placement^=top]{
-    margin-bottom:.5rem
+    margin-bottom:.9rem
 }
 .v-step[x-placement^=top] .v-step__arrow{
     border-width:.5rem .5rem 0;
@@ -84,7 +104,16 @@
 
 }
 .v-step__button{
-    display:none;
+    opacity:0;
+    width:20px;
+    height:20px;
+    overflow:hidden;
+    z-index:2;
+
+    position:absolute;
+    right:10px;
+    top:10px;
+    cursor: pointer;
 }
 .v-step__button:hover{
     background-color:hsla(0,0%,100%,.95);

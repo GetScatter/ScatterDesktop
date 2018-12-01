@@ -49,6 +49,7 @@
                         <SettingsBackup v-if="selectedOption.name === settingsOptions.BACKUP.name" />
                         <SettingsDestroy v-if="selectedOption.name === settingsOptions.DESTROY.name" />
                         <SettingsPIN v-if="selectedOption.name === settingsOptions.PIN.name" />
+                        <SettingsFirewall v-if="selectedOption.name === settingsOptions.FIREWALL.name" />
 
                     </section>
                 </section>
@@ -76,6 +77,7 @@
     import SettingsDestroy from '../components/panels/settings/SettingsDestroy.vue'
     import SettingsPassword from '../components/panels/settings/SettingsPassword.vue'
     import SettingsPIN from '../components/panels/settings/SettingsPIN.vue'
+    import SettingsFirewall from '../components/panels/settings/SettingsFirewall.vue'
 
 
 
@@ -90,6 +92,7 @@
             SettingsDestroy,
             SettingsPassword,
             SettingsPIN,
+		    SettingsFirewall,
         },
 	    data () {return {
             settingsOptions:SETTINGS_OPTIONS,
@@ -118,6 +121,7 @@
 		            SETTINGS_OPTIONS.NETWORKS,
 		            SETTINGS_OPTIONS.PASSWORD,
 		            SETTINGS_OPTIONS.BACKUP,
+		            SETTINGS_OPTIONS.FIREWALL,
 		            SETTINGS_OPTIONS.DESTROY,
                 ]
             }

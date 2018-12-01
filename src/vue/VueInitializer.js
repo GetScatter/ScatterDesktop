@@ -41,17 +41,20 @@ export default class VueInitializer {
 	                RouteNames,
 	                SETTINGS_OPTIONS,
                     langKeys:LANG_KEYS,
-                    now:0,
+                    // now:0,
                 }},
                 mounted(){
-                    setInterval(() => {
-                        this.now = +new Date();
-                    }, 1000);
+                    // setInterval(() => {
+                    //     this.now = +new Date();
+                    // }, 1000);
                 },
                 methods: {
+	                stopTour(){
+	                	if(!store.state.scatter.toured) this.$tours['scatter'].stop()
+	                },
 	                blockchainName,
 	                locale:(key, args) => localized(key, args, store.getters.language),
-	                newKeypair(){ this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
+	                newKeypair(){ this.stopTour(); this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
 	                goToApps(){ this.openInBrowser('https://get-scatter.com/Apps') },
 	                openInBrowser(url){ ElectronHelpers.openLinkInBrowser(url); },
 	                setWorkingScreen(bool){ store.dispatch(Actions.SET_WORKING_SCREEN, bool); },

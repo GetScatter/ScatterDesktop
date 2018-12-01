@@ -5,14 +5,14 @@
 				<section class="head">
 					<figure class="title">Enabled Whitelist</figure>
 					<p>
-						Whitelisting actions makes it so you don't have to keep approving actions you trust.
-						When you whitelist actions you will see a checkbox appear next to each action and all it's values.
+						Whitelisting actions makes it so you don't have to keep approving actions for applications you trust.
+						When whitelisting actions you will see checkboxes appear next to each action and value.
 					</p>
 
 					<br>
 
 					<section class="mock-props">
-						<label><b class="red">entire action is whitelisted</b></label>
+						<label><b class="red">This action will be whitelisted</b></label>
 						<section class="details split-inputs">
 							<input checked disabled="true" type="checkbox" />
 							<figure class="title" style="font-size: 13px;">eosio.token <i class="contract-split icon-right-open-big"></i> transfer</figure>

@@ -31,7 +31,7 @@
         </transition>
 
 
-        <!--<v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>-->
+        <v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>
 
     </section>
 </template>
@@ -55,16 +55,13 @@
             steps: [
                 {
                     target: '#tour1',
-                    content: `This is your <b>Vault</b> where all of your Keys are kept. <br><b>Open it.</b>`,
+                    content: `
+                        <div>You have to have a key</div>
+                        <span>So we will start by adding your first one.</span>
+                        <figure class="icon-cancel" onclick="() => this.stopTour()"></figure>
+                    `,
                     params: {
-                        placement: 'bottom'
-                    }
-                },
-                {
-                    target: '#tour2',
-                    content: `Now click here to add a <b>Vault Entry</b>`,
-                    params: {
-                        placement: 'left'
+                        placement: 'top'
                     }
                 },
             ],
@@ -89,22 +86,25 @@
             }
         },
         created(){
-
+	        this.checkTour()
         },
         mounted(){
 
         },
         methods:{
             onStop(){
+            	if(!this.scatter) return;
                 const scatter = this.scatter.clone();
                 scatter.toured = true;
                 this[Actions.SET_SCATTER](scatter);
             },
             checkTour(){
-                // if(!this.scatter) return;
-                // if(!this.scatter.toured && !this.onboarding && this.unlocked && this.route === 'home'){
-                //     this.$tours['scatter'].start();
-                // }
+                if(!this.scatter) return;
+                if(!this.scatter.toured && this.unlocked && this.route === 'home'){
+                    setTimeout(() => {
+	                    this.$tours['scatter'].start();
+                    }, 1000);
+                }
             },
             ...mapActions([
                 Actions.SET_SCATTER

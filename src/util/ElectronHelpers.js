@@ -7,7 +7,6 @@ electron = RUNNING_TESTS ? null : window.require('electron');
 if(!electron) electron = MOCK_ELECTRON;
 
 export const remote = electron.remote;
-console.log('remote', remote);
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
 
