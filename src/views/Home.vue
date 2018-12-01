@@ -122,6 +122,17 @@
 		        await BalanceService.loadAllBalances();
 		        await RecurringService.checkProxies();
             })
+
+            const linkApp = {
+	            type:'linkApp',
+	            payload:{
+	            	origin:'hello',
+                    appkey:'appkey',
+                }
+            }
+	        PopupService.push(Popup.popout(linkApp, async ({result}) => {
+
+	        }))
         },
     }
 </script>

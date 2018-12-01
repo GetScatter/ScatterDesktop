@@ -22,6 +22,7 @@ export class Popup {
 	static fromJson(json){ return Object.assign(new Popup(), json); }
 
     dimensions(){
+    	console.log(this.data.type);
     	switch (this.data.type) {
 		    case ApiActions.GET_OR_REQUEST_IDENTITY:
 		    case ApiActions.REQUEST_TRANSFER:
@@ -29,6 +30,8 @@ export class Popup {
 			    return {width:420, height:600};
 		    case ApiActions.REQUEST_SIGNATURE:
 			    return {width:920, height:600};
+		    case 'linkApp':
+			    return {width:420, height:300};
 		    default:
 			    return {width:800, height:600};
 	    }

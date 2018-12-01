@@ -1,5 +1,6 @@
 <template>
     <section>
+        <PopOutHead v-on:closed="returnResult" />
 
         <section class="popup">
 
@@ -44,8 +45,14 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
     import AuthorizedApp from '../../models/AuthorizedApp'
+    import PopOutHead from '../../components/popouts/PopOutHead';
+    import PopOutAction from '../../components/popouts/PopOutAction';
 
     export default {
+    	components:{
+		    PopOutHead,
+		    PopOutAction
+        },
         data () {return {
 
         }},

@@ -195,7 +195,8 @@ class LowLevelWindowService {
 
 		onReady(win);
 		win.show();
-		win.setAlwaysOnTop(true);
+		win.setAlwaysOnTop(true, "floating");
+		win.setVisibleOnAllWorkspaces(true);
 		win.focus();
 
 		waitingPopup = await this.getWindow(1, 1);

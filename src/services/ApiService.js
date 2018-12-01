@@ -322,6 +322,7 @@ export default class ApiService {
 					blockchain:network.blockchain,
 					symbol,
 					decimals:options.decimals || PluginRepository.plugin(network.blockchain).defaultDecimals(),
+					chainId:account.network().chainId
 				});
 				const sent = await PluginRepository.plugin(network.blockchain).transfer({
 					account,
