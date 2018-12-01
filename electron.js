@@ -97,13 +97,13 @@ const createScatterInstance = () => {
 
 
 
-	const splash = createMainWindow(true, '#fff');
-	splash.loadURL(splashScreen);
+	// const splash = createMainWindow(true, '#fff');
+	// splash.loadURL(splashScreen);
 	mainWindow.loadURL(mainUrl(false));
 
 	// if main window is ready to show, then destroy the splash window and show up the main window
 	mainWindow.once('ready-to-show', () => {
-		splash.destroy();
+		// splash.destroy();
 		mainWindow.show(); 
   		mainWindow.focus(); 
 	});
@@ -178,7 +178,7 @@ class LowLevelWindowService {
 		waitingPopup = await this.getWindow(1,1);
 	}
 
-	static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600){
+	static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600, dontHide = false){
 
 		let win = waitingPopup;
 		if(!win) win = await this.getWindow();
@@ -203,7 +203,7 @@ class LowLevelWindowService {
 		win.once('closed', async () => {
 			// This is a fix for MacOS systems which causes the
 			// main window to always pop up after popups closing.
-			if (process.platform === 'darwin') {
+			if (!dontHide && process.platform === 'darwin') {
 				mainWindow.hide();
 				app.hide();
 			}

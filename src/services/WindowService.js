@@ -54,8 +54,8 @@ export default class WindowService {
         ipcRenderer.on(type, (event, data) => handler(data))
     }
 
-    static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600){
-        return LowLevelWindowService.openPopOut(onReady, onClosed, width, height);
+    static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600, dontHide = false){
+        return LowLevelWindowService.openPopOut(onReady, onClosed, width, height, dontHide);
     }
 
 	static changeWindowSize(height, width, win = null){

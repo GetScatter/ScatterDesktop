@@ -30,7 +30,7 @@
             <i class="icon-spin4 animate-spin" v-if="loaderOnDynamic"></i>
         </figure>
         <figure class="copy" v-if="copy" :class="{'labeled':label}">
-            <i class="icon-star-1" v-tooltip="'Copy'" @click="copyText"></i>
+            <i class="icon-docs" v-tooltip="'Copy'" @click="copyText"></i>
         </figure>
     </section>
 </template>

@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'scatter';
-  src: url('../font/scatter.eot?13948416');
-  src: url('../font/scatter.eot?13948416#iefix') format('embedded-opentype'),
-       url('../font/scatter.woff2?13948416') format('woff2'),
-       url('../font/scatter.woff?13948416') format('woff'),
-       url('../font/scatter.ttf?13948416') format('truetype'),
-       url('../font/scatter.svg?13948416#scatter') format('svg');
+  src: url('../font/scatter.eot?99857604');
+  src: url('../font/scatter.eot?99857604#iefix') format('embedded-opentype'),
+       url('../font/scatter.woff2?99857604') format('woff2'),
+       url('../font/scatter.woff?99857604') format('woff'),
+       url('../font/scatter.ttf?99857604') format('truetype'),
+       url('../font/scatter.svg?99857604#scatter') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'scatter';
-    src: url('../font/scatter.svg?13948416#scatter') format('svg');
+    src: url('../font/scatter.svg?99857604#scatter') format('svg');
   }
 }
 */
@@ -110,6 +110,7 @@
 .icon-spin4:before { content: '\e834'; } /* '' */
 .icon-key:before { content: '\e835'; } /* '' */
 .icon-qrcode:before { content: '\e836'; } /* '' */
+.icon-docs:before { content: '\f0c5'; } /* '' */
 .icon-folder-empty:before { content: '\f114'; } /* '' */
 .icon-folder-open-empty:before { content: '\f115'; } /* '' */
 .icon-shield:before { content: '\f132'; } /* '' */

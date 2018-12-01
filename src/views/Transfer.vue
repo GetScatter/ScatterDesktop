@@ -14,7 +14,16 @@
                 <section class="panel">
                     <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.FROM.FromLabel)}}</h4>
 
-                    <SearchBar short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                    <section class="split-inputs">
+                        <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                        <section class="padded" style="padding:0 30px; flex:1;">
+                            <sel :options="[null].concat(networks)" style="margin-bottom:0;"
+                                 :selected="networkFilter"
+                                 v-on:changed="x => networkFilter = x"
+                                 :parser="x => x ? x.name : 'None'" />
+                        </section>
+
+                    </section>
                     <br>
 
                     <FlatList :label="locale(langKeys.TRANSFER.FROM.SendingAccountsLabel)"
@@ -204,6 +213,7 @@
 
 		    searchTerms:'',
 		    searchTermsContacts:'',
+            networkFilter:null,
 
 		    Blockchains,
 		    BlockchainsArray,
@@ -249,6 +259,7 @@
                             || x.sendable().toLowerCase().match(terms)
                             || x.keypair().name.toLowerCase().match(terms)
                     })
+                    .filter(x => !this.networkFilter ? true : x.networkUnique === this.networkFilter.unique())
                     .filter(x => x.authority !== 'watch')
                     .map(account => ({
                         id:account.unique(),
@@ -495,7 +506,7 @@
             },
             ['token'](){
             	this.amount = '';
-            }
+            },
         }
     }
 </script>

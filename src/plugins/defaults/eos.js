@@ -587,7 +587,7 @@ export default class EOS extends Plugin {
 				if(result.needResources) await await ResourceService.addResources(account);
 
 				resolve(signature);
-			}));
+			}, true));
 		})
 	}
 

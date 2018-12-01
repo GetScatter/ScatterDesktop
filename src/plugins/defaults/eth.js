@@ -239,7 +239,7 @@ export default class ETH extends Plugin {
                 if(!signature) return rejector({error:'Could not get signature'});
 
                 resolve(signature);
-            }));
+            }, true));
         })
     }
 

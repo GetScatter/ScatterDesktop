@@ -54,7 +54,8 @@ export default class PopupService {
                 respond(result);
             }),
             closedWithoutAction => { if(!responded) respond(null); },
-            width, height
+            width, height,
+	        popup.internal
         );
     }
 

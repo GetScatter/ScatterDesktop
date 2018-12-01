@@ -125,7 +125,7 @@
 						if(!balanceFilter) return true;
 						return balanceFilter <= parseFloat(x.amount);
 					})
-					.filter(x => x.unique() !== this.systemToken.unique())
+					.filter(x => x.unique() !== this.systemToken.unique() && x.identifiable() !== this.systemToken.identifiable())
 					.sort((a,b) => parseFloat(b.amount) - parseFloat(a.amount))
 			},
 			filteredTokens(){
@@ -136,7 +136,7 @@
 			totalFiatBalance(){
 				let total = 0;
 				this.tokens.map(token => {
-					if(token.fiatBalance()) acc += parseFloat(token.fiatBalance().split(' ')[0]);
+					if(token.fiatBalance()) total += parseFloat(token.fiatBalance().split(' ')[0]);
 				});
 
 				if(this.systemTokenBalance && this.systemTokenBalance.fiatBalance()) total += parseFloat(this.systemTokenBalance.fiatBalance().split(' ')[0]);

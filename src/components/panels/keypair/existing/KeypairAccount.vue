@@ -8,8 +8,8 @@
 					<figure class="authority" :class="{'red':authority === 'owner'}" v-for="authority in authorities">{{authority}}</figure>
 				</section>
 			</section>
-			<section class="tokens" @click="$emit('tokens', account)" v-if="this.account.tokenCount() > 0">
-				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, this.account.tokenCount())}} <i class="icon-right-open-big"></i>
+			<section class="tokens" @click="$emit('tokens', account)" v-if="account.tokenCount(systemToken)+1 > 0">
+				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, account.tokenCount(systemToken)+1)}} <i class="icon-right-open-big"></i>
 			</section>
 			<section class="tokens" v-else>
 				No Tokens
@@ -86,6 +86,9 @@
 				const hasActions = plugin.hasAccountActions();
 				if(!hasActions) return null;
 				return plugin.accountActions(this.account);
+			},
+			systemToken(){
+				return this.account.network().systemToken()
 			}
 		},
 		methods:{

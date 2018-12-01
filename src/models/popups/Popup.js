@@ -12,10 +12,11 @@ export const PopupDisplayTypes = {
 
 export class Popup {
 
-    constructor(_displayType = PopupDisplayTypes.POP_IN, _data = new PopupData()){
+    constructor(_displayType = PopupDisplayTypes.POP_IN, _data = new PopupData(), internal = false){
         this.id = IdGenerator.numeric(24);
         this.displayType = _displayType;
         this.data = _data;
+        this.internal = internal;
     }
 
 	static fromJson(json){ return Object.assign(new Popup(), json); }
@@ -46,8 +47,8 @@ export class Popup {
 
 
     // FULL POP OUT ( external window )
-	static popout(data, callback){
-		return new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data, callback))
+	static popout(data, callback, internal = false){
+		return new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data, callback), internal)
 	}
 
 

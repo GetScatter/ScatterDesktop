@@ -32,6 +32,7 @@ export default class Token {
 	clone(){ return Token.fromJson(JSON.parse(JSON.stringify(this))) }
 
     unique(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}` }
+    identifiable(){ return `${this.blockchain}:${this.contract.toLowerCase()}` }
 
     add(quantity){
 	    this.amount = (parseFloat(this.amount) + parseFloat(quantity)).toFixed(this.decimals);

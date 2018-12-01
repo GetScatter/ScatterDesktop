@@ -191,7 +191,7 @@ export default class TRX extends Plugin {
                 if(!signature) return rejector({error:'Could not get signature'});
 
                 resolve(signature);
-            }));
+            }, true));
         })
     }
 
