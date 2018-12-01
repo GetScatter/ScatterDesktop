@@ -34,16 +34,28 @@
 
             <!-- EXPORT AS QR -->
             <section key="text" v-if="state === STATES.QR">
-                <h1>{{locale(langKeys.KEYPAIR.EXPORT.QR.Title)}}</h1>
-                <section class="disclaimer less-pad" style="margin:0 auto 10px; max-width:500px;">
-                    You can either leave this field blank to use your current Scatter password, or enter another PIN or password here to re-encrypt this QR code with something
-                    that is easier to remember, or to type into a mobile device.
+                <section v-if="!screenshotting">
+                    <h1>{{locale(langKeys.KEYPAIR.EXPORT.QR.Title)}}</h1>
+                    <section class="disclaimer less-pad" style="margin:0 auto 10px; max-width:500px;">
+                        Leave this field blank to use your current password, or enter something else to re-encrypt this QR code with that password.
+                    </section>
+                    <section class="split-inputs" style="max-width:500px; margin:0 auto;">
+                        <cin placeholder="Alternative Password" style="margin-bottom:0;"
+                             type="password"
+                             :text="pass"
+                             v-on:changed="x => pass = x" />
+
+                        <btn text="Save QR as Image" v-on:clicked="screenshot" />
+                    </section>
                 </section>
-                <cin style="max-width:500px; margin:0 auto;"
-                     placeholder="Alternative Password"
-                     type="password"
-                     :text="pass"
-                     v-on:changed="x => pass = x" />
+                <section v-else>
+                    <h1>{{keypair.name}}</h1>
+                    <section class="keys">
+                        <figure class="key" v-for="key in publicKeyItems">
+                            {{key.description }} - <b>{{key.title}}</b>
+                        </figure>
+                    </section>
+                </section>
                 <br>
                 <section class="qr">
                     <img :src="qr" />
@@ -58,8 +70,10 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import FullWidthRow from '../../../reusable/FullWidthRow';
     import Crypto from "../../../../util/Crypto";
-    import ElectronHelpers from "../../../../util/ElectronHelpers";
+    import ElectronHelpers, {remote} from "../../../../util/ElectronHelpers";
     import QRService from "../../../../services/QRService";
+    import PopupService from "../../../../services/PopupService";
+    import {Popup} from "../../../../models/popups/Popup";
 
     const STATES = {
     	SELECT:'select',
@@ -76,6 +90,7 @@
 
             keys:[],
 	        pass:'',
+	        screenshotting:false,
         }},
 
         components:{
@@ -111,6 +126,16 @@
             ...mapGetters([
                 'keypairs',
             ]),
+	        publicKeyItems(){
+            	return this.keypair.publicKeys.map(x => {
+		            if(!this.keypair.blockchains.includes(x.blockchain)) return null;
+		            return {
+			            title:x.key,
+			            description:this.blockchainName(x.blockchain),
+                        actions:[]
+		            };
+                }).filter(x => !!x);
+            }
         },
 
         methods:{
@@ -142,6 +167,28 @@
 		        this.qr = await QRService.createQR(this.keypair.privateKey, this.pass);
 		        this.state = STATES.QR;
 	        },
+            screenshot(){
+	            this.screenshotting = true;
+    			setTimeout(() => {
+				    let location = remote.dialog.showOpenDialog({properties: ['openDirectory']});
+				    if(!location) return this.screenshotting = false;
+				    location = location[0];
+
+				    const filename = `${location}/${this.keypair.name}.png`;
+
+				    remote.getCurrentWindow().capturePage(img => {
+					    console.log('hi', img);
+					    remote.require('fs').writeFile(filename, img.toPng(), saved => {
+						    console.log('saved', saved);
+						    PopupService.push(Popup.snackbar('Saved Image'));
+						    ElectronHelpers.openLinkInBrowser(location);
+						    setTimeout(() => {
+							    this.screenshotting = false;
+						    }, 500);
+					    })
+				    })
+                }, 500);
+            }
         },
         watch:{
     		['pass'](){
@@ -157,6 +204,16 @@
     .panel-container {
         text-align: center;
         padding-top:70px;
+    }
+
+    .keys {
+        margin:0 auto;
+        max-width:500px;
+        text-align:center;
+
+        .key {
+            font-size: 11px;
+        }
     }
 
     .types {

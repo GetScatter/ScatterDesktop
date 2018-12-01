@@ -5,7 +5,7 @@
             <label>{{locale(langKeys.SETTINGS.FIREWALL.ENABLED.Label)}}</label>
             <p>{{locale(langKeys.SETTINGS.FIREWALL.ENABLED.Description)}}</p>
 
-            <btn :disabled="true" text="Not Yet Available" />
+            <btn :disabled="true" text="Coming Soon" />
         </section>
 
     </section>

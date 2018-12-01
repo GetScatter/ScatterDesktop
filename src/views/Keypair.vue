@@ -154,8 +154,6 @@
 
 
 	        enableExportKey(){
-	        	//TODO: Remove to require password authentication!!
-	        	// return this.state = STATES.EXPORT;
 	        	PopupService.push(Popup.verifyPassword(verified => {
 	        		if(!verified) return;
 	        		this.state = STATES.EXPORT;

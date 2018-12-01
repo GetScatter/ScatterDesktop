@@ -299,21 +299,11 @@ export default class ApiService {
 
 			let symbol = '';
 			if(options.hasOwnProperty('symbol')) symbol = options.symbol;
-			else {
-				// TODO: Support fork chains
-				switch(network.blockchain){
-					case Blockchains.EOSIO: symbol = 'EOS';
-				}
-			}
+			symbol = network.systemToken().symbol;
 
 			let contract = '';
 			if(options.hasOwnProperty('contract')) contract = options.contract;
-			else {
-				// TODO: Support fork chains
-				switch(network.blockchain){
-					case Blockchains.EOSIO: contract = 'eosio.token';
-				}
-			}
+			contract = network.systemToken().contract;
 
 			request.payload.memo = network.blockchain === 'eos'
 				? options.hasOwnProperty('memo') ? options.memo : ''

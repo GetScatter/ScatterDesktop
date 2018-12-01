@@ -438,7 +438,7 @@ const Locale = {
 	[SETTINGS.PASSWORD.ViewMnemonicDescription]:() =>
 		`If you've lost your password's mnemonic alternative you can view it here.`,
 	[SETTINGS.PASSWORD.ViewMnemonicButton]:() => `View Mnemonic`,
-	[SETTINGS.PASSWORD.ChangedPasswordSnackbar]:() => `View Mnemonic`,
+	[SETTINGS.PASSWORD.ChangedPasswordSnackbar]:() => `Password Changed`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[SETTINGS.BACKUP.Label]:() => `Configure Backups`,
 	[SETTINGS.BACKUP.Description]:() =>

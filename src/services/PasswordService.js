@@ -97,8 +97,6 @@ export default class PasswordService {
                 id.encrypt(newSeed);
             });
 
-            //TODO: Prompt mnemonic
-
             await store.commit(Actions.SET_SEED, newSeed);
             await store.dispatch(Actions.SET_SCATTER, scatter);
             resolve(newMnemonic);

@@ -35,7 +35,6 @@ export default class Scatter {
 	    const firstIdentity = Identity.placeholder();
 	    await firstIdentity.initialize(scatter.hash);
 
-	    //TODO: Testing
 	    firstIdentity.name = 'MyFirstIdentity';
 	    scatter.keychain.updateOrPushIdentity(firstIdentity);
 	    return scatter;
