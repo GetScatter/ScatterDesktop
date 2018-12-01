@@ -85,8 +85,8 @@
                 <!----------------------->
                 <section class="panel">
                     <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.RECIPIENT.RecipientLabel)}}</h4>
-                    <section class="panel-switch" v-if="formattedContacts.length">
-                        <figure class="button"
+                    <section class="panel-switch" v-if="formattedContacts.length || formattedSelfContacts.length">
+                        <figure class="button" v-if="formattedContacts.length"
                                 :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}"
                                 @click="recipientState = RECIPIENT_STATES.CONTACT">
                             {{locale(langKeys.TRANSFER.RECIPIENT.SendToContact)}}
@@ -95,6 +95,11 @@
                                 :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}"
                                 @click="recipientState = RECIPIENT_STATES.DIRECT">
                             {{locale(langKeys.TRANSFER.RECIPIENT.SendDirectly)}}
+                        </figure>
+                        <figure class="button" v-if="formattedSelfContacts.length"
+                                :class="{'active':recipientState === RECIPIENT_STATES.SELF}"
+                                @click="recipientState = RECIPIENT_STATES.SELF">
+                            {{locale(langKeys.TRANSFER.RECIPIENT.SendSelf)}}
                         </figure>
                     </section>
 
@@ -112,6 +117,19 @@
                                 selected-icon="icon-check"
                                 icon="icon-cancel"
                                 v-on:action="removeContact"
+                                v-on:selected="selectRecipient" />
+
+                    <!--------- SELF CONTACTS ---------->
+
+                    <SearchBar v-if="recipientState === RECIPIENT_STATES.SELF"
+                               :placeholder="locale(langKeys.TRANSFER.RECIPIENT.SearchSelfPlaceholder)"
+                               v-on:terms="x => searchTermsContacts = x" />
+
+                    <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.SELF"
+                                :label="recipientLabel"
+                                :items="formattedSelfContacts"
+                                :selected="recipient"
+                                selected-icon="icon-check"
                                 v-on:selected="selectRecipient" />
 
 
@@ -172,6 +190,7 @@
     const RECIPIENT_STATES = {
     	CONTACT:'contact',
         DIRECT:'directly',
+        SELF:'self',
     }
 
     export default {
@@ -258,7 +277,7 @@
 		        const contacts = this.contacts.filter(x => {
 			        if(!this.account) return false;
 			        return PluginRepository.plugin(this.account.blockchain()).isValidRecipient(x.recipient);
-		        })
+		        });
 
 		        return contacts.map(x => ({
 			        id:x.recipient,
@@ -266,6 +285,21 @@
 			        description:x.recipient,
 		        }));
 	        },
+            formattedSelfContacts(){
+	            const otherAccounts = !this.account ? [] : this.accounts
+		            .filter(x => x.sendable() !== this.account.sendable())
+		            .filter(x => x.networkUnique === this.account.networkUnique)
+		            .reduce((acc,account) => {
+			            if(!acc.find(x => x.sendable() === account.sendable())) acc.push(account);
+			            return acc;
+		            }, []);
+
+	            return otherAccounts.map(x => ({
+		            id:x.sendable(),
+		            title:x.sendable(),
+		            description:x.keypair().name
+	            })).filter(x => JSON.stringify(x).match(this.searchTermsContacts));
+            },
 	        filteredContacts(){
 		        const terms = this.searchTermsContacts.trim().toLowerCase();
 		        return this.formattedContacts.filter(x => {
