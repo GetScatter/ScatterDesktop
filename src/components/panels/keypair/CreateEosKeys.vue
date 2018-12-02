@@ -6,11 +6,6 @@
 				<img class="eos-logo" src="../../../assets/create_eos.png" />
 				<br>
 				<br>
-				<section class="disclaimer red">
-					<b>{{locale(langKeys.ADD_KEYS.EOS_KEYS.DisclaimerTitle)}}</b>
-					<p>{{locale(langKeys.ADD_KEYS.EOS_KEYS.DisclaimerSubtitle)}}</p>
-				</section>
-				<br>
 				<br>
 			</section>
 			<FullWidthRow :items="keysItems" />
@@ -43,12 +38,11 @@
 			activePublicKey:'',
 			ownerId:null,
 			activeId:null,
-			copied:{},
-			copiedAll:false,
 		}},
 
 		created(){
-			this[Actions.HIDE_BACK_BTN](true);
+			PopupService.push(Popup.snackbar("2 Keys generated and saved", "check"))
+			// this[Actions.HIDE_BACK_BTN](true);
 			setTimeout(async () => {
 				const keypairs = [...new Array(2)].map(() => Keypair.placeholder([Blockchains.EOSIO]));
 				await Promise.all(keypairs.map(KeyPairService.generateKeyPair));
@@ -60,8 +54,8 @@
 				active.name = `EOS-Active-${randomName}`;
 				owner.name = `EOS-Owner-${randomName}`;
 
-				await KeyPairService.saveKeyPair(active);
-				await KeyPairService.saveKeyPair(owner);
+				// await KeyPairService.saveKeyPair(active);
+				// await KeyPairService.saveKeyPair(owner);
 
 				this.ownerPublicKey = owner.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
 				this.activePublicKey = active.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
@@ -94,6 +88,25 @@
 								important:true
 							}
 						]
+					},
+					{
+						id:'purchase',
+						icon:'',
+						title:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountTitle),
+						description:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountDescription),
+						actions:[
+							{
+								name:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountButton),
+								handler:() => {
+									PopupService.push(Popup.eosCreateAccount(
+										this.activePublicKey,
+										this.ownerPublicKey,
+										this.activeId,
+										this.ownerId,
+									))
+								}
+							}
+						]
 					}
 				];
 
@@ -118,31 +131,6 @@
 				const item = this.keysItems.find(x => x.id === keyType);
 				if(!item) return;
 
-				this.copied[keyType] = true;
-				if(!this.copiedAll && Object.keys(this.copied).length === 2) {
-					this.copiedAll = true;
-					this[Actions.HIDE_BACK_BTN](false);
-					this.keysItems.push({
-						id:'purchase',
-						icon:'',
-						title:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountTitle),
-						description:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountDescription),
-						actions:[
-							{
-								name:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountButton),
-								handler:() => {
-									PopupService.push(Popup.eosCreateAccount(
-										this.activePublicKey,
-										this.ownerPublicKey,
-										this.activeId,
-										this.ownerId,
-									))
-								}
-							}
-						]
-					})
-				}
-
 				if(keyType === 'owner'){
 					item.actions = [{name:this.locale(this.langKeys.GENERIC.Remove), handler:this.deleteOwner, red:true, important:true}]
 				} else {
@@ -160,6 +148,7 @@
 				ElectronHelpers.copy(`${keyType}\nPrivate: ${privateKey} \nPublic: ${publicKey}`);
 			},
 			async deleteOwner(){
+				PopupService.push(Popup.snackbar("Owner private key removed from Scatter", "trash"))
 				await KeyPairService.removeKeyPair(this.keypairs.find(x => x.id === this.ownerId));
 				this.keysItems = this.keysItems.filter(x => x.id !== 'owner');
 			},

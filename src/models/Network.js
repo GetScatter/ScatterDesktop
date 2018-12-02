@@ -54,6 +54,8 @@ export default class Network {
 
 	systemToken(){
         if(this.token) return this.token;
-        return PluginRepository.plugin(this.blockchain).defaultToken();
+        const token = PluginRepository.plugin(this.blockchain).defaultToken();
+        token.chainId = this.chainId;
+        return token;
 	}
 }

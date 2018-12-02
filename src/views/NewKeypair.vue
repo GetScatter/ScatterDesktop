@@ -47,6 +47,8 @@
     import KeyPairService from "../services/KeyPairService";
     import AccountService from "../services/AccountService";
     import Keypair from "../models/Keypair";
+    import BalanceService from "../services/BalanceService";
+    import {store} from "../store/store";
 
     const STATES = {
     	SELECT:'select',
@@ -140,7 +142,10 @@
 
 
 	            await KeyPairService.saveKeyPair(keypair);
-	            AccountService.importAllAccounts(keypair, isNewKeypair);
+	            AccountService.importAllAccounts(keypair, isNewKeypair).then(async () => {
+                    const accounts = store.state.scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique());
+                    for(let i = 0; i < accounts.length; i++){ await BalanceService.loadBalancesFor(accounts[i]) }
+                });
 	            setTimeout(async () => {
 		            this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:keypair.id}});
 		            this.setWorkingScreen(false);

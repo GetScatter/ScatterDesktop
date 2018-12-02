@@ -175,10 +175,6 @@ const Locale = {
 	[ADD_KEYS.IMPORT_HW.UnlockLedgerError]:x => `You need to unlock your ledger and open the ${x} Ledger App.`,
 	[ADD_KEYS.IMPORT_HW.UnlockedLiquidEOSError]:() => `You need to unlock your Liquid EOS Hardware Wallet.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[ADD_KEYS.EOS_KEYS.DisclaimerTitle]:() =>
-		`You must copy and save both these keys somewhere outside Scatter to continue!`,
-	[ADD_KEYS.EOS_KEYS.DisclaimerSubtitle]:() =>
-		`If you delete a key from Scatter which you don't have saved elsewhere, you will not be able to recover it.`,
 	[ADD_KEYS.EOS_KEYS.OwnerDescription]:() =>
 		`This is your master key which has total control over your account. 
 		Do not keep it in Scatter unless you absolutely need it`,

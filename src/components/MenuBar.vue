@@ -46,7 +46,7 @@
 		},
 		methods:{
 			quit(){
-				remote.app.quit();
+				setTimeout(() => remote.app.quit(), 1);
 			},
 			minimize(){
 				remote.BrowserWindow.getFocusedWindow().hide();

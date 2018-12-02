@@ -265,7 +265,7 @@
 					const [obj, salt] = data.split('|SLT|');
 					if(!obj || !salt) {
 						unrestore();
-						return alert("Error parsing backup");
+						return PopupService.push(Popup.snackbar('Error parsing backup'));
 					}
 
 					const [_, seed] = await Mnemonic.generateMnemonic(password, salt);
@@ -278,12 +278,13 @@
 	                    StorageService.setSalt(salt);
 	                    await this[Actions.SET_SEED](password);
 	                    await this[Actions.SET_SCATTER](Scatter.fromJson(decrypted));
+
+
 	                    resetLockout();
-	                    unrestore();
-	                    this.pushTo(this.RouteNames.ONBOARDING);
+	                    location.reload();
                     } else {
 	                    unrestore();
-	                    return alert("Error decrypting backup");
+	                    return PopupService.push(Popup.snackbar('Error decrypting backup'));
                     }
 
                 };
@@ -292,7 +293,7 @@
 					const [obj, salt] = data.split('|SSLT|');
 					if(!obj || !salt) {
 						unrestore();
-						return alert("Error parsing backup");
+						return PopupService.push(Popup.snackbar('Error parsing backup'));
 					}
 
 					const [_, seed] = await Mnemonic.generateMnemonic(password, salt);
@@ -322,15 +323,14 @@
 						await this[Actions.SET_SEED](password);
 						await this[Actions.SET_SCATTER](scatter);
 
-						unrestore();
-						resetLockout();
-						this.pushTo(this.RouteNames.ONBOARDING);
 						await Promise.all(keypairs.map(keypair => {
 							return AccountService.importAllAccounts(keypair);
 						}));
+						resetLockout();
+						location.reload();
 					} else {
 						unrestore();
-						return alert("Error decrypting backup");
+						return PopupService.push(Popup.snackbar('Error decrypting backup'));
 					}
 
 
@@ -342,7 +342,7 @@
 
 					if(err) {
 						unrestore();
-						return alert("Could not read the backup file.");
+						return PopupService.push(Popup.snackbar('Could not read the backup file.'));
 					}
 
 					PopupService.push(Popup.verifyPassword(async password => {
@@ -355,7 +355,7 @@
 							}
                         } catch(e){
 							unrestore();
-							return alert("Error decrypting backup");
+							return PopupService.push(Popup.snackbar('Error decrypting backup'));
                         }
 					}, true))
 

@@ -153,8 +153,6 @@ const ADD_KEYS = prefixKeys('add_keys', {
 	},
 	IMPORT_QR:{},
 	EOS_KEYS:{
-		DisclaimerTitle:'disc_tit',
-		DisclaimerSubtitle:'disc_sub',
 		OwnerDescription:'owner_desc',
 		ActiveDescription:'active_desc',
 		CreateEosAccountTitle:'create_eos_acc_tit',

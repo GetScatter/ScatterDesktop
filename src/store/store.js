@@ -64,8 +64,13 @@ const getters = {
 	tokens:state =>         state.scatter.settings.tokens,
     allTokens:(state, getters) =>      getters.networkTokens.concat(getters.tokens),
     mainnetTokensOnly:state =>      state.scatter.settings.showMainnetsOnly,
-	networkTokens:state =>  state.scatter.settings.networks.map(x => x.systemToken()).reduce((acc, token) => {
-		if(!acc.find(x => x.unique() === token.unique())) acc.push(token);
+	networkTokens:state =>  state.scatter.settings.networks.map(x => {
+		const token = x.systemToken();
+		token.chainId = x.chainId;
+		return token;
+	}).reduce((acc, token) => {
+		const exists = acc.find(x => x.unique() === token.unique() && x.chainId === token.chainId);
+		if(!exists) acc.push(token);
 		return acc;
 	}, []),
 

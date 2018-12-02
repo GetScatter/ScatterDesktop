@@ -22,7 +22,11 @@
 			</section>
 
 			<section class="list">
-				<FlatList label="Proxies" :selected="selectedProxy" :items="proxyList" v-on:selected="x => selectedProxy = x.id" />
+				<FlatList label="Proxies"
+				          selected-icon="icon-check"
+				          :selected="selectedProxy"
+				          :items="proxyList"
+				          v-on:selected="x => selectedProxy = x.id" />
 			</section>
 
 		</section>
@@ -121,6 +125,7 @@
 		max-width:600px;
 		margin:0 auto;
 		display:flex;
+		justify-content: center;
 
 		.switch {
 

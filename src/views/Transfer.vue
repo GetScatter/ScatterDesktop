@@ -5,164 +5,179 @@
                   :subtext="account ? account.network().name : null" />
 
         <section class="full-panel inner limited" v-if="token">
-            <section class="split-panel" :class="{'recipient':!!account}">
-
-
-                <!----------------------->
-                <!--------- FROM -------->
-                <!----------------------->
-                <section class="panel">
-                    <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.FROM.FromLabel)}}</h4>
-
-                    <section class="split-inputs">
-                        <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
-                        <section class="padded" style="padding:0 30px; flex:1;">
-                            <sel :options="[null].concat(networks)" style="margin-bottom:0;"
-                                 :selected="networkFilter"
-                                 v-on:changed="x => networkFilter = x"
-                                 :parser="x => x ? x.name : 'None'" />
-                        </section>
-
-                    </section>
-                    <br>
-
-                    <FlatList :label="locale(langKeys.TRANSFER.FROM.SendingAccountsLabel)"
-                              style="padding-top:0;"
-                                :items="senderAccounts"
-                                :selected="account ? account.unique() : null"
-                                v-on:selected="selectAccount" />
-                </section>
+            <section style="display:flex; flex-direction: column; flex:1;">
 
 
 
-                <!----------------------->
-                <!------- TOKENS -------->
-                <!----------------------->
-                <section class="panel padded" style="flex:1; display:flex; flex-direction: column; overflow:auto;">
-                    <h4>Amount</h4>
-
-                    <!-- AMOUNT TO SEND -->
-                    <cin :placeholder="parseFloat(1).toFixed(token.decimals)"
-                         :text="amount"
-                         :error="amountError"
-                         v-on:changed="x => amount = x"
-                         :label="locale(langKeys.TRANSFER.TOKENS.AmountLabel)"
-                         big="1" type="number"
-                         :right-text="tokenBalance"
-                         v-on:right="sendAllBalance"
-                         v-on:blur="amount = amount.toString().length ? parseFloat(amount).toFixed(token.decimals) : ''" />
+                <section class="split-panel" :class="{'recipient':!!account}">
 
 
-                    <sel :disabled="!account" :selected="token"
-                         :parser="x => x.name"
-                         :items="[]" as-button="1"
-                         v-on:clicked="openTokenSelector" />
-                    <br>
+                    <!----------------------->
+                    <!--------- FROM -------->
+                    <!----------------------->
+                    <section class="panel">
+                        <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.FROM.FromLabel)}}</h4>
 
-                    <section class="custom-token" v-if="token.id === 'custom'">
                         <section class="split-inputs">
-                            <cin style="flex:1; margin-bottom:0;"
-                                 :placeholder="contractPlaceholder"
-                                 v-if="token.needsContract()"
-                                 :label="locale(langKeys.GENERIC.Blockchain)"
-                                 :text="token.contract"
-                                 v-on:changed="x => token.contract = x" />
+                            <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                            <section class="padded" style="padding:0 30px; flex:1;">
+                                <sel :options="[null].concat(networks)" style="margin-bottom:0;"
+                                     :selected="networkFilter"
+                                     v-on:changed="x => networkFilter = x"
+                                     :parser="x => x ? x.name : 'All Networks'" />
+                            </section>
+
                         </section>
                         <br>
-                        <section class="split-inputs">
-                            <cin placeholder="XXX"
-                                 :label="locale(langKeys.GENERIC.Symbol)"
-                                 :text="token.symbol"
-                                 v-on:changed="x => token.symbol = x" />
 
-                            <cin placeholder="4" type="number"
-                                 :label="locale(langKeys.GENERIC.Decimals)"
-                                 :text="token.decimals"
-                                 v-on:changed="x => token.decimals = x" />
-
-                            <btn :text="locale(langKeys.TRANSFER.TOKENS.SaveTokenButton)" v-on:clicked="addToken" />
-                        </section>
+                        <FlatList :label="locale(langKeys.TRANSFER.FROM.SendingAccountsLabel)"
+                                  style="padding-top:0;"
+                                  :items="senderAccounts"
+                                  :selected="account ? account.unique() : null"
+                                  v-on:selected="selectAccount" />
                     </section>
 
-                    <cin v-if="token.blockchain === Blockchains.EOSIO"
-                         :label="locale(langKeys.GENERIC.Memo)" textarea="1"
-                         :text="memo"
-                         v-on:changed="x => memo = x" />
+
+
+                    <!----------------------->
+                    <!------- TOKENS -------->
+                    <!----------------------->
+                    <section class="panel padded" style="flex:1; display:flex; flex-direction: column; overflow:auto;">
+                        <h4>Amount</h4>
+
+                        <!-- AMOUNT TO SEND -->
+                        <cin :placeholder="parseFloat(1).toFixed(token.decimals)"
+                             :text="amount"
+                             :error="amountError"
+                             v-on:changed="x => amount = x"
+                             :label="locale(langKeys.TRANSFER.TOKENS.AmountLabel)"
+                             big="1" type="number"
+                             :right-text="tokenBalance"
+                             v-on:right="sendAllBalance"
+                             v-on:blur="amount = amount.toString().length ? parseFloat(amount).toFixed(token.decimals) : ''" />
+
+
+                        <sel :disabled="!account" :selected="token"
+                             :parser="x => x.name"
+                             :items="[]" as-button="1"
+                             v-on:clicked="openTokenSelector" />
+                        <br>
+
+                        <section class="custom-token" v-if="token.id === 'custom'">
+                            <section class="split-inputs">
+                                <cin style="flex:1; margin-bottom:0;"
+                                     :placeholder="contractPlaceholder"
+                                     v-if="token.needsContract()"
+                                     :label="locale(langKeys.GENERIC.Blockchain)"
+                                     :text="token.contract"
+                                     v-on:changed="x => token.contract = x" />
+                            </section>
+                            <br>
+                            <section class="split-inputs">
+                                <cin placeholder="XXX"
+                                     :label="locale(langKeys.GENERIC.Symbol)"
+                                     :text="token.symbol"
+                                     v-on:changed="x => token.symbol = x" />
+
+                                <cin placeholder="4" type="number"
+                                     :label="locale(langKeys.GENERIC.Decimals)"
+                                     :text="token.decimals"
+                                     v-on:changed="x => token.decimals = x" />
+
+                                <btn :text="locale(langKeys.TRANSFER.TOKENS.SaveTokenButton)" v-on:clicked="addToken" />
+                            </section>
+                        </section>
+
+                        <cin v-if="token.blockchain === Blockchains.EOSIO"
+                             :label="locale(langKeys.GENERIC.Memo)" textarea="1"
+                             :text="memo"
+                             v-on:changed="x => memo = x" />
+                    </section>
+
+
+
+                    <!----------------------->
+                    <!--------- TO ---------->
+                    <!----------------------->
+                    <section class="panel">
+                        <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.RECIPIENT.RecipientLabel)}}</h4>
+                        <section class="panel-switch" v-if="formattedContacts.length || formattedSelfContacts.length">
+                            <figure class="button" v-if="formattedContacts.length"
+                                    :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}"
+                                    @click="recipientState = RECIPIENT_STATES.CONTACT">
+                                {{locale(langKeys.TRANSFER.RECIPIENT.SendToContact)}}
+                            </figure>
+                            <figure class="button"
+                                    :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}"
+                                    @click="recipientState = RECIPIENT_STATES.DIRECT">
+                                {{locale(langKeys.TRANSFER.RECIPIENT.SendDirectly)}}
+                            </figure>
+                            <figure class="button" v-if="formattedSelfContacts.length"
+                                    :class="{'active':recipientState === RECIPIENT_STATES.SELF}"
+                                    @click="recipientState = RECIPIENT_STATES.SELF">
+                                {{locale(langKeys.TRANSFER.RECIPIENT.SendSelf)}}
+                            </figure>
+                        </section>
+
+
+                        <!--------- CONTACTS ---------->
+
+                        <SearchBar v-if="recipientState === RECIPIENT_STATES.CONTACT"
+                                   :placeholder="locale(langKeys.TRANSFER.RECIPIENT.SearchContactsPlaceholder)"
+                                   v-on:terms="x => searchTermsContacts = x" />
+
+                        <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.CONTACT"
+                                  :label="locale(langKeys.TRANSFER.RECIPIENT.ContactsLabel)"
+                                  :items="filteredContacts"
+                                  :selected="recipient"
+                                  selected-icon="icon-check"
+                                  icon="icon-cancel"
+                                  v-on:action="removeContact"
+                                  v-on:selected="selectRecipient" />
+
+                        <!--------- SELF CONTACTS ---------->
+
+                        <SearchBar v-if="recipientState === RECIPIENT_STATES.SELF"
+                                   :placeholder="locale(langKeys.TRANSFER.RECIPIENT.SearchSelfPlaceholder)"
+                                   v-on:terms="x => searchTermsContacts = x" />
+
+                        <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.SELF"
+                                  :label="recipientLabel"
+                                  :items="formattedSelfContacts"
+                                  :selected="recipient"
+                                  selected-icon="icon-check"
+                                  v-on:selected="selectRecipient" />
+
+
+                        <!--------- DIRECT TO ADDRESS/ACCOUNT ---------->
+                        <section v-if="recipientState === RECIPIENT_STATES.DIRECT" class="padded">
+                            <cin :placeholder="locale(langKeys.TRANSFER.RECIPIENT.VerifyRecipient)"
+                                 :error="recipient.length > 0 ? recipientError : null"
+                                 :label="recipientLabel"
+                                 :text="recipient"
+                                 v-on:changed="x => recipient = x" />
+
+                            <transition name="slide-right" mode="out-in">
+                                recipientError:{{recipientError}}
+                                <section class="split-inputs" v-if="recipient.length > 0 && !isAlreadyContact && !recipientError">
+                                    <cin style="flex:1;" :placeholder="locale(langKeys.TRANSFER.RECIPIENT.ContactNamePlaceholder)"
+                                         :label="locale(langKeys.TRANSFER.RECIPIENT.ContactNameLabel, recipientLabel)"
+                                         :text="newContactName"
+                                         v-on:changed="x => newContactName = x" />
+                                    <btn style="width:50px;" icon="icon-user-add" v-on:clicked="addContact" />
+                                </section>
+                            </transition>
+                        </section>
+                    </section>
                 </section>
 
 
 
-                <!----------------------->
-                <!--------- TO ---------->
-                <!----------------------->
-                <section class="panel">
-                    <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.RECIPIENT.RecipientLabel)}}</h4>
-                    <section class="panel-switch" v-if="formattedContacts.length || formattedSelfContacts.length">
-                        <figure class="button" v-if="formattedContacts.length"
-                                :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}"
-                                @click="recipientState = RECIPIENT_STATES.CONTACT">
-                            {{locale(langKeys.TRANSFER.RECIPIENT.SendToContact)}}
-                        </figure>
-                        <figure class="button"
-                                :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}"
-                                @click="recipientState = RECIPIENT_STATES.DIRECT">
-                            {{locale(langKeys.TRANSFER.RECIPIENT.SendDirectly)}}
-                        </figure>
-                        <figure class="button" v-if="formattedSelfContacts.length"
-                                :class="{'active':recipientState === RECIPIENT_STATES.SELF}"
-                                @click="recipientState = RECIPIENT_STATES.SELF">
-                            {{locale(langKeys.TRANSFER.RECIPIENT.SendSelf)}}
-                        </figure>
-                    </section>
-
-
-                    <!--------- CONTACTS ---------->
-
-                    <SearchBar v-if="recipientState === RECIPIENT_STATES.CONTACT"
-                               :placeholder="locale(langKeys.TRANSFER.RECIPIENT.SearchContactsPlaceholder)"
-                               v-on:terms="x => searchTermsContacts = x" />
-
-                    <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.CONTACT"
-                                :label="locale(langKeys.TRANSFER.RECIPIENT.ContactsLabel)"
-                                :items="filteredContacts"
-                                :selected="recipient"
-                                selected-icon="icon-check"
-                                icon="icon-cancel"
-                                v-on:action="removeContact"
-                                v-on:selected="selectRecipient" />
-
-                    <!--------- SELF CONTACTS ---------->
-
-                    <SearchBar v-if="recipientState === RECIPIENT_STATES.SELF"
-                               :placeholder="locale(langKeys.TRANSFER.RECIPIENT.SearchSelfPlaceholder)"
-                               v-on:terms="x => searchTermsContacts = x" />
-
-                    <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.SELF"
-                                :label="recipientLabel"
-                                :items="formattedSelfContacts"
-                                :selected="recipient"
-                                selected-icon="icon-check"
-                                v-on:selected="selectRecipient" />
-
-
-                    <!--------- DIRECT TO ADDRESS/ACCOUNT ---------->
-                    <section v-if="recipientState === RECIPIENT_STATES.DIRECT" class="padded">
-                        <cin :placeholder="locale(langKeys.TRANSFER.RECIPIENT.VerifyRecipient)"
-                             :error="recipient.length > 0 ? recipientError : null"
-                             :label="recipientLabel"
-                             :text="recipient"
-                             v-on:changed="x => recipient = x" />
-
-                        <transition name="slide-right" mode="out-in">
-                            recipientError:{{recipientError}}
-                            <section class="split-inputs" v-if="recipient.length > 0 && !isAlreadyContact && !recipientError">
-                                <cin style="flex:1;" :placeholder="locale(langKeys.TRANSFER.RECIPIENT.ContactNamePlaceholder)"
-                                     :label="locale(langKeys.TRANSFER.RECIPIENT.ContactNameLabel, recipientLabel)"
-                                     :text="newContactName"
-                                     v-on:changed="x => newContactName = x" />
-                                <btn style="width:50px;" icon="icon-user-add" v-on:clicked="addContact" />
-                            </section>
-                        </transition>
+                <section class="transfer-details">
+                    <section style="font-size: 18px;">
+                        Sending <b :class="{'red':!!amountError}">{{parseFloat(amount ? amount : 0).toFixed(token.decimals)}} {{token ? token.symbol : ''}}</b>
+                        from <b :class="{'red':!account}">{{account ? account.sendable() : 'Select Account'}}</b>
+                        to <b :class="{'red':!recipient}">{{recipient ? recipient : 'Select Recipient'}}</b>
                     </section>
                 </section>
             </section>
@@ -272,8 +287,9 @@
                     }))
             },
 	        filteredTokens(){
-		        const standardTokens = this.networkTokens.filter(x => !this.account ? true : x.network().unique() === this.account.network().unique())
-                    .concat(this.tokens);
+		        const standardTokens = this.networkTokens.filter(x => {
+			        return !this.account ? true : x.network().unique() === this.account.network().unique()
+                }).concat(this.tokens);
 
 		        const tokensFromBalances = (() => {
 		        	if(!this.account) return [];
@@ -367,6 +383,7 @@
 		        return null;
 	        },
 	        amountError(){
+	        	if(this.account && this.amount === '') return this.locale(this.langKeys.TRANSFER.ERRORS.InvalidAmount);
 		        if(parseFloat(this.amount) <= 0) return this.locale(this.langKeys.TRANSFER.ERRORS.InvalidAmount);
 		        return null;
 	        },
@@ -448,7 +465,6 @@
 		            ? Token.fromJson({id:token.id, name:token.title, blockchain:this.account ? this.account.blockchain() : Blockchains.EOSIO})
 		            : this.filteredTokens.find(x => x.id === token.id);
 	    		if(this.token.id === 'custom'){
-	    			console.log('custom')
 				    this.token.blockchain = this.account.blockchain();
 				    this.token.decimals = PluginRepository.plugin(this.token.blockchain).defaultDecimals();
                 }
@@ -531,6 +547,25 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables";
+
+    .transfer-details {
+        border-top:2px solid #f4f4f4;
+        background:rgba(0,0,0,0.01);
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        padding:30px 50px;
+        text-align:center;
+
+        b {
+            color:$dark-blue;
+
+            &.red {
+                color:$red;
+                animation: blink 1s ease infinite;
+            }
+        }
+    }
 
     .full-panel {
         min-height:calc(100vh - 250px);

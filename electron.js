@@ -27,7 +27,7 @@ let splashScreen = url.format({
 });
 
 
-
+const quit = () => setTimeout(() => app.quit(), 1);
 
 let tray, mainWindow;
 
@@ -40,7 +40,7 @@ const setupMenu = () => {
 		submenu: [
 			{ label: "About Application", selector: "orderFrontStandardAboutPanel:" },
 			{ type: "separator" },
-			{ label: "Quit", accelerator: "Command+Q", click: () => { app.quit(); }}
+			{ label: "Quit", accelerator: "Command+Q", click: () => { quit(); }}
 		]}, {
 		label: "Edit",
 		submenu: [
@@ -64,7 +64,7 @@ const setupTray = () => {
 				mainWindow.show();
 				if(mainWindow.isMinimized()) mainWindow.restore();
 			}},
-		{label: 'Exit', type: 'normal', click:() => app.quit()}
+		{label: 'Exit', type: 'normal', click:() => quit()}
 	]);
 	tray.setToolTip('Scatter Desktop Companion');
 	tray.setContextMenu(contextMenu);
@@ -111,7 +111,7 @@ const createScatterInstance = () => {
 	// mainWindow.openDevTools();
 	mainWindow.loadURL(mainUrl(false));
 	mainWindow.on('closed', () => mainWindow = null);
-	mainWindow.on('close', () => app.quit());
+	mainWindow.on('close', () => quit());
 
 	setupTray();
 	setupMenu();
@@ -127,7 +127,7 @@ const activateInstance = e => {
 
 app.on('ready', createScatterInstance);
 app.on('activate', activateInstance);
-app.on('window-all-closed', () => app.quit())
+app.on('window-all-closed', () => quit())
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
 	const isLocal = url.startsWith('https://127.0.0.1');
@@ -149,7 +149,7 @@ const shouldQuit = app.makeSingleInstance(argv => {
 	if (mainWindow) activateInstance();
 })
 
-if (shouldQuit) app.quit();
+if (shouldQuit) quit();
 
 app.on('will-finish-launching', () => {
 	app.on('open-url', (e, url) => {
@@ -162,7 +162,7 @@ app.on('will-finish-launching', () => {
 
 
 
-const isMac = process.platform === 'darwin';
+const isMac = () => process.platform === 'darwin';
 let waitingPopup;
 class LowLevelWindowService {
 
@@ -195,19 +195,24 @@ class LowLevelWindowService {
 
 		onReady(win);
 		win.show();
-		app.dock.hide();
-		win.setAlwaysOnTop(true, "floating");
-		win.setVisibleOnAllWorkspaces(true);
+
+		if(isMac()){
+			app.dock.hide();
+			win.setAlwaysOnTop(true, "floating");
+			win.setVisibleOnAllWorkspaces(true);
+		} else {
+			win.setAlwaysOnTop(true);
+		}
+
 		win.focus();
 
 		waitingPopup = await this.getWindow(1, 1);
 
 		win.once('closed', async () => {
-			app.dock.show();
-
 			// This is a fix for MacOS systems which causes the
 			// main window to always pop up after popups closing.
-			if (!dontHide && isMac) {
+			if (!dontHide && isMac()) {
+				app.dock.show();
 				mainWindow.hide();
 				app.hide();
 			}

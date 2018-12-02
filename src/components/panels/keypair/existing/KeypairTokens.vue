@@ -25,8 +25,8 @@
 					<span>{{systemTokenBalance.symbol}}</span>
 				</figure>
 				<figure class="amount">
-					{{systemTokenBalance.amount}}
-					<span v-if="systemTokenBalance.fiatBalance()">{{systemTokenBalance.fiatBalance()}}</span>
+					{{formatNumber(systemTokenBalance.amount, true)}}
+					<span v-if="systemTokenBalance.fiatBalance()">{{formatNumber(systemTokenBalance.fiatBalance(), true)}}</span>
 				</figure>
 				<section class="info">
 					<figure class="system">SYSTEM TOKEN</figure>
@@ -40,11 +40,11 @@
 					<span>{{untouchableTokens.symbol}}</span>
 				</figure>
 				<figure class="amount">
-					{{untouchableTokens.amount}}
-					<span v-if="untouchableTokens.fiatBalance()">{{untouchableTokens.fiatBalance()}}</span>
+					{{formatNumber(untouchableTokens.amount, true)}}
+					<span v-if="untouchableTokens.fiatBalance()">{{formatNumber(untouchableTokens.fiatBalance(), true)}}</span>
 				</figure>
 				<section class="info">
-					<figure class="system">{{untouchableTokens.unusable}}</figure>
+					<figure class="system">{{formatNumber(untouchableTokens.unusable, true)}}</figure>
 					<figure>{{untouchableTokens.contract}}</figure>
 				</section>
 			</section>
@@ -55,8 +55,8 @@
 					<span>{{token.symbol}}</span>
 				</figure>
 				<figure class="amount">
-					{{token.amount}}
-					<span v-if="token.fiatBalance()">{{token.fiatBalance()}}</span>
+					{{formatNumber(token.amount, true)}}
+					<span v-if="token.fiatBalance()">{{formatNumber(token.fiatBalance(), true)}}</span>
 				</figure>
 				<section class="info">
 					<figure :class="{'small':token.contract.length > 20}">{{token.contract}}</figure>

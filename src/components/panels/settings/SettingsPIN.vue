@@ -14,6 +14,8 @@
                  :placeholder="locale(langKeys.SETTINGS.PIN.Placeholder)"
                  type="password"
                  :text="pin"
+                 dynamic-button="icon-cancel"
+                 v-on:dynamic="pin = ''"
                  v-on:changed="x => pin = x" />
 
             <section>
