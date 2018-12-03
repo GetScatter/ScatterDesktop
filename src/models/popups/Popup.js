@@ -22,7 +22,6 @@ export class Popup {
 	static fromJson(json){ return Object.assign(new Popup(), json); }
 
     dimensions(){
-    	console.log(this.data.type);
     	switch (this.data.type) {
 		    case ApiActions.GET_OR_REQUEST_IDENTITY:
 		    case ApiActions.REQUEST_TRANSFER:
@@ -60,8 +59,8 @@ export class Popup {
 
 
 
-    static prompt(title, description, callback){
-        let params = { title, description };
+    static prompt(title, description, callback, acceptDeny = false){
+        let params = { title, description, acceptDeny };
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
     }
 

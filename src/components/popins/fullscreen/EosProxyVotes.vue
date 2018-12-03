@@ -21,8 +21,17 @@
 				<br>
 			</section>
 
-			<section class="list">
-				<FlatList label="Proxies"
+			<br>
+			<br>
+			<cin style="max-width:650px; width:100%; margin:0 auto;"
+			     big="1"
+			     label="Proxy"
+			     placeholder="Enter the account name of a proxy"
+			     :text="selectedProxy"
+			     v-on:changed="x => selectedProxy = x" />
+
+			<section class="list" v-if="Object.keys(proxies).length">
+				<FlatList label="Known Proxies"
 				          selected-icon="icon-check"
 				          :selected="selectedProxy"
 				          :items="proxyList"
@@ -59,11 +68,15 @@
 			proxies:{},
 			selectedProxy:null,
 			autoVote:true,
+			proxy:'',
 		}},
 		mounted(){
 			if(this.isHardware) this.autoVote = false;
 			setTimeout(async () => {
-				this.proxies = await ProxyService.getProxyList();
+				if(PluginRepository.plugin(Blockchains.EOSIO).isEndorsedNetwork(this.account.network())){
+					this.proxies = await ProxyService.getProxyList();
+				}
+
 			})
 		},
 		computed:{

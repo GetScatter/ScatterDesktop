@@ -256,7 +256,10 @@
 				return this.searchTerms.trim().toLowerCase();
 			},
 			networkTokensList(){
-				const tokens = this.filterTokensByTerms(this.networkTokens);
+				const tokens = this.filterTokensByTerms(this.networkTokens).reduce((acc, t) => {
+					if(!acc.find(x => x.unique() === t.unique())) acc.push(t);
+					return acc;
+                }, []);
 				if(!this.blockchain) return formatter(tokens);
 				return formatter(tokens
 					.filter(x => x.blockchain === this.blockchain))

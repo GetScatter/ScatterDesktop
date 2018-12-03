@@ -22,7 +22,9 @@ export default async scatter => {
     if(!scatter.meta.needsUpdating())   return false;
 
     const lastVersion = mathematicalVersion(scatter.meta.lastVersion);
-    const nextVersions = Object.keys(migrators).filter(v => mathematicalVersion(v) > lastVersion);
+    const nextVersions = Object.keys(migrators).filter(v => mathematicalVersion(v) > lastVersion)
+        .sort((a,b) => mathematicalVersion(a) - mathematicalVersion(b));
+
     if(nextVersions.length) {
         for(let i = 0; i < nextVersions.length; i++){
 	        await migrators[nextVersions[i]](scatter)

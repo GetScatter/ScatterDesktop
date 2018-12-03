@@ -41,7 +41,6 @@
 		}},
 
 		created(){
-			PopupService.push(Popup.snackbar("2 Keys generated and saved", "check"))
 			// this[Actions.HIDE_BACK_BTN](true);
 			setTimeout(async () => {
 				const keypairs = [...new Array(2)].map(() => Keypair.placeholder([Blockchains.EOSIO]));
@@ -54,8 +53,10 @@
 				active.name = `EOS-Active-${randomName}`;
 				owner.name = `EOS-Owner-${randomName}`;
 
-				// await KeyPairService.saveKeyPair(active);
-				// await KeyPairService.saveKeyPair(owner);
+				await KeyPairService.saveKeyPair(active);
+				await KeyPairService.saveKeyPair(owner);
+
+				this.$emit('keys', [active.id, owner.id]);
 
 				this.ownerPublicKey = owner.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
 				this.activePublicKey = active.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
@@ -148,7 +149,6 @@
 				ElectronHelpers.copy(`${keyType}\nPrivate: ${privateKey} \nPublic: ${publicKey}`);
 			},
 			async deleteOwner(){
-				PopupService.push(Popup.snackbar("Owner private key removed from Scatter", "trash"))
 				await KeyPairService.removeKeyPair(this.keypairs.find(x => x.id === this.ownerId));
 				this.keysItems = this.keysItems.filter(x => x.id !== 'owner');
 			},

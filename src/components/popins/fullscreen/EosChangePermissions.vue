@@ -113,7 +113,7 @@
 
 
 	.split-inputs {
-		max-width:500px;
+		max-width:600px;
 		width:100%;
 		margin-bottom:20px;
 		text-align:left;

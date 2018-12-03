@@ -30,7 +30,7 @@
         </section>
 
         <!-- IMPORT KEYPAIR SELECTOR -->
-        <CreateEosKeys v-if="state === STATES.CREATE_EOS" />
+        <CreateEosKeys v-if="state === STATES.CREATE_EOS" v-on:keys="x => createdKeys = x" />
 
     </section>
 </template>
@@ -49,6 +49,8 @@
     import Keypair from "../models/Keypair";
     import BalanceService from "../services/BalanceService";
     import {store} from "../store/store";
+    import PopupService from "../services/PopupService";
+    import {Popup} from "../models/popups/Popup";
 
     const STATES = {
     	SELECT:'select',
@@ -81,6 +83,8 @@
             importTypes:[],
             importState:IMPORT_STATES.SELECT,
 	        IMPORT_STATES,
+
+	        createdKeys:[],
         }},
         computed:{
             ...mapState([
@@ -109,8 +113,25 @@
         },
         methods:{
 	        back(){
+
+		        if(this.createdKeys.length){
+			        PopupService.push(Popup.prompt(
+				        'Created EOS Keys',
+				        `You created EOS keys without creating an EOS account, do you want to remove them?`,
+				        removed => {
+					        if(!removed) return this.createdKeys = [];
+					        this.createdKeys.map(async id => {
+						        const keypair = this.keypairs.find(x => x.id === id);
+						        if(keypair) await KeyPairService.removeKeyPair(keypair);
+					        })
+
+					        this.createdKeys = [];
+				        }, true))
+		        }
+
 	        	if(this.importState !== IMPORT_STATES.SELECT) return this.importState = IMPORT_STATES.SELECT;
 	        	if(this.state !== STATES.SELECT) return this.state = STATES.SELECT;
+
 	            this.$router.push({name:this.RouteNames.HOME});
             },
             createEosKeys(){

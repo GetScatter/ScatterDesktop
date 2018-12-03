@@ -6,9 +6,6 @@
 
         <section class="full-panel inner limited" v-if="token">
             <section style="display:flex; flex-direction: column; flex:1;">
-
-
-
                 <section class="split-panel" :class="{'recipient':!!account}">
 
 

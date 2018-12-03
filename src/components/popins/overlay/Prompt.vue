@@ -8,8 +8,12 @@
 
             <br>
             <br>
-            <btn :text="locale(langKeys.GENERIC.Confirm)"
-                 v-on:clicked="returnResult(true)" />
+            <section class="split-inputs">
+                <btn :blue="popin.data.props.acceptDeny" :text="popin.data.props.acceptDeny ? locale(langKeys.GENERIC.Yes) : locale(langKeys.GENERIC.Confirm)"
+                     v-on:clicked="returnResult(true)" />
+                <btn red="1" v-if="popin.data.props.acceptDeny" :text="locale(langKeys.GENERIC.No)"
+                     v-on:clicked="returnResult(false)" />
+            </section>
         </section>
 
     </section>
@@ -57,6 +61,13 @@
     .description {
         font-size: 16px;
         text-align:center;
+    }
+
+    .split-inputs {
+        width:100%;
+        button {
+            flex:1;
+        }
     }
 
 </style>
