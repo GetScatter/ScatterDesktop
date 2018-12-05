@@ -221,7 +221,7 @@
 	@import "../../../_variables";
 
 	.panel-switch {
-		margin-top:-20px;
+		margin-top:0px;
 	}
 
 	.panel-container {

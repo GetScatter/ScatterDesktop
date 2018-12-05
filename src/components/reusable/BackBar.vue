@@ -51,7 +51,7 @@
     .back-bar {
         display:flex;
         flex-direction: row;
-        font-weight: bold;
+        font-weight: normal;
         justify-content: space-between;
         align-items: center;
         width:100%;
@@ -76,6 +76,7 @@
                 vertical-align: middle;
                 padding-top:6px;
                 margin-right:10px;
+                transition:margin 0.17s ease-in-out;
 
                 figure {
                     width:14px;
@@ -94,7 +95,9 @@
             }
 
             &:hover {
-                animation: bounce 0.7s infinite;
+                .chevron {
+                    margin-right: 14px;
+                }
             }
 
             @keyframes bounce {

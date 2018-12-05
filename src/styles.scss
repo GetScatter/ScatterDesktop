@@ -2,7 +2,7 @@
 
 div, figure, section, nav, article, input, textarea {
   padding:0; margin:0; box-sizing: border-box;
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Helvetica','Segoe UI','Roboto', sans-serif;
 }
 
 input::-webkit-outer-spin-button,
@@ -16,6 +16,11 @@ html, body {
   height:100%;
 }
 
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 *, *::after, *::before {
   -webkit-user-select: none;
   -webkit-user-drag: none;
@@ -26,7 +31,7 @@ body {
   padding:0;
   margin:0;
   word-break: break-word;
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Helvetica','Segoe UI','Roboto', sans-serif;
   background:#fff;
   color:#393d3f;
 }
@@ -282,8 +287,8 @@ p {
   transition-property: height;
 
   .button {
-    height:40px;
-    line-height:40px;
+    height:38px;
+    line-height:38px;
     font-weight: bold;
     color:$mid-dark-grey;
     font-size: 14px;
@@ -374,12 +379,13 @@ p {
 }
 
 .action-box {
-  background:#fafafa;
+  background:#ffffff;
   padding:1px 20px 20px 20px;
-  box-shadow:0 1px 2px rgba(0,0,0,0.2);
+  box-shadow:0 4px 12px rgba(0,0,0,0.12),0 1px 2px rgba(0,0,0,0.08);
   border-radius:4px;
   margin-top:30px;
   display:flex;
+  border:1px solid rgba(0,0,0,0.12);
   flex-direction: column;
 
   &.top-pad {
@@ -504,7 +510,7 @@ label {
 .details {
   .title {
     color:$dark-blue;
-    font-weight: bold;
+    font-weight: normal;
   }
 
   p {

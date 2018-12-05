@@ -43,7 +43,7 @@
 			transition-property: line-height, font-size;
 		}
 
-		$input-size:16px;
+		$input-size:14px;
 		$input-size-short:13px;
 		input {
 			outline:0;
