@@ -17,7 +17,7 @@
 
 		<br>
 
-		<cin v-if="hardwareType === EXT_WALLET_TYPES.LEDGER"
+		<cin v-if="external && hardwareType === EXT_WALLET_TYPES.LEDGER"
 		     big="1"
 		     :text="external.addressIndex"
 		     v-on:changed="x => external.addressIndex = x"
@@ -44,6 +44,7 @@
 	import KeyPairService from "../../../../services/KeyPairService";
 	import PopupService from "../../../../services/PopupService";
 	import {Popup} from "../../../../models/popups/Popup";
+	import HardwareService from "../../../../services/HardwareService";
 
 	export default {
 		data(){return {
@@ -56,8 +57,11 @@
 		}},
 
 		created(){
-			this.external = new ExternalWallet(this.hardwareType, this.blockchain);
-			this.external.interface.open();
+			HardwareService.openConnections(true).then(() => {
+				this.external = new ExternalWallet(this.hardwareType, this.blockchain);
+				this.external.interface.open();
+			})
+
 		},
 
 		computed:{

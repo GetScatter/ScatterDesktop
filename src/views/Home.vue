@@ -108,7 +108,7 @@
 
         mounted(){
 	        setTimeout(async() => {
-	        	HardwareService.openConnections(true);
+	        	// HardwareService.openConnections(true);
 		        await PriceService.watchPrices();
 		        await BalanceService.loadAllBalances();
 		        await RecurringService.checkProxies();

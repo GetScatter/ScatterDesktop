@@ -62,6 +62,8 @@ export default class HardwareService {
 
 
 	static async checkHardware(account){
+		await this.openConnections(true);
+
 		const popup = canConnect => new Promise(resolve => {
 			PopupService.push(Popup.prompt('Hardware Error', canConnect, async opened => {
 				if(!opened) return resolve(false);
