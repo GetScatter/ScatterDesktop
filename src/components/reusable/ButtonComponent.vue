@@ -20,16 +20,16 @@
 
     button {
         cursor: pointer;
-        height:44px;
-        padding:0 15px;
+        height:38px;
+        padding:0 12px;
         width:100%;
         outline:0;
         border:1px solid #dfe0e1;
         background:#fff;
-        border-radius:4px;
+        border-radius:3px;
         color:$dark-blue;
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 14px;
+        font-weight: 500;
         max-width:360px;
 
         &.small {

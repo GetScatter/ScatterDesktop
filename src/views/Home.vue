@@ -136,11 +136,11 @@
 
     .total-balance {
         cursor: pointer;
-        height:42px;
-        padding:0 10px;
+        height:38px;
+        padding:0 12px;
         outline:0;
         border:1px solid #dfe0e1;
-        border-radius:4px;
+        border-radius:3px;
         background:#fff;
         max-width:360px;
         display:flex;

@@ -147,14 +147,15 @@
             right:30px;
         }
 
-        $small-font:18px;
+        $small-font:14px;
+        
         input, textarea {
             outline:0;
-            height:44px;
+            height:38px;
             width:100%;
             border:1px solid #dfe0e1;
-            border-radius:4px;
-            padding:0 15px;
+            border-radius:3px;
+            padding:0 12px;
             cursor: text;
             resize: none;
             background:rgba(0,0,0,0.005);

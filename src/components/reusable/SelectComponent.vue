@@ -106,14 +106,13 @@
     .select {
         text-align:left;
         cursor: pointer;
-        height:44px;
+        height:38px;
         position: relative;
         width:100%;
-        font-family:'Raleway',sans-serif;
-        border-radius:4px;
+        border-radius:3px;
         background:#fff;
         border:1px solid #dfe0e1;
-        font-size: 16px;
+        font-size: 14px;
         transition:background 0.1s ease;
 
         input {
@@ -134,9 +133,9 @@
         .arrow {
             position:absolute;
             right:0;
-            height:44px;
-            line-height:44px;
-            padding:0 15px;
+            height:38px;
+            line-height:38px;
+            padding:0 12px;
             color:$dark-blue;
             opacity:0.5;
             transition:opacity 0.1s ease, transform 0.1s ease;
@@ -144,10 +143,10 @@
         }
 
         .selected-option {
-            height:44px;
-            line-height:44px;
+            height:38px;
+            line-height:38px;
             width:100%;
-            padding:0 35px 0 15px;
+            padding:0 35px 0 12px;
             overflow: hidden;
             word-break: break-all;
         }
@@ -163,13 +162,13 @@
 
         .options {
             position:absolute;
-            top:42px;
+            top:36px;
             background:#fff;
             border:1px solid $mid-light-grey;
             border-bottom-right-radius:4px;
             border-bottom-left-radius:4px;
             left:-1px; right:-1px;
-            box-shadow:0 8px 16px rgba(0,0,0,0.03);
+            box-shadow:0 8px 16px rgba(0,0,0,0.12);
             visibility:hidden;
             opacity:0;
             max-height:0;
@@ -177,8 +176,7 @@
             z-index:2;
 
             .option {
-                padding:15px;
-                font-size: 16px;
+                padding:12px;
                 background:transparent;
                 word-break: break-all;
 

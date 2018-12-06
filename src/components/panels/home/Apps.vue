@@ -269,6 +269,10 @@
 				padding:0 15px;
 				width:calc(100% - #{$icon-bounds});
 
+				p {
+					margin-bottom:5px;
+				}
+
 				.title {
 					&.has-url {
 						cursor: pointer;
@@ -292,11 +296,15 @@
 						cursor: pointer;
 						font-size: 11px;
 						color:$dark-grey;
-						text-decoration: underline;
-						font-weight: bold;
-						margin-right:8px;
+						margin-right:2px;
 						transition: 0.2s ease;
 						transition-property: color;
+						border: 1px solid rgba(211, 211, 211, 0.48);
+					    padding: 2px 4px;
+					    font-weight: normal;
+					    text-decoration: none;
+					    border-radius: 2px;
+					    margin-top: 12px;
 
 						&:hover {
 							color:$dark-blue;
