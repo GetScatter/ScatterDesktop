@@ -61,7 +61,7 @@ export default class TRX extends Plugin {
     }
 
     usesResources(){ return false; }
-	hasAccountActions(){ return true; }
+	hasAccountActions(){ return false; }
 
     accountsAreImported(){ return false; }
     isValidRecipient(address){ return utils.isAddressValid(address); }

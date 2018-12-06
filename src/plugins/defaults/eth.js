@@ -90,7 +90,7 @@ export default class ETH extends Plugin {
     }
 
     usesResources(){ return false; }
-	hasAccountActions(){ return true; }
+	hasAccountActions(){ return false; }
 
     accountsAreImported(){ return false; }
     isValidRecipient(address){ return this.validPublicKey(address); }

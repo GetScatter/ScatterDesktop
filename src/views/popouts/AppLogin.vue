@@ -5,7 +5,7 @@
             <section class="main-panel">
                 <PopOutAction :origin="popup.origin()" action="login" />
 
-                <section class="required-networks" v-if="accountNetworks.length > 1 || (accountNetworks.length === 1 && accountNetworks[0].count > 1)">
+                <section class="required-networks" v-if="!validAccounts.length || (accountNetworks.length > 1 || (accountNetworks.length === 1 && accountNetworks[0].count > 1))">
                     <figure class="requirements">App requires accounts for these networks</figure>
                     <section class="list">
                         <figure class="split-inputs" v-for="item in accountNetworks">
@@ -18,24 +18,44 @@
                     </section>
                 </section>
 
-                <br v-if="stillNeedsFields" />
+                <section v-if="validAccounts.length">
+                    <br v-if="stillNeedsFields" />
 
-                <section style="padding:0 30px;" v-if="stillNeedsFields">
-                    <btn text="Login" blue="1" v-on:clicked="selectAccount" :disabled="!isValidIdentity" />
+                    <section style="padding:0 30px;" v-if="stillNeedsFields">
+                        <btn text="Login" blue="1" v-on:clicked="selectAccount" :disabled="!isValidIdentity" />
+                    </section>
+
+
+                    <section class="split-inputs" style="flex:0 0 auto;" v-if="!stillNeedsFields">
+                        <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                        <figure class="advanced-button" @click="showingAll = !showingAll">
+                            {{showingAll ? 'Filter' : 'Show All'}}
+                        </figure>
+                    </section>
+
+                    <br v-if="stillNeedsFields" />
+
+                    <section class="popout-list" :class="{'done':stillNeedsFields}">
+                        <FullWidthRow :items="validAccounts" popout="1" />
+                    </section>
                 </section>
 
+                <section style="padding:0 30px;" v-if="!validAccounts.length">
+                    <br>
+                    <br>
+                    <section class="disclaimer less-pad red">
+                        You do not have blockchain accounts for the networks that this application requires.
+                        <br>
+                        <br>
+                        <p>
+                            Before logging into this application go back to Scatter and import some keys for the network/blockchain that
+                            this application is using.
+                        </p>
+                    </section>
 
-                <section class="split-inputs" style="flex:0 0 auto;" v-if="!stillNeedsFields">
-                    <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
-                    <figure class="advanced-button" @click="showingAll = !showingAll">
-                        {{showingAll ? 'Filter' : 'Show All'}}
-                    </figure>
-                </section>
-
-                <br v-if="stillNeedsFields" />
-
-                <section class="popout-list" :class="{'done':stillNeedsFields}">
-                    <FullWidthRow :items="validAccounts" popout="1" />
+                    <section class="fixed-actions">
+                        <btn :text="locale(langKeys.GENERIC.Cancel)" red="1" v-on:clicked="returnResult(null)" />
+                    </section>
                 </section>
             </section>
 
@@ -128,6 +148,7 @@
 			        })
 			        .filter(x => x.authority !== 'watch')
 			        .filter(id => JSON.stringify(id).toLowerCase().indexOf(this.searchTerms.toLowerCase()) > -1)
+			        .sort((a,b) => b.authority === 'active' ? 1 : 0)
 			        .reduce((acc, account) => {
 			        	if(this.showingAll) acc.push(account);
 			        	else {

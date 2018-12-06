@@ -19,11 +19,9 @@
             <label>{{locale(langKeys.SETTINGS.GENERAL.WhitelistNotificationsLabel)}}</label>
             <p>{{locale(langKeys.SETTINGS.GENERAL.WhitelistNotificationsDescription)}}</p>
 
-            <btn v-on:clicked="toggleNotifications"
-                 :red="showNotifications"
-                 :text="!showNotifications
-                    ? locale(langKeys.GENERIC.Enable)
-                    : locale(langKeys.GENERIC.Disable)" />
+            <section class="switch bottomed" @click="toggleNotifications">
+                <figure class="dot" :class="{'disabled':!showNotifications}"></figure>
+            </section>
         </section>
 
         <section class="action-box top-pad">

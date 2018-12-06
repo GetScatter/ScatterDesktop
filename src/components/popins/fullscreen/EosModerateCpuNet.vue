@@ -163,9 +163,6 @@
 					this.returnResult(res);
 				}).catch(err => {
 					this.setWorkingScreen(false);
-					if(err.hasOwnProperty('error') && err.error === 'Could not get signature') return;
-					console.error(err);
-					return PopupService.push(Popup.snackbar("Error submitting to blockchain. Check console (f12)", 'attention'));
 				})
 
 			},

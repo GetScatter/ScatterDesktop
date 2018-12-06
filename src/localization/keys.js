@@ -193,6 +193,8 @@ const KEYPAIR = prefixKeys('keypair', {
 		SearchPlaceholder:'search_plc',
 		ViewTokens:'view_tokens',
 		EOSClaimRefundButton:'eos_refund_btn',
+		EOSDangerousPermissions:'eos_danger_perms',
+		EOSDangerousPermissionsSubtitle:'eos_danger_perms_sub',
 	},
 	BLOCKCHAINS:{
 		CopyButton:'cpy_btn',

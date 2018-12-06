@@ -1,5 +1,5 @@
 <template>
-    <section class="user-bar">
+    <section class="user-bar" v-if="scatter.toured">
         <section class="actions">
             <router-link :to="{name:RouteNames.IDENTITY}" class="action">
                 {{locale(langKeys.USER_BAR.ManageIdentity)}}
@@ -30,14 +30,15 @@
 
         }},
         computed:{
+            ...mapState([
+                'scatter',
+            ]),
             ...mapGetters([
             	'identity'
             ])
         },
         methods:{
-	        goToSettings(){
-	        	this.$router.push({name:this.RouteNames.SETTINGS});
-            }
+
         },
 	}
 </script>

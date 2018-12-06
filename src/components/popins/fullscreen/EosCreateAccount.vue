@@ -359,12 +359,12 @@
 					this.activePublicKey,
 					this.eosToUse
 				).then(tx => {
+					console.log('finished')
 					this.finishedAccountCreation(tx, this.creator.network());
 				})
 				.catch(error => {
 					this.setWorkingScreen(false);
 					console.log('error', error);
-					PopupService.push(Popup.snackbar(error, 'attention'));
 				});
 			},
 

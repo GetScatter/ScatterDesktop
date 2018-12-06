@@ -132,6 +132,16 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 	])
 };
 
+
+
+const popupError = result => {
+	console.log('result', result);
+	const error = ({error:JSON.parse(result).error.details[0].message.replace('assertion failure with message:', '').trim()});
+	PopupService.push(Popup.prompt('Transaction Error', error));
+}
+
+
+
 const EXPLORER = {
 	"name":"Bloks",
 	"account":"https://bloks.io/account/{x}",
@@ -176,8 +186,8 @@ export default class EOS extends Plugin {
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			return await eos.voteproducer(account.name, proxyAccount, [], {authorization:[account.formatted()]})
-				.catch(error => resolve(console.error(error)))
-				.then(res => resolve(res));
+				.catch(res => reject(popupError(res)))
+				.then(res => resolve(res))
 		})
 
 	}
@@ -227,7 +237,10 @@ export default class EOS extends Plugin {
 
 			const options = {authorization:[`${account.name}@owner`]};
 			return eos.transaction(tr => perms.map(perm => tr.updateauth(perm, options)))
-				.catch(error => resolve(console.error(error)))
+				.catch(res => {
+					popupError(res);
+					reject(false)
+				})
 				.then(async res => {
 					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, res.transaction_id));
 
@@ -296,7 +309,7 @@ export default class EOS extends Plugin {
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			return await eos.refund(account.name, {authorization:[account.formatted()]})
-				.catch(error => resolve(console.error(error)))
+				.catch(res => reject(popupError(res)))
 				.then(res => resolve(res));
 		})
 	}
@@ -374,13 +387,17 @@ export default class EOS extends Plugin {
 		return resources.find(x => x.name === 'CPU').available < 6000;
 	}
 
-	// TODO: Fix System Token & make into slider
+	// TODO: make into slider
 	async addResources(account){
 		const signProvider = payload => this.signer(payload, account.publicKey);
 		const network = account.network();
 		const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-		return await eos.delegatebw(account.name, account.name, '0.0000 EOS', '0.1000 EOS', 0, { authorization:[account.formatted()] })
-			.catch(error => console.error(error))
+		const symbol = account.network().systemToken().symbol;
+		return await eos.delegatebw(account.name, account.name, `0.0000 ${symbol}`, `0.1000 ${symbol}`, 0, { authorization:[account.formatted()] })
+			.catch(res => {
+				popupError(res);
+				return false;
+			})
 			.then(res => res);
 	}
 
@@ -491,15 +508,6 @@ export default class EOS extends Plugin {
 	defaultDecimals(){ return 4; }
 	defaultToken(){ return new Token(Blockchains.EOSIO, 'eosio.token', 'EOS', 'EOS', this.defaultDecimals()) }
 
-	async getSystemSymbol(network){
-		return this.accountData(null, network, 'eosio.stake')
-			.then(res => res.core_liquid_balance.split(' ')[1])
-			.catch(err => {
-				console.error(err);
-				return null
-			});
-	}
-
 	async getRamPrice(network, eos = null){
 		if(!eos) eos = getCachedInstance(network);
 
@@ -554,7 +562,10 @@ export default class EOS extends Plugin {
 				}, options)
 			}, options)
 				.then(trx => resolve(trx.transaction_id))
-				.catch(err => reject(err));
+				.catch(res => {
+					popupError(res);
+					reject(false);
+				});
 		})
 	}
 
@@ -600,12 +611,18 @@ export default class EOS extends Plugin {
 
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			if(staking) resolve(await eos.delegatebw(account.name, account.name, net, cpu, 0, { authorization:[account.formatted()] })
-				.catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
-				.then(res => res));
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
 
 			else resolve(await eos.undelegatebw(account.name, account.name, net, cpu, { authorization:[account.formatted()] })
-				.catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
-				.then(res => res));
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
 		})
 	}
 
@@ -616,12 +633,18 @@ export default class EOS extends Plugin {
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
 			if(buying) resolve(await eos.buyrambytes(account.name, account.name, bytes, { authorization:[account.formatted()] })
-				.catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
-				.then(res => res));
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
 
 			else resolve(await eos.sellram(account.name, bytes, { authorization:[account.formatted()] })
-				.catch(error => ({error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}))
-				.then(res => res));
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
 		})
 	}
 

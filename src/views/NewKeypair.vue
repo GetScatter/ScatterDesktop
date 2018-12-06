@@ -159,7 +159,7 @@
 		            return this.$router.push({name: this.RouteNames.KEYPAIR, params: {id: existing.id}});
 	            }
 
-	            keypair.name = `Wallet-${IdGenerator.text(10)}`;
+	            keypair.name = `Key-${IdGenerator.text(10)}`;
 
 
 	            await KeyPairService.saveKeyPair(keypair);

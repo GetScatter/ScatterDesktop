@@ -70,11 +70,21 @@
                 <label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayLabel)}}</label>
                 <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayDescription)}}</p>
 
-                <btn v-on:clicked="toggleMainnetsOnly"
-                     :red="mainnetTokensOnly"
-                     :text="mainnetTokensOnly
-                        ? locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton)
-                        : locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton)" />
+                <br>
+                <br>
+                <section class="split-inputs">
+                    <section class="switch" style="flex:0 0 auto;" @click="toggleMainnetsOnly">
+                        <figure class="dot" :class="{'disabled':!mainnetTokensOnly}"></figure>
+                    </section>
+                    <section class="details" v-if="mainnetTokensOnly">
+                        <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton)}}</figure>
+                        <p>Displaying only mainnet tokens means Scatter will not use alternate chain or testnet chain tokens to calculate total balances.</p>
+                    </section>
+                    <section class="details" v-if="!mainnetTokensOnly">
+                        <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton)}}</figure>
+                        <p>Showing all networks means Scatter will take every network into consideration when calculating total balances.</p>
+                    </section>
+                </section>
             </section>
 
             <section class="action-box top-pad">

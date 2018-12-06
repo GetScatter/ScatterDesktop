@@ -83,7 +83,7 @@ const Locale = {
 
 	[LOGIN.NEW.Title]:() => `You must be new here!`,
 	[LOGIN.NEW.SubTitle]:() =>
-		`Just a few easy steps to get going. Let's start with your password.`,
+		`Let's start by creating a password that will be used to encrypt all of your private data. Make sure it's strong.`,
 	[LOGIN.NEW.PasswordLabel]:() => `Choose a password`,
 	[LOGIN.NEW.PasswordPlaceholder]:() => `Make sure it's a strong password!`,
 	[LOGIN.NEW.PasswordConfirmLabel]:() => `Type your password again`,
@@ -111,9 +111,9 @@ const Locale = {
 	/*                                                  */
 	/****************************************************/
 
-	[DASHBOARD.KEYS.SearchPlaceholder]:() => `Search Wallets`,
+	[DASHBOARD.KEYS.SearchPlaceholder]:() => `Search Keys`,
 	[DASHBOARD.KEYS.AddKeysButton]:() => `Add Keys`,
-	[DASHBOARD.KEYS.NoKeys]:() => `Well, what are you waiting for?`,
+	[DASHBOARD.KEYS.NoKeys]:() => `Well, what are we waiting for?`,
 	[DASHBOARD.KEYS.LinkedAccounts]:count => `${count} linked account${plural_s(count)}`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[DASHBOARD.TOOLBARS.SendButton]:() => `Send`,
@@ -152,8 +152,8 @@ const Locale = {
 	[ADD_KEYS.SELECT.CreateEosDescription]:() => `We'll quickly generate two keys for you`,
 	[ADD_KEYS.SELECT.CreateEosButton]:() => `EOS account`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[ADD_KEYS.IMPORT.NameLabel]:() => `Wallet Name`,
-	[ADD_KEYS.IMPORT.NamePlaceholder]:() => `Give this wallet a name to remember.`,
+	[ADD_KEYS.IMPORT.NameLabel]:() => `Key Name`,
+	[ADD_KEYS.IMPORT.NamePlaceholder]:() => `Give this key a name to remember.`,
 	[ADD_KEYS.IMPORT.TextTitle]:() => `Import private key as text`,
 	[ADD_KEYS.IMPORT.TextDescription]:() => `If you would like to type in or paste your private key`,
 	[ADD_KEYS.IMPORT.TextButton]:() => `Text`,
@@ -243,14 +243,19 @@ const Locale = {
 	[KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountDescription]:() =>
 		`If you already have an EOS account, but it's not being imported automatically.`,
 	[KEYPAIR.DASHBOARD.ADD_ACCOUNT.AccountNetworkLabel]:() => `Link existing EOS account`,
-	[KEYPAIR.DASHBOARD.ERRORS.InvalidWalletName]:() => `Enter a name for this Wallet`,
-	[KEYPAIR.DASHBOARD.ERRORS.WalletNameExists]:() => `A Wallet with this name already exists`,
+	[KEYPAIR.DASHBOARD.ERRORS.InvalidWalletName]:() => `Enter a name for this Key`,
+	[KEYPAIR.DASHBOARD.ERRORS.WalletNameExists]:() => `A Key with this name already exists`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.TOKENS.HiddenTokensCount]:(n) => `${n} tokens filtered out by your token spam filter.`,
 	[KEYPAIR.TOKENS.SearchPlaceholder]:() => `Search Tokens`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.ACCOUNTS.SearchPlaceholder]:() => `Search Accounts`,
 	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,
+	[KEYPAIR.ACCOUNTS.EOSClaimRefundButton]:() => `Refund`,
+	[KEYPAIR.ACCOUNTS.EOSDangerousPermissions]:() =>
+		`Both active and owner are on the same key.`,
+	[KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle]:() =>
+		`Consider changing one to another key by clicking the "change permissions" button below.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.BLOCKCHAINS.CopyButton]:() => `Copy Public Key`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////

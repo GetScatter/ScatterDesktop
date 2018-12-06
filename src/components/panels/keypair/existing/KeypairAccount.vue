@@ -2,10 +2,18 @@
 	<section>
 		<section class="basics" v-if="account">
 			<section class="info">
+				<figure class="collapser" v-if="accountActions || (account && usesResources)"
+				        :class="{'icon-down-open-big':collapsed, 'icon-up-open-big':!collapsed}"
+				        @click="collapsed = !collapsed"></figure>
+
 				<figure class="network">{{blockchainName(account.blockchain())}} - <b>{{account.network().name}}</b></figure>
 				<figure class="identifier" :class="{'mainnet':isMainnet}" @click="openInExplorer">{{account.sendable()}}</figure>
 				<section class="authorities" v-if="authorities.length">
 					<figure class="authority" :class="{'red':authority === 'owner'}" v-for="authority in authorities">{{authority}}</figure>
+				</section>
+				<section class="disclaimer less-pad" v-if="authorities.includes('owner') && authorities.includes('active')">
+					{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissions)}}
+					<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle)}}</p>
 				</section>
 			</section>
 			<section class="tokens" @click="$emit('tokens', account)" v-if="account.tokenCount(systemToken)+1 > 0">
@@ -16,7 +24,7 @@
 			</section>
 		</section>
 
-		<section class="moderations" v-if="account && usesResources">
+		<section class="moderations" v-if="!collapsed && account && usesResources">
 			<section key="loading" class="loading" v-if="!accountResources">
 				<figure class="spinner icon-spin4 animate-spin"></figure>
 			</section>
@@ -57,6 +65,7 @@
 			Blockchains,
 			usesResources:false,
 			isMainnet:false,
+			collapsed:false,
 		}},
 
 		mounted(){
@@ -129,10 +138,28 @@
 
 		.info {
 			flex:1;
+			padding-right:20px;
+
+			.disclaimer {
+				margin-top:20px;
+				width:auto;
+				display:table;
+				margin-bottom:0;
+			}
+
+			.collapser {
+				display:inline-block;
+				width:12px;
+				height:12px;
+				font-size: 12px;
+				margin-right:10px;
+				cursor: pointer;
+			}
 
 			.network {
 				font-size: 11px;
 				color: $mid-dark-grey;
+				display:inline-block;
 
 				b {
 					color:$dark-blue;
