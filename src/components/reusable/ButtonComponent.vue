@@ -1,6 +1,6 @@
 <template>
     <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small}">
-        <i :class="icon" v-if="icon"></i>
+        <i :class="icon" v-if="icon && !loading"></i>
         <span v-else>
             <i class="icon-spin4 animate-spin" v-if="loading"></i>
             <span v-else>{{text}}</span>
@@ -77,7 +77,7 @@
         &:disabled {
             border:1px solid #c6c7c8;
             background: #e3e3e3;
-            color: #c7c7c7;
+            color: #ababab;
             cursor: not-allowed;
         }
 

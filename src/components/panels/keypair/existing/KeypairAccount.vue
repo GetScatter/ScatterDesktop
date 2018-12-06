@@ -57,6 +57,7 @@
 	import ResourceService from "../../../../services/ResourceService";
 	import ElectronHelpers from "../../../../util/ElectronHelpers";
 	import PluginRepository from "../../../../plugins/PluginRepository";
+	import BalanceService from "../../../../services/BalanceService";
 
 	export default {
 		props:['account'],
@@ -105,8 +106,10 @@
 				this.isMainnet = PluginRepository.plugin(this.account.blockchain()).isEndorsedNetwork(this.account.network())
 			},
 			async moderateResource(resource){
-				if(await ResourceService.moderateResource(resource, this.account))
-					this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:await ResourceService.getResourcesFor(this.account)});
+				if(await ResourceService.moderateResource(resource, this.account)){
+					this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:await ResourceService.getResourcesFor(this.account)})
+					await BalanceService.loadBalancesFor(this.account);
+				}
 			},
 			async openInExplorer(){
 				if(this.isMainnet) {

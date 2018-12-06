@@ -4,6 +4,7 @@
         <section class="full-panel home" v-if="keypairs.length">
             <section class="action-bar short">
                 <section class="token-buttons">
+                    <btn style="padding:0 8px;" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />
                     <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" class="total-balance">
                         <figure class="symbol">{{balance.symbol}}</figure>
                         <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
@@ -63,6 +64,7 @@
 	    },
         data () {return {
 	        hoveringAddKeys:false,
+	        loadingBalances:false,
         }},
         computed:{
             ...mapState([
@@ -106,11 +108,21 @@
             }
         },
 
+        methods:{
+	        async refreshTokens(force = true){
+	        	if(!force && Object.keys(this.balances).length) return;
+	        	if(this.loadingBalances) return;
+	        	this.loadingBalances = true;
+		        await BalanceService.loadAllBalances(true);
+		        this.loadingBalances = false;
+            }
+        },
+
         mounted(){
 	        setTimeout(async() => {
 	        	// HardwareService.openConnections(true);
 		        await PriceService.watchPrices();
-		        await BalanceService.loadAllBalances();
+		        await this.refreshTokens(false);
 		        await RecurringService.checkProxies();
             })
         },
@@ -130,13 +142,15 @@
         display:flex;
 
         button {
-            margin-left:5px;
+            &:not(:first-child){
+                margin-left:5px;
+            }
         }
     }
 
     .total-balance {
         cursor: pointer;
-        height:38px;
+        height:36px;
         padding:0 12px;
         outline:0;
         border:1px solid #dfe0e1;
@@ -145,7 +159,8 @@
         max-width:360px;
         display:flex;
         align-items: center;
-        width:320px;
+        width:280px;
+        margin-left:5px;
 
         &:hover {
             border:1px solid rgba(0,0,0,0.22);
@@ -177,7 +192,7 @@
             padding:5px 8px;
             margin-right:10px;
 
-            font-size: 14px;
+            font-size: 11px;
         }
 
         .amount {

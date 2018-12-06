@@ -44,6 +44,9 @@
 							<section class="button" v-if="getAppData(origin).url.length">
 								<btn :text="locale(langKeys.GENERIC.Open)" v-on:clicked="openApp(origin)" />
 							</section>
+							<section class="button" v-else>
+								<btn disabled="1" text="No Meta" />
+							</section>
 
 						</section>
 
