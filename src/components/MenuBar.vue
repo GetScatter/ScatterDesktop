@@ -4,7 +4,7 @@
 			<router-link v-if="loaded && $route.name !== RouteNames.LOGIN" :to="{name:RouteNames.HOME}" class="logo">Scatter</router-link>
 		</transition>
 
-		<section class="actions" v-if="isWindows">
+		<section class="actions" v-if="!isMacOS">
 
 			<!-- MINIMIZE -->
 			<section class="action" @click="minimize">

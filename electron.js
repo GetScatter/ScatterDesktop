@@ -88,22 +88,15 @@ const createScatterInstance = () => {
 		minWidth: 620,
 		minHeight:580,
 		titleBarStyle:'hiddenInset',
-		vibrancy:'appearance-based',
 		backgroundColor,
 		show,
 	});
 
 	mainWindow = createMainWindow(false, '#62D0FD');
-
-
-
-	// const splash = createMainWindow(true, '#fff');
-	// splash.loadURL(splashScreen);
 	mainWindow.loadURL(mainUrl(false));
 
 	// if main window is ready to show, then destroy the splash window and show up the main window
 	mainWindow.once('ready-to-show', () => {
-		// splash.destroy();
 		mainWindow.show(); 
   		mainWindow.focus(); 
 	});
