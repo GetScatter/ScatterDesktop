@@ -22,12 +22,12 @@ import english from './languages/english';
 /*************************************/
 
 export const LANG = {
-    // TESTER: 'Tester',
+    TESTER: 'Tester',
     ENGLISH: 'English',
 };
 
 const languages = {
-    // [LANG.TESTER]:tester,
+    [LANG.TESTER]:tester,
     [LANG.ENGLISH]:english,
 };
 

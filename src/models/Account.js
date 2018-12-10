@@ -1,5 +1,6 @@
 import PluginRepository from '../plugins/PluginRepository';
 import {store} from '../store/store'
+import {Blockchains} from "./Blockchains";
 
 export default class Account {
     constructor(){
@@ -32,6 +33,7 @@ export default class Account {
     }
 
     blockchain(){
+    	if(!this.keypair()) return Blockchains.EOSIO;
         return this.keypair().publicKeys.find(x => x.key === this.publicKey).blockchain;
     }
 
