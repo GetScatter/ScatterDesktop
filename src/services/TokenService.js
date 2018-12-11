@@ -4,6 +4,8 @@ import PopupService from "./PopupService";
 import {Popup} from "../models/popups/Popup";
 import PriceService from "./PriceService";
 import BigNumber from "bignumber.js";
+import {localizedState} from "../localization/locales";
+import LANG_KEYS from "../localization/keys";
 
 const filterOutToken = (scatter, token) => {
 	scatter.settings.tokens = scatter.settings.tokens.filter(x => x.unique() !== token.unique());
@@ -37,7 +39,7 @@ export default class TokenService {
         else scatter.settings.blacklistTokens.unshift(token);
 
         await store.dispatch(Actions.SET_SCATTER, scatter);
-        PopupService.push(Popup.snackbar(`Token added.`));
+        PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TokenAdded), 'check'));
         return true;
     }
 

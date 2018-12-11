@@ -222,7 +222,7 @@
 				const lockout = getLockout();
                 if(lockout.tries >= 5 && +new Date() < lockout.stamp + lockoutTime){
                 	this.lockedOutTime = lockout.stamp + lockoutTime;
-	                return PopupService.push(Popup.snackbar("You have been locked out temporarily.", "attention-circled"));
+	                return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.LockedOut), "attention-circled"));
                 }
 
                 if(this.working) return;
@@ -265,7 +265,7 @@
 					const [obj, salt] = data.split('|SLT|');
 					if(!obj || !salt) {
 						unrestore();
-						return PopupService.push(Popup.snackbar('Error parsing backup'));
+						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorParsingBackup)));
 					}
 
 					const [_, seed] = await Mnemonic.generateMnemonic(password, salt);
@@ -284,7 +284,7 @@
 	                    location.reload();
                     } else {
 	                    unrestore();
-	                    return PopupService.push(Popup.snackbar('Error decrypting backup'));
+	                    return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
                     }
 
                 };
@@ -293,7 +293,7 @@
 					const [obj, salt] = data.split('|SSLT|');
 					if(!obj || !salt) {
 						unrestore();
-						return PopupService.push(Popup.snackbar('Error parsing backup'));
+						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorParsingBackup)));
 					}
 
 					const [_, seed] = await Mnemonic.generateMnemonic(password, salt);
@@ -330,7 +330,7 @@
 						location.reload();
 					} else {
 						unrestore();
-						return PopupService.push(Popup.snackbar('Error decrypting backup'));
+						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
 					}
 
 
@@ -342,7 +342,7 @@
 
 					if(err) {
 						unrestore();
-						return PopupService.push(Popup.snackbar('Could not read the backup file.'));
+						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.CantReadBackup)));
 					}
 
 					PopupService.push(Popup.verifyPassword(async password => {
@@ -355,7 +355,7 @@
 							}
                         } catch(e){
 							unrestore();
-							return PopupService.push(Popup.snackbar('Error decrypting backup'));
+							return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
                         }
 					}, true))
 

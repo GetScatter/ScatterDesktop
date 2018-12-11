@@ -5,6 +5,9 @@ import AccountService from './AccountService';
 import PopupService from './PopupService';
 import {Popup} from '../models/popups/Popup'
 import BalanceService from "./BalanceService";
+import {localizedState} from "../localization/locales";
+import LANG_KEYS from "../localization/keys";
+
 
 export default class NetworkService {
 
@@ -13,25 +16,27 @@ export default class NetworkService {
         const scatter = store.state.scatter.clone();
         const networks = scatter.settings.networks;
         if(networks.find(x => x.id === network.id)) return;
+
+        const {NETWORK} = LANG_KEYS.SNACKBARS;
         
-        if(!network.name.length) return PopupService.push(Popup.snackbar("Network must have a name", "attention-circled"));
-        if(!network.host.length) return PopupService.push(Popup.snackbar("Network must have a host", "attention-circled"));
-        if(!network.port) return PopupService.push(Popup.snackbar("Network must have a valid port", "attention-circled"));
-        if(!network.chainId) return PopupService.push(Popup.snackbar("Network must have a chain id", "attention-circled"));
+        if(!network.name.length) return PopupService.push(Popup.snackbar(localizedState(NETWORK.MissingName), "attention-circled"));
+        if(!network.host.length) return PopupService.push(Popup.snackbar(localizedState(NETWORK.MissingHost), "attention-circled"));
+        if(!network.port) return PopupService.push(Popup.snackbar(localizedState(NETWORK.MissingPort), "attention-circled"));
+        if(!network.chainId) return PopupService.push(Popup.snackbar(localizedState(NETWORK.MissingChain), "attention-circled"));
 
         network.setPort();
 
         if(networks.find(x => x.blockchain === network.blockchain && x.chainId === network.chainId))
-            return PopupService.push(Popup.snackbar("A network with this chain id already exists", "attention-circled"));
+            return PopupService.push(Popup.snackbar(localizedState(NETWORK.ChainExists), "attention-circled"));
 
         if(networks.find(x => x.name.toLowerCase() === network.name.toLowerCase()))
-	        return PopupService.push(Popup.snackbar("A network with this name already exists", "attention-circled"));
+	        return PopupService.push(Popup.snackbar(localizedState(NETWORK.NameExists), "attention-circled"));
 
         scatter.settings.updateOrPushNetwork(network);
         await store.dispatch(Actions.SET_SCATTER, scatter);
         await AccountService.importAllAccountsForNetwork(network);
         BalanceService.loadAllBalances(true);
-        PopupService.push(Popup.snackbar("Network Saved!", "check"));
+        PopupService.push(Popup.snackbar(localizedState(NETWORK.Saved), "check"));
         return true;
     }
 
@@ -46,7 +51,7 @@ export default class NetworkService {
 		            accounts.map(account => scatter.keychain.removeAccount(account));
 		            scatter.settings.removeNetwork(network);
 		            store.dispatch(Actions.SET_SCATTER, scatter);
-		            PopupService.push(Popup.snackbar("Network Deleted!", "check"));
+		            PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.NETWORK.Deleted), "check"));
 		            BalanceService.removeStaleBalances();
 		            resolve(true);
 	            } else resolve(false);
@@ -58,7 +63,7 @@ export default class NetworkService {
 	    const scatter = store.state.scatter.clone();
 	    scatter.settings.updateOrPushNetwork(network);
 	    await store.dispatch(Actions.SET_SCATTER, scatter);
-	    PopupService.push(Popup.snackbar("Network Saved!", "check"));
+		PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.NETWORK.Saved), "check"));
     }
 
 }

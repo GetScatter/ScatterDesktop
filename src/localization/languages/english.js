@@ -536,6 +536,22 @@ const Locale = {
 	/****************************************************/
 	[SNACKBARS.CopiedToClipboard]:() => `Copied to Clipboard`,
 	[SNACKBARS.BadPassword]:() => `Bad Password`,
+	[SNACKBARS.SavedImage]:() => `Image Saved`,
+	[SNACKBARS.TokenAdded]:() => `TokenAdded`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[SNACKBARS.NETWORK.MissingName]:() => `Network must have a name`,
+	[SNACKBARS.NETWORK.MissingHost]:() => `Network must have a host`,
+	[SNACKBARS.NETWORK.MissingPort]:() => `Network must have a valid port`,
+	[SNACKBARS.NETWORK.MissingChain]:() => `Network must have a chain id`,
+	[SNACKBARS.NETWORK.ChainExists]:() => `A network with this chain id already exists`,
+	[SNACKBARS.NETWORK.NameExists]:() => `A network with this name already exists`,
+	[SNACKBARS.NETWORK.Saved]:() => `Network Saved!`,
+	[SNACKBARS.NETWORK.Deleted]:() => `Network Deleted!`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[SNACKBARS.AUTH.LockedOut]:() => `You have been locked out temporarily`,
+	[SNACKBARS.AUTH.ErrorParsingBackup]:() => `Error Parsing Backup File`,
+	[SNACKBARS.AUTH.ErrorDecryptingBackup]:() => `Error Decrypting Backup File`,
+	[SNACKBARS.AUTH.CantReadBackup]:() => `Can't read backup file`,
 
 
 	/****************************************************/

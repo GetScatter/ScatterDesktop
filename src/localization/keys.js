@@ -530,6 +530,27 @@ const PROCESSES = prefixKeys('processes', {
 const SNACKBARS = prefixKeys('snackbar', {
 	CopiedToClipboard:'cop_to_clip',
 	BadPassword:'bad_pass',
+	SavedImage:'saved_img',
+	TokenAdded:'token_added',
+
+	NETWORK:{
+		MissingName:'miss_name',
+		MissingHost:'miss_host',
+		MissingPort:'miss_port',
+		MissingChain:'miss_chain',
+		ChainExists:'chain_exists',
+		NameExists:'name_exists',
+		Saved:'saved',
+		Deleted:'deleted',
+	},
+
+	AUTH:{
+		LockedOut:'locked_out',
+		ErrorParsingBackup:'err_parse_backup',
+		ErrorDecryptingBackup:'err_decr_backup',
+		CantReadBackup:'cant_read_backup',
+
+	}
 })
 
 const POPOUTS = prefixKeys('popouts', {

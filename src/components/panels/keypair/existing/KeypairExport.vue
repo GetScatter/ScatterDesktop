@@ -178,7 +178,7 @@
 
 				    remote.getCurrentWindow().capturePage(img => {
 					    remote.require('fs').writeFile(filename, img.toPng(), saved => {
-						    PopupService.push(Popup.snackbar('Saved Image'));
+						    PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.SavedImage), 'check'));
 						    ElectronHelpers.openLinkInBrowser(location);
 						    setTimeout(() => {
 							    this.screenshotting = false;
