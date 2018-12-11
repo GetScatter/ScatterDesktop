@@ -537,7 +537,9 @@ const Locale = {
 	[SNACKBARS.CopiedToClipboard]:() => `Copied to Clipboard`,
 	[SNACKBARS.BadPassword]:() => `Bad Password`,
 	[SNACKBARS.SavedImage]:() => `Image Saved`,
-	[SNACKBARS.TokenAdded]:() => `TokenAdded`,
+	[SNACKBARS.TokenAdded]:() => `Token Added`,
+	[SNACKBARS.ContactExists]:() => `Another contact already has this recipient`,
+	[SNACKBARS.ContactNameExists]:() => `Another contact already has this name`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[SNACKBARS.NETWORK.MissingName]:() => `Network must have a name`,
 	[SNACKBARS.NETWORK.MissingHost]:() => `Network must have a host`,
@@ -548,10 +550,17 @@ const Locale = {
 	[SNACKBARS.NETWORK.Saved]:() => `Network Saved!`,
 	[SNACKBARS.NETWORK.Deleted]:() => `Network Deleted!`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[SNACKBARS.TOKENS.MissingSymbol]:() => `You must add a token symbol`,
+	[SNACKBARS.TOKENS.MissingContract]:() => `You mnust add a token contract`,
+	[SNACKBARS.TOKENS.TokenExistsAdded]:() => `This token already exists in added tokens`,
+	[SNACKBARS.TOKENS.TokenExistsFiltered]:() => `Token already exists in filtered tokens`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[SNACKBARS.AUTH.LockedOut]:() => `You have been locked out temporarily`,
 	[SNACKBARS.AUTH.ErrorParsingBackup]:() => `Error Parsing Backup File`,
 	[SNACKBARS.AUTH.ErrorDecryptingBackup]:() => `Error Decrypting Backup File`,
 	[SNACKBARS.AUTH.CantReadBackup]:() => `Can't read backup file`,
+	[SNACKBARS.AUTH.PasswordLength]:() => `Passwords must be at least 8 characters long`,
+	[SNACKBARS.AUTH.InvalidConfirmation]:() => `The confirmation does not match the password`,
 
 
 	/****************************************************/

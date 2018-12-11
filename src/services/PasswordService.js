@@ -8,17 +8,19 @@ import AES from 'aes-oop';
 import Scatter from '../models/Scatter';
 import PopupService from '../services/PopupService'
 import {Popup} from '../models/popups/Popup'
+import {localizedState} from "../localization/locales";
+import LANG_KEYS from "../localization/keys";
 
 export default class PasswordService {
 
     static isValidPassword(password, confirmPassword = null){
         if(!password || password.length < 8) {
-            PopupService.push(Popup.prompt("Invalid Password", "Passwords must be at least 8 characters long."));
+            PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.AUTH.PasswordLength)));
             return false;
         }
 
         if(confirmPassword !== null && password !== confirmPassword) {
-          PopupService.push(Popup.prompt("Confirmation Mismatch", "The confirmation password does not match."));
+          PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.AUTH.InvalidConfirmation)));
             return false;
         }
 

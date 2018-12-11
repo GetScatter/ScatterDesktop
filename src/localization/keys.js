@@ -527,11 +527,17 @@ const PROCESSES = prefixKeys('processes', {
 	AccountsLeft:'acc_left',
 });
 
+const PROMPTS = prefixKeys('prompts', {
+
+});
+
 const SNACKBARS = prefixKeys('snackbar', {
 	CopiedToClipboard:'cop_to_clip',
 	BadPassword:'bad_pass',
 	SavedImage:'saved_img',
 	TokenAdded:'token_added',
+	ContactExists:'cont_exists',
+	ContactNameExists:'cont_name_exists',
 
 	NETWORK:{
 		MissingName:'miss_name',
@@ -544,13 +550,21 @@ const SNACKBARS = prefixKeys('snackbar', {
 		Deleted:'deleted',
 	},
 
+	TOKENS:{
+		MissingSymbol:'miss_symbol',
+		MissingContract:'miss_contract',
+		TokenExistsAdded:'exists_added',
+		TokenExistsFiltered:'exists_filtered',
+	},
+
 	AUTH:{
 		LockedOut:'locked_out',
 		ErrorParsingBackup:'err_parse_backup',
 		ErrorDecryptingBackup:'err_decr_backup',
 		CantReadBackup:'cant_read_backup',
-
-	}
+		PasswordLength:'pass_len',
+		InvalidConfirmation:'bad_conf'
+	},
 })
 
 const POPOUTS = prefixKeys('popouts', {
@@ -705,6 +719,7 @@ export default {
 	TRANSFER,
 	USER_BAR,
 	PROCESSES,
+	PROMPTS,
 	SNACKBARS,
 	POPOUTS,
 	POPINS

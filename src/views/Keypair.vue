@@ -131,16 +131,6 @@
 
             async remove(){
 	        	PopupService.push(Popup.removeKeypair(this.keypair));
-	            // PopupService.promptGuard(Popup.prompt(
-		        //     "Deleting Vault Entry", "Before you do this make sure you have a backup of this Vault Entry's Private Key.",
-		        //     "trash", "Delete"
-	            // ), async accepted => {
-		        //     if(accepted) {
-			    //         await KeyPairService.removeKeyPair(this.keypair);
-			    //         await BalanceService.removeStaleBalances();
-			    //         this.$router.push({name:this.RouteNames.HOME});
-		        //     }
-	            // });
             },
 
 	        async refreshAccounts(){

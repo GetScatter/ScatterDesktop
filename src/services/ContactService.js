@@ -4,6 +4,8 @@ import * as Actions from '../store/constants'
 
 import PopupService from './PopupService';
 import {Popup} from '../models/popups/Popup';
+import {localizedState} from "../localization/locales";
+import LANG_KEYS from "../localization/keys";
 
 export default class ContactService {
 
@@ -16,10 +18,10 @@ export default class ContactService {
         const scatter = store.state.scatter.clone();
 
         if(scatter.contacts.find(x => x.recipient.toLowerCase() === recipient.toLowerCase()))
-            return PopupService.push(Popup.prompt('Contact Exists', 'Another contact already has this recipient account.'))
+            return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.ContactExists)))
 
 	    if(scatter.contacts.find(x => x.name.toLowerCase() === name.toLowerCase()))
-		    return PopupService.push(Popup.prompt('Contact Name Exists', 'Another contact already has this name.'))
+		    return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.ContactNameExists)))
 
 	    scatter.contacts.push(new Contact(name, recipient));
 	    return store.dispatch(Actions.SET_SCATTER, scatter);

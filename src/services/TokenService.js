@@ -21,14 +21,14 @@ export default class TokenService {
 	    // Never adding system tokens.
 	    if(store.getters.networkTokens.find(x => x.unique() === token.unique())) return true;
 
-        if(!token.symbol.length) return PopupService.push(Popup.prompt('Token Symbol Error', 'You must add a token symbol.'));
-        if(token.needsContract() && !token.contract.length) return PopupService.push(Popup.prompt('Token Contract Error', 'You must add a token contract.'));
+        if(!token.symbol.length) return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TOKENS.MissingSymbol)));
+        if(token.needsContract() && !token.contract.length) return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TOKENS.MissingContract)));
 
         if(!blacklist && scatter.settings.tokens.find(x => x.unique() === token.unique()))
-            return PopupService.push(Popup.prompt('Token Exists', 'This token already exists in your added tokens.'));
+            return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TOKENS.TokenExistsAdded)));
 
         if(blacklist && scatter.settings.blacklistTokens.find(x => x.unique() === token.unique()))
-            return PopupService.push(Popup.prompt('Token Exists', 'This token already exists in your filtered tokens.'));
+            return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TOKENS.TokenExistsFiltered)));
 
         if(!token.name.trim().length) token.name = token.symbol;
 
