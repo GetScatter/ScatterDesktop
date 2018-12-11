@@ -7,39 +7,42 @@
             <!-- MAIN PANEL -->
             <section class="main-panel">
                 <PopOutAction :origin="popup.origin()" :action="limitedMessages.actions" />
-                <figure class="has-more" v-if="limitedMessages.total > 1">{{limitedMessages.total}} actions in total</figure>
+                <figure class="has-more" v-if="limitedMessages.total > 1">{{locale(langKeys.POPOUTS.SIGNATURE.ActionsTotal,limitedMessages.total)}}</figure>
                 <section class="participants" :class="{'top-less':limitedMessages.total <= 1}" v-if="participants">
-                    <label>Accounts Involved</label>
+                    <label>{{locale(langKeys.POPOUTS.SIGNATURE.AccountsInvolved)}}</label>
                     <section class="participant" v-for="p in participants">{{p}}</section>
                 </section>
                 <section class="participants top-less" v-if="isArbitrarySignature">
-                    <label>Keys Involved</label>
+                    <label>{{locale(langKeys.POPOUTS.SIGNATURE.KeysInvolved)}}</label>
                     <section class="participant">{{arbitraryKeypair.name}} -- {{payload.publicKey.substr(0,6)}}.....{{payload.publicKey.substr(payload.publicKey.length - 5)}}</section>
                 </section>
 
                 <section class="fixed-actions">
 
                     <section v-if="cannotSignArbitrary" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
-                        Arbitrary signing disabled!
-                        <p>To protect you we have disabled the ability to sign arbitrary data that is longer than 12 characters per word.</p>
+                        {{locale(langKeys.POPOUTS.SIGNATURE.ArbitraryDisabledTitle)}}
+                        <p>{{locale(langKeys.POPOUTS.SIGNATURE.ArbitraryDisabledDesc)}}</p>
                     </section>
 
                     <!-- ACCEPT TRANSACTION -->
                     <btn blue="1" v-if="!pinning"
                          :disabled="!isValidIdentity || cannotSignArbitrary"
-                         text="Allow"
+                         :text="locale(langKeys.GENERIC.Allow)"
                          v-on:clicked="accepted" />
 
                     <!-- DENY TRANSACTION -->
-                    <btn text="Deny" v-if="!pinning"
+                    <btn :text="locale(langKeys.GENERIC.Deny)" v-if="!pinning"
                          v-on:clicked="returnResult(false)" />
 
                     <section v-if="!isArbitrarySignature">
                         <br>
                         <br>
-                        <label style="text-align:center;">Whitelist this to not have to accept next time</label>
+                        <label style="text-align:center;">{{locale(langKeys.POPOUTS.SIGNATURE.WhitelistDesc)}}</label>
+
                         <btn :red="!whitelisted" :blue="whitelisted"
-                             :text="whitelisted ? 'Disable Whitelist' : 'Enable Whitelist'"
+                             :text="whitelisted
+                             	? locale(langKeys.POPOUTS.SIGNATURE.DisableWhitelistButton)
+								: locale(langKeys.POPOUTS.SIGNATURE.EnableWhitelistButton)"
                              v-on:clicked="whitelist" />
                     </section>
                 </section>
@@ -73,7 +76,7 @@
 
                         <section class="whitelist-overlay" v-if="isPreviouslyWhitelisted(message)">
                             <section class="box">
-                                <figure class="info">This action is previously whitelisted.</figure>
+                                <figure class="info">{{locale(langKeys.POPOUTS.SIGNATURE.PreviouslyWhitelisted)}}</figure>
                             </section>
                         </section>
 
@@ -112,7 +115,7 @@
                             </section>
 
                             <section class="collapsed" v-else>
-                                Action is hidden
+                                {{locale(langKeys.POPOUTS.SIGNATURE.HiddenActions)}}
                             </section>
                         </section>
                     </section>

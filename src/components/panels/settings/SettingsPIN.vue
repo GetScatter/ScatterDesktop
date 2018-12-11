@@ -14,7 +14,7 @@
                  :placeholder="locale(langKeys.SETTINGS.PIN.Placeholder)"
                  type="password"
                  :text="pin"
-                 dynamic-button="icon-cancel"
+                 :dynamic-button="pin.length ? 'icon-cancel' : ''"
                  v-on:dynamic="pin = ''"
                  v-on:changed="x => pin = x" />
 
@@ -65,7 +65,7 @@
                 saveTimeout = setTimeout(async () => {
                     await PasswordService.setPIN(this.pin, false);
                     PopupService.push(Popup.snackbar(
-                    	this.locale(this.langKeys.SETTINGS.PIN.SavedSnackbar)
+                    	this.locale(this.langKeys.SETTINGS.PIN.SavedSnackbar), 'check'
                     ))
                 }, 500);
             },

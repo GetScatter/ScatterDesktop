@@ -18,6 +18,7 @@ const prefixKeys = (name, obj, prefix = null) => {
 const GENERIC = prefixKeys('generic', {
 	Back:'back',
 	Confirm:'confirm',
+	Allow:'allow',
 	Deny:'deny',
 	Okay:'okay',
 	Cancel:'cancel',
@@ -27,6 +28,7 @@ const GENERIC = prefixKeys('generic', {
 	Enable:'enable',
 	Disable:'disable',
 	Select:'select',
+	Unselect:'unselect',
 	Edit:'edit',
 	Add:'add',
 	Save:'save',
@@ -102,7 +104,8 @@ const DASHBOARD = prefixKeys('dashboard', {
 		NPermissions:'n_permissions',
 		NoPermissions:'no_permissions',
 		UnlinkedAppsTitle:'unlinked_apps_tit',
-		UnlinkedAppsSubtitle:'unlinked_apps_sub'
+		UnlinkedAppsSubtitle:'unlinked_apps_sub',
+		NoMeta:'no_meta',
 	},
 	TOOLBARS:{
 		SendButton:'send',
@@ -195,6 +198,14 @@ const KEYPAIR = prefixKeys('keypair', {
 		EOSClaimRefundButton:'eos_refund_btn',
 		EOSDangerousPermissions:'eos_danger_perms',
 		EOSDangerousPermissionsSubtitle:'eos_danger_perms_sub',
+
+		ACTIONS:{
+			EOS:{
+				ChangePermissionsButton:'change_perms_btn',
+				ProxyVotesButton:'proxy_votes_btn',
+				UnlinkAccountButton:'unlink_acc_btn',
+			}
+		}
 	},
 	BLOCKCHAINS:{
 		CopyButton:'cpy_btn',
@@ -369,7 +380,9 @@ const SETTINGS = prefixKeys('settings', {
 			MainBalanceDisplayLabel:'main_bal_dis_lbl',
 			MainBalanceDisplayDescription:'main_bal_dis_desc',
 			MainBalanceDisplayMainnetButton:'main_bal_dis_main_btn',
+			MainBalanceDisplayMainnetDesc:'main_bal_dis_main_desc',
 			MainBalanceDisplayAllNetworksButton:'main_bal_dis_all_btn',
+			MainBalanceDisplayAllNetworksDesc:'main_bal_dis_all_desc',
 			FilterSmallBalancesLabel:'filter_small_bal_lbl',
 			FilterSmallBalancesDescription:'filter_small_bal_desc',
 		},
@@ -515,6 +528,43 @@ const SNACKBARS = prefixKeys('snackbar', {
 	BadPassword:'bad_pass',
 })
 
+const POPOUTS = prefixKeys('popouts', {
+	LOGIN:{
+		AccountRequirements:'acc_reqs',
+		NoAccountsTitle:'no_accs_tit',
+		NoAccountsDesc:'no_accs_desc',
+		MissingFieldsTitle:'miss_fields_tit',
+		MissingFieldsDesc:'miss_fields_desc',
+		LoginButton:'login_btn',
+		ShowAllAccounts:'show_all_accs',
+		FilterAccounts:'filter_accs'
+	},
+	GET_KEY:{
+		GenerateKeyButton:'gen_key_btn',
+		SearchPlaceholder:'search_plc',
+	},
+	LINK_APP:{
+		AppKey:'app_key',
+		Disclaimer:'disclaimer',
+	},
+	SIGNATURE:{
+		ActionsTotal:'acts_total',
+		AccountsInvolved:'accs_involved',
+		KeysInvolved:'keys_involved',
+		ArbitraryDisabledTitle:'arb_dis_tit',
+		ArbitraryDisabledDesc:'arb_dis_desc',
+		WhitelistDesc:'whitelist_desc',
+		DisableWhitelistButton:'dis_white_btn',
+		EnableWhitelistButton:'enbl_white_btn',
+		PreviouslyWhitelisted:'prev_whitelist',
+		HiddenActions:'hid_act',
+	},
+	TRANSFER:{
+		SendingTo:'sending_to',
+		SearchPlaceholder:'search_plc',
+	}
+})
+
 export default {
 	GENERIC,
 	LOGIN,
@@ -528,7 +578,8 @@ export default {
 	TRANSFER,
 	USER_BAR,
 	PROCESSES,
-	SNACKBARS
+	SNACKBARS,
+	POPOUTS
 }
 
 

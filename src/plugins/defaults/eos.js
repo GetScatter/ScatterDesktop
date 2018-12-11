@@ -271,20 +271,23 @@ export default class EOS extends Plugin {
 	accountActions(account){
 		const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable() && x.keypairUnique === account.keypairUnique);
 
+		const {EOS} = LANG_KEYS.KEYPAIR.ACCOUNTS.ACTIONS;
+
+
 		let availableActions = [
-			new AccountAction('Unlink Account', '', () => {
+			new AccountAction(localizedState(EOS.UnlinkAccountButton, null), '', () => {
 				PopupService.push(Popup.unlinkAccount(account, () => {}));
 			})
 		];
 
 		const nonWatchActions = [
-			new AccountAction('Proxy Votes', '', () => {
+			new AccountAction(localizedState(EOS.ProxyVotesButton, null), '', () => {
 				PopupService.push(Popup.eosProxyVotes(account, () => {}));
 			}),
 		];
 
 		const ownerActions = [
-			new AccountAction('Change Permissions', '', () => {
+			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), '', () => {
 				PopupService.push(Popup.verifyPassword(verified => {
 					if(!verified) return;
 					PopupService.push(Popup.eosChangePermissions(account, async permissions => {

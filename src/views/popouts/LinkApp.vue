@@ -6,13 +6,13 @@
         <section class="multi-pane">
             <section class="main-panel">
                 <section style="padding:0 30px; width:100%; text-align:center;">
-                    <label>App Key</label>
+                    <label>{{locale(langKeys.POPOUTS.LINK_APP.AppKey)}}</label>
                     <p>{{payload.appkey}}</p>
 
                     <br>
                     <br>
                     <section class="disclaimer less-pad red">
-                        Make sure the application name is an application you are interacting with right now.
+                        {{locale(langKeys.POPOUTS.LINK_APP.Disclaimer)}}
                     </section>
                 </section>
 
@@ -21,52 +21,16 @@
 
                     <!-- ACCEPT TRANSACTION -->
                     <btn blue="1"
-                         text="Allow"
+                         :text="locale(langKeys.GENERIC.Allow)"
                          v-on:clicked="returnResult(true)" />
 
                     <!-- DENY TRANSACTION -->
-                    <btn text="Deny"
+                    <btn :text="locale(langKeys.GENERIC.Deny)"
                          v-on:clicked="returnResult(false)" />
 
                 </section>
             </section>
         </section>
-
-        <!--<section class="popup">-->
-
-            <!--<section class="top-section">-->
-                <!--&lt;!&ndash; HEADER &ndash;&gt;-->
-                <!--<section class="head">-->
-                    <!--<figure class="logo">S</figure>-->
-                    <!--<figure class="info">-->
-                        <!--<figure>Link New App</figure>-->
-                    <!--</figure>-->
-                    <!--<section class="buttons">-->
-                        <!--<btn text="Link" v-on:clicked="returnResult(true)"></btn>-->
-                        <!--<btn red="true" text="Deny" v-on:clicked="returnResult(false)"></btn>-->
-                    <!--</section>-->
-                <!--</section>-->
-
-            <!--</section>-->
-
-            <!--<section class="lists">-->
-
-                <!--<section class="list">-->
-                    <!--<section class="breadcrumbs">-->
-                        <!--<figure class="breadcrumb">Application Details</figure>-->
-                    <!--</section>-->
-
-                    <!--<section class="item">-->
-                        <!--&lt;!&ndash;{{payload}}&ndash;&gt;-->
-                        <!--<figure class="title">{{app.origin}}</figure>-->
-                        <!--<figure class="sub-title">{{app.appkey}}</figure>-->
-                    <!--</section>-->
-                <!--</section>-->
-
-            <!--</section>-->
-        <!--</section>-->
-
-
 
     </section>
 </template>

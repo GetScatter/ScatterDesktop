@@ -113,7 +113,6 @@ const createScatterInstance = () => {
 };
 
 const activateInstance = e => {
-	console.log('hi')
 	if(e) e.preventDefault();
 	if(!mainWindow) return;
 	mainWindow.restore();

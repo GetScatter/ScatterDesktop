@@ -10,7 +10,7 @@
             <section class="split-inputs">
                 <btn style="flex:1;" :text="locale(langKeys.SETTINGS.BACKUP.AutoBackupLocationLabel)"
                      v-on:clicked="setBackupLocation()" />
-                <btn :text="locale(langKeys.SETTINGS.BACKUP.CreateBackupButton)"
+                <btn style="flex:0.6;" :text="locale(langKeys.SETTINGS.BACKUP.CreateBackupButton)"
                      v-on:clicked="createBackup" />
             </section>
         </section>

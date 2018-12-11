@@ -6,10 +6,9 @@
                 <PopOutAction :origin="popup.origin()" action="login" />
 
                 <section class="required-networks" v-if="!validAccounts.length || (accountNetworks.length > 1 || (accountNetworks.length === 1 && accountNetworks[0].count > 1))">
-                    <figure class="requirements">App requires accounts for these networks</figure>
+                    <figure class="requirements">{{locale(langKeys.POPOUTS.LOGIN.AccountRequirements)}}</figure>
                     <section class="list">
                         <figure class="split-inputs" v-for="item in accountNetworks">
-                            <!--<i class="icon-check" v-if="item.count - selectedOfNetwork(item.network).length === 0"></i>-->
                             <figure style="flex:3;">{{item.network.name}}</figure>
                             <figure class="bubble" :class="{'red':networkAccountsCount(item.network.unique()) === 0}"
                                     v-if="item.count - selectedOfNetwork(item.network).length !== 0">{{item.count - selectedOfNetwork(item.network).length}}</figure>
@@ -22,14 +21,17 @@
                     <br v-if="stillNeedsFields" />
 
                     <section style="padding:0 30px;" v-if="stillNeedsFields">
-                        <btn text="Login" blue="1" v-on:clicked="selectAccount" :disabled="!isValidIdentity" />
+                        <btn :text="locale(langKeys.POPOUTS.LOGIN.LoginButton)" blue="1" v-on:clicked="selectAccount" :disabled="!isValidIdentity" />
                     </section>
 
 
                     <section class="split-inputs" style="flex:0 0 auto;" v-if="!stillNeedsFields">
                         <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
                         <figure class="advanced-button" @click="showingAll = !showingAll">
-                            {{showingAll ? 'Filter' : 'Show All'}}
+                            {{showingAll
+								? locale(langKeys.POPOUTS.LOGIN.FilterAccounts)
+								: locale(langKeys.POPOUTS.LOGIN.ShowAllAccounts)
+							}}
                         </figure>
                     </section>
 
@@ -44,12 +46,11 @@
                     <br>
                     <br>
                     <section class="disclaimer less-pad red">
-                        You do not have blockchain accounts for the networks that this application requires.
+                        {{locale(langKeys.POPOUTS.LOGIN.NoAccountsTitle)}}
                         <br>
                         <br>
                         <p>
-                            Before logging into this application go back to Scatter and import some keys for the network/blockchain that
-                            this application is using.
+                            {{locale(langKeys.POPOUTS.LOGIN.NoAccountsDesc)}}
                         </p>
                     </section>
 
@@ -68,8 +69,8 @@
             <section class="side-panel" v-if="expanded">
 
                 <section class="disclaimer less-pad" :class="{'red':stillNeedsFields}" style="margin-top:20px; margin-bottom:10px;" v-if="missingFields">
-                    You are missing some fields!
-                    <p>Fill out the inputs below which will add those fields to your Identity for later use and also return them to the application.</p>
+                    {{locale(langKeys.POPOUTS.LOGIN.MissingFieldsTitle)}}
+                    <p>{{locale(langKeys.POPOUTS.LOGIN.MissingFieldsDesc)}}</p>
                 </section>
 
                 <RequiredFields :identity="identity" :fields="fields"
@@ -166,10 +167,10 @@
                     .map(account => {
 	                    let description = `${account.network().name}`;
 	                    let actions = [];
-	                    const actionName = alreadySelectedUniques.includes(account.unique()) ? 'Remove'
-                            : neededNetworks.length === 1 ? 'Login'
-                            : neededNetworks.length === alreadySelectedUniques.length ? 'Login'
-                            : 'Select';
+	                    const actionName = alreadySelectedUniques.includes(account.unique()) ? this.locale(this.langKeys.GENERIC.Remove)
+                            : neededNetworks.length === 1 ? this.locale(this.langKeys.POPOUTS.LOGIN.LoginButton)
+                            : neededNetworks.length === alreadySelectedUniques.length ? this.locale(this.langKeys.POPOUTS.LOGIN.LoginButton)
+                            : this.locale(this.langKeys.GENERIC.Select);
 	                    actions.push({
 		                    name:actionName,
 		                    handler:() => this.selectAccount(account),
@@ -251,7 +252,6 @@
 
 		        if(this.accountRequirements.length > this.selectedAccounts.length) return;
 
-		        console.log('this.stillNeedsFields', this.stillNeedsFields);
 		        if(this.stillNeedsFields){
 			        if(!this.expanded){
 				        this.$emit('expanded', 300, true);

@@ -6,12 +6,12 @@
                 <PopOutAction :origin="popup.origin()" action="public key" />
 
                 <section class="padded">
-                    <btn blue="1" text="Generate a new Key" v-on:clicked="generateNewKey" />
+                    <btn blue="1" :text="locale(langKeys.POPOUTS.GET_KEY.GenerateKeyButton)" v-on:clicked="generateNewKey" />
                     <br>
                     <br>
                 </section>
 
-                <SearchBar short="1" placeholder="Search Keys" v-on:terms="x => searchTerms = x" />
+                <SearchBar short="1" :placeholder="locale(langKeys.POPOUTS.GET_KEY.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
 
                 <section class="popout-list">
                     <FullWidthRow :items="validKeys" popout="1" />
@@ -77,7 +77,7 @@
 		                    title:keypair.name,
 		                    description:publicKey,
 		                    actions:[{
-			                    name:'Select',
+			                    name:this.locale(this.langKeys.GENERIC.Select),
 			                    handler:() => this.selectKeypair(keypair),
 			                    blue:1,
 			                    small:1,

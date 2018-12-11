@@ -12,7 +12,7 @@
                     <section class="padded">
                         <section class="transfer-details">
                             <span class="blue">{{popup.origin()}}</span>
-                            <span>sending {{token.symbol}} to</span>
+                            <span>{{locale(langKeys.POPOUTS.TRANSFER.SendingTo, token.symbol)}}</span>
                             <span class="bold" :class="{'small':to.length > 12}">{{to}}</span>
                         </section>
                     </section>
@@ -30,7 +30,9 @@
                              :placeholder="parseFloat(1).toFixed(decimals)" />
                     </section>
 
-                    <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
+                    <SearchBar style="flex:1;" short="1"
+							   :placeholder="locale(langKeys.POPOUTS.TRANSFER.SearchPlaceholder)"
+							   v-on:terms="x => searchTerms = x" />
 
                     <section class="popout-list">
                         <FullWidthRow :items="validAccounts" popout="1" />
@@ -48,7 +50,7 @@
                     </section>
                     <section class="memo" v-if="memo && memo.length">
                         <section class="info-line">
-                            <span>Memo</span>
+                            <span>{{locale(langKeys.GENERIC.Memo)}}</span>
                         </section>
                         <span>{{memo}}</span>
                     </section>
@@ -62,8 +64,8 @@
                     <FullWidthRow :items="selectedAccounts" popout="1" />
 
                     <section class="fixed-actions" v-if="!pinning">
-                        <btn blue="1" text="Accept" v-on:clicked="returnResult(true)" />
-                        <btn text="Deny" v-on:clicked="returnResult(null)" />
+                        <btn blue="1" :text="locale(langKeys.GENERIC.Accept)" v-on:clicked="returnResult(true)" />
+                        <btn :text="locale(langKeys.GENERIC.Deny)" v-on:clicked="returnResult(null)" />
                     </section>
                 </section>
 
@@ -186,7 +188,9 @@
 		            title:account.sendable(),
 		            description:``,
 		            actions:[{
-			            name:select ? 'Select' : 'Re-Select',
+			            name:select
+							? this.locale(this.langKeys.GENERIC.Select)
+							: this.locale(this.langKeys.GENERIC.Unselect),
 			            handler:() => this.selectAccount(select ? account : null),
 			            blue:select,
                         red:!select,

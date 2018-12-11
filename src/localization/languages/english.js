@@ -12,7 +12,8 @@ const {
 	TRANSFER,
 	USER_BAR,
 	PROCESSES,
-	SNACKBARS
+	SNACKBARS,
+	POPOUTS
 } = KEYS;
 
 // You can build your own pluralizers.
@@ -31,6 +32,7 @@ const Locale = {
 
 	[GENERIC.Back]:() => `Back`,
 	[GENERIC.Confirm]:() => `Confirm`,
+	[GENERIC.Allow]:() => `Allow`,
 	[GENERIC.Deny]:() => `Deny`,
 	[GENERIC.Okay]:() => `Okay`,
 	[GENERIC.Cancel]:() => `Cancel`,
@@ -40,6 +42,7 @@ const Locale = {
 	[GENERIC.Enable]:() => `Enable`,
 	[GENERIC.Disable]:() => `Disable`,
 	[GENERIC.Select]:() => `Select`,
+	[GENERIC.Unselect]:() => `Unselect`,
 	[GENERIC.Edit]:() => `Edit`,
 	[GENERIC.Add]:() => `Add`,
 	[GENERIC.Save]:() => `Save`,
@@ -130,6 +133,7 @@ const Locale = {
 	[DASHBOARD.APPS.UnlinkedAppsSubtitle]:() => `Note that these apps are not added by the Scatter team, 
 		but by the apps themselves. The display of any app is not an endorsement of any kind, 
 		just a discovery mechanism.`,
+	[DASHBOARD.APPS.NoMeta]:() => `No Meta`,
 
 
 
@@ -256,6 +260,10 @@ const Locale = {
 		`Both active and owner are on the same key.`,
 	[KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle]:() =>
 		`Consider changing one to another key by clicking the "change permissions" button below.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.ChangePermissionsButton]:() => `Change Permissions`,
+	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.ProxyVotesButton]:() => `Proxy Votes`,
+	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.UnlinkAccountButton]:() => `Unlink Account`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.BLOCKCHAINS.CopyButton]:() => `Copy Public Key`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,7 +397,11 @@ const Locale = {
 	[SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayDescription]:() =>
 		`You can set whether you want to see balances for all networks in the main dashboard, or just balances for mainnets.`,
 	[SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton]:() => `Show all networks`,
+	[SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetDesc]:() =>
+		`Displaying only mainnet tokens means Scatter will not use alternate chain or testnet chain tokens to calculate total balances.`,
 	[SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton]:() => `Show only Mainnets`,
+	[SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksDesc]:() =>
+		`Showing all networks means Scatter will take every network into consideration when calculating total balances.`,
 	[SETTINGS.TOKENS.SETTINGS.FilterSmallBalancesLabel]:() => `Filter Small Balances`,
 	[SETTINGS.TOKENS.SETTINGS.FilterSmallBalancesDescription]:() =>
 		`If you want to always filter out tokens with small balances you can set a modifier here.`,
@@ -519,6 +531,45 @@ const Locale = {
 	/****************************************************/
 	[SNACKBARS.CopiedToClipboard]:() => `Copied to Clipboard`,
 	[SNACKBARS.BadPassword]:() => `Bad Password`,
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                     POPOUTS                      */
+	/*                                                  */
+	/****************************************************/
+	[POPOUTS.LOGIN.AccountRequirements]:() => `App requires accounts for these networks`,
+	[POPOUTS.LOGIN.NoAccountsTitle]:() => `You do not have blockchain accounts for the networks that this application requires.`,
+	[POPOUTS.LOGIN.NoAccountsDesc]:() =>
+		`Before logging into this application go back to Scatter and import some keys for the network/blockchain that this application is using.`,
+	[POPOUTS.LOGIN.MissingFieldsTitle]:() => `You are missing some fields!`,
+	[POPOUTS.LOGIN.MissingFieldsDesc]:() =>
+		`Fill out the inputs below which will add those fields to your Identity for later use and also return them to the application.`,
+	[POPOUTS.LOGIN.LoginButton]:() => `Login`,
+	[POPOUTS.LOGIN.ShowAllAccounts]:() => `Show All`,
+	[POPOUTS.LOGIN.FilterAccounts]:() => `Filter`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPOUTS.GET_KEY.GenerateKeyButton]:() => `Generate a new Key`,
+	[POPOUTS.GET_KEY.SearchPlaceholder]:() => `Search Keys`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPOUTS.LINK_APP.AppKey]:() => `App Key`,
+	[POPOUTS.LINK_APP.Disclaimer]:() => `Make sure the application name is an application you are interacting with right now.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPOUTS.SIGNATURE.ActionsTotal]:x => `${x} actions in total`,
+	[POPOUTS.SIGNATURE.AccountsInvolved]:() => `Accounts Involved`,
+	[POPOUTS.SIGNATURE.KeysInvolved]:() => `Keys Involved`,
+	[POPOUTS.SIGNATURE.ArbitraryDisabledTitle]:() => `Arbitrary signing disabled!`,
+	[POPOUTS.SIGNATURE.ArbitraryDisabledDesc]:() =>
+		`To protect you we have disabled the ability to sign arbitrary data that is longer than 12 characters per word.`,
+	[POPOUTS.SIGNATURE.WhitelistDesc]:() => `Whitelist this to not have to accept next time`,
+	[POPOUTS.SIGNATURE.DisableWhitelistButton]:() => `Disable Whitelist`,
+	[POPOUTS.SIGNATURE.EnableWhitelistButton]:() => `Enable Whitelist`,
+	[POPOUTS.SIGNATURE.PreviouslyWhitelisted]:() => `This action is previously whitelisted.`,
+	[POPOUTS.SIGNATURE.HiddenActions]:() => `Action is hidden`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPOUTS.TRANSFER.SendingTo]:symbol => `sending ${symbol} to`,
+	[POPOUTS.TRANSFER.SearchPlaceholder]:() => `Search Accounts`,
+	[POPOUTS.TRANSFER.AppKey]:() => `App`,
 
 
 

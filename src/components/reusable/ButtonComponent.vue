@@ -31,6 +31,9 @@
         font-size: 14px;
         font-weight: 500;
         max-width:360px;
+		line-height:0;
+
+
 
         &.small {
             height:32px;

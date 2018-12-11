@@ -78,11 +78,11 @@
                     </section>
                     <section class="details" v-if="mainnetTokensOnly">
                         <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton)}}</figure>
-                        <p>Displaying only mainnet tokens means Scatter will not use alternate chain or testnet chain tokens to calculate total balances.</p>
+                        <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksDesc)}}</p>
                     </section>
                     <section class="details" v-if="!mainnetTokensOnly">
                         <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton)}}</figure>
-                        <p>Showing all networks means Scatter will take every network into consideration when calculating total balances.</p>
+                        <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetDesc)}}</p>
                     </section>
                 </section>
             </section>
