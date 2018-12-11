@@ -9,16 +9,20 @@
 			</section>
 
 			<section class="panel-switch">
-				<figure class="button" :class="{'active':state === STATES.BUY}" @click="switchState(STATES.BUY)">Buy</figure>
-				<figure class="button" :class="{'active':state === STATES.SELL}" @click="switchState(STATES.SELL)">Sell</figure>
+				<figure class="button" :class="{'active':state === STATES.BUY}" @click="switchState(STATES.BUY)">
+					{{locale(langKeys.GENERIC.Buy)}}
+				</figure>
+				<figure class="button" :class="{'active':state === STATES.SELL}" @click="switchState(STATES.SELL)">
+					{{locale(langKeys.GENERIC.Sell)}}
+				</figure>
 			</section>
 
 			<br>
 			<section v-if="state === STATES.BUY" class="disclaimer less-pad">
-				Buying RAM will let this account hold more data on the blockchain.
+				{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_RAM.BuyDesc)}}
 			</section>
 			<section v-if="state === STATES.SELL" class="disclaimer less-pad">
-				Selling RAM reclaims token to that account at the current price of RAM.
+				{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_RAM.SellDesc)}}
 			</section>
 
 			<section class="resource-moderator">
@@ -39,12 +43,12 @@
 
 					<section style="width:200px; align-self: flex-end;">
 						<cin v-if="state === STATES.BUY"
-						     :label="`Available ${systemToken.symbol}`"
+							 :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Available, systemToken.symbol)"
 						     :text="parseFloat(balance - (ram.quantity * price)).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 
 						<cin v-if="state === STATES.SELL"
-						     :label="`Reclaiming ${systemToken.symbol}`"
+							 :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Reclaiming, systemToken.symbol)"
 						     :text="parseFloat(ram.quantity * price).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 					</section>
@@ -58,7 +62,7 @@
 
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn text="Confirm" blue="1" v-on:clicked="buyOrSell" />
+			<btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" v-on:clicked="buyOrSell" />
 		</section>
 	</section>
 </template>
@@ -141,8 +145,8 @@
 
 			quantityLabel(){
 				switch(this.state){
-					case STATES.BUY: return 'Buying';
-					case STATES.SELL: return 'Selling';
+					case STATES.BUY: return this.locale(this.langKeys.GENERIC.Buying);
+					case STATES.SELL: return this.locale(this.langKeys.GENERIC.Selling);
 				}
 			}
 		},
@@ -161,7 +165,7 @@
 				}
 
 				bytes = parseFloat(bytes);
-				if(bytes <= 15) return PopupService.push(Popup.snackbar("Bytes must be over 15", 'attention'));
+				if(bytes <= 15) return PopupService.push(Popup.snackbar(this.locale(this.langKeys.POPINS.FULLSCREEN.EOS.MOD_RAM.BytesError), 'attention'));
 
 				this.setWorkingScreen(true);
 

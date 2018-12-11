@@ -4,7 +4,7 @@
 		<section class="full-panel center-fold inner with-action limited">
 			<section class="head">
 				<figure class="icon icon-trash"></figure>
-				<figure class="title">Remove Location</figure>
+				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.REMOVE_LOCATION.Title)}}</figure>
 				<p>{{identity.name}} - {{location.name}}</p>
 			</section>
 

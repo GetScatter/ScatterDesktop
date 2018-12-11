@@ -1,10 +1,10 @@
 <template>
     <section>
         <section class="full-panel inner center-fold limited">
-            <h4>Password Alternative</h4>
+            <h4>{{locale(langKeys.POPINS.FULLSCREEN.MNEMONIC.Title)}}</h4>
             <section class="disclaimer less-pad red">
-                This phrase is a backup for <b>your password</b>. It is not used to generate keys.
-                <p>You can paste this phrase into any field that accepts a password in Scatter.</p>
+                {{locale(langKeys.POPINS.FULLSCREEN.MNEMONIC.Desc)}}
+                <p>{{locale(langKeys.POPINS.FULLSCREEN.MNEMONIC.SubDesc)}}</p>
             </section>
 
 
@@ -22,7 +22,7 @@
         </section>
 
         <section class="action-bar short bottom centered">
-            <btn text="Done" blue="1" v-on:clicked="returnResult(null)" />
+            <btn :text="locale(langKeys.GENERIC.Okay)" blue="1" v-on:clicked="returnResult(null)" />
         </section>
     </section>
 </template>

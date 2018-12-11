@@ -9,16 +9,20 @@
 			</section>
 
 			<section class="panel-switch">
-				<figure class="button" :class="{'active':state === STATES.STAKE}" @click="switchState(STATES.STAKE)">Stake</figure>
-				<figure class="button" :class="{'active':state === STATES.UNSTAKE}" @click="switchState(STATES.UNSTAKE)">Unstake</figure>
+				<figure class="button" :class="{'active':state === STATES.STAKE}" @click="switchState(STATES.STAKE)">
+					{{locale(POPINS.FULLSCREEN.EOS.MOD_CPUNET.Stake)}}
+				</figure>
+				<figure class="button" :class="{'active':state === STATES.UNSTAKE}" @click="switchState(STATES.UNSTAKE)">
+					{{locale(POPINS.FULLSCREEN.EOS.MOD_CPUNET.Unstake)}}
+				</figure>
 			</section>
 
 			<br>
 			<section v-if="state === STATES.STAKE" class="disclaimer less-pad">
-				Self staking CPU & NET will allow this account to do more on the blockchain.
+				{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_CPUNET.StakeDesc)}}
 			</section>
 			<section v-if="state === STATES.UNSTAKE" class="disclaimer less-pad">
-				Unstaking CPU & NET will reclaim tokens, but will let you do less.
+				{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_CPUNET.UnstakeDesc)}}
 			</section>
 
 			<section class="resource-moderator">
@@ -38,12 +42,12 @@
 
 					<section style="width:200px; align-self: flex-end;">
 						<cin v-if="state === STATES.STAKE"
-						     :label="`Available ${systemToken.symbol}`"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Available, systemToken.symbol)"
 						     :text="parseFloat(balance - cpu - net).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 
 						<cin v-if="state === STATES.UNSTAKE"
-						     :label="`Reclaiming ${systemToken.symbol}`"
+							 :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Reclaiming, systemToken.symbol)"
 						     :text="parseFloat(cpu + net).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 					</section>
@@ -53,23 +57,23 @@
 				<section v-if="state === STATES.STAKE">
 					<section class="split-inputs">
 						<figure class="resource">CPU</figure>
-						<slider :min="0" :max="balance - this.net" step="0.0001" :value="cpu" v-on:changed="x => cpu = x"></slider>
+						<slider :min="0" :max="balance - this.net" step="0.0001" :value="cpu" v-on:changed="x => cpu = x" />
 					</section>
 					<section class="split-inputs">
 						<figure class="resource">NET</figure>
-						<slider :min="0" :max="balance - this.cpu" step="0.0001" :value="net" v-on:changed="x => net = x"></slider>
+						<slider :min="0" :max="balance - this.cpu" step="0.0001" :value="net" v-on:changed="x => net = x" />
 					</section>
 				</section>
 
 				<section v-if="state === STATES.UNSTAKE">
 					<section class="split-inputs">
 						<figure class="resource">CPU</figure>
-						<slider :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)"></slider>
+						<slider :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)" />
 						<figure class="resource">{{parseFloat(availableCPU - cpu).toFixed(this.account.network().systemToken().decimals)}}</figure>
 					</section>
 					<section class="split-inputs">
 						<figure class="resource">NET</figure>
-						<slider :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)"></slider>
+						<slider :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)" />
 						<figure class="resource">{{parseFloat(availableNET - net).toFixed(this.account.network().systemToken().decimals)}}</figure>
 					</section>
 				</section>
@@ -78,7 +82,7 @@
 
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn text="Confirm" blue="1" v-on:clicked="stakeOrUnstake" />
+			<btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" v-on:clicked="stakeOrUnstake" />
 		</section>
 	</section>
 </template>

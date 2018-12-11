@@ -59,6 +59,10 @@ const GENERIC = prefixKeys('generic', {
 	ChainID:'chain_id',
 	Name:'name',
 	Search:'search',
+	Buy:'buy',
+	Sell:'sell',
+	Buying:'buying',
+	Selling:'selling',
 
 	Accounts:'account',
 	AccountName:'account_name',
@@ -529,6 +533,10 @@ const SNACKBARS = prefixKeys('snackbar', {
 })
 
 const POPOUTS = prefixKeys('popouts', {
+	REQ_FIELDS:{
+		PersonalInfo:'per_info',
+		LocationInfo:'loc_info',
+	},
 	LOGIN:{
 		AccountRequirements:'acc_reqs',
 		NoAccountsTitle:'no_accs_tit',
@@ -565,6 +573,104 @@ const POPOUTS = prefixKeys('popouts', {
 	}
 })
 
+const POPINS = prefixKeys('popins', {
+	FULLSCREEN:{
+		CHECK_HARDWARE:{
+			Title:'tit',
+			Desc:'desc',
+		},
+		CONFIRM_PASS:{
+			Title:'tit',
+			Label:'lbl',
+		},
+		DESTROY:{
+			Title:'tit',
+			Disclaimer:'disc',
+			Desc:'desc',
+		},
+		WHITELISTING:{
+			Title:'tit',
+			Desc:'desc',
+			ActionLabel:'act_lbl',
+			MutableProp:'mutable_prop',
+			ImmutableProp:'immutable_prop',
+		},
+		EOS:{
+			Available:'available',
+			Reclaiming:'reclaim',
+			CHANGE_PERMS:{
+				Title:'tit',
+				Desc:'desc',
+				SubDesc:'sub_desc',
+				KeysLabel:'keys_lbl',
+				KeyPlaceholder:'key_plc',
+				OwnerLabel:'owner_lbl',
+				ActiveLabel:'active_lbl',
+				Button:'btn',
+			},
+			MOD_CPUNET:{
+				Stake:'stake',
+				Unstake:'unstake',
+				StakeDesc:'stake_desc',
+				UnstakeDesc:'unstake_desc',
+			},
+			MOD_RAM:{
+				BuyDesc:'buy_desc',
+				SellDesc:'sell_desc',
+				BytesError:'bytes_err',
+			},
+			PROXY:{
+				Title:'tit',
+				ReproxyTitle:'repro_tit',
+				ReproxyDesc:'repro_desc',
+				Label:'lbl',
+				Placeholder:'plc',
+				KnownProxiesLabel:'known_prox_lbl',
+				Button:'btn',
+			}
+		},
+		MNEMONIC:{
+			Title:'tit',
+			Desc:'desc',
+			SubDesc:'sub_desc',
+		},
+		REMOVE_KEY:{
+			Title:'tit',
+			Disclaimer:'disc',
+		},
+		REMOVE_LOCATION:{
+			Title:'tit',
+		},
+		UNLINK_ACCOUNT:{
+			Title:'tit',
+			Desc:'desc',
+			SubDesc:'sub_desc',
+			AuthoritiesLabel:'auth_lbl',
+		},
+		UNLINK_BLOCKCHAIN:{
+			Title:'tit',
+			Disclaimer:'disc',
+		}
+	},
+	OVERLAY:{
+		ConfirmPin:'conf_pin',
+
+		REMOVE_APP:{
+			Title:'tit',
+			Desc:'desc',
+		},
+		TRX_SUCCESS:{
+			Title:'tit',
+			Desc:'desc',
+		},
+		UPDATE_AVAIL:{
+			Title:'tit',
+			ClickLink:'click_link',
+		}
+	}
+})
+
+
 export default {
 	GENERIC,
 	LOGIN,
@@ -579,7 +685,8 @@ export default {
 	USER_BAR,
 	PROCESSES,
 	SNACKBARS,
-	POPOUTS
+	POPOUTS,
+	POPINS
 }
 
 

@@ -1,6 +1,6 @@
 <template>
     <section>
-        <PopinHead :popin="popin" name="Confirm PIN" />
+        <PopinHead :popin="popin" :name="locale(langKeys.POPINS.OVERLAY.ConfirmPin)" />
         <section class="panel">
             <section class="split-inputs">
                 <cin style="margin-bottom:0; flex:3;"

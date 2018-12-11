@@ -3,16 +3,15 @@
 		<section class="full-panel inner center-fold limited">
 			<section>
 				<section class="head">
-					<figure class="title">Enabled Whitelist</figure>
+					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.Title)}}</figure>
 					<p>
-						Whitelisting actions makes it so you don't have to keep approving actions for applications you trust.
-						When whitelisting actions you will see checkboxes appear next to each action and value.
+						{{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.Desc)}}
 					</p>
 
 					<br>
 
 					<section class="mock-props">
-						<label><b class="red">This action will be whitelisted</b></label>
+						<label><b class="red">{{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.ActionLabel)}}</b></label>
 						<section class="details split-inputs">
 							<input checked disabled="true" type="checkbox" />
 							<figure class="title" style="font-size: 13px;">eosio.token <i class="contract-split icon-right-open-big"></i> transfer</figure>
@@ -20,7 +19,7 @@
 						<br>
 
 						<section class="mock-props">
-							<label>Amount <b class="red">( this value will be able to change without a popup )</b></label>
+							<label>Amount <b class="red">( {{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.MutableProp)}} )</b></label>
 							<section class="split-inputs">
 								<input checked disabled="true" type="checkbox" />
 								<figure class="value">1 TOKENS</figure>
@@ -28,7 +27,7 @@
 						</section>
 
 						<section class="mock-props">
-							<label>Recipient <b class="red">( if this changes you will have to approve the action again )</b></label>
+							<label>Recipient <b class="red">( {{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.ImmutableProp)}} )</b></label>
 							<section class="split-inputs">
 								<input disabled="true" type="checkbox" />
 								<figure class="value">xxxxxxxxxxxxx</figure>

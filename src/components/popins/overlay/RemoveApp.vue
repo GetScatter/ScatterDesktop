@@ -1,7 +1,7 @@
 <template>
     <section>
 
-        <PopinHead :popin="popin" name="Removing Application" />
+        <PopinHead :popin="popin" :name="locale(langKeys.POPINS.OVERLAY.REMOVE_APP.Title)" />
         <section class="panel centered">
             <section class="split-inputs">
                 <figure class="icon" v-if="appData.hasOwnProperty('img')">
@@ -10,7 +10,7 @@
 
                 <section class="details">
                     <figure class="title">{{appData.name}}</figure>
-                    <p>You are about to remove this application from your Scatter. This will also remove all whitelist permissions.</p>
+                    <p>{{locale(langKeys.POPINS.OVERLAY.REMOVE_APP.Desc)}}</p>
 
                 </section>
             </section>

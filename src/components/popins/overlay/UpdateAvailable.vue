@@ -1,20 +1,16 @@
 <template>
     <section>
 
-        <PopinHead :popin="popin" name="Scatter Update Available" />
+        <PopinHead :popin="popin" :name="locale(langKeys.POPINS.OVERLAY.UPDATE_AVAIL.Title)" />
         <section class="panel centered">
             <figure class="description"><b>Scatter Desktop</b> - <b class="blue">{{update.name}}</b> (v{{update.stringVersion}})</figure>
             <br>
-            <!--<figure class="description">{{update.body}}</figure>-->
-
             <section class="markdown">
                 <VueMarkdown>{{update.body}}</VueMarkdown>
             </section>
-
-
             <br>
             <br>
-            <label>Click the link below to go to the downloads page</label>
+            <label>{{locale(langKeys.POPINS.OVERLAY.UPDATE_AVAIL.ClickLink)}}</label>
             <figure class="description link" @click="open">{{update.url}}</figure>
 
             <br>

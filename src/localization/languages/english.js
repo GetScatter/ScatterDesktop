@@ -13,7 +13,8 @@ const {
 	USER_BAR,
 	PROCESSES,
 	SNACKBARS,
-	POPOUTS
+	POPOUTS,
+	POPINS
 } = KEYS;
 
 // You can build your own pluralizers.
@@ -75,6 +76,10 @@ const Locale = {
 	[GENERIC.AccountName]:() => `Account Name`,
 	[GENERIC.Address]:() => `Address`,
 	[GENERIC.Search]:() => `Search`,
+	[GENERIC.Buy]:() => `Buy`,
+	[GENERIC.Sell]:() => `Sell`,
+	[GENERIC.Buying]:() => `Buying`,
+	[GENERIC.Selling]:() => `Selling`,
 
 	
 
@@ -538,6 +543,9 @@ const Locale = {
 	/*                     POPOUTS                      */
 	/*                                                  */
 	/****************************************************/
+	[POPOUTS.REQ_FIELDS.PersonalInfo]:() => `Personal Info`,
+	[POPOUTS.REQ_FIELDS.LocationInfo]:() => `Location Info`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[POPOUTS.LOGIN.AccountRequirements]:() => `App requires accounts for these networks`,
 	[POPOUTS.LOGIN.NoAccountsTitle]:() => `You do not have blockchain accounts for the networks that this application requires.`,
 	[POPOUTS.LOGIN.NoAccountsDesc]:() =>
@@ -569,9 +577,93 @@ const Locale = {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[POPOUTS.TRANSFER.SendingTo]:symbol => `sending ${symbol} to`,
 	[POPOUTS.TRANSFER.SearchPlaceholder]:() => `Search Accounts`,
-	[POPOUTS.TRANSFER.AppKey]:() => `App`,
 
 
+
+	/****************************************************/
+	/*                                                  */
+	/*                     POPINS                       */
+	/*                                                  */
+	/****************************************************/
+	[POPINS.FULLSCREEN.CHECK_HARDWARE.Title]:() => `Check Hardware`,
+	[POPINS.FULLSCREEN.CHECK_HARDWARE.Desc]:() => `You should see a confirmation on your hardware device.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.CONFIRM_PASS.Title]:() => `Confirm Password`,
+	[POPINS.FULLSCREEN.CONFIRM_PASS.Label]:() => `Enter password or backup phrase`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.DESTROY.Title]:() => `Destroy Scatter`,
+	[POPINS.FULLSCREEN.DESTROY.Disclaimer]:() =>
+		`Before doing this, make sure you have all of your Private Keys backed up.`,
+	[POPINS.FULLSCREEN.DESTROY.Desc]:() =>
+		`Destroying your Scatter is irreversible, and you will not be able to restore any data without backups.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.WHITELISTING.Title]:() => `Enabled Whitelist`,
+	[POPINS.FULLSCREEN.WHITELISTING.Desc]:() =>
+		`Whitelisting actions makes it so you don't have to keep approving actions for applications you trust.
+		When whitelisting actions you will see checkboxes appear next to each action and value.`,
+	[POPINS.FULLSCREEN.WHITELISTING.ActionLabel]:() => `This action will be whitelisted`,
+	[POPINS.FULLSCREEN.WHITELISTING.MutableProp]:() => `this value will be able to change without a popup`,
+	[POPINS.FULLSCREEN.WHITELISTING.ImmutableProp]:() => `if this changes you will have to approve the action again`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.EOS.Available]:x => `Available ${x}`,
+	[POPINS.FULLSCREEN.EOS.Reclaiming]:x => `Reclaiming ${x}`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Title]:() => `Change Account Permissions`,
+	[POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Desc]:() => `Changing your account's permissions means changing the keys that power the account.`,
+	[POPINS.FULLSCREEN.EOS.CHANGE_PERMS.SubDesc]:() => `You can leave either field blank to keep the existing permission.`,
+	[POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel]:() => `Imported Keys`,
+	[POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeyPlaceholder]:() => `Enter a public key or account name`,
+	[POPINS.FULLSCREEN.EOS.CHANGE_PERMS.OwnerLabel]:() => `Owner`,
+	[POPINS.FULLSCREEN.EOS.CHANGE_PERMS.ActiveLabel]:() => `Active`,
+	[POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Button]:() => `Change Permissions`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.EOS.MOD_CPUNET.Stake]:() => `Stake`,
+	[POPINS.FULLSCREEN.EOS.MOD_CPUNET.Unstake]:() => `Unstake`,
+	[POPINS.FULLSCREEN.EOS.MOD_CPUNET.StakeDesc]:() =>
+		`Self staking CPU & NET will allow this account to do more on the blockchain.`,
+	[POPINS.FULLSCREEN.EOS.MOD_CPUNET.UnstakeDesc]:() =>
+		`Unstaking CPU & NET will reclaim tokens, but will let you do less.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.EOS.MOD_RAM.BuyDesc]:() => `Buying RAM will let this account hold more data on the blockchain.`,
+	[POPINS.FULLSCREEN.EOS.MOD_RAM.SellDesc]:() => `Selling RAM reclaims token to that account at the current price of RAM.`,
+	[POPINS.FULLSCREEN.EOS.MOD_RAM.BytesError]:() => `Bytes must be over 15`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.EOS.PROXY.Title]:() => `Proxy Votes`,
+	[POPINS.FULLSCREEN.EOS.PROXY.ReproxyTitle]:() => `Do you want to automatically re-proxy every 7 days?`,
+	[POPINS.FULLSCREEN.EOS.PROXY.ReproxyDesc]:() =>
+		`If you enable this, accepting the initial transaction also accepts all future transactions too.`,
+	[POPINS.FULLSCREEN.EOS.PROXY.Label]:() => `Proxy`,
+	[POPINS.FULLSCREEN.EOS.PROXY.Placeholder]:() => `Enter the account name of a proxy`,
+	[POPINS.FULLSCREEN.EOS.PROXY.KnownProxiesLabel]:() => `Known Proxies`,
+	[POPINS.FULLSCREEN.EOS.PROXY.Button]:() => `Set Proxy`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.MNEMONIC.Title]:() => `Password Alternative`,
+	[POPINS.FULLSCREEN.MNEMONIC.Desc]:() => `This phrase is a backup for your password. It is not used to generate keys.`,
+	[POPINS.FULLSCREEN.MNEMONIC.SubDesc]:() => `You can paste this phrase into any field that accepts a password in Scatter.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.REMOVE_KEY.Title]:() => `Removing Keys`,
+	[POPINS.FULLSCREEN.REMOVE_KEY.Disclaimer]:() => `Removing keys also removes all of it's accounts and their application permissions.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.REMOVE_LOCATION.Title]:() => `Removing Location`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.Title]:() => `Unlink Accounts`,
+	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.Desc]:() => `Removing a linked account also removes all of it's application permissions`,
+	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.SubDesc]:() => `Select all the authorities you want to remove.`,
+	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.AuthoritiesLabel]:() => `Authorities`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.FULLSCREEN.UNLINK_BLOCKCHAIN.Title]:() => `Unlink Blockchain`,
+	[POPINS.FULLSCREEN.UNLINK_BLOCKCHAIN.Disclaimer]:() => `Unlinking a blockchain also removes all of it's accounts and their application permissions.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.OVERLAY.ConfirmPin]:() => `Confirm PIN`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.OVERLAY.REMOVE_APP.Title]:() => `Removing Application`,
+	[POPINS.OVERLAY.REMOVE_APP.Desc]:() => `You are about to remove this application from your Scatter. This will also remove all whitelist permissions.`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.OVERLAY.TRX_SUCCESS.Title]:() => `Transaction Success!`,
+	[POPINS.OVERLAY.TRX_SUCCESS.Desc]:x => `Click link below to view on ${x}`,
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	[POPINS.OVERLAY.UPDATE_AVAIL.Title]:() => `Scatter Update Available`,
+	[POPINS.OVERLAY.UPDATE_AVAIL.ClickLink]:() => `Click the link below to go to the downloads page`,
 
 	// [ADD_KEYS.IMPORT.QrButton]:() => ``,
 

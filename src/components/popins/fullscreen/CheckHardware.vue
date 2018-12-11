@@ -4,8 +4,8 @@
 			<section>
 				<section class="head">
 					<figure class="icon icon-spin4 animate-spin"></figure>
-					<figure class="title">Check Hardware</figure>
-					<p>You should see a confirmation on your hardware device.</p>
+					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.CHECK_HARDWARE.Title)}}</figure>
+					<p>{{locale(langKeys.POPINS.FULLSCREEN.CHECK_HARDWARE.Desc)}}</p>
 
 				</section>
 			</section>

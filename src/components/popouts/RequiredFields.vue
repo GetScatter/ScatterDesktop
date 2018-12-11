@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<section class="key-val" v-if="personalFields.length">
-			<figure>Personal Info</figure>
+			<figure>{{locale(langKeys.POPOUTS.REQ_FIELDS.PersonalInfo)}}</figure>
 			<figure v-for="field in personalFields" class="key-val nested split-inputs">
 				<figure>{{field}}</figure>
 				<figure v-if="fieldValueFor(field, true).length">{{fieldValueFor(field)}}</figure>
@@ -19,7 +19,7 @@
 			     short="1"
 			     v-on:changed="x => $emit('selectLocation', x)" />
 			<br>
-			<label>Location Info</label>
+			<label>{{locale(langKeys.POPOUTS.REQ_FIELDS.LocationInfo)}}</label>
 			<figure v-for="field in locationFields" class="key-val nested split-inputs">
 				<figure>{{field}}</figure>
 				<figure v-if="fieldValueFor(field, true).length">{{fieldValueFor(field)}}</figure>

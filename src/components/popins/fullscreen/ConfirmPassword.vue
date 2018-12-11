@@ -5,7 +5,7 @@
 			<section>
 				<section class="head">
 					<figure class="icon icon-lock"></figure>
-					<figure class="title">Confirm Password</figure>
+					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.CONFIRM_PASS.Title)}}</figure>
 
 					<br>
 					<br>
@@ -14,12 +14,14 @@
 					     v-on:enter="verify"
 					     v-on:changed="x => password = x"
 					     type="password"
-					     label="Enter password or backup phrase" />
+					     :label="locale(langKeys.POPINS.FULLSCREEN.CONFIRM_PASS.Label)" />
 				</section>
 			</section>
 
 			<section class="action-bar short bottom centered">
-				<btn :disabled="password.trim().length === 0" text="Confirm" blue="1" v-on:clicked="verify" />
+				<btn :disabled="password.trim().length === 0"
+					 :text="locale(langKeys.GENERIC.Confirm)"
+					 blue="1" v-on:clicked="verify" />
 			</section>
 		</section>
 	</section>

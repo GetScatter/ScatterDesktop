@@ -4,14 +4,13 @@
 		<section class="full-panel center-fold inner with-action limited">
 			<section class="head">
 				<figure class="icon icon-attention"></figure>
-				<figure class="title">Destroy Scatter</figure>
+				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Title)}}</figure>
 				<br>
 				<section class="disclaimer less-pad red" style="margin-bottom:10px;">
-					Before doing this, make sure you have all of your Private Keys backed up.
+					{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Disclaimer)}}
 				</section>
 				<p>
-					Destroying your Scatter is
-					irreversible, and you will not be able to restore any data without backups.
+					{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Desc)}}
 				</p>
 			</section>
 

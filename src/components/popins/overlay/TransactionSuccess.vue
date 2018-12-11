@@ -1,12 +1,12 @@
 <template>
     <section>
 
-        <PopinHead :popin="popin" name="Transaction Success!" />
+        <PopinHead :popin="popin" :name="locale(langKeys.POPINS.OVERLAY.TRX_SUCCESS.Title)" />
         <section class="panel centered">
             <br>
             <img src="../../../assets/piggy_bank.png" />
             <br>
-            <label>Click link below to view on {{explorer.name}}</label>
+            <label>{{locale(langKeys.POPINS.OVERLAY.TRX_SUCCESS.Desc, explorer.name)}}</label>
             <figure class="description" style="cursor:pointer;" @click="open"><u>{{tx}}</u></figure>
 
             <br>

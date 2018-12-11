@@ -5,15 +5,15 @@
 			<section>
 				<section class="head">
 					<figure class="icon icon-flow-tree"></figure>
-					<figure class="title">Change Account Permissions</figure>
+					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Title)}}</figure>
 					<br>
 					<section class="disclaimer less-pad">
-						Changing your account's permissions means changing the keys that power the account.
-						<p>You can leave either field blank to keep the existing permission.</p>
+						{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Desc)}}
+						<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.SubDesc)}}</p>
 					</section>
 
 					<section class="split-inputs">
-						<sel label="Imported Keys"
+						<sel :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel)"
 						     v-if="otherKeys.length"
 						     :options="otherKeys"
 						     :parser="x => x.name"
@@ -21,13 +21,13 @@
 						     v-on:changed="x => ownerKey = publicKeyForKeypair(x)"></sel>
 						<cin :text="ownerKey"
 						     v-on:changed="x => ownerKey = x"
-						     placeholder="Enter a public key or account name"
-						     label="Owner"
+						     :placeholder="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeyPlaceholder)"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.OwnerLabel)"
 						     :dynamic-button="isValidPermission(ownerKey) ? 'icon-check' : null" />
 					</section>
 
 					<section class="split-inputs">
-						<sel label="Imported Keys"
+						<sel :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel)"
 						     v-if="otherKeys.length"
 						     :options="otherKeys"
 						     :parser="x => x.name"
@@ -35,8 +35,8 @@
 						     v-on:changed="x => activeKey = publicKeyForKeypair(x)"></sel>
 						<cin :text="activeKey"
 						     v-on:changed="x => activeKey = x"
-						     placeholder="Enter a public key or account name"
-						     label="Active"
+							 :placeholder="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeyPlaceholder)"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.ActiveLabel)"
 						     :dynamic-button="isValidPermission(activeKey) ? 'icon-check' : null" />
 					</section>
 
@@ -44,7 +44,9 @@
 			</section>
 
 			<section class="action-bar short bottom centered">
-				<btn :disabled="!isValidPermission(ownerKey) && !isValidPermission(activeKey)" text="Change Permissions" blue="1" v-on:clicked="changePermissions" />
+				<btn :disabled="!isValidPermission(ownerKey) && !isValidPermission(activeKey)"
+					 :text="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Button)"
+					 blue="1" v-on:clicked="changePermissions" />
 			</section>
 		</section>
 	</section>

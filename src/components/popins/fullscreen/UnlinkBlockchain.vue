@@ -4,18 +4,19 @@
 		<section class="full-panel center-fold inner with-action limited">
 			<section class="head">
 				<figure class="icon icon-trash"></figure>
-				<figure class="title">Unlink Blockchain</figure>
+				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_BLOCKCHAIN.Title)}}</figure>
 				<p>{{blockchainName(blockchain)}}</p>
 
 				<br>
 				<section class="disclaimer less-pad red">
-					Unlinking a blockchain also removes all of it's accounts and their application permissions
+					{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_BLOCKCHAIN.Disclaimer)}}
 				</section>
 			</section>
 
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn text="Confirm" blue="1" v-on:clicked="unlink" />
+			<btn :text="locale(langKeys.GENERIC.Confirm)"
+				 blue="1" v-on:clicked="unlink" />
 		</section>
 	</section>
 </template>

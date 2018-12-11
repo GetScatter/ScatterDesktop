@@ -4,18 +4,18 @@
 		<section class="full-panel center-fold inner with-action limited">
 			<section class="head">
 				<figure class="icon icon-trash"></figure>
-				<figure class="title">Removing Keys</figure>
-				<p>{{keypair.name}} ({{keypair.accounts().length}} accounts)</p>
+				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.REMOVE_KEY.Title)}}</figure>
+				<p>{{keypair.name}} ({{keypair.accounts().length}} {{locale(langKeys.GENERIC.Accounts, keypair.accounts().length)}})</p>
 
 				<br>
 				<section class="disclaimer less-pad red">
-					Removing keys also removes all of it's accounts and their application permissions
+					{{locale(langKeys.POPINS.FULLSCREEN.REMOVE_KEY.Disclaimer)}}
 				</section>
 			</section>
 
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn text="Confirm" blue="1" v-on:clicked="remove" />
+			<btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" v-on:clicked="remove" />
 		</section>
 	</section>
 </template>

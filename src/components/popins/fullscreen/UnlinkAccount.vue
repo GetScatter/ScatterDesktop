@@ -4,29 +4,35 @@
 		<section class="panel-container limited">
 			<section class="head">
 				<figure class="icon icon-trash"></figure>
-				<figure class="title">Unlink Accounts</figure>
+				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.Title)}}</figure>
 				<p>{{account.sendable()}}</p>
 
 				<br>
 				<section class="disclaimer less-pad red">
-					Removing a linked account also removes all of it's application permissions
+					{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.Desc)}}
 
 					<p v-if="authorities.length">
-						Select all the authorities you want to remove.
+						{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.SubDesc)}}
 					</p>
 				</section>
 			</section>
 
 
 			<section class="list">
-				<FlatList label="Authorities" select-blue="1" :selected="selectedAuthorities" :items="authorities" v-on:selected="addOrRemoveAuthority" />
+				<FlatList :label="locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.AuthoritiesLabel)"
+						  select-blue="1"
+						  :selected="selectedAuthorities"
+						  :items="authorities"
+						  v-on:selected="addOrRemoveAuthority" />
 			</section>
 
 
 
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn :disabled="authorities.length > 1 && !selectedAuthorities.length" text="Confirm" blue="1" v-on:clicked="unlinkAccount" />
+			<btn :disabled="authorities.length > 1 && !selectedAuthorities.length"
+				 :text="locale(langKeys.GENERIC.Confirm)" blue="1"
+				 v-on:clicked="unlinkAccount" />
 		</section>
 	</section>
 </template>
@@ -90,8 +96,6 @@
 				} else {
 					accounts = [this.account];
 				}
-
-				console.log('accounts', accounts);
 
 				await AccountService.removeAccounts(accounts);
 				this.returnResult(true);

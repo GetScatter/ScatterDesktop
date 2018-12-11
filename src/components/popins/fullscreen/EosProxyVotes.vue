@@ -4,7 +4,7 @@
 		<section class="panel-container limited">
 			<section class="head">
 				<figure class="icon icon-flow-tree"></figure>
-				<figure class="title">Proxy Votes</figure>
+				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Title)}}</figure>
 				<p>{{account.sendable()}}</p>
 				<br>
 				<br>
@@ -15,8 +15,8 @@
 					<figure class="dot" :class="{'disabled':!autoVote}"></figure>
 				</section>
 				<section class="details">
-					<figure class="title">Do you want to automatically re-proxy every 7 days?</figure>
-					<p>If you enable this, accepting the initial transaction also accepts all future transactions too.</p>
+					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyTitle)}}</figure>
+					<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyDesc)}}</p>
 				</section>
 				<br>
 			</section>
@@ -25,13 +25,13 @@
 			<br>
 			<cin style="max-width:650px; width:100%; margin:0 auto;"
 			     big="1"
-			     label="Proxy"
-			     placeholder="Enter the account name of a proxy"
+			     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Label)"
+			     :placeholder="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Placeholder)"
 			     :text="selectedProxy"
 			     v-on:changed="x => selectedProxy = x" />
 
 			<section class="list" v-if="Object.keys(proxies).length">
-				<FlatList label="Known Proxies"
+				<FlatList :label="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.KnownProxiesLabel)"
 				          selected-icon="icon-check"
 				          :selected="selectedProxy"
 				          :items="proxyList"
@@ -40,7 +40,9 @@
 
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn :disabled="!selectedProxy" text="Set Proxy" blue="1" v-on:clicked="setProxy" />
+			<btn :disabled="!selectedProxy"
+				 :text="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Button)"
+				 blue="1" v-on:clicked="setProxy" />
 		</section>
 	</section>
 </template>
