@@ -15,16 +15,20 @@ const handlers = [];
 
 ipcRenderer.on('result', (event, result) => {
     if(!result) return;
+
     const pending = getPending(result.original);
-    if(!pending) return;
-    pending.resolver(result.result);
+    if(pending) pending.resolver(result.result);
+
+	remote.BrowserWindow.fromId(result.windowId)
+		.webContents
+		.send('ack', true);
+
 });
 
 const sendMessage = (windowId, type, data, resolver = null) => {
     const message = new WindowMessage(type, data, remote.getCurrentWindow().id, resolver);
     if(resolver) addPending(message);
 
-    const win = remote.BrowserWindow.fromId(windowId);
     remote.BrowserWindow.fromId(windowId)
         .webContents
         .send(type, message);
@@ -47,7 +51,14 @@ export default class WindowService {
     }
 
     static sendResult(original, result = null){
-        ipcRenderer.sendTo(original.windowId, 'result', {original, result});
+		return new Promise(resolve => {
+			setTimeout(() => resolve(true), 5500);
+			const windowId = remote.getCurrentWindow().id;
+
+			ipcRenderer.sendTo(original.windowId, 'result', {original, result, windowId});
+			ipcRenderer.once(`ack`, () => resolve(true))
+
+		})
     }
 
     static watch(type, handler){
@@ -64,7 +75,6 @@ export default class WindowService {
 		let {width:screenWidth, height:screenHeight} = remote.screen.getDisplayNearestPoint(mousePoint).workAreaSize;
 
 		// Never want to go out of screen bounds.
-		console.log('screenWidth', screenWidth, width);
 		if(screenWidth < width) width = screenWidth;
 
 		if(mousePoint.x > screenWidth) screenWidth = screenWidth * Math.ceil(mousePoint.x / screenWidth);

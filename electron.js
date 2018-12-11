@@ -186,22 +186,11 @@ class LowLevelWindowService {
 		if(mousePoint.x > screenWidth) screenWidth = screenWidth * Math.ceil(mousePoint.x / screenWidth);
 		win.setPosition(screenWidth - width, screenHeight - height);
 
-		onReady(win);
-		win.show();
 
-		if(isMac()){
-			app.dock.hide();
-			win.setAlwaysOnTop(true, "floating");
-			win.setVisibleOnAllWorkspaces(true);
-		} else {
-			win.setAlwaysOnTop(true);
-		}
-
-		win.focus();
-
-		waitingPopup = await this.getWindow(1, 1);
 
 		win.once('closed', async () => {
+			console.log('dontHide', dontHide);
+
 			// This is a fix for MacOS systems which causes the
 			// main window to always pop up after popups closing.
 			if (!dontHide && isMac()) {
@@ -213,6 +202,24 @@ class LowLevelWindowService {
 			onClosed(win);
 			win = null;
 		});
+
+		onReady(win);
+		win.show();
+
+		win.show();
+		win.setAlwaysOnTop(true, "floating");
+		win.focus();
+
+		if(isMac()){
+
+			win.setAlwaysOnTop(false);
+
+			app.dock.hide();
+			win.setVisibleOnAllWorkspaces(true);
+			win.setFullScreenable(false);
+		}
+
+		waitingPopup = await this.getWindow(1, 1);
 
 		return win;
 	}

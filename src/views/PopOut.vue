@@ -118,9 +118,12 @@
             popupType(){ return this.windowMessage.data.popup.data.type },
         },
         methods: {
-            returnResult(result){
-                WindowService.sendResult(this.windowMessage, result);
-                setTimeout(() => remote.getCurrentWindow().close(), 50);
+            async returnResult(result){
+				await WindowService.sendResult(this.windowMessage, result);
+
+				const window = remote.getCurrentWindow();
+				window.close();
+				if(!window.closed) window.destroy();
             },
 
 	        expandOrContract(deltaWidth = 300, forced = null, subtracted = null){
