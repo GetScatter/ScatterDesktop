@@ -113,6 +113,7 @@ const createScatterInstance = () => {
 };
 
 const activateInstance = e => {
+	console.log('hi')
 	if(e) e.preventDefault();
 	if(!mainWindow) return;
 	mainWindow.restore();
@@ -186,17 +187,13 @@ class LowLevelWindowService {
 		if(mousePoint.x > screenWidth) screenWidth = screenWidth * Math.ceil(mousePoint.x / screenWidth);
 		win.setPosition(screenWidth - width, screenHeight - height);
 
-
-
 		win.once('closed', async () => {
-			console.log('dontHide', dontHide);
-
 			// This is a fix for MacOS systems which causes the
 			// main window to always pop up after popups closing.
 			if (!dontHide && isMac()) {
-				app.dock.show();
-				mainWindow.hide();
-				app.hide();
+				// mainWindow.hide();
+				Menu.sendActionToFirstResponder('hide:');
+				// mainWindow.show();
 			}
 
 			onClosed(win);
@@ -204,19 +201,17 @@ class LowLevelWindowService {
 		});
 
 		onReady(win);
-		win.show();
 
 		win.show();
 		win.setAlwaysOnTop(true, "floating");
 		win.focus();
 
 		if(isMac()){
-
-			win.setAlwaysOnTop(false);
-
 			app.dock.hide();
+			win.setAlwaysOnTop(false);
 			win.setVisibleOnAllWorkspaces(true);
 			win.setFullScreenable(false);
+			app.dock.show();
 		}
 
 		waitingPopup = await this.getWindow(1, 1);
