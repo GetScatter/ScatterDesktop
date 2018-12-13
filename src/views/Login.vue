@@ -215,9 +215,14 @@
 					await this[Actions.CREATE_SCATTER](this.password);
 					this.password = '';
 					this.confirmPassword = '';
-					this.pushTo(this.RouteNames.ONBOARDING);
+					this.openScatter();
                 }, 100);
 			},
+            openScatter(){
+				if(!this.scatter.meta.acceptedTerms) return this.pushTo(this.RouteNames.TERMS);
+				if(this.scatter.settings.backupLocation === '') return this.pushTo(this.RouteNames.ONBOARDING);
+	            this.pushTo(this.RouteNames.HOME);
+            },
 			async unlock(){
 				const lockout = getLockout();
                 if(lockout.tries >= 5 && +new Date() < lockout.stamp + lockoutTime){
@@ -237,9 +242,7 @@
 						await SocketService.initialize();
 						UpdateService.needsUpdate();
 
-						if(this.scatter.settings.backupLocation === ''){
-							this.pushTo(this.RouteNames.ONBOARDING);
-                        } else this.pushTo(this.RouteNames.HOME);
+						this.openScatter();
 					} else {
 						this.working = false;
 						PopupService.push(Popup.snackbarBadPassword());

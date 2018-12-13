@@ -1,29 +1,39 @@
 <template>
     <section>
 
-        <section class="">
+        <section class="panel-container">
             <section class="head">
                 <figure class="logo">S</figure>
                 <figure class="info">
                     <figure>Welcome to Scatter</figure>
-                    <figure>Let's get started setting up your Scatter.</figure>
+                    <figure>Please read the following before continuing.</figure>
                 </figure>
                 <section class="buttons">
-                    <btn text="Accept" v-on:clicked="acceptTerms(true)"></btn>
-                    <btn red="true" text="Reject" v-on:clicked="acceptTerms(false)"></btn>
+                    <section class="split-inputs">
+                        <btn text="Accept" v-on:clicked="acceptTerms(true)" />
+                        <btn red="true" text="Reject" v-on:clicked="acceptTerms(false)" />
+                    </section>
                 </section>
             </section>
 
             <section class="selected-item scrollable">
 
+                <br>
+                <br>
                 <figure class="name">Let's get some things set in stone first.</figure>
                 <figure class="description">Read through the terms below fully so that you understand how both Scatter and you are protected.</figure>
+
+                <br>
+                <br>
 
 
                 <section class="split-panels">
 
                     <section class="info-box">
                         <figure class="header">Last Updated 7-8-2018</figure>
+                        <br>
+                        <br>
+                        <br>
                         <figure class="terms">
                             <h1>1. Acceptance of Terms</h1>
 
@@ -368,13 +378,14 @@
             async acceptTerms(accepted){
                 if(!accepted){
                     await StorageService.removeScatter();
-                    this.$router.push('/');
+                    location.reload();
                     return false;
                 }
 
                 const scatter = this.scatter.clone();
                 scatter.meta.acceptedTerms = true;
                 await this[Actions.SET_SCATTER](scatter);
+                this.$router.push({name:this.RouteNames.ONBOARDING});
 
             },
             ...mapActions([
@@ -388,13 +399,20 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../variables";
 
+    h1, h2 {
+        margin-top:20px;
+    }
+
+    h2 {
+        color:rgba(0,0,0,0.6);
+    }
+
     .head {
         background:#fff;
         margin-bottom:1px;
         -webkit-app-region: drag;
         padding:15px;
         overflow: hidden;
-        margin-top:150px;
 
         .logo {
             line-height: 40px;

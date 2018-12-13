@@ -1,3 +1,4 @@
+const Terms = () => import('../views/Terms')
 const Onboarding = () => import('../views/Onboarding')
 const Login = () => import('../views/Login')
 const Settings = () => import('../views/Settings')
@@ -25,6 +26,7 @@ export const RouteNames = {
     TRANSFER:'transfer',
     RECEIVE:'receive',
     PERMISSION:'permission',
+    TERMS:'terms',
     ONBOARDING:'onboarding',
     SETTINGS:'settings',
 
@@ -34,6 +36,7 @@ export const RouteNames = {
 
 const RouteViews = {
     [RouteNames.LOGIN]:Login,
+    [RouteNames.TERMS]:Terms,
     [RouteNames.ONBOARDING]:Onboarding,
     [RouteNames.HOME]:Home,
     [RouteNames.NEW_KEYPAIR]:NewKeypair,
