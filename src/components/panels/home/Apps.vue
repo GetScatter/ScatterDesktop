@@ -295,6 +295,8 @@
 				}
 
 				.actions {
+					margin-top:10px;
+
 					span {
 						cursor: pointer;
 						font-size: 11px;
@@ -303,7 +305,7 @@
 						transition: 0.2s ease;
 						transition-property: color;
 						border: 1px solid rgba(211, 211, 211, 0.48);
-					    padding: 2px 4px;
+					    padding: 4px 7px;
 					    font-weight: normal;
 					    text-decoration: none;
 					    border-radius: 2px;
