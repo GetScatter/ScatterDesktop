@@ -29,15 +29,15 @@
 
 								<p v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
 								<p v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
-								<p v-if="count === 0">{{locale(langKeys.DASHBOARD.APPS.NoPermissions)}}</p>
+								<p v-if="count === 0">{{getAppData(origin).blockchain}} - {{locale(langKeys.DASHBOARD.APPS.NoPermissions)}}</p>
 
 								<section class="actions" v-if="count !== 0">
-								<span @click="goToPermission(origin)">
-									{{locale(langKeys.GENERIC.Edit)}}
-								</span>
-									<span @click="removePermissions(origin)">
-									{{locale(langKeys.GENERIC.Remove)}}
-								</span>
+									<span @click="goToPermission(origin)">
+										{{locale(langKeys.GENERIC.Edit)}}
+									</span>
+										<span @click="removePermissions(origin)">
+										{{locale(langKeys.GENERIC.Remove)}}
+									</span>
 								</section>
 							</section>
 

@@ -3,6 +3,9 @@ import * as ApiActions from '../api/ApiActions';
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 
+import {remote} from '../../util/ElectronHelpers';
+const NotificationService = () => remote ? remote.getGlobal('appShared').NotificationService : null;
+
 export const PopupDisplayTypes = {
     POP_IN:'popin',
     POP_OUT:'popout',
@@ -160,6 +163,7 @@ export class Popup {
 	}
 
 	static checkHardwareWalletScreen(){
+		NotificationService().pushNotification('Check Hardware', 'Please check your hardware screen.');
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHECK_HARDWARE, {}, () => {}))
 	}
 
