@@ -3,6 +3,7 @@ import * as Actions from "../store/constants";
 import PluginRepository from "../plugins/PluginRepository";
 import {Blockchains} from "../models/Blockchains";
 
+let checkedProxies = false;
 export default class RecurringService {
 
 	static async addProxy(account, proxy){
@@ -18,12 +19,20 @@ export default class RecurringService {
 
 	static async removeProxies(accounts){
 		const scatter = store.state.scatter.clone();
-		const ids = accounts.map(x => x.identifiable());
-		scatter.recurring.proxies = scatter.recurring.proxies.filter(x => !ids.includes(x.account));
+		scatter.recurring.proxies = scatter.recurring.proxies.filter(x => !accounts.includes(x.account));
+		return store.dispatch(Actions.SET_SCATTER, scatter);
+	}
+
+	static async touchProxies(accounts){
+		const scatter = store.state.scatter.clone();
+		scatter.recurring.proxies.filter(x => accounts.includes(x.account)).map(x => x.timestamp = +new Date());
 		return store.dispatch(Actions.SET_SCATTER, scatter);
 	}
 
 	static async checkProxies(){
+		if(checkedProxies) return;
+		checkedProxies = true;
+
 		const scatter = store.state.scatter.clone();
 		const accounts = store.getters.accounts;
 
@@ -39,17 +48,18 @@ export default class RecurringService {
 
 		if(!staleProxies) return true;
 
-		const failed = (await Promise.all(staleProxies.map(proxy => {
+		const proxied = (await Promise.all(staleProxies.map(async proxy => {
 			const account = accounts.find(x => x.identifiable() === proxy.account);
 			return PluginRepository.plugin(account.blockchain()).proxyVote(account, proxy.proxy).then(res => {
 				return {res, account}
 			});
-		}))).filter(x => !x.res);
+		})));
 
-		// If a proxy fails, we're just going to remove it.
-		if(failed.length){
-			await this.removeProxies(failed.map(x => x.account));
-		}
+		const failed = proxied.filter(x => !x.res);
+		const succeeded = proxied.filter(x => x.res);
+
+		if(failed.length) await this.removeProxies(failed.map(x => x.account));
+		if(succeeded.length) await this.touchProxies(succeeded.map(x => x.account));
 
 		return true;
 	}

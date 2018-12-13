@@ -55,26 +55,11 @@
 	        KeypairTokens,
         },
 
-	    mounted(){
-		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
-		    if(!this.keypair) this.$router.push({name:this.RouteNames.HOME});
-
-		    const locale = this.locale;
-		    const {GENERIC} = this.langKeys;
-
-		    this.buttons = [
-			    {text:locale(GENERIC.Export), clicked:this.enableExportKey},
-			    {text:locale(GENERIC.Refresh), clicked:this.refreshAccounts, process:this.keypair.unique()},
-			    {text:locale(GENERIC.Remove), clicked:this.remove, process:this.keypair.unique()},
-		    ];
-
-		    this.lazyLoadResources();
-	    },
-
         computed:{
             ...mapState([
                 'scatter',
                 'resources',
+                'newKey',
             ]),
             ...mapGetters([
                 'keypairs',
@@ -88,6 +73,28 @@
 		        return publicKey.key;
 	        }
         },
+
+	    mounted(){
+		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
+
+		    if(this.newKey){
+			    this[Actions.NEW_KEY](false);
+			    this.state = STATES.EXPORT;
+		    }
+
+		    if(!this.keypair) this.$router.push({name:this.RouteNames.HOME});
+
+		    const locale = this.locale;
+		    const {GENERIC} = this.langKeys;
+
+		    this.buttons = [
+			    {text:locale(GENERIC.Export), clicked:this.enableExportKey},
+			    {text:locale(GENERIC.Refresh), clicked:this.refreshAccounts, process:this.keypair.unique()},
+			    {text:locale(GENERIC.Remove), clicked:this.remove, process:this.keypair.unique()},
+		    ];
+
+		    this.lazyLoadResources();
+	    },
 
         methods:{
 	        back(){
@@ -164,7 +171,8 @@
 
             ...mapActions([
             	Actions.SET_RESOURCES,
-            	Actions.ADD_RESOURCES
+            	Actions.ADD_RESOURCES,
+	            Actions.NEW_KEY
             ])
         },
 

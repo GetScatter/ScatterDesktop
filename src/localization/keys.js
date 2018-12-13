@@ -164,8 +164,6 @@ const ADD_KEYS = prefixKeys('add_keys', {
 		ActiveDescription:'active_desc',
 		CreateEosAccountTitle:'create_eos_acc_tit',
 		CreateEosAccountDescription:'create_eos_acc_desc',
-		CopyButton:'copy_btn',
-		DeleteButton:'del_btn',
 		CreateEosAccountButton:'create_eos_acc_btn',
 	}
 });
@@ -325,8 +323,6 @@ const PERMISSIONS = prefixKeys('permissions', {
 	RemoveLabel:'rem_lbl',
 	RemoveIdentityText:'rem_id_lbl',
 	RemoveWhitelistLabel:'rem_white_lbl',
-	RemoveButton:'rem_btn',
-	RemoveAllButton:'rem_all_btn',
 	ActionWhitelist:'act_whitelist'
 });
 

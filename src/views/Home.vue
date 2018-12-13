@@ -54,6 +54,7 @@
     import Token from "../models/Token";
     import RecurringService from "../services/RecurringService";
     import HardwareService from "../services/HardwareService";
+    import LanguageService from "../services/LanguageService";
 
 
     export default {
@@ -120,10 +121,10 @@
 
         mounted(){
 	        setTimeout(async() => {
-	        	// HardwareService.openConnections(true);
 		        await PriceService.watchPrices();
 		        await this.refreshTokens(false);
 		        await RecurringService.checkProxies();
+		        await LanguageService.regenerateLanguage();
             })
         },
     }

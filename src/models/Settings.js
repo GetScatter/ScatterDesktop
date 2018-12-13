@@ -27,6 +27,7 @@ export default class Settings {
     constructor(){
         this.networks = [];
         this.language = LANG.ENGLISH;
+        this.languageJson = null;
         this.autoBackup = BACKUP_STRATEGIES.AUTOMATIC;
         this.backupLocation = '';
         this.explorers = PluginRepository.defaultExplorers();

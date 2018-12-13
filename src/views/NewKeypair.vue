@@ -168,13 +168,14 @@
                     for(let i = 0; i < accounts.length; i++){ await BalanceService.loadBalancesFor(accounts[i]) }
                 });
 	            setTimeout(async () => {
+	            	if(isNewKeypair) this[Actions.NEW_KEY](true);
 		            this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:keypair.id}});
 		            this.setWorkingScreen(false);
                 }, 500);
 
             },
             ...mapActions([
-
+                Actions.NEW_KEY
             ])
         }
     }

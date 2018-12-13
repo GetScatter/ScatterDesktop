@@ -6,6 +6,7 @@ import {actions} from './actions';
 
 import {PopupDisplayTypes} from '../models/popups/Popup'
 import PluginRepository from '../plugins/PluginRepository'
+import Locale from "../models/Locale";
 
 Vue.use(Vuex);
 
@@ -30,6 +31,8 @@ const state = {
 
     balances:{},
     prices:{},
+
+	newKey:false,
 };
 
 const getters = {
@@ -53,7 +56,11 @@ const getters = {
     // Settings
     version:state =>        state.scatter.meta.version,
     networks:state =>       state.scatter.settings.networks || [],
-    language:state =>       state.scatter && state.scatter.hasOwnProperty('settings') ? state.scatter.settings.language : null,
+    language:state =>       {
+    	if(!state.scatter || !state.scatter.hasOwnProperty('settings')) return;
+    	if(state.scatter.settings.languageJson) return Locale.fromJson(state.scatter.settings.languageJson);
+    	return state.scatter.settings.language;
+    },
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),

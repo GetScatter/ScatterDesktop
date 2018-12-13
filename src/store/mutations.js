@@ -36,4 +36,5 @@ export const mutations = {
 	},
 	[Mutations.SET_HARDWARE]:(state, hardware) => Vue.set(state.hardware, hardware.name, hardware.transport),
 	[Mutations.REMOVE_HARDWARE]:(state, key) => Vue.delete(state.hardware, key),
+	[Mutations.NEW_KEY]:(state, x) => state.newKey = x,
 };

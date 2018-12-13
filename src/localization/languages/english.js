@@ -21,7 +21,7 @@ const {
 // This one for instance is for words that end with "s" when
 // pluralized.
 // See [DASHBOARD.APPS.NPermissions] for example usage
-const plural_s = (n) => parseInt(n) === 1 ? '' : 's'
+const plural_s = (n) => n === '{x}' ? '{plural_s}' : parseInt(n) === 1 ? '' : 's';
 
 const Locale = {
 
@@ -690,8 +690,6 @@ const Locale = {
 	[POPINS.OVERLAY.UPDATE_AVAIL.Title]:() => `Scatter Update Available`,
 	[POPINS.OVERLAY.UPDATE_AVAIL.ClickLink]:() => `Click the link below to go to the downloads page`,
 
-	// [ADD_KEYS.IMPORT.QrButton]:() => ``,
-
-}
+};
 
 export default Locale;

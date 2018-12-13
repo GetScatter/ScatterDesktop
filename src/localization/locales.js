@@ -56,9 +56,20 @@ const locales = () => {
 }
 
 export const localized = (key, args, language) => {
-    if(!language) language = LANG.ENGLISH;
-    let locale = locales()[language];
-    if(!locale || (language !== 'Tester' && !locale.hasOwnProperty(key))) locale = locales()[LANG.ENGLISH];
+	let locale;
+    if(!language) {
+        language = LANG.ENGLISH;
+	    locale = locales()[LANG.ENGLISH];
+    } else {
+        if(typeof getStore().getters.language === 'string'){
+	        locale = locales()[language];
+        } else {
+	        locale = getStore().getters.language.parsed().locales;
+        }
+    }
+
+    // let locale = locales()[language];
+    // if(!locale || (language !== 'Tester' && !locale.hasOwnProperty(key))) locale = locales()[LANG.ENGLISH];
     if(!locale.hasOwnProperty(key) || typeof locale[key] !== 'function') {
         return 'TRANSLATED';
     }
