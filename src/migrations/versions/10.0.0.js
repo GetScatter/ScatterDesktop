@@ -1,6 +1,7 @@
 import PluginRepository from '../../plugins/PluginRepository';
 import Explorer from "../../models/Explorer";
 import {BlockchainsArray} from "../../models/Blockchains";
+import KeyPairService from "../../services/KeyPairService";
 
 export const m10_0_0 = async scatter => {
 
@@ -14,7 +15,9 @@ export const m10_0_0 = async scatter => {
     scatter.settings.displayToken = null;
 
     // Removing all hardware wallets as uniques have changed.
-	scatter.keychain.keypairs = scatter.keychain.keypairs.filter(x => !x.external);
+	scatter.keychain.keypairs.filter(x => x.external).map(x => {
+		scatter.keychain.removeKeyPair(x);
+	});
 
     return true;
 };

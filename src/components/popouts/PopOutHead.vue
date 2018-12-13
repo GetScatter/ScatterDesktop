@@ -17,6 +17,7 @@
 	@import "../../variables";
 
 	.pop-out-head {
+		-webkit-app-region: drag;
 		flex:0 0 auto;
 		height:79px;
 		width:100%;
@@ -26,6 +27,7 @@
 		border-bottom:1px solid #dfe0e1;
 
 		.logo {
+			-webkit-app-region: drag;
 			flex:2;
 			font-family: 'Grand Hotel', sans-serif;
 			font-size: 30px;
@@ -33,6 +35,7 @@
 		}
 
 		.close {
+			-webkit-app-region: no-drag;
 			cursor: pointer;
 			text-align:right;
 			line-height:90px;
