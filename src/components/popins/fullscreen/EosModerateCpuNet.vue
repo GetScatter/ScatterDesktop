@@ -10,10 +10,10 @@
 
 			<section class="panel-switch">
 				<figure class="button" :class="{'active':state === STATES.STAKE}" @click="switchState(STATES.STAKE)">
-					{{locale(POPINS.FULLSCREEN.EOS.MOD_CPUNET.Stake)}}
+					{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_CPUNET.Stake)}}
 				</figure>
 				<figure class="button" :class="{'active':state === STATES.UNSTAKE}" @click="switchState(STATES.UNSTAKE)">
-					{{locale(POPINS.FULLSCREEN.EOS.MOD_CPUNET.Unstake)}}
+					{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_CPUNET.Unstake)}}
 				</figure>
 			</section>
 
