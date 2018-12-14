@@ -156,7 +156,7 @@
         z-index:10001;
 
         &.has-snackbar {
-            padding-bottom:20px;
+            padding-bottom:40px;
         }
     }
 

@@ -293,9 +293,9 @@
 				this.checkAccountName();
 			},
 
-			finishedAccountCreation(tx, network){
+			finishedAccountCreation(tx, network, exchange = false){
 				setTimeout(async () => {
-					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, tx));
+					if(!exchange) PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, tx));
 					const owner = this.keypairs.find(x => x.id === this.ownerId);
 					const active = this.keypairs.find(x => x.id === this.activeId);
 					this.$router.push({name:this.RouteNames.KEYPAIR, params:{id:owner ? owner.id : active.id}});
@@ -303,6 +303,7 @@
 
 					const networks = network ? [network] : [];
 					await AccountService.importAllAccounts(owner ? owner : active, false, [Blockchains.EOSIO], networks);
+					this.returnResult(true);
 				}, 500);
 			},
 
@@ -323,7 +324,7 @@
 					account_name:this.accountName
 				};
 
-				const result = await fetch(`http://localhost:6545/v1/create_eos`, {
+				const result = await fetch(`https://api.get-scatter.com/v1/create_eos`, {
 					method: 'POST',
 					headers:{
 						'Accept': 'application/json',
@@ -338,7 +339,7 @@
 				}
 
 				const network = this.networks.find(x => plugin.isEndorsedNetwork(x));
-				this.finishedAccountCreation(result.created, network);
+				this.finishedAccountCreation(result.created, network, true);
 			},
 
 			async createAccount(){
@@ -359,11 +360,11 @@
 					this.activePublicKey,
 					this.eosToUse
 				).then(tx => {
-					console.log('finished')
 					this.finishedAccountCreation(tx, this.creator.network());
 				})
 				.catch(error => {
 					this.setWorkingScreen(false);
+					PopupService.push(Popup.prompt("Error", error));
 					console.log('error', error);
 				});
 			},
@@ -380,6 +381,10 @@
 					if(this.accountName.length !== 12) return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameLengthError);
 					if(this.accountName.split('').filter(x => isNaN(x)).find(x => x.toUpperCase() === x))
 						return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameFormattingError);
+
+					if(!PluginRepository.plugin(Blockchains.EOSIO).isValidRecipient(this.accountName)){
+						return this.accountNameError = 'only a-z, 1-5';
+					}
 
 					if(this.state === STATES.ACCOUNT && !this.creator)
 						return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.SelectCreatorError);

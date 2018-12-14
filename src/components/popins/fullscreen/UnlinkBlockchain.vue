@@ -63,10 +63,13 @@
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			async unlink(){
+				this.setWorkingScreen(true);
 				await KeyPairService.addOrRemoveBlockchain(this.keypair, this.blockchain);
 				await Promise.all(this.keypair.accounts(true).map(account => {
 					return BalanceService.loadBalancesFor(account);
 				}));
+
+				this.setWorkingScreen(false);
 				this.returnResult(true);
 			},
 
