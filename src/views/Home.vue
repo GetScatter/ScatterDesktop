@@ -55,6 +55,7 @@
     import RecurringService from "../services/RecurringService";
     import HardwareService from "../services/HardwareService";
     import LanguageService from "../services/LanguageService";
+    import AccountService from "../services/AccountService";
 
 
     export default {
@@ -121,6 +122,7 @@
 
         mounted(){
 	        setTimeout(async() => {
+	        	await AccountService.fixOrphanedAccounts();
 		        await PriceService.watchPrices();
 		        await this.refreshTokens(false);
 		        await RecurringService.checkProxies();

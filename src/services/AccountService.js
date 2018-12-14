@@ -7,6 +7,8 @@ import Process from "../models/Process";
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
 
+let checkedOrphanedAccounts = false;
+
 export default class AccountService {
 
     static async addAccount(account){
@@ -122,5 +124,18 @@ export default class AccountService {
         const scatter = store.state.scatter.clone();
         scatter.keychain.accounts.filter(x => ids.includes(x.unique())).map(x => x.logins++);
         return store.dispatch(Actions.SET_SCATTER, scatter);
+    }
+
+    static async fixOrphanedAccounts(){
+        if(checkedOrphanedAccounts) return true;
+	    checkedOrphanedAccounts = true;
+
+        const scatter = store.state.scatter.clone();
+        const keypairs = scatter.keychain.keypairs.map(x => x.unique());
+        const orphaned = scatter.keychain.accounts.filter(x => !keypairs.includes(x.keypairUnique));
+        if(!orphaned.length) return true;
+
+	    orphaned.map(x => scatter.keychain.removeAccount(x));
+	    return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 }
