@@ -80,7 +80,7 @@ export default class WindowService {
 		if(mousePoint.x > screenWidth) screenWidth = screenWidth * Math.ceil(mousePoint.x / screenWidth);
 
 		win.setSize(width, height);
-		win.setPosition(screenWidth - width, screenHeight - height);
+		win.setPosition(screenWidth - width - 2, screenHeight - height - 2);
 	}
 
 }

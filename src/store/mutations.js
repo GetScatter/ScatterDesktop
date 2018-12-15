@@ -23,8 +23,9 @@ export const mutations = {
 	},
 	[Mutations.SET_RESOURCES]:(state, x) => state.resources = x,
 	[Mutations.ADD_RESOURCES]:(state, x) => {
-        state.resources = state.resources.filter(y => y.acc !== x.acc);
-		state.resources.push(x);
+    	Vue.set(state.resources, x.acc, x.res);
+        // state.resources = state.resources.filter(y => y.acc !== x.acc);
+		// state.resources.push(x);
 	},
 	[Mutations.SET_BALANCES]:(state, x) => {
 		Vue.set(state.balances, x.account, x.balances)

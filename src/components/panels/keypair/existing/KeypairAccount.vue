@@ -88,8 +88,8 @@
 					.map(x => x.authority)
 			},
 			accountResources(){
-				const resource = this.resources.find(x => x.acc === this.account.identifiable());
-				return resource ? resource.res : null;
+				const resource = this.resources[this.account.identifiable()];
+				return resource ? resource : null;
 			},
 			accountActions(){
 				const plugin = PluginRepository.plugin(this.account.blockchain());

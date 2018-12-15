@@ -116,7 +116,7 @@
 
 		        	// We're only going to show a process for the first time, as it becomes annoying
                     // to see if every time you go into a wallet.
-			        const alreadyHasResources = this.resources.find(x => x.acc === accounts[0].identifiable());
+			        const alreadyHasResources = this.resources[accounts[0].identifiable()];
 			        if(!alreadyHasResources) process = Process.loadResources(processKey);
 
 			        for(let i = 0; i < accounts.length; i++){
@@ -145,7 +145,7 @@
 		        await Promise.all(this.keypair.accounts(true).map(account => {
 		        	return BalanceService.loadBalancesFor(account);
                 }))
-		        this[Actions.SET_RESOURCES]([]);
+		        this[Actions.SET_RESOURCES]({});
 		        this.lazyLoadResources();
 	        },
 
