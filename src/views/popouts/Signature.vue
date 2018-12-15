@@ -11,7 +11,7 @@
                 <section class="participants" :class="{'top-less':limitedMessages.total <= 1}" v-if="participantAccounts">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.AccountsInvolved)}}</label>
                     <section class="participant" v-for="p in participantAccounts">
-                        {{`${p.sendable()} - ${p.network().name}`}}
+                        {{`${p.network().name} - ${p.sendable()}`}}
                         <span v-if="resources[p.identifiable()]">
                             <b>{{resourcesFor(p)}}</b>
                         </span>
@@ -262,7 +262,7 @@
 
 			    if(account.blockchain() === Blockchains.EOSIO){
 			    	const cpu = resources.find(x => x.name === "CPU");
-			    	return '+'+parseFloat(100 - cpu.percentage).toFixed(2) + '% CPU';
+			    	return parseFloat(cpu.percentage).toFixed(2) + '% CPU';
                 }
             },
 
