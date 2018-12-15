@@ -7,7 +7,8 @@
 
 			<section class="details" :class="{'has-icon':item.hasOwnProperty('icon') && item.icon.length}">
 				<figure class="title">{{item.title}}</figure>
-				<p>{{item.description}}</p>
+				<p v-if="!item.asInput">{{item.description}}</p>
+				<cin style="width:100%;" v-else :text="item.description" copy="1" />
 			</section>
 
 			<section class="actions" :class="{'multiple':item.actions.length > 1}">
@@ -81,7 +82,6 @@
 				flex-wrap: wrap;
 				max-width: 50%;
 				width: 100%;
-				flex: 0 0 auto;
 
 				button {
 					display:inline-block;

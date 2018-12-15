@@ -103,6 +103,7 @@
                 	icon:'',
                     title:this.blockchainName(blockchain),
                     description:this.getPublicKey(blockchain),
+                    asInput:true,
                     isPublic:true,
                     actions:[
 	                    {
@@ -147,7 +148,10 @@
 		        return Crypto.bufferToPrivateKey(this.keypair.privateKey, blockchain);
 	        },
 	        copyPrivateKey(blockchain){
-	        	ElectronHelpers.copy(this.getPrivateKey(blockchain));
+    			const prv = this.getPrivateKey(blockchain);
+    			const pub = this.getPublicKey(blockchain);
+    			const copy = `${this.blockchainName(blockchain)} - ${this.keypair.name}\r\nPublic: ${pub}\r\nPrivate: ${prv}`;
+	        	ElectronHelpers.copy(copy);
             },
 	        revealPrivateKey(blockchain){
 	        	const display = this.keys.find(x => x.title === this.blockchainName(blockchain));
