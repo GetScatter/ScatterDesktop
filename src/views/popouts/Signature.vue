@@ -8,9 +8,14 @@
             <section class="main-panel">
                 <PopOutAction :origin="popup.origin()" :action="limitedMessages.actions" />
                 <figure class="has-more" v-if="limitedMessages.total > 1">{{locale(langKeys.POPOUTS.SIGNATURE.ActionsTotal,limitedMessages.total)}}</figure>
-                <section class="participants" :class="{'top-less':limitedMessages.total <= 1}" v-if="participants">
+                <section class="participants" :class="{'top-less':limitedMessages.total <= 1}" v-if="participantAccounts">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.AccountsInvolved)}}</label>
-                    <section class="participant" v-for="p in participants">{{p}}</section>
+                    <section class="participant" v-for="p in participantAccounts">
+                        {{`${p.sendable()} - ${p.network().name}`}}
+                        <span v-if="resources[p.identifiable()]">
+                            <b>{{resourcesFor(p)}}</b>
+                        </span>
+                    </section>
                 </section>
                 <section class="participants top-less" v-if="isArbitrarySignature">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.KeysInvolved)}}</label>
@@ -129,6 +134,7 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
+    import * as Actions from '../../store/constants';
 	import PopOutHead from '../../components/popouts/PopOutHead';
 	import PopOutAction from '../../components/popouts/PopOutAction';
 	import SearchBar from '../../components/reusable/SearchBar';
@@ -143,6 +149,7 @@
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import RequiredFields from "../../components/popouts/RequiredFields";
 	import KeyPairService from "../../services/KeyPairService";
+	import ResourceService from "../../services/ResourceService";
 
 	const VIEW_TYPES = {
 	    HUMAN:'human',
@@ -160,6 +167,7 @@
 			SearchBar,
 		},
 		data () {return {
+			Blockchains,
             whitelisted:false,
 			whitelists:[],
 			actionList:[],
@@ -175,10 +183,18 @@
 			this.selectedIdentity = this.identity.clone();
 			this.selectedLocation = this.selectedIdentity.locations[0];
 			this.clonedLocation = this.selectedIdentity.locations[0].clone();
+
+			this.participantAccounts.map(async acc => {
+				if(ResourceService.usesResources(acc)){
+					const resources = await ResourceService.getResourcesFor(acc);
+					this[Actions.ADD_RESOURCES]({acc:acc.identifiable(), res:resources});
+                }
+            })
 		},
 		computed: {
 			...mapState([
-				'scatter'
+				'scatter',
+				'resources',
 			]),
 			...mapGetters([
 				'identity',
@@ -193,11 +209,10 @@
 			    return arrMap;
             },
             payload(){ return this.popup.payload(); },
-			participants(){
+			participantAccounts(){
 				if(!this.payload.hasOwnProperty('participants')) return null;
 				return this.payload.participants.map(x => {
-					const account = Account.fromJson(x);
-					return `${account.sendable()} - ${account.network().name}`
+					return Account.fromJson(x);
                 })
 			},
 			messages(){
@@ -240,6 +255,16 @@
 			returnResult(result){
 				this.$emit('returned', result);
 			},
+
+			resourcesFor(account){
+			    const resources = this.resources[account.identifiable()];
+			    if(!resources) return;
+
+			    if(account.blockchain() === Blockchains.EOSIO){
+			    	const cpu = resources.find(x => x.name === "CPU");
+			    	return '+'+parseFloat(100 - cpu.percentage).toFixed(2) + '% CPU';
+                }
+            },
 
             formatViewType(type){
 			    switch(type){
@@ -338,13 +363,15 @@
 			},
 			isPreviouslyWhitelisted(message){
 				if(this.isArbitrarySignature) return false;
-				const participants = this.payload.participants.map(x => Account.fromJson(x));
-				return PermissionService.hasActionPermission(this.payload.origin, this.identity, participants, message);
+				return PermissionService.hasActionPermission(this.payload.origin, this.identity, this.participantAccounts, message);
 			},
 			hasRicardianContract(message){
 				return message.hasOwnProperty('ricardian') && message.ricardian.length
 			},
 
+            ...mapActions([
+            	Actions.ADD_RESOURCES
+            ])
 		}
 	}
 </script>

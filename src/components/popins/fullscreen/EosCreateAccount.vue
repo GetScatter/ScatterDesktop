@@ -87,6 +87,9 @@
 
 		<section class="full-panel center-fold inner with-action limited" v-if="state === STATES.SEND_AMOUNT">
 			<section class="padded">
+				<b>EOS Mainnet</b>
+				<br>
+				<br>
 				<section style="margin:0 auto;" class="disclaimer less-pad">
 					{{locale(langKeys.CREATE_EOS.EXCHANGE.InfoTitle)}}
 					<p>{{locale(langKeys.CREATE_EOS.EXCHANGE.InfoSubtitle)}}</p>

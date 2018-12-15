@@ -17,8 +17,8 @@
 
                         <section class="split-inputs">
                             <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
-                            <section class="padded" style="padding:0 30px; flex:1;">
-                                <sel :options="[null].concat(networks)" style="margin-bottom:0;"
+                            <section class="padded" style="padding:0 30px; flex:1;" v-if="fullNetworks.length > 1">
+                                <sel :options="[null].concat(fullNetworks)" style="margin-bottom:0;"
                                      :selected="networkFilter"
                                      v-on:changed="x => networkFilter = x"
                                      :parser="x => x ? x.name : 'All Networks'" />
@@ -259,6 +259,12 @@
             /**************************/
             /**   LISTS AND FILTERS  **/
 	        /**************************/
+
+            fullNetworks(){
+                return this.networks.filter(net => {
+                	return !!this.accounts.find(acc => acc.networkUnique === net.unique())
+                })
+            },
 
 	        senderAccounts(){
 		        const reducer = accs => accs.reduce((acc,x) => {
