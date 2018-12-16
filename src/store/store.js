@@ -15,7 +15,7 @@ const state = {
     dappData:{},
     workingScreen:null,
     processes:[],
-    resources:[],
+    resources:{},
     hideBackButton:false,
 
     searchTerms:'',
