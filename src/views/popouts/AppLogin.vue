@@ -17,7 +17,7 @@
                     </section>
                 </section>
 
-                <section v-if="validAccounts.length">
+                <section v-if="validAccounts.length" style="display: flex; flex-direction: column;">
                     <br v-if="stillNeedsFields" />
 
                     <section style="padding:0 30px;" v-if="stillNeedsFields">

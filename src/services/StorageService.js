@@ -25,6 +25,7 @@ import {remote} from '../util/ElectronHelpers';
 const dataPath = remote.app.getPath('userData');
 const fs = window.require('fs');
 
+const setSavingData = (bool) => remote.getGlobal('appShared').savingData = bool;
 
 
 let saveResolvers = [];
@@ -36,8 +37,11 @@ const clearSaveTimeouts = () => {
 };
 
 const safeSetScatter = async (scatter, resolver) => {
+	setSavingData(true);
+
 	if(RUNNING_TESTS){
 		await scatterStorage().set('scatter', scatter);
+		setSavingData(false);
 		return resolver(true);
 	}
 
@@ -58,6 +62,7 @@ const safeSetScatter = async (scatter, resolver) => {
 	else fs.rename(path(SCATTER_INTERMED_NAME), path(SCATTER_DATA_NAME), (err) => {
 		if(err) return retry();
 		resolver(true);
+		setSavingData(false);
 	});
 };
 

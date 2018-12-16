@@ -257,7 +257,6 @@
 				}
 
 				if(this.restoringBackup) return;
-				this.setWorkingScreen(true);
 				this.restoringBackup = true;
 				const possibleFile = getFileLocation();
 				if(!possibleFile) return unrestore();
@@ -350,6 +349,7 @@
 
 					PopupService.push(Popup.verifyPassword(async password => {
 						if(!password || !password.length) return unrestore();
+						this.setWorkingScreen(true);
 
 						try {
 							switch(fileExtension){

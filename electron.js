@@ -27,7 +27,13 @@ let splashScreen = url.format({
 });
 
 
-const quit = () => setTimeout(() => app.quit(), 1);
+const quit = () => {
+	if(global.appShared.savingData){
+		setTimeout(() => {
+			quit();
+		}, 100);
+	} else setTimeout(() => app.quit(), 1);
+}
 
 let tray, mainWindow;
 
@@ -234,5 +240,5 @@ class NotificationService {
 }
 
 const Transport = require('@ledgerhq/hw-transport-node-hid');
-global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService };
+global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService, savingData:false };
 
