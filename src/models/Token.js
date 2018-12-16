@@ -48,7 +48,7 @@ export default class Token {
     network(){
     	const networks = store.state.scatter.settings.networks;
     	if(!this.chainId || !this.chainId.length) return networks.find(x => x.unique() === PluginRepository.plugin(this.blockchain).getEndorsedNetwork().unique());
-    	return networks.find(x => x.chainId === this.chainId);
+    	return networks.find(x => x.blockchain === this.blockchain && x.chainId === this.chainId);
     }
 
     needsContract(){
