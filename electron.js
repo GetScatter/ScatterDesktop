@@ -28,7 +28,7 @@ let splashScreen = url.format({
 
 
 const quit = () => {
-	if(global.appShared.savingData){
+	if(global.appShared && global.appShared.savingData){
 		setTimeout(() => {
 			quit();
 		}, 100);
