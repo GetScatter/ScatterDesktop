@@ -90,7 +90,6 @@
                 });
 
                 this[Actions.HOLD_SCATTER](Scatter.fromJson(scatter));
-                console.log('popupType', this.popupType);
 
                 const needsPIN = [
                     ApiActions.REQUEST_ARBITRARY_SIGNATURE,

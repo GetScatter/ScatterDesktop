@@ -29,9 +29,7 @@ export default class LanguageService {
 		this.getLanguage(store.state.scatter.settings.language).then(res => {
 			if(!res) return;
 			const scatter = store.state.scatter.clone();
-			console.log('regen')
 			if(scatter.settings.languageJson.raw !== JSON.stringify(res)){
-				console.log('changed')
 				res.raw = JSON.stringify(res);
 				scatter.settings.languageJson = res;
 				store.dispatch(Actions.SET_SCATTER, scatter);

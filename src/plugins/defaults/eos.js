@@ -136,7 +136,12 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 
 const popupError = result => {
 	console.log('result', result);
-	const error = ({error:JSON.parse(result).error.details[0].message.replace('assertion failure with message:', '').trim()});
+	const json = JSON.parse(result);
+	let error;
+	if(json.hasOwnProperty('error') && json.error.hasOwnProperty('details') && json.error.details.length) {
+		error = ({error: JSON.parse(result).error.details[0].message.replace('assertion failure with message:', '').trim()});
+	} else error = result;
+
 	PopupService.push(Popup.prompt('Transaction Error', error));
 }
 

@@ -99,14 +99,6 @@
         },
 
         mounted(){
-    		// setTimeout(async() => {
-			//     const [_,seed] = await Mnemonic.generateMnemonic('lengliu12345', '24bda30ae82a97f500b4844b12506d5d461ddb0fb8d73eab8954a3000ebd5aea')
-			//     console.log('seed', seed);
-			//     this.keypair.decrypt(seed);
-			//     const test = Crypto.bufferToPrivateKey(this.keypair.privateKey, 'trx');
-			//     console.log('test', test);
-			//     console.log('keypair', this.keypair);
-            // })
     		this.keys = this.keypair.blockchains.map(blockchain => {
                 return {
                 	icon:'',
