@@ -140,6 +140,12 @@ export default class ApiService {
             const possibleId = PermissionService.identityFromPermissions(request.payload.origin);
             if(possibleId) return resolve({id:request.id, result:possibleId});
 
+            const requiredNetworks = (request.payload.fields.hasOwnProperty('accounts') ? request.payload.fields.accounts : []).map(x => Network.fromJson(x)).map(x => x.unique());
+            const existingNetworkIds = store.state.scatter.settings.networks.map(x => x.unique());
+            if(!requiredNetworks.every(x => existingNetworkIds.includes(x))){
+	            return resolve({id:request.id, result:Error.noNetwork()});
+            }
+
             PopupService.push(Popup.popout(request, async ({result}) => {
                 if(!result) return resolve({id:request.id, result:Error.signatureError("identity_rejected", "User rejected the provision of an Identity")});
 

@@ -107,6 +107,8 @@
 	import AccountService from "../../../services/AccountService";
 	import Account from "../../../models/Account";
 	import PluginRepository from "../../../plugins/PluginRepository";
+	import BalanceService from "../../../services/BalanceService";
+	import * as Actions from "../../../store/constants";
 
 	let saveTimeout;
 
@@ -196,7 +198,13 @@
 
 				await AccountService.addAccount(account);
 				this.dashState = DASH_STATES.ACCOUNTS;
+				BalanceService.loadBalancesFor(account);
+				this[Actions.ADD_RESOURCES]({acc:account.identifiable(), res:await ResourceService.getResourcesFor(account)});
 			},
+
+			...mapActions([
+				Actions.ADD_RESOURCES
+			])
 		},
 
 		watch:{

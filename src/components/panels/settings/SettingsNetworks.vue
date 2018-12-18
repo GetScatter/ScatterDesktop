@@ -24,7 +24,7 @@
                          :subparser="x => blockchainName(x.blockchain)"
                          v-on:changed="x => knownNetwork = x" />
 
-                    <btn style="flex:1; font-size: 11px; margin-top:0;"
+                    <btn style="flex:1; font-size: 11px; margin-top:0;" :disabled="working" :loading="working"
                          :text="locale(langKeys.GENERIC.Add)" v-on:clicked="addKnownNetwork" />
                 </section>
             </section>

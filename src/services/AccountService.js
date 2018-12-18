@@ -60,7 +60,8 @@ export default class AccountService {
     static async importAllAccountsForNetwork(network){
         return new Promise(async resolve => {
             let scatter = store.state.scatter.clone();
-            const keypairs = scatter.keychain.keypairs;
+            const blockchain = network.blockchain;
+            const keypairs = scatter.keychain.keypairs.filter(x => x.blockchains.includes(blockchain));
             let accounts = [];
 
             const plugin = PluginRepository.plugin(network.blockchain);

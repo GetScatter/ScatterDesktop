@@ -123,17 +123,23 @@ export default class ETH extends Plugin {
         }
 
 
-        if(token.unique() === this.defaultToken().unique()){
-	        balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
-        } else {
-            const contract = new web3.eth.Contract(erc20abi, token.contract);
-            try {
-	            balance = TokenService.formatAmount(await contract.methods.balanceOf(account.sendable()).call(), token, true);
-            } catch(e){
-                console.log(`${token.name} is not an ERC20 token`, e);
-                balance = TokenService.formatAmount('0', token, true);
-            }
-        }
+        await Promise.race([
+            new Promise(resolve => setTimeout(() => resolve(), 2000)),
+            new Promise(async resolve => {
+	            if(token.unique() === this.defaultToken().unique()){
+		            balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
+	            } else {
+		            const contract = new web3.eth.Contract(erc20abi, token.contract);
+		            try {
+			            balance = TokenService.formatAmount(await contract.methods.balanceOf(account.sendable()).call(), token, true);
+		            } catch(e){
+			            console.log(`${token.name} is not an ERC20 token`, e);
+			            balance = TokenService.formatAmount('0', token, true);
+		            }
+	            }
+	            resolve();
+            })
+        ])
 
 	    if(killInstance) killCachedInstance(account.network());
 	    return balance;

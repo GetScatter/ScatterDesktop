@@ -70,7 +70,7 @@ export default class TRX extends Plugin {
         return utils.getBase58CheckAddress(utils.getAddressFromPriKey(privateKey));
     }
     validPrivateKey(privateKey){ return privateKey.length === 64 && ethUtil.isValidPrivate(toBuffer(privateKey)); }
-    validPublicKey(publicKey){ return utils.isAddressValid(address); }
+    validPublicKey(address){ return utils.isAddressValid(address); }
     bufferToHexPrivate(buffer){ return new Buffer(buffer).toString('hex') }
     hexPrivateToBuffer(privateKey){ return Buffer.from(privateKey, 'hex'); }
 
@@ -92,12 +92,13 @@ export default class TRX extends Plugin {
 		const tron = getCachedInstance(account.network());
 		const formatBalance = n => tron.toBigNumber(n).div(1000000).toFixed(6).toString(10);
 
-		const trxBalance = await tron.trx.getBalance(account.publicKey);
 		const trx = this.defaultToken();
-		trx.amount = formatBalance(trxBalance);
-
-		const {asset} = await tron.trx.getAccount(account.sendable()).catch(() => ({asset:[]}));
+		const {asset, balance} = await Promise.race([
+			new Promise(resolve => setTimeout(() => resolve({asset:[], balance:0}), 2000)),
+			tron.trx.getAccount(account.sendable()).catch(() => ({asset:[], balance:0}))
+		]);
 		if(!asset) return [trx];
+		trx.amount = formatBalance(balance);
 		const altTokens = asset.map(({key:symbol, value}) => {
 			return Token.fromJson({
 				blockchain:Blockchains.TRX,

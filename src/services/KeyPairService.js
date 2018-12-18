@@ -105,6 +105,7 @@ export default class KeyPairService {
     }
 
     static updateKeyPair(keypair){
+        if(!keypair.name.length) return;
         const scatter = store.state.scatter.clone();
         scatter.keychain.keypairs.find(x => x.unique() === keypair.unique()).name = keypair.name;
         scatter.keychain.keypairs.find(x => x.unique() === keypair.unique()).blockchains = keypair.blockchains;

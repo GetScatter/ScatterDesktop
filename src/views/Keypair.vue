@@ -75,7 +75,7 @@
         },
 
 	    mounted(){
-		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id);
+		    this.keypair = this.keypairs.find(x => x.id === this.$route.params.id).clone();
 
 		    if(this.newKey){
 			    this[Actions.NEW_KEY](false);
