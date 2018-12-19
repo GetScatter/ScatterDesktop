@@ -51,7 +51,10 @@ export default class Account {
     clone(){ return Account.fromJson(JSON.parse(JSON.stringify(this))) }
 
     asReturnable(){
-        return PluginRepository.plugin(this.blockchain()).returnableAccount(this);
+        const returnable = PluginRepository.plugin(this.blockchain()).returnableAccount(this);
+        returnable.chainId = this.network().chainId;
+        returnable.isHardware = !!this.keypair().external;
+        return returnable;
     }
 
     tokenCount(systemToken = null){
