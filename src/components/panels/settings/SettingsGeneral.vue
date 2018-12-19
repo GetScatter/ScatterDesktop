@@ -10,8 +10,8 @@
                  :red="needsUpdate"
                  v-on:clicked="openUpdateLink"
                  :text="needsUpdate
-                 ? locale(langKeys.SETTINGS.GENERAL.UpdateAvailable)
-                 : locale(langKeys.SETTINGS.GENERAL.NoUpdateAvailable)"
+                     ? locale(langKeys.SETTINGS.GENERAL.UpdateAvailable)
+                     : locale(langKeys.SETTINGS.GENERAL.NoUpdateAvailable)"
             />
         </section>
 
@@ -74,7 +74,7 @@
         },
         mounted(){
             UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
-                this.needsUpdate = needsUpdate ? needsUpdate.url : false;
+                this.needsUpdate = !!needsUpdate;
             })
         },
         methods: {
