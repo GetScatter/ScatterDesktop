@@ -3,15 +3,15 @@
 		<section class="basics" v-if="account">
 			<section class="info">
 				<figure class="collapser" v-if="accountActions || (account && usesResources)"
-				        :class="{'icon-down-open-big':collapsed, 'icon-up-open-big':!collapsed}"
+				        :class="{'icon-down-open-big':collapsed, 'icon-up-open-big':!collapsed, 'switched':!collapsed}"
 				        @click="collapsed = !collapsed"></figure>
 
 				<figure class="network">{{blockchainName(account.blockchain())}} - <b>{{account.network().name}}</b></figure>
-				<figure class="identifier" :class="{'mainnet':isMainnet}" @click="openInExplorer">{{account.sendable()}}</figure>
 				<section class="authorities" v-if="authorities.length">
 					<figure class="authority" :class="{'red':authority === 'owner'}" v-for="authority in authorities">{{authority}}</figure>
 				</section>
-				<section class="disclaimer less-pad" v-if="authorities.includes('owner') && authorities.includes('active')">
+				<figure class="identifier" :class="{'mainnet':isMainnet}" @click="openInExplorer">{{account.sendable()}}</figure>
+				<section class="disclaimer less-pad" v-if="!collapsed && authorities.includes('owner') && authorities.includes('active')">
 					{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissions)}}
 					<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle)}}</p>
 				</section>
@@ -22,6 +22,10 @@
 			<section class="tokens" v-else>
 				No Tokens
 			</section>
+		</section>
+
+		<section class="bottom-collapser" v-if="collapsed && (accountActions || (account && usesResources))" @click="collapsed = !collapsed">
+			<span>Show Resources & Actions</span>
 		</section>
 
 		<section class="moderations" v-if="!collapsed && account && usesResources">
@@ -60,16 +64,17 @@
 	import BalanceService from "../../../../services/BalanceService";
 
 	export default {
-		props:['account'],
+		props:['account', 'collapse'],
 
 		data(){return {
 			Blockchains,
 			usesResources:false,
 			isMainnet:false,
-			collapsed:false,
+			collapsed:true,
 		}},
 
 		mounted(){
+			if(this.collapse !== null) this.collapsed = this.collapse;
 			this.usesResources = ResourceService.usesResources(this.account);
 			this.setMainnet();
 		},
@@ -157,6 +162,19 @@
 				font-size: 12px;
 				margin-right:10px;
 				cursor: pointer;
+
+				&.switched {
+					animation: pump 0.5s ease;
+
+					@keyframes pump {
+						0%, 100% {
+							transform:scale(1);
+						}
+						50% {
+							transform:scale(2) translateX(-1px);
+						}
+					}
+				}
 			}
 
 			.network {
@@ -185,7 +203,8 @@
 			}
 
 			.authorities {
-				margin-top:5px;
+				margin-left:10px;
+				display:inline-block;
 
 				.authority {
 					font-size: 9px;
@@ -235,6 +254,23 @@
 			}
 		}
 
+	}
+
+	.bottom-collapser {
+		cursor: pointer;
+		padding:5px;
+		background:#f4f5f5;
+		border-top:1px solid rgba(0,0,0,0.05);
+		display:flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 11px;
+		font-weight: bold;
+		background:$dark-blue;
+		background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
+		color:#fff;
+		border-bottom-left-radius:2px;
+		border-bottom-right-radius:2px;
 	}
 
 	.moderations {

@@ -4,7 +4,8 @@ import {Blockchains, BlockchainsArray} from '../models/Blockchains';
 import PluginRepository from '../plugins/PluginRepository'
 import ObjectHelpers from '../util/ObjectHelpers'
 
-const api = "https://api.get-scatter.com";
+// const api = "https://api.get-scatter.com";
+const api = "http://localhost:6545";
 
 // Once every 30 minutes.
 const intervalTime = 60000 * 30;

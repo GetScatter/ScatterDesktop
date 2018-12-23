@@ -319,7 +319,6 @@
 			}
 
 			.button {
-				width:100px;
 				display:flex;
 				justify-content: flex-end;
 				align-items: center;

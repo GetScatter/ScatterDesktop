@@ -108,12 +108,12 @@ const getters = {
 
             if(!state.balances[accountUnique]) return;
             state.balances[accountUnique].map(token => {
-                if(!tokens[account.networkUnique].hasOwnProperty(token.unique())) {
-	                tokens[account.networkUnique][token.unique()] = token.clone();
-	                tokens['totals'][token.unique()] = token.clone();
+                if(!tokens[account.networkUnique].hasOwnProperty(token.uniqueWithChain())) {
+	                tokens[account.networkUnique][token.uniqueWithChain()] = token.clone();
+	                tokens['totals'][token.uniqueWithChain()] = token.clone();
                 } else {
-	                tokens[account.networkUnique][token.unique()].add(token.amount);
-	                tokens['totals'][token.unique()].add(token.amount);
+	                tokens[account.networkUnique][token.uniqueWithChain()].add(token.amount);
+	                tokens['totals'][token.uniqueWithChain()].add(token.amount);
                 }
             });
         });

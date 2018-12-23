@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 
 export default class Token {
 
-    constructor(blockchain = Blockchains.EOSIO, contract = '', symbol = '', name = null, decimals = null){
+    constructor(blockchain = Blockchains.EOSIO, contract = '', symbol = '', name = null, decimals = null, chainId = ''){
         this.id = IdGenerator.text(24);
         this.blockchain = blockchain;
         this.contract = contract;
@@ -16,7 +16,7 @@ export default class Token {
 
 	    this.amount = 0;
 
-	    this.chainId = '';
+	    this.chainId = chainId;
     }
 
     static placeholder(){ return new Token(); }
@@ -63,8 +63,8 @@ export default class Token {
     }
 
 	fiatBalance(){
-		if(store.state.prices.hasOwnProperty(this.unique())){
-			const price = parseFloat(store.state.prices[this.unique()][store.getters.displayCurrency]);
+		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
+			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
 			return `${parseFloat(price * parseFloat(this.amount)).toFixed(2)} ${store.getters.displayCurrency}`;
 		} else {
 			return null;
@@ -72,8 +72,8 @@ export default class Token {
 	}
 
 	fiatPrice(){
-		if(store.state.prices.hasOwnProperty(this.unique())){
-			const price = parseFloat(store.state.prices[this.unique()][store.getters.displayCurrency]);
+		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
+			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
 			return `${parseFloat(price).toFixed(2)} ${store.getters.displayCurrency}`
 		} else {
 			return null;

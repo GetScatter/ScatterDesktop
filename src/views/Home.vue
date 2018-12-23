@@ -84,6 +84,7 @@
             balance(){
             	const totals = this.totalBalances.totals;
 
+
             	if(this.displayToken){
             		if(totals.hasOwnProperty(this.displayToken)) return totals[this.displayToken]
                     else {

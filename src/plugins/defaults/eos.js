@@ -517,7 +517,7 @@ export default class EOS extends Plugin {
 	}
 
 	defaultDecimals(){ return 4; }
-	defaultToken(){ return new Token(Blockchains.EOSIO, 'eosio.token', 'EOS', 'EOS', this.defaultDecimals()) }
+	defaultToken(){ return new Token(Blockchains.EOSIO, 'eosio.token', 'EOS', 'EOS', this.defaultDecimals(), 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906') }
 
 	async getRamPrice(network, eos = null){
 		if(!eos) eos = getCachedInstance(network);

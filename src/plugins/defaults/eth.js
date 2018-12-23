@@ -126,7 +126,7 @@ export default class ETH extends Plugin {
         await Promise.race([
             new Promise(resolve => setTimeout(() => resolve(), 2000)),
             new Promise(async resolve => {
-	            if(token.unique() === this.defaultToken().unique()){
+	            if(token.uniqueWithChain() === this.defaultToken().uniqueWithChain()){
 		            balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));
 	            } else {
 		            const contract = new web3.eth.Contract(erc20abi, token.contract);
@@ -162,7 +162,7 @@ export default class ETH extends Plugin {
     }
 
     defaultDecimals(){ return 18; }
-    defaultToken(){ return new Token(Blockchains.ETH, 'eth', 'ETH', 'ETH', this.defaultDecimals()) }
+    defaultToken(){ return new Token(Blockchains.ETH, 'eth', 'ETH', 'ETH', this.defaultDecimals(), '1') }
 
     actionParticipants(payload){
         return ObjectHelpers.flatten(
@@ -174,7 +174,7 @@ export default class ETH extends Plugin {
 
     async transfer({account, to, amount, token, promptForSignature = true}){
 	    const {contract, symbol} = token;
-	    const isEth = token.unique() === this.defaultToken().unique();
+	    const isEth = token.uniqueWithChain() === this.defaultToken().uniqueWithChain();
         return new Promise(async (resolve, reject) => {
             const wallet = new ScatterEthereumWallet(account, async (transaction, callback) => {
                 const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{}, abi:isEth ? null : erc20abi };

@@ -29,7 +29,7 @@
 				<!-- Accounts List -->
 				<section class="list accounts" :class="{'scrolled':!scrollerAtTop}" @scroll="handleScroll">
 					<section class="item" v-for="account in filteredAccounts">
-						<KeypairAccount :key="account.unique()" :account="account" v-on:tokens="x => $emit('tokens', x)" />
+						<KeypairAccount :collapse="filteredAccounts.length > 3" :key="account.unique()" :account="account" v-on:tokens="x => $emit('tokens', x)" />
 					</section>
 				</section>
 			</section>

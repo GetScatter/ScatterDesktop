@@ -80,7 +80,7 @@ export default class TRX extends Plugin {
     async balanceFor(account, token){
 	    const tron = getCachedInstance(account.network());
 	    const clone = token.clone();
-        if(token.unique() === this.defaultToken().unique()){
+        if(token.uniqueWithChain() === this.defaultToken().uniqueWithChain()){
 	        const bal = await tron.trx.getBalance(account.publicKey);
 	        clone.amount = tron.toBigNumber(bal).div(1000000).toFixed(6).toString(10);
         }
@@ -115,7 +115,7 @@ export default class TRX extends Plugin {
     }
 
     defaultDecimals(){ return 6; }
-    defaultToken(){ return new Token(Blockchains.TRX, 'trx', 'TRX', 'TRX', this.defaultDecimals()) }
+    defaultToken(){ return new Token(Blockchains.TRX, 'trx', 'TRX', 'TRX', this.defaultDecimals(), '1') }
     actionParticipants(payload){ return payload.transaction.participants }
 
 

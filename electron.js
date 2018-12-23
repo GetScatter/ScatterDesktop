@@ -185,12 +185,14 @@ class LowLevelWindowService {
 
 		win.setSize(width, height);
 
+
 		// Getting the screen to display the popup based on
 		// where the user is at the time ( for dual monitors )
 		const mousePoint = electron.screen.getCursorScreenPoint();
-		let {width:screenWidth, height:screenHeight} = electron.screen.getDisplayNearestPoint(mousePoint).workAreaSize;
-		if(mousePoint.x > screenWidth) screenWidth = screenWidth * Math.ceil(mousePoint.x / screenWidth);
-		win.setPosition(screenWidth - width - 2, screenHeight - height - 2);
+		const activeDisplay = electron.screen.getDisplayNearestPoint(mousePoint);
+		let {width:screenWidth, height:screenHeight} = activeDisplay.workAreaSize;
+		const leftBound = activeDisplay.bounds.x;
+		win.setPosition(screenWidth + leftBound - width - 2, screenHeight - height - 2);
 
 		win.once('closed', async () => {
 			// This is a fix for MacOS systems which causes the
