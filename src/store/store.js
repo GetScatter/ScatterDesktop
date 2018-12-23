@@ -33,6 +33,9 @@ const state = {
     prices:{},
 
 	newKey:false,
+
+	backgroundColor:'rgb(255,255,255)',
+	textColor:'rgb(188,188,188)'
 };
 
 const getters = {

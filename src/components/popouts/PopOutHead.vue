@@ -24,7 +24,7 @@
 		display:flex;
 		align-items: center;
 		padding:0 0 0 30px;
-		border-bottom:1px solid #dfe0e1;
+		border-bottom:1px solid $border-medium;
 
 		.logo {
 			-webkit-app-region: drag;

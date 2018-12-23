@@ -42,6 +42,15 @@
                  :text="locale(langKeys.SETTINGS.GENERAL.DeveloperConsoleButton)"></btn>
         </section>
 
+        <section class="action-box top-pad">
+            <label>Colors</label>
+            <slider :min="0" :max="255" step="1" :value="bgColorVal" v-on:changed="x => {bgColor = numberToColor(x); applyColors(); }" />
+            <slider :min="0" :max="255" step="1" :value="txtColorVal" v-on:changed="x => {txtColor = numberToColor(x); applyColors(); }" />
+
+            <!--<btn @click.native="applyColors"-->
+                 <!--:text="locale(langKeys.GENERIC.Confirm)"></btn>-->
+        </section>
+
     </section>
 </template>
 
@@ -59,10 +68,16 @@
     export default {
         data () {return {
             needsUpdate:null,
+            bgColor:'',
+            txtColor:'',
+            bgColorVal:0,
+            txtColorVal:0,
         }},
         computed:{
             ...mapState([
-                'scatter'
+                'scatter',
+                'backgroundColor',
+                'textColor',
             ]),
             ...mapGetters([
                 'showNotifications',
@@ -90,8 +105,18 @@
                 scatter.settings.showNotifications = !scatter.settings.showNotifications;
                 this[Actions.SET_SCATTER](scatter);
             },
+            numberToColor(n){
+        		if(n === null || typeof n === 'undefined') return 'rgb(0,0,0)';
+        		return `rgb(${n},${n},${n})`
+            },
+            applyColors(){
+	            this[Actions.SET_BG_COLOR](this.bgColor);
+	            this[Actions.SET_TXT_COLOR](this.txtColor);
+            },
             ...mapActions([
-                Actions.SET_SCATTER
+                Actions.SET_SCATTER,
+                Actions.SET_BG_COLOR,
+                Actions.SET_TXT_COLOR,
             ])
         },
     }

@@ -62,7 +62,6 @@
 			justify-content: flex-start;
 			align-items: center;
 			font-size: 36px;
-			color:$dark-grey;
 		}
 
 		.details {
@@ -112,7 +111,7 @@
 		.row {
 			padding:15px;
 			background:#fff;
-			border:1px solid #e0e0e0;
+			border:1px solid $border-medium;
 			border-radius:4px;
 			margin-bottom:10px;
 
@@ -128,7 +127,6 @@
 				.title { font-size:14px; }
 				p {
 					font-size:9px;
-					color:$dark-grey;
 					margin-top:0;
 				}
 			}

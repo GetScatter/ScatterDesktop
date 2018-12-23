@@ -153,7 +153,7 @@
             outline:0;
             height:38px;
             width:100%;
-            border:1px solid #dfe0e1;
+            border:1px solid $border-medium;
             border-radius:3px;
             padding:0 12px;
             cursor: text;

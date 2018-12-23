@@ -7,6 +7,7 @@ const PopOut = () => import('../views/PopOut')
 const Identity = () => import('../views/Identity')
 const Transfer = () => import('../views/Transfer')
 const Receive = () => import('../views/Receive')
+const Exchange = () => import('../views/Exchange')
 const Permission = () => import('../views/Permission')
 
 
@@ -25,6 +26,7 @@ export const RouteNames = {
     IDENTITY:'identity',
     TRANSFER:'transfer',
     RECEIVE:'receive',
+    EXCHANGE:'exchange',
     PERMISSION:'permission',
     TERMS:'terms',
     ONBOARDING:'onboarding',
@@ -44,6 +46,7 @@ const RouteViews = {
     [RouteNames.IDENTITY]:Identity,
     [RouteNames.TRANSFER]:Transfer,
     [RouteNames.RECEIVE]:Receive,
+    [RouteNames.EXCHANGE]:Exchange,
     [RouteNames.PERMISSION]:Permission,
 
     [RouteNames.SETTINGS]:Settings,

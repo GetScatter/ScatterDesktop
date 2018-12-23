@@ -229,7 +229,7 @@
             width:calc(50% - 10px);
             max-width:400px;
             background:#fff;
-            border:1px solid #e8e8e8;
+            border:1px solid $border-medium;
             border-radius:10px;
             padding:36px;
             position: relative;
@@ -249,7 +249,7 @@
                 height:100px;
                 border-radius:50%;
                 background:#fff;
-                border:1px solid #e8e8e8;
+                border:1px solid $border-medium;
                 color:$dark-grey;
                 font-size: 36px;
                 display:flex;

@@ -4,16 +4,31 @@
         <section class="full-panel home" v-if="keypairs.length">
             <section class="action-bar short">
                 <section class="token-buttons">
-                    <btn style="padding:0 8px;" borderless="1" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />
+                    <section class="refresh" @click="refreshTokens" :class="{'loading':loadingBalances}">
+                        <i v-if="!loadingBalances" class="icon-arrows-ccw"></i>
+                        <i v-if="loadingBalances" class="icon-spin4 animate-spin"></i>
+                        <!--<btn borderless="1" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />-->
+                    </section>
+
                     <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" class="total-balance">
-                        <figure class="symbol">{{balance.symbol}}</figure>
-                        <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
-                        <figure class="chevron icon-right-open-big"></figure>
+                        <section class="icon">
+                            <!--<i class="icon-arrows-ccw"></i>-->
+                            $
+                        </section>
+
+                        <section class="total-details">
+                            <figure class="symbol">{{balance.symbol}}</figure>
+                            <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
+                        </section>
+
+
+                        <!--<figure class="chevron icon-right-open-big"></figure>-->
                     </router-link>
                     <!--<btn text="Buy"></btn>-->
                     <!--<btn text="Exchange"></btn>-->
                 </section>
                 <section class="actions" style="margin-right:-10px;">
+                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.EXCHANGE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
                 </section>
@@ -152,14 +167,58 @@
                 margin-left:5px;
             }
         }
+
+        .refresh {
+            cursor: pointer;
+            margin-left:-30px;
+            padding:0 15px;
+            position:relative;
+            margin-right:20px;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+
+
+            &:after {
+                content:'';
+                display:block;
+                position:absolute;
+                top:-22px;
+                bottom:-21px;
+                right:0;
+                border-right:2px solid $border-standard;
+            }
+        }
     }
 
     .total-balance {
+        display:flex;
+        align-items: center;
+
+        .icon {
+            font-size: 22px;
+        }
+
+        .total-details {
+            padding-left:15px;
+
+            .symbol {
+                font-size: 11px;
+                font-weight: bold;
+            }
+
+            .amount {
+                margin-top:5px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+        /*
         cursor: pointer;
         height:36px;
         padding:0 12px;
         outline:0;
-        border:1px solid #dfe0e1;
         border-radius:3px;
         background:#fff;
         max-width:360px;
@@ -210,6 +269,7 @@
         .chevron {
             color:$primary;
         }
+         */
     }
 
 

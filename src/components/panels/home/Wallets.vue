@@ -84,7 +84,6 @@
 				align-items: center;
 				font-size: 18px;
 				width:20px;
-				color:$primary;
 			}
 
 			&:hover {

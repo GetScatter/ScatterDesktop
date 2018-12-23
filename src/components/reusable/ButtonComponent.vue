@@ -1,5 +1,5 @@
 <template>
-    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small, 'borderless':borderless}">
+    <button :disabled="disabled" v-on:click="emit" :style="{'background':blue || red || disabled ? null : backgroundColor, 'color':blue || red || disabled ? null : textColor}" :class="{'blue': blue, 'red':red, 'small':small, 'borderless':borderless}">
         <i :class="icon" v-if="icon && !loading"></i>
         <span v-else>
             <i class="icon-spin4 animate-spin" v-if="loading"></i>
@@ -9,7 +9,9 @@
 </template>
 
 <script>
+    import {mapState} from 'vuex';
     export default {
+    	computed:{...mapState(['backgroundColor', 'textColor'])},
         methods: { emit(){ this.$emit('clicked') } },
         props:['text', 'icon', 'blue', 'red', 'disabled', 'small', 'loading', 'borderless']
     }
@@ -24,8 +26,7 @@
         padding:0 12px;
         width:100%;
         outline:0;
-        border:1px solid #dfe0e1;
-        background:#fff;
+        border:1px solid $border-medium;
         border-radius:3px;
         color:$primary;
         font-size: 14px;

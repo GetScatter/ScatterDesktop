@@ -97,5 +97,7 @@ export const actions = {
     [Actions.REMOVE_BALANCES]:({commit}, x) => commit(Actions.REMOVE_BALANCES, x),
     [Actions.SET_PRICES]:({commit}, prices) => commit(Actions.SET_PRICES, prices),
     [Actions.NEW_KEY]:({commit}, x) => commit(Actions.NEW_KEY, x),
+    [Actions.SET_BG_COLOR]:({commit}, x) => commit(Actions.SET_BG_COLOR, x),
+    [Actions.SET_TXT_COLOR]:({commit}, x) => commit(Actions.SET_TXT_COLOR, x),
 
 };
