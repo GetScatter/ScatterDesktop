@@ -25,6 +25,7 @@ export const REMOVE_HARDWARE =  'removeHardware';
 
 export const SET_TOKENS =       'setTokens';
 export const SET_BALANCES =     'setBalances';
+export const SET_FULL_BALANCES ='setFullBalances';
 export const REMOVE_BALANCES =  'removeBalances';
 export const SET_PRICES =       'setPrices';
 

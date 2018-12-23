@@ -183,7 +183,7 @@
 				display:inline-block;
 
 				b {
-					color:$dark-blue;
+					color:$primary;
 				}
 			}
 
@@ -210,8 +210,8 @@
 					font-size: 9px;
 					font-weight: bold;
 					padding:2px 4px;
-					border:1px solid $dark-blue;
-					color:$dark-blue;
+					border:1px solid $primary;
+					color:$primary;
 					border-radius:4px;
 					display:inline-block;
 					margin-right:3px;
@@ -228,7 +228,7 @@
 		.tokens {
 			display:flex;
 			align-items: center;
-			color:$dark-blue;
+			color:$primary;
 			font-weight: bold;
 			cursor: pointer;
 
@@ -266,8 +266,8 @@
 		align-items: center;
 		font-size: 11px;
 		font-weight: bold;
-		background:$dark-blue;
-		background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
+		background:$primary;
+		background-image: $blue-grad;
 		color:#fff;
 		border-bottom-left-radius:2px;
 		border-bottom-right-radius:2px;
@@ -282,7 +282,7 @@
 			display:flex;
 			justify-content: center;
 			align-items: center;
-			color:$dark-blue;
+			color:$primary;
 		}
 
 		.moderation {

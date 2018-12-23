@@ -40,13 +40,13 @@
                      v-on:changed="x => selectNetwork(x)" />
 
                 <section style="flex:1.5;" class="split-inputs" v-if="isNew || networkChanged">
-                    <btn style="flex:1; font-size: 11px;" :text="locale(langKeys.GENERIC.Save)" v-on:clicked="save" :blue="newNetworkReady || !isNew" />
-                    <btn style="flex:0.1;" icon="icon-cancel" v-on:clicked="cancelAdd" />
+                    <btn style="flex:1; font-size: 11px;" :loading="working" :text="locale(langKeys.GENERIC.Save)" v-on:clicked="save" :blue="newNetworkReady || !isNew" />
+                    <btn style="flex:0.1;" v-if="!working" icon="icon-cancel" v-on:clicked="cancelAdd" />
                 </section>
 
                 <section style="flex:1.5;" class="split-inputs" v-else>
-                    <btn style="flex:1; font-size: 11px;" :text="locale(langKeys.GENERIC.Add)" v-on:clicked="addNetwork" />
-                    <btn style="flex:0.1;" icon="icon-cancel" v-on:clicked="removeNetwork" />
+                    <btn style="flex:1; font-size: 11px;" :loading="working" :text="locale(langKeys.GENERIC.Add)" v-on:clicked="addNetwork" />
+                    <btn style="flex:0.1;" v-if="!working" icon="icon-cancel" v-on:clicked="removeNetwork" />
                 </section>
             </section>
 
@@ -251,7 +251,6 @@
 
 	            this.originalNetwork = this.network.clone();
 	            this.networkChanged = false;
-
                 this.working = false;
             },
             async removeNetwork(){
@@ -260,7 +259,10 @@
                     setTimeout(() => this.network = this.networks[0], 250);
 
 	            if(this.addableNetworks.length) this.knownNetwork = this.addableNetworks[0];
-                this.working = false;
+	            setTimeout(() => {
+		            this.working = false;
+		            this.networkChanged = false;
+                }, 500);
             },
             checkNetworkChanged(){
                 this.networkChanged = JSON.stringify(this.network) !== JSON.stringify(this.originalNetwork);
@@ -416,8 +418,8 @@
                     }
 
                     &.ready {
-                        background:$light-blue;
-                        border:1px solid $light-blue;
+                        background:$secondary;
+                        border:1px solid $secondary;
                         color:#fff;
                     }
                 }
@@ -426,8 +428,8 @@
                 transition-property: color, background, border;
 
                 &:hover {
-                    background:$light-blue;
-                    border:1px solid $light-blue;
+                    background:$secondary;
+                    border:1px solid $secondary;
                     color:#fff;
                 }
 

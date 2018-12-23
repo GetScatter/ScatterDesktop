@@ -69,7 +69,7 @@
                 appearance: none;
                 width: $slider-button;
                 height: $slider-button;
-                background: $light-blue;
+                background: $secondary;
                 cursor: pointer;
                 margin-top:-2px;
 
@@ -88,7 +88,7 @@
                 appearance: none;
                 width: $slider-button;
                 height: $slider-button;
-                background: $light-blue;
+                background: $secondary;
                 cursor: pointer;
                 margin-top:-2px;
 

@@ -79,7 +79,6 @@
     @import "../../_variables.scss";
 
     .popup {
-        background:$very-light-blue;
         width:440px;
         height:360px;
         display: flex;
@@ -103,7 +102,7 @@
                 line-height: 40px;
                 height:36px;
                 width:36px;
-                background:$light-blue;
+                background:$secondary;
                 color:#fff;
                 font-family: 'Grand Hotel', sans-serif;
                 font-size:24px;

@@ -143,7 +143,7 @@
 
         .spinner {
             font-size: 36px;
-            color:$light-blue;
+            color:$secondary;
         }
     }
 

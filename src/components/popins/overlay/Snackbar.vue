@@ -43,14 +43,14 @@
 
         margin-top:10px;
 
-        background:$light-blue;
-        background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
+        background:$secondary;
+        background-image: $blue-grad;
 
         color:white;
         padding:10px 0;
         border-radius:40px;
         box-shadow:0 6px 28px rgba(0,0,0,0.12);
-        border:1px solid $light-blue;
+        border:1px solid $secondary;
         text-align:left;
 
         .icon {

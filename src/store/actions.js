@@ -93,6 +93,7 @@ export const actions = {
     [Actions.REMOVE_HARDWARE]:({commit}, key) => commit(Actions.REMOVE_HARDWARE, key),
     [Actions.SET_TOKENS]:({commit}, tokens) => commit(Actions.SET_TOKENS, tokens),
     [Actions.SET_BALANCES]:({commit}, x) => commit(Actions.SET_BALANCES, x),
+    [Actions.SET_FULL_BALANCES]:({commit}, x) => commit(Actions.SET_FULL_BALANCES, x),
     [Actions.REMOVE_BALANCES]:({commit}, x) => commit(Actions.REMOVE_BALANCES, x),
     [Actions.SET_PRICES]:({commit}, prices) => commit(Actions.SET_PRICES, prices),
     [Actions.NEW_KEY]:({commit}, x) => commit(Actions.NEW_KEY, x),

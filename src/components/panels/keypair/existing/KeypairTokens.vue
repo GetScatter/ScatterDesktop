@@ -185,7 +185,7 @@
 			font-size: 11px;
 
 			b {
-				color:$dark-blue;
+				color:$primary;
 			}
 		}
 	}
@@ -196,7 +196,7 @@
 		padding: 0 70px;
 		flex: 1;
 		overflow: auto;
-		border-top:1px solid #f4f4f4;
+		border-top:1px solid $border-standard;
 
 
 		.token {
@@ -205,7 +205,7 @@
 			padding:20px 0;
 
 			&:not(:last-child){
-				border-bottom:1px solid #f4f4f4;
+				border-bottom:1px solid $border-standard;
 			}
 
 			.symbol {
@@ -214,7 +214,7 @@
 				span {
 					font-size: 14px;
 					font-weight: bold;
-					background:$dark-blue;
+					background:$primary;
 					padding:8px 15px;
 					border-radius:50px;
 					color:#fff;

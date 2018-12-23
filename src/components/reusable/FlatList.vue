@@ -96,7 +96,7 @@
 			}
 
 			.icon {
-				color:$dark-blue;
+				color:$primary;
 				font-size: 22px;
 				border-radius:4px;
 				height:30px;
@@ -106,13 +106,13 @@
 				align-items: center;
 
 				&:hover {
-					background:$dark-blue;
+					background:$primary;
 					color:#fff;
 				}
 			}
 
 			.selected-icon {
-				color:$dark-blue;
+				color:$primary;
 				font-size: 22px;
 				padding-right:15px;
 			}
@@ -123,7 +123,7 @@
 
 			&.selected {
 				&.select-blue {
-					background:$dark-blue;
+					background:$primary;
 					.details {
 						.title {
 							color:#fff;

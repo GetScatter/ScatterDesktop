@@ -40,8 +40,7 @@
 
 		</section>
 		<section class="action-bar short bottom centered">
-			<btn :disabled="!selectedProxy"
-				 :text="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Button)"
+			<btn :text="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Button)"
 				 blue="1" v-on:clicked="setProxy" />
 		</section>
 	</section>
@@ -111,10 +110,11 @@
 			},
 			async setProxy(){
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-				const result = await plugin.proxyVote(this.account, this.selectedProxy, true);
+				const proxy = this.selectedProxy ? this.selectedProxy : '';
+				const result = await plugin.proxyVote(this.account, proxy, true);
 				if(result) {
 					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, result.transaction_id));
-					if(this.autoVote) await RecurringService.addProxy(this.account, this.selectedProxy);
+					if(this.autoVote && this.selectedProxy) await RecurringService.addProxy(this.account, this.selectedProxy);
 					else await RecurringService.removeProxies([this.account]);
 				}
 

@@ -96,7 +96,7 @@ $speed:0.09s;
 .tooltip {
   z-index: 10000;
   padding:5px 10px;
-  background:$dark-blue;
+  background:$primary;
   border-radius:4px;
   color:#fff;
 
@@ -218,7 +218,7 @@ p {
   &:not(.no-divider){
     .panel {
       &:not(:first-child) {
-        border-left:2px solid #f4f4f4;
+        border-left:2px solid $border-standard;
       }
     }
   }
@@ -262,15 +262,15 @@ p {
     height:28px;
     margin-left:15px;
     border-radius:50%;
-    background:$light-blue;
-    background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
+    background:$secondary;
+    background-image: $blue-grad;
 
     transition: all 0.3s ease;
     transition-property: margin-left, background;
 
     &.disabled {
       margin-left:0;
-      background:$light-blue;
+      background:$secondary;
       background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
     }
   }
@@ -308,7 +308,7 @@ p {
       bottom:-10px;
       left:0;
       right:0;
-      background:$dark-blue;
+      background:$primary;
       height:2px;
       z-index:2;
       opacity:0;
@@ -321,7 +321,7 @@ p {
     }
 
     &.active {
-      color:$dark-blue;
+      color:$primary;
 
       &:after { opacity:1; }
 
@@ -365,7 +365,7 @@ p {
     left:0;
     right:0;
     bottom:0;
-    border-bottom:2px solid #f4f4f4;
+    border-bottom:2px solid $border-standard;
   }
 
   &.short {
@@ -438,16 +438,16 @@ label {
     &.clickable {
       cursor: pointer;
       font-size: 13px;
-      color:$dark-blue;
+      color:$primary;
       padding:8px 12px;
-      border:1px solid $dark-blue;
+      border:1px solid $primary;
       border-radius:4px;
       margin-top:4px;
       margin-bottom:2px;
       display:table;
 
       &:hover {
-        background:$dark-blue;
+        background:$primary;
         color:#fff;
       }
     }
@@ -471,7 +471,7 @@ label {
       }
 
       &:last-child {
-        color:$dark-blue;
+        color:$primary;
         flex:1;
         text-align:right;
       }
@@ -487,12 +487,11 @@ label {
   align-items: center;
   padding:0 30px;
 
-  $shade:#f4f4f4;
   &:not(.bottom){
-    border-bottom:2px solid $shade;
+    border-bottom:2px solid $border-standard;
   }
   &.bottom {
-    border-top:2px solid $shade;
+    border-top:2px solid $border-standard;
   }
   &.centered { justify-content: center; }
   &.short { height:80px; }
@@ -508,7 +507,7 @@ label {
 
 .details {
   .title {
-    color:$dark-blue;
+    color:$primary;
     font-weight: normal;
     font-size:14px;
   }
@@ -539,7 +538,7 @@ label {
   .bar {
     height:100%;
     max-width:100%;
-    background:$light-blue;
+    background:$secondary;
     border-radius:50px;
 
     &:not(.instant){
@@ -600,7 +599,7 @@ label {
   }
 
   u {
-    color:$dark-blue;
+    color:$primary;
     cursor: pointer;
   }
 

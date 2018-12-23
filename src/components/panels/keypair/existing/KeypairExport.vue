@@ -267,7 +267,7 @@
 
             .name {
                 font-size: 24px;
-                color:$dark-blue;
+                color:$primary;
                 margin-bottom:5px;
             }
 
@@ -279,8 +279,8 @@
                 background:rgba(0,0,0,0.02);
 
                 .badge {
-                    background:$dark-blue;
-                    border:1px solid $dark-blue;
+                    background:$primary;
+                    border:1px solid $primary;
                     color:#fff;
                 }
             }

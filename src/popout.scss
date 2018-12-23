@@ -43,8 +43,8 @@
       cursor: pointer;
       height:calc(100vh - 70px);
       width:20px;
-      background:$light-blue;
-      border-left:1px solid $dark-blue;
+      background:$secondary;
+      border-left:1px solid $primary;
       display:flex;
       justify-content: center;
       align-items: center;
@@ -68,13 +68,13 @@
       font-size:11px;
       color:#fff;
       border-radius:4px;
-      border:1px solid $dark-blue;
-      background:$light-blue;
+      border:1px solid $primary;
+      background:$secondary;
       display:inline-block;
       padding:3px 6px;
 
       span {
-        background:$dark-blue;
+        background:$primary;
         padding:2px 5px;
         display: inline-block;
         margin-left:10px;

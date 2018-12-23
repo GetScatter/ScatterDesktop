@@ -49,7 +49,7 @@ export default class PopupService {
 
 	    const {width, height} = popup.dimensions();
         WindowService.openPopOut(
-            readyWindow => WindowService.sendAndWait(readyWindow.id, 'popup', {scatter, popup}).then(result => {
+            readyWindow => WindowService.sendAndWait(readyWindow.id, 'popup', {scatter, popup, balances:store.state.balances}).then(result => {
                 responded = true;
                 respond(result);
             }),

@@ -202,7 +202,7 @@
 		padding:10px 30px 30px;
 		overflow-y: auto;
 		height: 0;
-		border-top:2px solid #f4f4f4;
+		border-top:2px solid $border-standard;
 
 		.item {
 			padding:20px 0 5px;
@@ -245,7 +245,7 @@
 					line-height:9px;
 					font-size:9px;
 					padding:4px;
-					background:$dark-blue;
+					background:$primary;
 					text-align:center;
 					opacity:0;
 					transition:0.12s all ease-in-out;
@@ -312,7 +312,7 @@
 					    margin-top: 12px;
 
 						&:hover {
-							color:$dark-blue;
+							color:$primary;
 						}
 					}
 				}

@@ -66,7 +66,7 @@
 
                 .subtext {
                     font-size: 11px;
-                    color:$dark-blue;
+                    color:$primary;
                 }
             }
 
@@ -81,7 +81,7 @@
                 figure {
                     width:14px;
                     height:2px;
-                    background:$light-blue;
+                    background:$secondary;
 
                     &:first-child {
                         transform:rotate(45deg);

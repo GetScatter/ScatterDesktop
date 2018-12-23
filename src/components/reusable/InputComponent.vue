@@ -106,7 +106,7 @@
                     text-decoration: underline;
 
                     &:hover {
-                        color:$dark-blue;
+                        color:$primary;
                     }
                 }
             }
@@ -130,7 +130,7 @@
             align-items: center;
             font-size:20px;
             z-index:2;
-            color:$light-blue;
+            color:$secondary;
 
             &.labeled {
                 bottom:-20px;
@@ -140,7 +140,7 @@
             transition-property: color;
 
             &:hover {
-                color:$dark-blue;
+                color:$primary;
             }
         }
         .dynamic-button + .copy {

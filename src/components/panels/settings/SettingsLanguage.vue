@@ -2,7 +2,6 @@
     <section>
 
         <section class="action-box top-pad">
-
             <sel :label="locale(langKeys.SETTINGS.LANGUAGE.Label)"
                  :options="names"
                  :selected="selectedLanguage"
@@ -33,7 +32,7 @@
                 'networks',
             ]),
             selectedLanguage(){
-                return LANG.ENGLISH
+                return this.scatter.settings.language
             }
         },
         mounted(){
@@ -50,9 +49,6 @@
 		            scatter.settings.languageJson = res;
 		            this[Actions.SET_SCATTER](scatter);
                 })
-                // const scatter = this.scatter.clone();
-                // scatter.settings.language = language;
-                // this[Actions.SET_SCATTER](scatter);
             },
             ...mapActions([
                 Actions.SET_SCATTER

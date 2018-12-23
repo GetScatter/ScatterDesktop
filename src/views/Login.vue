@@ -417,7 +417,7 @@
             padding:4px;
 
             .bar {
-                background:$light-blue;
+                background:$secondary;
                 height:4px;
                 border-radius:20px;
 
@@ -451,7 +451,7 @@
             width:120px;
             box-shadow:0 0 30px rgba(0,0,0,0.08), 0 0 20px rgba(0,0,0,0.04);
             border-radius:50%;
-            color:$light-blue;
+            color:$secondary;
             font-size: 88px;
             display:inline-block;
             margin-bottom:50px;

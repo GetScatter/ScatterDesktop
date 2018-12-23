@@ -1,6 +1,7 @@
 import PluginRepository from '../plugins/PluginRepository';
 import {store} from '../store/store'
 import {Blockchains} from "./Blockchains";
+import Token from "./Token";
 
 export default class Account {
     constructor(){
@@ -62,5 +63,14 @@ export default class Account {
 	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
 	    if(!store.state.balances[this.identifiable()]) return 0;
 	    return store.state.balances[this.identifiable()].filter(x => !systemToken ? true : x.identifiable() !== systemToken.identifiable()).length;
+    }
+
+    systemBalance(){
+	    if(!store.state.balances) return 0;
+	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
+	    if(!store.state.balances[this.identifiable()]) return 0;
+	    const systemBalance = store.state.balances[this.identifiable()].find(x =>  Token.fromJson(x).identifiable() === this.network().systemToken().identifiable());
+	    if(!systemBalance) return 0;
+	    return `${systemBalance.amount} ${systemBalance.symbol}`;
     }
 }

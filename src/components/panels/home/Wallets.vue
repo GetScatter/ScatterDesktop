@@ -67,7 +67,7 @@
 		padding:10px 30px;
 		overflow-y: auto;
 		height: 0;
-		border-top:2px solid #f4f4f4;
+		border-top:2px solid $border-standard;
 
 		.item {
 			padding:20px 0 0;
@@ -84,7 +84,7 @@
 				align-items: center;
 				font-size: 18px;
 				width:20px;
-				color:$dark-blue;
+				color:$primary;
 			}
 
 			&:hover {

@@ -215,7 +215,7 @@
 
         > span {
             font-size: 13px;
-            color:$dark-blue;
+            color:$primary;
             font-weight: bold;
         }
     }
@@ -236,7 +236,7 @@
         }
 
         .blue {
-            color:$dark-blue;
+            color:$primary;
         }
 
         .small {

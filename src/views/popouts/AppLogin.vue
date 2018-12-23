@@ -125,13 +125,14 @@
 	    },
         computed: {
 	        ...mapState([
-		        'scatter'
+		        'scatter',
+		        'balances'
 	        ]),
 	        ...mapGetters([
 		        'identity',
 		        'identities',
 		        'accounts',
-		        'networks',
+		        'networks'
 	        ]),
             payload(){ return this.popup.payload(); },
 	        validAccounts() {
@@ -165,7 +166,8 @@
                     	return selected || b.logins - a.logins
                     })
                     .map(account => {
-	                    let description = `${account.network().name}`;
+                    	const systemBalance = account.systemBalance();
+	                    let description = `${account.network().name}${systemBalance ? ' - '+systemBalance : ''}`;
 	                    let actions = [];
 	                    const actionName = alreadySelectedUniques.includes(account.unique()) ? this.locale(this.langKeys.GENERIC.Remove)
                             : neededNetworks.length === 1 ? this.locale(this.langKeys.POPOUTS.LOGIN.LoginButton)
@@ -333,9 +335,9 @@
                     }
 
                     &.blue {
-                        background:$light-blue;
-                        background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
-                        border:1px solid $dark-blue;
+                        background:$secondary;
+                        background-image: $blue-grad;
+                        border:1px solid $primary;
                         color:#fff;
                     }
                 }
@@ -354,7 +356,7 @@
         cursor: pointer;
 
         &:hover {
-            color:$dark-blue;
+            color:$primary;
         }
     }
 

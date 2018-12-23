@@ -68,12 +68,12 @@
     @import "../../../variables";
 
     .description {
-        color:$dark-blue;
+        color:$primary;
         text-align:center;
         font-size: 9px;
 
         &:hover {
-            color:$light-blue;
+            color:$secondary;
         }
     }
 

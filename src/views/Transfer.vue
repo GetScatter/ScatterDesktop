@@ -552,7 +552,7 @@
     @import "../_variables";
 
     .transfer-details {
-        border-top:2px solid #f4f4f4;
+        border-top:2px solid $border-standard;
         background:rgba(0,0,0,0.01);
         display:flex;
         justify-content: center;
@@ -561,7 +561,7 @@
         text-align:center;
 
         b {
-            color:$dark-blue;
+            color:$primary;
 
             &.red {
                 color:$red;

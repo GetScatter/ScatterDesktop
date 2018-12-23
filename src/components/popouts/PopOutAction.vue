@@ -27,7 +27,7 @@
 		background:#fafafa;
 
 		.origin {
-			color:$dark-blue;
+			color:$primary;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;

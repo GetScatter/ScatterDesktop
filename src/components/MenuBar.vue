@@ -69,8 +69,8 @@
 
 	.menu-bar {
 		-webkit-app-region: drag;
-		background:$light-blue;
-		background-image: linear-gradient(-180deg, #39ADFF -20%, #62D0FD 100%);
+		background:$secondary;
+		background-image: $blue-grad;
 		color:#fff;
 		height:80px;
 		line-height: 80px;

@@ -91,6 +91,8 @@
 
                 this[Actions.HOLD_SCATTER](Scatter.fromJson(scatter));
 
+	            this[Actions.SET_FULL_BALANCES](this.windowMessage.data.balances);
+
                 const needsPIN = [
                     ApiActions.REQUEST_ARBITRARY_SIGNATURE,
                     ApiActions.REQUEST_SIGNATURE,
@@ -134,7 +136,8 @@
 		        WindowService.changeWindowSize(height, subtracted ? width-delta : width+delta);
 	        },
             ...mapActions([
-                Actions.HOLD_SCATTER
+                Actions.HOLD_SCATTER,
+                Actions.SET_FULL_BALANCES
             ])
         }
     }

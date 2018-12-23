@@ -1,5 +1,5 @@
 <template>
-    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small}">
+    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small, 'borderless':borderless}">
         <i :class="icon" v-if="icon && !loading"></i>
         <span v-else>
             <i class="icon-spin4 animate-spin" v-if="loading"></i>
@@ -11,7 +11,7 @@
 <script>
     export default {
         methods: { emit(){ this.$emit('clicked') } },
-        props:['text', 'icon', 'blue', 'red', 'disabled', 'small', 'loading']
+        props:['text', 'icon', 'blue', 'red', 'disabled', 'small', 'loading', 'borderless']
     }
 </script>
 
@@ -27,7 +27,7 @@
         border:1px solid #dfe0e1;
         background:#fff;
         border-radius:3px;
-        color:$dark-blue;
+        color:$primary;
         font-size: 14px;
         font-weight: 500;
         max-width:360px;
@@ -46,8 +46,8 @@
         &.blue {
             border:1px solid rgba(0,0,0,0);
             color:#fff;
-            background:$dark-blue;
-            background-image: linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
+            background:$primary;
+            background-image: $blue-grad;
         }
 
         &.red {
@@ -61,11 +61,11 @@
 
         &:not(:disabled){
             &:active {
-                border:1px solid $dark-blue;
+                border:1px solid $primary;
                 background:rgba(0,0,0,0.04);
 
                 &.blue {
-                    color:$dark-blue;
+                    color:$primary;
                 }
 
                 &.red {
@@ -82,6 +82,18 @@
             background: #e3e3e3;
             color: #ababab;
             cursor: not-allowed;
+        }
+
+        &.borderless {
+            border:0;
+
+            &:hover {
+                border:0;
+            }
+
+            &:active {
+                border:0;
+            }
         }
 
     }

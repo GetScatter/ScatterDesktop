@@ -28,11 +28,11 @@ let splashScreen = url.format({
 
 
 const quit = () => {
-	if(global.appShared && global.appShared.savingData){
+	if(global && global.appShared && global.appShared.savingData){
 		setTimeout(() => {
 			quit();
 		}, 100);
-	} else setTimeout(() => app.quit(), 1);
+	} else app.quit();
 }
 
 let tray, mainWindow;

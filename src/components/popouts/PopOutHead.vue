@@ -31,7 +31,7 @@
 			flex:2;
 			font-family: 'Grand Hotel', sans-serif;
 			font-size: 30px;
-			color:$dark-blue;
+			color:$primary;
 		}
 
 		.close {

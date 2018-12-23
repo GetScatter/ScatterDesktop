@@ -30,6 +30,7 @@ export const mutations = {
 	[Mutations.SET_BALANCES]:(state, x) => {
 		Vue.set(state.balances, x.account, x.balances)
 	},
+	[Mutations.SET_FULL_BALANCES]:(state, x) => state.balances = x,
 	[Mutations.REMOVE_BALANCES]:(state, accountKeys) => {
 		accountKeys.map(key => {
 			Vue.delete(state.balances, key);

@@ -4,7 +4,7 @@
         <section class="full-panel home" v-if="keypairs.length">
             <section class="action-bar short">
                 <section class="token-buttons">
-                    <btn style="padding:0 8px;" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />
+                    <btn style="padding:0 8px;" borderless="1" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />
                     <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" class="total-balance">
                         <figure class="symbol">{{balance.symbol}}</figure>
                         <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
@@ -13,9 +13,9 @@
                     <!--<btn text="Buy"></btn>-->
                     <!--<btn text="Exchange"></btn>-->
                 </section>
-                <section>
-                    <btn v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
-                    <btn v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
+                <section class="actions">
+                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
+                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
                 </section>
             </section>
 
@@ -181,12 +181,12 @@
         }
 
         &:active {
-            border:1px solid $dark-blue;
+            border:1px solid $primary;
             background:rgba(0,0,0,0.04);
         }
 
         .symbol {
-            background:$light-blue;
+            background:$blue-grad;
             color:#fff;
             border-radius:50px;
             display: flex;
@@ -206,7 +206,7 @@
         }
 
         .chevron {
-            color:$dark-blue;
+            color:$primary;
         }
     }
 

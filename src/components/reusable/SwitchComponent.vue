@@ -33,10 +33,10 @@
         padding:0 20px;
         height:40px;
         line-height:39px;
-        border:1px solid $dark-blue;
+        border:1px solid $primary;
         border-radius:5px;
         outline:0;
-        background:$light-blue;
+        background:$secondary;
         color:#fff;
         font-size:13px;
         font-weight: bold;
@@ -56,12 +56,12 @@
             color:rgba(0,0,0,0.2);
 
             &:hover {
-                border:1px solid $dark-blue;
-                color: $dark-blue;
+                border:1px solid $primary;
+                color: $primary;
             }
 
             &:active {
-                background: $dark-blue;
+                background: $primary;
                 border: 1px solid transparent;
                 color: #fff;
             }

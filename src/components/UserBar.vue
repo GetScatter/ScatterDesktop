@@ -49,7 +49,7 @@
     .user-bar {
         width:100%;
         height:50px;
-        background:$light-blue;
+        background:$secondary;
         display:flex;
         flex-direction: row;
         justify-content: space-between;
@@ -59,7 +59,7 @@
         left: 0;
         right: 0;
         z-index: 2;
-        background: #62d0fd;
+        background: $primary;
 
         .actions {
             .action {

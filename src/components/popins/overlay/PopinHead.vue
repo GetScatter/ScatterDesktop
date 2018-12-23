@@ -36,8 +36,8 @@
         display:flex;
         justify-content: space-between;
         align-items: center;
-        background:$dark-blue;
-        border-bottom:1px solid $dark-blue;
+        background:$primary;
+        border-bottom:1px solid $primary;
 
         .name {
             flex:1;
@@ -55,17 +55,17 @@
             padding:5px 3px;
             background:rgba(255,255,255,0.3);
             box-shadow:0 2px 4px rgba(0,0,0,0.05);
-            color:$dark-blue;
+            color:$primary;
             border-radius:4px;
 
             &:hover {
-                color:$dark-blue;
+                color:$primary;
                 background:rgba(255,255,255,0.8);
             }
 
             &:active {
                 background:rgba(255,255,255,0.5);
-                color:$dark-blue;
+                color:$primary;
             }
         }
     }

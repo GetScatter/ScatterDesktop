@@ -464,7 +464,7 @@
                 padding:20px;
                 background:#fff;
                 text-align:center;
-                //border:1px solid $dark-blue;
+                //border:1px solid $primary;
                 border-radius:4px;
                 box-shadow:0 2px 4px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.03);
                 font-size: 13px;

@@ -136,7 +136,7 @@
             height:38px;
             line-height:38px;
             padding:0 12px;
-            color:$dark-blue;
+            color:$primary;
             opacity:0.5;
             transition:opacity 0.1s ease, transform 0.1s ease;
             pointer-events: none;
