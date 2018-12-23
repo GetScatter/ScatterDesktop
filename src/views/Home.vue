@@ -4,11 +4,25 @@
         <section class="full-panel home" v-if="keypairs.length">
             <section class="action-bar short">
                 <section class="token-buttons">
-                    <btn style="padding:0 8px;" borderless="1" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />
+                    <section class="refresh" @click="refreshTokens" :class="{'loading':loadingBalances}">
+                        <i v-if="!loadingBalances" class="icon-arrows-ccw"></i>
+                        <i v-if="loadingBalances" class="icon-spin4 animate-spin"></i>
+                        <!--<btn borderless="1" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />-->
+                    </section>
+
                     <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" class="total-balance">
-                        <figure class="symbol">{{balance.symbol}}</figure>
-                        <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
-                        <figure class="chevron icon-right-open-big"></figure>
+                        <section class="icon" :class="{'big':balance.symbol.length === 1}">
+                            <!--<i class="icon-arrows-ccw"></i>-->
+                            {{balance.symbol}}
+                        </section>
+
+                        <section class="total-details">
+                            <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
+                            <figure class="dots">
+                                <figure class="dot" v-for="i in [1,1,1]"></figure>
+                            </figure>
+                        </section>
+
                     </router-link>
                     <!--<btn text="Buy"></btn>-->
                     <!--<btn text="Exchange"></btn>-->
@@ -146,69 +160,69 @@
 
     .token-buttons {
         display:flex;
-
         button {
             &:not(:first-child){
                 margin-left:5px;
             }
         }
+        .refresh {
+            cursor: pointer;
+            margin-left:-30px;
+            padding:0 15px;
+            position:relative;
+            margin-right:20px;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            &:after {
+                content:'';
+                display:block;
+                position:absolute;
+                top:-25px;
+                bottom:-25px;
+                right:0;
+                border-right:2px solid $border-standard;
+            }
+        }
     }
 
     .total-balance {
-        cursor: pointer;
-        height:36px;
-        padding:0 12px;
-        outline:0;
-        border:1px solid #dfe0e1;
-        border-radius:3px;
-        background:#fff;
-        max-width:360px;
         display:flex;
         align-items: center;
-        width:280px;
-        margin-left:5px;
+        .icon {
+            margin-top:3px;
+            font-size: 16px;
 
-        &:hover {
-            border:1px solid rgba(0,0,0,0.22);
-
-            .chevron {
-
-                animation: hover-bounce 0.7s ease infinite;
-            }
-
-            @keyframes hover-bounce {
-                0%, 100% { transform:translateX(-2px) }
-                50% { transform:translateX(2px) }
+            &.big {
+                font-size: 22px;
             }
         }
 
-        &:active {
-            border:1px solid $primary;
-            background:rgba(0,0,0,0.04);
-        }
+        .total-details {
+            display:flex;
+            align-items: center;
+            padding-left:15px;
 
-        .symbol {
-            background:$blue-grad;
-            color:#fff;
-            border-radius:50px;
-            display: flex;
-            justify-content: center;
-            align-self: center;
-            text-align:center;
-            padding:5px 8px;
-            margin-right:10px;
+            .amount {
+                font-size: 24px;
+                font-weight: 300;
+            }
 
-            font-size: 11px;
-        }
+            .dots {
+                display:flex;
+                align-items: center;
+                margin-left:10px;
 
-        .amount {
-            font-size: 20px;
-            flex:1;
-            padding-right:10px;
-        }
-
-        .chevron {
-            color:$primary;
+                $dot:4px;
+                .dot {
+                    width:$dot;
+                    height:$dot;
+                    background:$primary;
+                    border-radius:50%;
+                    margin-right:3px;
+                }
+            }
         }
     }
 
