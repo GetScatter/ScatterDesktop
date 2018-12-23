@@ -13,7 +13,7 @@
                     <!--<btn text="Buy"></btn>-->
                     <!--<btn text="Exchange"></btn>-->
                 </section>
-                <section class="actions">
+                <section class="actions" style="margin-right:-10px;">
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
                 </section>
@@ -99,7 +99,9 @@
 			            const balance = totals[tokenUnique];
 			            if(balance){
 				            const price = this.prices[tokenUnique][this.displayCurrency];
-				            total += parseFloat(parseFloat(balance.amount) * parseFloat(price));
+				            const value = parseFloat(parseFloat(balance.amount) * parseFloat(price));
+				            if(isNaN(value)) return;
+				            total += value;
 			            }
                     });
 

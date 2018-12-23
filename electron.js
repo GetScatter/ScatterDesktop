@@ -63,22 +63,27 @@ const setupMenu = () => {
 	Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
 
+const restoreInstance = () => {
+	mainWindow.show();
+	if(mainWindow.isMinimized()) mainWindow.restore();
+};
+
+const activateInstance = e => {
+	if(e) e.preventDefault();
+	if(!mainWindow) return;
+	restoreInstance();
+};
+
 const setupTray = () => {
 	tray = new Tray(trayIcon);
 	const contextMenu = Menu.buildFromTemplate([
-		{label: 'Open', type: 'normal', click:() => {
-				mainWindow.show();
-				if(mainWindow.isMinimized()) mainWindow.restore();
-			}},
+		{label: 'Open', type: 'normal', click:() => restoreInstance()},
 		{label: 'Exit', type: 'normal', click:() => quit()}
 	]);
 	tray.setToolTip('Scatter Desktop Companion');
 	tray.setContextMenu(contextMenu);
 
-	tray.on('click', () => {
-		mainWindow.show();
-		if(mainWindow.isMinimized()) mainWindow.restore();
-	})
+	tray.on('click', () => restoreInstance())
 };
 
 const createScatterInstance = () => {
@@ -98,7 +103,7 @@ const createScatterInstance = () => {
 		show,
 	});
 
-	mainWindow = createMainWindow(false, '#62D0FD');
+	mainWindow = createMainWindow(false, '#111111');
 	mainWindow.loadURL(mainUrl(false));
 
 	// if main window is ready to show, then destroy the splash window and show up the main window
@@ -116,12 +121,6 @@ const createScatterInstance = () => {
 	setupMenu();
 
 	LowLevelWindowService.onMainWindowReady();
-};
-
-const activateInstance = e => {
-	if(e) e.preventDefault();
-	if(!mainWindow) return;
-	mainWindow.restore();
 };
 
 app.on('ready', createScatterInstance);
@@ -144,7 +143,7 @@ const callDeepLink = url => {
 }
 
 const shouldQuit = app.makeSingleInstance(argv => {
-	if (process.platform === 'win32') callDeepLink(argv.slice(1))
+	if (process.platform === 'win32') callDeepLink(argv.slice(1));
 	if (mainWindow) activateInstance();
 })
 

@@ -55,7 +55,7 @@ const updateIdentity = async result => {
 export default class ApiService {
 
     static async handleDeepLink(deepLink){
-        if(!deepLink) return;
+        if(!deepLink || Array.isArray(deepLink)) return;
         let [type, payload] = deepLink.toString().split('scatter://')[1].split('/?payload=');
         type = type.replace('/', '');
         if(payload) payload = decodeURI(payload);

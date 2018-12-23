@@ -1,6 +1,9 @@
 <template>
 	<section class="apps">
-		<SearchBar :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
+		<section class="split-inputs">
+			<SearchBar style="flex:1;" :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
+			<btn small="1" style="margin-right:20px; font-weight: normal;" borderless="1" v-on:clicked="goToApps" text="Browse" />
+		</section>
 
 		<transition name="slide-right" mode="out-in">
 

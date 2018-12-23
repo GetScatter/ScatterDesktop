@@ -26,7 +26,7 @@ export default class UpdateService {
         }
     }
 
-    static async needsUpdateNoPrompt(){
+    static async needsUpdateNoPrompt(useLastVersion = true){
         const {version, stringVersion, body, prerelease, name} = await fetch('https://api.github.com/repos/GetScatter/ScatterDesktop/releases/latest').then(res => res.json()).then(x => ({
 	        name:x.name,
             version:mathematicalVersion(x.tag_name),
@@ -40,7 +40,7 @@ export default class UpdateService {
         const scatter = store.state.scatter.clone();
         let lastSuggested = scatter.meta.lastSuggestedVersion;
 
-        if(mathematicalVersion(scatter.meta.version) < version && (!lastSuggested || lastSuggested !== version))
+        if(mathematicalVersion(scatter.meta.version) < version && (!useLastVersion || (!lastSuggested || lastSuggested !== version)))
             return {version, stringVersion, url:this.updateUrl(), prerelease, name, body};
 
         return false;

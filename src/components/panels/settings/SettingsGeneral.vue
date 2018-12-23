@@ -73,7 +73,7 @@
             }
         },
         mounted(){
-            UpdateService.needsUpdateNoPrompt().then(needsUpdate => {
+            UpdateService.needsUpdateNoPrompt(false).then(needsUpdate => {
                 this.needsUpdate = !!needsUpdate;
             })
         },

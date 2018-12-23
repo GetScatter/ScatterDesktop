@@ -196,7 +196,7 @@
         //background:$light-grey;
         opacity:0;
         visibility: hidden;
-        transition: all 0.02s ease;
+        transition: all 0.05s ease;
         transition-property: opacity, visibility;
 
         z-index:10000;
@@ -213,7 +213,8 @@
             bottom:0;
             left:0;
             right:0;
-            background:rgba(255,255,255,0.92);
+            //background:rgba(255,255,255,0.92);
+            background:rgba(0,0,0,0.7);
             z-index: 0;
         }
     }
