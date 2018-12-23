@@ -32,6 +32,8 @@ body {
   margin:0;
   word-break: break-word;
   font-family: 'Helvetica','Segoe UI','Roboto', sans-serif;
+  background:#fff;
+  color:#393d3f;
 }
 
 a {
@@ -109,6 +111,7 @@ $speed:0.09s;
 
 h1,h2,h3,h4,h5 {
   font-family: 'Roboto-Light', sans-serif;
+  color: #393D3F;
   font-weight:300;
 }
 
@@ -138,6 +141,7 @@ h5 {
 }
 
 p {
+  color:#878a8b;
   font-size: 14px;
   line-height:20px;
   margin:0;
@@ -286,6 +290,7 @@ p {
     height:38px;
     line-height:38px;
     font-weight: bold;
+    color:$mid-dark-grey;
     font-size: 14px;
     position: relative;
     cursor: pointer;
@@ -311,7 +316,12 @@ p {
       transition-property: opacity;
     }
 
+    &:hover {
+      color:$dark-grey;
+    }
+
     &.active {
+      color:$primary;
 
       &:after { opacity:1; }
 
@@ -369,8 +379,9 @@ p {
 }
 
 .action-box {
+  background:#ffffff;
   padding:1px 20px 20px 20px;
-  border:1px solid $border-medium;
+  border:1px solid $lighter-grey;
   border-radius:4px;
   margin-top:30px;
   display:flex;
@@ -394,6 +405,7 @@ p {
 
 label {
   font-size: 11px;
+  color:#7899a6;
   font-weight: bold;
   margin-bottom:8px;
   display: block;
@@ -413,6 +425,7 @@ label {
   figure {
     &:first-child {
       font-size: 11px;
+      color:#7899a6;
       font-weight: bold;
       margin-bottom:8px;
       display: block;
@@ -425,6 +438,7 @@ label {
     &.clickable {
       cursor: pointer;
       font-size: 13px;
+      color:$primary;
       padding:8px 12px;
       border:1px solid $primary;
       border-radius:4px;
@@ -452,6 +466,7 @@ label {
       &:first-child {
         flex:0 0 auto;
         font-weight: 500;
+        color:$dark-grey;
         padding-right:10px;
       }
 
@@ -485,7 +500,6 @@ label {
     button {
       display:inline-block;
       width:auto;
-      font-weight: bold;
     }
   }
 
@@ -493,6 +507,7 @@ label {
 
 .details {
   .title {
+    color:$primary;
     font-weight: normal;
     font-size:14px;
   }
@@ -501,6 +516,7 @@ label {
     margin-top:3px;
     font-size:12px;
     line-height:14px;
+    color:rgba(0,0,0,0.4);
   }
 }
 
@@ -508,9 +524,10 @@ label {
   flex:1;
   margin:0 10px;
   height:14px;
-  border:1px solid $border-medium;
+  border:1px solid #dfe0e1;
   border-radius:50px;
   width:100%;
+  background:#fff;
   padding:3px;
 
   &.short {
@@ -556,7 +573,7 @@ label {
 
 .disclaimer {
   background:#fffde6;
-  border:1px solid $border-medium;
+  border:1px solid #dfdecc;
   border-radius:4px;
   color:#979896;
   padding:25px 35px;
@@ -582,6 +599,7 @@ label {
   }
 
   u {
+    color:$primary;
     cursor: pointer;
   }
 

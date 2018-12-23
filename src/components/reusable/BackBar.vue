@@ -16,7 +16,7 @@
 
             <transition name="slide-right" mode="out-in">
                 <section key="buttons" class="buttons" v-if="buttons && buttons.length">
-                    <btn blue="1" :key="button.text" class="button" v-for="button in buttons" :red="button.hasOwnProperty('red')"
+                    <btn :key="button.text" class="button" v-for="button in buttons" :red="button.hasOwnProperty('red')"
                          :disabled="disabled(button)" :text="button.text" v-on:clicked="button.clicked"></btn>
                 </section>
             </transition>

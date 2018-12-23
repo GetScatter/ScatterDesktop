@@ -124,7 +124,6 @@ const Locale = {
 	[DASHBOARD.KEYS.NoKeys]:() => `Well, what are we waiting for?`,
 	[DASHBOARD.KEYS.LinkedAccounts]:count => `${count} linked account${plural_s(count)}`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[DASHBOARD.TOOLBARS.ExchangeButton]:() => `Exchange`,
 	[DASHBOARD.TOOLBARS.SendButton]:() => `Send`,
 	[DASHBOARD.TOOLBARS.ReceiveButton]:() => `Receive`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////

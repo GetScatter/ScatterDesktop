@@ -14,7 +14,7 @@
                 <user-bar v-if="route === routeNames.HOME"></user-bar>
             </transition>
 
-            <section class="app-content" :style="{'background':backgroundColor, 'color':textColor + ' !important'}">
+            <section class="app-content">
 
                 <transition :name="route === 'login' ? 'fade' : ''" mode="out-in">
                     <router-view></router-view>
@@ -70,9 +70,7 @@
             ...mapState([
                 'scatter',
                 'workingScreen',
-                'processes',
-                'backgroundColor',
-                'textColor',
+                'processes'
             ]),
             ...mapGetters([
                 'unlocked',

@@ -75,7 +75,7 @@
 		}
 
 		.item {
-			border:1px solid $border-medium;
+			border:1px solid #e2e2e2;
 			border-radius:4px;
 			padding:16px;
 			transition: border 0.15s ease;
@@ -88,7 +88,7 @@
 			}
 
 			&:hover, &.selected {
-				border:1px solid $primary;
+				border:1px solid #719fb6;
 			}
 
 			&.unselectable {
@@ -96,6 +96,7 @@
 			}
 
 			.icon {
+				color:$primary;
 				font-size: 22px;
 				border-radius:4px;
 				height:30px;
@@ -111,6 +112,7 @@
 			}
 
 			.selected-icon {
+				color:$primary;
 				font-size: 22px;
 				padding-right:15px;
 			}

@@ -111,7 +111,7 @@
         width:100%;
         border-radius:3px;
         background:#fff;
-        border:1px solid $border-medium;
+        border:1px solid #dfe0e1;
         font-size: 14px;
         transition:background 0.1s ease;
 

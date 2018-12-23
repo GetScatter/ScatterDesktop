@@ -181,31 +181,26 @@
 
         .group-list {
             border-radius:4px;
-            border:1px solid $border-medium;
+            border:1px solid #dfe0e1;
             overflow:hidden;
 
             .item {
                 cursor: pointer;
                 padding:12px 20px;
                 font-size: 14px;
+                background:#fafafa;
 
                 &.selected {
-
+                    background:#fff;
                 }
 
                 &:not(:last-child){
-                    border-bottom:1px solid $border-medium;
+                    border-bottom:1px solid #dfe0e1;
                 }
             }
 
             &.danger {
                 border:1px solid $red;
-
-                .item {
-                    &:not(:last-child){
-                        border-bottom:1px solid $red;
-                    }
-                }
             }
         }
     }

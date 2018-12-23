@@ -112,7 +112,6 @@ const DASHBOARD = prefixKeys('dashboard', {
 		NoMeta:'no_meta',
 	},
 	TOOLBARS:{
-		ExchangeButton:'exchange',
 		SendButton:'send',
 		ReceiveButton:'receive',
 	}

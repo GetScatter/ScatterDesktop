@@ -299,7 +299,7 @@
 			.item {
 				flex:1;
 				margin-bottom:20px;
-				border:1px solid $border-medium;
+				border:1px solid #dfe0e1;
 				border-radius:2px;
 			}
 		}
