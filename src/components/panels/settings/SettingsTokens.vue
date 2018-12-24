@@ -122,30 +122,30 @@
 
             <br>
             <section v-if="state === STATES.WHITELIST">
-                <section class="disclaimer less-pad" v-if="!searchTerms.length">
-                    {{locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.Disclaimer)}}
-                </section>
+                <!--<section class="disclaimer less-pad" v-if="!searchTerms.length">-->
+                    <!--{{locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.Disclaimer)}}-->
+                <!--</section>-->
 
-                <section v-if="blockchain === null && !searchTerms.length">
-                    <FlatList as-rows="1" style="padding:0;"
-                              :selected="selectedDisplayToken"
-                              :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.FiatCurrencyLabel)"
-                              v-on:selected="selectDisplayToken"
-                              small="1"
-                              :items="currencyList" />
-                    <br>
-                    <br>
-                </section>
+                <!--<section v-if="blockchain === null && !searchTerms.length">-->
+                    <!--<FlatList as-rows="1" style="padding:0;"-->
+                              <!--:selected="selectedDisplayToken"-->
+                              <!--:label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.FiatCurrencyLabel)"-->
+                              <!--v-on:selected="selectDisplayToken"-->
+                              <!--small="1"-->
+                              <!--:items="currencyList" />-->
+                    <!--<br>-->
+                    <!--<br>-->
+                <!--</section>-->
 
-                <section v-if="networkTokensList.length">
-                    <FlatList style="padding:0;"
-                              :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.SystemTokensLabel)"
-                              :selected="selectedDisplayToken"
-                              v-on:selected="selectDisplayToken"
-                              :items="networkTokensList" />
-                    <br>
-                    <br>
-                </section>
+                <!--<section v-if="networkTokensList.length">-->
+                    <!--<FlatList style="padding:0;"-->
+                              <!--:label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.SystemTokensLabel)"-->
+                              <!--:selected="selectedDisplayToken"-->
+                              <!--v-on:selected="selectDisplayToken"-->
+                              <!--:items="networkTokensList" />-->
+                    <!--<br>-->
+                    <!--<br>-->
+                <!--</section>-->
 
                 <FlatList style="padding:0;"
                           :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.CustomTokensLabel)"
@@ -308,8 +308,8 @@
 					this[Actions.SET_SCATTER](scatter);
 				}
 
-				if(!token.id || asFiat) return TokenService.toggleDisplayToken(null);
-				TokenService.toggleDisplayToken(token.id);
+				if(!token.id || asFiat) return TokenService.setDisplayToken(null);
+				TokenService.setDisplayToken(token.id);
 			},
 			async addToken(blacklist = false){
 				this.newToken.contract = this.newToken.contract.trim();

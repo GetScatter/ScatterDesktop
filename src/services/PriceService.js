@@ -6,8 +6,9 @@ import ObjectHelpers from '../util/ObjectHelpers'
 import StorageService from "./StorageService";
 import Token from "../models/Token";
 
+// TODO: REVERT
 // const api = "https://api.get-scatter.com";
-const api = "http://localhost:6545";
+const api = "http://localhost:6544";
 
 // Once every 30 minutes.
 const intervalTime = 60000 * 30;
@@ -50,8 +51,14 @@ export default class PriceService {
 	    ])
     }
 
+    static async getCurrencyPrices(){
+        return Promise.race([
+		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
+		    fetch(api+'/v1/currencies/prices').then(x => x.json()).catch(() => null)
+	    ])
+    }
+
     static async getTimeline(date = null){
-        const api = 'http://localhost:6544';
         const query = date ? `?date=${date}` : '';
         return Promise.race([
 		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
@@ -59,14 +66,15 @@ export default class PriceService {
 	    ])
     }
 
-    static getTotal(totals){
-	    // const totals = this.totalBalances.totals;
+    static getTotal(totals, displayCurrency, bypassDisplayToken, displayToken){
+	    if(!displayCurrency) displayCurrency = store.getters.displayCurrency;
+	    // if(!displayToken) displayToken = store.getters.displayToken;
 
 
-	    if(store.getters.displayToken){
-		    if(totals.hasOwnProperty(store.getters.displayToken)) return totals[store.getters.displayToken]
+	    if(!bypassDisplayToken && displayToken){
+		    if(totals.hasOwnProperty(displayToken)) return totals[displayToken]
 		    else {
-			    const token = Token.fromUnique(store.getters.displayToken);
+			    const token = (displayToken instanceof Token ? displayToken : Token.fromUnique(displayToken)).clone();
 			    token.amount = parseFloat(0).toFixed(token.decimals);
 			    return token;
 		    }
@@ -76,35 +84,36 @@ export default class PriceService {
 		    Object.keys(store.state.prices).map(tokenUnique => {
 			    const balance = totals[tokenUnique];
 			    if(balance){
-				    const price = store.state.prices[tokenUnique][store.getters.displayCurrency];
+				    const price = store.state.prices[tokenUnique][displayCurrency];
 				    const value = parseFloat(parseFloat(balance.amount) * parseFloat(price));
 				    if(isNaN(value)) return;
 				    total += value;
 			    }
 		    });
 
-		    const fiatSymbol = () => {
-			    switch(store.getters.displayCurrency){
-				    case 'USD':
-				    case 'AUD':
-				    case 'CAD':
-					    return '$';
-				    case 'CNY':
-				    case 'JPY':
-					    return '¥';
-				    case 'EUR': return '€';
-				    case 'GBP': return '£';
-
-
-				    default: return store.getters.displayCurrency;
-			    }
-		    }
-
 		    return Token.fromJson({
-			    symbol:fiatSymbol(),//this.displayCurrency,
+			    symbol:this.fiatSymbol(displayCurrency),//this.displayCurrency,
 			    amount:total.toFixed(2),
 		    })
 	    }
     }
+
+    static fiatSymbol(currency) {
+    	if(!currency) currency = store.getters.displayCurrency;
+		switch(currency){
+			case 'USD':
+			case 'AUD':
+			case 'CAD':
+				return '$';
+			case 'CNY':
+			case 'JPY':
+				return '¥';
+			case 'EUR': return '€';
+			case 'GBP': return '£';
+
+
+			default: return currency;
+		}
+	}
 
 }

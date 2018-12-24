@@ -7,14 +7,16 @@
                     <section class="refresh" @click="refreshTokens" :class="{'loading':loadingBalances}">
                         <i v-if="!loadingBalances" class="icon-arrows-ccw"></i>
                         <i v-if="loadingBalances" class="icon-spin4 animate-spin"></i>
-                        <!--<btn borderless="1" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />-->
                     </section>
 
                     <router-link :to="{name:RouteNames.TOKENS}" class="total-balance">
-                        <section class="icon" :class="{'big':totalBalance.symbol.length === 1}">{{totalBalance.symbol}}</section>
+                        <!--<section class="icon" :class="{'big':totalBalance.symbol.length === 1}">{{totalBalance.symbol}}</section>-->
 
                         <section class="total-details">
-                            <figure class="amount">{{formatNumber(totalBalance.amount, true)}}</figure>
+                            <figure class="amount">
+                                {{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}
+                                <div v-if="displayToken">{{totalTokenBalance.symbol}} {{formatNumber(totalTokenBalance.amount, true)}}</div>
+                            </figure>
                             <figure class="dots">
                                 <figure class="dot" v-for="i in [1,1,1]"></figure>
                             </figure>
@@ -69,6 +71,7 @@
     import LanguageService from "../services/LanguageService";
     import AccountService from "../services/AccountService";
     import {daysOld} from "../util/DateHelpers";
+    import TokenService from "../services/TokenService";
 
 
     export default {
@@ -97,6 +100,10 @@
             totalBalance(){
 	            const totals = this.totalBalances.totals;
                 return PriceService.getTotal(totals);
+            },
+            totalTokenBalance(){
+	            const totals = this.totalBalances.totals;
+                return PriceService.getTotal(totals, null, false, this.displayToken);
             }
         },
 
@@ -111,7 +118,6 @@
         },
 
         created(){
-
 
         },
 
@@ -195,6 +201,10 @@
             .amount {
                 font-size: 24px;
                 font-weight: 300;
+
+                div {
+                    font-size: 11px;
+                }
             }
 
             .dots {

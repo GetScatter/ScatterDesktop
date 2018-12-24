@@ -6,6 +6,7 @@ import PriceService from "./PriceService";
 import BigNumber from "bignumber.js";
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
+import Token from "../models/Token";
 
 const filterOutToken = (scatter, token) => {
 	scatter.settings.tokens = scatter.settings.tokens.filter(x => x.unique() !== token.unique());
@@ -57,11 +58,15 @@ export default class TokenService {
         }))
     }
 
-	static async toggleDisplayToken(token){
-		const scatter = store.state.scatter.clone();
-		scatter.settings.displayToken = token;
+    static async setDisplayCurrency(ticker){
+	    const scatter = store.state.scatter.clone();
+	    scatter.settings.displayCurrency = ticker;
+	    return store.dispatch(Actions.SET_SCATTER, scatter);
+    }
 
-		// await PriceService.watchPrices(!!token);
+	static async setDisplayToken(token){
+		const scatter = store.state.scatter.clone();
+		scatter.settings.displayToken = token instanceof Token ? token.uniqueWithChain() : token;
 		return store.dispatch(Actions.SET_SCATTER, scatter);
 	}
 

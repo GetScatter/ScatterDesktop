@@ -20,7 +20,7 @@
 
 			<section class="graph">
 				<section class="tip" v-if="graphValue">
-					<div>{{formatNumber(parseFloat(graphValue).toFixed(2), true)}}</div>
+					<div>{{graphValue}}</div>
 				</section>
 				<section class="chart"></section>
 			</section>
@@ -74,6 +74,7 @@
 	import Token from "../models/Token";
 
 	import Chartist from 'chartist';
+	import {dateId, hourNow} from "../util/DateHelpers";
 	require("../charts.scss");
 	require("../tokens.scss");
 
@@ -89,6 +90,7 @@
 			yesterData:{},
 			chart:null,
 			graphValue:null,
+			currencyPrices:{},
 		}},
 		computed:{
 			...mapState([
@@ -99,6 +101,7 @@
 				'fullTotalBalances',
 				'totalBalances',
 				'networks',
+				'displayCurrency',
 			]),
 			totalBalance(){
 				const totals = this.balances.reduce((acc,x) => {
@@ -116,12 +119,15 @@
 					})
 					.filter(token => {
 						if(!terms.length) return true;
-						if(terms === '-') return !this.change(token).plus;
-						if(terms === '+') return this.change(token).plus;
-						if(isNaN(terms)) return token.symbol.toLowerCase().indexOf(terms) > -1;
+						if(terms === '-') return !this.change(token).plus && token.fiatBalance(false);
+						if(terms === '+') return this.change(token).plus && token.fiatBalance(false);
+						if(isNaN(terms)) return token.symbol.toLowerCase().indexOf(terms) > -1 || token.contract.toLowerCase().indexOf(terms) > -1;
 						return token.amount >= parseFloat(terms);
 					})
-					.sort((a,b) => (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0));
+					.sort((a,b) => {
+						if(terms === '+' || terms === '-') return this.change(b, true) - this.change(a, true)
+						return (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);
+					});
 			},
 			fullNetworks(){
 				return this.networks.filter(net => {
@@ -146,8 +152,9 @@
 				this.$router.back();
 			},
 			async setup(){
+				this.currencyPrices = await PriceService.getCurrencyPrices();
 				this.priceData = await PriceService.getTimeline();
-				this.yesterData = await PriceService.getTimeline(1);
+				this.yesterData = await PriceService.getTimeline(dateId(1));
 				this.setupGraph();
 			},
 			async setupGraph(){
@@ -155,28 +162,31 @@
 
 				const labels = [];
 				const values = [];
+				let totaled = [];
 
+				Object.keys(this.yesterData).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
+					totaled.push({hour, data:this.yesterData[hour]}));
+				Object.keys(this.priceData).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
+					totaled.push({hour, data:this.priceData[hour]}));
 
-				let taken = 0;
-				Object.keys(this.priceData).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour => {
-					taken++;
-					if(taken > 12) return;
+				totaled = totaled.slice(totaled.length-24, totaled.length);
 
+				totaled.map(({hour, data}, i) => {
 					const label = `${hour}:00`;
-
-					labels.push(label);
+					if(i % 2 === 0) labels.push(label);
+					else labels.push('');
 
 					const total = this.balances.reduce((acc,balance) => {
-						// const balance = this.fullTotalBalances.totals[tokenKey];
-						const priceData = this.priceData[hour][balance.uniqueWithChain()];
+						const priceData = data[balance.uniqueWithChain()];
 						if(!priceData) return acc;
-						acc += parseFloat(balance.fiatBalance(false, priceData));
+						acc += parseFloat(balance.fiatBalance(false, priceData * this.currencyPrices[this.displayCurrency]));
 						return acc;
 					}, 0);
-					values.push(total);
-				});
+					values.push({value:total, meta:label});
+				})
 
-
+				values.pop();
+				values.push({value:this.totalBalance.amount, meta:`${hourNow()}:00`});
 
 				const CHART_OPTIONS = {
 					showArea:true,
@@ -198,7 +208,7 @@
 					this.chart.on('draw', data => {
 
 						const toggleTooltip = (show = true) => {
-							this.graphValue = show ? data.value.y : null;
+							this.graphValue = show ? `${data.meta} -- ${this.formatNumber(parseFloat(data.value.y).toFixed(2), true)}` : null;
 						}
 
 						if (data.type === 'label') {
@@ -212,20 +222,6 @@
 							data.element._node.addEventListener("mouseenter", e => toggleTooltip())
 							data.element._node.addEventListener("mouseleave", e => toggleTooltip(false));
 						}
-
-
-
-						// if(data.type === 'line' || data.type === 'area') {
-						// 	data.element.animate({
-						// 		d: {
-						// 			begin: 500 * data.index,
-						// 			dur: 500,
-						// 			from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
-						// 			to: data.path.clone().stringify(),
-						// 			easing: Chartist.Svg.Easing.easeOutQuint
-						// 		}
-						// 	});
-						// }
 					});
 
 					this.chart.on('created', ctx => {
@@ -242,6 +238,7 @@
 							offset: 1,
 							'stop-color': 'rgba(255,255,255,1)'
 						});
+
 					});
 				} else {
 					this.chart.update({
@@ -250,19 +247,20 @@
 					})
 				}
 			},
-			change(token){
+			change(token, numOnly = false){
 				if(!this.priceData) return;
 				const hour = this.priceData.latest;
 				const latest = this.priceData[hour];
-				const earliest = this.yesterData.hasOwnProperty('23')
+				const earliest = this.yesterData.hasOwnProperty(hour)
 					// Getting last update from yesterday
-					? this.yesterData['23']
+					? this.yesterData[hour]
 					// Getting first update from today
 					: this.priceData[Object.keys(this.priceData).filter(x => x !== 'latest').sort((a,b) => a - b)[0]];
 
 				if(!latest || !earliest || !latest[token.uniqueWithChain()] || !earliest[token.uniqueWithChain()]) return '--';
 				const diff = earliest[token.uniqueWithChain()] - latest[token.uniqueWithChain()];
 				const change = (diff / earliest[token.uniqueWithChain()]) * 100;
+				if(numOnly) return Math.abs(parseFloat(change).toFixed(2));
 				const symbol = change > 0 ? '-' : '+';
 				return {plus:change <= 0, perc:`${symbol}${Math.abs(parseFloat(change).toFixed(2))}%`};
 

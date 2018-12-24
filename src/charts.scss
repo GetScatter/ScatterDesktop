@@ -7,18 +7,27 @@
 
 
 .ct-label {
-  color:#646673;
+  color: #6b6d7a;
+  text-shadow:0 1px 1px rgba(0,0,0,0.3);
+  font-weight: bold;
 
   &.ct-vertical {
     &.ct-start {
       text-align:left;
       justify-content: flex-start;
+
+      &.the-last-of-the-labels {
+        //margin-left:-30px;
+      }
     }
   }
 
   &.ct-horizontal {
+    font-size: 9px;
+    margin-top:5px;
+
     &.the-last-of-the-labels {
-      margin-left:-30px;
+      //margin-left:-30px;
     }
   }
 }

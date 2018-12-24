@@ -27,10 +27,11 @@ export default class Token {
     }
     static fromUnique(unique){
     	const p = this.placeholder();
-    	const [blockchain, contract, symbol] = unique.split(':');
+    	const [blockchain, contract, symbol, chainId] = unique.split(':');
     	p.blockchain = blockchain;
     	p.contract = contract;
     	p.symbol = symbol.toUpperCase();
+    	p.chainId = chainId;
     	p.decimals = PluginRepository.plugin(blockchain).defaultDecimals();
     	return p;
     }
@@ -75,6 +76,14 @@ export default class Token {
 		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
 			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
 			return `${parseFloat(price).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`
+		} else {
+			return null;
+		}
+	}
+
+	totalBalance(){
+		if(store.getters.totalBalances.totals.hasOwnProperty(this.uniqueWithChain())){
+			return store.getters.totalBalances.totals[this.uniqueWithChain()];
 		} else {
 			return null;
 		}
