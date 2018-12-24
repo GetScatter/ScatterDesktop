@@ -5,6 +5,7 @@ const Store = window.require('electron-store');
 
 const ABIS_NAME = 'abi';
 const SCATTER_DATA_NAME = 'scatter';
+const PRICE_DATA_NAME = 'prices';
 const SCATTER_INTERMED_NAME = 'scatter_intermed';
 
 const stores = {};
@@ -17,11 +18,13 @@ const getStore = name => {
 	return stores[name];
 };
 
+const priceStorage = () => getStore(PRICE_DATA_NAME);
 const scatterStorage = () => getStore(SCATTER_DATA_NAME);
 const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
 
 import {remote} from '../util/ElectronHelpers';
+import {dateId, daysOld, hourNow} from "../util/DateHelpers";
 const dataPath = remote.app.getPath('userData');
 const fs = window.require('fs');
 

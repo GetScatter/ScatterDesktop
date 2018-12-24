@@ -288,10 +288,10 @@
 			filterTokensByTerms(tokensList){
 				return tokensList
 					.filter(x => {
-						return x.symbol.toLowerCase().match(this.terms)
-							|| x.name.toLowerCase().match(this.terms)
-							|| x.blockchain.toLowerCase().match(this.terms)
-							|| this.blockchainName(x.blockchain).toLowerCase().match(this.terms)
+						return x.symbol.toLowerCase().indexOf(this.terms) > -1
+							|| x.name.toLowerCase().indexOf(this.terms) > -1
+							|| x.blockchain.toLowerCase().indexOf(this.terms) > -1
+							|| this.blockchainName(x.blockchain).toLowerCase().indexOf(this.terms) > -1
 					})
 			},
 			defaultDecimals(blockchain){

@@ -69,7 +69,7 @@
 
 				return this.keypairs
                     .filter(keypair => keypair.publicKeys.some(x => x.blockchain === this.blockchain))
-                    .filter(keypair => keypair.name.toLowerCase().match(this.searchTerms))
+                    .filter(keypair => keypair.name.toLowerCase().indexOf(this.searchTerms) > -1)
                     .map(keypair => {
                     	const publicKey = keypair.publicKeys.find(x => x.blockchain === this.blockchain).key;
 

@@ -62,19 +62,19 @@ export default class Token {
     	return `${this.amount} ${this.symbol}`;
     }
 
-	fiatBalance(){
+	fiatBalance(withSymbol = true, price = null){
 		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
-			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
-			return `${parseFloat(price * parseFloat(this.amount)).toFixed(2)} ${store.getters.displayCurrency}`;
+			price = price ? price : parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
+			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`;
 		} else {
 			return null;
 		}
 	}
 
-	fiatPrice(){
+	fiatPrice(withSymbol = true){
 		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
 			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
-			return `${parseFloat(price).toFixed(2)} ${store.getters.displayCurrency}`
+			return `${parseFloat(price).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`
 		} else {
 			return null;
 		}

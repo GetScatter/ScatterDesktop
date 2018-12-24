@@ -10,14 +10,11 @@
                         <!--<btn borderless="1" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />-->
                     </section>
 
-                    <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" class="total-balance">
-                        <section class="icon" :class="{'big':balance.symbol.length === 1}">
-                            <!--<i class="icon-arrows-ccw"></i>-->
-                            {{balance.symbol}}
-                        </section>
+                    <router-link :to="{name:RouteNames.TOKENS}" class="total-balance">
+                        <section class="icon" :class="{'big':totalBalance.symbol.length === 1}">{{totalBalance.symbol}}</section>
 
                         <section class="total-details">
-                            <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
+                            <figure class="amount">{{formatNumber(totalBalance.amount, true)}}</figure>
                             <figure class="dots">
                                 <figure class="dot" v-for="i in [1,1,1]"></figure>
                             </figure>
@@ -27,7 +24,8 @@
                     <!--<btn text="Buy"></btn>-->
                     <!--<btn text="Exchange"></btn>-->
                 </section>
-                <section class="actions" style="margin-right:-10px;">
+                <section class="actions">
+                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.EXCHANGE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
                 </section>
@@ -70,6 +68,7 @@
     import HardwareService from "../services/HardwareService";
     import LanguageService from "../services/LanguageService";
     import AccountService from "../services/AccountService";
+    import {daysOld} from "../util/DateHelpers";
 
 
     export default {
@@ -95,35 +94,9 @@
                 'displayToken',
                 'displayCurrency',
             ]),
-            balance(){
-            	const totals = this.totalBalances.totals;
-
-
-            	if(this.displayToken){
-            		if(totals.hasOwnProperty(this.displayToken)) return totals[this.displayToken]
-                    else {
-                    	const token = Token.fromUnique(this.displayToken);
-                    	token.amount = parseFloat(0).toFixed(token.decimals);
-                    	return token;
-                    }
-                } else {
-            		let total = 0;
-
-            		Object.keys(this.prices).map(tokenUnique => {
-			            const balance = totals[tokenUnique];
-			            if(balance){
-				            const price = this.prices[tokenUnique][this.displayCurrency];
-				            const value = parseFloat(parseFloat(balance.amount) * parseFloat(price));
-				            if(isNaN(value)) return;
-				            total += value;
-			            }
-                    });
-
-		            return Token.fromJson({
-			            symbol:this.displayCurrency,
-			            amount:total.toFixed(2),
-		            })
-                }
+            totalBalance(){
+	            const totals = this.totalBalances.totals;
+                return PriceService.getTotal(totals);
             }
         },
 
@@ -135,6 +108,11 @@
 		        await BalanceService.loadAllBalances(true);
 		        this.loadingBalances = false;
             }
+        },
+
+        created(){
+
+
         },
 
         mounted(){
@@ -152,6 +130,12 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../_variables";
 
+    .actions {
+        button {
+            font-weight: bold;
+        }
+    }
+
     .home {
         position:relative;
         display:flex;
@@ -161,6 +145,7 @@
     .token-buttons {
         display:flex;
         button {
+
             &:not(:first-child){
                 margin-left:5px;
             }
@@ -191,18 +176,21 @@
         display:flex;
         align-items: center;
         .icon {
-            margin-top:3px;
             font-size: 16px;
+            padding-right:5px;
+            margin-top:2px;
 
             &.big {
                 font-size: 22px;
+                padding-right:0;
+                margin-top:0;
             }
         }
 
         .total-details {
             display:flex;
             align-items: center;
-            padding-left:15px;
+            padding-left:5px;
 
             .amount {
                 font-size: 24px;
@@ -221,6 +209,12 @@
                     background:$primary;
                     border-radius:50%;
                     margin-right:3px;
+                }
+            }
+
+            &:hover {
+                .dots {
+                    animation: bounce-right 0.5s ease infinite;
                 }
             }
         }

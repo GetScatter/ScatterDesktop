@@ -44,7 +44,7 @@
             ]),
             items(){
             	return this.popin.data.props.items
-                    .filter(x => x.title ? x.title.toLowerCase().match(this.searchTerms) : true || x.description ? x.description.toLowerCase().match(this.searchTerms) : true);
+                    .filter(x => x.title ? x.title.toLowerCase().indexOf(this.searchTerms) > -1 : true || x.description ? x.description.toLowerCase().indexOf(this.searchTerms) > -1 : true);
             }
         },
         methods:{

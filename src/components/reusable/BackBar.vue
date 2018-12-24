@@ -99,17 +99,6 @@
                     margin-right: 14px;
                 }
             }
-
-            @keyframes bounce {
-                0%, 100% {
-                    transform:translateX(0px);
-                }
-
-                50% {
-                    transform:translateX(4px);
-
-                }
-            }
         }
 
         .buttons {

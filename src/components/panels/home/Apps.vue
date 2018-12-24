@@ -2,7 +2,7 @@
 	<section class="apps">
 		<section class="split-inputs">
 			<SearchBar style="flex:1;" :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
-			<btn small="1" style="margin-right:20px; font-weight: normal;" borderless="1" v-on:clicked="goToApps" text="Browse" />
+			<btn small="1" style="margin-right:30px; font-weight: normal;" borderless="1" v-on:clicked="goToApps" text="Browse" />
 		</section>
 
 		<transition name="slide-right" mode="out-in">
@@ -126,10 +126,10 @@
 			search(appkeys, fakeCount = false){
 				return Object.keys(appkeys).reduce((acc, origin) => {
 					const appdata = this.getAppData(origin);
-					const matchesOrigin = origin.toString().toLowerCase().match(this.searchTerms);
-					const matchesType = appdata.type.toLowerCase().match(this.searchTerms);
-					const matchesDescription = appdata.description.toLowerCase().match(this.searchTerms);
-					const matchesBlockchain = appdata.hasOwnProperty('blockchain') ? appdata.blockchain.toLowerCase().match(this.searchTerms) : false;
+					const matchesOrigin = origin.toString().toLowerCase().indexOf(this.searchTerms) > -1;
+					const matchesType = appdata.type.toLowerCase().indexOf(this.searchTerms) > -1;
+					const matchesDescription = appdata.description.toLowerCase().indexOf(this.searchTerms) > -1;
+					const matchesBlockchain = appdata.hasOwnProperty('blockchain') ? appdata.blockchain.toLowerCase().indexOf(this.searchTerms) > -1 : false;
 					if(matchesOrigin || matchesType || matchesDescription || matchesBlockchain)
 						acc[origin] = fakeCount ? 0 : appkeys[origin];
 					return acc;

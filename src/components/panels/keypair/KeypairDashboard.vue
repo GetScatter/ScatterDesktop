@@ -151,7 +151,7 @@
 			},
 			filteredAccounts(){
 				return this.keypair.accounts(true)
-					.filter(x => x.name.toLowerCase().match(this.searchTerms))
+					.filter(x => x.name.toLowerCase().indexOf(this.searchTerms) > -1)
 					.sort((a,b) => {
 						return b.tokenCount() - a.tokenCount()
 					})

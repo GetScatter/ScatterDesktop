@@ -61,7 +61,6 @@
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
     import Prompt from './popins/overlay/Prompt.vue'
-    import PopInHead from './popins/overlay/fragments/PopInHead.vue'
 
     import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
     import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
@@ -90,7 +89,6 @@
 		    Snackbar,
 		    TransactionSuccess,
 		    Prompt,
-		    PopInHead,
 
             // FULLSCREEN
 		    DestroyScatter,
@@ -178,7 +176,6 @@
         max-width:100%;
         margin:0 40px;
         position: relative;
-        border-radius:4px;
         overflow:hidden;
     }
 

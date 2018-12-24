@@ -64,9 +64,9 @@
 
 		        return reducer(this.accounts)
 			        .filter(x => {
-				        return x.blockchain().toLowerCase().match(terms)
-					        || x.sendable().toLowerCase().match(terms)
-					        || x.keypair().name.toLowerCase().match(terms)
+				        return x.blockchain().toLowerCase().indexOf(terms) > -1
+					        || x.sendable().toLowerCase().indexOf(terms) > -1
+					        || x.keypair().name.toLowerCase().indexOf(terms) > -1
 			        })
 	        },
 

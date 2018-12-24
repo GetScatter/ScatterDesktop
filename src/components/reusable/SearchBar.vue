@@ -1,5 +1,5 @@
 <template>
-	<section class="search-bar" :class="{'short':short}">
+	<section class="search-bar" :class="{'short':short, 'tokens':tokens}">
 		<figure class="icon icon-search"></figure>
 		<input :placeholder="placeholder" v-model="terms" />
 	</section>
@@ -16,7 +16,7 @@
 				this.$emit('terms', this.terms.toLowerCase().trim());
 			}
 		},
-		props:['placeholder', 'short']
+		props:['placeholder', 'short', 'tokens']
 	}
 
 </script>
@@ -97,6 +97,41 @@
 			}
 
 			.icon {
+				line-height: 40px;
+				font-size: $input-size-short;
+			}
+		}
+
+		&.tokens {
+			height:40px;
+			margin-top:0;
+			margin-left:-30px;
+
+			input {
+				height:40px;
+				padding-left:50px;
+				color:#fff;
+
+				&::-webkit-input-placeholder {
+					color:#fff;
+					font-size: $input-size-short;
+				}
+				&::-moz-placeholder {
+					color:#fff;
+					font-size: $input-size-short;
+				}
+				&:-ms-input-placeholder {
+					color:#fff;
+					font-size: $input-size-short;
+				}
+				&:-moz-placeholder {
+					color:#fff;
+					font-size: $input-size-short;
+				}
+			}
+
+			.icon {
+				color:#fff;
 				line-height: 40px;
 				font-size: $input-size-short;
 			}

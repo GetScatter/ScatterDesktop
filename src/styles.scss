@@ -623,3 +623,8 @@ label {
   50% { transform:rotateZ(4deg); }
 }
 
+@keyframes bounce-right {
+  0%, 100% { transform:translateX(0px); }
+  50% { transform:translateX(4px); }
+}
+

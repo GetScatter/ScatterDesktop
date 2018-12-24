@@ -156,9 +156,9 @@
 		},
 		methods:{
 			matchesToken(terms, token){
-				if(token.name.toLowerCase().match(terms)) return true;
-				if(token.symbol.toLowerCase().match(terms)) return true;
-				if(token.contract.toLowerCase().match(terms)) return true;
+				if(token.name.toLowerCase().indexOf(terms) > -1) return true;
+				if(token.symbol.toLowerCase().indexOf(terms) > -1) return true;
+				if(token.contract.toLowerCase().indexOf(terms) > -1) return true;
 				return false;
 			}
 		},

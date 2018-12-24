@@ -1,5 +1,5 @@
 <template>
-    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small, 'borderless':borderless}">
+    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small, 'borderless':borderless, 'colorless':colorless}">
         <i :class="icon" v-if="icon && !loading"></i>
         <span v-else>
             <i class="icon-spin4 animate-spin" v-if="loading"></i>
@@ -11,7 +11,7 @@
 <script>
     export default {
         methods: { emit(){ this.$emit('clicked') } },
-        props:['text', 'icon', 'blue', 'red', 'disabled', 'small', 'loading', 'borderless']
+        props:['text', 'icon', 'blue', 'red', 'disabled', 'small', 'loading', 'borderless', 'colorless']
     }
 </script>
 
@@ -94,6 +94,13 @@
             &:active {
                 border:0;
             }
+        }
+
+        &.colorless {
+	        border:1px solid rgba(255,255,255,0.1);
+	        color:#fff;
+	        background: transparent;
+
         }
 
     }

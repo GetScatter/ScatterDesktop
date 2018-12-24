@@ -253,7 +253,6 @@
                 'networks',
                 'tokens',
                 'networkTokens',
-                'totalBalances'
             ]),
 
             /**************************/
@@ -276,9 +275,9 @@
 
 		        return reducer(this.accounts)
                     .filter(x => {
-                    	return x.blockchain().toLowerCase().match(terms)
-                            || x.sendable().toLowerCase().match(terms)
-                            || x.keypair().name.toLowerCase().match(terms)
+                    	return x.blockchain().toLowerCase().indexOf(terms) > -1
+                            || x.sendable().toLowerCase().indexOf(terms) > -1
+                            || x.keypair().name.toLowerCase().indexOf(terms) > -1
                     })
                     .filter(x => !this.networkFilter ? true : x.networkUnique === this.networkFilter.unique())
                     .filter(x => x.authority !== 'watch')
@@ -334,13 +333,13 @@
 		            id:x.sendable(),
 		            title:x.sendable(),
 		            description:x.keypair().name
-	            })).filter(x => JSON.stringify(x).match(this.searchTermsContacts));
+	            })).filter(x => JSON.stringify(x).indexOf(this.searchTermsContacts) > -1);
             },
 	        filteredContacts(){
 		        const terms = this.searchTermsContacts.trim().toLowerCase();
 		        return this.formattedContacts.filter(x => {
-			        return x.id.toLowerCase().match(terms)
-				        || x.title.toLowerCase().match(terms)
+			        return x.id.toLowerCase().indexOf(terms) > -1
+				        || x.title.toLowerCase().indexOf(terms) > -1
 		        })
 	        },
 
