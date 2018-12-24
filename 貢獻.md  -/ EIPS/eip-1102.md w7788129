@@ -1,0 +1,140 @@
+---
+eip：1102
+標題：選擇加入帳戶
+作者：Paul Bouchon <mail@bitpshr.net>
+討論 - ：https：//ethereum-magicians.org/t/eip-1102-opt-in-provider-access/414
+狀態：草稿
+類型：標準跟踪
+類別：界面
+創建時間：2018-05-04
+---
+
+##簡單總結
+
+此提案描述了DOM環境以需要用戶批准的方式公開用戶帳戶的方法。
+
+##摘要
+
+上一代支持以太坊的DOM環境遵循一種模式，即在沒有用戶同意的情況下注入填充了帳戶的提供程序。這使得此類環境的用戶面臨風險，因為惡意網站可以使用這些帳戶查看詳細的帳戶信息，並代表用戶任意發起不需要的交易。
+
+該提案概述了一種協議，在該協議中，啟用了以太坊的DOM環境在用戶批准帳戶訪問之前不會公開帳戶。
+
+##規格
+
+###概念
+
+#### RFC-2119
+
+本文檔中的關鍵詞“必須”，“必須”，“必需”，“應該”，“不應該”，“應該”，“不應該”，“推薦”，“可以”和“可選”按照[RFC-2119]（https://www.ietf.org/rfc/rfc2119.txt）中的描述進行解釋。
+
+####`eth_requestAccounts`
+
+由啟用了以太坊的DOM環境公開的提供程序定義了一個新的RPC方法：`eth_requestAccounts`。調用此方法會觸髮用戶界面，允許用戶批准或拒絕給定dapp的帳戶訪問權限。此方法返回一個`Promise`，如果用戶批准訪問，則使用“Array”帳戶解析，如果用戶拒絕訪問，則返回“Error”。
+
+```JS
+ethereum.send（'eth_requestAccounts'）：Promise <string>
+```
+
+#### Provider＃enable（DEPRECATED）
+
+**注意：不推薦使用此方法，而使用RPC方法[`eth_requestAccounts`]（＃eth_requestAccounts）。**
+
+由啟用了以太坊的DOM環境公開的提供程序定義了一個新的RPC方法：`ethereum.enable（）`。調用此方法會觸髮用戶界面，允許用戶批准或拒絕給定dapp的帳戶訪問權限。此方法返回一個`Promise`，如果用戶批准訪問，則使用“Array”帳戶解析，如果用戶拒絕訪問，則返回“Error”。
+
+```JS
+ethereum.enable（）：承諾<any>
+```
+
+＃＃＃ 協議
+
+#### Legacy dapp初始化
+
+```
+START dapp
+如果定義了web3
+    繼續dapp
+如果web3未定義
+    停止dapp
+```
+
+####建議dapp初始化
+
+```
+START dapp
+IF提供商已定義
+    請求[1]帳戶訪問權限
+    如果用戶批准
+        RESOLVE [2]帳戶訪問權限
+        繼續dapp
+    IF用戶拒絕
+        REJECT [3]帳戶訪問權限
+        停止dapp
+IF提供程序未定義
+    停止dapp
+```
+
+#####`[1]請求
+
+Dapps **必須通過在`window.ethereum`上公開的提供程序上調用`eth_requestAccounts` RPC方法來請求帳戶訪問。調用此方法**必須**觸髮用戶界面，允許用戶批准或拒絕給定dapp的帳戶訪問權限。如果用戶批准帳戶訪問，則此方法**必須返回一個用一組用戶帳戶解析的“Promise”，如果用戶拒絕帳戶訪問，則返回拒絕。
+
+#####`[2] RESOLVE`
+
+如果用戶批准帳戶訪問權限，那麼DOM環境**必須使用“Array”用戶帳戶填充“window.ethereum”中公開的提供程序。調用`eth_requestAccounts` RPC方法時返回的`Promise` **必須用一個用戶帳戶的`Array`解析。
+
+#####`[3] REJECT`
+
+如果用戶拒絕帳戶訪問，則在調用`eth_requestAccounts` RPC方法時返回的'Promise` **必須被拒絕並提供信息性的`Error`。
+
+###示例初始化
+
+```JS
+嘗試{
+    //如果需要請求帳戶訪問權限
+    const accounts = await ethereum.send（'eth_requestAccounts'）;
+    //帳戶現在公開，使用它們
+    ethereum.send（'eth_sendTransaction'，{from：accounts [0]，/ * ... * /}）
+} catch（error）{
+    //用戶拒絕帳戶訪問權限
+}
+```
+
+###約束
+
+*瀏覽器**必須**在`window.ethereum`上公開提供者。
+*瀏覽器**絕不能**默認情況下使用用戶帳戶填充提供者。
+*瀏覽器**必須**定義`eth_requestAccounts` RPC方法。
+*瀏覽器**必須**在調用`eth_requestAccounts`時顯示帳戶訪問權限用戶界面。
+*如果帳戶訪問權限獲得批准，瀏覽器**必須**使用帳戶填充提供商。
+*如果帳戶訪問被批准，瀏覽器**必須**解析`eth_requestAccounts`返回的`Promise`。
+*如果帳戶訪問被拒絕，瀏覽器**不得**使用帳戶填充提供者。
+*如果帳戶訪問被拒絕，瀏覽器**必須拒絕`eth_requestAccounts`返回的`Promise`和`Error`。
+
+##基本原理
+
+上一代啟用以太坊的DOM環境之後的自動帳戶曝光模式無法保護用戶隱私，無法保持安全的用戶體驗：不受信任的網站既可以查看詳細的帳戶信息，也可以代表用戶任意啟動交易。即使大多數用戶可能拒絕不受信任的網站上的未經請求的交易，但帳戶訪問協議應該使這些未經請求的請求成為不可能。
+
+該提議建立了一種新模式，其中dapps必須請求訪問用戶帳戶。此協議通過隱藏用戶帳戶並防止不受信任的站點上的未經請求的事務請求來直接增強用戶隱私。
+
+###立即增值
+
+*用戶可以拒絕不受信任的網站上的帳戶訪問權限以隱藏帳戶。
+*用戶可以拒絕不受信任的站點上的帳戶訪問，以防止未經請求的交易。
+
+###長期增值
+
+* Dapps可以根據用戶同意請求特定的帳戶信息。
+* Dapps可以根據用戶同意（uPort，DID）請求特定的用戶信息。
+* Dapps可以根據用戶同意請求特定網絡。
+* Dapps可以根據用戶同意請求上述的多個實例。
+
+##向後兼容性
+
+此提案會影響dapp開發人員，並要求他們按照上述協議請求訪問用戶帳戶。同樣，此提案會影響dapp瀏覽器開發人員，並要求他們僅按照上面定義的協議公開用戶帳戶。
+
+##實施
+
+MetaMask團隊[已實施]（https://github.com/MetaMask/metamask-extension/pull/4703）上述策略。
+
+##版權所有
+
+版權和相關權利通過[CC0]（https://creativecommons.org/publicdomain/zero/1.0/）免除。
