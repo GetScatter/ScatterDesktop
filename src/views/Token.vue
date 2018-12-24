@@ -20,7 +20,7 @@
 			<section class="tokens">
 
 				<section class="token" v-for="balance in accountBalances">
-					<figure class="icon">{{balance.account.sendable()[0].toUpperCase()}}</figure>
+					<figure class="icon" @click="goToAccount(balance.account)">{{balance.account.sendable()[0].toUpperCase()}}</figure>
 					<section>
 						<section class="title" :class="{'small':balance.account.sendable().length > 12}"><b>{{balance.account.sendable()}}</b></section>
 						<section class="sub">{{formatNumber(balance.token.amount, true)}} {{balance.token.symbol}}</section>
@@ -32,7 +32,7 @@
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
 						<btn colorless="1" style="width:auto;" text="Stabilize" />
 						<btn style="width:auto;" text="Exchange" />
-						<figure class="chevron icon-right-open-big"></figure>
+						<figure @click="goToAccount(balance.account)" class="chevron icon-right-open-big"></figure>
 					</section>
 				</section>
 
@@ -108,6 +108,10 @@
 			back(){
 				this.$router.back();
 			},
+			goToAccount(account){
+				console.log('account', account);
+				this.$router.push({name:this.RouteNames.TOKENS, params:{account:account.unique()}})
+			}
 		}
 	}
 </script>

@@ -16,7 +16,7 @@
 					<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle)}}</p>
 				</section>
 			</section>
-			<section class="tokens" @click="$emit('tokens', account)" v-if="account.tokenCount(systemToken)+1 > 0">
+			<section class="tokens" @click="$router.push({name:RouteNames.TOKENS, params:{account:account.unique()}})" v-if="account.tokenCount(systemToken)+1 > 0">
 				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, account.tokenCount(systemToken)+1)}} <i class="icon-right-open-big"></i>
 			</section>
 			<section class="tokens" v-else>
