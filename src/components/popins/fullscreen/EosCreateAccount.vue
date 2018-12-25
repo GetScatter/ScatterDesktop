@@ -40,9 +40,9 @@
 							<br>
 
 							<cin label="Owner"
-							     :text="ownerPublicKey" />
+							     :text="ownerKey" v-on:changed="x => ownerKey = x" />
 							<cin label="Active"
-							     :text="activePublicKey" />
+							     :text="activeKey" v-on:changed="x => activeKey = x" />
 						</section>
 					</section>
 				</section>
@@ -198,9 +198,14 @@
 			ramPrice:null,
 
 			transactionId:'',
+
+			ownerKey:'',
+			activeKey:'',
 		}},
 
 		created(){
+			this.ownerKey = this.ownerPublicKey;
+			this.activeKey = this.activePublicKey;
 
 			this.checkAccountName();
 			if(this.hasOtherEosAccounts) this.state = STATES.ACCOUNT;
@@ -359,8 +364,8 @@
 				plugin.createAccount(
 					this.creator,
 					this.accountName,
-					this.ownerPublicKey,
-					this.activePublicKey,
+					this.ownerKey,
+					this.ownerKey,
 					this.eosToUse
 				).then(tx => {
 					this.finishedAccountCreation(tx, this.creator.network());

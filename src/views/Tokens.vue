@@ -280,9 +280,9 @@
 			}
 		},
 		watch:{
-			['balances'](){
+			['calculatedBalances'](){
 				this.setupGraph();
-			}
+			},
 		}
 	}
 </script>

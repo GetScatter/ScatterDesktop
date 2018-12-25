@@ -21,10 +21,11 @@
   }
 
   .panel-top {
-    margin-top:20px;
     display:flex;
     align-items: flex-end;
     justify-content: space-between;
+    max-width:1366px;
+    margin:20px auto 0;
 
     .values {
       color:#fff;
@@ -61,8 +62,9 @@
 
   .graph {
     position:relative;
-    margin-top:30px;
     height:180px;
+    max-width:1366px;
+    margin:30px auto 0;
 
     .tip {
       position:absolute;
@@ -89,7 +91,8 @@
 
 
   .token-filters {
-    margin-top:40px;
+    max-width:1366px;
+    margin:50px auto 0;
     display:flex;
     padding-bottom:10px;
     border-bottom:1px solid rgba(255,255,255,0.1);
@@ -97,7 +100,8 @@
 
   .tokens {
     color:#fff;
-    margin-top:10px;
+    max-width:1366px;
+    margin:10px auto;
 
     .token {
       display:flex;

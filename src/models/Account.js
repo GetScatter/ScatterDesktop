@@ -65,6 +65,19 @@ export default class Account {
 	    return store.state.balances[this.identifiable()].filter(x => !systemToken ? true : x.identifiable() !== systemToken.identifiable()).length;
     }
 
+    tokens(){
+	    if(!store.state.balances) return [];
+	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return [];
+	    if(!store.state.balances[this.identifiable()]) return [];
+	    return store.state.balances[this.identifiable()];
+    }
+
+    tokenBalance(token){
+    	const balance = this.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain());
+    	if(!balance) return 0;
+    	return balance.amount;
+    }
+
     systemBalance(){
 	    if(!store.state.balances) return 0;
 	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;

@@ -1,8 +1,5 @@
 <template>
 	<section class="menu-bar">
-		<transition name="slide-up" mode="out-in">
-			<router-link v-if="loaded && $route.name !== RouteNames.LOGIN" :to="{name:RouteNames.HOME}" class="logo">Scatter</router-link>
-		</transition>
 
 		<section class="actions" v-if="!isMacOS">
 
@@ -81,17 +78,6 @@
 		top:0;
 		left:0;
 		right:0;
-
-		.logo {
-			font-family: 'Grand Hotel', sans-serif;
-			font-size: 45px;
-			display:inline-block;
-			height:80px;
-			line-height: 80px;
-			padding-top:3px;
-			cursor: default;
-			-webkit-app-region: drag;
-		}
 
 		.actions {
 			position:absolute;

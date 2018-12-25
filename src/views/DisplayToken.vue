@@ -2,41 +2,7 @@
 	<section>
 		<back-bar v-on:back="back" />
 
-		<section class="panel-container limited">
-			<h1>Display Token & Fiat Symbol</h1>
-
-			<br>
-			<label>Fiat Currencies</label>
-			<section class="tokens">
-				<section class="token" :class="{'active':displayCurrency === currency.ticker}" v-for="currency in currencyList" @click="setDisplayCurrency(currency.ticker)">
-					<figure class="icon">{{currency.symbol}}</figure>
-					<section class="data">
-						<section>
-							<div>{{currency.ticker}}</div>
-							<b>{{formatNumber(parseFloat(currency.price.amount).toFixed(2), parseInt(currency.price.amount) < 1000000)}}</b>
-						</section>
-					</section>
-				</section>
-			</section>
-
-			<br>
-			<label>System Tokens</label>
-			<section class="tokens">
-				<section class="token" :class="{'active':displayToken && displayToken === token.id}" v-for="token in networkTokensList" @click="setDisplayToken(token.token)">
-					<figure class="icon">{{token.symbol}}</figure>
-					<section class="data">
-						<section>
-							<div>{{token.token.network().name}}</div>
-							<b v-if="token.amount">{{formatNumber(parseFloat(token.amount.amount).toFixed(2), parseInt(token.amount.amount) < 1000000)}}</b>
-							<b v-else>--</b>
-						</section>
-					</section>
-				</section>
-			</section>
-		</section>
-
-
-
+		<TokenSelector title="Display Token & Fiat Symbol" :lists="tokenLists" />
 
 	</section>
 </template>
@@ -45,12 +11,14 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../store/constants';
 	import SearchBar from '../components/reusable/SearchBar';
+	import TokenSelector from '../components/panels/TokenSelector';
 	import PriceService from '../services/PriceService';
 	import TokenService from "../services/TokenService";
 
 	export default {
 		components:{
-			SearchBar
+			SearchBar,
+			TokenSelector
 		},
 		data () {return {
 			currencies:{},
@@ -72,11 +40,13 @@
 			currencyList(){
 				return Object.keys(this.currencies).map(ticker => {
 					const symbol = PriceService.fiatSymbol(ticker);
+					const amount = PriceService.getTotal(this.totalBalances.totals, ticker, true);
 					return {
-						id:`fiat_${ticker}`,
-						ticker,
+						id:ticker,
+						name:ticker,
 						symbol,
-						price:PriceService.getTotal(this.totalBalances.totals, ticker, true)
+						amount:amount ? this.formatNumber(parseFloat(amount.amount).toFixed(2), parseInt(amount.amount) < 1000000) : '--',
+						token:ticker
 					}
 				});
 			},
@@ -85,15 +55,22 @@
 					if(!acc.find(x => x.unique() === t.unique())) acc.push(t);
 					return acc;
 				}, []).map(token => {
+					const amount = this.totalBalances.totals[token.uniqueWithChain()];
 					return {
 						id:token.uniqueWithChain(),
-						ticker:token.name,
+						name:token.name,
 						symbol:token.symbol,
-						amount:this.totalBalances.totals[token.uniqueWithChain()],
+						amount:amount ? this.formatNumber(parseFloat(amount.amount).toFixed(2), parseInt(amount.amount) < 1000000) : '--',
 						token
 					}
 				});
 			},
+			tokenLists(){
+				return [
+					{title:'Fiat Currencies', active:this.displayCurrency, handler:this.setDisplayCurrency, tokens:this.currencyList},
+					{title:'System Tokens', active:this.displayToken, handler:this.setDisplayToken, tokens:this.networkTokensList}
+				];
+			}
 		},
 		mounted(){
 			PriceService.getCurrencyPrices().then(x => this.currencies = x);
