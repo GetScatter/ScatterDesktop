@@ -1,6 +1,6 @@
 <template>
 	<section>
-		<back-bar v-on:back="back" />
+		<back-bar v-on:back="back" :buttons="[{text:'Exchange History', clicked:() => $router.push({name:RouteNames.DISPLAY_TOKEN})}]" />
 
 		<TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
 
@@ -11,7 +11,7 @@
 					<h5>Exchange</h5>
 
 					<section style="max-height: 100px;">
-						<section class="box" :class="{'unclickable':loadingPairs || loadingRate || !pairs.length, 'clickable':pairs.length}" @click="selectToken('from')">
+						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':pairs.length}" @click="selectToken('from')">
 							<section class="row" v-if="loadingPairs">
 								<figure class="fill">
 									<b class="icon-spin4 animate-spin"></b>
@@ -84,7 +84,7 @@
 					<h5>Receive</h5>
 
 					<section style="max-height: 100px;">
-						<section class="box dark" :class="{'outlined unclickable':loadingPairs || loadingRate || !pairs.length, 'clickable':pairs.length}" @click="selectToken('to')">
+						<section class="box dark" :class="{'outlined unclickable':loadingPairs || loadingRate || !pairs.length || pairs.length === 1, 'clickable':pairs.length > 1}" @click="selectToken('to')">
 							<section class="row" v-if="loadingPairs">
 								<figure class="fill" style="flex:0 0 auto; padding-right:20px;">
 									<b class="icon-spin4 animate-spin"></b>
@@ -94,7 +94,7 @@
 							<section class="row" v-else>
 								<figure class="icon" :class="{'small':pair && pair.length >= 4}" v-if="pairs.length && pair">{{pair ? pair : ''}}</figure>
 								<figure class="fill">{{pairs.length ? pair ? pair : `Select Pair (${pairs.length})` : 'No Available Pairs'}}</figure>
-								<figure class="chevron icon-down-open-big" v-if="pairs.length"></figure>
+								<figure class="chevron" :class="{'icon-down-open-big':pairs.length > 1, 'icon-lock':pairs.length === 1}" v-if="pairs.length"></figure>
 								<figure class="chevron icon-cancel" v-if="!pairs.length"></figure>
 							</section>
 						</section>
@@ -125,15 +125,15 @@
 							<section class="row" v-else>
 								<figure class="icon" :class="{'small':pair && pair.length >= 4}">{{pair ? pair : '--'}}</figure>
 								<figure class="fill">
-									<input v-model="estimatedAmount" :class="{'bad':rate && (estimatedAmount > rate.limitMaxDestinationCoin || estimatedAmount < rate.limitMinDestinationCoin)}" :disabled="true" />
+									<input v-model="estimatedAmount" :class="{'bad':rate && rate.max && (estimatedAmount > rate.max || estimatedAmount < rate.min)}" :disabled="true" />
 								</figure>
 							</section>
 							<section class="row unpad">
 								<section class="row pad">
 									<figure class="icon small" style="width:auto;">MIN</figure>
-									<div class="small" style="flex:0 0 auto;" :class="{'bad':rate && rate.limitMinDestinationCoin > estimatedAmount}">{{rate ? rate.limitMinDestinationCoin : '--'}}</div>
+									<div class="small" style="flex:0 0 auto;" :class="{'bad':rate && rate.min && (rate.min > estimatedAmount)}">{{rate && rate.min ? rate.min : '--'}}</div>
 									<figure class="icon small" style="margin-left:50px; width:auto;">MAX</figure>
-									<div class="small" style="flex:0 0 auto;" :class="{'bad':rate && rate.limitMaxDestinationCoin < estimatedAmount}">{{rate ? rate.limitMaxDestinationCoin : '--'}}</div>
+									<div class="small" style="flex:0 0 auto;" :class="{'bad':rate && rate.max && (rate.max < estimatedAmount)}">{{rate && rate.max ? rate.max : '--'}}</div>
 								</section>
 							</section>
 						</section>
@@ -166,6 +166,8 @@
 			account:null,
 			token:null,
 			pair:null,
+			pairId:null,
+			service:null,
 			rate:null,
 			fiat:0,
 			selectingToken:false,
@@ -199,7 +201,7 @@
 							id:token.uniqueWithChain(),
 							name:token.name,
 							symbol:token.symbol,
-							amount:amount ? this.formatNumber(parseFloat(amount).toFixed(2), parseInt(amount) < 1000000) : '--',
+							amount:amount ? this.formatNumber(parseFloat(amount).toFixed(token.decimals), parseInt(amount) < 1000000) : '--',
 							token:token.clone(),
 							fiat:token.fiatBalance(false),
 						}
@@ -207,8 +209,8 @@
 					return [{
 						title:'',
 						active:this.token.uniqueWithChain(),
-						handler:token => {
-							this.token = token;
+						handler:id => {
+							this.token = this.account.tokens().find(x => x.uniqueWithChain() === id).clone();
 							this.selectingToken = false;
 						},
 						tokens,
@@ -220,10 +222,9 @@
 					return [{
 						title:'',
 						active:this.pair,
-						handler:symbol => {
-							this.pair = symbol.toUpperCase();
-							this.selectingToken = false;
-							this.getRate();
+						handler:t => {
+							const [id, service, symbol] = t.split('::');
+							this.setPair(symbol, service, id);
 						},
 						tokens:this.pairs,
 					}];
@@ -275,8 +276,15 @@
 			},
 			selectToken(id){
 				if(this.loadingPairs || this.loadingRate) return;
-				if(id === 'to' && !this.pairs.length) return;
+				if(id === 'to' && (this.pairs.length < 2)) return;
 				this.selectingToken = id;
+			},
+			setPair(symbol, service, id){
+				this.pair = symbol.toUpperCase();
+				this.pairId = id;
+				this.service = service;
+				this.selectingToken = false;
+				this.getRate();
 			},
 			async getPairs(){
 				this.pair = null;
@@ -285,15 +293,15 @@
 				// TODO: ERROR HANDLING
 				pairs = pairs.sort((a,b) => {
 					const TOP_PAIRS = ['btc', 'eth', 'eos', 'trx', 'usdt'].map(x => x.toUpperCase());
-					return TOP_PAIRS.includes(b) ? 1 : TOP_PAIRS.includes(a) ? -1 : 0;
+					return TOP_PAIRS.includes(b.symbol) ? 1 : TOP_PAIRS.includes(a.symbol) ? -1 : 0;
 				});
-				pairs = pairs.map(other => {
+				pairs = pairs.map(({service, id, symbol}) => {
 					return {
-						id:other,
+						id:`${id}::${service}::${symbol}`,
 						name:'',
-						symbol:other,
-						amount:other,
-						token:other,
+						symbol:symbol,
+						amount:symbol,
+						token:symbol,
 					}
 				});
 
@@ -303,12 +311,17 @@
 					this.rate = null;
 				}
 
+				if(this.pairs.length === 1){
+					const [id, service, symbol] = this.pairs[0].id.split('::');
+					this.setPair(symbol, service, id);
+				}
+
 				this.loadingPairs = false;
 			},
 			async getRate(){
 				this.loadingRate = true;
 				this.rate = null;
-				this.rate = await ExchangeService.rate(this.token, this.pair);
+				this.rate = await ExchangeService.rate(this.token, this.pairId, this.service);
 				this.loadingRate = false;
 			},
 			send(){

@@ -8,7 +8,7 @@
 			<br>
 			<label>{{list.title}}</label>
 			<section class="tokens">
-				<section class="token" v-if="visible(token)" :class="{'active':list.active === token.id}" v-for="token in list.tokens" @click="list.handler(token.token)">
+				<section class="token" v-if="visible(token)" :class="{'active':list.active === token.id}" v-for="token in list.tokens" @click="list.handler(token.id)">
 					<figure class="icon">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
 					<section class="data">
 						<section>

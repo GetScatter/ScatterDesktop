@@ -20,11 +20,11 @@ const POST = (route, data) => {
 export default class ExchangeService {
 
 	static async pairs(token){
-		return POST('/exchange/pairs', {token}).then(res => res.map(x => x.destinationCoin.toUpperCase()));
+		return POST('/exchange/pairs', {token});
 	}
 
-	static async rate(token, other){
-		return POST('/exchange/rate', {token, other});
+	static async rate(token, other, service){
+		return POST('/exchange/rate', {token, other, service});
 	}
 
 }

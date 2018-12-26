@@ -79,8 +79,8 @@
 			back(){
 				this.$router.back();
 			},
-			setDisplayToken(token){
-				const t = this.displayToken === token.uniqueWithChain() ? null : token;
+			setDisplayToken(id){
+				const t = this.displayToken === id ? null : id;
 				TokenService.setDisplayToken(t);
 			},
 			setDisplayCurrency(ticker){
