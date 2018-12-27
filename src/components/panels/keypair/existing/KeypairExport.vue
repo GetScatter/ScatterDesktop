@@ -202,7 +202,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../../variables";
+    @import "../../../../styles/variables";
 
     .panel-container {
         text-align: center;

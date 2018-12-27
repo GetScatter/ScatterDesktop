@@ -16,7 +16,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../popins.scss';
+	import '../../../styles/popins.scss';
 	export default {
 		props:['popin'],
 		data () {return {
@@ -40,7 +40,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 
 

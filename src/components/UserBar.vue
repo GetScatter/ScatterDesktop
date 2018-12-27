@@ -44,7 +44,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import '../_variables.scss';
+    @import '../styles/variables';
 
     .user-bar {
         width:100%;

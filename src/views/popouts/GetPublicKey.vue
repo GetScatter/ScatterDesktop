@@ -110,7 +110,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../variables";
+    @import "../../styles/variables";
 
     .padded {
         padding:0 30px;

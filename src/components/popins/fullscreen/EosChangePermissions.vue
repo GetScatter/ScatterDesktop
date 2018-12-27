@@ -55,7 +55,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../popins.scss';
+	import '../../../styles/popins.scss';
 	import PasswordService from "../../../services/PasswordService";
 	import PopupService from "../../../services/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
@@ -111,7 +111,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 
 	.split-inputs {

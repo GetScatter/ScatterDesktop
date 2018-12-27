@@ -46,7 +46,7 @@
 </script>
 
 <style scoped lang="scss">
-    @import "../../_variables";
+    @import "../../styles/variables";
 
     .action-bar {
         background:#fff;

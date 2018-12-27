@@ -379,7 +379,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables";
+    @import "../styles/variables";
 
     .limited-p {
         max-width:400px;

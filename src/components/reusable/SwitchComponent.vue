@@ -21,7 +21,7 @@
 </script>
 
 <style scoped lang="scss">
-    @import "../../_variables";
+    @import "../../styles/variables";
 
     .switcher {
         width:100%;

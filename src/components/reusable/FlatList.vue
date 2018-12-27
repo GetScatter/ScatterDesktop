@@ -5,13 +5,12 @@
 			<section class="item"
 			         :key="item.id"
 			         v-for="item in items"
-			         :class="{'selected':itemIsSelected(item), 'unselectable':unselectable, 'select-blue':selectBlue}"
-			         @click="$emit('selected',item)">
+			         :class="{'selected':itemIsSelected(item), 'unselectable':unselectable, 'select-blue':selectBlue}">
 
 				<figure v-if="itemIsSelected(item) && selectedIcon" :class="selectedIcon"
 				        class="selected-icon"></figure>
 
-				<section class="details">
+				<section class="details" @click="$emit('selected',item)">
 					<figure class="title">{{item.title}}</figure>
 					<p v-if="item.hasOwnProperty('description')">{{item.description}}</p>
 				</section>
@@ -38,7 +37,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../_variables";
+	@import "../../styles/variables";
 
 	.container {
 		display:flex;

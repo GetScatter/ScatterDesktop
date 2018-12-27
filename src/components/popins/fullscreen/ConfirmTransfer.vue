@@ -4,26 +4,20 @@
 		<section class="full-panel center-fold inner with-action">
 			<section class="container">
 				<section class="exchange">
-					<figure class="icon">{{symbols.from.length > 4 ? symbols.from[0] : symbols.from}}</figure>
+					<figure class="icon">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
 					<section class="info">
-						<figure class="account">{{accounts.from}}</figure>
-						<figure class="amount" :class="{'small':order.deposit.toString().length > 10}">{{order.deposit}} {{symbols.from}}</figure>
-						<!--<figure class="value">$20.00</figure>-->
+						<figure class="account">{{from}}</figure>
+						<figure class="amount" :class="{'small':token.amount.toString().length > 10}">{{token.amount}} {{token.symbol}}</figure>
 					</section>
 				</section>
 				<figure class="breaker">
 					<figure class="icon-down-small"></figure>
 				</figure>
 				<section class="exchange">
-					<figure class="icon">{{symbols.to.length > 4 ? symbols.to[0] : symbols.to}}</figure>
+					<figure class="icon">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
 					<section class="info">
-						<figure class="amount" :class="{'small':order.expected.toString().length > 10}">{{order.expected}} {{symbols.to}}</figure>
-						<figure class="account">{{accounts.to}}</figure>
-						<!--<figure class="value">$20.00</figure>-->
-						<section class="disclaimer less-pad red" style="margin-top:10px;">
-							Please note that this is an estimate!
-							<p>Token prices could change between now and the time it takes to complete the exchange. You may get slightly more or less than estimated.</p>
-						</section>
+						<figure class="amount" :class="{'small':token.amount.toString().length > 10}">{{token.amount}} {{token.symbol}}</figure>
+						<figure class="account">{{to}}</figure>
 					</section>
 				</section>
 
@@ -50,9 +44,9 @@
 
 		},
 		computed:{
-			symbols(){ return this.popin.data.props.symbols; },
-			accounts(){ return this.popin.data.props.accounts; },
-			order(){ return this.popin.data.props.order; },
+			from(){ return this.popin.data.props.from; },
+			to(){ return this.popin.data.props.to; },
+			token(){ return this.popin.data.props.token; },
 		},
 		methods:{
 			returnResult(x){
@@ -68,5 +62,6 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../../styles/confirm";
+
 
 </style>

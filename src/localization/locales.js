@@ -69,10 +69,8 @@ export const localized = (key, args, language) => {
     }
 
     // let locale = locales()[language];
-    // if(!locale || (language !== 'Tester' && !locale.hasOwnProperty(key))) locale = locales()[LANG.ENGLISH];
-    if(!locale.hasOwnProperty(key) || typeof locale[key] !== 'function') {
-        return 'TRANSLATED';
-    }
+    if(!locale || (language !== 'Tester' && !locale.hasOwnProperty(key))) locale = locales()[LANG.ENGLISH];
+    if(!locale.hasOwnProperty(key) || typeof locale[key] !== 'function') return 'TRANSLATED';
     return locale[key](args);
 };
 

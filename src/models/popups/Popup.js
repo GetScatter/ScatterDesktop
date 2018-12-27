@@ -179,6 +179,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order}, callback))
 	}
 
+	static confirmTransfer(from, to, token, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_TRANSFER, {from, to, token}, callback))
+	}
+
 }
 
 export const PopupTypes = {
@@ -206,6 +210,7 @@ export const PopupTypes = {
 	ENABLE_WHITELIST:'enableWhitelist',
 	SELECT_ACCOUNT:'selectAccount',
 	CONFIRM_EXCHANGE:'confirmExchange',
+	CONFIRM_TRANSFER:'confirmTransfer',
 
     TX_SUCCESS:'txSuccess',
 };
@@ -228,6 +233,7 @@ export const isFullscreen = popup => {
         PopupTypes.ENABLE_WHITELIST,
         PopupTypes.SELECT_ACCOUNT,
         PopupTypes.CONFIRM_EXCHANGE,
+        PopupTypes.CONFIRM_TRANSFER,
     ].includes(popup.data.type);
 
 

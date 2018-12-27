@@ -20,7 +20,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../popins.scss';
+	import '../../../styles/popins.scss';
 	import {Blockchains} from "../../../models/Blockchains";
 	import FlatList from '../../reusable/FlatList';
 	import AccountService from "../../../services/AccountService";
@@ -66,7 +66,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 	.panel-container {
 		overflow: auto;

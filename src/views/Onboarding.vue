@@ -23,7 +23,7 @@
 </template>
 
 <script>
-	import '../popins.scss';
+	import '../styles/popins.scss';
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
 
@@ -60,7 +60,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables.scss";
+    @import "../styles/variables";
 
     .full-panel {
         min-height:calc(100vh - 160px);

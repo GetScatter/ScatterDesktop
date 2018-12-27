@@ -84,7 +84,7 @@
 </script>
 
 <style scoped lang="scss">
-    @import "../../_variables";
+    @import "../../styles/variables";
     .input {
         text-align:left;
         position: relative;

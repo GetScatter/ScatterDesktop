@@ -14,7 +14,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../variables";
+	@import "../../styles/variables";
 
 	.pop-out-head {
 		-webkit-app-region: drag;

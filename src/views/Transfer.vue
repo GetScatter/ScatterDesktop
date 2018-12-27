@@ -1,619 +1,272 @@
 <template>
-    <section>
-        <back-bar v-on:back="back"
-                  :text="account ? account.sendable() : null"
-                  :subtext="account ? account.network().name : null" />
+    <section class="transfer">
+        <back-bar v-on:back="back" :buttons="[{text:'History', clicked:() => $router.push({name:RouteNames.DISPLAY_TOKEN})}]" />
 
-        <section class="full-panel inner limited" v-if="token">
-            <section style="display:flex; flex-direction: column; flex:1;">
-                <section class="split-panel" :class="{'recipient':!!account}">
+        <TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
 
+        <section class="full-panel inner limited" v-if="!selectingToken">
 
-                    <!----------------------->
-                    <!--------- FROM -------->
-                    <!----------------------->
-                    <section class="panel">
-                        <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.FROM.FromLabel)}}</h4>
+            <section class="tokens-out">
 
-                        <section class="split-inputs">
-                            <SearchBar style="flex:1;" short="1" placeholder="Search Accounts" v-on:terms="x => searchTerms = x" />
-                            <section class="padded" style="padding:0 30px; flex:1;" v-if="fullNetworks.length > 1">
-                                <sel :options="[null].concat(fullNetworks)" style="margin-bottom:0;"
-                                     :selected="networkFilter"
-                                     v-on:changed="x => networkFilter = x"
-                                     :parser="x => x ? x.name : 'All Networks'" />
+                <section class="panel">
+                    <h5>Sender</h5>
+
+                    <section>
+                        <section class="box">
+                            <section class="row clickable" @click="selectAccount('from')">
+                                <figure class="fill">
+                                    <div>{{account.network().name}}</div>
+                                    {{account.sendable()}}
+                                </figure>
+                                <figure class="chevron icon-down-open-big"></figure>
                             </section>
-
+                            <section class="row unpad">
+                                <figure class="fill pad darker">
+                                    <div>{{account.tokenBalance(token)}} {{token.symbol}}</div>
+                                </figure>
+                            </section>
+                            <section class="row unpad">
+                                <figure class="fill pad">
+                                    <section class="row unpad" style="width:50%;">
+                                        <div class="fraction clickable" @click="setFraction('100')">100%</div>
+                                        <div class="fraction clickable" @click="setFraction('1/2')">1/2</div>
+                                        <div class="fraction clickable" @click="setFraction('1/4')">1/4</div>
+                                    </section>
+                                </figure>
+                            </section>
                         </section>
-                        <br>
-
-                        <FlatList :label="locale(langKeys.TRANSFER.FROM.SendingAccountsLabel)"
-                                  style="padding-top:0;"
-                                  :items="senderAccounts"
-                                  :selected="account ? account.unique() : null"
-                                  v-on:selected="selectAccount" />
                     </section>
 
-
-
-                    <!----------------------->
-                    <!------- TOKENS -------->
-                    <!----------------------->
-                    <section class="panel padded" style="flex:1; display:flex; flex-direction: column; overflow:auto;">
-                        <h4>Amount</h4>
-
-                        <!-- AMOUNT TO SEND -->
-                        <cin :placeholder="parseFloat(1).toFixed(token.decimals)"
-                             :text="amount"
-                             :error="amountError"
-                             v-on:changed="x => amount = x"
-                             :label="locale(langKeys.TRANSFER.TOKENS.AmountLabel)"
-                             big="1" type="number"
-                             :right-text="tokenBalance"
-                             v-on:right="sendAllBalance"
-                             v-on:blur="amount = amount.toString().length ? parseFloat(amount).toFixed(token.decimals) : ''" />
-
-
-                        <sel :disabled="!account" :selected="token"
-                             :parser="x => x.name"
-                             :items="[]" as-button="1"
-                             v-on:clicked="openTokenSelector" />
-                        <br>
-
-                        <section class="custom-token" v-if="token.id === 'custom'">
-                            <section class="split-inputs">
-                                <cin style="flex:1; margin-bottom:0;"
-                                     :placeholder="contractPlaceholder"
-                                     v-if="token.needsContract()"
-                                     :label="locale(langKeys.GENERIC.Blockchain)"
-                                     :text="token.contract"
-                                     v-on:changed="x => token.contract = x" />
+                    <section>
+                        <section class="box">
+                            <section class="row clickable" @click="selectToken('from')">
+                                <figure class="icon" :class="{'small':token && token.symbol.length >= 4}">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
+                                <figure class="fill">{{token.name}}</figure>
+                                <figure class="chevron icon-down-open-big"></figure>
                             </section>
-                            <br>
-                            <section class="split-inputs">
-                                <cin placeholder="XXX"
-                                     :label="locale(langKeys.GENERIC.Symbol)"
-                                     :text="token.symbol"
-                                     v-on:changed="x => token.symbol = x" />
-
-                                <cin placeholder="4" type="number"
-                                     :label="locale(langKeys.GENERIC.Decimals)"
-                                     :text="token.decimals"
-                                     v-on:changed="x => token.decimals = x" />
-
-                                <btn :text="locale(langKeys.TRANSFER.TOKENS.SaveTokenButton)" v-on:clicked="addToken" />
+                            <section class="row">
+                                <figure class="icon icon-right-outline"></figure>
+                                <figure class="fill">
+                                    <input v-model="token.amount" v-on:input="changedAmount"
+                                           :placeholder="parseFloat(1).toFixed(token.decimals)" />
+                                </figure>
                             </section>
-                        </section>
-
-                        <cin v-if="token.blockchain === Blockchains.EOSIO"
-                             :label="locale(langKeys.GENERIC.Memo)" textarea="1"
-                             :text="memo"
-                             v-on:changed="x => memo = x" />
-                    </section>
-
-
-
-                    <!----------------------->
-                    <!--------- TO ---------->
-                    <!----------------------->
-                    <section class="panel">
-                        <h4 class="padded" style="padding-bottom:0;">{{locale(langKeys.TRANSFER.RECIPIENT.RecipientLabel)}}</h4>
-                        <section class="panel-switch" v-if="formattedContacts.length || formattedSelfContacts.length">
-                            <figure class="button" v-if="formattedContacts.length"
-                                    :class="{'active':recipientState === RECIPIENT_STATES.CONTACT}"
-                                    @click="recipientState = RECIPIENT_STATES.CONTACT">
-                                {{locale(langKeys.TRANSFER.RECIPIENT.SendToContact)}}
-                            </figure>
-                            <figure class="button"
-                                    :class="{'active':recipientState === RECIPIENT_STATES.DIRECT}"
-                                    @click="recipientState = RECIPIENT_STATES.DIRECT">
-                                {{locale(langKeys.TRANSFER.RECIPIENT.SendDirectly)}}
-                            </figure>
-                            <figure class="button" v-if="formattedSelfContacts.length"
-                                    :class="{'active':recipientState === RECIPIENT_STATES.SELF}"
-                                    @click="recipientState = RECIPIENT_STATES.SELF">
-                                {{locale(langKeys.TRANSFER.RECIPIENT.SendSelf)}}
-                            </figure>
-                        </section>
-
-
-                        <!--------- CONTACTS ---------->
-
-                        <SearchBar v-if="recipientState === RECIPIENT_STATES.CONTACT"
-                                   :placeholder="locale(langKeys.TRANSFER.RECIPIENT.SearchContactsPlaceholder)"
-                                   v-on:terms="x => searchTermsContacts = x" />
-
-                        <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.CONTACT"
-                                  :label="locale(langKeys.TRANSFER.RECIPIENT.ContactsLabel)"
-                                  :items="filteredContacts"
-                                  :selected="recipient"
-                                  selected-icon="icon-check"
-                                  icon="icon-cancel"
-                                  v-on:action="removeContact"
-                                  v-on:selected="selectRecipient" />
-
-                        <!--------- SELF CONTACTS ---------->
-
-                        <SearchBar v-if="recipientState === RECIPIENT_STATES.SELF"
-                                   :placeholder="locale(langKeys.TRANSFER.RECIPIENT.SearchSelfPlaceholder)"
-                                   v-on:terms="x => searchTermsContacts = x" />
-
-                        <FlatList style="padding-top:0;" v-if="recipientState === RECIPIENT_STATES.SELF"
-                                  :label="recipientLabel"
-                                  :items="formattedSelfContacts"
-                                  :selected="recipient"
-                                  selected-icon="icon-check"
-                                  v-on:selected="selectRecipient" />
-
-
-                        <!--------- DIRECT TO ADDRESS/ACCOUNT ---------->
-                        <section v-if="recipientState === RECIPIENT_STATES.DIRECT" class="padded">
-                            <cin :placeholder="locale(langKeys.TRANSFER.RECIPIENT.VerifyRecipient)"
-                                 :error="recipient.length > 0 ? recipientError : null"
-                                 :label="recipientLabel"
-                                 :text="recipient"
-                                 v-on:changed="x => recipient = x" />
-
-                            <transition name="slide-right" mode="out-in">
-                                recipientError:{{recipientError}}
-                                <section class="split-inputs" v-if="recipient.length > 0 && !isAlreadyContact && !recipientError">
-                                    <cin style="flex:1;" :placeholder="locale(langKeys.TRANSFER.RECIPIENT.ContactNamePlaceholder)"
-                                         :label="locale(langKeys.TRANSFER.RECIPIENT.ContactNameLabel, recipientLabel)"
-                                         :text="newContactName"
-                                         v-on:changed="x => newContactName = x" />
-                                    <btn style="width:50px;" icon="icon-user-add" v-on:clicked="addContact" />
+                            <section class="row unpad">
+                                <section class="row pad">
+                                    <figure class="icon small">{{displayCurrency}}</figure>
+                                    <input style="flex:1;" class="small" v-model="fiat" v-on:input="changedFiat" placeholder="0.00" />
                                 </section>
-                            </transition>
+                            </section>
                         </section>
                     </section>
+
                 </section>
 
 
 
-                <section class="transfer-details">
-                    <section style="font-size: 18px;">
-                        Sending <b :class="{'red':!!amountError}">{{parseFloat(amount ? amount : 0).toFixed(token.decimals)}} {{token ? token.symbol : ''}}</b>
-                        from <b :class="{'red':!account}">{{account ? account.sendable() : 'Select Account'}}</b>
-                        to <b :class="{'red':!recipient}">{{recipient ? recipient : 'Select Recipient'}}</b>
+
+
+
+                <!-- RIGHT PANEL -->
+                <section class="panel upper-arrow">
+                    <h5>Recipient</h5>
+
+                    <section>
+                        <section class="box dark clickable outlined">
+                            <section class="row" style="height:144px; text-align:center;" @click="selectAccount('to')">
+                                <section style="flex:1;">
+                                    <div class="small bad" v-if="recipient && recipient.length && !isValidRecipient">Are you sure this is a valid recipient?</div>
+                                    <figure class="fill">
+                                        {{recipient && recipient.length ? recipient : 'Select Recipient'}}
+                                    </figure>
+                                </section>
+                                <figure class="chevron icon-down-open-big"></figure>
+                            </section>
+                        </section>
                     </section>
+
+                    <section style="max-height: 150px;" v-if="token && token.blockchain === 'eos'">
+                        <label>Memo</label>
+                        <section class="box dark outlined">
+                            <section class="row">
+                                <input style="font-size: 14px; height:25px;" v-model="memo" />
+                            </section>
+                        </section>
+                    </section>
+
                 </section>
+
             </section>
 
 
             <section class="action-bar short bottom centered">
-                <btn :loading="sending"
-                     :disabled="!canSend"
-                     blue="1"
-                     :text="locale(langKeys.TRANSFER.SendButton)"
-                     v-on:clicked="send" />
+                <btn blue="1" text="Send Tokens" v-on:clicked="send" :disabled="!canSend" :loading="sending" />
             </section>
         </section>
+
+
     </section>
 </template>
 
 <script>
-    import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../store/constants';
+	import { mapActions, mapGetters, mapState } from 'vuex'
+	import * as Actions from '../store/constants';
+	import TokenSelector from '../components/panels/TokenSelector';
+	import PluginRepository from "../plugins/PluginRepository";
+	import ExchangeService from "../services/ExchangeService";
+	import Account from "../models/Account";
+	import PopupService from "../services/PopupService";
+	import {Popup} from "../models/popups/Popup";
+	import TransferService from "../services/TransferService";
+	import BalanceService from "../services/BalanceService";
+	import PasswordService from "../services/PasswordService";
 
-    import PluginRepository from '../plugins/PluginRepository'
-    import TransferService from '../services/TransferService'
-    import ContactService from '../services/ContactService'
-    import {Blockchains, BlockchainsArray} from '../models/Blockchains'
-    import PopupService from '../services/PopupService'
-    import PasswordService from '../services/PasswordService'
-    import KeyPairService from '../services/KeyPairService'
-    import {Popup} from '../models/popups/Popup';
-    import Token from "../models/Token";
-    import TokenService from "../services/TokenService";
-    import BalanceService from "../services/BalanceService";
+	export default {
+		components:{
+			TokenSelector
+		},
+		data () {return {
+			account:null,
+			recipient:null,
+			token:null,
+			fiat:0,
+			selectingToken:false,
+			sending:false,
+			memo:'',
+		}},
+		computed:{
+			...mapState([
+				'scatter'
+			]),
+			...mapGetters([
+				'accounts',
+				'displayCurrency',
+				'totalBalances',
+			]),
+			isValidRecipient(){
+				return PluginRepository.plugin(this.token.blockchain).isValidRecipient(this.recipient);
+			},
 
-    import FlatList from "../components/reusable/FlatList";
-    import SearchBar from "../components/reusable/SearchBar";
-    import HardwareService from "../services/HardwareService";
-
-    const RECIPIENT_STATES = {
-    	CONTACT:'contact',
-        DIRECT:'directly',
-        SELF:'self',
-    }
-
-    export default {
-	    components: {
-		    FlatList,
-            SearchBar
-        },
-	    data () {return {
-	    	recipientState:RECIPIENT_STATES.DIRECT,
-		    RECIPIENT_STATES,
-
-		    searchTerms:'',
-		    searchTermsContacts:'',
-            networkFilter:null,
-
-		    Blockchains,
-		    BlockchainsArray,
-            sending:false,
-            token:null,
-
-            account:null,
-            recipient:'',
-            amount:0,
-            memo:'',
-
-            newContactName:'',
-        }},
-        computed:{
-            ...mapState([
-                'scatter',
-                'balances',
-            ]),
-            ...mapGetters([
-                'accounts',
-                'contacts',
-                'networks',
-                'tokens',
-                'networkTokens',
-            ]),
-
-            /**************************/
-            /**   LISTS AND FILTERS  **/
-	        /**************************/
-
-            fullNetworks(){
-                return this.networks.filter(net => {
-                	return !!this.accounts.find(acc => acc.networkUnique === net.unique())
-                })
-            },
-
-	        senderAccounts(){
-		        const reducer = accs => accs.reduce((acc,x) => {
-			        if(!acc.find(y => `${y.networkUnique}${y.sendable()}` === `${x.networkUnique}${x.sendable()}`)) acc.push(x);
-			        return acc;
-		        }, []);
-
-		        const terms = this.searchTerms.trim().toLowerCase();
-
-		        return reducer(this.accounts)
-                    .filter(x => {
-                    	return x.blockchain().toLowerCase().indexOf(terms) > -1
-                            || x.sendable().toLowerCase().indexOf(terms) > -1
-                            || x.keypair().name.toLowerCase().indexOf(terms) > -1
-                    })
-                    .filter(x => !this.networkFilter ? true : x.networkUnique === this.networkFilter.unique())
-                    .filter(x => x.authority !== 'watch')
-                    .sort((a,b) => b.logins - a.logins)
-                    .map(account => ({
-                        id:account.unique(),
-                        title:account.sendable(),
-                        description:`${account.network().name} - ${account.keypair().name}`,
-                    }))
-            },
-	        filteredTokens(){
-		        const standardTokens = this.networkTokens.filter(x => {
-			        return !this.account ? true : x.network().unique() === this.account.network().unique()
-                }).concat(this.tokens);
-
-		        const tokensFromBalances = (() => {
-		        	if(!this.account) return [];
-			        const accountBalances = this.balances[this.account.identifiable()].filter(x => x.chainId === this.account.network().chainId);
-			        return accountBalances || [];
-                })().sort((a,b) => b.amount - a.amount);
-            	const allTokens = standardTokens.concat(tokensFromBalances);
-
-            	const uniqueTokens = allTokens.reduce((acc,token) => {
-            		if(!acc.find(x => x.unique() === token.unique())) acc.push(token);
-            		return acc;
-                }, [])
-
-		        if(this.account) return uniqueTokens.filter(x => x.blockchain === this.account.blockchain());
-		        return uniqueTokens;
-	        },
-	        formattedContacts(){
-		        const contacts = this.contacts.filter(x => {
-			        if(!this.account) return false;
-			        return PluginRepository.plugin(this.account.blockchain()).isValidRecipient(x.recipient);
-		        });
-
-		        return contacts.map(x => ({
-			        id:x.recipient,
-			        title:x.name,
-			        description:x.recipient,
-		        }));
-	        },
-            formattedSelfContacts(){
-	            const otherAccounts = !this.account ? [] : this.accounts
-		            .filter(x => x.sendable() !== this.account.sendable())
-		            .filter(x => x.networkUnique === this.account.networkUnique)
-		            .reduce((acc,account) => {
-			            if(!acc.find(x => x.sendable() === account.sendable())) acc.push(account);
-			            return acc;
-		            }, []);
-
-	            return otherAccounts.map(x => ({
-		            id:x.sendable(),
-		            title:x.sendable(),
-		            description:x.keypair().name
-	            })).filter(x => JSON.stringify(x).indexOf(this.searchTermsContacts) > -1);
-            },
-	        filteredContacts(){
-		        const terms = this.searchTermsContacts.trim().toLowerCase();
-		        return this.formattedContacts.filter(x => {
-			        return x.id.toLowerCase().indexOf(terms) > -1
-				        || x.title.toLowerCase().indexOf(terms) > -1
-		        })
-	        },
-
-
-
-	        /**************************/
-	        /**         MISC         **/
-	        /**************************/
-
-            contractPlaceholder(){
-            	return PluginRepository.plugin(this.token.blockchain).contractPlaceholder();
-            },
-            recipientLabel(){
-	            return PluginRepository.plugin(this.token.blockchain).recipientLabel();
-            },
-            isValidRecipient(){
-            	return PluginRepository.plugin(this.token.blockchain).isValidRecipient(this.recipient);
-            },
-	        isAlreadyContact(){
-		        return this.contacts.find(x => x.recipient.toLowerCase() === this.recipient.toLowerCase())
-	        },
-	        tokenBalance(){
-            	if(!this.account) return;
-
-            	const balanceToken = this.totalBalanceFor(this.token);
-            	if(!balanceToken) return;
-            	return balanceToken.formatted();
-	        },
-            canSend(){
-            	return parseFloat(this.amount) > 0
-                    && this.isValidRecipient
-                    && this.account
-                    && this.token
-                    && !this.sending
-            },
-
-
-	        /**************************/
-	        /**        ERRORS        **/
-	        /**************************/
-	        recipientError(){
-		        if(!this.isValidRecipient) return this.locale(this.langKeys.TRANSFER.ERRORS.InvalidRecipient);
-		        return null;
-	        },
-	        amountError(){
-	        	if(this.account && this.amount === '') return this.locale(this.langKeys.TRANSFER.ERRORS.InvalidAmount);
-		        if(parseFloat(this.amount) <= 0) return this.locale(this.langKeys.TRANSFER.ERRORS.InvalidAmount);
-		        return null;
-	        },
-
-
-
-        },
-        mounted(){
-            this.token = this.filteredTokens[0];
-        },
-        methods:{
-	    	back(){
-	    		if(this.account) return this.account = null;
-	    	    this.$router.push({name:this.RouteNames.HOME})
-            },
-            openTokenSelector(){
-	    		if(!this.account) return;
-
-	    		let items = [{id:'custom', name:this.locale(this.langKeys.TRANSFER.TOKENS.CustomTokenLabel)}].concat(this.filteredTokens)
-                    .map(token => {
-	                    const balance = this.totalBalanceFor(token.id) ? this.totalBalanceFor(token.id).formatted() ? this.totalBalanceFor(token.id).formatted() :'' :'';
-	                    const description = token.id === 'custom' ? null : balance
-                    	return {
-		                    id: token.id,
-		                    title: token.name,
-                            description
-	                    }
-                    })
-
-	    	    PopupService.push(Popup.selector('Select a Token', items, token => {
-	    	    	if(!token) return;
-	    	    	this.selectToken(token);
-                }))
-            },
-            tokenFromId(id){
-	    	    return this.filteredTokens.find(x => x.id === id);
-            },
-	        totalBalanceFor(token){
-		        if(typeof token === 'string'){
-			        token = this.tokenFromId(token);
-		        }
-
-		        if(!this.account) return null;
-		        if(!token) return null;
-		        const accountBalances = this.balances[this.account.identifiable()];
-		        if(!accountBalances) return null;
-		        return this.balances[this.account.identifiable()].find(x => x.unique() === token.unique());
-	        },
-	        async addToken(){
-	    		const token = new Token(
-				    this.token.blockchain,
-				    this.token.contract,
-				    this.token.symbol,
-				    this.token.symbol,
-				    this.token.decimals
-			    );
-		        if(await TokenService.addToken(token)) this.token = token;
-	        },
-	        selectRecipient(item){
-	    		this.recipient = item.id;
-            },
-            selectAccount(item){
-	            this.account = this.account && item.id === this.account.unique()
-                    ? null
-                    : this.accounts.find(x => x.unique() === item.id);
-
-	            if(!this.account || this.token.blockchain !== this.account.blockchain()){
-		            this.token = this.filteredTokens[0];
-                }
-
-	            if(this.account && this.formattedContacts.length){
-		            this.recipientState = RECIPIENT_STATES.CONTACT;
-	            } else {
-		            this.recipientState = RECIPIENT_STATES.DIRECT;
-                }
-            },
-            selectToken(token){
-	            this.token = token.id === 'custom'
-		            ? Token.fromJson({id:token.id, name:token.title, blockchain:this.account ? this.account.blockchain() : Blockchains.EOSIO})
-		            : this.filteredTokens.find(x => x.id === token.id);
-	    		if(this.token.id === 'custom'){
-				    this.token.blockchain = this.account.blockchain();
-				    this.token.decimals = PluginRepository.plugin(this.token.blockchain).defaultDecimals();
-                }
-            },
-            async addContact(){
-                if(!this.recipient.length) return;
-                if(!this.newContactName.length) return;
-                if(await ContactService.add(this.recipient, this.newContactName)){
-                	this.recipientState = RECIPIENT_STATES.CONTACT;
-                }
-            },
-            async removeContact(item){
-	    		const contact = this.contacts.find(x => x.name === item.title);
-                await ContactService.remove(contact);
-                if(!this.contacts.length) this.recipientState = RECIPIENT_STATES.DIRECT;
-            },
-
-	        sendAllBalance(){
-	    		this.amount = parseFloat(this.tokenBalance.split(' ')[0]).toFixed(this.token.decimals);
-            },
-
-
-
-            async send(){
-	            const reset = () => this.sending = false;
-
-	    		if(!this.canSend) return;
-	    		this.sending = true;
-
-	            if(!await PasswordService.verifyPIN()) return reset();
-
-                const sent = await TransferService[this.account.blockchain()]({
-                    account:this.account,
-                    recipient:this.recipient,
-                    amount:this.amount,
-                    memo:this.memo,
-                    token:this.token,
-                }).catch(() => false);
-
-                reset();
-                if(sent) {
-                	await BalanceService.loadBalancesFor(this.account);
-                	this.account = null;
-                }
-
-            },
-
-        },
-        watch:{
-	    	['account'](){
-	    	    if(this.account){
-			        if(this.token.blockchain === this.account.blockchain() && this.filteredTokens.find(x => x.unique() === this.token.unique())) return;
-			        const token = this.filteredTokens.find(x => x.blockchain === this.account.blockchain());
-			        if(token) this.selectToken(token);
-                }
-            },
-            ['recipient'](){
-                BlockchainsArray.map(({value}) => {
-                    const plugin = PluginRepository.plugin(value);
-                    if(plugin.isValidRecipient(this.recipient)){
-                        if(this.token.blockchain === value) return;
-                        const token = this.filteredTokens.find(x => x.blockchain === value);
-                        if(token) this.selectToken(token);
-                    }
-                });
-            },
-            ['token.decimals'](){
-            	if(this.token.decimals > 20) this.token.decimals = 20;
-            },
-            ['token'](){
-            	this.amount = '';
-            },
-            ['networkFilter'](){
-	            const token = this.filteredTokens[0];
-	            if(token) this.selectToken(token);
+			accountTokens(){
+				if(!this.account) return [];
+				const systemToken = this.account.network().systemToken().uniqueWithChain();
+				return this.account.tokens()
+					.sort((a,b) => {
+						const system = systemToken === b.uniqueWithChain() ? 1
+							: systemToken === a.uniqueWithChain() ? -1 : 0;
+						return system || (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0) || b.amount - a.amount
+					})
+			},
+			selectableTokens(){
+				return [{
+					title:'',
+					active:this.token ? this.token.uniqueWithChain() : null,
+					handler:id => {
+						this.token = this.account.tokens().find(x => x.uniqueWithChain() === id).clone();
+						this.token.amount = null;
+						this.selectingToken = false;
+					},
+					tokens:this.accountTokens
+						.map(token => {
+							const amount = this.account.tokenBalance(token);
+							return {
+								id:token.uniqueWithChain(),
+								name:token.name,
+								symbol:token.symbol,
+								amount:amount ? this.formatNumber(parseFloat(amount).toFixed(token.decimals), parseInt(amount) < 1000000) : '--',
+								token:token.clone(),
+								fiat:token.fiatBalance(false),
+							}
+						}),
+				}];
+			},
+			canSend(){
+				return !this.sending && this.recipient && this.recipient.length && this.token && this.token.amount > 0;
             }
-        }
-    }
+		},
+		created(){
+			// TODO: Validity Checking
+			this.account = this.accounts.sort((a,b) => b.logins - a.logins)[0] || null;
+			const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
+			const token = this.account.network().systemToken().clone();
+			token.amount = 0;
+			this.token = token;
+		},
+		methods:{
+			back(){
+				if(this.selectingToken) return this.selectingToken = false;
+				this.$router.back();
+			},
+			selectAccount(type){
+				PopupService.push(Popup.selectAccount(account => {
+					if(!account) return;
+					if(type === 'from'){
+						this.account = account;
+						BalanceService.loadBalancesFor(account);
+						if(this.accountTokens.length){
+							this.token = this.accountTokens[0].clone();
+							this.token.amount = 0;
+                        }
+
+						if(this.recipient === account.sendable()) this.recipient = '';
+					} else {
+						this.recipient = account;
+					}
+					this.changedAmount()
+				}, type === 'from', type === 'to' && this.account ? this.account : null, type === 'to' && this.pair ? this.pair.blockchain : null));
+			},
+			setFraction(fraction){
+				const balance = parseFloat(this.account.tokenBalance(this.token));
+				if(!balance) return 0;
+				switch(fraction){
+					case '100': this.token.amount = balance; break;
+					case '1/2': this.token.amount = balance/2; break;
+					case '1/4': this.token.amount = balance/4; break;
+				}
+
+				this.token.amount = parseFloat(this.token.amount).toFixed(this.token.decimals);
+				this.changedAmount()
+			},
+			changedFiat(){
+				this.token.amount = parseFloat(this.fiat / this.token.fiatPrice(false)).toFixed(this.token.decimals);
+			},
+			changedAmount(){
+				this.fiat = this.token.amount === '' ? '0' : this.token.fiatBalance(false)
+			},
+			selectToken(id){
+				this.selectingToken = id;
+				this.changedAmount()
+			},
+			async send(){
+				const reset = () => this.sending = false;
+				if(!this.canSend) return;
+				this.sending = true;
+				PopupService.push(Popup.confirmTransfer(this.account.sendable(), this.recipient, this.token, async accepted => {
+					if(!accepted) return reset();
+					if(!await PasswordService.verifyPIN()) return reset();
+					const sent = await TransferService[this.account.blockchain()]({
+						account:this.account,
+						recipient:this.recipient,
+						amount:this.token.amount,
+						memo:this.memo,
+						token:this.token,
+						promptForSignature:false,
+					}).catch(() => false);
+					reset();
+					if(sent) {
+						BalanceService.loadBalancesFor(this.account);
+						// TODO: CHANGE TO HISTORY
+						this.$router.push({name:this.RouteNames.HOME});
+					}
+                }))
+			}
+		},
+	}
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables";
-
-    .transfer-details {
-        border-top:2px solid $border-standard;
-        background:rgba(0,0,0,0.01);
-        display:flex;
-        justify-content: center;
-        align-items: center;
-        padding:30px 50px;
-        text-align:center;
-
-        b {
-            color:$primary;
-
-            &.red {
-                color:$red;
-                animation: blink 1s ease infinite;
-            }
-        }
-    }
-
-    .full-panel {
-        min-height:calc(100vh - 250px);
-        display:flex;
-        flex-direction: column;
-
-        &.limited {
-            overflow-x:hidden;
-        }
-    }
-
-    .split-panel {
-        overflow-x:hidden;
-        transition:margin-left, 0.24s;
-        width:150%;
-        margin-left:0;
-
-        &.recipient {
-            margin-left:calc(-50% - 2px);
-        }
-    }
-
-    .panel {
-        flex:1;
-        position: relative;
-        display:flex;
-        flex-direction: column;
-        width:33.333%;
-        max-width:33.333%;
-        min-width:33.333%;
-    }
-
-    .padded {
-        padding:30px;
-    }
-
-    .custom-token {
-        margin-top:-25px;
-        padding:20px 10px 0 10px;
-        background:rgba(0,0,0,0.02);
-        border:1px solid rgba(0,0,0,0.1);
-        border-top:0;
-        border-bottom-left-radius:4px;
-        border-bottom-right-radius:4px;
-        margin-bottom:20px;
-    }
+    @import "../styles/variables";
+    @import "../styles/transfer";
 
 
 

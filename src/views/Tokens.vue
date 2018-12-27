@@ -75,8 +75,8 @@
 
 	import Chartist from 'chartist';
 	import {dateId, hourNow} from "../util/DateHelpers";
-	require("../charts.scss");
-	require("../tokens.scss");
+	require("../styles/charts.scss");
+	require("../styles/tokens.scss");
 
 	export default {
 		components:{
@@ -125,6 +125,7 @@
 						if(terms === '^') return true;
 						if(terms === '-') return !this.change(token).plus && token.fiatBalance(false);
 						if(terms === '+') return this.change(token).plus && token.fiatBalance(false);
+						if(terms.indexOf('::') > -1) return `${token.contract.toLowerCase()}::${token.symbol.toLowerCase()}` === terms;
 						if(isNaN(terms)) return token.symbol.toLowerCase().indexOf(terms) > -1 || token.contract.toLowerCase().indexOf(terms) > -1;
 						return token.amount >= parseFloat(terms);
 					})
@@ -189,17 +190,27 @@
 					if(i % 2 === 0) labels.push(label);
 					else labels.push('');
 
-					const total = this.calculatedBalances.reduce((acc,balance) => {
-						const priceData = data[balance.uniqueWithChain()];
-						if(!priceData) return acc;
-						acc += parseFloat(balance.fiatBalance(false, priceData * this.currencyPrices[this.displayCurrency]));
-						return acc;
-					}, 0);
+					let total;
+
+					if(this.calculatedBalances.length === 1){
+						total = data[this.calculatedBalances[0].uniqueWithChain()];
+					} else {
+						total = this.calculatedBalances.reduce((acc,balance) => {
+							const priceData = data[balance.uniqueWithChain()];
+							if(!priceData) return acc;
+							acc += parseFloat(balance.fiatBalance(false, priceData * this.currencyPrices[this.displayCurrency]));
+							return acc;
+						}, 0);
+					}
+
 					values.push({value:total, meta:label});
 				})
 
-				values.pop();
-				values.push({value:this.totalBalance.amount, meta:`${hourNow()}:00`});
+				if(this.calculatedBalances.length !== 1){
+					values.pop();
+					values.push({value:this.totalBalance.amount, meta:`${hourNow()}:00`});
+				}
+
 
 				const CHART_OPTIONS = {
 					showArea:true,
@@ -221,7 +232,9 @@
 					this.chart.on('draw', data => {
 
 						const toggleTooltip = (show = true) => {
-							this.graphValue = show ? `${data.meta} -- ${this.formatNumber(parseFloat(data.value.y).toFixed(2), true)}` : null;
+							let parsed = parseFloat(data.value.y);
+							if(this.calculatedBalances.length !== 1) parsed = parsed.toFixed(2);
+							this.graphValue = show ? `${data.meta} -- ${this.formatNumber(parsed, true)}` : null;
 						}
 
 						if (data.type === 'label') {
@@ -288,7 +301,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../_variables";
+	@import "../styles/variables";
 
 
 </style>

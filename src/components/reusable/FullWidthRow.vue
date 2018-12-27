@@ -35,7 +35,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../_variables";
+	@import "../../styles/variables";
 
 	.important {
 		animation: important 1s ease infinite;

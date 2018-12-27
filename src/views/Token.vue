@@ -48,8 +48,8 @@
 	import * as Actions from '../store/constants';
 	import SearchBar from '../components/reusable/SearchBar';
 	import Chartist from 'chartist';
-	require("../charts.scss");
-	require("../tokens.scss");
+	require("../styles/charts.scss");
+	require("../styles/tokens.scss");
 
 	export default {
 		components:{
@@ -117,7 +117,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../_variables";
+	@import "../styles/variables";
 
 
 

@@ -155,7 +155,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables.scss";
+    @import "../styles/variables";
 
     .settings-panels {
         flex:1;

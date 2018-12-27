@@ -21,6 +21,7 @@
                     <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
                     <AccountSelector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
                     <ConfirmExchange :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_EXCHANGE" />
+                    <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -80,6 +81,7 @@
     import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
     import AccountSelector from "./popins/fullscreen/AccountSelector";
     import ConfirmExchange from "./popins/fullscreen/ConfirmExchange";
+    import ConfirmTransfer from "./popins/fullscreen/ConfirmTransfer";
     import RemoveApp from "./popins/overlay/RemoveApp";
     import Selector from "./popins/overlay/Selector";
     import UpdateAvailable from "./popins/overlay/UpdateAvailable";
@@ -111,6 +113,7 @@
 		    EnableWhitelist,
 		    AccountSelector,
 		    ConfirmExchange,
+		    ConfirmTransfer,
         },
         data(){ return {
             popupTypes:PopupTypes,
@@ -149,7 +152,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables.scss";
+    @import "../styles/variables";
 
     .snackbar-holder {
         position:fixed;

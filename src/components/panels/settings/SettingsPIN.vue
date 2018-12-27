@@ -88,7 +88,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../variables";
+    @import "../../../styles/variables";
 
 
 </style>

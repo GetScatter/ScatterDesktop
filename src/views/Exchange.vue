@@ -1,32 +1,17 @@
 <template>
-	<section>
-		<back-bar v-on:back="back" :buttons="[{text:'Exchange History', clicked:() => $router.push({name:RouteNames.DISPLAY_TOKEN})}]" />
+	<section class="transfer">
+		<back-bar v-on:back="back" :buttons="[{text:'History', clicked:() => $router.push({name:RouteNames.DISPLAY_TOKEN})}]" />
 
 		<TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
 
 		<section class="full-panel inner limited" v-if="!selectingToken">
+
 			<section class="tokens-out">
 
 				<section class="panel">
 					<h5>Exchange</h5>
 
-					<section style="max-height: 100px;">
-						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':pairs.length}" @click="selectToken('from')">
-							<section class="row" v-if="loadingPairs">
-								<figure class="fill">
-									<b class="icon-spin4 animate-spin"></b>
-								</figure>
-							</section>
-							<section class="row" v-else>
-								<figure class="icon">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
-								<figure class="fill">{{token.name}}</figure>
-								<figure class="chevron icon-down-open-big"></figure>
-							</section>
-						</section>
-					</section>
-
 					<section>
-						<label>From</label>
 						<section class="box">
 							<section class="row clickable" @click="selectAccount('from')">
 								<figure class="fill">
@@ -53,11 +38,20 @@
 					</section>
 
 
-					<section>
-						<label>Exchanging</label>
-						<section class="box clickable">
+					<section style="max-height: 100px;">
+						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':pairs.length}" @click="selectToken('from')">
+							<section class="row" v-if="loadingPairs">
+								<figure class="fill">
+									<b class="icon-spin4 animate-spin"></b>
+								</figure>
+							</section>
+							<section class="row clickable" v-else>
+								<figure class="icon" :class="{'small':token && token.symbol.length >= 4}">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
+								<figure class="fill">{{token.name}}</figure>
+								<figure class="chevron icon-down-open-big"></figure>
+							</section>
 							<section class="row">
-								<figure class="icon">{{token.symbol}}</figure>
+								<figure class="icon icon-right-outline"></figure>
 								<figure class="fill">
 									<input v-model="token.amount" v-on:input="changedAmount"
 									       :placeholder="parseFloat(1).toFixed(token.decimals)" />
@@ -83,27 +77,9 @@
 				<section class="panel">
 					<h5>Receive</h5>
 
-					<section style="max-height: 100px;">
-						<section class="box dark" :class="{'outlined unclickable':loadingPairs || loadingRate || !pairs.length || pairs.length === 1, 'clickable':pairs.length > 1}" @click="selectToken('to')">
-							<section class="row" v-if="loadingPairs">
-								<figure class="fill" style="flex:0 0 auto; padding-right:20px;">
-									<b class="icon-spin4 animate-spin"></b>
-								</figure>
-								<figure class="fill">Fetching Pairs</figure>
-							</section>
-							<section class="row" v-else>
-								<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}" v-if="pairs.length && pair">{{pair ? pair.symbol : ''}}</figure>
-								<figure class="fill">{{pairs.length ? pair ? pair.symbol : `Select Pair (${pairs.length})` : 'No Available Pairs'}}</figure>
-								<figure class="chevron" :class="{'icon-down-open-big':pairs.length > 1, 'icon-lock':pairs.length === 1}" v-if="pairs.length"></figure>
-								<figure class="chevron icon-cancel" v-if="!pairs.length"></figure>
-							</section>
-						</section>
-					</section>
-
 					<section>
-						<label>Recipient</label>
 						<section class="box dark clickable outlined">
-							<section class="row" style="height:150px; text-align:center;" @click="selectAccount('to')">
+							<section class="row" style="height:144px; text-align:center;" @click="selectAccount('to')">
 								<figure class="fill">
 									{{recipient && recipient.length ? recipient : 'Select Recipient'}}
 								</figure>
@@ -113,8 +89,19 @@
 					</section>
 
 					<section>
-						<label>Estimated Exchange Rate</label>
-						<section class="box dark" :class="{'outlined unclickable':loadingPairs || loadingRate || !pairs.length || !rate}">
+						<section class="box dark">
+							<section class="row" v-if="loadingPairs">
+								<figure class="fill" style="flex:0 0 auto; padding-right:20px;">
+									<b class="icon-spin4 animate-spin"></b>
+								</figure>
+								<figure class="fill">Fetching Pairs</figure>
+							</section>
+							<section class="row clickable" v-else @click="selectToken('to')">
+								<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}" v-if="pairs.length && pair">{{pair ? pair.symbol : ''}}</figure>
+								<figure class="fill">{{pairs.length ? pair ? pair.symbol : `Select Pair (${pairs.length})` : 'No Available Pairs'}}</figure>
+								<figure class="chevron" :class="{'icon-down-open-big':pairs.length > 1, 'icon-lock':pairs.length === 1}" v-if="pairs.length"></figure>
+								<figure class="chevron icon-cancel" v-if="!pairs.length"></figure>
+							</section>
 							<section class="row" v-if="loadingRate || !rate">
 								<figure class="fill" style="flex:0 0 auto; padding-right:20px;" v-if="loadingRate">
 									<b class="icon-spin4 animate-spin"></b>
@@ -172,7 +159,6 @@
 			recipient:null,
 			token:null,
 			pair:null,
-			service:null,
 			rate:null,
 			fiat:0,
 			selectingToken:false,
@@ -180,6 +166,7 @@
 			loadingPairs:false,
 			loadingRate:false,
 			sending:false,
+			failedConnection:false,
 		}},
 		computed:{
 			...mapState([
@@ -209,6 +196,7 @@
 						active:this.token ? this.token.uniqueWithChain() : null,
 						handler:id => {
 							this.token = this.account.tokens().find(x => x.uniqueWithChain() === id).clone();
+							this.token.amount = null;
 							this.selectingToken = false;
 						},
 						tokens:this.accountTokens
@@ -287,6 +275,7 @@
 					} else {
 						this.recipient = account;
 					}
+					this.changedAmount()
 				}, type === 'from', null, type === 'to' && this.pair ? this.pair.blockchain : null));
 			},
 			setFraction(fraction){
@@ -311,6 +300,7 @@
 				if(this.loadingPairs || this.loadingRate) return;
 				if(id === 'to' && (this.pairs.length < 2)) return;
 				this.selectingToken = id;
+				this.changedAmount()
 			},
 			setPair(pair){
 				this.pair = pair;
@@ -318,26 +308,37 @@
 				this.recipient = null;
 				this.getRate();
 			},
+			cantConnect(){
+				this.failedConnection = true;
+				PopupService.push(Popup.snackbar(`Can't connect to Exchange API`));
+				this.loadingPairs = false;
+			},
 			async getPairs(){
 				this.pair = null;
+				this.pairs = [];
 				this.loadingPairs = true;
 				let pairs = await ExchangeService.pairs(this.token);
 				// TODO: ERROR HANDLING
-				pairs = pairs.sort((a,b) => {
-					const TOP_PAIRS = ['btc', 'eth', 'eos', 'trx', 'usdt'].map(x => x.toUpperCase());
-					return TOP_PAIRS.includes(b.symbol) ? 1 : TOP_PAIRS.includes(a.symbol) ? -1 : 0;
-				});
-				pairs = pairs.map(pair => {
-					const {service, type, id, symbol} = pair;
-					return Object.assign({
-						name:'',
-						symbol:symbol,
-						amount:symbol,
-						token:symbol,
-					}, pair);
-				});
+				console.log('pairs', pairs);
+				if(!pairs) {
+					this.cantConnect();
+				} else {
+					pairs = pairs.sort((a,b) => {
+						const TOP_PAIRS = ['btc', 'eth', 'eos', 'trx', 'usdt'].map(x => x.toUpperCase());
+						return TOP_PAIRS.includes(b.symbol) ? 1 : TOP_PAIRS.includes(a.symbol) ? -1 : 0;
+					});
+					pairs = pairs.map(pair => {
+						const {service, type, id, symbol} = pair;
+						return Object.assign({
+							name:'',
+							symbol:symbol,
+							amount:symbol,
+							token:symbol,
+						}, pair);
+					});
 
-				this.pairs = pairs;
+					this.pairs = pairs;
+				}
 
 				if(!this.pairs.length) {
 					this.rate = null;
@@ -362,11 +363,10 @@
 				const from = { account:this.account.sendable() };
 				const to = { account:this.recipient };
 				const order = await ExchangeService.order(this.pair.service, this.token, this.pair.symbol, this.token.amount, this.account, to);
-
 				this.sending = false;
 
 				if(!order) {
-					//TODO: ERROR HANDLING
+					this.cantConnect();
 					return;
 				}
 
@@ -418,216 +418,9 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../_variables";
-
-	.full-panel {
-		min-height:calc(100vh - 250px);
-		display:flex;
-		flex-direction: column;
-
-		&.limited {
-			overflow-x:hidden;
-		}
-	}
-
-	.tokens-out {
-		display:flex;
-		flex:1;
-		height:0;
-
-		$border:#dfe0e1;
+	@import "../styles/variables";
+	@import "../styles/transfer";
 
 
-		.panel {
-			flex:1;
-			position:relative;
-			padding:40px;
-			display: flex;
-			flex-direction: column;
-			min-height:550px;
-
-			> section {
-				flex:1 1 auto;
-				max-height:200px;
-			}
-
-			.clickable {
-				cursor: pointer;
-			}
-
-			.unclickable {
-				cursor: not-allowed;
-			}
-
-			.box {
-				border:1px solid $border;
-				border-radius:4px;
-				display:flex;
-				flex-direction: column;
-
-				.row {
-					display:flex;
-					align-items: center;
-					position:relative;
-					padding:20px;
-
-					input {
-						border:0;
-						outline:0;
-						width:100%;
-						height:40px;
-						font-size: 22px;
-						background:transparent;
-
-						&:disabled {
-							cursor: inherit;
-						}
-
-						&.small {
-							font-size: 11px;
-							height:14px;
-						}
-
-						&.bad {
-							color:yellow;
-						}
-					}
-
-					div {
-						&.small {
-							font-size: 11px;
-							height:14px;
-
-							&.bad {
-								color:yellow;
-							}
-						}
-					}
-
-					.fraction {
-						margin-right:20px;
-						color:rgba(0,0,0,0.4);
-
-						&:hover {
-							color:$primary;
-						}
-					}
-
-					.fill {
-						flex:1;
-						font-size: 22px;
-
-						div {
-							font-size: 11px;
-							font-weight: bold;
-						}
-
-						&.darker {
-							background:rgba(0,0,0,0.05);
-						}
-
-						&.pad {
-							padding:10px 20px;
-						}
-					}
-
-					.icon {
-						margin-right:20px;
-						width:40px;
-
-						&.small {
-							font-size: 11px;
-							font-weight: bold;
-						}
-					}
-
-					.chevron {
-						font-size: 18px;
-
-						&.icon-cancel {
-							color:red;
-							font-size: 26px;
-							line-height:0;
-						}
-					}
-
-					&.unpad {
-						padding:0;
-					}
-
-					&.pad {
-						padding:10px 20px;
-					}
-
-					&:not(:first-child){
-						border-top:1px solid $border;
-					}
-				}
-
-
-				&.dark {
-					border:0;
-					background: $blue-grad;
-
-					&.outlined {
-						background:transparent;
-						/*border:1px solid rgba(255,255,255,0.2);*/
-						box-shadow:inset 0 0 0 1px rgba(255,255,255,0.2);
-
-						.chevron {
-							align-self: flex-start;
-						}
-					}
-
-					input {
-						color:#fff;
-					}
-
-					.row {
-						&:not(:first-child){
-							border-top:1px solid rgba(255,255,255,0.1);
-						}
-					}
-				}
-
-
-			}
-
-			&:nth-child(2){
-				background:$reverse-gradient;
-				color:#fff;
-
-				&:before {
-					content:'';
-					display:block;
-					position:fixed;
-					right:0;
-					top:170px;
-					bottom:80px;
-					width:40%;
-					z-index:-1;
-
-					background:$reverse-gradient;
-				}
-
-				&:after {
-					content:'';
-					display:block;
-					position:absolute;
-					top:calc(50% - 7px);
-					bottom:0;
-					left:0;
-
-					$arrow:15px;
-					width: 0;
-					height: 0;
-					border-top: $arrow solid transparent;
-					border-bottom: $arrow solid transparent;
-
-					border-left: $arrow solid #fff;
-				}
-			}
-		}
-	}
 
 </style>

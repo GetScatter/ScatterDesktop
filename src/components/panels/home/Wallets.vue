@@ -53,7 +53,7 @@
 
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../_variables";
+	@import "../../../styles/variables";
 
 	.vault {
 		flex:1;

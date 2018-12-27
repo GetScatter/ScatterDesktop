@@ -25,23 +25,23 @@
 					     :parser="x => x ? x.name : 'All Networks'" />
 				</section>
 
-				<section class="panel" v-if="state === STATES.DIRECT">
+				<section class="panel direct" v-if="state === STATES.DIRECT">
 					<img src="../../../assets/scrooge_mcpig.png" />
-					<p>
-						You can send exchanged tokens directly to your external accounts, friends, or family.
-						Please note that if the address is incorrect, we have no way of refunding the tokens.
+					<p style="flex:1;">
+						You can enter an address ( recipient ) manually below, and even add it to your list of contacts so that you
+						can easily use it later.
 					</p>
 
-					<br>
-					<br>
-					<section>
+					<section class="bottom-fixed">
 						<section class="split-inputs">
-							<cin :placeholder="locale(langKeys.GENERIC.Address)" medium="1" style="flex:1; margin-bottom:0;"
+							<cin :placeholder="locale(langKeys.GENERIC.Address)" medium="1" style="flex:2; margin-bottom:0;"
 							     :text="recipient" v-on:changed="x => recipient = x" />
+							<cin :placeholder="locale(langKeys.TRANSFER.RECIPIENT.ContactNamePlaceholder)" medium="1" style="flex:1; margin-bottom:0;"
+							     :text="contactName" v-on:changed="x => contactName = x" />
 
 							<btn text="Add Contact" v-on:clicked="addContact" big="1" style="width:auto; padding:0 20px;" />
 						</section>
-						<btn text="Send to this contact" v-on:clicked="returnResult(recipient)" big="1" blue="1" style="height:60px; max-width:none; padding:0 20px; margin-top:10px;" />
+						<btn text="Use this Address" v-on:clicked="returnResult(recipient)" big="1" blue="1" />
 					</section>
 				</section>
 
@@ -60,6 +60,8 @@
 					          :items="filteredContacts"
 					          :selected="recipient"
 					          selected-icon="icon-check"
+					          icon="icon-user-delete"
+					          v-on:action="removeContact"
 					          v-on:selected="x => returnResult(x.id)" />
 				</section>
 			</section>
@@ -71,10 +73,11 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../popins.scss';
+	import '../../../styles/popins.scss';
 	import SearchBar from '../../reusable/SearchBar';
 	import FlatList from '../../reusable/FlatList';
 	import PluginRepository from "../../../plugins/PluginRepository";
+	import ContactService from "../../../services/ContactService";
 
 	const STATES = {
 		MINE:'mine',
@@ -95,6 +98,7 @@
 			networkFilter:null,
 
 			recipient:'',
+			contactName:'',
 		}},
 		computed:{
 			...mapState([
@@ -169,20 +173,23 @@
 			},
 		},
 		created(){
-			console.log('blockchain', this.blockchain);
 			if(!this.accountsOnly){
 				this.state = this.filteredContacts.length ? STATES.CONTACTS : STATES.DIRECT;
 			}
 		},
 		methods:{
 			returnResult(id, isAccount = false){
-				if(this.accountsOnly){
-					id = this.accounts.find(x => x.unique() === id);
-					this.popin.data.callback(id);
-				} else {
-					if(isAccount) id = this.accounts.find(x => x.unique() === id).sendable();
-					this.popin.data.callback(id);
+				if(!id) this.popin.data.callback(null);
+				else {
+					if(this.accountsOnly){
+						id = this.accounts.find(x => x.unique() === id);
+						this.popin.data.callback(id);
+					} else {
+						if(isAccount) id = this.accounts.find(x => x.unique() === id).sendable();
+						this.popin.data.callback(id.trim());
+					}
 				}
+
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			stateText(s){
@@ -192,8 +199,17 @@
 					case STATES.DIRECT: return 'Send Directly';
 				}
 			},
-			addContact(){
-
+			async addContact(){
+				if(!this.recipient.length) return;
+				if(!this.contactName.length) return;
+				if(await ContactService.add(this.recipient, this.contactName)){
+					this.state = STATES.CONTACTS;
+				}
+			},
+			async removeContact(item){
+				const contact = this.contacts.find(x => x.name === item.title);
+				await ContactService.remove(contact);
+				if(!this.contacts.length) this.state = STATES.DIRECT;
 			},
 			...mapActions([
 				Actions.RELEASE_POPUP
@@ -203,7 +219,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 	.limit {
 		max-width:1024px;
@@ -212,11 +228,24 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+		position: relative;
 	}
 
 	.panel-container {
 		overflow: auto;
 		height: calc(100vh - 170px);
+		position: relative;
+	}
+
+	.bottom-fixed {
+		position:absolute;
+		bottom:30px;
+		left:30px;
+		right:30px;
+
+		> button {
+			height:60px; max-width:none; padding:0 20px; margin-top:10px; font-size: 18px;
+		}
 	}
 
 	.select-bar {
@@ -274,6 +303,10 @@
 		flex:1;
 		height:0;
 		overflow-y:auto;
+
+		&.direct {
+			display:flex; flex-direction: column; max-height:500px; position: relative;
+		}
 
 		img {
 			display:block;

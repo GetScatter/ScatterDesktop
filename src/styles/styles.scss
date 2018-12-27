@@ -1,4 +1,4 @@
-@import "_variables.scss";
+@import "./variables";
 
 div, figure, section, nav, article, input, textarea {
   padding:0; margin:0; box-sizing: border-box;
@@ -269,8 +269,8 @@ p {
 
     &.disabled {
       margin-left:0;
-      background:$secondary;
-      background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
+      background: #d0d0d0;
+      //background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
     }
   }
 }
@@ -398,7 +398,10 @@ p {
     margin-top:30px;
     max-width:200px;
     align-self: flex-end;
-    width:auto !important;
+
+    &:not(.switch){
+      width:auto !important;
+    }
   }
 }
 
@@ -519,14 +522,14 @@ label {
   .title {
     color:$primary;
     font-weight: normal;
-    font-size:14px;
+    font-size:16px;
   }
 
   p {
     margin-top:3px;
-    font-size:12px;
+    font-size:13px;
     line-height:14px;
-    color:rgba(0,0,0,0.4);
+    color:rgba(0,0,0,0.6);
   }
 }
 

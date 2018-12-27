@@ -1,5 +1,5 @@
-import './styles.scss'
-import './tour.scss';
+import './styles/styles.scss'
+import './styles/tour.scss';
 
 // MUST BE LOADED FIRST
 import ElectronHelpers from './util/ElectronHelpers';

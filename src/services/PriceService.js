@@ -5,6 +5,8 @@ import PluginRepository from '../plugins/PluginRepository'
 import ObjectHelpers from '../util/ObjectHelpers'
 import StorageService from "./StorageService";
 import Token from "../models/Token";
+import PopupService from "./PopupService";
+import {Popup} from "../models/popups/Popup";
 
 // TODO: REVERT
 // const api = "https://api.get-scatter.com";
@@ -40,7 +42,10 @@ export default class PriceService {
     static getAll(){
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-            fetch(api+'/v1/prices?v2=true').then(x => x.json())
+            fetch(api+'/v1/prices?v2=true').then(x => x.json()).catch(() => {
+            	PopupService.push(Popup.snackbar("Problem connecting to Prices API"));
+            	return null;
+            })
         ])
     }
 

@@ -159,7 +159,7 @@
 
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../_variables";
+	@import "../../../styles/variables";
 
 	.breaker {
 		margin:20px 0;

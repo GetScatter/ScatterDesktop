@@ -62,7 +62,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../_variables";
+	@import "../../styles/variables";
 
 	.panel-container {
 		overflow-y: auto;

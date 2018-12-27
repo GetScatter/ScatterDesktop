@@ -126,7 +126,7 @@
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-    @import '../_variables.scss';
+    @import '../styles/variables';
 
     .working-screen {
         background:rgba(255,255,255,0.93);

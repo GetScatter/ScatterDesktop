@@ -38,7 +38,7 @@
 </script>
 
 <style scoped lang="scss">
-    @import "../../_variables";
+    @import "../../styles/variables";
 
     .percentage-bar {
         width: 100%;
