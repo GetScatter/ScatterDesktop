@@ -1,0 +1,296 @@
+<template>
+	<section class="select-account">
+		<back-bar v-on:back="returnResult(null)" style="border-bottom:0;" />
+		<section class="full-panel inner">
+			<section class="select-bar">
+				<h3>Accounts</h3>
+				<section class="selector">
+					<figure class="option" v-for="s in shownStates"
+					        :class="{'selected':state === s}"
+					        @click="state = s">
+						{{stateText(s)}}
+					</figure>
+				</section>
+			</section>
+
+			<section class="limit">
+				<section class="filters" v-if="state !== STATES.DIRECT">
+					<SearchBar style="flex:2; margin-left:-30px;" short="1"
+					           :placeholder="locale(langKeys.GENERIC.Search)"
+					           v-on:terms="x => searchTerms = x" />
+
+					<sel :options="[null].concat(fullNetworks)" style="margin-bottom:0; flex:1;" v-if="state === STATES.MINE"
+					     :selected="networkFilter"
+					     v-on:changed="x => networkFilter = x"
+					     :parser="x => x ? x.name : 'All Networks'" />
+				</section>
+
+				<section class="panel" v-if="state === STATES.DIRECT">
+					<img src="../../../assets/scrooge_mcpig.png" />
+					<p>
+						You can send exchanged tokens directly to your external accounts, friends, or family.
+						Please note that if the address is incorrect, we have no way of refunding the tokens.
+					</p>
+
+					<br>
+					<br>
+					<section>
+						<section class="split-inputs">
+							<cin :placeholder="locale(langKeys.GENERIC.Address)" medium="1" style="flex:1; margin-bottom:0;"
+							     :text="recipient" v-on:changed="x => recipient = x" />
+
+							<btn text="Add Contact" v-on:clicked="addContact" big="1" style="width:auto; padding:0 20px;" />
+						</section>
+						<btn text="Send to this contact" v-on:clicked="returnResult(recipient)" big="1" blue="1" style="height:60px; max-width:none; padding:0 20px; margin-top:10px;" />
+					</section>
+				</section>
+
+				<section class="panel" v-if="state === STATES.MINE">
+
+					<FlatList style="padding:0;"
+					          :items="myAccounts"
+					          :selected="recipient"
+					          selected-icon="icon-check"
+					          v-on:selected="x => returnResult(x.id, true)" />
+				</section>
+
+				<section class="panel" v-if="state === STATES.CONTACTS">
+
+					<FlatList style="padding:0;"
+					          :items="filteredContacts"
+					          :selected="recipient"
+					          selected-icon="icon-check"
+					          v-on:selected="x => returnResult(x.id)" />
+				</section>
+			</section>
+
+		</section>
+	</section>
+</template>
+
+<script>
+	import { mapActions, mapGetters, mapState } from 'vuex'
+	import * as Actions from '../../../store/constants';
+	import '../../../popins.scss';
+	import SearchBar from '../../reusable/SearchBar';
+	import FlatList from '../../reusable/FlatList';
+	import PluginRepository from "../../../plugins/PluginRepository";
+
+	const STATES = {
+		MINE:'mine',
+		CONTACTS:'contacts',
+		DIRECT:'direct',
+	}
+
+	export default {
+		props:['popin'],
+		components:{
+			SearchBar,
+			FlatList
+		},
+		data () {return {
+			STATES,
+			state:STATES.MINE,
+			searchTerms:'',
+			networkFilter:null,
+
+			recipient:'',
+		}},
+		computed:{
+			...mapState([
+
+			]),
+			...mapGetters([
+				'networks',
+				'accounts',
+				'contacts',
+			]),
+			fullNetworks(){
+				return this.networks.filter(net => {
+					const accounts = this.accounts.filter(acc => acc.networkUnique === net.unique());
+					return accounts.some(account => {
+						return account.tokenCount() > 0 || account.tokenCount(account.network().systemToken()) > 0;
+					})
+				})
+			},
+			account(){
+				return this.popin.data.props.account;
+			},
+			accountsOnly(){
+				return this.popin.data.props.accountsOnly;
+			},
+			blockchain(){
+				return this.popin.data.props.blockchain;
+			},
+			allowAll(){
+				return this.popin.data.props.allowAll;
+			},
+			shownStates(){
+				if(this.accountsOnly) return [STATES.MINE];
+				else return STATES;
+			},
+			myAccounts(){
+				const otherAccounts = this.accounts
+					.filter(x => !this.blockchain ? true : this.blockchain === x.blockchain())
+					.filter(x => !this.account ? true : x.sendable() !== this.account.sendable())
+					.filter(x => !this.account ? true : x.networkUnique === this.account.networkUnique)
+					.filter(x => !this.networkFilter ? true : x.networkUnique === this.networkFilter.unique())
+					.reduce((acc,account) => {
+						if(!acc.find(x => x.sendable() === account.sendable())) acc.push(account);
+						return acc;
+					}, []);
+
+				return otherAccounts.map(x => ({
+					id:x.unique(),
+					title:x.sendable(),
+					description:`${x.network().name} - ${x.tokenBalance(x.network().systemToken())} ${x.network().systemToken().symbol}`
+				})).filter(x => JSON.stringify(x).indexOf(this.searchTerms) > -1);
+			},
+			formattedContacts(){
+				const contacts = this.contacts.filter(x => {
+					if(!this.blockchain) return true;
+					const plugin = PluginRepository.plugin(this.blockchain);
+					if(!plugin) return;
+					return plugin.isValidRecipient(x.recipient);
+				});
+
+				return contacts.map(x => ({
+					id:x.recipient,
+					title:x.name,
+					description:x.recipient,
+				}));
+			},
+			filteredContacts(){
+				const terms = this.searchTerms.trim().toLowerCase();
+				return this.formattedContacts.filter(x => {
+					return x.id.toLowerCase().indexOf(terms) > -1
+						|| x.title.toLowerCase().indexOf(terms) > -1
+				})
+			},
+		},
+		created(){
+			console.log('blockchain', this.blockchain);
+			if(!this.accountsOnly){
+				this.state = this.filteredContacts.length ? STATES.CONTACTS : STATES.DIRECT;
+			}
+		},
+		methods:{
+			returnResult(id, isAccount = false){
+				if(this.accountsOnly){
+					id = this.accounts.find(x => x.unique() === id);
+					this.popin.data.callback(id);
+				} else {
+					if(isAccount) id = this.accounts.find(x => x.unique() === id).sendable();
+					this.popin.data.callback(id);
+				}
+				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			stateText(s){
+				switch(s){
+					case STATES.MINE: return 'My Accounts';
+					case STATES.CONTACTS: return 'Contacts';
+					case STATES.DIRECT: return 'Send Directly';
+				}
+			},
+			addContact(){
+
+			},
+			...mapActions([
+				Actions.RELEASE_POPUP
+			])
+		},
+	}
+</script>
+
+<style scoped lang="scss" rel="stylesheet/scss">
+	@import "../../../variables";
+
+	.limit {
+		max-width:1024px;
+		width:100%;
+		margin:0 auto;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.panel-container {
+		overflow: auto;
+		height: calc(100vh - 170px);
+	}
+
+	.select-bar {
+		padding:40px 20px 0;
+		background:$blue-grad;
+		display:flex;
+		flex-direction: column;
+		justify-content: center;
+
+		h3 {
+			color:#fff;
+			font-weight: 300;
+			text-align: center;
+		}
+
+		.selector {
+			display:flex;
+			color:rgba(255,255,255,0.7);
+			margin:10px auto 0;
+
+			.option {
+				cursor: pointer;
+				margin:0 30px;
+				position: relative;
+				height:50px;
+
+				&.selected {
+					color:#fff;
+
+					&:after {
+						content:'';
+						display:block;
+						position:absolute;
+						left:0;
+						right:0;
+						bottom:0;
+						height:5px;
+						background:#fff;
+					}
+				}
+			}
+		}
+	}
+
+	.filters {
+		padding:30px;
+		display:flex;
+		padding-bottom:10px;
+		border-bottom:1px solid rgba(255,255,255,0.1);
+	}
+
+	.panel {
+		padding:30px;
+		width:100%;
+		flex:1;
+		height:0;
+		overflow-y:auto;
+
+		img {
+			display:block;
+			margin:20px auto;
+		}
+
+		p {
+			text-align:center;
+			max-width:600px;
+			margin:0 auto;
+		}
+	}
+
+	.limit-small {
+		max-width:600px;
+		margin:0 auto;
+	}
+
+
+</style>

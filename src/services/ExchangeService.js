@@ -3,7 +3,7 @@
 const baseUrl = 'http://localhost:6544/v1';
 
 const GET = (route) => {
-
+	return fetch(`${baseUrl}${route}`).then(x => x.json())
 };
 
 const POST = (route, data) => {
@@ -25,6 +25,18 @@ export default class ExchangeService {
 
 	static async rate(token, other, service){
 		return POST('/exchange/rate', {token, other, service});
+	}
+
+	static async order(service, token, other, amount, from, to){
+		return POST('/exchange/order', {service, token, other, amount, from, to});
+	}
+
+	static async accepted(id){
+		return GET(`/exchange/accepted/${id}`);
+	}
+
+	static async cancelled(id){
+		return GET(`/exchange/cancelled/${id}`);
 	}
 
 }

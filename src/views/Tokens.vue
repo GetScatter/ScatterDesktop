@@ -1,6 +1,6 @@
 <template>
 	<section class="token-panel">
-		<back-bar style="border-bottom:0;" v-on:back="back" :subtext="account ? account.sendable() : null" :buttons="[{text:'Set Display Token', clicked:() => $router.push({name:RouteNames.DISPLAY_TOKEN})}]" />
+		<back-bar style="border-bottom:0;" v-on:back="back" :subtext="account ? account.sendable() : null" :buttons="[{text:'Set Display Tokens', clicked:() => $router.push({name:RouteNames.DISPLAY_TOKEN})}]" />
 
 		<section class="panel-container">
 			<figure class="bg"></figure>

@@ -660,6 +660,8 @@ export default class EOS extends Plugin {
 	}
 
 	async transfer({account, to, amount, token, memo, promptForSignature = true}){
+		console.log('promptForSignature', promptForSignature);
+		amount = parseFloat(amount).toFixed(token.decimals);
 		const {contract, symbol} = token;
 		return new Promise(async (resolve, reject) => {
 			const signProvider = promptForSignature

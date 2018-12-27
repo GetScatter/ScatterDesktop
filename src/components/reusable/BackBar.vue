@@ -48,6 +48,10 @@
 <style scoped lang="scss">
     @import "../../_variables";
 
+    .action-bar {
+        background:#fff;
+    }
+
     .back-bar {
         display:flex;
         flex-direction: row;

@@ -1,7 +1,7 @@
 <template>
 	<section class="container">
 		<label v-if="label">{{label}}</label>
-		<section class="items" :class="{'as-rows':asRows, 'small':small}">
+		<section class="items" :class="{'as-rows':asRows, 'small':small, 'dark':dark}">
 			<section class="item"
 			         :key="item.id"
 			         v-for="item in items"
@@ -25,7 +25,7 @@
 <script>
 
 	export default {
-		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable', 'asRows', 'small', 'selectBlue'],
+		props:['items', 'label', 'selected', 'selectedIcon', 'icon', 'unselectable', 'asRows', 'small', 'selectBlue', 'dark'],
 		methods:{
 			itemIsSelected(item){
 				if(!this.selected) return false;
@@ -77,7 +77,7 @@
 		.item {
 			border:1px solid #e2e2e2;
 			border-radius:4px;
-			padding:16px;
+			padding:20px;
 			transition: border 0.15s ease;
 			cursor: pointer;
 			display:flex;
@@ -138,6 +138,54 @@
 			.item {
 				font-size: 11px;
 				padding:8px 12px;
+			}
+		}
+
+		&.dark {
+
+
+			.item {
+				border:1px solid #e2e2e2;
+
+				.details {
+					.title {
+						color:rgba(255,255,255,0.5);
+					}
+
+					p {
+						color:rgba(255,255,255,0.3);
+					}
+				}
+
+				&:hover, &.selected {
+					border:1px solid #719fb6;
+				}
+
+				.icon {
+					color:#fff;
+
+					&:hover {
+						background:$primary;
+						color:#fff;
+					}
+				}
+
+				.selected-icon {
+					color:$primary;
+				}
+
+				&.selected {
+					background:rgba(0,0,0,0.2);
+					.details {
+						.title {
+							color:#fff;
+						}
+
+						p {
+							color:rgba(255,255,255,0.5);
+						}
+					}
+				}
 			}
 		}
 	}

@@ -476,6 +476,17 @@ label {
       }
     }
   }
+
+  &.dark {
+
+
+    figure {
+
+      &:last-child {
+        color:#fff;
+      }
+    }
+  }
 }
 
 .action-bar {

@@ -171,6 +171,14 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, () => {}))
 	}
 
+	static selectAccount(callback, accountsOnly = false, account = null, blockchain = null){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {accountsOnly, account, blockchain}, callback))
+	}
+
+	static confirmExchange(accounts, symbols, order, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order}, callback))
+	}
+
 }
 
 export const PopupTypes = {
@@ -196,6 +204,8 @@ export const PopupTypes = {
 	DESTROY_SCATTER:'destroyScatter',
 	CHECK_HARDWARE:'checkHardware',
 	ENABLE_WHITELIST:'enableWhitelist',
+	SELECT_ACCOUNT:'selectAccount',
+	CONFIRM_EXCHANGE:'confirmExchange',
 
     TX_SUCCESS:'txSuccess',
 };
@@ -216,6 +226,8 @@ export const isFullscreen = popup => {
         PopupTypes.DESTROY_SCATTER,
         PopupTypes.CHECK_HARDWARE,
         PopupTypes.ENABLE_WHITELIST,
+        PopupTypes.SELECT_ACCOUNT,
+        PopupTypes.CONFIRM_EXCHANGE,
     ].includes(popup.data.type);
 
 

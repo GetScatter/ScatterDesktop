@@ -1,5 +1,5 @@
 <template>
-    <section class="input" :class="{'big':big, 'small':small, 'important':red, 'centered':centered, 'white':white}">
+    <section class="input" :class="{'big':big, 'medium':medium, 'small':small, 'important':red, 'centered':centered, 'white':white}">
 
         <label v-if="error || label" :class="{'error':error}">
             <span>{{error ? error : label}}</span>
@@ -66,6 +66,7 @@
             'dynamicButton',
             'dynamicTooltip',
             'big',
+            'medium',
             'focus',
             'loaderOnDynamic',
             'red',
@@ -225,6 +226,47 @@
                 }
                 &:-moz-placeholder {
                     font-size: $big-font;
+                    color:$placeholder-color;
+                }
+
+                &.pad-right {
+                    padding-right:50px;
+                }
+            }
+
+            .dynamic-button {
+                font-size: 26px;
+                bottom:0;
+
+                &.labeled {
+                    bottom:-15px;
+                }
+            }
+        }
+
+        &.medium {
+
+            $medium-font:20px;
+            input, textarea {
+                line-height:48px;
+                height:48px;
+                padding:0 20px;
+                font-size: $medium-font;
+
+                &::-webkit-input-placeholder {
+                    font-size: $medium-font;
+                    color:$placeholder-color;
+                }
+                &::-moz-placeholder {
+                    font-size: $medium-font;
+                    color:$placeholder-color;
+                }
+                &:-ms-input-placeholder {
+                    font-size: $medium-font;
+                    color:$placeholder-color;
+                }
+                &:-moz-placeholder {
+                    font-size: $medium-font;
                     color:$placeholder-color;
                 }
 

@@ -8,7 +8,6 @@ import TokenService from "./TokenService";
 export default class TransferService {
 
     static async [Blockchains.ETH](params){
-	    params.amount = TokenService.formatAmount(params.amount, params.token);
         return this.baseTransfer(params);
     }
 
@@ -31,7 +30,8 @@ export default class TransferService {
                 to:recipient,
                 amount,
                 token,
-                memo
+                memo,
+	            promptForSignature:params.hasOwnProperty('promptForSignature') ? params.promptForSignature : true
             }).catch(x => x);
 
 
