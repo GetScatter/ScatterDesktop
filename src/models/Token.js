@@ -17,6 +17,7 @@ export default class Token {
 	    this.amount = 0;
 
 	    this.chainId = chainId;
+	    this.unusable = null;
     }
 
     static placeholder(){ return new Token(); }
@@ -39,7 +40,7 @@ export default class Token {
 	clone(){ return Token.fromJson(JSON.parse(JSON.stringify(this))) }
 
     unique(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}` }
-    uniqueWithChain(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}:${this.chainId}` }
+    uniqueWithChain(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}:${this.chainId}${this.unusable ? `:${this.unusable}` : ''}` }
     identifiable(){ return `${this.blockchain}:${this.contract.toLowerCase()}` }
 
     add(quantity){
@@ -64,10 +65,17 @@ export default class Token {
     }
 
 	fiatBalance(withSymbol = true, price = null){
+    	const unusableReplacement = this.uniqueWithChain().replace(`:${this.unusable}`, '');
 		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
 			price = price ? price : parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
 			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`;
-		} else {
+		}
+		else if(this.unusable && store.state.prices.hasOwnProperty(unusableReplacement)){
+			price = price ? price : parseFloat(store.state.prices[unusableReplacement][store.getters.displayCurrency]);
+			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`;
+		}
+
+		else {
 			return null;
 		}
 	}

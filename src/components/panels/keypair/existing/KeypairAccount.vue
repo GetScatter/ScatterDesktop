@@ -17,7 +17,11 @@
 				</section>
 			</section>
 			<section class="tokens" @click="$router.push({name:RouteNames.TOKENS, params:{account:account.unique()}})" v-if="account.tokenCount(systemToken)+1 > 0">
-				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, account.tokenCount(systemToken)+1)}} <i class="icon-right-open-big"></i>
+				<section class="total-tokens">
+					{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, account.tokenCount(systemToken)+1)}}
+					<div class="main-token-balance">{{accountBalance}}</div>
+				</section>
+				<i class="chevron icon-right-open-big"></i>
 			</section>
 			<section class="tokens" v-else>
 				No Tokens
@@ -104,6 +108,19 @@
 			},
 			systemToken(){
 				return this.account.network().systemToken()
+			},
+			accountBalance(){
+				const plugin = PluginRepository.plugin(this.account.blockchain());
+				const systemToken = this.account.network().systemToken();
+				let result = `${this.account.tokenBalance(systemToken)} `;
+				if(plugin.hasUntouchableTokens()){
+					let untouchable = this.account.tokens().find(x => !!x.unusable);
+					if(untouchable) {
+						untouchable = untouchable.clone();
+						result += `(+${this.formatNumber(untouchable.amount)}) `;
+					}
+				}
+				return `${result} ${systemToken.symbol}`
 			}
 		},
 		methods:{
@@ -227,14 +244,11 @@
 
 		.tokens {
 			display:flex;
+			justify-content: center;
 			align-items: center;
 			color:$primary;
 			font-weight: bold;
 			cursor: pointer;
-
-			i {
-				margin-left:5px;
-			}
 
 			&:hover {
 				i {
@@ -242,14 +256,33 @@
 				}
 			}
 
-			@keyframes bounce {
-				0%, 100% {
-					transform:translateX(0px);
+			.total-tokens {
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: flex-end;
+				margin-right:10px;
+
+				.main-token-balance {
+					margin-top:5px;
+					font-size: 11px;
+					font-weight: 300;
+					display:block;
 				}
 
-				50% {
-					transform:translateX(4px);
+				i {
+					margin-left:5px;
+				}
 
+				@keyframes bounce {
+					0%, 100% {
+						transform:translateX(0px);
+					}
+
+					50% {
+						transform:translateX(4px);
+
+					}
 				}
 			}
 		}

@@ -44,12 +44,15 @@
 				<section class="token" v-for="token in calculatedBalances">
 					<figure class="icon" @click="goToToken(token)">{{token.symbol.length > 4 ? `${token.symbol.slice(0,3)}...`.toUpperCase() : token.symbol}}</figure>
 					<section>
-						<section class="title"><b>{{token.symbol}}</b> {{formatNumber(token.amount, true)}}</section>
-						<section class="sub">{{token.fiatPrice() || '--'}} <b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></section>
+						<section class="title">
+							<b><i class="icon-lock" v-if="token.unusable"></i>{{token.symbol}}</b> {{formatNumber(token.amount, true)}}
+						</section>
+						<section class="sub" v-if="!token.unusable">{{token.fiatPrice() || '--'}} <b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></section>
+						<section class="sub" v-else>{{token.unusable}}</section>
 					</section>
 					<section>
 						<section class="title"><b>{{formatNumber(token.fiatBalance(), true) || '--'}}</b></section>
-						<section class="sub">{{parseFloat((token.fiatBalance(false) / totalFiat) * 100).toFixed(1)}}% of portfolio</section>
+						<section class="sub" v-if="!token.unusable && portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
 						<btn colorless="1" style="width:auto;" text="Stabilize" />
@@ -132,7 +135,12 @@
 					.sort((a,b) => {
 						if(terms === '+' || terms === '-') return this.change(b, true) - this.change(a, true)
 						if(terms === '^') return b.amount - a.amount;
-						return (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);
+
+						const systemToken = !this.account ? null : this.account.network().systemToken().uniqueWithChain();
+						const system = systemToken === b.uniqueWithChain() ? 1 : systemToken === a.uniqueWithChain() ? -1 : 0;
+						const untouchable = this.account && !!b.unusable ? 1 : this.account && !!a.unusable ? -1 : 0;
+
+						return system || untouchable || (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);
 					});
 			},
 			fullNetworks(){
@@ -160,6 +168,11 @@
 			back(){
 				if(!this.account) return this.$router.push({name:this.RouteNames.HOME})
 				this.$router.back();
+			},
+			portfolioPercentage(token){
+				const p = parseFloat((token.fiatBalance(false) / this.totalFiat) * 100).toFixed(1);
+				if(isNaN(p)) return null;
+				return p;
 			},
 			async setup(){
 				this.currencyPrices = await PriceService.getCurrencyPrices();

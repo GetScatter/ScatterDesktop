@@ -182,6 +182,7 @@
 
 				const systemToken = this.account.network().systemToken().uniqueWithChain();
 				return this.account.tokens()
+					.filter(x => !x.unusable)
 					.sort((a,b) => {
 						const system = systemToken === b.uniqueWithChain() ? 1
 							: systemToken === a.uniqueWithChain() ? -1 : 0;

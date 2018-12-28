@@ -167,6 +167,7 @@
 						this.selectingToken = false;
 					},
 					tokens:this.accountTokens
+                        .filter(x => !x.unusable)
 						.map(token => {
 							const amount = this.account.tokenBalance(token);
 							return {

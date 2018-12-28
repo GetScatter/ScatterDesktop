@@ -7,6 +7,8 @@ import {actions} from './actions';
 import {PopupDisplayTypes} from '../models/popups/Popup'
 import PluginRepository from '../plugins/PluginRepository'
 import Locale from "../models/Locale";
+import PriceService from "../services/PriceService";
+import BalanceService from "../services/BalanceService";
 
 Vue.use(Vuex);
 
@@ -89,62 +91,11 @@ const getters = {
     showNotifications:state => state.scatter.settings.showNotifications,
 
     totalBalances:(state, getters) => {
-        const tokens = {};
-	    tokens['totals'] = {};
-
-        Object.keys(state.balances).map(async accountUnique => {
-            const account = state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique);
-            if(!account) return;
-
-            if(getters.mainnetTokensOnly){
-	            if(!PluginRepository.plugin(account.blockchain()).isEndorsedNetwork(account.network()))
-	                return;
-            }
-
-            if(!tokens.hasOwnProperty(account.networkUnique)){
-                tokens[account.networkUnique] = {};
-            }
-
-            if(!state.balances[accountUnique]) return;
-            state.balances[accountUnique].map(token => {
-                if(!tokens[account.networkUnique].hasOwnProperty(token.uniqueWithChain())) {
-	                tokens[account.networkUnique][token.uniqueWithChain()] = token.clone();
-	                tokens['totals'][token.uniqueWithChain()] = token.clone();
-                } else {
-	                tokens[account.networkUnique][token.uniqueWithChain()].add(token.amount);
-	                tokens['totals'][token.uniqueWithChain()].add(token.amount);
-                }
-            });
-        });
-
-        return tokens;
+    	return BalanceService.totalBalances(true);
     },
 
     fullTotalBalances:(state, getters) => {
-        const tokens = {};
-	    tokens['totals'] = {};
-
-        Object.keys(state.balances).map(async accountUnique => {
-            const account = state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique);
-            if(!account) return;
-
-            if(!tokens.hasOwnProperty(account.networkUnique)){
-                tokens[account.networkUnique] = {};
-            }
-
-            if(!state.balances[accountUnique]) return;
-            state.balances[accountUnique].map(token => {
-                if(!tokens[account.networkUnique].hasOwnProperty(token.uniqueWithChain())) {
-	                tokens[account.networkUnique][token.uniqueWithChain()] = token.clone();
-	                tokens['totals'][token.uniqueWithChain()] = token.clone();
-                } else {
-	                tokens[account.networkUnique][token.uniqueWithChain()].add(token.amount);
-	                tokens['totals'][token.uniqueWithChain()].add(token.amount);
-                }
-            });
-        });
-
-        return tokens;
+	    return BalanceService.totalBalances(false);
     },
 };
 

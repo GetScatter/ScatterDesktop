@@ -174,7 +174,7 @@
 		},
 		created(){
 			if(!this.accountsOnly){
-				this.state = this.filteredContacts.length ? STATES.CONTACTS : STATES.DIRECT;
+				this.state = STATES.DIRECT;
 			}
 		},
 		methods:{

@@ -18,7 +18,7 @@ const POST = (route, data) => {
 };
 
 const timeout = (rq, caughtValue = null) => Promise.race([
-	new Promise(resolve => setTimeout(() => resolve(caughtValue), 5000)),
+	new Promise(resolve => setTimeout(() => resolve(caughtValue), 10000)),
 	rq.catch(() => caughtValue)
 ])
 

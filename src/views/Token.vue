@@ -109,7 +109,6 @@
 				this.$router.back();
 			},
 			goToAccount(account){
-				console.log('account', account);
 				this.$router.push({name:this.RouteNames.TOKENS, params:{account:account.unique()}})
 			}
 		}
