@@ -129,7 +129,7 @@
 			account:null,
 			recipient:null,
 			token:null,
-			fiat:0,
+			fiat:null,
 			selectingToken:false,
 			sending:false,
 			memo:'',
@@ -186,11 +186,10 @@
             }
 		},
 		created(){
-			// TODO: Validity Checking
-			this.account = this.accounts.sort((a,b) => b.logins - a.logins)[0] || null;
+			this.account = this.accounts.sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
 			const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
 			const token = this.account.network().systemToken().clone();
-			token.amount = 0;
+			token.amount = null;
 			this.token = token;
 		},
 		methods:{
@@ -206,9 +205,8 @@
 						BalanceService.loadBalancesFor(account);
 						if(this.accountTokens.length){
 							this.token = this.accountTokens[0].clone();
-							this.token.amount = 0;
+							this.token.amount = null;
                         }
-
 						if(this.recipient === account.sendable()) this.recipient = '';
 					} else {
 						this.recipient = account;
@@ -232,7 +230,7 @@
 				this.token.amount = parseFloat(this.fiat / this.token.fiatPrice(false)).toFixed(this.token.decimals);
 			},
 			changedAmount(){
-				this.fiat = this.token.amount === '' ? '0' : this.token.fiatBalance(false)
+				this.fiat = !this.token.amount || this.token.amount === '' ? null : this.token.fiatBalance(false)
 			},
 			selectToken(id){
 				this.selectingToken = id;

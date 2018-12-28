@@ -142,7 +142,8 @@
 					.reduce((acc,account) => {
 						if(!acc.find(x => x.sendable() === account.sendable())) acc.push(account);
 						return acc;
-					}, []);
+					}, [])
+					.sort((a,b) => b.systemBalance() - a.systemBalance());
 
 				return otherAccounts.map(x => ({
 					id:x.unique(),

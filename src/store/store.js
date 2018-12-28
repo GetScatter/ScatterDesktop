@@ -91,11 +91,11 @@ const getters = {
     showNotifications:state => state.scatter.settings.showNotifications,
 
     totalBalances:(state, getters) => {
-    	return BalanceService.totalBalances(true);
+    	return BalanceService.totalBalances(false);
     },
 
     fullTotalBalances:(state, getters) => {
-	    return BalanceService.totalBalances(false);
+	    return BalanceService.totalBalances(true);
     },
 };
 

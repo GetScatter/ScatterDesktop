@@ -485,7 +485,7 @@ export default class EOS extends Plugin {
 		const eos = getCachedInstance(account.network());
 
 		const balances = await Promise.race([
-			new Promise(resolve => setTimeout(() => resolve([]), 2000)),
+			new Promise(resolve => setTimeout(() => resolve([]), 10000)),
 			eos.getTableRows({
 				json:true,
 				code:token.contract,

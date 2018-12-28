@@ -76,7 +76,6 @@
 		.item {
 			border:1px solid #e2e2e2;
 			border-radius:4px;
-			padding:20px;
 			transition: border 0.15s ease;
 			cursor: pointer;
 			display:flex;
@@ -103,6 +102,8 @@
 				display:flex;
 				justify-content: center;
 				align-items: center;
+				margin-right:20px;
+				padding:20px;
 
 				&:hover {
 					background:$primary;
@@ -113,11 +114,12 @@
 			.selected-icon {
 				color:$primary;
 				font-size: 22px;
-				padding-right:15px;
+				margin-left:20px;
 			}
 
 			.details {
 				flex:1;
+				padding:20px;
 			}
 
 			&.selected {

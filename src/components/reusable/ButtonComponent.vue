@@ -76,7 +76,7 @@
                 &.red {
                     border:1px solid $red;
                     background:$red;
-                    background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
+                    background-image: $red-gradient;
                     color:#fff;
                 }
             }

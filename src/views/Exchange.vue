@@ -39,13 +39,13 @@
 
 
 					<section style="max-height: 100px;">
-						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':pairs.length}" @click="selectToken('from')">
+						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':pairs.length}">
 							<section class="row" v-if="loadingPairs">
 								<figure class="fill">
 									<b class="icon-spin4 animate-spin"></b>
 								</figure>
 							</section>
-							<section class="row clickable" v-else>
+							<section class="row clickable" v-else @click="selectToken('from')">
 								<figure class="icon" :class="{'small':token && token.symbol.length >= 4}">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
 								<figure class="fill">{{token.name}}</figure>
 								<figure class="chevron icon-down-open-big"></figure>
@@ -160,7 +160,7 @@
 			token:null,
 			pair:null,
 			rate:null,
-			fiat:0,
+			fiat:null,
 			selectingToken:false,
 			pairs:[],
 			loadingPairs:false,
@@ -250,13 +250,10 @@
 			}
 		},
 		created(){
-
-
-			// TODO: Validity Checking
-			this.account = this.accounts.sort((a,b) => b.logins - a.logins)[0] || null;
+			this.account = this.accounts.sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
 			const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
 			const token = this.account.network().systemToken().clone();
-			token.amount = 0;
+			token.amount = null;
 			this.token = token;
 
 			this.getPairs();
@@ -272,7 +269,11 @@
 					if(type === 'from'){
 						this.account = account;
 						BalanceService.loadBalancesFor(account);
-						this.token = this.accountTokens.length ? this.accountTokens[0] : null;
+						if(this.accountTokens.length){
+							this.token = this.accountTokens[0].clone();
+							this.token.amount = null;
+						}
+						if(this.recipient === account.sendable()) this.recipient = '';
 					} else {
 						this.recipient = account;
 					}
@@ -295,7 +296,7 @@
 				this.token.amount = parseFloat(this.fiat / this.token.fiatPrice(false)).toFixed(this.token.decimals);
 			},
 			changedAmount(){
-				this.fiat = this.token.amount === '' ? '0' : this.token.fiatBalance(false)
+				this.fiat = !this.token.amount || this.token.amount === '' ? null : this.token.fiatBalance(false)
 			},
 			selectToken(id){
 				if(this.loadingPairs || this.loadingRate) return;

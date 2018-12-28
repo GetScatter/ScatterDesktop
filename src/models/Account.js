@@ -78,12 +78,12 @@ export default class Account {
     	return balance.amount;
     }
 
-    systemBalance(){
+    systemBalance(withSymbol = false){
 	    if(!store.state.balances) return 0;
 	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
 	    if(!store.state.balances[this.identifiable()]) return 0;
 	    const systemBalance = store.state.balances[this.identifiable()].find(x =>  Token.fromJson(x).identifiable() === this.network().systemToken().identifiable());
 	    if(!systemBalance) return 0;
-	    return `${systemBalance.amount} ${systemBalance.symbol}`;
+	    return `${systemBalance.amount} ${withSymbol ? systemBalance.symbol : ''}`;
     }
 }

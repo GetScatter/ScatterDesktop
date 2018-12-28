@@ -8,7 +8,12 @@
 			<section class="panel-top">
 				<section class="values">
 					<figure class="value">{{totalBalance.symbol}} {{formatNumber(totalBalance.amount, true)}}</figure>
-					<p>{{calculatedBalances.length}} {{locale(langKeys.GENERIC.Tokens, calculatedBalances.length)}}</p>
+					<p>
+						{{calculatedBalances.length}} {{locale(langKeys.GENERIC.Tokens, calculatedBalances.length)}}
+						<router-link tag="u" :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" style="color:rgba(255,255,255,0.3); cursor: pointer;">
+							( {{hiddenTokenCount}} filtered out )
+						</router-link>
+					</p>
 				</section>
 
 				<!--<section class="graph-actions">-->
@@ -42,7 +47,7 @@
 			<section class="tokens">
 
 				<section class="token" v-for="token in calculatedBalances">
-					<figure class="icon" @click="goToToken(token)">{{token.symbol.length > 4 ? `${token.symbol.slice(0,3)}...`.toUpperCase() : token.symbol}}</figure>
+					<figure class="icon" :class="{'unusable':!!token.unusable}" @click="goToToken(token)">{{token.symbol.length > 4 ? `${token.symbol.slice(0,3)}...`.toUpperCase() : token.symbol}}</figure>
 					<section>
 						<section class="title">
 							<b><i class="icon-lock" v-if="token.unusable"></i>{{token.symbol}}</b> {{formatNumber(token.amount, true)}}
@@ -52,7 +57,7 @@
 					</section>
 					<section>
 						<section class="title"><b>{{formatNumber(token.fiatBalance(), true) || '--'}}</b></section>
-						<section class="sub" v-if="!token.unusable && portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
+						<section class="sub" v-if="portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
 						<btn colorless="1" style="width:auto;" text="Stabilize" />
@@ -107,6 +112,7 @@
 				'totalBalances',
 				'networks',
 				'displayCurrency',
+				'balanceFilters',
 			]),
 			totalBalance(){
 				const totals = this.calculatedBalances.reduce((acc,x) => {
@@ -115,7 +121,15 @@
 				}, {});
 				return PriceService.getTotal(totals);
 			},
+			hiddenTokenCount(){
+				const totals = this.account ? this.balances[this.account.identifiable()] : Object.keys(this.fullTotalBalances.totals).map(key => this.fullTotalBalances.totals[key]);
+				return totals
+					.filter(token => {
+						return this.balanceFilters[token.blockchain] && parseFloat(this.balanceFilters[token.blockchain]) > token.amount;
+					}).length;
+			},
 			calculatedBalances(){
+				console.log('balanceFilters', this.balanceFilters);
 				const terms = this.searchTerms.trim();
 				const totals = this.account ? this.balances[this.account.identifiable()] : Object.keys(this.fullTotalBalances.totals).map(key => this.fullTotalBalances.totals[key]);
 				return totals
@@ -124,6 +138,7 @@
 						return token.blockchain === this.networkFilter.blockchain && token.chainId === this.networkFilter.chainId;
 					})
 					.filter(token => {
+						if(this.balanceFilters[token.blockchain] && parseFloat(this.balanceFilters[token.blockchain]) > token.amount) return false;
 						if(!terms.length) return true;
 						if(terms === '^') return true;
 						if(terms === '-') return !this.change(token).plus && token.fiatBalance(false);

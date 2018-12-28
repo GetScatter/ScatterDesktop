@@ -51,11 +51,6 @@
 			<section class="list-container" style="overflow:auto;" v-if="dashState === DASH_STATES.ADD_ACCOUNT">
 
 				<section style="padding-bottom:20px;">
-					<section class="action-box top-pad" v-if="canCreateAccounts">
-						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountLabel)}}</label>
-						<p>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountDescription)}}</p>
-						<btn :text="locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountButton)" v-on:clicked="$emit('createeos')" />
-					</section>
 
 					<section class="action-box top-pad">
 						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountLabel)}}</label>
@@ -81,6 +76,12 @@
 								     red="1" v-on:clicked="manuallyAddAccount" />
 							</section>
 						</section>
+					</section>
+
+					<section class="action-box top-pad" v-if="canCreateAccounts">
+						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountLabel)}}</label>
+						<p>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountDescription)}}</p>
+						<btn :text="locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountButton)" v-on:clicked="$emit('createeos')" />
 					</section>
 				</section>
 

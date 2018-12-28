@@ -77,8 +77,9 @@
 			accountBalances(){
 				const terms = this.searchTerms.trim().toLowerCase();
 				return Object.keys(this.balances).map(accUnique => {
-					const account = this.accounts.find(x => x.identifiable() === accUnique).clone();
-					if(terms.length && account.sendable().indexOf(terms) === -1) return;
+					const exists = this.accounts.find(x => x.identifiable() === accUnique);
+					const account = exists ? exists.clone() : null;
+					if(!account || (terms.length && account.sendable().indexOf(terms) === -1)) return;
 
 					const balances = this.balances[accUnique];
 					const balance = balances.find(x => x.uniqueWithChain() === this.token.uniqueWithChain());

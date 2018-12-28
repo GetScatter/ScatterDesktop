@@ -124,7 +124,7 @@ export default class ETH extends Plugin {
 
 
         await Promise.race([
-            new Promise(resolve => setTimeout(() => resolve(), 2000)),
+            new Promise(resolve => setTimeout(() => resolve(), 10000)),
             new Promise(async resolve => {
 	            if(token.uniqueWithChain() === this.defaultToken().uniqueWithChain()){
 		            balance = await web3.utils.fromWei(await web3.eth.getBalance(account.publicKey));

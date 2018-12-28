@@ -166,7 +166,7 @@
                     	return selected || b.logins - a.logins
                     })
                     .map(account => {
-                    	const systemBalance = account.systemBalance();
+                    	const systemBalance = account.systemBalance(true);
 	                    let description = `${account.network().name}${systemBalance ? ' - '+systemBalance : ''}`;
 	                    let actions = [];
 	                    const actionName = alreadySelectedUniques.includes(account.unique()) ? this.locale(this.langKeys.GENERIC.Remove)
@@ -329,7 +329,7 @@
 
                     &.red {
                         background:$red;
-                        background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
+                        background-image: $red-gradient;
                         border:1px solid #c93c3b;
                         color:#fff;
                     }
