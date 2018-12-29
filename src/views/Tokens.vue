@@ -10,7 +10,7 @@
 					<figure class="value">{{totalBalance.symbol}} {{formatNumber(totalBalance.amount, true)}}</figure>
 					<p>
 						{{calculatedBalances.length}} {{locale(langKeys.GENERIC.Tokens, calculatedBalances.length)}}
-						<router-link tag="u" :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" style="color:rgba(255,255,255,0.3); cursor: pointer;">
+						<router-link tag="u" v-if="hiddenTokenCount > 0" :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" style="color:rgba(255,255,255,0.3); cursor: pointer;">
 							( {{hiddenTokenCount}} filtered out )
 						</router-link>
 					</p>
@@ -83,6 +83,7 @@
 
 	import Chartist from 'chartist';
 	import {dateId, hourNow} from "../util/DateHelpers";
+	import BalanceService from "../services/BalanceService";
 	require("../styles/charts.scss");
 	require("../styles/tokens.scss");
 
@@ -104,7 +105,8 @@
 		computed:{
 			...mapState([
 				'scatter',
-				'balances'
+				'balances',
+				'prices',
 			]),
 			...mapGetters([
 				'accounts',
@@ -129,7 +131,6 @@
 					}).length;
 			},
 			calculatedBalances(){
-				console.log('balanceFilters', this.balanceFilters);
 				const terms = this.searchTerms.trim();
 				const totals = this.account ? this.balances[this.account.identifiable()] : Object.keys(this.fullTotalBalances.totals).map(key => this.fullTotalBalances.totals[key]);
 				return totals
@@ -168,9 +169,7 @@
 			},
 		},
 		mounted(){
-			if(this.$route.params.account){
-				this.account = this.accounts.find(x => x.unique() === this.$route.params.account);
-			}
+			if(this.$route.params.account) this.account = this.accounts.find(x => x.unique() === this.$route.params.account);
 
 			this.totalFiat = this.calculatedBalances.reduce((acc,x) => {
 				acc += parseFloat(x.fiatBalance(false) || 0);
@@ -213,6 +212,12 @@
 				const values = [];
 				let totaled = this.getTotaled();
 
+				const onlyShowingSystemAndUntouchable = (() => {
+					if(this.calculatedBalances.length !== 2) return false;
+					const tokenUnique = this.calculatedBalances[0].uniqueWithChain();
+					return this.calculatedBalances.every(x => x.uniqueWithChain(false) === tokenUnique);
+				})();
+
 				totaled.map(({hour, data}, i) => {
 					const label = `${hour}:00`;
 					if(i % 2 === 0) labels.push(label);
@@ -220,8 +225,9 @@
 
 					let total;
 
-					if(this.calculatedBalances.length === 1){
-						total = data[this.calculatedBalances[0].uniqueWithChain()];
+					if(this.calculatedBalances.length === 1 || onlyShowingSystemAndUntouchable){
+						let tokenUnique = this.calculatedBalances[0].uniqueWithChain(false);
+						total = (data[tokenUnique] / this.prices[tokenUnique].USD) * this.prices[tokenUnique][this.displayCurrency];
 					} else {
 						total = this.calculatedBalances.reduce((acc,balance) => {
 							const priceData = data[balance.uniqueWithChain()];
@@ -234,7 +240,7 @@
 					values.push({value:total, meta:label});
 				})
 
-				if(this.calculatedBalances.length !== 1){
+				if(this.calculatedBalances.length !== 1 && !onlyShowingSystemAndUntouchable){
 					values.pop();
 					values.push({value:this.totalBalance.amount, meta:`${hourNow()}:00`});
 				}

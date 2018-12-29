@@ -40,7 +40,7 @@ export default class Token {
 	clone(){ return Token.fromJson(JSON.parse(JSON.stringify(this))) }
 
     unique(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}` }
-    uniqueWithChain(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}:${this.chainId}${this.unusable ? `:${this.unusable}` : ''}` }
+    uniqueWithChain(includeUnusable = true){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}:${this.chainId}${includeUnusable && this.unusable ? `:${this.unusable}` : ''}` }
     identifiable(){ return `${this.blockchain}:${this.contract.toLowerCase()}` }
 
     add(quantity){
