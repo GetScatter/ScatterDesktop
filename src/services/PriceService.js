@@ -25,10 +25,7 @@ export default class PriceService {
         return new Promise(async resolve => {
 
             const setPrices = async () => {
-                const prices = await PriceService.getAll();
-                if(prices && Object.keys(prices).length) {
-                    await store.dispatch(Actions.SET_PRICES, prices);
-                }
+                await PriceService.setPrices();
                 resolve(true);
             }
 
@@ -38,6 +35,13 @@ export default class PriceService {
             }, intervalTime);
         })
     }
+
+    static async setPrices(){
+		const prices = await PriceService.getAll();
+		if(prices && Object.keys(prices).length) {
+			await store.dispatch(Actions.SET_PRICES, prices);
+		}
+	}
 
     static getAll(){
         return Promise.race([

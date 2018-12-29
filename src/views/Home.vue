@@ -27,9 +27,9 @@
                     <!--<btn text="Exchange"></btn>-->
                 </section>
                 <section class="actions">
-                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.EXCHANGE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
-                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
+                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.EXCHANGE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
+                    <!--<btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>-->
                 </section>
             </section>
 
@@ -113,6 +113,7 @@
 	        	if(this.loadingBalances) return;
 	        	this.loadingBalances = true;
 		        await BalanceService.loadAllBalances(true);
+		        await PriceService.getAll();
 		        this.loadingBalances = false;
             }
         },

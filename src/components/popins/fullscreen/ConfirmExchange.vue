@@ -20,7 +20,7 @@
 						<figure class="amount" :class="{'small':order.expected.toString().length > 10}">{{order.expected}} {{symbols.to}}</figure>
 						<figure class="account">{{accounts.to}}</figure>
 						<!--<figure class="value">$20.00</figure>-->
-						<section class="disclaimer less-pad" style="margin-top:10px;">
+						<section class="memo" style="margin-top:10px;">
 							Please note that this is an estimate!
 							<p>Token prices could change between now and the time it takes to complete the exchange. You may get slightly more or less than estimated.</p>
 						</section>

@@ -1,6 +1,6 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" />
+        <PopOutHead v-on:closed="returnResult" :hide-close="hideCloseButton" />
         <section class="multi-pane">
 
 
@@ -178,6 +178,7 @@
 			selectedIdentity:null,
 			selectedLocation:null,
 			clonedLocation:null,
+			hideCloseButton:false,
 		}},
 		created(){
 			this.selectedIdentity = this.identity.clone();
@@ -316,15 +317,20 @@
 			},
 
 			whitelist(){
-				if(!this.whitelisted) PopupService.push(Popup.enableWhitelist());
-
-				setTimeout(() => {
-					this.whitelisted = !this.whitelisted;
+				this.hideCloseButton = true;
+				const finish = bool => {
+					this.whitelisted = bool;
+					this.hideCloseButton = false;
 					this.messages.map(message => {
 						if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
-					});
-                }, this.whitelisted ? 0 : 250);
+					})
+				};
 
+				if(this.whitelisted) return finish(false);
+
+				PopupService.push(Popup.enableWhitelist(accepted => {
+					finish(accepted);
+				}));
             },
 
 

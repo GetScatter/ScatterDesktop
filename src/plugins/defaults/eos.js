@@ -289,9 +289,6 @@ export default class EOS extends Plugin {
 			new AccountAction(localizedState(EOS.ProxyVotesButton, null), '', () => {
 				PopupService.push(Popup.eosProxyVotes(account, () => {}));
 			}),
-		];
-
-		const ownerActions = [
 			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), '', () => {
 				PopupService.push(Popup.verifyPassword(verified => {
 					if(!verified) return;
@@ -305,8 +302,6 @@ export default class EOS extends Plugin {
 		// Adding owner only actions.
 		if(accounts.some(x => x.authority !== 'watch'))
 			availableActions = nonWatchActions.concat(availableActions);
-		if(accounts.some(x => x.authority === 'owner'))
-			availableActions = ownerActions.concat(availableActions);
 
 		return availableActions;
 	}

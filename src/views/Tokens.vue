@@ -115,6 +115,7 @@
 				'networks',
 				'displayCurrency',
 				'balanceFilters',
+				'blacklistTokens',
 			]),
 			totalBalance(){
 				const totals = this.calculatedBalances.reduce((acc,x) => {
@@ -147,6 +148,9 @@
 						if(terms.indexOf('::') > -1) return `${token.contract.toLowerCase()}::${token.symbol.toLowerCase()}` === terms;
 						if(isNaN(terms)) return token.symbol.toLowerCase().indexOf(terms) > -1 || token.contract.toLowerCase().indexOf(terms) > -1;
 						return token.amount >= parseFloat(terms);
+					})
+					.filter(token => {
+						return !this.blacklistTokens.find(x => x.uniqueWithChain(false) === token.uniqueWithChain(false))
 					})
 					.sort((a,b) => {
 						if(terms === '+' || terms === '-') return this.change(b, true) - this.change(a, true)

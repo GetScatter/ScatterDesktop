@@ -2,6 +2,31 @@
 	<section class="panel-container limited">
 		<h1>{{title}}</h1>
 
+		<section class="custom" v-if="custom && token">
+			<section class="split-inputs">
+				<cin style="flex:1; margin-bottom:0;"
+					 :placeholder="contractPlaceholder"
+					 v-if="token.needsContract()"
+					 :label="locale(langKeys.GENERIC.Contract)"
+					 :text="token.contract"
+					 v-on:changed="x => token.contract = x" />
+			</section>
+			<br>
+			<section class="split-inputs">
+				<cin placeholder="XXX"
+					 :label="locale(langKeys.GENERIC.Symbol)"
+					 :text="token.symbol"
+					 v-on:changed="x => token.symbol = x" />
+
+				<cin :placeholder="decimals" type="number"
+					 :label="locale(langKeys.GENERIC.Decimals)"
+					 :text="token.decimals"
+					 v-on:changed="x => token.decimals = x" />
+
+				<btn :text="locale(langKeys.TRANSFER.TOKENS.SaveTokenButton)" v-on:clicked="addToken" />
+			</section>
+		</section>
+
 		<SearchBar style="margin-left:-30px;" :placeholder="locale(langKeys.GENERIC.Search)" v-on:terms="x => searchTerms = x" />
 
 		<section v-for="list in lists">
@@ -29,19 +54,36 @@
 	import SearchBar from '../../components/reusable/SearchBar';
 	import PriceService from '../../services/PriceService';
 	import TokenService from "../../services/TokenService";
+	import Token from "../../models/Token";
+	import PluginRepository from "../../plugins/PluginRepository";
 
 	export default {
-		props:['title', 'lists'],
+		props:['title', 'lists', 'custom'],
 		components:{
 			SearchBar
 		},
 		data () {return {
 			searchTerms:'',
+			token:null,
 		}},
 		computed:{
 			...mapGetters([
 				'displayCurrency'
-			])
+			]),
+			contractPlaceholder(){
+				return PluginRepository.plugin(this.token.blockchain).contractPlaceholder();
+			},
+			decimals(){
+				return PluginRepository.plugin(this.custom.blockchain()).defaultDecimals();
+			}
+		},
+		created(){
+			if(this.custom){
+				this.token = Token.placeholder();
+				this.token.blockchain = this.custom.blockchain();
+				this.token.chainId = this.custom.network().chainId;
+				this.token.decimals = this.decimals;
+			}
 		},
 		methods:{
 			visible(token){
@@ -56,8 +98,14 @@
 				return token.name.toLowerCase().indexOf(this.searchTerms) > -1 ||
 					(token.token.hasOwnProperty('contract') ? token.token.contract.toLowerCase().indexOf(this.searchTerms) > -1 : false) ||
 					token.symbol.toLowerCase().indexOf(this.searchTerms) > -1
-			}
-		}
+			},
+			async addToken(){
+				this.token.name = this.token.symbol;
+				if(await TokenService.addToken(this.token)) {
+					this.$emit('custom', this.token.clone());
+				}
+			},
+		},
 	}
 </script>
 
@@ -67,6 +115,15 @@
 	.panel-container {
 		overflow-y: auto;
 		height: calc(100vh - 170px);
+	}
+
+	.custom {
+		padding:20px 20px 5px;
+		background:rgba(0,0,0,0.02);
+		border:1px solid rgba(0,0,0,0.1);
+		border-radius:4px;
+		margin-top:10px;
+		margin-bottom:30px;
 	}
 
 	.tokens {

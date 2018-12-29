@@ -9,10 +9,10 @@
 					<br>
 					<section class="disclaimer less-pad">
 						{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Desc)}}
-						<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.SubDesc)}}</p>
+						<p v-if="account.authorities().length > 1">{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.SubDesc)}}</p>
 					</section>
 
-					<section class="split-inputs">
+					<section class="split-inputs" v-if="hasPermission('owner')">
 						<sel :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel)"
 						     v-if="otherKeys.length"
 						     :options="otherKeys"
@@ -26,7 +26,7 @@
 						     :dynamic-button="isValidPermission(ownerKey) ? 'icon-check' : null" />
 					</section>
 
-					<section class="split-inputs">
+					<section class="split-inputs" v-if="hasPermission('active')">
 						<sel :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel)"
 						     v-if="otherKeys.length"
 						     :options="otherKeys"
@@ -82,7 +82,7 @@
 			otherKeys(){
 				return this.keypairs
 					.filter(x => x.publicKeys.some(key => key.blockchain === Blockchains.EOSIO))
-			}
+			},
 		},
 		methods:{
 			returnResult(result){
@@ -101,6 +101,9 @@
 					owner:this.ownerKey,
 					active:this.activeKey,
 				})
+			},
+			hasPermission(type){
+				return !!this.account.authorities().find(x => x.authority === type);
 			},
 
 			...mapActions([

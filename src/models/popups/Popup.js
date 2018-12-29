@@ -167,8 +167,8 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHECK_HARDWARE, {}, () => {}))
 	}
 
-	static enableWhitelist(){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, () => {}))
+	static enableWhitelist(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, callback))
 	}
 
 	static selectAccount(callback, accountsOnly = false, account = null, blockchain = null){
@@ -179,8 +179,8 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order}, callback))
 	}
 
-	static confirmTransfer(from, to, token, callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_TRANSFER, {from, to, token}, callback))
+	static confirmTransfer(from, to, token, memo, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_TRANSFER, {from, to, token, memo}, callback))
 	}
 
 }

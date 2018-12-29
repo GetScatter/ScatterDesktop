@@ -39,7 +39,8 @@
 			</section>
 
 			<section class="action-bar short bottom centered">
-				<btn :text="locale(langKeys.GENERIC.Okay)" blue="1" v-on:clicked="returnResult(true)" />
+				<btn :text="locale(langKeys.GENERIC.Deny)" red="1" v-on:clicked="returnResult(false)" />
+				<btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" v-on:clicked="returnResult(true)" />
 			</section>
 		</section>
 	</section>
@@ -103,6 +104,17 @@
 		label {
 			.red {
 				color:$red;
+			}
+		}
+	}
+
+	.action-bar {
+		button {
+			width:auto;
+			min-width:200px;
+
+			&:last-child {
+				margin-left:10px;
 			}
 		}
 	}

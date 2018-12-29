@@ -1,7 +1,7 @@
 <template>
 	<section class="pop-out-head">
 		<figure class="logo">Scatter</figure>
-		<figure class="close icon-cancel" @click="$emit('closed')"></figure>
+		<figure v-if="!hideClose" class="close icon-cancel" @click="$emit('closed')"></figure>
 	</section>
 </template>
 
@@ -9,7 +9,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 
 	export default {
-
+		props:['hideClose']
 	}
 </script>
 

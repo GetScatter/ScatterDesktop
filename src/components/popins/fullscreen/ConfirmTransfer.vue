@@ -8,6 +8,9 @@
 					<section class="info">
 						<figure class="account">{{from}}</figure>
 						<figure class="amount" :class="{'small':token.amount.toString().length > 10}">{{token.amount}} {{token.symbol}}</figure>
+						<section class="memo" v-if="memo && memo.length">
+							{{memo}}
+						</section>
 					</section>
 				</section>
 				<figure class="breaker">
@@ -47,6 +50,7 @@
 			from(){ return this.popin.data.props.from; },
 			to(){ return this.popin.data.props.to; },
 			token(){ return this.popin.data.props.token; },
+			memo(){ return this.popin.data.props.memo; },
 		},
 		methods:{
 			returnResult(x){

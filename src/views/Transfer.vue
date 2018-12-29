@@ -2,7 +2,11 @@
     <section class="transfer">
         <back-bar v-on:back="back" :buttons="[{text:'History', clicked:() => $router.push({name:RouteNames.DISPLAY_TOKEN})}]" />
 
-        <TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
+        <TokenSelector v-if="selectingToken"
+					   title="Select Token"
+					   :lists="selectableTokens"
+					   :custom="account"
+					   v-on:custom="setCustomToken" />
 
         <section class="full-panel inner limited" v-if="!selectingToken">
 
@@ -197,6 +201,11 @@
 				if(this.selectingToken) return this.selectingToken = false;
 				this.$router.back();
 			},
+			setCustomToken(token){
+				this.token = token;
+				this.token.amount = null;
+				this.selectingToken = false;
+			},
 			selectAccount(type){
 				PopupService.push(Popup.selectAccount(account => {
 					if(!account) return;
@@ -240,7 +249,7 @@
 				const reset = () => this.sending = false;
 				if(!this.canSend) return;
 				this.sending = true;
-				PopupService.push(Popup.confirmTransfer(this.account.sendable(), this.recipient, this.token, async accepted => {
+				PopupService.push(Popup.confirmTransfer(this.account.sendable(), this.recipient, this.token, this.memo, async accepted => {
 					if(!accepted) return reset();
 					if(!await PasswordService.verifyPIN()) return reset();
 					const sent = await TransferService[this.account.blockchain()]({

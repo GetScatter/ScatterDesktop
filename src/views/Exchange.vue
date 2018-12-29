@@ -246,7 +246,7 @@
 			canSend(){
 				return !!this.rate && !!this.pair && !this.sending && this.recipient &&
 						this.rate.min <= this.estimatedAmount &&
-						this.rate.max >= this.estimatedAmount
+						this.rate.max >= this.estimatedAmount && !this.failedConnection
 			}
 		},
 		created(){
@@ -312,7 +312,11 @@
 			},
 			cantConnect(){
 				this.failedConnection = true;
-				PopupService.push(Popup.snackbar(`Can't connect to Exchange API`));
+				PopupService.push(Popup.prompt(
+					"Exchange Error",
+					"Can't connect to the Exhange API."
+				));
+				this.$router.push({name:this.RouteNames.HOME});
 				this.loadingPairs = false;
 			},
 			async getPairs(){
