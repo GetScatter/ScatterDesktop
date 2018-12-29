@@ -4,8 +4,8 @@ import * as Actions from '../store/constants';
 const Store = window.require('electron-store');
 
 const ABIS_NAME = 'abi';
+const HISTORIES_NAME = 'histories';
 const SCATTER_DATA_NAME = 'scatter';
-const PRICE_DATA_NAME = 'prices';
 const SCATTER_INTERMED_NAME = 'scatter_intermed';
 
 const stores = {};
@@ -18,8 +18,8 @@ const getStore = name => {
 	return stores[name];
 };
 
-const priceStorage = () => getStore(PRICE_DATA_NAME);
 const scatterStorage = () => getStore(SCATTER_DATA_NAME);
+const historyStorage = () => getStore(HISTORIES_NAME);
 const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
 
@@ -88,6 +88,7 @@ export default class StorageService {
     static removeScatter(){
         scatterStorage().clear();
         abiStorage().clear();
+        historyStorage().clear();
         store.commit(Actions.SET_SCATTER, null);
         store.commit(Actions.SET_SEED, '');
         return true;
@@ -107,5 +108,13 @@ export default class StorageService {
 
     static setSalt(salt){
         return scatterStorage().set('salt', salt);
+    }
+
+    static getHistory(){
+		return historyStorage().get('history') || [];
+    }
+
+    static setHistory(history){
+        return historyStorage().set('history', history);
     }
 }

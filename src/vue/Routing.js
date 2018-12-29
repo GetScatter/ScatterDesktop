@@ -12,6 +12,7 @@ const Tokens = () => import('../views/Tokens')
 const Token = () => import('../views/Token')
 const DisplayToken = () => import('../views/DisplayToken')
 const Permission = () => import('../views/Permission')
+const History = () => import('../views/History')
 
 
 const Home = () => import('../views/Home')
@@ -37,6 +38,7 @@ export const RouteNames = {
     TERMS:'terms',
     ONBOARDING:'onboarding',
     SETTINGS:'settings',
+    HISTORY:'history',
 
     // POPOUT
     POP_OUT:'popout',
@@ -57,6 +59,7 @@ const RouteViews = {
     [RouteNames.RECEIVE]:Receive,
     [RouteNames.EXCHANGE]:Exchange,
     [RouteNames.PERMISSION]:Permission,
+    [RouteNames.HISTORY]:History,
 
     [RouteNames.SETTINGS]:Settings,
     [RouteNames.POP_OUT]:PopOut,

@@ -30,3 +30,5 @@ export const REMOVE_BALANCES =  'removeBalances';
 export const SET_PRICES =       'setPrices';
 
 export const NEW_KEY =          'setNewKey';
+
+export const DELTA_HISTORY =	'deltaHistory';

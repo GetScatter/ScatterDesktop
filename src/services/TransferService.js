@@ -42,6 +42,7 @@ export default class TransferService {
             }
             else {
                 this.transferSuccessPopup(transfer, token.blockchain);
+
                 return true;
             }
         }

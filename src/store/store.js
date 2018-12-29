@@ -35,6 +35,8 @@ const state = {
     prices:{},
 
 	newKey:false,
+
+	history:[],
 };
 
 const getters = {
