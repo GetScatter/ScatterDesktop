@@ -86,4 +86,11 @@ export default class Account {
 	    if(!systemBalance) return 0;
 	    return `${systemBalance.amount} ${withSymbol ? systemBalance.symbol : ''}`;
     }
+
+    totalFiatBalance(){
+	    return this.tokens().reduce((acc, x) => {
+	    	acc += parseFloat(x.fiatBalance(false))
+		    return acc;
+	    }, 0)
+    }
 }

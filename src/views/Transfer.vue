@@ -44,7 +44,9 @@
                     <section>
                         <section class="box">
                             <section class="row clickable" @click="selectToken('from')">
-                                <figure class="icon" :class="{'small':token && token.symbol.length >= 4}">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
+                                <figure class="icon" :class="[{'small':token && token.symbol.length >= 4}, token.symbolClass()]">
+                                    <span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
+                                </figure>
                                 <figure class="fill">{{token.name}}</figure>
                                 <figure class="chevron icon-down-open-big"></figure>
                             </section>
@@ -140,7 +142,8 @@
 		}},
 		computed:{
 			...mapState([
-				'scatter'
+				'scatter',
+                'history'
 			]),
 			...mapGetters([
 				'accounts',
@@ -190,16 +193,26 @@
             }
 		},
 		created(){
-			this.account = this.accounts.sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
-			const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
-			const token = this.account.network().systemToken().clone();
-			token.amount = null;
-			this.token = token;
+			const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;
+			if(history){
+				this.account = history.from;
+				this.recipient = history.to;
+				this.memo = history.memo;
+				this.token = history.token.clone();
+				this.changedAmount();
+            } else {
+				this.account = this.accounts.sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
+				const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
+				const token = this.account.network().systemToken().clone();
+				token.amount = null;
+				this.token = token;
+            }
+
 		},
 		methods:{
 			back(){
 				if(this.selectingToken) return this.selectingToken = false;
-				this.$router.back();
+				this.$router.push({name:this.RouteNames.HOME});
 			},
 			setCustomToken(token){
 				this.token = token;
@@ -264,7 +277,7 @@
 					if(sent) {
 						BalanceService.loadBalancesFor(this.account);
 						// TODO: CHANGE TO HISTORY
-						this.$router.push({name:this.RouteNames.HOME});
+						this.$router.push({name:this.RouteNames.HISTORY});
 					}
                 }))
 			}

@@ -34,7 +34,10 @@
 			<label>{{list.title}}</label>
 			<section class="tokens">
 				<section class="token" v-if="visible(token)" :class="{'active':list.active === token.id}" v-for="token in list.tokens" @click="list.handler(token.id)">
-					<figure class="icon">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
+					<figure class="icon" v-if="!token.token || typeof token.token.symbolClass !== 'function'">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
+					<figure class="icon" v-else :class="[{'small':token.token && token.token.symbol.length >= 4}, token.token.symbolClass()]">
+						<span v-if="!token.token.symbolClass()">{{token.token.truncatedSymbol()}}</span>
+					</figure>
 					<section class="data">
 						<section>
 							<div>{{token.name}}</div>
@@ -157,6 +160,10 @@
 				border-bottom-left-radius:6px;
 				transition:all 0.05s ease;
 				transition-property: background, color;
+
+				&.token-icon {
+					font-size: 36px;
+				}
 			}
 
 			.data {

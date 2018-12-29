@@ -14,8 +14,8 @@
 
                         <section class="total-details">
                             <figure class="amount">
-                                {{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}
-                                <div v-if="displayToken">{{totalTokenBalance.symbol}} {{formatNumber(totalTokenBalance.amount, true)}}</div>
+                                {{totalBalance.symbol}}{{formatNumber(totalBalance.amount)}}
+                                <div v-if="displayToken">{{totalTokenBalance.symbol}} {{formatNumber(totalTokenBalance.amount)}}</div>
                             </figure>
                             <figure class="dots">
                                 <figure class="dot" v-for="i in [1,1,1]"></figure>
@@ -72,6 +72,7 @@
     import AccountService from "../services/AccountService";
     import {daysOld} from "../util/DateHelpers";
     import TokenService from "../services/TokenService";
+    import StorageService from "../services/StorageService";
 
 
     export default {
@@ -115,7 +116,10 @@
 		        await BalanceService.loadAllBalances(true);
 		        await PriceService.getAll();
 		        this.loadingBalances = false;
-            }
+            },
+            ...mapActions([
+            	Actions.LOAD_HISTORY
+            ])
         },
 
         created(){
@@ -124,6 +128,7 @@
 
         mounted(){
 	        setTimeout(async() => {
+	        	this[Actions.LOAD_HISTORY]();
 	        	await AccountService.fixOrphanedAccounts();
 		        await PriceService.watchPrices();
 		        await this.refreshTokens(false);

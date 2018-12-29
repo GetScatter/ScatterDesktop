@@ -46,7 +46,9 @@
 								</figure>
 							</section>
 							<section class="row clickable" v-else @click="selectToken('from')">
-								<figure class="icon" :class="{'small':token && token.symbol.length >= 4}">{{token.symbol.length > 4 ? token.symbol[0] : token.symbol}}</figure>
+								<figure class="icon" :class="[{'small':token && token.symbol.length >= 4}, token.symbolClass()]">
+									<span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
+								</figure>
 								<figure class="fill">{{token.name}}</figure>
 								<figure class="chevron icon-down-open-big"></figure>
 							</section>
@@ -98,6 +100,9 @@
 							</section>
 							<section class="row clickable" v-else @click="selectToken('to')">
 								<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}" v-if="pairs.length && pair">{{pair ? pair.symbol : ''}}</figure>
+								<!--<figure class="icon" :class="[{'small':pair && pair.symbol.length >= 4}, pair.symbolClass()]">-->
+									<!--<span v-if="!pair.symbolClass()">{{pair.truncatedSymbol()}}</span>-->
+								<!--</figure>-->
 								<figure class="fill">{{pairs.length ? pair ? pair.symbol : `Select Pair (${pairs.length})` : 'No Available Pairs'}}</figure>
 								<figure class="chevron" :class="{'icon-down-open-big':pairs.length > 1, 'icon-lock':pairs.length === 1}" v-if="pairs.length"></figure>
 								<figure class="chevron icon-cancel" v-if="!pairs.length"></figure>
@@ -261,7 +266,7 @@
 		methods:{
 			back(){
 				if(this.selectingToken) return this.selectingToken = false;
-				this.$router.back();
+				this.$router.push({name:this.RouteNames.HOME});
 			},
 			selectAccount(type){
 				PopupService.push(Popup.selectAccount(account => {

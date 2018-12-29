@@ -47,7 +47,9 @@
 			<section class="tokens">
 
 				<section class="token" v-for="token in calculatedBalances">
-					<figure class="icon" :class="{'unusable':!!token.unusable}" @click="goToToken(token)">{{token.symbol.length > 4 ? `${token.symbol.slice(0,3)}...`.toUpperCase() : token.symbol}}</figure>
+					<figure class="icon" @click="goToToken(token)" :class="[{'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]">
+						<span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
+					</figure>
 					<section>
 						<section class="title">
 							<b><i class="icon-lock" v-if="token.unusable"></i>{{token.symbol}}</b> {{formatNumber(token.amount, true)}}

@@ -4,6 +4,9 @@ import PopupService from './PopupService';
 import {Popup} from '../models/popups/Popup'
 import BigNumber from 'bignumber.js';
 import TokenService from "./TokenService";
+import HistoricTransfer from "../models/histories/HistoricTransfer";
+import {store} from '../store/store'
+import * as Actions from '../store/constants'
 
 export default class TransferService {
 
@@ -42,7 +45,8 @@ export default class TransferService {
             }
             else {
                 this.transferSuccessPopup(transfer, token.blockchain);
-
+				const history = new HistoricTransfer(account, recipient, token, amount, memo, this.getTransferId(transfer, token.blockchain));
+				store.dispatch(Actions.DELTA_HISTORY, history);
                 return true;
             }
         }
@@ -50,17 +54,16 @@ export default class TransferService {
     }
 
     static transferSuccessPopup(transfer, blockchain){
+	    PopupService.push(Popup.transactionSuccess(blockchain, this.getTransferId(transfer, blockchain)));
+    }
+
+    static getTransferId(transfer, blockchain){
 	    switch(blockchain){
-		    case Blockchains.EOSIO:
-			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.transaction_id))
-			    break;
-		    case Blockchains.TRX:
-			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.txID))
-			    break;
-		    case Blockchains.ETH:
-			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.transactionHash))
-			    break;
+		    case Blockchains.EOSIO: return transfer.transaction_id;
+		    case Blockchains.TRX: return transfer.txID;
+		    case Blockchains.ETH: return transfer.transactionHash;
 	    }
+	    return null;
     }
 
 }

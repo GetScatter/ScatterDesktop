@@ -32,3 +32,4 @@ export const SET_PRICES =       'setPrices';
 export const NEW_KEY =          'setNewKey';
 
 export const DELTA_HISTORY =	'deltaHistory';
+export const LOAD_HISTORY =	    'loadHistory';

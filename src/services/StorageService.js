@@ -25,6 +25,10 @@ const abiStorage = () => getStore(ABIS_NAME);
 
 import {remote} from '../util/ElectronHelpers';
 import {dateId, daysOld, hourNow} from "../util/DateHelpers";
+import {AES} from "aes-oop";
+import {HISTORY_TYPES} from "../models/histories/History";
+import HistoricTransfer from "../models/histories/HistoricTransfer";
+import HistoricExchange from "../models/histories/HistoricExchange";
 const dataPath = remote.app.getPath('userData');
 const fs = window.require('fs');
 
@@ -111,10 +115,28 @@ export default class StorageService {
     }
 
     static getHistory(){
-		return historyStorage().get('history') || [];
+		let history = historyStorage().get('history');
+		if(!history) return [];
+		history = AES.decrypt(history, store.state.seed);
+
+		history = history.map(x => {
+			if(x.type === HISTORY_TYPES.Transfer) return HistoricTransfer.fromJson(x);
+			if(x.type === HISTORY_TYPES.Exchange) return HistoricExchange.fromJson(x);
+			return null;
+		}).filter(x => x);
+
+		return history;
     }
 
-    static setHistory(history){
-        return historyStorage().set('history', history);
+    static deltaHistory(x){
+    	let history = this.getHistory();
+	    if(x === null) history = [];
+	    else {
+		    if(history.find(h => h.id === x.id)) history = history.filter(h => h.id !== x.id);
+		    else history.unshift(x);
+	    }
+
+    	const encrypted = AES.encrypt(history, store.state.seed);
+        return historyStorage().set('history', encrypted);
     }
 }

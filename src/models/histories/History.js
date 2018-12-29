@@ -7,9 +7,10 @@ export const HISTORY_TYPES = {
 
 export default class History {
 
-	constructor(type){
+	constructor(type, txid = ''){
 		this.id = IdGenerator.text(24);
 		this.type = type;
 		this.timestamp = +new Date();
+		this.txid = typeof txid === 'string' ? txid : '';
 	}
 }

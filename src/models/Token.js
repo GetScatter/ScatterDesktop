@@ -96,4 +96,14 @@ export default class Token {
 			return null;
 		}
 	}
+
+	symbolClass(){
+    	const iconSearch = `${this.blockchain}-${this.symbol}`.toLowerCase();
+    	const icons = ['eth-tusd', 'btc-btc', 'eos-eos', 'eth-dai', 'trx-trx', 'eth-eth'];
+    	return icons.includes(iconSearch) ? `token-icon token-${iconSearch}` : null;
+	}
+
+	truncatedSymbol(){
+		return this.symbol.length > 4 ? this.symbol[0] : this.symbol
+	}
 }
