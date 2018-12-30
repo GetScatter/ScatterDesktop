@@ -4,7 +4,7 @@
 
 		<TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
 
-		<section class="full-panel inner limited" v-if="!selectingToken">
+		<section class="full-panel inner limited" v-if="account && token && !selectingToken">
 
 			<section class="tokens-out">
 
@@ -154,6 +154,7 @@
 	import {Popup} from "../models/popups/Popup";
 	import TransferService from "../services/TransferService";
 	import BalanceService from "../services/BalanceService";
+	import HistoricExchange from "../models/histories/HistoricExchange";
 
 	export default {
 		components:{
@@ -175,7 +176,8 @@
 		}},
 		computed:{
 			...mapState([
-				'scatter'
+				'scatter',
+				'history'
 			]),
 			...mapGetters([
 				'accounts',
@@ -197,6 +199,7 @@
 			selectableTokens(){
 
 				if(this.selectingToken === 'from'){
+					if(!this.account) return [];
 					return [{
 						title:'',
 						active:this.token ? this.token.uniqueWithChain() : null,
@@ -255,13 +258,26 @@
 			}
 		},
 		created(){
-			this.account = this.accounts.filter(x => x.authority !== 'watch').sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
-			const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
-			const token = this.account.network().systemToken().clone();
-			token.amount = null;
-			this.token = token;
+			setTimeout(async () => {
+				const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;
+				if(history){
+					this.account = history.from;
+					this.token = history.fromToken.clone();
+					await this.getPairs();
+					this.recipient = history.to;
+					this.pair = history.toToken;
+					this.changedAmount();
+					this.getRate();
+				} else {
+					this.account = this.accounts.filter(x => x.authority !== 'watch').sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
+					const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
+					const token = this.account.network().systemToken().clone();
+					token.amount = null;
+					this.token = token;
+					await this.getPairs();
+				}
+			}, 1);
 
-			this.getPairs();
 		},
 		methods:{
 			back(){
@@ -330,7 +346,7 @@
 				this.loadingPairs = true;
 				let pairs = await ExchangeService.pairs(this.token);
 				// TODO: ERROR HANDLING
-				console.log('pairs', pairs);
+
 				if(!pairs) {
 					this.cantConnect();
 				} else {
@@ -360,6 +376,7 @@
 				}
 
 				this.loadingPairs = false;
+				return true;
 			},
 			async getRate(){
 				this.loadingRate = true;
@@ -405,20 +422,26 @@
 						memo:order.memo,
 						token:this.token,
 						promptForSignature:false,
+						bypassHistory:true,
 					}).catch(() => false);
 
 					if(sent){
+						const history = new HistoricExchange(this.account, this.recipient, this.token, this.pair, order, TransferService.getTransferId(sent, this.token.blockchain));
+						this[Actions.DELTA_HISTORY](history);
+
 						setTimeout(() => {
 							BalanceService.loadBalancesFor(this.account);
 						}, 1000);
 					}
 
-					console.log('sent', sent);
-
 				}));
 
 
-			}
+			},
+
+			...mapActions([
+				Actions.DELTA_HISTORY
+			])
 		},
 		watch:{
 			['token.symbol'](){

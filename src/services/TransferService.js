@@ -45,9 +45,12 @@ export default class TransferService {
             }
             else {
                 this.transferSuccessPopup(transfer, token.blockchain);
-				const history = new HistoricTransfer(account, recipient, token, amount, memo, this.getTransferId(transfer, token.blockchain));
-				store.dispatch(Actions.DELTA_HISTORY, history);
-                return true;
+
+                if(!params.bypassHistory){
+	                const history = new HistoricTransfer(account, recipient, token, amount, memo, this.getTransferId(transfer, token.blockchain));
+	                store.dispatch(Actions.DELTA_HISTORY, history);
+                }
+                return transfer;
             }
         }
 

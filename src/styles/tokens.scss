@@ -147,6 +147,7 @@
         }
 
         .title {
+
           &.small {
             font-size: 13px;
           }
@@ -156,6 +157,16 @@
           font-size: 11px;
           margin-top:5px;
           color:#a8a9b0;
+
+          &.txid {
+            padding:7px 8px 5px;
+            background:rgba(0,0,0,0.2);
+            border:1px solid $primary;
+            border-radius: 4px;
+            display:table;
+            margin-top:10px;
+
+          }
 
           b {
             color:yellow;
