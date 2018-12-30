@@ -101,6 +101,7 @@ export default class PasswordService {
 
             await store.commit(Actions.SET_SEED, newSeed);
             await store.dispatch(Actions.SET_SCATTER, scatter);
+            StorageService.swapHistory(store.state.history);
             resolve(newMnemonic);
 
         })

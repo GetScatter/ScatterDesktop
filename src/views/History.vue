@@ -115,7 +115,7 @@
 			clearHistory(){
 				PopupService.push(Popup.prompt(
 					"Clearing History",
-					"Are you sure?",
+					"Your history in Scatter is only stored locally. If you clear it you will not be able to restore it.",
 					accepted => {
 						if(accepted) this[Actions.DELTA_HISTORY](null)
 					}

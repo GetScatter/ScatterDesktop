@@ -139,4 +139,9 @@ export default class StorageService {
     	const encrypted = AES.encrypt(history, store.state.seed);
         return historyStorage().set('history', encrypted);
     }
+
+    static swapHistory(history){
+    	const encrypted = AES.encrypt(history, store.state.seed);
+        return historyStorage().set('history', encrypted);
+    }
 }
