@@ -166,6 +166,11 @@
             display:table;
             margin-top:10px;
 
+            &:hover {
+              background:#fff;
+              color:$primary;
+            }
+
           }
 
           b {

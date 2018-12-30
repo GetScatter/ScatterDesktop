@@ -4,8 +4,6 @@
 
 		<section class="panel-container">
 			<figure class="bg"></figure>
-			<br>
-			<h1 style="color:#fff;">History</h1>
 
 			<section class="token-filters">
 				<SearchBar tokens="1"
@@ -36,7 +34,7 @@
 					</section>
 					<section>
 						<section class="title" v-if="item.toAmount"><b>+{{formatNumber(parseFloat(item.toAmount).toFixed(item.toToken.decimals), true)}} {{item.toToken.symbol}}</b></section>
-						<section :class="item.toAmount ? 'sub' : 'title'"><b><i v-if="item.toAmount">-</i>{{formatNumber(parseFloat(item.token.amount).toFixed(item.token.decimals), true)}} {{item.token.symbol}}</b></section>
+						<section :class="item.toAmount ? 'sub' : 'title'"><b>-{{formatNumber(parseFloat(item.token.amount).toFixed(item.token.decimals), true)}} {{item.token.symbol}}</b></section>
 						<section class="sub" v-if="item.memo && item.memo.length">{{item.memo}}</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
@@ -94,13 +92,6 @@
 			},
 			filteredHistories(){
 				return this.history
-					.filter(x => !this.networkFilter ? true : x.from.network().unique() === this.networkFilter.unique())
-					.filter(x => !this.searchTerms.length ? true : (() => {
-						return x.from.sendable().toLowerCase().indexOf(this.searchTerms) > -1 ||
-								x.to.toLowerCase().indexOf(this.searchTerms) > -1 ||
-								x.token.symbol.toLowerCase().indexOf(this.searchTerms) > -1 ||
-								(x.memo && x.memo.toLowerCase().indexOf(this.searchTerms) > -1)
-					})())
 					.map(item => {
 						const token = item.type === HISTORY_TYPES.Transfer
 							? item.token
@@ -131,6 +122,13 @@
 							order:item.orderDetails,
 						}
 					})
+					.filter(x => !this.networkFilter ? true : x.from.network().unique() === this.networkFilter.unique())
+					.filter(x => !this.searchTerms.length ? true : (() => {
+						return x.from.sendable().toLowerCase().indexOf(this.searchTerms) > -1 ||
+								x.to.toLowerCase().indexOf(this.searchTerms) > -1 ||
+								x.token.symbol.toLowerCase().indexOf(this.searchTerms) > -1 ||
+								(x.memo && x.memo.toLowerCase().indexOf(this.searchTerms) > -1)
+					})())
 			}
 		},
 		mounted(){
