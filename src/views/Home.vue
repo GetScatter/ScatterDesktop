@@ -118,7 +118,8 @@
 		        this.loadingBalances = false;
             },
             ...mapActions([
-            	Actions.LOAD_HISTORY
+            	Actions.LOAD_HISTORY,
+                Actions.LOAD_LANGUAGE
             ])
         },
 
@@ -128,12 +129,16 @@
 
         mounted(){
 	        setTimeout(async() => {
+	        	//TODO: Move to singleton
 	        	this[Actions.LOAD_HISTORY]();
+	        	this[Actions.LOAD_LANGUAGE]();
 	        	await AccountService.fixOrphanedAccounts();
+		        await LanguageService.regenerateLanguage();
+	        	// ------------------
+
 		        await PriceService.watchPrices();
 		        await this.refreshTokens(false);
 		        await RecurringService.checkProxies();
-		        await LanguageService.regenerateLanguage();
             })
         },
     }

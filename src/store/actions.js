@@ -97,10 +97,12 @@ export const actions = {
     [Actions.REMOVE_BALANCES]:({commit}, x) => commit(Actions.REMOVE_BALANCES, x),
     [Actions.SET_PRICES]:({commit}, prices) => commit(Actions.SET_PRICES, prices),
     [Actions.NEW_KEY]:({commit}, x) => commit(Actions.NEW_KEY, x),
-    [Actions.LOAD_HISTORY]:({commit}) => {
-        const history = StorageService.getHistory();
-	    commit(Actions.LOAD_HISTORY, history)
+    [Actions.SET_LANGUAGE]:({commit}, x) => {
+	    commit(Actions.SET_LANGUAGE, StorageService.setTranslation(x));
+	    StorageService.setTranslation(x);
     },
+    [Actions.LOAD_LANGUAGE]:({commit}) => commit(Actions.SET_LANGUAGE, StorageService.getTranslation()),
+    [Actions.LOAD_HISTORY]:({commit}) => commit(Actions.LOAD_HISTORY, StorageService.getHistory()),
     [Actions.DELTA_HISTORY]:({commit}, x) => {
         commit(Actions.DELTA_HISTORY, x);
         StorageService.deltaHistory(x);

@@ -37,6 +37,7 @@ const state = {
 	newKey:false,
 
 	history:[],
+	language:null,
 };
 
 const getters = {
@@ -60,11 +61,7 @@ const getters = {
     // Settings
     version:state =>        state.scatter.meta.version,
     networks:state =>       state.scatter.settings.networks || [],
-    language:state =>       {
-    	if(!state.scatter || !state.scatter.hasOwnProperty('settings')) return;
-    	if(state.scatter.settings.languageJson) return Locale.fromJson(state.scatter.settings.languageJson);
-    	return state.scatter.settings.language;
-    },
+    language:state =>       Locale.fromJson(state.language),
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),

@@ -25,14 +25,12 @@ export default class LanguageService {
 	static regenerateLanguage(){
 		if(checked) return false;
 		checked = true;
-		if(!store.state.scatter.settings.languageJson) return;
+		if(!store.state.language) return;
 		this.getLanguage(store.state.scatter.settings.language).then(res => {
 			if(!res) return;
-			const scatter = store.state.scatter.clone();
-			if(scatter.settings.languageJson.raw !== JSON.stringify(res)){
+			if(store.state.language.raw !== JSON.stringify(res)){
 				res.raw = JSON.stringify(res);
-				scatter.settings.languageJson = res;
-				store.dispatch(Actions.SET_SCATTER, scatter);
+				store.dispatch(Actions.SET_LANGUAGE, res);
 			}
 
 		})

@@ -18,6 +18,7 @@ export const m10_1_0 = async scatter => {
 
     scatter.settings.displayCurrency = 'USD';
     scatter.settings.displayToken = null;
+    scatter.settings.languageJson = null;
 
     return true;
 };

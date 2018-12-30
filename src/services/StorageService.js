@@ -5,6 +5,7 @@ const Store = window.require('electron-store');
 
 const ABIS_NAME = 'abi';
 const HISTORIES_NAME = 'histories';
+const TRANSLATION_NAME = 'translation';
 const SCATTER_DATA_NAME = 'scatter';
 const SCATTER_INTERMED_NAME = 'scatter_intermed';
 
@@ -20,6 +21,7 @@ const getStore = name => {
 
 const scatterStorage = () => getStore(SCATTER_DATA_NAME);
 const historyStorage = () => getStore(HISTORIES_NAME);
+const translationStorage = () => getStore(TRANSLATION_NAME);
 const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
 
@@ -112,6 +114,17 @@ export default class StorageService {
 
     static setSalt(salt){
         return scatterStorage().set('salt', salt);
+    }
+
+    static getTranslation(){
+	    let translation = translationStorage().get('translation');
+	    if(!translation) return null;
+	    return AES.decrypt(translation, store.state.seed);
+    }
+
+    static setTranslation(translation){
+	    const encrypted = AES.encrypt(translation, store.state.seed);
+	    return translationStorage().set('translation', encrypted);
     }
 
     static getHistory(){

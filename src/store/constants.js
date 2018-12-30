@@ -33,3 +33,6 @@ export const NEW_KEY =          'setNewKey';
 
 export const DELTA_HISTORY =	'deltaHistory';
 export const LOAD_HISTORY =	    'loadHistory';
+
+export const SET_LANGUAGE =	    'setLanguage';
+export const LOAD_LANGUAGE =	'loadLanguage';
