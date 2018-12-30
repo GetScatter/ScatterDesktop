@@ -37,7 +37,7 @@ export const mutations = {
 	[Mutations.SET_HARDWARE]:(state, hardware) => Vue.set(state.hardware, hardware.name, hardware.transport),
 	[Mutations.REMOVE_HARDWARE]:(state, key) => Vue.delete(state.hardware, key),
 	[Mutations.NEW_KEY]:(state, x) => state.newKey = x,
-	[Mutations.SET_LANGUAGE]:(state, x) => state.language = x,
+	[Mutations.SET_LANGUAGE]:(state, x) => Vue.set(state.language, 'json', x),
 	[Mutations.LOAD_HISTORY]:(state, x) => state.history = x,
 	[Mutations.DELTA_HISTORY]:(state, x) => {
     	if(x === null) state.history = [];

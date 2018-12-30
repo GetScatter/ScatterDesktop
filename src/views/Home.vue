@@ -15,7 +15,7 @@
                         <section class="total-details">
                             <figure class="amount">
                                 {{totalBalance.symbol}}{{formatNumber(totalBalance.amount)}}
-                                <div v-if="displayToken">{{totalTokenBalance.symbol}} {{formatNumber(totalTokenBalance.amount)}}</div>
+                                <div v-if="displayToken">{{formatNumber(totalTokenBalance.amount)}} {{totalTokenBalance.symbol}}</div>
                             </figure>
                             <figure class="dots">
                                 <figure class="dot" v-for="i in [1,1,1]"></figure>
@@ -73,6 +73,7 @@
     import {daysOld} from "../util/DateHelpers";
     import TokenService from "../services/TokenService";
     import StorageService from "../services/StorageService";
+    import SingletonService from "../services/SingletonService";
 
 
     export default {
@@ -129,16 +130,8 @@
 
         mounted(){
 	        setTimeout(async() => {
-	        	//TODO: Move to singleton
-	        	this[Actions.LOAD_HISTORY]();
-	        	this[Actions.LOAD_LANGUAGE]();
-	        	await AccountService.fixOrphanedAccounts();
-		        await LanguageService.regenerateLanguage();
-	        	// ------------------
-
-		        await PriceService.watchPrices();
+	        	await SingletonService.init();
 		        await this.refreshTokens(false);
-		        await RecurringService.checkProxies();
             })
         },
     }

@@ -17,6 +17,10 @@ export default class LanguageService {
 
 	static getLanguage(name){
 		return fetch(`https://api.get-scatter.com/v1/languages?name=${name}`).then(r => r.json())
+		.then(res => {
+			if(!this.validateLanguage(res)) return;
+			return res;
+		})
 		.catch(err => {
 			return null;
 		})
@@ -25,14 +29,25 @@ export default class LanguageService {
 	static regenerateLanguage(){
 		if(checked) return false;
 		checked = true;
-		if(!store.state.language) return;
-		this.getLanguage(store.state.scatter.settings.language).then(res => {
+		if(!store.state.language || !store.state.language.json) return;
+		this.getLanguage(store.state.scatter.settings.language.json).then(res => {
 			if(!res) return;
-			if(store.state.language.raw !== JSON.stringify(res)){
+			if(store.state.language.json.raw !== JSON.stringify(res)){
 				res.raw = JSON.stringify(res);
+				if(!this.validateLanguage(res)) return;
 				store.dispatch(Actions.SET_LANGUAGE, res);
 			}
 
+		})
+	}
+
+
+	// So basic checks against long methods which could expose
+	// data if DNS based attacks happen. This prevents any
+	// powerful method from being eval'ed within Scatter.
+	static validateLanguage(json){
+		return json.methods.every(x => {
+			return x.body.toString().length <= 100;
 		})
 	}
 

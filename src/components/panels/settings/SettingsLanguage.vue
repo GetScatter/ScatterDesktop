@@ -30,6 +30,7 @@
             ]),
             ...mapGetters([
                 'networks',
+                'language',
             ]),
             selectedLanguage(){
                 return this.scatter.settings.language

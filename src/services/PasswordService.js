@@ -103,6 +103,8 @@ export default class PasswordService {
             await store.dispatch(Actions.SET_SCATTER, scatter);
             StorageService.swapHistory(store.state.history);
             StorageService.setTranslation(store.getters.language);
+            store.dispatch(Actions.LOAD_HISTORY);
+            store.dispatch(Actions.LOAD_LANGUAGE);
             resolve(newMnemonic);
 
         })

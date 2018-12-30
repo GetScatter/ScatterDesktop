@@ -201,7 +201,7 @@
 				this.token = history.token.clone();
 				this.changedAmount();
             } else {
-				this.account = this.accounts.sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
+				this.account = this.accounts.filter(x => x.authority !== 'watch').sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
 				const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
 				const token = this.account.network().systemToken().clone();
 				token.amount = null;
@@ -234,7 +234,7 @@
 						this.recipient = account;
 					}
 					this.changedAmount()
-				}, type === 'from', type === 'to' && this.account ? this.account : null, type === 'to' && this.pair ? this.pair.blockchain : null));
+				}, type === 'from', type === 'to' && this.account ? this.account : null, type === 'to' && this.pair ? this.pair.blockchain : null, type === 'from'));
 			},
 			setFraction(fraction){
 				const balance = parseFloat(this.account.tokenBalance(this.token));
@@ -276,7 +276,6 @@
 					reset();
 					if(sent) {
 						BalanceService.loadBalancesFor(this.account);
-						// TODO: CHANGE TO HISTORY
 						this.$router.push({name:this.RouteNames.HISTORY});
 					}
                 }))

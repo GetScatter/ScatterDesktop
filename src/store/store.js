@@ -37,7 +37,7 @@ const state = {
 	newKey:false,
 
 	history:[],
-	language:null,
+	language:{},
 };
 
 const getters = {
@@ -61,7 +61,7 @@ const getters = {
     // Settings
     version:state =>        state.scatter.meta.version,
     networks:state =>       state.scatter.settings.networks || [],
-    language:state =>       Locale.fromJson(state.language),
+    language:state =>       Locale.fromJson(state.language.json),
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),

@@ -126,8 +126,8 @@
 			blockchain(){
 				return this.popin.data.props.blockchain;
 			},
-			allowAll(){
-				return this.popin.data.props.allowAll;
+			hideWatch(){
+				return this.popin.data.props.hideWatch;
 			},
 			shownStates(){
 				if(this.accountsOnly) return [STATES.MINE];
@@ -135,6 +135,7 @@
 			},
 			myAccounts(){
 				const otherAccounts = this.accounts
+					.filter(x => !this.hideWatch ? true : x.authority !== 'watch')
 					.filter(x => !this.blockchain ? true : this.blockchain === x.blockchain())
 					.filter(x => !this.account ? true : x.sendable() !== this.account.sendable())
 					.filter(x => !this.account ? true : x.networkUnique === this.account.networkUnique)

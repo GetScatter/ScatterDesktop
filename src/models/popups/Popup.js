@@ -171,8 +171,8 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, callback))
 	}
 
-	static selectAccount(callback, accountsOnly = false, account = null, blockchain = null){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {accountsOnly, account, blockchain}, callback))
+	static selectAccount(callback, accountsOnly = false, account = null, blockchain = null, hideWatch = false){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {accountsOnly, account, blockchain, hideWatch}, callback))
 	}
 
 	static confirmExchange(accounts, symbols, order, callback){

@@ -9,8 +9,8 @@ import PopupService from "./PopupService";
 import {Popup} from "../models/popups/Popup";
 
 // TODO: REVERT
-// const api = "https://api.get-scatter.com";
-const api = "http://localhost:6544";
+const api = "https://api.get-scatter.com";
+// const api = "http://localhost:6544";
 
 // Once every 30 minutes.
 const intervalTime = 60000 * 30;

@@ -98,7 +98,7 @@ export const actions = {
     [Actions.SET_PRICES]:({commit}, prices) => commit(Actions.SET_PRICES, prices),
     [Actions.NEW_KEY]:({commit}, x) => commit(Actions.NEW_KEY, x),
     [Actions.SET_LANGUAGE]:({commit}, x) => {
-	    commit(Actions.SET_LANGUAGE, StorageService.setTranslation(x));
+	    commit(Actions.SET_LANGUAGE, x);
 	    StorageService.setTranslation(x);
     },
     [Actions.LOAD_LANGUAGE]:({commit}) => commit(Actions.SET_LANGUAGE, StorageService.getTranslation()),

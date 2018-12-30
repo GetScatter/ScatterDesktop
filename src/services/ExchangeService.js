@@ -1,6 +1,7 @@
 
-// const baseUrl = 'https://api.get-scatter.com/v1';
-const baseUrl = 'http://localhost:6544/v1';
+// TODO: REVERT
+const baseUrl = 'https://api.get-scatter.com/v1';
+// const baseUrl = 'http://localhost:6544/v1';
 
 const GET = (route) => {
 	return fetch(`${baseUrl}${route}`).then(x => x.json())
