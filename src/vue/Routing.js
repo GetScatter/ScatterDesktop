@@ -6,7 +6,6 @@ const PopOut = () => import('../views/PopOut')
 
 const Identity = () => import('../views/Identity')
 const Transfer = () => import('../views/Transfer')
-const Receive = () => import('../views/Receive')
 const Exchange = () => import('../views/Exchange')
 const Tokens = () => import('../views/Tokens')
 const Token = () => import('../views/Token')
@@ -32,7 +31,6 @@ export const RouteNames = {
     TOKEN:'token',
     DISPLAY_TOKEN:'displaytoken',
     TRANSFER:'transfer',
-    RECEIVE:'receive',
     EXCHANGE:'exchange',
     PERMISSION:'permission',
     TERMS:'terms',
@@ -56,7 +54,6 @@ const RouteViews = {
     [RouteNames.TOKENS]:Tokens,
     [RouteNames.TOKEN]:Token,
     [RouteNames.DISPLAY_TOKEN]:DisplayToken,
-    [RouteNames.RECEIVE]:Receive,
     [RouteNames.EXCHANGE]:Exchange,
     [RouteNames.PERMISSION]:Permission,
     [RouteNames.HISTORY]:History,

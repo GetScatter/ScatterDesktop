@@ -10,8 +10,6 @@
                     </section>
 
                     <router-link :to="{name:RouteNames.TOKENS}" class="total-balance">
-                        <!--<section class="icon" :class="{'big':totalBalance.symbol.length === 1}">{{totalBalance.symbol}}</section>-->
-
                         <section class="total-details">
                             <figure class="amount">
                                 {{totalBalance.symbol}}{{formatNumber(totalBalance.amount)}}
@@ -23,14 +21,11 @@
                         </section>
 
                     </router-link>
-                    <!--<btn text="Buy"></btn>-->
-                    <!--<btn text="Exchange"></btn>-->
                 </section>
                 <section class="actions" v-if="accounts.length">
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.EXCHANGE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
-                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.HISTORY})" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
-                    <!--<btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>-->
+                    <btn v-if="history.length" borderless="1" v-on:clicked="$router.push({name:RouteNames.HISTORY})" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
                 </section>
             </section>
 
@@ -92,6 +87,7 @@
             	'scatter',
 	            'balances',
                 'prices',
+                'history',
             ]),
             ...mapGetters([
                 'keypairs',

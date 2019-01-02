@@ -66,6 +66,14 @@
     max-width:1366px;
     margin:30px auto 0;
 
+    &.loading {
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      color:rgba(255,255,255,0.15);
+      font-size: 48px;
+    }
+
     .tip {
       position:absolute;
       bottom:-25px;

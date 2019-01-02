@@ -260,6 +260,7 @@
 		created(){
 			setTimeout(async () => {
 				const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;
+				const queryToken = this.$route.query.token;
 				if(history){
 					this.account = history.from;
 					this.token = history.fromToken.clone();
@@ -268,9 +269,23 @@
 					this.pair = history.toToken;
 					this.changedAmount();
 					this.getRate();
-				} else {
+				}
+
+				else if (queryToken){
+
+					const found = this.accounts.filter(x => x.tokens().find(t => t.uniqueWithChain() === queryToken));
+					this.account = this.$route.query.account || !found.length
+						? this.accounts.find(x => x.unique() === this.$route.query.account)
+						: found[0];
+
+					const token = this.account.tokens().find(x => x.uniqueWithChain() === queryToken).clone();
+					token.amount = null;
+					this.token = token;
+					await this.getPairs();
+				}
+
+				else {
 					this.account = this.accounts.filter(x => x.authority !== 'watch').sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
-					const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
 					const token = this.account.network().systemToken().clone();
 					token.amount = null;
 					this.token = token;

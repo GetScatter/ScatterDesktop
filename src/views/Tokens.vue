@@ -23,11 +23,15 @@
 				<!--</section>-->
 			</section>
 
-			<section class="graph">
+			<section class="graph" v-show="loaded">
 				<section class="tip" v-if="graphValue">
 					<div>{{graphValue}}</div>
 				</section>
 				<section class="chart"></section>
+			</section>
+
+			<section class="graph loading" v-show="!loaded">
+				<figure class="icon-spin4 animate-spin"></figure>
 			</section>
 
 
@@ -62,8 +66,8 @@
 						<section class="sub" v-if="portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:240px;">
-						<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" />
-						<btn v-if="canStabilize(token)" style="width:auto;" text="Exchange" />
+						<!--<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" />-->
+						<btn v-if="canStabilize(token)" style="width:auto;" text="Exchange" @click.native="exchangeToken(token)" />
 						<figure @click="goToToken(token)" class="chevron icon-right-open-big"></figure>
 					</section>
 				</section>
@@ -90,11 +94,14 @@
 	require("../styles/charts.scss");
 	require("../styles/tokens.scss");
 
+	let refreshInterval;
+
 	export default {
 		components:{
 			SearchBar
 		},
 		data () {return {
+			loaded:false,
 			totalFiat:0,
 			networkFilter:null,
 			searchTerms:'',
@@ -148,8 +155,8 @@
 						if(this.balanceFilters[token.blockchain] && parseFloat(this.balanceFilters[token.blockchain]) > token.amount) return false;
 						if(!terms.length) return true;
 						if(terms === '^') return true;
-						if(terms === '-') return !this.change(token).plus && token.fiatBalance(false);
-						if(terms === '+') return this.change(token).plus && token.fiatBalance(false);
+						if(terms === '-') return this.change(token) && !this.change(token).plus && token.fiatBalance(false);
+						if(terms === '+') return this.change(token) && this.change(token).plus && token.fiatBalance(false);
 						if(terms.indexOf('::') > -1) return `${token.contract.toLowerCase()}::${token.symbol.toLowerCase()}` === terms;
 						if(isNaN(terms)) return token.symbol.toLowerCase().indexOf(terms) > -1 || token.contract.toLowerCase().indexOf(terms) > -1;
 						return token.amount >= parseFloat(terms);
@@ -189,6 +196,10 @@
 			}, 0);
 
 			this.setup();
+			refreshInterval = setInterval(() => this.setup(), 1000*60*5);
+		},
+		destroyed(){
+			clearInterval(refreshInterval)
 		},
 		methods:{
 			back(){
@@ -206,11 +217,15 @@
 				this.priceData = await PriceService.getTimeline(dateId(0));
 				this.yesterData = await PriceService.getTimeline(dateId(1));
 				this.setupGraph();
+				this.loaded = true;
 			},
 			canStabilize(token){
 				if(token.unusable) return false;
 				if(!this.stablePaths || !this.stablePaths.hasOwnProperty('from')) return false;
 				return this.stablePaths.from.includes(token.uniqueWithChain());
+			},
+			exchangeToken(token){
+				this.$router.push({name:this.RouteNames.EXCHANGE, query:{token:token.uniqueWithChain(), account:this.account ? this.account.unique() : null}})
 			},
 			getTotaled(){
 				let totaled = [];
@@ -327,6 +342,7 @@
 			},
 			change(token, numOnly = false){
 				if(!this.priceData) return;
+				if(token.unusable) return;
 				const hour = this.priceData.latest;
 				const totaled = this.getTotaled();
 				const latest = totaled[totaled.length-1] ? totaled[totaled.length-1].data : null;

@@ -30,8 +30,8 @@
 						<section class="sub">{{balance.token.network().name}}</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
-						<btn colorless="1" style="width:auto;" text="Stabilize" />
-						<btn style="width:auto;" text="Exchange" />
+						<!--<btn colorless="1" style="width:auto;" text="Stabilize" />-->
+						<!--<btn style="width:auto;" text="Exchange" />-->
 						<figure @click="goToAccount(balance.account)" class="chevron icon-right-open-big"></figure>
 					</section>
 				</section>
