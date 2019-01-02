@@ -2,7 +2,8 @@ import IdGenerator from "../../util/IdGenerator";
 
 export const HISTORY_TYPES = {
 	Transfer:'transfer',
-	Exchange:'exchange'
+	Exchange:'exchange',
+	Action:'action'
 };
 
 export default class History {

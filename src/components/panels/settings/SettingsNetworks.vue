@@ -160,6 +160,7 @@
     import {Popup} from '../../../models/popups/Popup'
     import NetworkService from '../../../services/NetworkService';
     import Token from "../../../models/Token";
+    import Configs from '../../../../configs';
 
 
     const STATES = {
@@ -212,7 +213,7 @@
                 this.endorsedNetworks.push(PluginRepository.plugin(blockchain.value).getEndorsedNetwork());
             })
 
-            fetch(`https://api.get-scatter.com/v1/networks?flat=true`).then(r => r.json())
+            fetch(`${Configs.api}/networks?flat=true`).then(r => r.json())
                 .then(networks => {
                 	this.knownNetworks = networks
                         .map(x => Network.fromJson(x));

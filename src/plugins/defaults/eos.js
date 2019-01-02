@@ -16,6 +16,7 @@ import ResourceService from '../../services/ResourceService'
 import StorageService from '../../services/StorageService'
 import * as Actions from '../../models/api/ApiActions';
 import {store} from '../../store/store'
+import * as StoreActions from '../../store/constants'
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs2';
 import * as numeric from "eosjs2/dist/eosjs-numeric";
 import Token from "../../models/Token";
@@ -23,6 +24,7 @@ import AccountAction from "../../models/AccountAction";
 import AccountService from "../../services/AccountService";
 import RecurringService from "../../services/RecurringService";
 import HardwareService from "../../services/HardwareService";
+import HistoricAction from "../../models/histories/HistoricAction";
 
 
 const blockchainApiURL = 'https://api.light.xeos.me/api';
@@ -192,7 +194,11 @@ export default class EOS extends Plugin {
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			return await eos.voteproducer(account.name, proxyAccount, [], {authorization:[account.formatted()]})
 				.catch(res => reject(popupError(res)))
-				.then(res => resolve(res))
+				.then(res => {
+					const history = new HistoricAction(account, 'proxy', res.transaction_id);
+					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					resolve(res);
+				})
 		})
 
 	}
@@ -267,6 +273,8 @@ export default class EOS extends Plugin {
 					const ownerKeypair = store.state.scatter.keychain.getKeyPairByPublicKey(keys.owner);
 					if(activeKeypair) await addAccount(activeKeypair, 'active');
 					if(ownerKeypair) await addAccount(ownerKeypair, 'owner');
+					const history = new HistoricAction(account, 'permissions', res.transaction_id);
+					store.dispatch(StoreActions.DELTA_HISTORY, history);
 					resolve(true)
 				});
 		})
@@ -313,7 +321,11 @@ export default class EOS extends Plugin {
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			return await eos.refund(account.name, {authorization:[account.formatted()]})
 				.catch(res => reject(popupError(res)))
-				.then(res => resolve(res));
+				.then(res => {
+					const history = new HistoricAction(account, 'refund', res.transaction_id);
+					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					resolve(res)
+				});
 		})
 	}
 

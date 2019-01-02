@@ -31,6 +31,7 @@ import {AES} from "aes-oop";
 import {HISTORY_TYPES} from "../models/histories/History";
 import HistoricTransfer from "../models/histories/HistoricTransfer";
 import HistoricExchange from "../models/histories/HistoricExchange";
+import HistoricAction from "../models/histories/HistoricAction";
 const dataPath = remote.app.getPath('userData');
 const fs = window.require('fs');
 
@@ -135,6 +136,7 @@ export default class StorageService {
 		history = history.map(x => {
 			if(x.type === HISTORY_TYPES.Transfer) return HistoricTransfer.fromJson(x);
 			if(x.type === HISTORY_TYPES.Exchange) return HistoricExchange.fromJson(x);
+			if(x.type === HISTORY_TYPES.Action) return HistoricAction.fromJson(x);
 			return null;
 		}).filter(x => x);
 
@@ -148,6 +150,8 @@ export default class StorageService {
 		    if(history.find(h => h.id === x.id)) history = history.filter(h => h.id !== x.id);
 		    else history.unshift(x);
 	    }
+
+	    console.log('deta', history);
 
     	const encrypted = AES.encrypt(history, store.state.seed);
         return historyStorage().set('history', encrypted);

@@ -1,7 +1,7 @@
 <template>
 	<section class="vault">
 		<SearchBar :placeholder="locale(langKeys.DASHBOARD.KEYS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
-		<section class="list">
+		<section class="list" style="background:rgba(0,0,0,0.02);">
 			<section class="item" v-for="keypair in vaultEntries" @click="goToKeypair(keypair.id)">
 				<section class="details">
 					<figure class="title"><b>{{keypair.name}}</b></figure>

@@ -26,9 +26,10 @@
                     <!--<btn text="Buy"></btn>-->
                     <!--<btn text="Exchange"></btn>-->
                 </section>
-                <section class="actions">
+                <section class="actions" v-if="accounts.length">
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.EXCHANGE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
+                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.HISTORY})" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
                     <!--<btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>-->
                 </section>
             </section>

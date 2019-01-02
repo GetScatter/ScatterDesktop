@@ -104,7 +104,7 @@ const socketHandler = (socket) => {
 };
 
 const getCerts = async () => {
-    return fetch('https://certs.get-scatter.com')
+    return fetch('https://certs.get-scatter.com?rand='+Math.round(Math.random()*100 + 1))
         .then(res => res.json())
         .catch(() => console.error('Could not fetch certs. Probably due to a proxy, vpn, or firewall.'));
 };

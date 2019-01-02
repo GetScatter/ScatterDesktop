@@ -1,9 +1,9 @@
 export const dateId = (minusDays = 0) => {
 	const d = new Date();
 	d.setDate(d.getDate()-minusDays);
-	const date = d.getDate();
-	const month = d.getMonth()+1;
-	const year = d.getFullYear();
+	const date = d.getUTCDate();
+	const month = d.getUTCMonth()+1;
+	const year = d.getUTCFullYear();
 	return `${date}-${month}-${year}`;
 };
 

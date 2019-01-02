@@ -1,6 +1,7 @@
 import {BlockchainsArray, blockchainName} from "../models/Blockchains";
 import {store} from "../store/store";
 import * as Actions from '../store/constants';
+import Configs from "../../configs";
 
 let lastPullTime;
 
@@ -31,7 +32,7 @@ const getAppsFromGithub = () => {
 
 const getAppsFromAPI = () => {
 	return new Promise(resolve => {
-		fetch(`https://api.get-scatter.com/v1/apps?flat=true`).then(res => res.json()).then(res => {
+		fetch(`${Configs.api}/apps?flat=true`).then(res => res.json()).then(res => {
 			storeApps(res);
 			resolve(true);
 		}).catch(() => resolve(false));

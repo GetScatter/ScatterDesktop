@@ -114,8 +114,14 @@
 				const result = await plugin.proxyVote(this.account, proxy, true);
 				if(result) {
 					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, result.transaction_id));
-					if(this.autoVote && this.selectedProxy) await RecurringService.addProxy(this.account, this.selectedProxy);
-					else await RecurringService.removeProxies([this.account]);
+
+					if(this.selectedProxy && this.selectedProxy.length){
+						if(this.autoVote && this.selectedProxy) await RecurringService.addProxy(this.account, this.selectedProxy);
+						else await RecurringService.removeProxies([this.account]);
+					} else {
+						await RecurringService.removeProxies([this.account])
+					}
+
 				}
 
 				this.returnResult(true)

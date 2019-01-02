@@ -196,7 +196,7 @@
 			},
 			async setup(){
 				this.currencyPrices = await PriceService.getCurrencyPrices();
-				this.priceData = await PriceService.getTimeline();
+				this.priceData = await PriceService.getTimeline(dateId(0));
 				this.yesterData = await PriceService.getTimeline(dateId(1));
 				this.setupGraph();
 			},
@@ -209,10 +209,10 @@
 					totaled.push({hour, data:this.priceData[hour]}));
 
 				totaled = totaled.slice(totaled.length-24, totaled.length);
+
 				return totaled;
 			},
 			async setupGraph(){
-				// TODO: ERROR HANDLING
 
 				const labels = [];
 				const values = [];

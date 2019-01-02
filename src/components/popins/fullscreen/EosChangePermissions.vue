@@ -103,7 +103,7 @@
 				})
 			},
 			hasPermission(type){
-				return !!this.account.authorities().find(x => x.authority === type);
+				return !!this.account.authorities().find(x => x.authority === type || x.authority === 'owner');
 			},
 
 			...mapActions([

@@ -241,5 +241,8 @@ class NotificationService {
 }
 
 const Transport = require('@ledgerhq/hw-transport-node-hid');
-global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService, savingData:false };
+
+const NodeMachineId = require('node-machine-id');
+
+global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService, NodeMachineId, savingData:false };
 

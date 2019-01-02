@@ -345,7 +345,6 @@
 				this.pairs = [];
 				this.loadingPairs = true;
 				let pairs = await ExchangeService.pairs(this.token);
-				// TODO: ERROR HANDLING
 
 				if(!pairs) {
 					this.cantConnect();

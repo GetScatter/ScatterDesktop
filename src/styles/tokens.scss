@@ -129,6 +129,11 @@
           background:$red-gradient;
         }
 
+        &.action {
+          background:$white-gradient;
+          color:$primary;
+        }
+
         &:hover {
           ~ .last .chevron {
             transform:translateX(8px);

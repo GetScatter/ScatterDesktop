@@ -7,10 +7,9 @@ import StorageService from "./StorageService";
 import Token from "../models/Token";
 import PopupService from "./PopupService";
 import {Popup} from "../models/popups/Popup";
+import Configs from "../../configs";
 
-// TODO: REVERT
-const api = "https://api.get-scatter.com";
-// const api = "http://localhost:6544";
+const api = Configs.api;
 
 // Once every 30 minutes.
 const intervalTime = 60000 * 30;
@@ -46,7 +45,7 @@ export default class PriceService {
     static getAll(){
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-            fetch(api+'/v1/prices?v2=true').then(x => x.json()).catch(() => {
+            fetch(api+'/prices?v2=true').then(x => x.json()).catch(() => {
             	PopupService.push(Popup.snackbar("Problem connecting to Prices API"));
             	return null;
             })
@@ -56,14 +55,14 @@ export default class PriceService {
     static async getCurrencies(){
         return Promise.race([
 		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-		    fetch(api+'/v1/currencies').then(x => x.json()).catch(() => ['USD'])
+		    fetch(api+'/currencies').then(x => x.json()).catch(() => ['USD'])
 	    ])
     }
 
     static async getCurrencyPrices(){
         return Promise.race([
 		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-		    fetch(api+'/v1/currencies/prices').then(x => x.json()).catch(() => null)
+		    fetch(api+'/currencies/prices').then(x => x.json()).catch(() => null)
 	    ])
     }
 
@@ -71,13 +70,14 @@ export default class PriceService {
         const query = date ? `?date=${date}` : '';
         return Promise.race([
 		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-		    fetch(api+'/v1/prices/timeline'+query).then(x => x.json()).catch(() => {})
+		    fetch(api+'/prices/timeline'+query).then(x => x.json()).catch(() => {})
 	    ])
     }
 
     static getTotal(totals, displayCurrency, bypassDisplayToken, displayToken){
 	    if(!displayCurrency) displayCurrency = store.getters.displayCurrency;
 	    // if(!displayToken) displayToken = store.getters.displayToken;
+
 
 
 	    if(!bypassDisplayToken && displayToken){
@@ -89,7 +89,6 @@ export default class PriceService {
 		    }
 	    } else {
 		    let total = 0;
-
 		    Object.keys(store.state.prices).map(tokenUnique => {
 			    const balance = totals[tokenUnique];
 			    if(balance){

@@ -1,6 +1,7 @@
 import {blockchainName, Blockchains, BlockchainsArray} from "../models/Blockchains";
 import PluginRepository from "../plugins/PluginRepository";
 import Explorer from "../models/Explorer";
+import Configs from "../../configs";
 
 export default class ExplorerService {
 
@@ -17,7 +18,7 @@ export default class ExplorerService {
 				setDefaultExplorers();
 				resolve(explorers);
 			}, 3000)),
-			fetch(`https://api.get-scatter.com/v1/explorers`).then(r => r.json())
+			fetch(`${Configs.api}/explorers`).then(r => r.json())
 				.then(res => {
 					BlockchainsArray.map(({value:blockchain}) => {
 						res[blockchainName(blockchain)].map(rawExplorer => {
