@@ -1,6 +1,6 @@
 <template>
     <section class="transfer">
-        <back-bar v-on:back="back" :buttons="[{text:'Transfer History', clicked:() => $router.push({name:RouteNames.HISTORY, query:{filter:'transfer'}})}]" />
+        <back-bar v-on:back="back" :buttons="[{text:'Transfer History', clicked:() => openHistory()}]" />
 
         <TokenSelector v-if="selectingToken"
 					   title="Select Token"
@@ -214,6 +214,9 @@
 				if(this.selectingToken) return this.selectingToken = false;
 				this.$router.push({name:this.RouteNames.HOME});
 			},
+            openHistory(){
+			    PopupService.push(Popup.history('transfer', () => {}))
+            },
 			setCustomToken(token){
 				this.token = token;
 				this.token.amount = null;
@@ -276,7 +279,6 @@
 					reset();
 					if(sent) {
 						BalanceService.loadBalancesFor(this.account);
-						this.$router.push({name:this.RouteNames.HISTORY});
 					}
                 }))
 			}

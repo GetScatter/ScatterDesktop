@@ -6,12 +6,9 @@ const PopOut = () => import('../views/PopOut')
 
 const Identity = () => import('../views/Identity')
 const Transfer = () => import('../views/Transfer')
-const Exchange = () => import('../views/Exchange')
 const Tokens = () => import('../views/Tokens')
 const Token = () => import('../views/Token')
-const DisplayToken = () => import('../views/DisplayToken')
 const Permission = () => import('../views/Permission')
-const History = () => import('../views/History')
 
 
 const Home = () => import('../views/Home')
@@ -29,14 +26,11 @@ export const RouteNames = {
     IDENTITY:'identity',
     TOKENS:'tokens',
     TOKEN:'token',
-    DISPLAY_TOKEN:'displaytoken',
     TRANSFER:'transfer',
-    EXCHANGE:'exchange',
     PERMISSION:'permission',
     TERMS:'terms',
     ONBOARDING:'onboarding',
     SETTINGS:'settings',
-    HISTORY:'history',
 
     // POPOUT
     POP_OUT:'popout',
@@ -53,10 +47,7 @@ const RouteViews = {
     [RouteNames.TRANSFER]:Transfer,
     [RouteNames.TOKENS]:Tokens,
     [RouteNames.TOKEN]:Token,
-    [RouteNames.DISPLAY_TOKEN]:DisplayToken,
-    [RouteNames.EXCHANGE]:Exchange,
     [RouteNames.PERMISSION]:Permission,
-    [RouteNames.HISTORY]:History,
 
     [RouteNames.SETTINGS]:Settings,
     [RouteNames.POP_OUT]:PopOut,

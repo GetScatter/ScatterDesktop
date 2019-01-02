@@ -9,13 +9,14 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../store/constants';
-	import SearchBar from '../components/reusable/SearchBar';
-	import TokenSelector from '../components/panels/TokenSelector';
-	import PriceService from '../services/PriceService';
-	import TokenService from "../services/TokenService";
+	import * as Actions from '../../../store/constants';
+	import SearchBar from '../../../components/reusable/SearchBar';
+	import TokenSelector from '../../../components/panels/TokenSelector';
+	import PriceService from '../../../services/PriceService';
+	import TokenService from "../../../services/TokenService";
 
 	export default {
+		props:['popin'],
 		components:{
 			SearchBar,
 			TokenSelector
@@ -77,7 +78,8 @@
 		},
 		methods:{
 			back(){
-				this.$router.back();
+				this.popin.data.callback(true);
+				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			setDisplayToken(id){
 				const t = this.displayToken === id ? null : id;
@@ -85,13 +87,17 @@
 			},
 			setDisplayCurrency(ticker){
 				TokenService.setDisplayCurrency(ticker);
-			}
+			},
+
+			...mapActions([
+				Actions.RELEASE_POPUP,
+			])
 		}
 	}
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../styles/variables";
+	@import "../../../styles/variables";
 
 	.tokens {
 		display:flex;

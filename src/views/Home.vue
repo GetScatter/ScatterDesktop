@@ -24,8 +24,8 @@
                 </section>
                 <section class="actions" v-if="accounts.length">
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
-                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.EXCHANGE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
-                    <btn v-if="history.length" borderless="1" v-on:clicked="$router.push({name:RouteNames.HISTORY})" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
+                    <btn borderless="1" v-on:clicked="openExchange" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
+                    <btn v-if="history.length" borderless="1" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
                 </section>
             </section>
 
@@ -70,6 +70,8 @@
     import TokenService from "../services/TokenService";
     import StorageService from "../services/StorageService";
     import SingletonService from "../services/SingletonService";
+    import PopupService from "../services/PopupService";
+    import {Popup} from "../models/popups/Popup";
 
 
     export default {
@@ -114,6 +116,12 @@
 		        await BalanceService.loadAllBalances(true);
 		        await PriceService.getAll();
 		        this.loadingBalances = false;
+            },
+	        openExchange(){
+	            PopupService.push(Popup.exchange({}))
+            },
+	        openHistory(){
+	            PopupService.push(Popup.history(null, () => {}))
             },
             ...mapActions([
             	Actions.LOAD_HISTORY,

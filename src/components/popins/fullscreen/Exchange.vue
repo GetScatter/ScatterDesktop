@@ -1,6 +1,6 @@
 <template>
 	<section class="transfer">
-		<back-bar v-on:back="back" :buttons="[{text:'Exchange History', clicked:() => $router.push({name:RouteNames.HISTORY, query:{filter:'exchange'}})}]" />
+		<back-bar v-on:back="back" :buttons="[{text:'Exchange History', clicked:() => openHistory()}]" />
 
 		<TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
 
@@ -101,7 +101,7 @@
 							<section class="row clickable" v-else @click="selectToken('to')">
 								<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}" v-if="pairs.length && pair">{{pair ? pair.symbol : ''}}</figure>
 								<!--<figure class="icon" :class="[{'small':pair && pair.symbol.length >= 4}, pair.symbolClass()]">-->
-									<!--<span v-if="!pair.symbolClass()">{{pair.truncatedSymbol()}}</span>-->
+								<!--<span v-if="!pair.symbolClass()">{{pair.truncatedSymbol()}}</span>-->
 								<!--</figure>-->
 								<figure class="fill">{{pairs.length ? pair ? pair.symbol : `Select Pair (${pairs.length})` : 'No Available Pairs'}}</figure>
 								<figure class="chevron" :class="{'icon-down-open-big':pairs.length > 1, 'icon-lock':pairs.length === 1}" v-if="pairs.length"></figure>
@@ -146,17 +146,18 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../store/constants';
-	import TokenSelector from '../components/panels/TokenSelector';
-	import ExchangeService from "../services/ExchangeService";
-	import Account from "../models/Account";
-	import PopupService from "../services/PopupService";
-	import {Popup} from "../models/popups/Popup";
-	import TransferService from "../services/TransferService";
-	import BalanceService from "../services/BalanceService";
-	import HistoricExchange from "../models/histories/HistoricExchange";
+	import * as Actions from '../../../store/constants';
+	import TokenSelector from '../../../components/panels/TokenSelector';
+	import ExchangeService from "../../../services/ExchangeService";
+	import Account from "../../../models/Account";
+	import PopupService from "../../../services/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import TransferService from "../../../services/TransferService";
+	import BalanceService from "../../../services/BalanceService";
+	import HistoricExchange from "../../../models/histories/HistoricExchange";
 
 	export default {
+		props:['popin'],
 		components:{
 			TokenSelector
 		},
@@ -253,14 +254,14 @@
 			},
 			canSend(){
 				return !!this.rate && !!this.pair && !this.sending && this.recipient &&
-						this.rate.min <= this.estimatedAmount &&
-						this.rate.max >= this.estimatedAmount && !this.failedConnection
+					this.rate.min <= this.estimatedAmount &&
+					this.rate.max >= this.estimatedAmount && !this.failedConnection
 			}
 		},
 		created(){
 			setTimeout(async () => {
-				const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;
-				const queryToken = this.$route.query.token;
+
+				const {history, token, account} = this.popin.data.props;
 				if(history){
 					this.account = history.from;
 					this.token = history.fromToken.clone();
@@ -271,14 +272,12 @@
 					this.getRate();
 				}
 
-				else if (queryToken){
-
-					const found = this.accounts.filter(x => x.tokens().find(t => t.uniqueWithChain() === queryToken));
-					this.account = this.$route.query.account || !found.length
-						? this.accounts.find(x => x.unique() === this.$route.query.account)
+				else if (token){
+					const found = this.accounts.filter(x => x.tokens().find(t => t.uniqueWithChain() === token.uniqueWithChain()));
+					this.account = account || !found.length
+						? account
 						: found[0];
 
-					const token = this.account.tokens().find(x => x.uniqueWithChain() === queryToken).clone();
 					token.amount = null;
 					this.token = token;
 					await this.getPairs();
@@ -297,7 +296,11 @@
 		methods:{
 			back(){
 				if(this.selectingToken) return this.selectingToken = false;
-				this.$router.push({name:this.RouteNames.HOME});
+				this.popin.data.callback(true);
+				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			openHistory(){
+				PopupService.push(Popup.history('exchange', () => {}));
 			},
 			selectAccount(type){
 				PopupService.push(Popup.selectAccount(account => {
@@ -352,7 +355,7 @@
 					"Exchange Error",
 					"Can't connect to the Exhange API."
 				));
-				this.$router.push({name:this.RouteNames.HOME});
+				this.back()
 				this.loadingPairs = false;
 			},
 			async getPairs(){
@@ -454,7 +457,8 @@
 			},
 
 			...mapActions([
-				Actions.DELTA_HISTORY
+				Actions.DELTA_HISTORY,
+				Actions.RELEASE_POPUP
 			])
 		},
 		watch:{
@@ -466,8 +470,8 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../styles/variables";
-	@import "../styles/transfer";
+	@import "../../../styles/variables";
+	@import "../../../styles/transfer";
 
 
 

@@ -79,18 +79,19 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../store/constants';
-	import FullWidthRow from '../components/reusable/FullWidthRow';
-	import SearchBar from '../components/reusable/SearchBar';
-	import HistoricTransfer from "../models/histories/HistoricTransfer";
-	import PopupService from "../services/PopupService";
-	import {Popup} from "../models/popups/Popup";
-	import ElectronHelpers from "../util/ElectronHelpers";
-	import {HISTORY_TYPES} from "../models/histories/History";
-	import StorageService from "../services/StorageService";
+	import * as Actions from '../../../store/constants';
+	import FullWidthRow from '../../../components/reusable/FullWidthRow';
+	import SearchBar from '../../../components/reusable/SearchBar';
+	import HistoricTransfer from "../../../models/histories/HistoricTransfer";
+	import PopupService from "../../../services/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import ElectronHelpers from "../../../util/ElectronHelpers";
+	import {HISTORY_TYPES} from "../../../models/histories/History";
+	import StorageService from "../../../services/StorageService";
 
 
 	export default {
+		props:['popin'],
 		components:{
 			FullWidthRow,
 			SearchBar
@@ -185,18 +186,23 @@
 			}
 		},
 		mounted(){
-			this.typeFilter = this.$route.query.filter;
+			this.typeFilter = this.popin.data.props.filter;
 			if(!this.typeFilter) this.buttons = [{text:'Clear History', clicked:this.clearHistory}];
 		},
 		methods:{
 			back(){
-				this.$router.back();
+				this.popin.data.callback(true);
+				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			redo(item){
-				const route = item.type === HISTORY_TYPES.Transfer
-					? this.RouteNames.TRANSFER
-					: this.RouteNames.EXCHANGE
-				this.$router.push({name:route, query:{history:item.id}});
+
+				if(item.type === HISTORY_TYPES.Exchange){
+					PopupService.push(Popup.exchange({history:item.id}));
+				}
+				else {
+					this.$router.push({name:this.RouteNames.TRANSFER, query:{history:item.id}});
+				}
+
 			},
 			clearHistory(){
 				PopupService.push(Popup.prompt(
@@ -215,15 +221,16 @@
 				this.$router.push({name:this.RouteNames.KEYPAIR, params:{id}})
 			},
 			...mapActions([
-				Actions.DELTA_HISTORY
+				Actions.DELTA_HISTORY,
+				Actions.RELEASE_POPUP,
 			])
 		}
 	}
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../styles/variables";
-	@import "../styles/tokens";
+	@import "../../../styles/variables";
+	@import "../../../styles/tokens";
 
 	b {
 		margin:0 !important;

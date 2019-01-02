@@ -1,6 +1,6 @@
 <template>
 	<section class="token-panel">
-		<back-bar style="border-bottom:0;" v-on:back="back" :subtext="account ? account.sendable() : null" :buttons="[{text:'Set Display Tokens', clicked:() => $router.push({name:RouteNames.DISPLAY_TOKEN})}]" />
+		<back-bar style="border-bottom:0;" v-on:back="back" :subtext="account ? account.sendable() : null" :buttons="[{text:'Set Display Tokens', clicked:() => openDisplayToken()}]" />
 
 		<section class="panel-container">
 			<figure class="bg"></figure>
@@ -30,7 +30,7 @@
 				<section class="chart"></section>
 			</section>
 
-			<section class="graph loading" v-show="!loaded">
+			<section class="graph loading" v-if="!loaded">
 				<figure class="icon-spin4 animate-spin"></figure>
 			</section>
 
@@ -66,7 +66,7 @@
 						<section class="sub" v-if="portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:240px;">
-						<!--<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" />-->
+						<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" @click.native="stabilizeToken(token)" />
 						<btn v-if="canStabilize(token)" style="width:auto;" text="Exchange" @click.native="exchangeToken(token)" />
 						<figure @click="goToToken(token)" class="chevron icon-right-open-big"></figure>
 					</section>
@@ -91,6 +91,8 @@
 	import {dateId, hourNow} from "../util/DateHelpers";
 	import BalanceService from "../services/BalanceService";
 	import ExchangeService from "../services/ExchangeService";
+	import PopupService from "../services/PopupService";
+	import {Popup} from "../models/popups/Popup";
 	require("../styles/charts.scss");
 	require("../styles/tokens.scss");
 
@@ -206,6 +208,9 @@
 				if(!this.account) return this.$router.push({name:this.RouteNames.HOME})
 				this.$router.back();
 			},
+			openDisplayToken(){
+				PopupService.push(Popup.setDisplayToken());
+			},
 			portfolioPercentage(token){
 				const p = parseFloat((token.fiatBalance(false) / this.totalFiat) * 100).toFixed(1);
 				if(isNaN(p)) return null;
@@ -215,9 +220,9 @@
 				this.stablePaths = await ExchangeService.stablePaths();
 				this.currencyPrices = await PriceService.getCurrencyPrices();
 				this.priceData = await PriceService.getTimeline(dateId(0));
+				this.loaded = true;
 				this.yesterData = await PriceService.getTimeline(dateId(1));
 				this.setupGraph();
-				this.loaded = true;
 			},
 			canStabilize(token){
 				if(token.unusable) return false;
@@ -225,7 +230,13 @@
 				return this.stablePaths.from.includes(token.uniqueWithChain());
 			},
 			exchangeToken(token){
-				this.$router.push({name:this.RouteNames.EXCHANGE, query:{token:token.uniqueWithChain(), account:this.account ? this.account.unique() : null}})
+				PopupService.push(Popup.exchange({
+					token:token.clone(),
+					account:this.account
+				}));
+			},
+			stabilizeToken(token){
+				PopupService.push(Popup.stabilize({token, account:this.account}));
 			},
 			getTotaled(){
 				let totaled = [];

@@ -22,6 +22,10 @@
                     <AccountSelector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
                     <ConfirmExchange :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_EXCHANGE" />
                     <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
+                    <Exchange :popin="popIn" v-if="popIn.data.type === popupTypes.EXCHANGE" />
+                    <Stabilize :popin="popIn" v-if="popIn.data.type === popupTypes.STABILIZE" />
+                    <History :popin="popIn" v-if="popIn.data.type === popupTypes.HISTORY" />
+                    <DisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -82,6 +86,10 @@
     import AccountSelector from "./popins/fullscreen/AccountSelector";
     import ConfirmExchange from "./popins/fullscreen/ConfirmExchange";
     import ConfirmTransfer from "./popins/fullscreen/ConfirmTransfer";
+    import DisplayToken from "./popins/fullscreen/DisplayToken";
+    import Exchange from "./popins/fullscreen/Exchange";
+    import Stabilize from "./popins/fullscreen/Stabilize";
+    import History from "./popins/fullscreen/History";
     import RemoveApp from "./popins/overlay/RemoveApp";
     import Selector from "./popins/overlay/Selector";
     import UpdateAvailable from "./popins/overlay/UpdateAvailable";
@@ -114,6 +122,10 @@
 		    AccountSelector,
 		    ConfirmExchange,
 		    ConfirmTransfer,
+		    DisplayToken,
+		    Exchange,
+		    Stabilize,
+		    History,
         },
         data(){ return {
             popupTypes:PopupTypes,
