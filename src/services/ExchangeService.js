@@ -44,4 +44,8 @@ export default class ExchangeService {
 		return timeout(GET(`/exchange/cancelled/${id}`));
 	}
 
+	static async stablePaths(){
+		return timeout(GET(`/exchange/stabilize/paths`), []);
+	}
+
 }

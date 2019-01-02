@@ -61,9 +61,9 @@
 						<section class="title"><b>{{formatNumber(token.fiatBalance(), true) || '--'}}</b></section>
 						<section class="sub" v-if="portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
 					</section>
-					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
-						<btn colorless="1" style="width:auto;" text="Stabilize" />
-						<btn style="width:auto;" text="Exchange" />
+					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:240px;">
+						<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" />
+						<btn v-if="canStabilize(token)" style="width:auto;" text="Exchange" />
 						<figure @click="goToToken(token)" class="chevron icon-right-open-big"></figure>
 					</section>
 				</section>
@@ -86,6 +86,7 @@
 	import Chartist from 'chartist';
 	import {dateId, hourNow} from "../util/DateHelpers";
 	import BalanceService from "../services/BalanceService";
+	import ExchangeService from "../services/ExchangeService";
 	require("../styles/charts.scss");
 	require("../styles/tokens.scss");
 
@@ -103,6 +104,7 @@
 			graphValue:null,
 			currencyPrices:{},
 			account:null,
+			stablePaths:[],
 		}},
 		computed:{
 			...mapState([
@@ -118,6 +120,7 @@
 				'displayCurrency',
 				'balanceFilters',
 				'blacklistTokens',
+				'networkTokens',
 			]),
 			totalBalance(){
 				const totals = this.calculatedBalances.reduce((acc,x) => {
@@ -162,7 +165,10 @@
 						const system = systemToken === b.uniqueWithChain() ? 1 : systemToken === a.uniqueWithChain() ? -1 : 0;
 						const untouchable = this.account && !!b.unusable ? 1 : this.account && !!a.unusable ? -1 : 0;
 
-						return system || untouchable || (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);
+						const systemTokenUniques = this.networkTokens.map(x => x.uniqueWithChain(false));
+						const isSelfSystem = systemTokenUniques.includes(b.uniqueWithChain(false)) ? 1 : systemTokenUniques.includes(a.uniqueWithChain(false)) ? -1 : 0;
+
+						return isSelfSystem || system || untouchable || (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);
 					});
 			},
 			fullNetworks(){
@@ -195,10 +201,16 @@
 				return p;
 			},
 			async setup(){
+				this.stablePaths = await ExchangeService.stablePaths();
 				this.currencyPrices = await PriceService.getCurrencyPrices();
 				this.priceData = await PriceService.getTimeline(dateId(0));
 				this.yesterData = await PriceService.getTimeline(dateId(1));
 				this.setupGraph();
+			},
+			canStabilize(token){
+				if(token.unusable) return false;
+				if(!this.stablePaths || !this.stablePaths.hasOwnProperty('from')) return false;
+				return this.stablePaths.from.includes(token.uniqueWithChain());
 			},
 			getTotaled(){
 				let totaled = [];

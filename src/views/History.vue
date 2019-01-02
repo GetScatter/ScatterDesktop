@@ -19,48 +19,54 @@
 
 			<section class="tokens">
 
-				<section class="token" v-for="item in filteredTokenHistories">
-					<figure class="icon" :class="{'small':item.token && item.token.symbol.length >= 4, 'token-icon':item.token.symbolClass(), 'unusable':item.type === 'exchange'}">
-						<span v-if="!item.token.symbolClass()">{{item.token.truncatedSymbol()}}</span>
-						<span v-else :class="item.token.symbolClass()"></span>
-					</figure>
-					<section style="flex:1.7;">
-						<section class="title" style="text-transform: capitalize">
-							<b>{{item.type}}</b>
-						</section>
-						<section class="sub"><b>{{item.from.sendable()}}</b> <i class="icon-right-outline"></i> <b>{{item.to}}</b></section>
-						<section class="sub"><i>{{item.from.network().name}}</i> <i class="icon-right-outline"></i> <i>{{new Date(item.timestamp).toLocaleString()}}</i></section>
-						<section class="sub txid" style="font-size: 9px; cursor:pointer;" @click="openInExplorer(item)" v-if="item.txid">{{item.txid}}</section>
-					</section>
-					<section>
-						<section class="title" v-if="item.toAmount"><b>+{{formatNumber(parseFloat(item.toAmount).toFixed(item.toToken.decimals), true)}} {{item.toToken.symbol}}</b></section>
-						<section :class="item.toAmount ? 'sub' : 'title'"><b>-{{formatNumber(parseFloat(item.token.amount).toFixed(item.token.decimals), true)}} {{item.token.symbol}}</b></section>
-						<section class="sub" v-if="item.memo && item.memo.length">{{item.memo}}</section>
-					</section>
-					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
-						<btn style="width:auto;" colorless="1" @click.native="redo(item)" text="Redo" />
-					</section>
-				</section>
+				<section v-for="item in allHistories">
 
-				<section class="token" v-for="item in filteredActionHistories">
-					<figure class="icon action" :class="{'small':item.token && item.token.symbol.length >= 4, 'token-icon':item.token.symbolClass()}">
-						<span v-if="!item.token.symbolClass()">{{item.token.truncatedSymbol()}}</span>
-						<span v-else :class="item.token.symbolClass()"></span>
-					</figure>
-					<!--<figure class="icon token-icon icon-network" style="color:rgba(255,255,255,0.3)"></figure>-->
-					<section style="flex:1.7;">
-						<section class="title" style="text-transform: capitalize">
-							<b>{{item.action}}</b>
+					<!-- TOKEN HISTORY -->
+					<section class="token" v-if="item.type !== 'action'">
+						<figure class="icon" :class="{'small':item.token && item.token.symbol.length >= 4, 'token-icon':item.token.symbolClass(), 'unusable':item.type === 'exchange'}">
+							<span v-if="!item.token.symbolClass()">{{item.token.truncatedSymbol()}}</span>
+							<span v-else :class="item.token.symbolClass()"></span>
+						</figure>
+						<section style="flex:1.7;">
+							<section class="title" style="text-transform: capitalize">
+								<b>{{item.type}}</b>
+							</section>
+							<section class="sub"><b>{{item.from.sendable()}}</b> <i class="icon-right-outline"></i> <b>{{item.to}}</b></section>
+							<section class="sub"><i>{{item.from.network().name}}</i> <i class="icon-right-outline"></i> <i>{{new Date(item.timestamp).toLocaleString()}}</i></section>
+							<section class="sub txid" style="font-size: 9px; cursor:pointer;" @click="openInExplorer(item)" v-if="item.txid">{{item.txid}}</section>
 						</section>
-						<section class="sub"><i>{{item.account.network().name}}</i> <i class="icon-right-outline"></i> <i>{{new Date(item.timestamp).toLocaleString()}}</i></section>
-						<section class="sub txid" style="font-size: 9px; cursor:pointer;" @click="openInExplorer(item)" v-if="item.txid">{{item.txid}}</section>
+						<section>
+							<section class="title" v-if="item.toAmount"><b>+{{formatNumber(parseFloat(item.toAmount).toFixed(item.toToken.decimals), true)}} {{item.toToken.symbol}}</b></section>
+							<section :class="item.toAmount ? 'sub' : 'title'"><b>-{{formatNumber(parseFloat(item.token.amount).toFixed(item.token.decimals), true)}} {{item.token.symbol}}</b></section>
+							<section class="sub" v-if="item.memo && item.memo.length">{{item.memo}}</section>
+						</section>
+						<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
+							<btn style="width:auto;" colorless="1" @click.native="redo(item)" text="Redo" />
+						</section>
 					</section>
-					<section>
-						<section class="title"><b>{{item.account.sendable()}}</b></section>
-						<section class="sub"><i style="font-size: 9px;">{{item.account.keypair().name}}</i></section>
-					</section>
-					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
-						<btn style="width:auto;" @click.native="openKeypair(item.account.keypair().id)" :text="locale(langKeys.GENERIC.Accounts, 1)" />
+
+
+					<!-- ACTION HISTORY -->
+					<section class="token" v-if="item.type === 'action'">
+						<figure class="icon action" :class="{'small':item.token && item.token.symbol.length >= 4, 'token-icon':item.token.symbolClass()}">
+							<span v-if="!item.token.symbolClass()">{{item.token.truncatedSymbol()}}</span>
+							<span v-else :class="item.token.symbolClass()"></span>
+						</figure>
+						<!--<figure class="icon token-icon icon-network" style="color:rgba(255,255,255,0.3)"></figure>-->
+						<section style="flex:1.7;">
+							<section class="title" style="text-transform: capitalize">
+								<b>{{item.action}}</b>
+							</section>
+							<section class="sub"><i>{{item.account.network().name}}</i> <i class="icon-right-outline"></i> <i>{{new Date(item.timestamp).toLocaleString()}}</i></section>
+							<section class="sub txid" style="font-size: 9px; cursor:pointer;" @click="openInExplorer(item)" v-if="item.txid">{{item.txid}}</section>
+						</section>
+						<section>
+							<section class="title"><b>{{item.account.sendable()}}</b></section>
+							<section class="sub"><i style="font-size: 9px;">{{item.account.keypair().name}}</i></section>
+						</section>
+						<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
+							<btn style="width:auto;" @click.native="openKeypair(item.account.keypair().id)" :text="locale(langKeys.GENERIC.Accounts, 1)" />
+						</section>
 					</section>
 				</section>
 
@@ -93,6 +99,7 @@
 			searchTerms:'',
 			networkFilter:null,
 			buttons:[],
+			typeFilter:null,
 		}},
 		computed:{
 			...mapState([
@@ -170,12 +177,16 @@
 						return x.account.sendable().toLowerCase().indexOf(this.searchTerms) > -1 ||
 								x.action.toLowerCase().indexOf(this.searchTerms) > -1
 					})())
+			},
+			allHistories(){
+				return this.filteredTokenHistories.concat(this.filteredActionHistories)
+					.filter(x => !this.typeFilter ? true : x.type === this.typeFilter)
+					.sort((a,b) => b.timestamp - a.timestamp)
 			}
 		},
 		mounted(){
-			this.buttons = [
-				{text:'Clear History', clicked:this.clearHistory},
-			];
+			this.typeFilter = this.$route.query.filter;
+			if(!this.typeFilter) this.buttons = [{text:'Clear History', clicked:this.clearHistory}];
 		},
 		methods:{
 			back(){

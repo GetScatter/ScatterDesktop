@@ -96,6 +96,7 @@ export default class StorageService {
         scatterStorage().clear();
         abiStorage().clear();
         historyStorage().clear();
+	    translationStorage().clear();
         store.commit(Actions.SET_SCATTER, null);
         store.commit(Actions.SET_SEED, '');
         return true;

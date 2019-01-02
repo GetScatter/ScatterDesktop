@@ -1,6 +1,6 @@
 <template>
 	<section class="transfer">
-		<back-bar v-on:back="back" :buttons="[{text:'History', clicked:() => $router.push({name:RouteNames.HISTORY})}]" />
+		<back-bar v-on:back="back" :buttons="[{text:'Exchange History', clicked:() => $router.push({name:RouteNames.HISTORY, query:{filter:'exchange'}})}]" />
 
 		<TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
 
