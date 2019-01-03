@@ -80,10 +80,10 @@
 					<h5>Receive</h5>
 
 					<section>
-						<section class="box dark clickable outlined">
-							<section class="row" style="height:144px; text-align:center;" @click="selectAccount('to')">
+						<section class="box dark outlined" :class="pair ? 'clickable' : 'unclickable'">
+							<section class="row" style="height:144px; text-align:center;" @click="!pair ? null : selectAccount('to')">
 								<figure class="fill">
-									{{recipient && recipient.length ? recipient : 'Select Recipient'}}
+									{{!pair ? 'Select Pair First' : recipient && recipient.length ? recipient : 'Select Recipient'}}
 								</figure>
 								<figure class="chevron icon-down-open-big"></figure>
 							</section>
@@ -261,8 +261,9 @@
 		created(){
 			setTimeout(async () => {
 
-				const {history, token, account} = this.popin.data.props;
+				let {history, token, account} = this.popin.data.props;
 				if(history){
+					history = this.history.find(x => x.id === history);
 					this.account = history.from;
 					this.token = history.fromToken.clone();
 					await this.getPairs();
@@ -447,6 +448,7 @@
 						this[Actions.DELTA_HISTORY](history);
 
 						setTimeout(() => {
+							ExchangeService.watch(history);
 							BalanceService.loadBalancesFor(this.account);
 						}, 1000);
 					}

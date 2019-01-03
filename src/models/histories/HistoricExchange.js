@@ -12,6 +12,7 @@ export default class HistoricExchange extends History {
 		this.fromToken = fromToken;
 		this.toToken = toToken;
 		this.orderDetails = orderDetails;
+		this.status = 'pending';
 	}
 
 	static placeholder(){ return new HistoricExchange(); }

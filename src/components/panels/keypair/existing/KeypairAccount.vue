@@ -38,7 +38,7 @@
 			</section>
 			<section key="resources" v-if="accountResources">
 				<section class="moderation" v-for="resource in accountResources">
-					<figure class="name">{{resource.name}}</figure>
+					<figure class="name">{{resource.name}} <b class="info">{{resource.text ? resource.text : parseFloat(resource.percentage).toFixed(2) + '%'}}</b></figure>
 					<figure class="percentage-bar">
 						<figure class="bar" :class="{'red':resource.percentage > 80}" :style="{'width':resource.percentage + '%'}"></figure>
 					</figure>
@@ -46,8 +46,6 @@
 						<btn v-if="resource.actionable"
 						     v-on:clicked="() => moderateResource(resource)"
 						     small="1" :text="resource.actionText"></btn>
-
-						<span v-else>{{resource.text}}</span>
 					</figure>
 				</section>
 			</section>
@@ -330,6 +328,15 @@
 
 			.name {
 				font-size: 14px;
+
+				.info {
+					font-size:9px;
+					padding:3px;
+					border:1px solid rgba(0,0,0,0.3);
+					border-radius:4px;
+					vertical-align: middle;
+					margin-left:5px;
+				}
 			}
 
 			.action {

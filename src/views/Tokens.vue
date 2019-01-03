@@ -66,7 +66,7 @@
 						<section class="sub" v-if="portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:240px;">
-						<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" @click.native="stabilizeToken(token)" />
+						<!--<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" @click.native="stabilizeToken(token)" />-->
 						<btn v-if="canStabilize(token)" style="width:auto;" text="Exchange" @click.native="exchangeToken(token)" />
 						<figure @click="goToToken(token)" class="chevron icon-right-open-big"></figure>
 					</section>
@@ -88,7 +88,7 @@
 	import Token from "../models/Token";
 
 	import Chartist from 'chartist';
-	import {dateId, hourNow} from "../util/DateHelpers";
+	import {dateId, hourNow, utcToLocal} from "../util/DateHelpers";
 	import BalanceService from "../services/BalanceService";
 	import ExchangeService from "../services/ExchangeService";
 	import PopupService from "../services/PopupService";
@@ -242,9 +242,9 @@
 				let totaled = [];
 
 				Object.keys(this.yesterData).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
-					totaled.push({hour, data:this.yesterData[hour]}));
+					totaled.push({hour, data:this.yesterData[hour], date:dateId(1)}));
 				Object.keys(this.priceData).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
-					totaled.push({hour, data:this.priceData[hour]}));
+					totaled.push({hour, data:this.priceData[hour], date:dateId()}));
 
 				totaled = totaled.slice(totaled.length-24, totaled.length);
 
@@ -262,7 +262,8 @@
 					return this.calculatedBalances.every(x => x.uniqueWithChain(false) === tokenUnique);
 				})();
 
-				totaled.map(({hour, data}, i) => {
+				totaled.map(({hour, data, date}, i) => {
+					[date, hour] = utcToLocal(date, hour);
 					const label = `${hour}:00`;
 					if(i % 2 === 0) labels.push(label);
 					else labels.push('');
@@ -281,12 +282,12 @@
 						}, 0);
 					}
 
-					values.push({value:total, meta:label});
+					values.push({value:total, meta:`${date} ${label}`});
 				})
 
 				if(this.calculatedBalances.length !== 1 && !onlyShowingSystemAndUntouchable){
 					values.pop();
-					values.push({value:this.totalBalance.amount, meta:`${hourNow()}:00`});
+					values.push({value:this.totalBalance.amount, meta:'Now'});
 				}
 
 

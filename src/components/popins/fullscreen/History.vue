@@ -22,7 +22,7 @@
 				<section v-for="item in allHistories">
 
 					<!-- TOKEN HISTORY -->
-					<section class="token" v-if="item.type !== 'action'">
+					<section class="token" v-if="item.type === 'transfer' || item.type === 'exchange'">
 						<figure class="icon" :class="{'small':item.token && item.token.symbol.length >= 4, 'token-icon':item.token.symbolClass(), 'unusable':item.type === 'exchange'}">
 							<span v-if="!item.token.symbolClass()">{{item.token.truncatedSymbol()}}</span>
 							<span v-else :class="item.token.symbolClass()"></span>
@@ -39,6 +39,11 @@
 							<section class="title" v-if="item.toAmount"><b>+{{formatNumber(parseFloat(item.toAmount).toFixed(item.toToken.decimals), true)}} {{item.toToken.symbol}}</b></section>
 							<section :class="item.toAmount ? 'sub' : 'title'"><b>-{{formatNumber(parseFloat(item.token.amount).toFixed(item.token.decimals), true)}} {{item.token.symbol}}</b></section>
 							<section class="sub" v-if="item.memo && item.memo.length">{{item.memo}}</section>
+							<section class="sub" v-if="item.type === 'exchange'">
+								{{item.status}}
+								<btn small="1" colorless="1" :loading="loadingStatus" @click.native="refreshStatus(item.id)" v-if="item.status !== 'complete'" icon="icon-arrows-ccw" />
+							</section>
+
 						</section>
 						<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
 							<btn style="width:auto;" colorless="1" @click.native="redo(item)" text="Redo" />
@@ -65,7 +70,7 @@
 							<section class="sub"><i style="font-size: 9px;">{{item.account.keypair().name}}</i></section>
 						</section>
 						<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
-							<btn style="width:auto;" @click.native="openKeypair(item.account.keypair().id)" :text="locale(langKeys.GENERIC.Accounts, 1)" />
+							<btn style="width:auto;" @click.native="openKeypair(item.account.keypair().id)" :text="locale(langKeys.GENERIC.Open)" />
 						</section>
 					</section>
 				</section>
@@ -88,6 +93,7 @@
 	import ElectronHelpers from "../../../util/ElectronHelpers";
 	import {HISTORY_TYPES} from "../../../models/histories/History";
 	import StorageService from "../../../services/StorageService";
+	import ExchangeService from "../../../services/ExchangeService";
 
 
 	export default {
@@ -101,6 +107,7 @@
 			networkFilter:null,
 			buttons:[],
 			typeFilter:null,
+			loadingStatus:false,
 		}},
 		computed:{
 			...mapState([
@@ -152,6 +159,7 @@
 							txid:item.txid,
 							toToken,
 							order:item.orderDetails,
+							status:item.status,
 						}
 					})
 					.filter(x => !this.networkFilter ? true : x.from.network().unique() === this.networkFilter.unique())
@@ -194,6 +202,18 @@
 				this.popin.data.callback(true);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
+			async refreshStatus(id){
+				this.loadingStatus = true;
+				const history = this.history.find(x => x.id === id);
+				if(!history) return this.loadingStatus = false;
+				const orderStatus = await ExchangeService.orderStatus(history.orderDetails.id);
+				if(history.status !== orderStatus){
+					await this[Actions.DELTA_HISTORY](history);
+					history.status = orderStatus;
+					await this[Actions.DELTA_HISTORY](history);
+				}
+				this.loadingStatus = false;
+			},
 			redo(item){
 
 				if(item.type === HISTORY_TYPES.Exchange){
@@ -201,6 +221,7 @@
 				}
 				else {
 					this.$router.push({name:this.RouteNames.TRANSFER, query:{history:item.id}});
+					this.back();
 				}
 
 			},
@@ -218,7 +239,8 @@
 				ElectronHelpers.openLinkInBrowser(explorer.transaction(item.txid));
 			},
 			openKeypair(id){
-				this.$router.push({name:this.RouteNames.KEYPAIR, params:{id}})
+				this.$router.push({name:this.RouteNames.KEYPAIR, params:{id}});
+				this.back();
 			},
 			...mapActions([
 				Actions.DELTA_HISTORY,

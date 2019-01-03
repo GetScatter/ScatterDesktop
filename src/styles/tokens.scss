@@ -171,6 +171,15 @@
           margin-top:5px;
           color:#a8a9b0;
 
+          button {
+            width:25px;
+            height:25px;
+            font-size: 11px;
+            padding:0;
+            margin-left:2px;
+            line-height: 25px;
+          }
+
           &.txid {
             padding:7px 8px 5px;
             background:rgba(0,0,0,0.2);
