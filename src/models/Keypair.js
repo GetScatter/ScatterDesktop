@@ -13,6 +13,7 @@ export default class Keypair {
         this.privateKey = '';
         this.keyHash = '';
 
+        this.loose = true;
         this.external = null;
         this.fork = null;
 

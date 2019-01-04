@@ -16,6 +16,8 @@ import AES from 'aes-oop';
 import PopupService from "../services/PopupService";
 import {Popup} from '../models/popups/Popup'
 import {RUNNING_TESTS} from "../util/TestingHelper";
+import Crypto from "../util/Crypto";
+import KeyPairService from "../services/KeyPairService";
 
 export const actions = {
     [Actions.HIDE_BACK_BTN]:({commit}, x) => commit(Actions.HIDE_BACK_BTN, x),
@@ -57,7 +59,7 @@ export const actions = {
         return true;
     },
 
-    [Actions.CREATE_SCATTER]:({state, commit, dispatch}, password) => {
+    [Actions.CREATE_SCATTER]:({state, commit, dispatch}, {password, mnemonic = null}) => {
         return new Promise(async (resolve, reject) => {
             const scatter = await Scatter.create();
 
@@ -65,10 +67,10 @@ export const actions = {
 
             await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 
-            dispatch(Actions.SET_SEED, password).then(mnemonic => {
-                dispatch(Actions.SET_SCATTER, scatter).then(_scatter => {
-
-                    PopupService.push(Popup.mnemonic(mnemonic));
+            dispatch(Actions.SET_SEED, password).then(passwordMnemonic => {
+                dispatch(Actions.SET_SCATTER, scatter).then(async _scatter => {
+                    if(mnemonic) await Crypto.setRootMnemonic(mnemonic);
+                    // PopupService.push(Popup.mnemonic(passwordMnemonic));
                     resolve();
                 })
             })

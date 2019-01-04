@@ -150,6 +150,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_KEYPAIR, {keypair}, callback))
 	}
 
+	static importMnemonic(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.IMPORT_MNEMONIC, {}, callback))
+	}
+
 	static mnemonic(mnemonic){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, {mnemonic}, () => {}))
 	}
@@ -221,6 +225,7 @@ export const PopupTypes = {
 	UNLINK_ACCOUNT:'unlinkAccount',
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 	REMOVE_KEYPAIR:'removeKeypair',
+	IMPORT_MNEMONIC:'importMnemonic',
 	MNEMONIC:'mnemonic',
 	REMOVE_LOCATION:'removeLocation',
 	DESTROY_SCATTER:'destroyScatter',
@@ -248,6 +253,7 @@ export const isFullscreen = popup => {
         PopupTypes.EOS_MODERATE_RAM,
         PopupTypes.EOS_MODERATE_CPU_NET,
         PopupTypes.EOS_CREATE_ACCOUNT,
+        PopupTypes.IMPORT_MNEMONIC,
         PopupTypes.MNEMONIC,
         PopupTypes.REMOVE_LOCATION,
         PopupTypes.DESTROY_SCATTER,

@@ -104,6 +104,9 @@ export default class ETH extends Plugin {
             resolve(privateKey.toString('hex'));
         })
     }
+
+	bip(){ return `44'/60'/0'/0/`}
+
     bufferToHexPrivate(buffer){
         return new Buffer(buffer).toString('hex')
     }
@@ -119,9 +122,8 @@ export default class ETH extends Plugin {
         let balance;
         if(!web3){
 	        const [w, e] = getCachedInstance(account.network());
-	        web3 = e;
+	        web3 = w;
         }
-
 
         await Promise.race([
             new Promise(resolve => setTimeout(() => resolve(), 10000)),

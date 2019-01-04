@@ -13,19 +13,20 @@ export default class Hasher {
         return ecc.sha256(cleartext);
     }
 
-    /***
-     * Hashes a cleartext using scrypt.
-     * @param cleartext
-     * @param salt
-     */
-    static async secureHash(cleartext, salt = null) {
+	/***
+	 * Hashes a cleartext using scrypt.
+	 * @param cleartext
+	 * @param salt
+	 * @param length
+	 */
+    static async secureHash(cleartext, salt = null, length = 16) {
         return new Promise(async resolve => {
             if(!salt) salt = await StorageService.getSalt();
             scrypt(cleartext, salt, {
                 N: 16384,
                 r: 8,
                 p: 1,
-                dkLen: 16,
+                dkLen: length,
                 encoding: 'hex'
             }, (derivedKey) => {
                 resolve(derivedKey);

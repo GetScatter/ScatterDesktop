@@ -61,14 +61,7 @@
     import Wallets from '../components/panels/home/Wallets';
     import BalanceService from "../services/BalanceService";
     import PriceService from "../services/PriceService";
-    import Token from "../models/Token";
-    import RecurringService from "../services/RecurringService";
-    import HardwareService from "../services/HardwareService";
-    import LanguageService from "../services/LanguageService";
-    import AccountService from "../services/AccountService";
-    import {daysOld} from "../util/DateHelpers";
-    import TokenService from "../services/TokenService";
-    import StorageService from "../services/StorageService";
+    import Crypto from "../util/Crypto";
     import SingletonService from "../services/SingletonService";
     import PopupService from "../services/PopupService";
     import {Popup} from "../models/popups/Popup";
@@ -130,7 +123,11 @@
         },
 
         created(){
-
+            setTimeout(async() => {
+	            // await Crypto.setRootMnemonic();
+	            // const key = await Crypto.generatePrivateKey();
+	            // console.log('key', key);
+            }, 1000);
         },
 
         mounted(){

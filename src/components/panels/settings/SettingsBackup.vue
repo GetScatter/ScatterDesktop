@@ -1,6 +1,15 @@
 <template>
     <section>
 
+
+        <section class="action-box top-pad">
+            <label>{{locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicLabel)}}</label>
+            <p>{{locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicDescription)}}</p>
+
+            <btn v-on:clicked="viewMnemonic" :text="locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicButton)" />
+
+        </section>
+
         <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.BACKUP.Label)}}</label>
             <p>{{locale(langKeys.SETTINGS.BACKUP.Description)}}</p>
@@ -32,6 +41,10 @@
     import {BACKUP_STRATEGIES} from '../../../models/Settings';
     import BackupService from '../../../services/BackupService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
+    import PopupService from "../../../services/PopupService";
+    import {Popup} from "../../../models/popups/Popup";
+    import Crypto from '../../../util/Crypto';
+    import Mnemonic from "../../../util/Mnemonic";
 
     export default {
         data () {return {
@@ -57,6 +70,10 @@
             },
             async createBackup(){
                 await BackupService.createBackup();
+            },
+	        async viewMnemonic(){
+	        	const mnemonic = await Crypto.getRootMnemonic();
+		        PopupService.push(Popup.mnemonic(mnemonic));
             },
             ...mapActions([
                 Actions.SET_SCATTER

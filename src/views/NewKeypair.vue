@@ -145,7 +145,7 @@
 	        	const keypair = Keypair.placeholder();
 	            await KeyPairService.generateKeyPair(keypair);
 	            await KeyPairService.makePublicKeys(keypair);
-	            this.insertKeypair(keypair, true);
+	            this.insertKeypair(keypair);
             },
             async insertKeypair(keypair, isNewKeypair = false){
 	            const isHardware = !!keypair.external;

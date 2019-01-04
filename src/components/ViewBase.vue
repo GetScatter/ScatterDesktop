@@ -20,7 +20,6 @@
                     <router-view></router-view>
                 </transition>
 
-                <Processes />
             </section>
         </section>
 
@@ -29,9 +28,7 @@
                 <figure class="spinner icon-spin4 animate-spin"></figure>
             </section>
         </transition>
-
-
-        <v-tour name="scatter" :steps="steps" :callbacks="{onStop}"></v-tour>
+	    <Processes />
 
     </section>
 </template>
@@ -51,20 +48,6 @@
         },
         data(){ return {
             routeNames:RouteNames,
-
-            steps: [
-                {
-                    target: '#tour1',
-                    content: `
-                        <div>You have to have a key</div>
-                        <span>So we will start by adding your first one.</span>
-                        <figure class="icon-cancel" onclick="() => this.stopTour()"></figure>
-                    `,
-                    params: {
-                        placement: 'top'
-                    }
-                },
-            ],
         }},
         computed:{
             ...mapState([
@@ -85,42 +68,14 @@
                 return this.$route.name
             }
         },
-        created(){
-	        this.checkTour()
-        },
         mounted(){
 
         },
         methods:{
-            onStop(){
-            	if(!this.scatter) return;
-                const scatter = this.scatter.clone();
-                scatter.toured = true;
-                this[Actions.SET_SCATTER](scatter);
-            },
-            checkTour(){
-                if(!this.scatter) return;
-                if(!this.scatter.toured && this.unlocked && this.route === 'home'){
-                    setTimeout(() => {
-	                    this.$tours['scatter'].start();
-                    }, 1000);
-                }
-            },
             ...mapActions([
                 Actions.SET_SCATTER
             ])
 
-        },
-        watch:{
-            unlocked(){
-                this.checkTour()
-            },
-            onboarding(){
-                this.checkTour();
-            },
-            route(){
-                this.checkTour();
-            }
         },
     }
 </script>

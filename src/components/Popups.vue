@@ -26,6 +26,7 @@
                     <Stabilize :popin="popIn" v-if="popIn.data.type === popupTypes.STABILIZE" />
                     <History :popin="popIn" v-if="popIn.data.type === popupTypes.HISTORY" />
                     <DisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />
+                    <ImportMnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_MNEMONIC" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -82,6 +83,7 @@
     import CheckHardware from "./popins/fullscreen/CheckHardware";
     import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
+    import ImportMnemonic from "./popins/fullscreen/ImportMnemonic";
     import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
     import AccountSelector from "./popins/fullscreen/AccountSelector";
     import ConfirmExchange from "./popins/fullscreen/ConfirmExchange";
@@ -115,6 +117,7 @@
 		    EosCreateAccount,
 		    UnlinkAccount,
 		    UnlinkBlockchain,
+		    ImportMnemonic,
 		    Mnemonic,
 		    RemoveKeypair,
 		    CheckHardware,
@@ -149,7 +152,6 @@
             clickedFader(){
                 if(this.nextPopIn) {
                     this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length - 1]);
-                    if(this.$tours['scatter']) this.$tours['scatter'].previousStep();
                 }
             },
 	        isWide(popIn){

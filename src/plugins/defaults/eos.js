@@ -447,6 +447,8 @@ export default class EOS extends Plugin {
 
 	randomPrivateKey(){ return ecc.randomKey(); }
 
+	bip(){ return `44'/194'/0'/0/`}
+
 	bufferToHexPrivate(buffer){
 		return ecc.PrivateKey.fromBuffer(new Buffer(buffer)).toString()
 	}

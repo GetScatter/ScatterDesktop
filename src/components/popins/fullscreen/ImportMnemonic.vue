@@ -2,18 +2,14 @@
     <section>
         <section class="full-panel inner center-fold limited">
             <h4>Mnemonic Phrase</h4>
-            <!--<section class="disclaimer less-pad red">-->
-                <!--{{locale(langKeys.POPINS.FULLSCREEN.MNEMONIC.Desc)}}-->
-                <!--<p>{{locale(langKeys.POPINS.FULLSCREEN.MNEMONIC.SubDesc)}}</p>-->
-            <!--</section>-->
-
-
 
             <section class="mnemonic">
-                <cin :text="phraseArray.join(' ')" copy="1" />
+                <cin :text="allWords" v-on:changed="x => allWords = x" />
                 <section class="phrase-box">
-                    <section class="word" v-for="(word, index) in phraseArray">
-                        <figure class="text">{{word}}</figure>
+                    <section class="word" v-for="(word, index) in words" :class="{'red':!word || !word.length}">
+                        <figure class="text">
+                            {{word}}
+                        </figure>
                         <figure class="num">{{index+1}}</figure>
 
                     </section>
@@ -22,7 +18,7 @@
         </section>
 
         <section class="action-bar short bottom centered">
-            <btn :text="locale(langKeys.GENERIC.Okay)" blue="1" v-on:clicked="returnResult(null)" />
+            <btn :text="locale(langKeys.GENERIC.Okay)" blue="1" v-on:clicked="returnResult(words.join(' '))" />
         </section>
     </section>
 </template>
@@ -38,7 +34,8 @@
 	export default {
 		props:['popin'],
 		data () {return {
-			password:'',
+			words:[],
+            allWords:'',
 		}},
 		computed:{
 			...mapState([
@@ -47,10 +44,13 @@
 			...mapGetters([
 
 			]),
-			phraseArray(){
-				return this.popin.data.props.mnemonic.split(' ');
-			}
+			// phraseArray(){
+			// 	return this.popin.data.props.mnemonic.split(' ');
+			// }
 		},
+        created(){
+	        this.words = new Array(24);
+        },
 		methods:{
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
@@ -61,6 +61,14 @@
 				Actions.RELEASE_POPUP
 			])
 		},
+        watch:{
+			['allWords'](){
+				this.words = new Array(24);
+				this.allWords.split(' ').map((x,i) => {
+					this.words[i] = x;
+				})
+            }
+        }
 	}
 </script>
 
@@ -73,6 +81,7 @@
 
     .mnemonic {
         max-width:750px;
+        width:100%;
         margin:0 auto;
 
         .phrase-box {
@@ -87,10 +96,12 @@
                 width: 16.66%;
                 float:left;
                 padding:15px 0;
+                height:65px;
                 text-align:center;
                 border:1px solid rgba(0,0,0,0.1);
 
                 .text {
+                    height:16px;
                     font-size: 14px;
                     display:block;
                     color:rgba(0,0,0,0.8);
@@ -102,6 +113,13 @@
                     font-size: 11px;
                     color:rgba(0,0,0,0.5);
                     margin-top:5px;
+                }
+
+                &.red {
+                    background:$red;
+                    .text, .num {
+                        color:#fff;
+                    }
                 }
 
 

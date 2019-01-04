@@ -11,6 +11,8 @@ import Keypair from '../models/Keypair';
 import Account from '../models/Account'
 import AccountService from "./AccountService";
 import HardwareService from "./HardwareService";
+import IdGenerator from "../util/IdGenerator";
+import BalanceService from "./BalanceService";
 
 export default class KeyPairService {
 
@@ -74,6 +76,7 @@ export default class KeyPairService {
     static async generateKeyPair(keypair){
         keypair.privateKey = await Crypto.generatePrivateKey();
         keypair.hash();
+        keypair.loose = false;
         return true;
     }
 
@@ -145,6 +148,7 @@ export default class KeyPairService {
     }
 
     static async loadFromHardware(keypair, tries = 0){
+        console.log(typeof keypair.external.interface.getPublicKey);
         if(typeof keypair.external.interface.getPublicKey !== 'function') return false;
 
         if(tries >= 5) return false;
@@ -169,5 +173,43 @@ export default class KeyPairService {
 		if(!keypair) throw new Error('Keypair doesnt exist on keychain');
 		return keypair.external !== null;
 	}
+
+	static async checkMnemonicKeys(){
+        let foundAllKeys = false;
+        while(!foundAllKeys){
+	        const keypair = Keypair.placeholder();
+	        keypair.name = `Key-${IdGenerator.text(8)}`;
+	        await this.generateKeyPair(keypair);
+	        await this.makePublicKeys(keypair);
+	        if(await this.isFullKey(keypair)){
+	            await this.saveKeyPair(keypair);
+	            await AccountService.importAllAccounts(keypair);
+            } else {
+	            foundAllKeys = true;
+            }
+        }
+    }
+
+	static async isFullKey(keypair){
+        const networks = store.state.scatter.settings.networks;
+        return (await Promise.all(keypair.publicKeys.map(async k => {
+	        const plugin = PluginRepository.plugin(k.blockchain);
+	        let accounts = [];
+	        await AccountService.accountsFrom(
+		        plugin,
+		        networks.filter(x => x.blockchain === k.blockchain),
+		        accounts,
+		        keypair
+	        );
+
+	        // If EOSIO and finds accounts on chains, then key is used.
+	        if(k.blockchain === Blockchains.EOSIO && accounts.length) return true;
+
+	        return (await Promise.all(accounts.map(async account => {
+		        const systemBalance = await plugin.balanceFor(account, account.network().systemToken());
+		        return systemBalance.amount > 0;
+	        }))).some(x => x);
+        }))).some(x => x);
+    }
     
 }

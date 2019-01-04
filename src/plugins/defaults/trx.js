@@ -71,6 +71,8 @@ export default class TRX extends Plugin {
     }
     validPrivateKey(privateKey){ return privateKey.length === 64 && ethUtil.isValidPrivate(toBuffer(privateKey)); }
     validPublicKey(address){ return utils.isAddressValid(address); }
+
+	bip(){ return `44'/195'/0'/0/`}
     bufferToHexPrivate(buffer){ return new Buffer(buffer).toString('hex') }
     hexPrivateToBuffer(privateKey){ return Buffer.from(privateKey, 'hex'); }
 

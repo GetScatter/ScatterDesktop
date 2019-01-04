@@ -10,14 +10,18 @@
 
                     <br>
                     <br>
-                    <br>
+                    <section class="disclaimer less-pad" v-if="mnemonic">
+                        Mnemonic Loaded!
+
+                        <p>Scatter will use the mnemonic you imported instead of generating a new one for you.</p>
+                    </section>
                     <br>
                     <section class="inputs">
                         <cin :focus="true"
                              :label="locale(langKeys.LOGIN.NEW.PasswordLabel)"
                              :placeholder="locale(langKeys.LOGIN.NEW.PasswordPlaceholder)"
                              type="password" v-on:enter="create" :text="password"
-                             v-on:changed="x => password = x"></cin>
+                             v-on:changed="x => password = x" />
 
                         <section class="password-strength">
                             <figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 100}"></figure>
@@ -26,12 +30,12 @@
                         <cin :label="locale(langKeys.LOGIN.NEW.PasswordConfirmLabel)"
                              :placeholder="locale(langKeys.LOGIN.NEW.PasswordConfirmPlaceholder)"
                              type="password" v-on:enter="create" :text="confirmPassword"
-                             v-on:changed="x => confirmPassword = x"></cin>
+                             v-on:changed="x => confirmPassword = x" />
 
                         <br>
-                        <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="create" text="Let's go!" blue="true"></btn>
+                        <btn :disabled="working" :loading="working" style="width:300px;" v-on:clicked="create" text="Let's go!" blue="true" />
                         <br><br>
-                        <btn :disabled="working" v-on:clicked="state = STATES.RESTORE" text="I want to restore from backup" small="true"></btn>
+                        <btn :disabled="working" v-on:clicked="state = STATES.RESTORE" text="I want to restore from backup" small="true" />
                     </section>
                 </section>
             </section>
@@ -46,11 +50,10 @@
                          type="password" :disabled="isLockedOut"
                          :loader-on-dynamic="working"
                          :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="x => password = x"
-                         :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'"
-                    ></cin>
+                         :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'" />
                     <span class="locked" v-if="isLockedOut">Locked: {{formatTime(lockedTimeLeft)}}</span>
                     <section v-if="dPresses >= 10" class="bottom-stuck">
-                        <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" :text="locale(langKeys.LOGIN.EXISTING.ResetButton)"></btn>
+                        <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" :text="locale(langKeys.LOGIN.EXISTING.ResetButton)" />
                     </section>
                 </section>
             </section>
@@ -66,12 +69,22 @@
                     <br>
                     <br>
 
+
                     <btn :disabled="working"
                          :loading="working"
                          style="width:300px;"
+                         v-on:clicked="importMnemonic"
+                         text="Use Phrase"
+                         blue="true" />
+                    <br>
+
+                    <btn :disabled="working"
+                         :loading="working"
+                         style="width:300px; margin-top:5px;"
                          v-on:clicked="importBackup"
-                         :text="locale(langKeys.LOGIN.RESTORE.ChooseButton)"
-                         blue="true"></btn>
+                         text="Use JSON Backup" />
+                    <br>
+                    <br>
                     <br>
                     <br>
                     <btn :disabled="working"
@@ -137,6 +150,8 @@
             lockedOutTime:0,
 
             now:0,
+
+            mnemonic:null,
 		}},
 		computed: {
 			...mapState([
@@ -197,7 +212,7 @@
 				// !! DO NOT REMOVE !!
 				// Gathering entropy causes slowdowns,
 				// doing this when idle
-				KeyPairService.generateKeyPair(Keypair.placeholder());
+				// KeyPairService.generateKeyPair(Keypair.placeholder());
 
 				this.$router.push({name:route});
 			},
@@ -212,7 +227,7 @@
 				}
 
 				setTimeout(async () => {
-					await this[Actions.CREATE_SCATTER](this.password);
+					await this[Actions.CREATE_SCATTER]({password:this.password, mnemonic:this.mnemonic});
 					this.password = '';
 					this.confirmPassword = '';
 					this.openScatter();
@@ -220,7 +235,7 @@
 			},
             openScatter(){
 				if(!this.scatter.meta.acceptedTerms) return this.pushTo(this.RouteNames.TERMS);
-				if(this.scatter.settings.backupLocation === '') return this.pushTo(this.RouteNames.ONBOARDING);
+				// if(this.scatter.settings.backupLocation === '') return this.pushTo(this.RouteNames.ONBOARDING);
 	            this.pushTo(this.RouteNames.HOME);
             },
 			async unlock(){
@@ -250,6 +265,16 @@
 					}
 				}, 400)
 			},
+			importMnemonic(){
+                PopupService.push(Popup.importMnemonic(async mnemonic => {
+                	if(mnemonic.toString().split(' ').length === 24){
+                		this.mnemonic = mnemonic;
+                		this.state = STATES.LOGIN_OR_NEW;
+                    } else {
+                		this.mnemonic = null;
+                    }
+                }))
+            },
 			importBackup(){
 				const unrestore = () => {
 					this.setWorkingScreen(false);

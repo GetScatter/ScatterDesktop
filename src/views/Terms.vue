@@ -358,6 +358,7 @@
     import * as Actions from '../store/constants';
 
     import StorageService from '../services/StorageService';
+    import KeyPairService from "../services/KeyPairService";
 
     export default {
         data () {return {
@@ -385,7 +386,11 @@
                 const scatter = this.scatter.clone();
                 scatter.meta.acceptedTerms = true;
                 await this[Actions.SET_SCATTER](scatter);
-                this.$router.push({name:this.RouteNames.ONBOARDING});
+                // this.$router.push({name:this.RouteNames.ONBOARDING});
+                this.setWorkingScreen(true);
+	            await KeyPairService.checkMnemonicKeys();
+	            this.setWorkingScreen(false);
+                this.$router.push({name:this.RouteNames.HOME});
 
             },
             ...mapActions([

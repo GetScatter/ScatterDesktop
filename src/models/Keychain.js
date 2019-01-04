@@ -14,6 +14,8 @@ export default class Keychain {
         this.identities = [];
         this.permissions = [];
         this.apps = [];
+
+	    this.seed = '';
     }
 
     static placeholder(){ return new Keychain(); }

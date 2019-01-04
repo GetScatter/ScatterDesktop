@@ -217,6 +217,11 @@
 				Actions.RELEASE_POPUP
 			])
 		},
+		watch:{
+			['recipient'](){
+				this.recipient = this.recipient.toLowerCase();
+			}
+		}
 	}
 </script>
 

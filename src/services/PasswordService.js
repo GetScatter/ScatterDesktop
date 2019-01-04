@@ -32,7 +32,7 @@ export default class PasswordService {
             try {
                 let seed, mnemonic;
                 if(password.split(' ').length >= 12) {
-                    seed = await Mnemonic.mnemonicToSeed(password);
+                    seed = Mnemonic.mnemonicToSeedHex(password);
                     mnemonic = password;
                 } else {
                     const [m, s] = await Mnemonic.generateMnemonic(password);
@@ -98,6 +98,9 @@ export default class PasswordService {
                 id.decrypt(oldSeed);
                 id.encrypt(newSeed);
             });
+
+	        const clearMnemonic = AES.decrypt(scatter.keychain.mnemonic, oldSeed);
+	        scatter.keychain.mnemonic = AES.encrypt(clearMnemonic, newSeed);
 
             await store.commit(Actions.SET_SEED, newSeed);
             await store.dispatch(Actions.SET_SCATTER, scatter);
