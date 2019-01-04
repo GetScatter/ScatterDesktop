@@ -152,8 +152,6 @@ export default class StorageService {
 		    else history.unshift(x);
 	    }
 
-	    console.log('deta', history);
-
     	const encrypted = AES.encrypt(history, store.state.seed);
         return historyStorage().set('history', encrypted);
     }

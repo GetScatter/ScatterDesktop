@@ -7,6 +7,7 @@ import Permission from '../models/Permission'
 import {IdentityRequiredFields} from '../models/Identity'
 import Error from '../models/errors/Error'
 import Hasher from '../util/Hasher'
+import SocketService from "./SocketService";
 
 export default class PermissionService {
 
@@ -168,6 +169,11 @@ export default class PermissionService {
         return PermissionService.hasIdentityRequirementsPermission(origin, identity, requiredFields);
     }
 
+    static checkAppLinkPermissions(origin){
+        const permissions = store.state.scatter.keychain.permissions.filter(x => x.origin === origin);
+        if(!permissions.length) SocketService.sendEvent('logout', {}, origin);
+    }
+
     static removeAllPermissionsFor(origin){
         return new Promise(resolve => {
             PopupService.push(Popup.removeApp(origin, async removed => {
@@ -179,6 +185,7 @@ export default class PermissionService {
 
 	            scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.origin !== origin);
 	            await store.dispatch(Actions.SET_SCATTER, scatter);
+	            this.checkAppLinkPermissions(origin);
 	            resolve(true);
             }))
         })
@@ -189,6 +196,7 @@ export default class PermissionService {
 	        const scatter = store.state.scatter.clone();
 	        scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.id !== permission.id);
 	        await store.dispatch(Actions.SET_SCATTER, scatter);
+	        this.checkAppLinkPermissions(permission.origin);
 	        resolve(true)
         })
     }

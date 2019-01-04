@@ -1,5 +1,5 @@
 <template>
-    <section class="user-bar" v-if="scatter.toured">
+    <section class="user-bar" v-if="keypairs.length">
         <section class="actions">
             <router-link :to="{name:RouteNames.IDENTITY}" class="action">
                 {{locale(langKeys.USER_BAR.ManageIdentity)}}
@@ -34,7 +34,8 @@
                 'scatter',
             ]),
             ...mapGetters([
-            	'identity'
+            	'identity',
+                'keypairs'
             ])
         },
         methods:{

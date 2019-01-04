@@ -76,7 +76,6 @@ export default class WindowService {
 
 
 		const mousePoint = remote.screen.getCursorScreenPoint();
-		console.log('mousePoint', mousePoint);
 		const activeDisplay = remote.screen.getDisplayNearestPoint(mousePoint);
 		let {width:screenWidth, height:screenHeight} = activeDisplay.workAreaSize;
 		const leftBound = activeDisplay.bounds.x;

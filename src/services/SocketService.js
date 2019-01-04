@@ -8,7 +8,15 @@ const https = window.require('https');
 import {Popup} from '../models/popups/Popup'
 import PopupService from '../services/PopupService';
 
+import {remote} from "../util/ElectronHelpers";
+remote.getGlobal('appShared').QuitWatcher = () => {
+	SocketService.broadcastEvent('dced', {});
+};
+
 let io = window.require('socket.io')();
+
+
+let openConnections = {};
 
 let rekeyPromise;
 const getNewKey = socket => new Promise((resolve, reject) => {
@@ -17,6 +25,7 @@ const getNewKey = socket => new Promise((resolve, reject) => {
 });
 
 const socketHandler = (socket) => {
+	let origin = null;
 
 
     // TODO: Testing the event system.
@@ -60,11 +69,20 @@ const socketHandler = (socket) => {
 	    if(existingApp.nextNonce.length && !existingApp.checkNonce(request.data.nonce)) await removeAppPermissions();
 	    else await updateNonce();
 
+	    if(!origin){
+		    origin = existingApp.origin;
+		    openConnections[origin] = socket;
+	    }
+
         socket.emit('api', await ApiService.handler(Object.assign(request.data, {plugin:request.plugin})));
     });
 
     socket.on('rekeyed', async request => {
         rekeyPromise.resolve(request);
+    });
+
+    socket.on('disconnect', async request => {
+        delete openConnections[origin];
     });
 
     socket.on('pair', async request => {
@@ -156,6 +174,20 @@ export default class SocketService {
         delete io.nsps[`/scatter`];
 
 	    return true;
+    }
+
+    static sendEvent(event, payload, origin){
+    	if(!openConnections.hasOwnProperty(origin)) return false;
+    	const socket = openConnections[origin];
+	    socket.emit('event', {event, payload});
+	    return true;
+    }
+
+    static broadcastEvent(event, payload){
+    	Object.keys(openConnections).map(origin => {
+		    this.sendEvent(event, payload, origin);
+	    });
+    	return true;
     }
 
 }

@@ -137,7 +137,6 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 
 
 const popupError = result => {
-	console.log('result', result);
 	const json = JSON.parse(result);
 	let error;
 	if(json.hasOwnProperty('error') && json.error.hasOwnProperty('details') && json.error.details.length) {
@@ -667,7 +666,6 @@ export default class EOS extends Plugin {
 	}
 
 	async transfer({account, to, amount, token, memo, promptForSignature = true}){
-		console.log('promptForSignature', promptForSignature);
 		amount = parseFloat(amount).toFixed(token.decimals);
 		const {contract, symbol} = token;
 		return new Promise(async (resolve, reject) => {

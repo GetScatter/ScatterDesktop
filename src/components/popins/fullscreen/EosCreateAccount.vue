@@ -371,7 +371,7 @@
 				.catch(error => {
 					this.setWorkingScreen(false);
 					PopupService.push(Popup.prompt("Error", error));
-					console.log('error', error);
+					console.error('error', error);
 				});
 			},
 

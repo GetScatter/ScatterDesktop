@@ -32,7 +32,11 @@ const quit = () => {
 		setTimeout(() => {
 			quit();
 		}, 100);
-	} else app.quit();
+	} else {
+		if(global.appShared.QuitWatcher !== null)
+			global.appShared.QuitWatcher();
+		app.quit();
+	}
 }
 
 let tray, mainWindow;
@@ -244,5 +248,5 @@ const Transport = require('@ledgerhq/hw-transport-node-hid');
 
 const NodeMachineId = require('node-machine-id');
 
-global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService, NodeMachineId, savingData:false };
+global.appShared = { Transport, QuitWatcher:null, ApiWatcher:null, LowLevelWindowService, NotificationService, NodeMachineId, savingData:false };
 

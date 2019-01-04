@@ -31,6 +31,7 @@
 <script>
 
 	import {remote} from '../util/ElectronHelpers';
+	import SocketService from "../services/SocketService";
 
 	export default {
 		data(){return {
@@ -43,6 +44,7 @@
 		},
 		methods:{
 			quit(){
+				SocketService.broadcastEvent('dced', {});
 				setTimeout(() => remote.app.quit(), 1);
 			},
 			minimize(){

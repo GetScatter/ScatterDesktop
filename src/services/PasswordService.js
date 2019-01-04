@@ -64,7 +64,6 @@ export default class PasswordService {
 		            if(setToState) store.dispatch(Actions.SET_SCATTER, scatter);
 		            resolve(mnemonic ? mnemonic : true);
 	            } catch(e) {
-		            console.log('e', e);
 		            resolve(false);
 	            }
             }
