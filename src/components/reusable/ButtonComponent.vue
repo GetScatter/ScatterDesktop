@@ -28,8 +28,8 @@
         background:#fff;
         border-radius:3px;
         color:$primary;
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 16px;
+        font-weight: normal;
         max-width:360px;
 		line-height:0;
 
@@ -42,8 +42,8 @@
 
         &.small {
             height:32px;
-            font-size: 13px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: normal;
             width:auto;
             padding:0 10px;
         }
@@ -52,6 +52,7 @@
             border:1px solid rgba(0,0,0,0);
             color:#fff;
             background:$primary;
+            font-weight:bold;
             background-image: $blue-grad;
         }
 
@@ -83,8 +84,8 @@
         }
 
         &:disabled {
-            border:1px solid #c6c7c8;
-            background: #e3e3e3;
+            border:1px solid $light-grey;
+            background: $lighter-grey;
             color: #ababab;
             cursor: not-allowed;
         }
