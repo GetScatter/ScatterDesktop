@@ -39,10 +39,14 @@
 						<span v-if="!token.token.symbolClass()">{{token.token.truncatedSymbol()}}</span>
 					</figure>
 					<section class="data">
-						<section>
+						<section v-if="!token.meta">
 							<div>{{token.name}}</div>
 							<b>{{token.amount}}</b>
 							<div style="margin-top:5px;" v-if="token.fiat">{{token.fiat}} {{displayCurrency}}</div>
+						</section>
+						<section v-else>
+							<div>{{token.meta.sub}}</div>
+							<b>{{token.meta.title}}</b>
 						</section>
 					</section>
 				</section>

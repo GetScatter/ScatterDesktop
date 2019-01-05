@@ -36,8 +36,8 @@
 							<section class="sub txid" style="font-size: 9px; cursor:pointer;" @click="openInExplorer(item)" v-if="item.txid">{{item.txid}}</section>
 						</section>
 						<section>
-							<section class="title" v-if="item.toAmount"><b>+{{formatNumber(parseFloat(item.toAmount).toFixed(item.toToken.decimals), true)}} {{item.toToken.symbol}}</b></section>
-							<section :class="item.toAmount ? 'sub' : 'title'"><b>-{{formatNumber(parseFloat(item.token.amount).toFixed(item.token.decimals), true)}} {{item.token.symbol}}</b></section>
+							<section class="title" v-if="item.toAmount"><b>+{{formatNumber(parseFloat(item.toAmount).toFixed(decimalsOrDefault(item.toToken)), true)}} {{item.toToken.symbol}}</b></section>
+							<section :class="item.toAmount ? 'sub' : 'title'"><b>-{{formatNumber(parseFloat(item.token.amount).toFixed(decimalsOrDefault(item.token)), true)}} {{item.token.symbol}}</b></section>
 							<section class="sub" v-if="item.memo && item.memo.length">{{item.memo}}</section>
 							<section class="sub" v-if="item.type === 'exchange'">
 								{{item.status}}
@@ -94,6 +94,7 @@
 	import {HISTORY_TYPES} from "../../../models/histories/History";
 	import StorageService from "../../../services/StorageService";
 	import ExchangeService from "../../../services/ExchangeService";
+	import PluginRepository from "../../../plugins/PluginRepository";
 
 
 	export default {
@@ -201,6 +202,10 @@
 			back(){
 				this.popin.data.callback(true);
 				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			decimalsOrDefault(token){
+				if(token.decimals) return token.decimals;
+				return PluginRepository.plugin(token.blockchain).defaultDecimals();
 			},
 			async refreshStatus(id){
 				this.loadingStatus = true;

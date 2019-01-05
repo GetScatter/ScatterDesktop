@@ -39,7 +39,7 @@
 
 
 					<section style="max-height: 100px;">
-						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':pairs.length}">
+						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':flatPairs.length}">
 							<section class="row" v-if="loadingPairs">
 								<figure class="fill">
 									<b class="icon-spin4 animate-spin"></b>
@@ -99,13 +99,13 @@
 								<figure class="fill">Fetching Pairs</figure>
 							</section>
 							<section class="row clickable" v-else @click="selectToken('to')">
-								<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}" v-if="pairs.length && pair">{{pair ? pair.symbol : ''}}</figure>
+								<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}" v-if="flatPairs.length && pair">{{pair ? pair.symbol : ''}}</figure>
 								<!--<figure class="icon" :class="[{'small':pair && pair.symbol.length >= 4}, pair.symbolClass()]">-->
 								<!--<span v-if="!pair.symbolClass()">{{pair.truncatedSymbol()}}</span>-->
 								<!--</figure>-->
-								<figure class="fill">{{pairs.length ? pair ? pair.symbol : `Select Pair (${pairs.length})` : 'No Available Pairs'}}</figure>
-								<figure class="chevron" :class="{'icon-down-open-big':pairs.length > 1, 'icon-lock':pairs.length === 1}" v-if="pairs.length"></figure>
-								<figure class="chevron icon-cancel" v-if="!pairs.length"></figure>
+								<figure class="fill">{{flatPairs.length ? pair ? pair.symbol : `Select Pair (${flatPairs.length})` : 'No Available Pairs'}}</figure>
+								<figure class="chevron" :class="{'icon-down-open-big':flatPairs.length > 1, 'icon-lock':flatPairs.length === 1}" v-if="flatPairs.length"></figure>
+								<figure class="chevron icon-cancel" v-if="!flatPairs.length"></figure>
 							</section>
 							<section class="row" v-if="loadingRate || !rate">
 								<figure class="fill" style="flex:0 0 auto; padding-right:20px;" v-if="loadingRate">
@@ -155,6 +155,7 @@
 	import TransferService from "../../../services/TransferService";
 	import BalanceService from "../../../services/BalanceService";
 	import HistoricExchange from "../../../models/histories/HistoricExchange";
+	import ObjectHelpers from "../../../util/ObjectHelpers";
 
 	export default {
 		props:['popin'],
@@ -169,7 +170,7 @@
 			rate:null,
 			fiat:null,
 			selectingToken:false,
-			pairs:[],
+			pairs:{},
 			loadingPairs:false,
 			loadingRate:false,
 			sending:false,
@@ -226,23 +227,33 @@
 
 				if(this.selectingToken === 'to'){
 
-					const pairs = this.pairs.reduce((acc,x) => {
-						if(!acc.hasOwnProperty(x.type)) acc[x.type] = [];
-						acc[x.type].push(x);
-						return acc;
-					}, {});
 
-					return Object.keys(pairs).map(type => {
+					// TODO: Localize
+					const titleFormatter = (title, pair) => {
+						switch(title){
+							case 'base': return `Base Tokens (${pair.type})`;
+							case 'stable': return `Stable Coins (${pair.type})`;
+							default: return `${this.blockchainName(title)} (${pair.type})`;
+						}
+					}
+
+					return Object.keys(this.pairs).map(title => {
 						return {
-							title:type,
+							title:titleFormatter(title, this.pairs[title][0]),
 							active:this.pair ? this.pair.id : null,
 							handler:id => {
-								const pair = this.pairs.find(x => x.id === id);
+								const pair = this.flatPairs.find(x => x.id === id);
 								this.setPair(pair);
 							},
-							tokens:pairs[type],
+							tokens:this.pairs[title].map(x => Object.assign(Object.assign(x, x.token), {
+								meta:{
+									sub:this.blockchainName(x.token.blockchain),
+									title:x.token.name,
+
+								}
+							})),
 						}
-					});
+					})
 				}
 
 				return [];
@@ -256,6 +267,12 @@
 				return !!this.rate && !!this.pair && !this.sending && this.recipient &&
 					this.rate.min <= this.estimatedAmount &&
 					this.rate.max >= this.estimatedAmount && !this.failedConnection
+			},
+			flatPairs(){
+				return Object.keys(this.pairs).reduce((acc,key) => {
+					this.pairs[key].map(x => acc.push(x));
+					return acc;
+				}, []);
 			}
 		},
 		created(){
@@ -340,7 +357,7 @@
 			},
 			selectToken(id){
 				if(this.loadingPairs || this.loadingRate) return;
-				if(id === 'to' && (this.pairs.length < 2)) return;
+				// if(id === 'to' && (this.pairs.length < 2)) return;
 				this.selectingToken = id;
 				this.changedAmount()
 			},
@@ -361,36 +378,27 @@
 			},
 			async getPairs(){
 				this.pair = null;
-				this.pairs = [];
+				this.pairs = {};
 				this.loadingPairs = true;
 				let pairs = await ExchangeService.pairs(this.token);
+				const {base, stable, eth, eos, trx} = pairs;
 
 				if(!pairs) {
 					this.cantConnect();
 				} else {
-					pairs = pairs.sort((a,b) => {
-						const TOP_PAIRS = ['btc', 'eth', 'eos', 'trx', 'usdt'].map(x => x.toUpperCase());
-						return TOP_PAIRS.includes(b.symbol) ? 1 : TOP_PAIRS.includes(a.symbol) ? -1 : 0;
-					});
-					pairs = pairs.map(pair => {
-						const {service, type, id, symbol} = pair;
-						return Object.assign({
-							name:'',
-							symbol:symbol,
-							amount:symbol,
-							token:symbol,
-						}, pair);
-					});
-
 					this.pairs = pairs;
 				}
 
-				if(!this.pairs.length) {
+				const allPairs = Object.keys(pairs).reduce((acc,key) => {
+					this.pairs[key].map(x => acc.push(x));
+					return acc;
+				}, []);
+				if(!allPairs.length) {
 					this.rate = null;
 				}
 
-				if(this.pairs.length === 1){
-					this.setPair(this.pairs[0]);
+				if(allPairs.length === 1){
+					this.setPair(allPairs[0]);
 				}
 
 				this.loadingPairs = false;
@@ -399,7 +407,7 @@
 			async getRate(){
 				this.loadingRate = true;
 				this.rate = null;
-				this.rate = await ExchangeService.rate(this.token, this.pair.id, this.pair.service);
+				this.rate = await ExchangeService.rate(this.token, this.pair.symbol, this.pair.service);
 				this.loadingRate = false;
 			},
 			async send(){

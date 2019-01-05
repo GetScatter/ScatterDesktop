@@ -4,6 +4,8 @@ import BalanceService from "./BalanceService";
 import {GET, POST} from './BackendApiService';
 import SoundService from "./SoundService";
 import {remote} from '../util/ElectronHelpers';
+import ObjectHelpers from "../util/ObjectHelpers";
+import Token from "../models/Token";
 const NotificationService = remote.getGlobal('appShared').NotificationService;
 
 
@@ -18,7 +20,10 @@ let watchTimeout;
 export default class ExchangeService {
 
 	static async pairs(token){
-		return timeout(POST('exchange/pairs', {token}));
+		return timeout(POST('exchange/pairs', {token})).then(pairs => {
+			Object.keys(pairs).map(key => pairs[key].map(x => x.token = Token.fromJson(x.token)));
+			return pairs;
+		});
 	}
 
 	static async rate(token, other, service){

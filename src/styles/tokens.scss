@@ -30,6 +30,15 @@
     .values {
       color:#fff;
 
+      .refresh {
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        display:inline-block;
+        margin-right:20px;
+        margin-left:0;
+      }
+
       .value {
         font-size: 48px;
         font-weight: bold;

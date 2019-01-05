@@ -8,6 +8,10 @@
 			<section class="panel-top">
 				<section class="values">
 					<figure class="value">{{totalBalance.symbol}} {{formatNumber(totalBalance.amount, true)}}</figure>
+					<section class="refresh" v-if="account" @click="refreshTokens" :class="{'loading':loadingBalances}">
+						<i v-if="!loadingBalances" class="icon-arrows-ccw"> Refresh Tokens</i>
+						<i v-if="loadingBalances" class="icon-spin4 animate-spin"></i>
+					</section>
 					<p>
 						{{calculatedBalances.length}} {{locale(langKeys.GENERIC.Tokens, calculatedBalances.length)}}
 						<router-link tag="u" v-if="hiddenTokenCount > 0" :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" style="color:rgba(255,255,255,0.3); cursor: pointer;">
@@ -114,6 +118,7 @@
 			currencyPrices:{},
 			account:null,
 			stablePaths:[],
+			loadingBalances:false,
 		}},
 		computed:{
 			...mapState([
@@ -207,6 +212,13 @@
 			back(){
 				if(!this.account) return this.$router.push({name:this.RouteNames.HOME})
 				this.$router.back();
+			},
+			async refreshTokens(){
+				if(this.loadingBalances) return;
+				this.loadingBalances = true;
+				await BalanceService.loadBalancesFor(this.account);
+				await PriceService.getAll();
+				this.loadingBalances = false;
 			},
 			openDisplayToken(){
 				PopupService.push(Popup.setDisplayToken());

@@ -199,7 +199,7 @@ export default class ETH extends Plugin {
 		            .on('transactionHash', transactionHash => finished({transactionHash}))
 		            .on('error', error => finished({error}));
             } else {
-	            const value = TokenService.formatAmount(amount.toString(), token, true);
+	            const value = web3util.utils.toWei(amount.toString());
 	            const contract = new web3.eth.Contract(erc20abi, token.contract, {from:account.sendable()});
 	            contract.methods.transfer(to, value).send({gasLimit: 250000})
 		            .on('transactionHash', transactionHash => finished({transactionHash}))
