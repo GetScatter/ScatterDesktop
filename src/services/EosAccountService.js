@@ -5,12 +5,10 @@ import {Blockchains} from "../models/Blockchains";
 import PluginRepository from "../plugins/PluginRepository";
 
 import {remote} from '../util/ElectronHelpers';
-import Configs from "../../configs";
+import BackendApiService from "./BackendApiService";
 const NodeMachineId = () => remote ? remote.getGlobal('appShared').NodeMachineId : null;
 
 const fingerprinted = s => murmur.v2(s);
-
-const baseUrl = Configs.api;
 
 export default class EosAccountService {
 
@@ -38,13 +36,7 @@ export default class EosAccountService {
 	}
 
 	static async canMakeFreeAccount(id){
-		return await fetch(`${baseUrl}/machine/${id}`, {
-			method: 'GET',
-			headers:{
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			}
-		}).then(r => r.json()).catch(error => ({error}));
+		return await BackendApiService.checkMachineId(id).catch(error => ({error}));
 	}
 
 	static async createAccount(key, name, free = false){
@@ -53,14 +45,7 @@ export default class EosAccountService {
 		const signature = await plugin.signer({data:ecc.sha256(free ? key+machineId+name : key)}, key, true, true);
 
 		const payload = { signature, key, name, machineId, free };
-		return await fetch(`${baseUrl}/create_bridge`, {
-			method: 'POST',
-			headers:{
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body:JSON.stringify(payload)
-		}).then(r => r.json()).catch(error => ({error}));
+		return await BackendApiService.createAccount(payload).catch(error => ({error}));
 	}
 
 }

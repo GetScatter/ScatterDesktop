@@ -72,6 +72,7 @@
     import SingletonService from "../services/SingletonService";
     import PopupService from "../services/PopupService";
     import {Popup} from "../models/popups/Popup";
+    import BackendApiService from "../services/BackendApiService";
 
 
     export default {

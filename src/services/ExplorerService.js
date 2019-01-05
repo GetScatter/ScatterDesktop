@@ -1,7 +1,7 @@
 import {blockchainName, Blockchains, BlockchainsArray} from "../models/Blockchains";
 import PluginRepository from "../plugins/PluginRepository";
 import Explorer from "../models/Explorer";
-import Configs from "../../configs";
+import {GET} from "./BackendApiService";
 
 export default class ExplorerService {
 
@@ -18,7 +18,7 @@ export default class ExplorerService {
 				setDefaultExplorers();
 				resolve(explorers);
 			}, 3000)),
-			fetch(`${Configs.api}/explorers`).then(r => r.json())
+			GET(`explorers`)
 				.then(res => {
 					BlockchainsArray.map(({value:blockchain}) => {
 						res[blockchainName(blockchain)].map(rawExplorer => {

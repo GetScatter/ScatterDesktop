@@ -3,21 +3,21 @@ import PluginRepository from "../plugins/PluginRepository";
 import Explorer from "../models/Explorer";
 import {store} from "../store/store";
 import * as Actions from "../store/constants";
-import Configs from "../../configs";
+import {GET} from "./BackendApiService";
 
 let checked = false;
 
 export default class LanguageService {
 
 	static getLanguageNames(){
-		return fetch(`${Configs.api}/languages?names=1`).then(r => r.json())
+		return GET(`languages?names=1`)
 			.catch(err => {
 			return ["English"];
 		})
 	}
 
 	static getLanguage(name){
-		return fetch(`${Configs.api}/languages?name=${name}`).then(r => r.json())
+		return GET(`languages?name=${name}`).then(r => r.json())
 		.then(res => {
 			if(!this.validateLanguage(res)) return;
 			return res;

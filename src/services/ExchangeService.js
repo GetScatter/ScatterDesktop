@@ -1,24 +1,8 @@
-import Configs from "../../configs";
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
 import BalanceService from "./BalanceService";
+import {GET, POST} from './BackendApiService';
 
-const baseUrl = Configs.api;
-
-const GET = (route) => {
-	return fetch(`${baseUrl}${route}`).then(x => x.json())
-};
-
-const POST = (route, data) => {
-	return fetch(`${baseUrl}${route}`, {
-		method:'POST',
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(data)
-	}).then(x => x.json())
-};
 
 const timeout = (rq, caughtValue = null) => Promise.race([
 	new Promise(resolve => setTimeout(() => resolve(caughtValue), 10000)),
@@ -31,31 +15,31 @@ let watchTimeout;
 export default class ExchangeService {
 
 	static async pairs(token){
-		return timeout(POST('/exchange/pairs', {token}));
+		return timeout(POST('exchange/pairs', {token}));
 	}
 
 	static async rate(token, other, service){
-		return timeout(POST('/exchange/rate', {token, other, service}));
+		return timeout(POST('exchange/rate', {token, other, service}));
 	}
 
 	static async order(service, token, other, amount, from, to){
-		return timeout(POST('/exchange/order', {service, token, other, amount, from, to}));
+		return timeout(POST('exchange/order', {service, token, other, amount, from, to}));
 	}
 
 	static async accepted(id){
-		return timeout(GET(`/exchange/accepted/${id}`));
+		return timeout(GET(`exchange/accepted/${id}`));
 	}
 
 	static async cancelled(id){
-		return timeout(GET(`/exchange/cancelled/${id}`));
+		return timeout(GET(`exchange/cancelled/${id}`));
 	}
 
 	static async orderStatus(id){
-		return timeout(GET(`/exchange/order/${id}`).then(res => res.updated.status));
+		return timeout(GET(`exchange/order/${id}`).then(res => res.updated.status));
 	}
 
 	static async stablePaths(){
-		return timeout(GET(`/exchange/stabilize/paths`), []);
+		return timeout(GET(`exchange/stabilize/paths`), []);
 	}
 
 	static watch(history){

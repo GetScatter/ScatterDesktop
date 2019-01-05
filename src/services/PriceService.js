@@ -1,15 +1,10 @@
 import {store} from '../store/store';
 import * as Actions from '../store/constants';
-import {Blockchains, BlockchainsArray} from '../models/Blockchains';
-import PluginRepository from '../plugins/PluginRepository'
-import ObjectHelpers from '../util/ObjectHelpers'
-import StorageService from "./StorageService";
 import Token from "../models/Token";
 import PopupService from "./PopupService";
 import {Popup} from "../models/popups/Popup";
-import Configs from "../../configs";
+import {GET} from "./BackendApiService";
 
-const api = Configs.api;
 
 // Once every 30 minutes.
 const intervalTime = 60000 * 30;
@@ -45,7 +40,7 @@ export default class PriceService {
     static getAll(){
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-            fetch(api+'/prices?v2=true').then(x => x.json()).catch(() => {
+	        GET('prices?v2=true').catch(() => {
             	PopupService.push(Popup.snackbar("Problem connecting to Prices API"));
             	return null;
             })
@@ -55,14 +50,14 @@ export default class PriceService {
     static async getCurrencies(){
         return Promise.race([
 		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-		    fetch(api+'/currencies').then(x => x.json()).catch(() => ['USD'])
+	        GET('currencies').catch(() => ['USD'])
 	    ])
     }
 
     static async getCurrencyPrices(){
         return Promise.race([
 		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-		    fetch(api+'/currencies/prices').then(x => x.json()).catch(() => null)
+	        GET('currencies/prices').catch(() => null)
 	    ])
     }
 
@@ -70,7 +65,7 @@ export default class PriceService {
         const query = date ? `?date=${date}` : '';
         return Promise.race([
 		    new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-		    fetch(api+'/prices/timeline'+query).then(x => x.json()).catch(() => {})
+	        GET('prices/timeline'+query).catch(() => {})
 	    ])
     }
 
