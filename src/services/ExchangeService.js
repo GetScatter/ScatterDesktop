@@ -2,6 +2,9 @@ import {store} from '../store/store';
 import * as Actions from '../store/constants';
 import BalanceService from "./BalanceService";
 import {GET, POST} from './BackendApiService';
+import SoundService from "./SoundService";
+import {remote} from '../util/ElectronHelpers';
+const NotificationService = remote.getGlobal('appShared').NotificationService;
 
 
 const timeout = (rq, caughtValue = null) => Promise.race([
@@ -61,6 +64,9 @@ export default class ExchangeService {
 				await store.dispatch(Actions.DELTA_HISTORY, history);
 
 				if(status === 'complete'){
+					SoundService.ding();
+					NotificationService.pushNotification('Exchange Complete', `Your token exchange has just completed.`);
+
 					watchers = watchers.filter(x => x.id !== history.id);
 
 					const accounts = store.getters.accounts.filter(x => x.sendable() === history.to);
