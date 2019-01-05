@@ -92,7 +92,7 @@
         margin-bottom:20px;
 
         label {
-            font-size: 11px;
+            font-size: 14px;
             color:#7899a6;
             font-weight: bold;
             margin-bottom:8px;

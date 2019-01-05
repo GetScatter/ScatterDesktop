@@ -9,7 +9,7 @@
 			<section class="tokens-out">
 
 				<section class="panel">
-					<h5>Exchange</h5>
+					<h5>Exchange from account</h5>
 
 					<section>
 						<section class="box">
@@ -37,6 +37,8 @@
 						</section>
 					</section>
 
+
+					<h5>Amount</h5>
 
 					<section style="max-height: 100px;">
 						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':flatPairs.length}">
@@ -80,17 +82,6 @@
 					<h5>Receive</h5>
 
 					<section>
-						<section class="box dark outlined" :class="pair ? 'clickable' : 'unclickable'">
-							<section class="row" style="height:144px; text-align:center;" @click="!pair ? null : selectAccount('to')">
-								<figure class="fill">
-									{{!pair ? 'Select Pair First' : recipient && recipient.length ? recipient : 'Select Recipient'}}
-								</figure>
-								<figure class="chevron icon-down-open-big"></figure>
-							</section>
-						</section>
-					</section>
-
-					<section>
 						<section class="box dark">
 							<section class="row" v-if="loadingPairs">
 								<figure class="fill" style="flex:0 0 auto; padding-right:20px;">
@@ -127,6 +118,19 @@
 									<figure class="icon small" style="margin-left:50px; width:auto;">MAX</figure>
 									<div class="small" style="flex:0 0 auto;" :class="{'bad':rate && rate.max && (rate.max < estimatedAmount)}">{{rate && rate.max ? rate.max : '--'}}</div>
 								</section>
+							</section>
+						</section>
+					</section>
+
+					<h5>To account</h5>
+
+					<section>
+						<section class="box dark outlined" :class="pair ? 'clickable' : 'unclickable'">
+							<section class="row" style="height:144px; text-align:center;" @click="!pair ? null : selectAccount('to')">
+								<figure class="fill">
+									{{!pair ? 'Select Pair First' : recipient && recipient.length ? recipient : 'Select Recipient'}}
+								</figure>
+								<figure class="chevron icon-down-open-big"></figure>
 							</section>
 						</section>
 					</section>

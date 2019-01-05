@@ -193,7 +193,7 @@
 			}
 
 			.network {
-				font-size: 11px;
+				font-size: 14px;
 				color: $mid-dark-grey;
 				display:inline-block;
 
@@ -203,9 +203,8 @@
 			}
 
 			.identifier {
-				margin-top:5px;
-				font-size: 20px;
-				font-weight: 300;
+				margin-top:14px;
+				font-size: 32px;
 				display:table;
 
 				&.mainnet {
@@ -222,7 +221,7 @@
 				display:inline-block;
 
 				.authority {
-					font-size: 9px;
+					font-size: 14px;
 					font-weight: bold;
 					padding:2px 4px;
 					border:1px solid $primary;
@@ -263,8 +262,8 @@
 
 				.main-token-balance {
 					margin-top:5px;
-					font-size: 11px;
-					font-weight: 300;
+					font-size: 14px;
+					font-weight: normal;
 					display:block;
 				}
 

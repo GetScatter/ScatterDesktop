@@ -67,7 +67,6 @@
 		padding:10px 30px;
 		overflow-y: auto;
 		height: 0;
-		border-top:2px solid $border-standard;
 
 		.item {
 			padding:20px 0 0;

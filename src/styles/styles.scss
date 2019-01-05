@@ -141,7 +141,7 @@ h5 {
 
 p {
   color:#878a8b;
-  font-size: 14px;
+  font-size: 16px;
   line-height:20px;
   margin:0;
 }
@@ -217,7 +217,7 @@ p {
   &:not(.no-divider){
     .panel {
       &:not(:first-child) {
-        border-left:2px solid $border-standard;
+        border-left:1px solid $border-standard;
       }
     }
   }
@@ -290,7 +290,7 @@ p {
     line-height:38px;
     font-weight: bold;
     color:$mid-dark-grey;
-    font-size: 14px;
+    font-size: 16px;
     position: relative;
     cursor: pointer;
     transition:all 0.08s ease;
@@ -406,7 +406,7 @@ p {
 }
 
 label {
-  font-size: 11px;
+  font-size: 14px;
   color:#7899a6;
   font-weight: bold;
   margin-bottom:8px;
@@ -493,7 +493,7 @@ label {
 }
 
 .action-bar {
-  height:90px;
+  height:120px;
   width:100%;
   display:flex;
   justify-content: space-between;
@@ -501,10 +501,10 @@ label {
   padding:0 30px;
 
   &:not(.bottom){
-    border-bottom:2px solid $border-standard;
+    border-bottom:1px solid $border-standard;
   }
   &.bottom {
-    border-top:2px solid $border-standard;
+    border-top:1px solid $border-standard;
   }
   &.centered { justify-content: center; }
   &.short { height:80px; }
@@ -527,7 +527,7 @@ label {
 
   p {
     margin-top:3px;
-    font-size:13px;
+    font-size:14px;
     line-height:14px;
     color:rgba(0,0,0,0.6);
   }

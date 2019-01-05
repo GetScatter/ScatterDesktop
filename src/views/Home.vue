@@ -2,7 +2,7 @@
     <section class="home">
 
         <section class="full-panel home" v-if="keypairs.length">
-            <section class="action-bar short">
+            <section class="action-bar">
                 <section class="token-buttons">
                     <section class="refresh" @click="refreshTokens" :class="{'loading':loadingBalances}">
                         <i v-if="!loadingBalances" class="icon-arrows-ccw"></i>
@@ -24,8 +24,10 @@
                 </section>
                 <section class="actions" v-if="accounts.length">
                     <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
-                    <btn borderless="1" v-on:clicked="openExchange" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
                     <btn v-if="history.length" borderless="1" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
+                    <div class="separator">
+                        <btn blue="1" v-on:clicked="openExchange" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
+                    </div>
                 </section>
             </section>
 
@@ -151,6 +153,10 @@
         button {
             font-weight: bold;
         }
+        .separator {
+            margin-left:12px;
+            display:inline;
+        }
     }
 
     .home {
@@ -210,11 +216,10 @@
             padding-left:5px;
 
             .amount {
-                font-size: 24px;
-                font-weight: 300;
+                font-size: 32px;
 
                 div {
-                    font-size: 11px;
+                    font-size: 14px;
                 }
             }
 

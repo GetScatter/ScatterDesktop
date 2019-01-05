@@ -14,6 +14,15 @@
 					<section v-for="(list, i) in [origins, originsFromSearch]">
 						<section class="item" v-for="(count, origin) in list" :key="origin">
 
+							<section class="actions" v-if="count !== 0">
+								<span class="icon-edit-wrapper" @click="goToPermission(origin)">
+									<i class="icon icon-pencil"></i>
+								</span>
+								<span class="icon-trash-wrapper" @click="removePermissions(origin)">
+									<i class="icon icon-trash"></i>
+								</span>
+							</section>
+
 							<!-- APP ICON -->
 							<section class="icon-wrapper" @click="openApp(origin)">
 								<figure class="icon">
@@ -28,24 +37,16 @@
 								        @click="openApp(origin)"
 								        :class="{'has-url':getAppData(origin).url.length}">{{getAppData(origin).name}}</figure>
 
-								<p class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></p>
+								<!-- <p class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></p> -->
 
-								<p v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
-								<p v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
-								<p v-if="count === 0">{{getAppData(origin).blockchain}} - {{locale(langKeys.DASHBOARD.APPS.NoPermissions)}}</p>
+								<p class="permissions-type" v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
+								<p class="permissions-type" v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
+								<p class="permissions-type" v-if="count === 0">{{getAppData(origin).blockchain}} - {{locale(langKeys.DASHBOARD.APPS.NoPermissions)}}</p>
 
-								<section class="actions" v-if="count !== 0">
-									<span @click="goToPermission(origin)">
-										{{locale(langKeys.GENERIC.Edit)}}
-									</span>
-										<span @click="removePermissions(origin)">
-										{{locale(langKeys.GENERIC.Remove)}}
-									</span>
-								</section>
 							</section>
 
 							<section class="button" v-if="getAppData(origin).url.length">
-								<btn :text="locale(langKeys.GENERIC.Open)" v-on:clicked="openApp(origin)" />
+								<btn blue="1" :text="locale(langKeys.GENERIC.Open)" v-on:clicked="openApp(origin)" />
 							</section>
 							<section class="button" v-else>
 								<btn disabled="1" :text="locale(langKeys.DASHBOARD.APPS.NoMeta)" />
@@ -163,9 +164,13 @@
 
 	.breaker {
 		margin:20px 0;
-		width:100%;
 		color: $dark-grey;
 		font-size: 14px;
+	    position: fixed;
+	    bottom: 0;
+	    z-index: 1000;
+	    right: 20px;
+	    left: 35%;
 
 		span {
 			font-size: 11px;
@@ -205,21 +210,88 @@
 		padding:10px 30px 30px;
 		overflow-y: auto;
 		height: 0;
-		border-top:2px solid $border-standard;
 
 		.item {
 			padding:20px 0 5px;
 			display:flex;
-			flex-direction: row;
+			flex-direction: column;
+			width:25%;
+			height:200px;
+			margin-bottom:20px;
+			text-align:center;
+			float:left;
+			position:relative;
+			background-color:white;
+			transition:all 0.12s ease-in-out;
+			border-radius:12px;
 
-			$icon-bounds:70px;
+			&:hover {
+				background-color:$lighter-grey;
+			}
+
+			&:hover .actions {
+				display:block;
+				opacity:1;
+			} 
+
+			&:hover .button {
+				opacity:1;
+			} 
+
+			.actions {
+				position:absolute;
+				top:0;
+				left:0;
+				right:0;
+				display:none;
+				opacity:0;
+				transition:all 0.12s ease-in-out;
+
+				.icon-edit-wrapper {
+					left:20px;
+					position:absolute;
+				}
+
+				.icon-trash-wrapper {
+					right:20px;
+					position:absolute;
+				}
+
+				span {
+					cursor: pointer;
+					font-size: 16px;
+					color:$dark-grey;
+					transition: 0.2s ease;
+					transition-property: color;
+				    padding: 6px;
+				    border-radius:30px;
+				    font-weight: normal;
+				    text-decoration: none;
+				    border-radius: 2px;
+				    margin-top: 12px;
+
+					&:hover {
+						color:$primary;
+					}
+				}
+			}
+
+			@media(max-width:$breakpoint-small-desktop){
+				width:33.3333%;
+			}
+
+			@media(max-width:$breakpoint-tablet){
+				width:50%;
+			}
+
+			$icon-bounds:60px;
 
 			.icon-wrapper {
 				width:$icon-bounds;
 				height:$icon-bounds;
 				position: relative;
-				margin: 0 auto;
-				border-radius: 20px;
+				margin: 0 auto 10px;
+				border-radius: 3px;
 				overflow: hidden;
 				cursor: pointer;
 
@@ -273,10 +345,18 @@
 			.details {
 				flex:1;
 				padding:0 15px;
-				width:calc(100% - #{$icon-bounds});
+				position:relative;
 
 				p {
 					margin-bottom:5px;
+				}
+
+				.permissions-type {
+					
+				}
+
+				&:hover .permissions-type {
+					
 				}
 
 				.title {
@@ -297,34 +377,13 @@
 					color:$dark-grey;
 				}
 
-				.actions {
-					margin-top:10px;
-
-					span {
-						cursor: pointer;
-						font-size: 11px;
-						color:$dark-grey;
-						margin-right:2px;
-						transition: 0.2s ease;
-						transition-property: color;
-						border: 1px solid rgba(211, 211, 211, 0.48);
-					    padding: 4px 7px;
-					    font-weight: normal;
-					    text-decoration: none;
-					    border-radius: 2px;
-					    margin-top: 12px;
-
-						&:hover {
-							color:$primary;
-						}
-					}
-				}
 			}
 
 			.button {
-				display:flex;
-				justify-content: flex-end;
 				align-items: center;
+				transition:all 0.12s ease-in-out;
+				opacity:0.14;
+				margin-bottom:20px;
 
 				button {
 					width:auto;

@@ -12,7 +12,7 @@
   }
 
   .full-panel {
-    min-height:calc(100vh - 250px);
+    min-height:calc(100vh - 240px);
     display:flex;
     flex-direction: column;
     position: relative;
@@ -105,10 +105,10 @@
 
           .fill {
             flex:1;
-            font-size: 20px;
+            font-size: 16px;
 
             div {
-              font-size: 11px;
+              font-size: 14px;
               font-weight: bold;
             }
 
@@ -169,7 +169,7 @@
             box-shadow:inset 0 0 0 1px rgba(255,255,255,0.2);
 
             .chevron {
-              align-self: flex-start;
+              /* align-self: flex-start;*/
             }
           }
 

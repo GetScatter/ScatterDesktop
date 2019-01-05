@@ -1,5 +1,5 @@
 <template>
-    <section class="action-bar">
+    <section class="action-bar short">
         <section class="back-bar">
             <transition name="slide-left" mode="out-in">
                 <section key="back" class="back" @click="emit" v-if="!hideBackButton">
