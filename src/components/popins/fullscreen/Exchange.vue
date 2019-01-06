@@ -44,7 +44,6 @@
 							</section>
 							
 							<section class="row highlighted">
-								<!-- <figure class="icon icon-right-outline"></figure> -->
 								<figure class="icon">{{token.truncatedSymbol()}}</figure>
 								<figure class="fill">
 									<input style="flex:1;" v-model="token.amount" v-on:input="changedAmount"
