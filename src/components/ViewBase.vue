@@ -112,10 +112,7 @@
         bottom:0;
         z-index: 1;
         background: white;
-        animation: FadeIn 0.1s forwards;
     }
-
-
 
     .view-base {
         min-height:100vh;
