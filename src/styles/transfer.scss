@@ -55,11 +55,20 @@
         display:flex;
         flex-direction: column;
 
+        &.no-box {
+          padding:10px 0;
+          border:1px solid transparent;
+        }
+
         .row {
           display:flex;
           align-items: center;
           position:relative;
           padding:20px;
+
+          &.highlighted {
+            border-bottom:2px solid $dark-grey !important;
+          }
 
           input {
             border:0;
@@ -95,8 +104,11 @@
           }
 
           .fraction {
-            margin-right:20px;
-            color:rgba(0,0,0,0.4);
+            margin-right:6px;
+            color:$black;
+            border:1px solid $border-standard;
+            border-radius:3px;
+            padding:4px 6px;
 
             &:hover {
               color:$primary;
@@ -118,6 +130,13 @@
 
             &.pad {
               padding:10px 20px;
+            }
+
+            &.no-pad {
+              padding:10px 0px;
+              border-left:0;
+              border-right:0;
+              border-bottom:0;
             }
           }
 
