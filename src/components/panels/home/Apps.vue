@@ -1,7 +1,7 @@
 <template>
 	<section class="apps">
 		<section class="split-inputs">
-			<SearchBar style="flex:1;" :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
+			<SearchBar style="flex:1; margin-left:-10px;" :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
 			<btn small="1" style="margin-right:30px; font-weight: normal;" borderless="1" v-on:clicked="goToApps" text="Browse" />
 		</section>
 
@@ -36,13 +36,6 @@
 								<figure class="title"
 								        @click="openApp(origin)"
 								        :class="{'has-url':getAppData(origin).url.length}">{{getAppData(origin).name}}</figure>
-
-								<!-- <p class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></p> -->
-
-								<!--<p class="permissions-type" v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>-->
-								<!--<p class="permissions-type" v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>-->
-								<!--<p class="permissions-type" v-if="count === 0">{{getAppData(origin).blockchain}} - {{locale(langKeys.DASHBOARD.APPS.NoPermissions)}}</p>-->
-
 							</section>
 
 							<section class="button" v-if="getAppData(origin).url.length">
@@ -53,11 +46,6 @@
 							</section>
 
 						</section>
-
-						<figure class="breaker disclaimer less-pad" v-if="i === 0 && Object.keys(originsFromSearch).length">
-							{{locale(langKeys.DASHBOARD.APPS.UnlinkedAppsTitle)}}<br>
-							<span>{{locale(langKeys.DASHBOARD.APPS.UnlinkedAppsSubtitle)}}</span>
-						</figure>
 					</section>
 
 				</section>
@@ -261,17 +249,17 @@
 					cursor: pointer;
 					font-size: 16px;
 					color:$dark-grey;
-					transition: 0.2s ease;
-					transition-property: color;
 				    padding: 6px;
-				    border-radius:30px;
 				    font-weight: normal;
 				    text-decoration: none;
 				    border-radius: 2px;
-				    margin-top: 12px;
+				    margin-top: 20px;
+					border:1px solid rgba(0,0,0,.2);
 
 					&:hover {
-						color:$primary;
+						color:#fff;
+						background:$blue-grad;
+						border:1px solid transparent;
 					}
 				}
 			}
@@ -317,16 +305,16 @@
 					position:absolute;
 					left:0;
 					right:0;
-					line-height:9px;
+					line-height:15px;
 					font-size:9px;
 					padding:4px;
-					background:$primary;
+					background:$reverse-gradient;
 					text-align:center;
 					opacity:0;
 					transition:0.12s all ease-in-out;
 					visibility: hidden;
 					transition-property: top, bottom, opacity, visibility;
-					box-shadow:0 -4px 10px rgba(0,0,0,0.2);
+					box-shadow:0 -4px 10px rgba(0,0,0,0.2), 0 -1px 1px rgba(0,0,0,0.2);
 				}
 
 				.app-type { bottom:-20px; }

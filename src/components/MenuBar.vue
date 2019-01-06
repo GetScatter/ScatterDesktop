@@ -67,7 +67,7 @@
 	@import '../styles/variables';
 
 	.menu-bar {
-		-webkit-app-region: drag;
+		-webkit-app-region: drag !important;
 		background:$secondary;
 		background-image: $blue-grad;
 		color:#fff;

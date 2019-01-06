@@ -12,8 +12,8 @@
                     <router-link :to="{name:RouteNames.TOKENS}" class="total-balance">
                         <section class="total-details">
                             <figure class="amount">
-                                {{totalBalance.symbol}}{{totalBalance.amount}}
-                                <div v-if="displayToken">{{formatNumber(totalTokenBalance.amount)}} {{totalTokenBalance.symbol}}</div>
+                                {{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}
+                                <div v-if="displayToken">{{formatNumber(totalTokenBalance.amount, true)}} {{totalTokenBalance.symbol}}</div>
                             </figure>
                             <figure class="dots">
                                 <figure class="dot" v-for="i in [1,1,1]"></figure>
@@ -25,7 +25,7 @@
                 <section class="actions" v-if="accounts.length">
                     <btn v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
-                    <btn blue="1" v-on:clicked="openExchange" :icon="icon-arrows-ccw" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
+                    <btn blue="1" v-on:clicked="openExchange" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
                 </section>
             </section>
 

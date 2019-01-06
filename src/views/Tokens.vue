@@ -58,7 +58,7 @@
 					<figure class="icon" @click="goToToken(token)" :class="[{'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]">
 						<span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
 					</figure>
-					<section>
+					<section style="flex:2;">
 						<section class="title">
 							<b><i class="icon-lock" v-if="token.unusable"></i>{{token.symbol}}</b> {{formatNumber(token.amount, true)}}
 						</section>
@@ -66,17 +66,14 @@
 						<section class="sub" v-else>{{token.unusable}}</section>
 						<section class="sub lighter" v-if="token.baseTokenPrice()">{{token.baseTokenPrice()}}</section>
 					</section>
-					<section>
+					<section style="flex:1.5;">
 						<section class="title"><b>{{formatNumber(token.fiatBalance(), true) || '--'}}</b></section>
 						<section class="sub lighter">{{token.network().name}}</section>
-					</section>
-					<section>
-						<section class="sub" v-if="portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
 					</section>
 					<section class="price-movement">
 						<section class="price-movement-bold sub" v-if="!token.unusable"> <b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></section>
 					</section>
-					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:240px;">
+					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:180px;">
 						<!--<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" @click.native="stabilizeToken(token)" />-->
 						<btn v-if="canStabilize(token)" style="width:auto;" text="Exchange" @click.native="exchangeToken(token)" />
 						<figure @click="goToToken(token)" class="chevron icon-right-open-big"></figure>
@@ -229,11 +226,6 @@
 			},
 			openDisplayToken(){
 				PopupService.push(Popup.setDisplayToken());
-			},
-			portfolioPercentage(token){
-				const p = parseFloat((token.fiatBalance(false) / this.totalFiat) * 100).toFixed(1);
-				if(isNaN(p)) return null;
-				return p;
 			},
 			async setup(){
 				this.stablePaths = await ExchangeService.stablePaths();
