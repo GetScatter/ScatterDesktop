@@ -41,29 +41,35 @@
                                 <figure class="fill">{{token.name}}</figure>
                                 <figure class="chevron icon-down-open-big"></figure>
                             </section>
-                            <section class="row unpad">
-                                <figure class="fill pad">
-                                    <section class="row unpad" style="width:50%;">
-                                        <div class="fraction clickable" @click="setFraction('100')">100%</div>
-                                        <div class="fraction clickable" @click="setFraction('50')">50%</div>
-                                        <div class="fraction clickable" @click="setFraction('25')">25%</div>
-                                    </section>
-                                </figure>
-                            </section>
-                            <section class="row">
-                                <figure class="icon icon-right-outline"></figure>
+                            
+                            <section class="row highlighted">
+                                <!-- <figure class="icon icon-right-outline"></figure> -->
+                                <figure class="icon">{{token.truncatedSymbol()}}</figure>
                                 <figure class="fill">
-                                    <input v-model="token.amount" v-on:input="changedAmount"
+                                    <input style="flex:1;" v-model="token.amount" v-on:input="changedAmount"
                                            :placeholder="parseFloat(1).toFixed(token.decimals)" />
                                 </figure>
                             </section>
+
                             <section class="row unpad">
                                 <section class="row pad">
-                                    <figure class="icon small">{{displayCurrency}}</figure>
-                                    <input style="flex:1;" class="small" v-model="fiat" v-on:input="changedFiat" placeholder="0.00" />
+                                    <figure class="icon">{{displayCurrency}}</figure>
+                                    <input style="flex:1;" v-model="fiat" v-on:input="changedFiat" placeholder="0.00" />
                                 </section>
                             </section>
+
                         </section>
+
+                        <section class="box no-box row unpad">
+                            <figure class="fill no-pad">
+                                <section class="row unpad">
+                                    <div class="fraction clickable" @click="setFraction('100')">100%</div>
+                                    <div class="fraction clickable" @click="setFraction('50')">50%</div>
+                                    <div class="fraction clickable" @click="setFraction('25')">25%</div>
+                                </section>
+                            </figure>
+                        </section>
+
                     </section>
 
                 </section>

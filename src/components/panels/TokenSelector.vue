@@ -29,8 +29,7 @@
 
 		<SearchBar style="margin-left:-30px;" :placeholder="locale(langKeys.GENERIC.Search)" v-on:terms="x => searchTerms = x" />
 
-		<section v-for="list in lists">
-			<br>
+		<section class="list-tokens" v-for="list in lists">
 			<label>{{list.title}}</label>
 			<section class="tokens">
 				<section class="token" v-if="visible(token)" :class="{'active':list.active === token.id}" v-for="token in list.tokens" @click="list.handler(token.id)">
@@ -133,6 +132,12 @@
 		margin-bottom:30px;
 	}
 
+	.list-tokens {
+		width:48%;
+		float:left;
+		margin:0 1%;
+	}
+
 	.tokens {
 		display:flex;
 		flex-wrap: wrap;
@@ -141,7 +146,7 @@
 			cursor: pointer;
 			border-radius:10px;
 			border:1px solid $border-standard;
-			width:calc(33.3333% - 10px);
+			width:100%;
 			margin-bottom:10px;
 			margin-right:10px;
 			display:flex;

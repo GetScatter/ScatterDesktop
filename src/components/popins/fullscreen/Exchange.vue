@@ -44,7 +44,6 @@
 							</section>
 							
 							<section class="row highlighted">
-								<!-- <figure class="icon icon-right-outline"></figure> -->
 								<figure class="icon">{{token.truncatedSymbol()}}</figure>
 								<figure class="fill">
 									<input style="flex:1;" v-model="token.amount" v-on:input="changedAmount"
@@ -62,14 +61,14 @@
 						</section>
 
 						<section class="box no-box row unpad">
-								<figure class="fill no-pad">
-									<section class="row unpad" style="width:50%;">
-										<div class="fraction clickable" @click="setFraction('100')">100%</div>
-										<div class="fraction clickable" @click="setFraction('50')">50%</div>
-										<div class="fraction clickable" @click="setFraction('25')">25%</div>
-									</section>
-								</figure>
-							</section>
+							<figure class="fill no-pad">
+								<section class="row unpad" style="width:50%;">
+									<div class="fraction clickable" @click="setFraction('100')">100%</div>
+									<div class="fraction clickable" @click="setFraction('50')">50%</div>
+									<div class="fraction clickable" @click="setFraction('25')">25%</div>
+								</section>
+							</figure>
+						</section>
 
 					</section>
 

@@ -106,7 +106,6 @@
     }
   }
 
-
   .token-filters {
     max-width:1366px;
     margin:50px auto 0;
@@ -209,13 +208,10 @@
           }
 
           b {
-            color:yellow;
-            margin-left:8px;
-
-            &.red {
-              color:$red;
-            }
+            color:$lighter-grey;
+            font-size:14px;
           }
+
         }
 
         .centered {
@@ -233,6 +229,15 @@
           }
         }
       }
+    }
+  }
+
+  .price-movement-bold b {
+    color:$green !important;
+    font-size:20px !important;
+
+    &.red {
+      color:$red !important;
     }
   }
 }

@@ -12,7 +12,7 @@
                     <router-link :to="{name:RouteNames.TOKENS}" class="total-balance">
                         <section class="total-details">
                             <figure class="amount">
-                                {{totalBalance.symbol}}{{formatNumber(totalBalance.amount)}}
+                                {{totalBalance.symbol}}{{totalBalance.amount}}
                                 <div v-if="displayToken">{{formatNumber(totalTokenBalance.amount)}} {{totalTokenBalance.symbol}}</div>
                             </figure>
                             <figure class="dots">
@@ -23,11 +23,9 @@
                     </router-link>
                 </section>
                 <section class="actions" v-if="accounts.length">
-                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
-                    <btn v-if="history.length" borderless="1" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
-                    <div class="separator">
-                        <btn blue="1" v-on:clicked="openExchange" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
-                    </div>
+                    <btn v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
+                    <btn v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
+                    <btn blue="1" v-on:clicked="openExchange" :icon="icon-arrows-ccw" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
                 </section>
             </section>
 
@@ -142,7 +140,7 @@
 
     .actions {
         button {
-            font-weight: bold;
+            font-weight: normal;    
         }
         .separator {
             margin-left:12px;

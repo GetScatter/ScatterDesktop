@@ -52,7 +52,7 @@
             border:1px solid rgba(0,0,0,0);
             color:#fff;
             background:$primary;
-            font-weight:bold;
+            font-weight: normal;
             background-image: $blue-grad;
         }
 
