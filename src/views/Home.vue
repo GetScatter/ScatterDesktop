@@ -12,7 +12,7 @@
                     <router-link :to="{name:RouteNames.TOKENS}" class="total-balance">
                         <section class="total-details">
                             <figure class="amount">
-                                {{totalBalance.symbol}}{{formatNumber(totalBalance.amount)}}
+                                {{totalBalance.symbol}}{{totalBalance.amount}}
                                 <div v-if="displayToken">{{formatNumber(totalTokenBalance.amount)}} {{totalTokenBalance.symbol}}</div>
                             </figure>
                             <figure class="dots">
