@@ -62,14 +62,19 @@
 						<section class="title">
 							<b><i class="icon-lock" v-if="token.unusable"></i>{{token.symbol}}</b> {{formatNumber(token.amount, true)}}
 						</section>
-						<section class="sub" v-if="!token.unusable">{{token.fiatPrice() || '--'}} <b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></section>
+						<section class="sub" v-if="!token.unusable">{{token.fiatPrice() || '--'}}</section>
 						<section class="sub" v-else>{{token.unusable}}</section>
 						<section class="sub lighter" v-if="token.baseTokenPrice()">{{token.baseTokenPrice()}}</section>
 					</section>
 					<section>
 						<section class="title"><b>{{formatNumber(token.fiatBalance(), true) || '--'}}</b></section>
 						<section class="sub lighter">{{token.network().name}}</section>
+					</section>
+					<section>
 						<section class="sub" v-if="portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
+					</section>
+					<section class="price-movement">
+						<section class="price-movement-bold sub" v-if="!token.unusable"> <b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:240px;">
 						<!--<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" @click.native="stabilizeToken(token)" />-->
