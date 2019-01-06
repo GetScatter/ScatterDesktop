@@ -27,13 +27,27 @@ html, body {
   -webkit-app-region: no-drag;
 }
 
+@keyframes FadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 body {
   padding:0;
   margin:0;
   word-break: break-word;
   font-family: 'Helvetica','Segoe UI','Roboto', sans-serif;
-  background:#fff;
+  background:transparent;
   color:#393d3f;
+  animation: FadeIn 0.6s forwards;
 }
 
 a {
