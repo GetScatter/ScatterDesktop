@@ -1,7 +1,8 @@
 const electron = require('electron');
-const {app, BrowserWindow, Tray, Menu, MenuItem} = electron;
+const {app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
 const path = require("path");
 const url = require("url");
+
 
 const isDev = process.mainModule.filename.indexOf('app.asar') === -1;
 
@@ -18,12 +19,6 @@ let mainUrl = isPopup => isDev ? `http://localhost:8080/${isPopup ? '/#/popout' 
 	protocol: "file:",
 	slashes: true,
 	hash:isPopup ? '/popout' : null
-});
-
-let splashScreen = url.format({
-	pathname: path.join(__dirname, "dist", "splash.html"),
-	protocol: "file:",
-	slashes: true,
 });
 
 
@@ -249,4 +244,20 @@ const Transport = require('@ledgerhq/hw-transport-node-hid');
 const NodeMachineId = require('node-machine-id');
 
 global.appShared = { Transport, QuitWatcher:null, ApiWatcher:null, LowLevelWindowService, NotificationService, NodeMachineId, savingData:false };
+
+
+
+const ecc = require("eosjs-ecc");
+let seed, key;
+ipcMain.on('key', (event, arg) => {
+	if(event.sender.history[0].indexOf('popout') > -1) return;
+	if(key) return;
+	key = arg;
+});
+ipcMain.on('seeding', (event, arg) => seed = arg);
+ipcMain.on('seed', (event, arg) => {
+	const {data, sig} = arg;
+	if(!isDev && ecc.recover(sig, 'seed') !== key) return event.sender.send('seed', null);
+	event.sender.send('seed', seed);
+});
 

@@ -71,6 +71,7 @@ export default class Keychain {
         this.permissions = this.permissions.filter(x => !x.accounts.some(a => accountsToRemove.includes(a)));
         this.accounts = this.accounts.filter(x => x.keypairUnique !== keypair.unique());
         this.keypairs = this.keypairs.filter(key => key.unique() !== keypair.unique());
+        this.correctAppLinks();
     }
 
     addAccount(account){
@@ -82,5 +83,11 @@ export default class Keychain {
         const accountsToRemove = this.accounts.filter(x => x.unique() === account.unique()).map(x => x.unique());
         this.permissions = this.permissions.filter(x => !x.accounts.some(a => accountsToRemove.includes(a)));
         this.accounts = this.accounts.filter(a => a.unique() !== account.unique());
+	    this.correctAppLinks();
     }
+
+	correctAppLinks(){
+		const origins = this.permissions.map(x => x.origin);
+		this.apps = this.apps.filter(x => origins.includes(x => x.origin));
+	}
 }

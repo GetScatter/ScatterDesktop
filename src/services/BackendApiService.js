@@ -1,8 +1,8 @@
 import IdGenerator from "../util/IdGenerator";
 import ecc from 'eosjs-ecc';
 
-const baseUrl = `http://localhost:6544/v1/`;
-// const baseUrl = `https://api.get-scatter.com/v1/`;
+// const baseUrl = `http://localhost:6544/v1/`;
+const baseUrl = `https://api.get-scatter.com/v1/`;
 const PROOF_KEY = 'EOS62b3WxfuRyP7JYaDbF3gr49joLWYpsF3kPmo2HPxPuGRDiRUwj';
 
 const getHeaders = () => {

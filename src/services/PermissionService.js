@@ -40,7 +40,7 @@ export default class PermissionService {
         });
 
         scatter.keychain.permissions.push(permission);
-        store.dispatch(Actions.SET_SCATTER, scatter);
+        return store.dispatch(Actions.SET_SCATTER, scatter);
     }
 
     static removeIdentityPermission(origin){

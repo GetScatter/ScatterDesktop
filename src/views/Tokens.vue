@@ -233,7 +233,7 @@
 			async setup(){
 				this.stablePaths = await ExchangeService.stablePaths();
 				this.currencyPrices = await PriceService.getCurrencyPrices();
-				this.priceData = await PriceService.getTimeline(dateId(0));
+				this.priceData = await PriceService.getTimeline();
 				this.loaded = true;
 				this.yesterData = await PriceService.getTimeline(dateId(1));
 				this.setupGraph();
@@ -260,7 +260,7 @@
 				Object.keys(this.priceData).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
 					totaled.push({hour, data:this.priceData[hour], date:dateId()}));
 
-				totaled = totaled.slice(totaled.length-24, totaled.length);
+				totaled = totaled.slice(totaled.length-(totaled.length > 24 ? 24 : totaled.length), totaled.length);
 
 				return totaled;
 			},
@@ -275,7 +275,6 @@
 					const tokenUnique = this.calculatedBalances[0].uniqueWithChain();
 					return this.calculatedBalances.every(x => x.uniqueWithChain(false) === tokenUnique);
 				})();
-
 				totaled.map(({hour, data, date}, i) => {
 					[date, hour] = utcToLocal(date, hour);
 					const label = `${hour}:00`;

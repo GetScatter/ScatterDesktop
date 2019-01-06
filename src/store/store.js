@@ -21,8 +21,6 @@ const state = {
     hideBackButton:false,
 
     searchTerms:'',
-
-    seed:'',
     mnemonic:'',
 
     scatter:null,

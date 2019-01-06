@@ -25,7 +25,7 @@ const translationStorage = () => getStore(TRANSLATION_NAME);
 const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
 
-import {remote} from '../util/ElectronHelpers';
+import {ipcAsync, remote} from '../util/ElectronHelpers';
 import {dateId, daysOld, hourNow} from "../util/DateHelpers";
 import {AES} from "aes-oop";
 import {HISTORY_TYPES} from "../models/histories/History";
@@ -118,21 +118,21 @@ export default class StorageService {
         return scatterStorage().set('salt', salt);
     }
 
-    static getTranslation(){
+    static async getTranslation(){
 	    let translation = translationStorage().get('translation');
 	    if(!translation) return null;
-	    return AES.decrypt(translation, store.state.seed);
+	    return AES.decrypt(translation, await ipcAsync('seed'));
     }
 
-    static setTranslation(translation){
-	    const encrypted = AES.encrypt(translation, store.state.seed);
+    static async setTranslation(translation){
+	    const encrypted = AES.encrypt(translation, await ipcAsync('seed'));
 	    return translationStorage().set('translation', encrypted);
     }
 
-    static getHistory(){
+    static async getHistory(){
 		let history = historyStorage().get('history');
 		if(!history) return [];
-		history = AES.decrypt(history, store.state.seed);
+		history = AES.decrypt(history, await ipcAsync('seed'));
 
 		history = history.map(x => {
 			if(x.type === HISTORY_TYPES.Transfer) return HistoricTransfer.fromJson(x);
@@ -144,20 +144,20 @@ export default class StorageService {
 		return history;
     }
 
-    static deltaHistory(x){
-    	let history = this.getHistory();
+    static async deltaHistory(x){
+    	let history = await this.getHistory();
 	    if(x === null) history = [];
 	    else {
 		    if(history.find(h => h.id === x.id)) history = history.filter(h => h.id !== x.id);
 		    else history.unshift(x);
 	    }
 
-    	const encrypted = AES.encrypt(history, store.state.seed);
+    	const encrypted = AES.encrypt(history, await ipcAsync('seed'));
         return historyStorage().set('history', encrypted);
     }
 
-    static swapHistory(history){
-    	const encrypted = AES.encrypt(history, store.state.seed);
+    static async swapHistory(history){
+    	const encrypted = AES.encrypt(history, await ipcAsync('seed'));
         return historyStorage().set('history', encrypted);
     }
 }

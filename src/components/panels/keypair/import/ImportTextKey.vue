@@ -6,6 +6,8 @@
 		     :dynamic-button="eyeIcon"
 		     v-on:dynamic="toggleKeyInputType"
 		     :text="key" v-on:changed="x => key = x" />
+
+		<btn :text="locale(langKeys.GENERIC.Import)" blue="1" big="1" style="max-width:100%;" />
 	</section>
 </template>
 
@@ -40,6 +42,7 @@
 			toggleKeyInputType(){
 				this.keyInputType = this.keyInputType === 'password' ? 'text' : 'password';
 			},
+
 			async testKey(){
 				if(this.importing) return;
 				this.importing = true;

@@ -25,11 +25,13 @@ export const daysOld = (id, days) => {
 export const utcToLocal = (id, hour = 0) => {
 	const [d2,m2,y2] = id.split('-');
 
-	const d = new Date(`${d2}/${m2}/${y2} ${hour}:00:00 UTC`);
-
-	// const d = new Date(+new Date(y2, m2, d2, hour));
+	const d = new Date();
+	d.setUTCDate(d2);
+	d.setUTCMonth(m2);
+	d.setUTCFullYear(y2);
+	d.setUTCHours(hour);
 	const date = d.getDate();
-	const month = d.getMonth()+1;
+	const month = d.getMonth();
 	const year = d.getFullYear();
 	return [`${date}-${month}-${year}`, d.getHours()];
 };

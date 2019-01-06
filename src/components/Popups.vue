@@ -148,6 +148,7 @@
 	        isFullscreen,
             clickedFader(){
                 if(this.nextPopIn) {
+                	if(this.nextPopIn.hasOwnProperty('data') && typeof this.nextPopIn.data.callback === 'function') this.nextPopIn.data.callback(null);
                     this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length - 1]);
                 }
             },
@@ -206,7 +207,7 @@
         align-items: center;
 
         position:fixed;
-        top:0;
+        top:80px;
         bottom:0;
         left:0;
         right:0;

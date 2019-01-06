@@ -154,7 +154,7 @@ export default class ApiService {
 	            const location = LocationInformation.fromJson(result.location);
 
                 const accounts = (result.accounts || []).map(x => Account.fromJson(x));
-                PermissionService.addIdentityOriginPermission(identity, accounts, request.payload.fields, request.payload.origin);
+                await PermissionService.addIdentityOriginPermission(identity, accounts, request.payload.fields, request.payload.origin);
 
                 const returnableIdentity = identity.asOnlyRequiredFields(request.payload.fields, location);
                 returnableIdentity.accounts = accounts.map(x => x.asReturnable());

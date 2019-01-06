@@ -223,7 +223,6 @@
 
 		computed:{
 			...mapState([
-				'seed',
 				'balances'
 			]),
 			...mapGetters([

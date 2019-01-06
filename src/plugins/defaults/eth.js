@@ -210,7 +210,7 @@ export default class ETH extends Plugin {
     }
 
     async signer(transaction, publicKey, arbitrary = false, isHash = false){
-        const basePrivateKey = KeyPairService.publicToPrivate(publicKey);
+        const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
         if(!basePrivateKey) return;
 
         const privateKey = ethUtil.addHexPrefix(basePrivateKey);

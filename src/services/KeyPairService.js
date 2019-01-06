@@ -11,6 +11,7 @@ import Keypair from '../models/Keypair';
 import Account from '../models/Account'
 import AccountService from "./AccountService";
 import HardwareService from "./HardwareService";
+import {ipcAsync} from "../util/ElectronHelpers";
 
 export default class KeyPairService {
 
@@ -120,14 +121,11 @@ export default class KeyPairService {
 
     static getKeyPairFromPublicKey(publicKey, decrypt = false){
         const keypair = store.getters.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
-        if(keypair) {
-            if(decrypt) keypair.decrypt(store.state.seed);
-            return keypair;
-        }
+        if(keypair) return keypair;
+
 
         const identity = store.state.scatter.keychain.identities.find(x => x.publicKey === publicKey);
         if(identity) {
-            if(decrypt) identity.decrypt(store.state.seed);
             return Keypair.fromJson({
                 name:identity.name,
                 publicKeys:[{blockchain:Blockchains.EOSIO, key:publicKey}],
@@ -138,8 +136,9 @@ export default class KeyPairService {
         return null;
     }
 
-    static publicToPrivate(publicKey){
+    static async publicToPrivate(publicKey){
         const keypair = this.getKeyPairFromPublicKey(publicKey, true);
+        keypair.decrypt(await ipcAsync('seed'));
         if(keypair) return keypair.privateKey;
         return null;
     }

@@ -427,10 +427,10 @@
 				const from = { account:this.account.sendable() };
 				const to = { account:this.recipient };
 				const order = await ExchangeService.order(this.pair.service, this.token, this.pair.symbol, this.token.amount, this.account, to);
-				this.sending = false;
 
 				if(!order) {
 					this.cantConnect();
+					this.sending = false;
 					return;
 				}
 
@@ -446,6 +446,7 @@
 				PopupService.push(Popup.confirmExchange(accounts, symbols, order, async accepted => {
 					if(!accepted) {
 						ExchangeService.cancelled(order.id);
+						this.sending = false;
 						return;
 					}
 
@@ -470,6 +471,7 @@
 							BalanceService.loadBalancesFor(this.account);
 						}, 1000);
 					}
+					this.sending = false;
 
 				}));
 

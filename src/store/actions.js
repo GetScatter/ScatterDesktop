@@ -16,6 +16,7 @@ import AES from 'aes-oop';
 import PopupService from "../services/PopupService";
 import {Popup} from '../models/popups/Popup'
 import {RUNNING_TESTS} from "../util/TestingHelper";
+import {ipcAsync} from "../util/ElectronHelpers";
 
 export const actions = {
     [Actions.HIDE_BACK_BTN]:({commit}, x) => commit(Actions.HIDE_BACK_BTN, x),
@@ -75,10 +76,11 @@ export const actions = {
         })
     },
 
-    [Actions.SET_SCATTER]:({commit, state}, scatter) => {
+    [Actions.SET_SCATTER]:async ({commit, state}, scatter) => {
         return new Promise(async resolve => {
 
-            StorageService.setScatter(AES.encrypt(scatter.savable(state.seed), state.seed)).then(() => {
+            const seed = await ipcAsync('seed');
+            StorageService.setScatter(AES.encrypt(scatter.savable(seed), seed)).then(() => {
 	            BackupService.createAutoBackup()
             });
 
@@ -101,8 +103,8 @@ export const actions = {
 	    commit(Actions.SET_LANGUAGE, x);
 	    StorageService.setTranslation(x);
     },
-    [Actions.LOAD_LANGUAGE]:({commit}) => commit(Actions.SET_LANGUAGE, StorageService.getTranslation()),
-    [Actions.LOAD_HISTORY]:({commit}) => commit(Actions.LOAD_HISTORY, StorageService.getHistory()),
+    [Actions.LOAD_LANGUAGE]:async ({commit}) => commit(Actions.SET_LANGUAGE, await StorageService.getTranslation()),
+    [Actions.LOAD_HISTORY]:async ({commit}) => commit(Actions.LOAD_HISTORY, await StorageService.getHistory()),
     [Actions.DELTA_HISTORY]:({commit}, x) => {
         commit(Actions.DELTA_HISTORY, x);
         StorageService.deltaHistory(x);

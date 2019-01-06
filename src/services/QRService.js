@@ -7,6 +7,7 @@ import {Popup} from '../models/popups/Popup'
 import AES from 'aes-oop';
 import {store} from '../store/store'
 import Mnemonic from '../util/Mnemonic'
+import {ipcAsync} from "../util/ElectronHelpers";
 
 export default class QRService {
 
@@ -15,7 +16,7 @@ export default class QRService {
 	        if(!pass || !pass.length) {
 		        resolve(QRCode.toDataURL(JSON.stringify({data, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));
 	        } else {
-		        const oldSeed = store.state.seed;
+		        const oldSeed = await ipcAsync('seed');
 		        const newSeed = (await Mnemonic.generateMnemonic(pass, StorageService.getSalt()))[1];
 		        const dData = AES.encrypt(AES.decrypt(data, oldSeed), newSeed);
 		        resolve(QRCode.toDataURL(JSON.stringify({data:dData, salt: StorageService.getSalt()}), {errorCorrectionLevel: 'L'}));

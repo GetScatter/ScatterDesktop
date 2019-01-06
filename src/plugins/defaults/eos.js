@@ -686,7 +686,7 @@ export default class EOS extends Plugin {
 	}
 
 	async signer(payload, publicKey, arbitrary = false, isHash = false){
-		let privateKey = KeyPairService.publicToPrivate(publicKey);
+		let privateKey = await KeyPairService.publicToPrivate(publicKey);
 		if (!privateKey) return;
 
 		if(typeof privateKey !== 'string') privateKey = this.bufferToHexPrivate(privateKey);
@@ -777,12 +777,6 @@ export default class EOS extends Plugin {
 			const data = abi.fromBuffer(typeName, action.data);
 			const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
 			let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
-
-			if(ricardian){
-				const htmlFormatting = {h1:'div class="ricardian-action"', h2:'div class="ricardian-description"'};
-				const signer = action.authorization.length === 1 ? action.authorization[0].actor : null;
-				ricardian = ricardianParser.parse(action.name, data, ricardian, signer, htmlFormatting);
-			}
 
 			if(transaction.hasOwnProperty('delay_sec') && parseInt(transaction.delay_sec) > 0){
 				data.delay_sec = transaction.delay_sec;

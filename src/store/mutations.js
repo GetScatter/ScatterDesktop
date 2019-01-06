@@ -5,7 +5,7 @@ export const mutations = {
     [Mutations.HIDE_BACK_BTN]:(state, x) => state.hideBackButton = x,
     [Mutations.SET_WORKING_SCREEN]:(state, x) => state.workingScreen = x,
     [Mutations.SET_SEARCH_TERMS]:(state, terms) => state.searchTerms = terms,
-    [Mutations.SET_SEED]:(state, seed) => state.seed = seed,
+    [Mutations.SET_SEED]:(state, seed) => null,
     [Mutations.SET_MNEMONIC]:(state, mnemonic) => state.mnemonic = mnemonic,
     [Mutations.SET_SCATTER]:(state, scatter) => state.scatter = scatter,
     [Mutations.PUSH_POPUP]:(state, popup) => state.popups.push(popup),

@@ -64,7 +64,7 @@
 
 		computed:{
 			...mapState([
-				'seed',
+
 			]),
 			...mapGetters([
 				'keypairs',

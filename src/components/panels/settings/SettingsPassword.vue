@@ -51,7 +51,6 @@
         }},
         computed:{
             ...mapState([
-            	'seed',
                 'scatter'
             ])
         },

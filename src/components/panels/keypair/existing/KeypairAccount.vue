@@ -11,10 +11,10 @@
 					<figure class="authority" :class="{'red':authority === 'owner'}" v-for="authority in authorities">{{authority}}</figure>
 				</section>
 				<figure class="identifier" :class="{'mainnet':isMainnet}" @click="openInExplorer">{{account.sendable()}}</figure>
-				<section class="disclaimer less-pad" v-if="!collapsed && authorities.includes('owner') && authorities.includes('active')">
-					{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissions)}}
-					<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle)}}</p>
-				</section>
+				<!--<section class="disclaimer less-pad" v-if="!collapsed && authorities.includes('owner') && authorities.includes('active')">-->
+					<!--{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissions)}}-->
+					<!--<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle)}}</p>-->
+				<!--</section>-->
 			</section>
 			<section class="tokens" @click="$router.push({name:RouteNames.TOKENS, params:{account:account.unique()}})" v-if="account.tokenCount(systemToken)+1 > 0">
 				<section class="total-tokens">

@@ -115,7 +115,7 @@
                                 </section>
                                 <section class="properties" v-if="viewType === VIEW_TYPES.RICARDIAN">
                                     <figure class="collapsed" v-if="!hasRicardianContract(message)">No Ricardian Contract</figure>
-                                    <figure class="ricardian" v-else v-html="message.ricardian"></figure>
+                                    <figure class="ricardian" v-else>{{message.ricardian}}</figure>
                                 </section>
                             </section>
 

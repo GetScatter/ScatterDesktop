@@ -63,19 +63,9 @@
     import Wallets from '../components/panels/home/Wallets';
     import BalanceService from "../services/BalanceService";
     import PriceService from "../services/PriceService";
-    import Token from "../models/Token";
-    import RecurringService from "../services/RecurringService";
-    import HardwareService from "../services/HardwareService";
-    import LanguageService from "../services/LanguageService";
-    import AccountService from "../services/AccountService";
-    import {daysOld} from "../util/DateHelpers";
-    import TokenService from "../services/TokenService";
-    import StorageService from "../services/StorageService";
     import SingletonService from "../services/SingletonService";
     import PopupService from "../services/PopupService";
     import {Popup} from "../models/popups/Popup";
-    import BackendApiService from "../services/BackendApiService";
-    import SoundService from "../services/SoundService";
 
 
     export default {
@@ -129,7 +119,8 @@
             },
             ...mapActions([
             	Actions.LOAD_HISTORY,
-                Actions.LOAD_LANGUAGE
+                Actions.LOAD_LANGUAGE,
+                Actions.SET_SCATTER,
             ])
         },
 
