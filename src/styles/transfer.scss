@@ -200,7 +200,7 @@
           display:block;
           position:fixed;
           right:0;
-          top:170px;
+          top:160px;
           bottom:80px;
           width:40%;
           z-index:-1;
@@ -212,7 +212,7 @@
           content:'';
           display:block;
           position:absolute;
-          top:calc(50% - 7px);
+          top:140px;
           bottom:0;
           left:0;
 
@@ -223,13 +223,6 @@
           border-bottom: $arrow solid transparent;
 
           border-left: $arrow solid #fff;
-        }
-
-        &.upper-arrow {
-
-          &:after {
-            top:140px;
-          }
         }
       }
     }

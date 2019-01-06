@@ -89,7 +89,7 @@ export default class Account {
 
     totalFiatBalance(){
 	    return this.tokens().reduce((acc, x) => {
-	    	acc += parseFloat(x.fiatBalance(false))
+	    	acc += x.fiatBalance(false) ? parseFloat(x.fiatBalance(false)) : 0;
 		    return acc;
 	    }, 0)
     }

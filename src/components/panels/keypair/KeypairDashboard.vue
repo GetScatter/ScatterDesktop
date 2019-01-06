@@ -235,7 +235,7 @@
 
 	.panel-container {
 		position:fixed;
-		top:170px;
+		top:160px;
 		left:0;
 		right:0;
 		bottom:0;

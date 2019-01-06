@@ -131,6 +131,7 @@
 			},
 			shownStates(){
 				if(this.accountsOnly) return [STATES.MINE];
+				if(!this.filteredContacts.length) return [STATES.MINE, STATES.DIRECT];
 				else return STATES;
 			},
 			myAccounts(){
@@ -144,7 +145,7 @@
 						if(!acc.find(x => x.sendable() === account.sendable())) acc.push(account);
 						return acc;
 					}, [])
-					.sort((a,b) => b.systemBalance() - a.systemBalance());
+					.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance());
 
 				return otherAccounts.map(x => ({
 					id:x.unique(),
@@ -240,7 +241,7 @@
 
 	.panel-container {
 		overflow: auto;
-		height: calc(100vh - 170px);
+		height: $win-height;
 		position: relative;
 	}
 

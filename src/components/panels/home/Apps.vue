@@ -39,9 +39,9 @@
 
 								<!-- <p class="description" v-if="getAppData(origin).description.length"><b>{{getAppData(origin).description}}</b></p> -->
 
-								<p class="permissions-type" v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>
-								<p class="permissions-type" v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>
-								<p class="permissions-type" v-if="count === 0">{{getAppData(origin).blockchain}} - {{locale(langKeys.DASHBOARD.APPS.NoPermissions)}}</p>
+								<!--<p class="permissions-type" v-if="count === 1">{{locale(langKeys.DASHBOARD.APPS.LinkPermissionOnly)}}</p>-->
+								<!--<p class="permissions-type" v-if="count > 1">{{locale(langKeys.DASHBOARD.APPS.NPermissions, count)}}</p>-->
+								<!--<p class="permissions-type" v-if="count === 0">{{getAppData(origin).blockchain}} - {{locale(langKeys.DASHBOARD.APPS.NoPermissions)}}</p>-->
 
 							</section>
 
@@ -284,7 +284,7 @@
 				width:50%;
 			}
 
-			$icon-bounds:60px;
+			$icon-bounds:80px;
 
 			.icon-wrapper {
 				width:$icon-bounds;

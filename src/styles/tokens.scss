@@ -2,16 +2,16 @@
 
 .token-panel {
   .panel-container {
-    min-height:calc(100vh - 170px);
+    min-height:$win-height;
     position: relative;
     overflow-y:scroll;
     height:0;
 
     .bg {
       background:$reverse-gradient;
-      min-height:calc(100vh - 170px);
+      min-height:$win-height;
       position:fixed;
-      top:170px;
+      top:160px;
       bottom:0;
       left:0;
       right:0;
@@ -179,6 +179,10 @@
           font-size: 11px;
           margin-top:5px;
           color:#a8a9b0;
+
+          &.lighter {
+            color:rgba(255,255,255,0.4);
+          }
 
           button {
             width:25px;

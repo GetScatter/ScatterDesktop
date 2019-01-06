@@ -89,6 +89,18 @@ export default class Token {
 		}
 	}
 
+	baseTokenPrice(withSymbol = true){
+		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
+			const systemToken = this.network().systemToken();
+			if(this.uniqueWithChain(false) === systemToken.uniqueWithChain(false)) return null;
+			const baseTokenPrice = parseFloat(store.state.prices[systemToken.uniqueWithChain()][store.getters.displayCurrency]);
+			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
+			return `${parseFloat(price/baseTokenPrice).toFixed(10)} ${withSymbol ? systemToken.symbol : ''}`
+		} else {
+			return null;
+		}
+	}
+
 	totalBalance(){
 		if(store.getters.totalBalances.totals.hasOwnProperty(this.uniqueWithChain())){
 			return store.getters.totalBalances.totals[this.uniqueWithChain()];

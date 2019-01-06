@@ -29,15 +29,6 @@
                                     <div>{{account.tokenBalance(token)}} {{token.symbol}}</div>
                                 </figure>
                             </section>
-                            <section class="row unpad">
-                                <figure class="fill pad">
-                                    <section class="row unpad" style="width:50%;">
-                                        <div class="fraction clickable" @click="setFraction('100')">100%</div>
-                                        <div class="fraction clickable" @click="setFraction('1/2')">1/2</div>
-                                        <div class="fraction clickable" @click="setFraction('1/4')">1/4</div>
-                                    </section>
-                                </figure>
-                            </section>
                         </section>
                     </section>
 
@@ -49,6 +40,15 @@
                                 </figure>
                                 <figure class="fill">{{token.name}}</figure>
                                 <figure class="chevron icon-down-open-big"></figure>
+                            </section>
+                            <section class="row unpad">
+                                <figure class="fill pad">
+                                    <section class="row unpad" style="width:50%;">
+                                        <div class="fraction clickable" @click="setFraction('100')">100%</div>
+                                        <div class="fraction clickable" @click="setFraction('50')">50%</div>
+                                        <div class="fraction clickable" @click="setFraction('25')">25%</div>
+                                    </section>
+                                </figure>
                             </section>
                             <section class="row">
                                 <figure class="icon icon-right-outline"></figure>
@@ -201,7 +201,7 @@
 				this.token = history.token.clone();
 				this.changedAmount();
             } else {
-				this.account = this.accounts.filter(x => x.authority !== 'watch').sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
+				this.account = this.accounts.filter(x => x.authority !== 'watch').sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0] || null;
 				const systemTokenUnique = this.account.network().systemToken().uniqueWithChain();
 				const token = this.account.network().systemToken().clone();
 				token.amount = null;
@@ -244,8 +244,8 @@
 				if(!balance) return 0;
 				switch(fraction){
 					case '100': this.token.amount = balance; break;
-					case '1/2': this.token.amount = balance/2; break;
-					case '1/4': this.token.amount = balance/4; break;
+					case '50': this.token.amount = balance/2; break;
+					case '25': this.token.amount = balance/4; break;
 				}
 
 				this.token.amount = parseFloat(this.token.amount).toFixed(this.token.decimals);

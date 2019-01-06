@@ -165,7 +165,7 @@ p {
   }
 
   &.inner {
-    min-height:calc(100vh - 170px);
+    min-height:$win-height;
     display:flex;
     flex-direction: column;
 
@@ -195,7 +195,7 @@ p {
   padding:40px 70px;
 
   &.scroller {
-    max-height:calc(100vh - 170px);
+    max-height:$win-height;
     overflow:auto;
   }
 

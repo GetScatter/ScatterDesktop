@@ -9,7 +9,7 @@
 			<section class="tokens-out">
 
 				<section class="panel">
-					<h5>Exchange from account</h5>
+					<h5>Exchanging</h5>
 
 					<section>
 						<section class="box">
@@ -25,20 +25,8 @@
 									<div>{{account.tokenBalance(token)}} {{token.symbol}}</div>
 								</figure>
 							</section>
-							<section class="row unpad">
-								<figure class="fill pad">
-									<section class="row unpad" style="width:50%;">
-										<div class="fraction clickable" @click="setFraction('100')">100%</div>
-										<div class="fraction clickable" @click="setFraction('1/2')">1/2</div>
-										<div class="fraction clickable" @click="setFraction('1/4')">1/4</div>
-									</section>
-								</figure>
-							</section>
 						</section>
 					</section>
-
-
-					<h5>Amount</h5>
 
 					<section style="max-height: 100px;">
 						<section class="box" :class="{'unclickable':loadingPairs || loadingRate, 'clickable':flatPairs.length}">
@@ -53,6 +41,15 @@
 								</figure>
 								<figure class="fill">{{token.name}}</figure>
 								<figure class="chevron icon-down-open-big"></figure>
+							</section>
+							<section class="row unpad">
+								<figure class="fill pad">
+									<section class="row unpad" style="width:50%;">
+										<div class="fraction clickable" @click="setFraction('100')">100%</div>
+										<div class="fraction clickable" @click="setFraction('50')">50%</div>
+										<div class="fraction clickable" @click="setFraction('25')">25%</div>
+									</section>
+								</figure>
 							</section>
 							<section class="row">
 								<figure class="icon icon-right-outline"></figure>
@@ -79,7 +76,7 @@
 
 				<!-- RIGHT PANEL -->
 				<section class="panel">
-					<h5>Receive</h5>
+					<h5>Receiving</h5>
 
 					<section>
 						<section class="box dark">
@@ -90,10 +87,9 @@
 								<figure class="fill">Fetching Pairs</figure>
 							</section>
 							<section class="row clickable" v-else @click="selectToken('to')">
-								<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}" v-if="flatPairs.length && pair">{{pair ? pair.symbol : ''}}</figure>
-								<!--<figure class="icon" :class="[{'small':pair && pair.symbol.length >= 4}, pair.symbolClass()]">-->
-								<!--<span v-if="!pair.symbolClass()">{{pair.truncatedSymbol()}}</span>-->
-								<!--</figure>-->
+								<figure class="icon" v-if="pair" :class="[{'small':pair && pair.token.symbol.length >= 4}, pair.token.symbolClass()]">
+									<span v-if="!pair.token.symbolClass()">{{pair.token.truncatedSymbol()}}</span>
+								</figure>
 								<figure class="fill">{{flatPairs.length ? pair ? pair.symbol : `Select Pair (${flatPairs.length})` : 'No Available Pairs'}}</figure>
 								<figure class="chevron" :class="{'icon-down-open-big':flatPairs.length > 1, 'icon-lock':flatPairs.length === 1}" v-if="flatPairs.length"></figure>
 								<figure class="chevron icon-cancel" v-if="!flatPairs.length"></figure>
@@ -106,7 +102,7 @@
 								<figure class="fill" v-else>No Rates</figure>
 							</section>
 							<section class="row" v-else>
-								<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}">{{pair ? pair.symbol : '--'}}</figure>
+								<!--<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}">{{pair ? pair.symbol : '&#45;&#45;'}}</figure>-->
 								<figure class="fill">
 									<input v-model="estimatedAmount" :class="{'bad':rate && rate.max && (estimatedAmount > rate.max || estimatedAmount < rate.min)}" :disabled="true" />
 								</figure>
@@ -122,14 +118,17 @@
 						</section>
 					</section>
 
-					<h5>To account</h5>
+					<h5>To</h5>
 
 					<section>
 						<section class="box dark outlined" :class="pair ? 'clickable' : 'unclickable'">
 							<section class="row" style="height:144px; text-align:center;" @click="!pair ? null : selectAccount('to')">
-								<figure class="fill">
-									{{!pair ? 'Select Pair First' : recipient && recipient.length ? recipient : 'Select Recipient'}}
-								</figure>
+								<section style="flex:1;">
+									<div class="small bad" v-if="recipient && recipient.length && !isValidRecipient">Are you sure this is a valid recipient?</div>
+									<figure class="fill">
+										{{!pair ? 'Select Pair First' : recipient && recipient.length ? recipient : 'Select Recipient'}}
+									</figure>
+								</section>
 								<figure class="chevron icon-down-open-big"></figure>
 							</section>
 						</section>
@@ -153,6 +152,7 @@
 	import * as Actions from '../../../store/constants';
 	import TokenSelector from '../../../components/panels/TokenSelector';
 	import ExchangeService from "../../../services/ExchangeService";
+	import PluginRepository from "../../../plugins/PluginRepository";
 	import Account from "../../../models/Account";
 	import PopupService from "../../../services/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
@@ -190,6 +190,12 @@
 				'displayCurrency',
 				'totalBalances',
 			]),
+			isValidRecipient(){
+				if(!this.pair) return true;
+				const plugin = PluginRepository.plugin(this.pair.blockchain);
+				if(!plugin) return true;
+				return plugin.isValidRecipient(this.recipient);
+			},
 			accountTokens(){
 				if(!this.account) return [];
 
@@ -265,7 +271,7 @@
 			estimatedAmount(){
 				if(!this.rate) return 0;
 				if(!this.pair) return 0;
-				return this.rate.rate * this.token.amount;
+				return parseFloat(this.rate.rate * this.token.amount).toFixed(this.pair.token.decimals);
 			},
 			canSend(){
 				return !!this.rate && !!this.pair && !this.sending && this.recipient &&
@@ -306,7 +312,7 @@
 				}
 
 				else {
-					this.account = this.accounts.filter(x => x.authority !== 'watch').sort((a,b) => b.systemBalance() - a.systemBalance())[0] || null;
+					this.account = this.accounts.filter(x => x.authority !== 'watch').sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0] || null;
 					const token = this.account.network().systemToken().clone();
 					token.amount = null;
 					this.token = token;
@@ -346,8 +352,8 @@
 				if(!balance) return 0;
 				switch(fraction){
 					case '100': this.token.amount = balance; break;
-					case '1/2': this.token.amount = balance/2; break;
-					case '1/4': this.token.amount = balance/4; break;
+					case '50': this.token.amount = balance/2; break;
+					case '25': this.token.amount = balance/4; break;
 				}
 
 				this.token.amount = parseFloat(this.token.amount).toFixed(this.token.decimals);

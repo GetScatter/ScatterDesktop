@@ -121,7 +121,7 @@
 
 	.panel-container {
 		overflow-y: auto;
-		height: calc(100vh - 170px);
+		height: $win-height;
 	}
 
 	.custom {

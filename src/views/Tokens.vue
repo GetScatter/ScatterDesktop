@@ -64,9 +64,11 @@
 						</section>
 						<section class="sub" v-if="!token.unusable">{{token.fiatPrice() || '--'}} <b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></section>
 						<section class="sub" v-else>{{token.unusable}}</section>
+						<section class="sub lighter" v-if="token.baseTokenPrice()">{{token.baseTokenPrice()}}</section>
 					</section>
 					<section>
 						<section class="title"><b>{{formatNumber(token.fiatBalance(), true) || '--'}}</b></section>
+						<section class="sub lighter">{{token.network().name}}</section>
 						<section class="sub" v-if="portfolioPercentage(token)">{{portfolioPercentage(token)}}% of portfolio</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:240px;">

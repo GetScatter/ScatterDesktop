@@ -6,8 +6,8 @@ $dark-grey: #525252;
 $mid-dark-grey: #9b9b9b;
 $medium-grey:#b1b1b1;
 $mid-light-grey:#d1d1d1;
-$light-grey: rgba(245,250,252,1);
-$lighter-grey: rgba(245,250,252,0.44);
+$light-grey: #f2f2f2;
+$lighter-grey: #f1f3f5;
 
 $secondary: #61667d;
 $primary:#50556C;
@@ -28,3 +28,5 @@ $breakpoint-mobile:        600px;
 $breakpoint-tablet:        920px;
 $breakpoint-small-desktop: 1200px;
 $breakpoint-large-desktop: 1600px;
+
+$win-height:calc(100vh - 160px);

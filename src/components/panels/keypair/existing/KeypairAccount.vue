@@ -204,7 +204,7 @@
 
 			.identifier {
 				margin-top:14px;
-				font-size: 32px;
+				font-size: 22px;
 				display:table;
 
 				&.mainnet {
