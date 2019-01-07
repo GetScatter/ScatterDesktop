@@ -58,20 +58,18 @@
 					<figure class="icon" @click="goToToken(token)" :class="[{'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]">
 						<span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
 					</figure>
-					<section style="flex:2;">
+					<section>
+						<section class="sub lighter" style="font-size: 9px; margin-bottom:5px;">{{token.network().name}}</section>
 						<section class="title">
-							<b><i class="icon-lock" v-if="token.unusable"></i>{{token.symbol}}</b> {{formatNumber(token.amount, true)}}
+							<b>{{token.symbol}}</b> {{formatNumber(token.amount, true)}}
 						</section>
-						<section class="sub" v-if="!token.unusable">{{token.fiatPrice() || '--'}}</section>
-						<section class="sub" v-else>{{token.unusable}}</section>
-						<section class="sub lighter" v-if="token.baseTokenPrice()">{{token.baseTokenPrice()}}</section>
+						<section class="sub" v-if="token.fiatBalance(false)">{{fiatSymbol(displayCurrency)}} {{formatNumber(token.fiatBalance(false), true) || '--'}}</section>
 					</section>
-					<section style="flex:1.5;">
-						<section class="title"><b>{{formatNumber(token.fiatBalance(), true) || '--'}}</b></section>
-						<section class="sub lighter">{{token.network().name}}</section>
-					</section>
-					<section class="price-movement">
+					<section>
 						<section class="price-movement-bold sub" v-if="!token.unusable"> <b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></section>
+						<section class="sub" v-if="!token.unusable">{{fiatSymbol(displayCurrency)}} {{token.fiatPrice(false) || '--'}}</section>
+						<section class="sub" v-else><i class="icon-lock" style="margin-right:5px;"></i>{{token.unusable}}</section>
+						<section class="sub lighter" v-if="token.baseTokenPrice()">{{token.baseTokenPrice()}}</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:180px;">
 						<!--<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" @click.native="stabilizeToken(token)" />-->
@@ -123,6 +121,8 @@
 			account:null,
 			stablePaths:[],
 			loadingBalances:false,
+
+			fiatSymbol:PriceService.fiatSymbol
 		}},
 		computed:{
 			...mapState([

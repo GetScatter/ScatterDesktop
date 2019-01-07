@@ -133,9 +133,7 @@
 	}
 
 	.list-tokens {
-		width:48%;
-		float:left;
-		margin:0 1%;
+		margin-bottom:20px;
 	}
 
 	.tokens {
@@ -146,7 +144,7 @@
 			cursor: pointer;
 			border-radius:10px;
 			border:1px solid $border-standard;
-			width:100%;
+			width:calc(33.3333% - 10px);
 			margin-bottom:10px;
 			margin-right:10px;
 			display:flex;

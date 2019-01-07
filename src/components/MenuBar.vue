@@ -75,7 +75,7 @@
 		line-height: 80px;
 		width:100%;
 		text-align:center;
-		z-index: 10;
+		z-index: 9999999999;
 		position:absolute;
 		top:0;
 		left:0;

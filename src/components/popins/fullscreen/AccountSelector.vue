@@ -218,11 +218,6 @@
 				Actions.RELEASE_POPUP
 			])
 		},
-		watch:{
-			['recipient'](){
-				this.recipient = this.recipient.trim().toLowerCase();
-			}
-		}
 	}
 </script>
 

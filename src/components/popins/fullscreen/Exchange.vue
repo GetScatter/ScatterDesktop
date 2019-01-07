@@ -280,8 +280,9 @@
 			},
 			canSend(){
 				return !!this.rate && !!this.pair && !this.sending && this.recipient &&
-					this.rate.min <= this.estimatedAmount &&
-					this.rate.max >= this.estimatedAmount && !this.failedConnection
+					(this.rate.min === null || this.rate.min <= this.estimatedAmount) &&
+					(this.rate.max === null || this.rate.max >= this.estimatedAmount) &&
+					!this.failedConnection
 			},
 			flatPairs(){
 				return Object.keys(this.pairs).reduce((acc,key) => {
@@ -431,7 +432,7 @@
 
 				const from = { account:this.account.sendable() };
 				const to = { account:this.recipient };
-				const order = await ExchangeService.order(this.pair.service, this.token, this.pair.symbol, this.token.amount, this.account, to);
+				const order = await ExchangeService.order(this.pair.service, this.token, this.pair.symbol, this.token.amount, from, to);
 
 				if(!order) {
 					this.cantConnect();

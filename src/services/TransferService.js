@@ -20,6 +20,7 @@ export default class TransferService {
     }
 
     static async [Blockchains.EOSIO](params){
+    	params.recipient = params.recipient.toLowerCase();
         return this.baseTransfer(params);
     }
 

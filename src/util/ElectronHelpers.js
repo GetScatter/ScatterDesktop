@@ -13,6 +13,7 @@ const {clipboard, shell} = electron;
 
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
+import IdGenerator from "./IdGenerator";
 
 let popupService;
 const PopupService = () => {
@@ -25,7 +26,7 @@ class proover {
     constructor(){ this.regen(); }
 
     async regen(){
-	    const key = await ecc.PrivateKey.randomKey();
+	    const key = await ecc.PrivateKey.fromSeed(IdGenerator.text(64));
 	    this.wif = key.toWif();
 	    ipcFaF('key', key.toPublic().toString());
     }

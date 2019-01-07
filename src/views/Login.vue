@@ -414,13 +414,13 @@
     #welcome-title {
         opacity:0;
         animation: FadeInWelcome .44s ease-out forwards;
-        animation-delay:1.84s;
+        animation-delay:1.54s;
     }
 
     .welcome-password {
         opacity:0;
         animation: FadeInWelcome .44s ease-out forwards;
-        animation-delay:2.24s;
+        animation-delay:1.75s;
     }
 
     @keyframes dash {
