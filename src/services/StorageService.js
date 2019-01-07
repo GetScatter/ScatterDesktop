@@ -144,6 +144,14 @@ export default class StorageService {
 		return history;
     }
 
+    static async updateHistory(x){
+    	let history = await this.getHistory();
+    	if(history.find(h => h.id === x.id)) history = history.filter(h => h.id !== x.id);
+        history.unshift(x);
+	    const encrypted = AES.encrypt(history, await ipcAsync('seed'));
+	    return historyStorage().set('history', encrypted);
+    }
+
     static async deltaHistory(x){
     	let history = await this.getHistory();
 	    if(x === null) history = [];

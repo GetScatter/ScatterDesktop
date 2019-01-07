@@ -50,6 +50,10 @@ export default class ExchangeService {
 		return timeout(GET(`exchange/stabilize/paths`), []);
 	}
 
+	static async pairable(){
+		return timeout(GET(`exchange/pairable`), []);
+	}
+
 	static watch(history){
 		watchers.push(history);
 		this.checkExchanges();
@@ -64,9 +68,8 @@ export default class ExchangeService {
 			const history = watchers[i];
 			const status = await this.orderStatus(history.orderDetails.id);
 			if(status !== history.status){
-				await store.dispatch(Actions.DELTA_HISTORY, history);
 				history.status = status;
-				await store.dispatch(Actions.DELTA_HISTORY, history);
+				await store.dispatch(Actions.UPDATE_HISTORY, history);
 
 				if(status === 'complete'){
 					SoundService.ding();

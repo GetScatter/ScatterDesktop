@@ -402,6 +402,11 @@
 				if(!pairs) {
 					this.cantConnect();
 				} else {
+
+					Object.keys(pairs).map(type => {
+						pairs[type] = pairs[type].sort((a,b) => b.token.symbolClass() ? 1 : a.token.symbolClass() ? -1 : 0)
+					});
+
 					this.pairs = pairs;
 				}
 

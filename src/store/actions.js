@@ -101,13 +101,17 @@ export const actions = {
     [Actions.NEW_KEY]:({commit}, x) => commit(Actions.NEW_KEY, x),
     [Actions.SET_LANGUAGE]:({commit}, x) => {
 	    commit(Actions.SET_LANGUAGE, x);
-	    StorageService.setTranslation(x);
+	    return StorageService.setTranslation(x);
     },
     [Actions.LOAD_LANGUAGE]:async ({commit}) => commit(Actions.SET_LANGUAGE, await StorageService.getTranslation()),
     [Actions.LOAD_HISTORY]:async ({commit}) => commit(Actions.LOAD_HISTORY, await StorageService.getHistory()),
+    [Actions.UPDATE_HISTORY]:async ({commit}, x) => {
+        await StorageService.updateHistory(x);
+	    commit(Actions.LOAD_HISTORY, await StorageService.getHistory())
+    },
     [Actions.DELTA_HISTORY]:({commit}, x) => {
         commit(Actions.DELTA_HISTORY, x);
-        StorageService.deltaHistory(x);
+        return StorageService.deltaHistory(x);
     },
 
 };

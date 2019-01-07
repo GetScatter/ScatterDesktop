@@ -119,7 +119,7 @@
 			graphValue:null,
 			currencyPrices:{},
 			account:null,
-			stablePaths:[],
+			pairable:[],
 			loadingBalances:false,
 
 			fiatSymbol:PriceService.fiatSymbol
@@ -228,7 +228,7 @@
 				PopupService.push(Popup.setDisplayToken());
 			},
 			async setup(){
-				this.stablePaths = await ExchangeService.stablePaths();
+				this.pairable = await ExchangeService.pairable();
 				this.currencyPrices = await PriceService.getCurrencyPrices();
 				this.priceData = await PriceService.getTimeline();
 				this.loaded = true;
@@ -237,8 +237,8 @@
 			},
 			canStabilize(token){
 				if(token.unusable) return false;
-				if(!this.stablePaths || !this.stablePaths.hasOwnProperty('from')) return false;
-				return this.stablePaths.from.includes(token.uniqueWithChain());
+				if(!this.pairable || !this.pairable.length) return false;
+				return this.pairable.includes(token.uniqueWithChain());
 			},
 			exchangeToken(token){
 				PopupService.push(Popup.exchange({

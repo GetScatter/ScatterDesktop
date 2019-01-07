@@ -213,9 +213,8 @@
 				if(!history) return this.loadingStatus = false;
 				const orderStatus = await ExchangeService.orderStatus(history.orderDetails.id);
 				if(history.status !== orderStatus){
-					await this[Actions.DELTA_HISTORY](history);
 					history.status = orderStatus;
-					await this[Actions.DELTA_HISTORY](history);
+					await this[Actions.UPDATE_HISTORY](history);
 				}
 				this.loadingStatus = false;
 			},
@@ -249,6 +248,7 @@
 			},
 			...mapActions([
 				Actions.DELTA_HISTORY,
+				Actions.UPDATE_HISTORY,
 				Actions.RELEASE_POPUP,
 			])
 		}
