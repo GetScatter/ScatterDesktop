@@ -28,7 +28,7 @@ const quit = () => {
 			quit();
 		}, 100);
 	} else {
-		if(global.appShared.QuitWatcher !== null)
+		if(global && global.appShared && global.appShared.QuitWatcher !== null)
 			global.appShared.QuitWatcher();
 		app.quit();
 	}
