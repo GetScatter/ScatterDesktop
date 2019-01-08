@@ -14,15 +14,6 @@
 					<section v-for="(list, i) in [origins, originsFromSearch]">
 						<section class="item" v-for="(count, origin) in list" :key="origin">
 
-							<section class="actions" v-if="count !== 0">
-								<span class="icon-edit-wrapper" @click="goToPermission(origin)">
-									<i class="icon icon-pencil"></i>
-								</span>
-								<span class="icon-trash-wrapper" @click="removePermissions(origin)">
-									<i class="icon icon-trash"></i>
-								</span>
-							</section>
-
 							<!-- APP ICON -->
 							<section class="icon-wrapper" @click="openApp(origin)">
 								<figure class="icon">
@@ -35,14 +26,16 @@
 								<figure class="title"
 								        @click="openApp(origin)"
 								        :class="{'has-url':getAppData(origin).url.length}">{{getAppData(origin).name}}</figure>
-						        <figure class="app-type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
+						        <figure v-if="getAppData(origin).url.length" class="app-type">{{getAppData(origin).type}}</figure>
+						        <figure v-else class="app-type">{{locale(langKeys.DASHBOARD.APPS.NoMeta)}}</figure>
 							</section>
 
-							<section class="button" v-if="getAppData(origin).url.length">
-								<btn blue="1" :text="locale(langKeys.GENERIC.Open)" v-on:clicked="openApp(origin)" />
-							</section>
-							<section class="button" v-else>
-								<btn disabled="1" :text="locale(langKeys.DASHBOARD.APPS.NoMeta)" />
+							<section class="actions">
+								<div class="button" v-if="getAppData(origin).url.length">
+									<btn :text="locale(langKeys.GENERIC.Open)" v-on:clicked="openApp(origin)" />
+								</div>
+								<btn v-if="count !== 0" :icon="icon-pencil" @click="goToPermission(origin)" />
+								<btn v-if="count !== 0" :icon="icon-trash" @click="removePermissions(origin)" />
 							</section>
 
 						</section>
@@ -181,7 +174,6 @@
 		display:flex;
 		justify-content: center;
 		align-items: center;
-
 		max-width:260px;
 		margin:0 auto;
 		text-align:center;
@@ -191,22 +183,19 @@
 		flex:1;
 		display:flex;
 		flex-direction: column;
+		align-items:center;
 	}
 
 	.list {
-		flex:1;
-		padding:10px 30px 30px;
+		padding:10px;
 		overflow-y: auto;
-		height: 0;
 
 		.item {
-			padding:20px 0 5px;
-			display:flex;
-			flex-direction: column;
-			width:25%;
-			height:220px;
-			margin-bottom:20px;
-			text-align:center;
+			padding:10px 20px;
+			display:table;
+			width:100%;
+			margin-bottom:2px;
+			text-align:left;
 			float:left;
 			position:relative;
 			background-color:white;
@@ -214,66 +203,30 @@
 			transition:all 0.12s ease-in-out;
 			border-radius:12px;
 
-			&:hover {
-				border-color:$lighter-grey;
+			section {
+				display:table-cell;
+				vertical-align:middle;
 			}
 
-			&:hover .actions {
-				display:block;
-				opacity:1;
-			} 
-
-			&:hover .button {
-				opacity:1;
-			} 
+			&:hover {
+				background:$lighter-grey;
+			}
 
 			.actions {
-				position:absolute;
-				top:-10px;
-				left:-10px;
-				right:-10px;
-				display:none;
-				opacity:0;
-				transition:all 0.12s ease-in-out;
+				text-align:right;
 
-				.icon-edit-wrapper {
-					left:20px;
-					position:absolute;
+				button {
+					float:right;
+					margin-left:6px;
+					width:auto;
 				}
-
-				.icon-trash-wrapper {
-					right:20px;
-					position:absolute;
-				}
-
-				span {
-					cursor: pointer;
-					font-size: 16px;
-					color:$dark-grey;
-				    padding: 6px;
-				    font-weight: normal;
-				    text-decoration: none;
-				    border-radius: 2px;
-				    margin-top: 20px;
-					border:1px solid rgba(0,0,0,.2);
-
-					&:hover {
-						color:#fff;
-						background:$blue-grad;
-						border:1px solid transparent;
-					}
+				.button {
+					float:right;
+					width:auto;
 				}
 			}
 
-			@media(min-width:$breakpoint-large-desktop){
-				width:25%;
-			}
-
-			@media(max-width:$breakpoint-small-desktop){
-				width:33.3333%;
-			}
-
-			@media(max-width:$breakpoint-tablet){
+			@media(min-width:$breakpoint-small-desktop){
 				width:50%;
 			}
 
@@ -283,7 +236,6 @@
 				width:$icon-bounds;
 				height:$icon-bounds;
 				position: relative;
-				margin: 0 auto 10px;
 				border-radius: 60px;
 				overflow: hidden;
 				cursor: pointer;
@@ -306,12 +258,10 @@
 			.app-type {
 				color:$dark-grey;
 				font-size:11px;
-				text-align:center;
 				margin-bottom:6px;
 			}
 
 			.details {
-				flex:1;
 				padding:0 15px;
 				position:relative;
 
@@ -347,16 +297,6 @@
 
 			}
 
-			.button {
-				align-items: center;
-				transition:all 0.12s ease-in-out;
-				opacity:0.14;
-				margin-bottom:20px;
-
-				button {
-					width:auto;
-				}
-			}
 		}
 	}
 

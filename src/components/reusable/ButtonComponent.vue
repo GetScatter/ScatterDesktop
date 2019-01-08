@@ -20,19 +20,20 @@
 
     button {
         cursor: pointer;
-        height:38px;
-        padding:0 12px;
-        width:100%;
+        height:34px;
+        padding:0 15px;
+        display:inline-block;
         outline:0;
-        border:1px solid #dfe0e1;
-        background:#fff;
-        border-radius:3px;
-        color:$primary;
+        width:100%;
+        border:0px;
+        background:rgba(252,252,255,0.88);
+        border-radius:4px;
+        color:$link;
         font-size: 16px;
         font-weight: normal;
         max-width:360px;
 		line-height:0;
-
+        transition:all 0.22s ease-in-out;
 
 
         &.big {
@@ -50,44 +51,48 @@
         }
 
         &.blue {
-            border:1px solid rgba(0,0,0,0);
             color:#fff;
-            background:$primary;
+            background:$link;
+            border-color:$link;
             font-weight: normal;
-            background-image: $blue-grad;
+
+            &:hover {
+                background-color:darken($link,5%);
+            }
         }
 
         &.red {
-            border:1px solid $red;
+            background:rgba( $red, .22 );
             color:$red;
+            &:hover {
+                background:rgba( $red, .92 );
+                color:white;
+            }
         }
 
         &:hover {
-            border:1px solid rgba(0,0,0,0.22);
+            background-color:darken(rgba(252,252,255,0.88),2%);
         }
 
         &:not(:disabled){
             &:active {
-                border:1px solid $primary;
-                background:rgba(0,0,0,0.04);
+                outline:1px;
 
                 &.blue {
-                    color:$primary;
+                    color:white;
                 }
 
                 &.red {
-                    border:1px solid $red;
-                    background:$red;
-                    background-image: $red-gradient;
+                    background:rgba( $red, .82 );
                     color:#fff;
                 }
             }
         }
 
         &:disabled {
-            border:1px solid $light-grey;
-            background: $lighter-grey;
+            background: darken($lighter-grey, 2%) !important;
             color: #ababab;
+            opacity:0.6;
             cursor: not-allowed;
         }
 
