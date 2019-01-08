@@ -25,6 +25,7 @@
 		align-items: center;
 		padding:0 0 0 30px;
 		border-bottom:1px solid #dfe0e1;
+		background:white;
 
 		.logo {
 			-webkit-app-region: drag;

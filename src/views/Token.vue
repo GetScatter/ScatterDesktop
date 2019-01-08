@@ -26,7 +26,7 @@
 						<section class="sub">{{formatNumber(balance.token.amount, true)}} {{balance.token.symbol}}</section>
 					</section>
 					<section>
-						<section class="title"><b>derp {{formatNumber(balance.token.fiatBalance(), true) || '...'}}</b></section>
+						<section class="title"><b>{{formatNumber(balance.token.fiatBalance(), true) || '...'}}</b></section>
 						<section class="sub">{{balance.token.network().name}}</section>
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">

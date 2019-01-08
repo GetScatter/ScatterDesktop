@@ -201,6 +201,7 @@ p {
       bottom:0;
       left:0;
       right:0;
+      background:$lighter-grey;
     }
   }
 }
@@ -507,12 +508,13 @@ label {
 }
 
 .action-bar {
-  height:120px;
+  height:80px;
   width:100%;
   display:flex;
   justify-content: space-between;
   align-items: center;
   padding:0 30px;
+  background:#4a4f65;
 
   &:not(.bottom){
     border-bottom:1px solid $border-standard;
@@ -534,7 +536,6 @@ label {
 
 .details {
   .title {
-    color:$primary;
     font-weight: normal;
     font-size:16px;
   }

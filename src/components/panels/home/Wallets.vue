@@ -1,7 +1,7 @@
 <template>
 	<section class="vault">
 		<SearchBar style="margin-left:-10px;" :placeholder="locale(langKeys.DASHBOARD.KEYS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
-		<section class="list" style="background:rgba(0,0,0,0.02);">
+		<section class="list wallet-list">
 			<section class="item" v-for="keypair in vaultEntries" @click="goToKeypair(keypair.id)">
 				<section class="details">
 					<figure class="title"><b>{{keypair.name}}</b></figure>
@@ -67,6 +67,10 @@
 		padding:10px 30px;
 		overflow-y: auto;
 		height: 0;
+
+		&.wallet-list {
+			background-color:$lighter-grey;
+		}
 
 		.item {
 			padding:20px 0 0;

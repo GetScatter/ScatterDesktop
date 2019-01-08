@@ -23,8 +23,8 @@
                     </router-link>
                 </section>
                 <section class="actions" v-if="accounts.length">
-                    <btn v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
-                    <btn v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
+                    <btn blue="1" v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
+                    <btn blue="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn blue="1" v-on:clicked="openExchange" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
                 </section>
             </section>
@@ -140,7 +140,8 @@
 
     .actions {
         button {
-            font-weight: normal;    
+            font-weight: normal;  
+            margin-left:8px;  
         }
         .separator {
             margin-left:12px;
@@ -156,6 +157,8 @@
 
     .token-buttons {
         display:flex;
+        color: rgba(255,255,255,0.9);
+
         button {
 
             &:not(:first-child){
@@ -221,7 +224,7 @@
                 .dot {
                     width:$dot;
                     height:$dot;
-                    background:$primary;
+                    background:white;
                     border-radius:50%;
                     margin-right:3px;
                 }
