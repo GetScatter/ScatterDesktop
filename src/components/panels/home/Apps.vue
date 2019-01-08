@@ -203,8 +203,8 @@
 			padding:20px 0 5px;
 			display:flex;
 			flex-direction: column;
-			width:33.33333%;
-			height:280px;
+			width:25%;
+			height:220px;
 			margin-bottom:20px;
 			text-align:center;
 			float:left;
@@ -277,7 +277,7 @@
 				width:50%;
 			}
 
-			$icon-bounds:120px;
+			$icon-bounds:72px;
 
 			.icon-wrapper {
 				width:$icon-bounds;
