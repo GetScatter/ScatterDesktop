@@ -36,8 +36,9 @@
 
 
         &.big {
-            height:48px;
-            font-size: 13px;
+            height:60px;
+            font-size: 18px;
+            padding:0 24px;
         }
 
         &.small {

@@ -28,7 +28,6 @@
 								<figure class="icon">
 									<img v-if="getAppData(origin).hasOwnProperty('img')" :src="getAppData(origin).img" />
 								</figure>
-								<figure class="app-type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
 							</section>
 
 							<!-- APP DETAILS -->
@@ -36,6 +35,7 @@
 								<figure class="title"
 								        @click="openApp(origin)"
 								        :class="{'has-url':getAppData(origin).url.length}">{{getAppData(origin).name}}</figure>
+						        <figure class="app-type" v-if="getAppData(origin).type.length">{{getAppData(origin).type}}</figure>
 							</section>
 
 							<section class="button" v-if="getAppData(origin).url.length">
@@ -203,18 +203,19 @@
 			padding:20px 0 5px;
 			display:flex;
 			flex-direction: column;
-			width:25%;
-			height:200px;
+			width:33.33333%;
+			height:280px;
 			margin-bottom:20px;
 			text-align:center;
 			float:left;
 			position:relative;
 			background-color:white;
+			border:1px solid white;
 			transition:all 0.12s ease-in-out;
 			border-radius:12px;
 
 			&:hover {
-				background-color:$lighter-grey;
+				border-color:$lighter-grey;
 			}
 
 			&:hover .actions {
@@ -228,9 +229,9 @@
 
 			.actions {
 				position:absolute;
-				top:0;
-				left:0;
-				right:0;
+				top:-10px;
+				left:-10px;
+				right:-10px;
 				display:none;
 				opacity:0;
 				transition:all 0.12s ease-in-out;
@@ -264,6 +265,10 @@
 				}
 			}
 
+			@media(min-width:$breakpoint-large-desktop){
+				width:25%;
+			}
+
 			@media(max-width:$breakpoint-small-desktop){
 				width:33.3333%;
 			}
@@ -272,25 +277,21 @@
 				width:50%;
 			}
 
-			$icon-bounds:80px;
+			$icon-bounds:120px;
 
 			.icon-wrapper {
 				width:$icon-bounds;
 				height:$icon-bounds;
 				position: relative;
 				margin: 0 auto 10px;
-				border-radius: 3px;
+				border-radius: 60px;
 				overflow: hidden;
 				cursor: pointer;
 
 				.icon {
 					width:$icon-bounds;
 					height:$icon-bounds;
-					background-image: url(../../../assets/no_logo.png);
-					background-repeat: no-repeat;
-					background-size: contain;
-					background-position: 50%;
-					background-color: #f7f7f7;
+					background-color: darken($lighter-grey,2%);
 					overflow: hidden;
 
 					img {
@@ -300,35 +301,14 @@
 					}
 				}
 
-				.app-type {
-					color:#fff;
-					position:absolute;
-					left:0;
-					right:0;
-					line-height:15px;
-					font-size:9px;
-					padding:4px;
-					background:$reverse-gradient;
-					text-align:center;
-					opacity:0;
-					transition:0.12s all ease-in-out;
-					visibility: hidden;
-					transition-property: top, bottom, opacity, visibility;
-					box-shadow:0 -4px 10px rgba(0,0,0,0.2), 0 -1px 1px rgba(0,0,0,0.2);
-				}
-
-				.app-type { bottom:-20px; }
 			}
 
-			&:hover {
-				.app-type {
-					opacity:1;
-					visibility: visible;
-					bottom:0;
-				}
+			.app-type {
+				color:$dark-grey;
+				font-size:11px;
+				text-align:center;
+				margin-bottom:6px;
 			}
-
-
 
 			.details {
 				flex:1;
