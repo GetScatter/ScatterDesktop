@@ -219,10 +219,20 @@
 					float:right;
 					margin-left:6px;
 					width:auto;
+					opacity:0;
 				}
 				.button {
 					float:right;
 					width:auto;
+					button {
+						opacity:1;
+					}
+				}
+			}
+
+			&:hover {
+				.actions button {
+					opacity:1;
 				}
 			}
 
