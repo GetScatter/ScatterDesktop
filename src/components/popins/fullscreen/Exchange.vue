@@ -123,20 +123,13 @@
 						</section>
 					</section>
 
-					<h5>To</h5>
+					<h5 v-if="pair">To</h5>
 
 					<section>
-						<section class="box dark outlined" :class="pair ? 'clickable' : 'unclickable'">
-							<section class="row" style="height:144px; text-align:center;" @click="!pair ? null : selectAccount('to')">
-								<section style="flex:1;">
-									<div class="small bad" v-if="recipient && recipient.length && !isValidRecipient">Are you sure this is a valid recipient?</div>
-									<figure class="fill">
-										{{!pair ? 'Select Pair First' : recipient && recipient.length ? recipient : 'Select Recipient'}}
-									</figure>
-								</section>
-								<figure class="chevron icon-down-open-big"></figure>
-							</section>
-						</section>
+						<Recipient v-if="pair" :account="account"
+						           :recipient="recipient"
+						           v-on:change="x => recipient = x"
+						           v-on:select="selectAccount" />
 					</section>
 				</section>
 
@@ -156,6 +149,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import TokenSelector from '../../../components/panels/TokenSelector';
+	import Recipient from '../../../components/panels/transfer/Recipient';
 	import ExchangeService from "../../../services/ExchangeService";
 	import PluginRepository from "../../../plugins/PluginRepository";
 	import Account from "../../../models/Account";
@@ -165,11 +159,13 @@
 	import BalanceService from "../../../services/BalanceService";
 	import HistoricExchange from "../../../models/histories/HistoricExchange";
 	import ObjectHelpers from "../../../util/ObjectHelpers";
+	import TokenService from "../../../services/TokenService";
 
 	export default {
 		props:['popin'],
 		components:{
-			TokenSelector
+			TokenSelector,
+			Recipient
 		},
 		data () {return {
 			account:null,
@@ -253,6 +249,7 @@
 					}
 
 					return Object.keys(this.pairs).map(title => {
+						if(!this.pairs[title][0]) return;
 						return {
 							title:titleFormatter(title, this.pairs[title][0]),
 							active:this.pair ? this.pair.id : null,
@@ -268,7 +265,7 @@
 								}
 							})),
 						}
-					})
+					}).filter(x => !!x);
 				}
 
 				return [];
@@ -279,7 +276,11 @@
 				return parseFloat(this.rate.rate * this.token.amount).toFixed(this.pair.token.decimals);
 			},
 			canSend(){
-				return !!this.rate && !!this.pair && !this.sending && this.recipient &&
+				return !!this.rate &&
+					!!this.pair &&
+					!this.sending &&
+					this.recipient &&
+					this.token.amount > 0 &&
 					(this.rate.min === null || this.rate.min <= this.estimatedAmount) &&
 					(this.rate.max === null || this.rate.max >= this.estimatedAmount) &&
 					!this.failedConnection
@@ -474,6 +475,14 @@
 					}).catch(() => false);
 
 					if(sent){
+						if(!TokenService.hasToken(this.pair.token)){
+							if(this.pair.token.contract && !this.pair.token.contract.length) {
+								await TokenService.addToken(this.pair.token, false, false);
+							}
+						}
+
+
+
 						const history = new HistoricExchange(this.account, this.recipient, this.token, this.pair, order, TransferService.getTransferId(sent, this.token.blockchain));
 						this[Actions.DELTA_HISTORY](history);
 

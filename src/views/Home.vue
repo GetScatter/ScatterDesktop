@@ -23,9 +23,9 @@
                     </router-link>
                 </section>
                 <section class="actions" v-if="accounts.length">
-                    <btn blue="1" v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
                     <btn blue="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
                     <btn blue="1" v-on:clicked="openExchange" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
+                    <btn colorless="1" v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
                 </section>
             </section>
 
@@ -121,7 +121,6 @@
                 Actions.SET_SCATTER,
             ])
         },
-
         created(){
 
         },

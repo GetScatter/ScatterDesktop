@@ -20,12 +20,11 @@
 
     button {
         cursor: pointer;
-        height:34px;
-        padding:0 15px;
+        height:38px;
+        padding:0 15px 0;
         display:inline-block;
         outline:0;
         width:100%;
-        border:0px;
         background:rgba(252,252,255,0.88);
         border-radius:4px;
         color:$link;
@@ -33,8 +32,8 @@
         font-weight: normal;
         max-width:360px;
 		line-height:0;
-        transition:all 0.22s ease-in-out;
-
+        transition:all 0.12s ease-in-out;
+        border:1px solid $link-border;
 
         &.big {
             height:60px;
@@ -53,8 +52,8 @@
         &.blue {
             color:#fff;
             background:$link;
-            border-color:$link;
             font-weight: normal;
+            border:0px;
 
             &:hover {
                 background-color:darken($link,5%);
@@ -64,6 +63,8 @@
         &.red {
             background:rgba( $red, .22 );
             color:$red;
+            border:0px;
+
             &:hover {
                 background:rgba( $red, .92 );
                 color:white;
@@ -112,6 +113,10 @@
 	        border:1px solid rgba(255,255,255,0.1);
 	        color:#fff;
 	        background: transparent;
+
+            &:hover {
+                background-color:rgba(0,0,0,0.08);
+            }
 
         }
 

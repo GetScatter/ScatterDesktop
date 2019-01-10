@@ -16,7 +16,7 @@ const filterOutToken = (scatter, token) => {
 
 export default class TokenService {
 
-    static async addToken(token, blacklist = false){
+    static async addToken(token, blacklist = false, showNotification = true){
 	    const scatter = store.state.scatter.clone();
 
 	    // Never adding system tokens.
@@ -40,7 +40,7 @@ export default class TokenService {
         else scatter.settings.blacklistTokens.unshift(token);
 
         await store.dispatch(Actions.SET_SCATTER, scatter);
-        PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TokenAdded), 'check'));
+        if(showNotification) PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TokenAdded), 'check'));
         return true;
     }
 
@@ -56,6 +56,14 @@ export default class TokenService {
 		    filterOutToken(scatter, token);
 		    store.dispatch(Actions.SET_SCATTER, scatter);
         }))
+    }
+
+    static hasToken(token){
+    	const scatter = store.state.scatter.clone();
+
+    	return !!store.getters.fullTotalBalances.totals[token.unique()] ||
+		    !!scatter.settings.tokens.find(x => x.unique() === token.unique()) ||
+		    !!scatter.settings.blacklistTokens.find(x => x.unique() === token.unique());
     }
 
     static async setDisplayCurrency(ticker){

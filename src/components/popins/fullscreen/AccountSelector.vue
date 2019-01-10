@@ -14,7 +14,7 @@
 			</section>
 
 			<section class="limit">
-				<section class="filters" v-if="state !== STATES.DIRECT">
+				<section class="filters">
 					<SearchBar style="flex:2; margin-left:-30px;" short="1"
 					           :placeholder="locale(langKeys.GENERIC.Search)"
 					           v-on:terms="x => searchTerms = x" />
@@ -23,26 +23,6 @@
 					     :selected="networkFilter"
 					     v-on:changed="x => networkFilter = x"
 					     :parser="x => x ? x.name : 'All Networks'" />
-				</section>
-
-				<section class="panel direct" v-if="state === STATES.DIRECT">
-					<img src="../../../assets/scrooge_mcpig.png" />
-					<p style="flex:1;">
-						You can enter an address ( recipient ) manually below, and even add it to your list of contacts so that you
-						can easily use it later.
-					</p>
-
-					<section class="bottom-fixed">
-						<section class="split-inputs">
-							<cin :placeholder="locale(langKeys.GENERIC.Address)" medium="1" style="flex:2; margin-bottom:0;"
-							     :text="recipient" v-on:changed="x => recipient = x" />
-							<cin :placeholder="locale(langKeys.TRANSFER.RECIPIENT.ContactNamePlaceholder)" medium="1" style="flex:1; margin-bottom:0;"
-							     :text="contactName" v-on:changed="x => contactName = x" />
-
-							<btn text="Add Contact" v-on:clicked="addContact" big="1" style="width:auto; padding:0 20px;" />
-						</section>
-						<btn text="Use this Address" v-on:clicked="returnResult(recipient)" big="1" blue="1" />
-					</section>
 				</section>
 
 				<section class="panel" v-if="state === STATES.MINE">
@@ -82,7 +62,6 @@
 	const STATES = {
 		MINE:'mine',
 		CONTACTS:'contacts',
-		DIRECT:'direct',
 	}
 
 	export default {
@@ -98,7 +77,6 @@
 			networkFilter:null,
 
 			recipient:'',
-			contactName:'',
 		}},
 		computed:{
 			...mapState([
@@ -130,8 +108,7 @@
 				return this.popin.data.props.hideWatch;
 			},
 			shownStates(){
-				if(this.accountsOnly) return [STATES.MINE];
-				if(!this.filteredContacts.length) return [STATES.MINE, STATES.DIRECT];
+				if(this.accountsOnly || !this.filteredContacts.length) return [STATES.MINE];
 				else return STATES;
 			},
 			myAccounts(){
@@ -149,15 +126,16 @@
 
 				return otherAccounts.map(x => ({
 					id:x.unique(),
+					sub:`${x.network().name} - ${x.keypair().name}`,
 					title:x.sendable(),
-					description:`${x.network().name} - ${x.tokenBalance(x.network().systemToken())} ${x.network().systemToken().symbol}`
+					description:`${x.tokenBalance(x.network().systemToken())} ${x.network().systemToken().symbol}`
 				})).filter(x => JSON.stringify(x).indexOf(this.searchTerms) > -1);
 			},
 			formattedContacts(){
 				const contacts = this.contacts.filter(x => {
 					if(!this.blockchain) return true;
 					const plugin = PluginRepository.plugin(this.blockchain);
-					if(!plugin) return;
+					if(!plugin) return true;
 					return plugin.isValidRecipient(x.recipient);
 				});
 
@@ -176,9 +154,7 @@
 			},
 		},
 		created(){
-			if(!this.accountsOnly){
-				this.state = STATES.DIRECT;
-			}
+
 		},
 		methods:{
 			returnResult(id, isAccount = false){
@@ -199,20 +175,11 @@
 				switch(s){
 					case STATES.MINE: return 'My Accounts';
 					case STATES.CONTACTS: return 'Contacts';
-					case STATES.DIRECT: return 'Send Directly';
-				}
-			},
-			async addContact(){
-				if(!this.recipient.length) return;
-				if(!this.contactName.length) return;
-				if(await ContactService.add(this.recipient, this.contactName)){
-					this.state = STATES.CONTACTS;
 				}
 			},
 			async removeContact(item){
 				const contact = this.contacts.find(x => x.name === item.title);
 				await ContactService.remove(contact);
-				if(!this.contacts.length) this.state = STATES.DIRECT;
 			},
 			...mapActions([
 				Actions.RELEASE_POPUP

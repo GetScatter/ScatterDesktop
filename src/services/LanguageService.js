@@ -1,6 +1,3 @@
-import {blockchainName, Blockchains, BlockchainsArray} from "../models/Blockchains";
-import PluginRepository from "../plugins/PluginRepository";
-import Explorer from "../models/Explorer";
 import {store} from "../store/store";
 import * as Actions from "../store/constants";
 import {GET} from "./BackendApiService";
@@ -17,12 +14,14 @@ export default class LanguageService {
 	}
 
 	static getLanguage(name){
-		return GET(`languages?name=${name}`).then(r => r.json())
+		return GET(`languages?name=${name}`)
 		.then(res => {
+			console.log(this.validateLanguage(res), res);
 			if(!this.validateLanguage(res)) return;
 			return res;
 		})
 		.catch(err => {
+			console.log('err', err);
 			return null;
 		})
 	}

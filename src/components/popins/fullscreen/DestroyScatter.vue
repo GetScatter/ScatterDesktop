@@ -71,7 +71,7 @@
 
 	.panel-container {
 		overflow: auto;
-		height: calc(100vh - 250px);
+		height: calc(100vh - 240px);
 	}
 
 	.auto-vote {

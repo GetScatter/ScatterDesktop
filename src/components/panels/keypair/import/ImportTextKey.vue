@@ -4,10 +4,10 @@
 		     :label="locale(langKeys.ADD_KEYS.IMPORT_TEXT.KeyLabel)"
 		     :placeholder="locale(langKeys.ADD_KEYS.IMPORT_TEXT.KeyPlaceholder)"
 		     :dynamic-button="eyeIcon"
-		     v-on:dynamic="toggleKeyInputType"
+		     v-on:dynamic="toggleKeyInputType" focus="1"
 		     :text="key" v-on:changed="x => key = x" />
 
-		<btn :text="locale(langKeys.GENERIC.Import)" blue="1" big="1" style="max-width:100%;" />
+		<btn :text="locale(langKeys.GENERIC.Import)" @click.native="imported" blue="1" big="1" style="max-width:100%;" />
 	</section>
 </template>
 
@@ -69,6 +69,10 @@
 					this.$emit('keypair', keypair);
 					this.importing = false;
 				}, 1);
+			},
+
+			imported(){
+				this.error = 'Invalid Key.'
 			}
 		},
 		watch:{

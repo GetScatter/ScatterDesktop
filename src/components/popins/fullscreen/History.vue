@@ -31,7 +31,7 @@
 							<section class="title" style="text-transform: capitalize">
 								<b>{{item.type}}</b>
 							</section>
-							<section class="sub"><b>{{item.from.sendable()}}</b> <i class="icon-right-outline"></i> <b>{{item.to}}</b></section>
+							<section class="sub"><b style="font-size: 11px;">{{item.from.sendable()}}</b> <i class="icon-right-outline"></i> <b style="font-size: 11px;">{{item.to}}</b></section>
 							<section class="sub"><i>{{item.from.network().name}}</i> <i class="icon-right-outline"></i> <i>{{new Date(item.timestamp).toLocaleString()}}</i></section>
 							<section class="sub txid" style="font-size: 9px; cursor:pointer;" @click="openInExplorer(item)" v-if="item.txid">{{item.txid}}</section>
 						</section>

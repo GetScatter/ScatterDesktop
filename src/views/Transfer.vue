@@ -84,24 +84,17 @@
                     <h5>Recipient</h5>
 
                     <section>
-                        <section class="box dark clickable outlined">
-                            <section class="row" style="height:144px; text-align:center;" @click="selectAccount('to')">
-                                <section style="flex:1;">
-                                    <div class="small bad" v-if="recipient && recipient.length && !isValidRecipient">Are you sure this is a valid recipient?</div>
-                                    <figure class="fill">
-                                        {{recipient && recipient.length ? recipient : 'Select Recipient'}}
-                                    </figure>
-                                </section>
-                                <figure class="chevron icon-down-open-big"></figure>
-                            </section>
-                        </section>
+                        <Recipient :account="account"
+                                   :recipient="recipient"
+                                   v-on:change="x => recipient = x"
+                                   v-on:select="selectAccount" />
                     </section>
 
                     <section style="max-height: 150px;" v-if="token && token.blockchain === 'eos'">
                         <label>Memo</label>
                         <section class="box dark outlined">
                             <section class="row">
-                                <input style="font-size: 14px; height:25px;" v-model="memo" />
+                                <input placeholder="Optional Memo" style="font-size: 14px; height:25px;" v-model="memo" />
                             </section>
                         </section>
                     </section>
@@ -124,6 +117,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../store/constants';
 	import TokenSelector from '../components/panels/TokenSelector';
+	import Recipient from '../components/panels/transfer/Recipient';
 	import PluginRepository from "../plugins/PluginRepository";
 	import ExchangeService from "../services/ExchangeService";
 	import Account from "../models/Account";
@@ -132,10 +126,13 @@
 	import TransferService from "../services/TransferService";
 	import BalanceService from "../services/BalanceService";
 	import PasswordService from "../services/PasswordService";
+	import {Blockchains} from "../models/Blockchains";
+	import ContactService from "../services/ContactService";
 
 	export default {
 		components:{
-			TokenSelector
+			TokenSelector,
+			Recipient
 		},
 		data () {return {
 			account:null,
@@ -155,10 +152,8 @@
 				'accounts',
 				'displayCurrency',
 				'totalBalances',
+                'contacts',
 			]),
-			isValidRecipient(){
-				return PluginRepository.plugin(this.token.blockchain).isValidRecipient(this.recipient);
-			},
 
 			accountTokens(){
 				if(!this.account) return [];
@@ -196,7 +191,7 @@
 			},
 			canSend(){
 				return !this.sending && this.recipient && this.recipient.length && this.token && this.token.amount > 0;
-            }
+            },
 		},
 		created(){
 			const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;

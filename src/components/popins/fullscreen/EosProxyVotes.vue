@@ -10,13 +10,27 @@
 				<br>
 			</section>
 
-			<section class="auto-vote" v-if="!isHardware">
-				<section class="switch" @click="autoVote = !autoVote">
-					<figure class="dot" :class="{'disabled':!autoVote}"></figure>
+			<section v-if="!isHardware">
+
+				<section v-if="hasRecurring">
+					<FlatList small="1" style="max-width:500px; margin:0 auto;"
+					          icon="icon-cancel"
+					          :selected="hasRecurring.account"
+					          :items="[hasRecurring].map(x => ({
+					id:x.account,
+					title:x.proxy,
+				}))"
+					          v-on:action="unrevote" />
 				</section>
-				<section class="details">
-					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyTitle)}}</figure>
-					<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyDesc)}}</p>
+
+				<section class="auto-vote">
+					<section class="switch" @click="autoVote = !autoVote">
+						<figure class="dot" :class="{'disabled':!autoVote}"></figure>
+					</section>
+					<section class="details">
+						<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyTitle)}}</figure>
+						<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyDesc)}}</p>
+					</section>
 				</section>
 				<br>
 			</section>
@@ -77,12 +91,12 @@
 				if(PluginRepository.plugin(Blockchains.EOSIO).isEndorsedNetwork(this.account.network())){
 					this.proxies = await ProxyService.getProxyList();
 				}
+			});
 
-			})
 		},
 		computed:{
 			...mapState([
-
+				'scatter'
 			]),
 			...mapGetters([
 				'keypairs',
@@ -101,12 +115,18 @@
 			},
 			isHardware(){
 				return !!this.account.keypair().external
+			},
+			hasRecurring(){
+				return this.scatter.recurring.proxies.find(x => x.account === this.account.identifiable())
 			}
 		},
 		methods:{
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
 				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			unrevote(){
+				RecurringService.removeProxies([this.account]);
 			},
 			async setProxy(){
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
@@ -139,7 +159,7 @@
 
 	.panel-container {
 		overflow: auto;
-		height: calc(100vh - 250px);
+		height: calc(100vh - 240px);
 	}
 
 	.auto-vote {

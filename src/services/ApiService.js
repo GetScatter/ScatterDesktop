@@ -16,7 +16,7 @@ import PluginRepository from '../plugins/PluginRepository';
 import {blockchainName, Blockchains, BlockchainsArray} from '../models/Blockchains';
 
 import Keypair from '../models/Keypair';
-import Identity, {LocationInformation} from '../models/Identity';
+import Identity, {IdentityRequiredFields, LocationInformation} from '../models/Identity';
 import Account from '../models/Account';
 import Error from '../models/errors/Error'
 import Network from '../models/Network'
@@ -171,6 +171,8 @@ export default class ApiService {
 
 			const {payload} = request;
 			const {origin, requiredFields, blockchain} = payload;
+			console.log('requiredFields', requiredFields);
+
 
 			const possibleId = PermissionService.identityFromPermissions(origin, false);
 			if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});

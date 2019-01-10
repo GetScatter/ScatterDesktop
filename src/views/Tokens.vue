@@ -73,7 +73,7 @@
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:180px;">
 						<!--<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" @click.native="stabilizeToken(token)" />-->
-						<btn v-if="canStabilize(token)" style="width:auto;" text="Exchange" @click.native="exchangeToken(token)" />
+						<btn v-if="canStabilize(token)" style="width:auto;" blue="1" text="Exchange" @click.native="exchangeToken(token)" />
 						<figure @click="goToToken(token)" class="chevron icon-right-open-big"></figure>
 					</section>
 				</section>
@@ -262,105 +262,106 @@
 				return totaled;
 			},
 			async setupGraph(){
+				try {
+					const labels = [];
+					const values = [];
+					let totaled = this.getTotaled();
 
-				const labels = [];
-				const values = [];
-				let totaled = this.getTotaled();
+					const onlyShowingSystemAndUntouchable = (() => {
+						if(this.calculatedBalances.length !== 2) return false;
+						const tokenUnique = this.calculatedBalances[0].uniqueWithChain();
+						return this.calculatedBalances.every(x => x.uniqueWithChain(false) === tokenUnique);
+					})();
+					totaled.map(({hour, data, date}, i) => {
+						[date, hour] = utcToLocal(date, hour);
+						const label = `${hour}:00`;
+						if(i % 2 === 0) labels.push(label);
+						else labels.push('');
 
-				const onlyShowingSystemAndUntouchable = (() => {
-					if(this.calculatedBalances.length !== 2) return false;
-					const tokenUnique = this.calculatedBalances[0].uniqueWithChain();
-					return this.calculatedBalances.every(x => x.uniqueWithChain(false) === tokenUnique);
-				})();
-				totaled.map(({hour, data, date}, i) => {
-					[date, hour] = utcToLocal(date, hour);
-					const label = `${hour}:00`;
-					if(i % 2 === 0) labels.push(label);
-					else labels.push('');
+						let total;
 
-					let total;
+						if(this.calculatedBalances.length === 1 || onlyShowingSystemAndUntouchable){
+							let tokenUnique = this.calculatedBalances[0].uniqueWithChain(false);
+							total = (data[tokenUnique] / this.prices[tokenUnique].USD) * this.prices[tokenUnique][this.displayCurrency];
+						} else {
+							total = this.calculatedBalances.reduce((acc,balance) => {
+								const priceData = data[balance.uniqueWithChain()];
+								if(!priceData) return acc;
+								acc += parseFloat(balance.fiatBalance(false, priceData * this.currencyPrices[this.displayCurrency]));
+								return acc;
+							}, 0);
+						}
 
-					if(this.calculatedBalances.length === 1 || onlyShowingSystemAndUntouchable){
-						let tokenUnique = this.calculatedBalances[0].uniqueWithChain(false);
-						total = (data[tokenUnique] / this.prices[tokenUnique].USD) * this.prices[tokenUnique][this.displayCurrency];
-					} else {
-						total = this.calculatedBalances.reduce((acc,balance) => {
-							const priceData = data[balance.uniqueWithChain()];
-							if(!priceData) return acc;
-							acc += parseFloat(balance.fiatBalance(false, priceData * this.currencyPrices[this.displayCurrency]));
-							return acc;
-						}, 0);
+						values.push({value:total, meta:`${date} ${label}`});
+					})
+
+					if(this.calculatedBalances.length !== 1 && !onlyShowingSystemAndUntouchable){
+						values.pop();
+						values.push({value:this.totalBalance.amount, meta:'Now'});
 					}
 
-					values.push({value:total, meta:`${date} ${label}`});
-				})
 
-				if(this.calculatedBalances.length !== 1 && !onlyShowingSystemAndUntouchable){
-					values.pop();
-					values.push({value:this.totalBalance.amount, meta:'Now'});
-				}
+					const CHART_OPTIONS = {
+						showArea:true,
+						showPoint: true,
+						lineSmooth: true,
 
+						chartPadding: { top: 15, right: 0, bottom: 0, left: 0 },
+						fullWidth:true,
+						axisX: { showGrid: true, showLabel: true, },
+						axisY: { scaleMinSpace:40, offset: 60, position: 'start', labelInterpolationFnc: n => this.formatNumber(n, n < 100000) },
+					};
 
-				const CHART_OPTIONS = {
-					showArea:true,
-					showPoint: true,
-					lineSmooth: true,
+					if(!this.chart){
+						this.chart = new Chartist.Line('.chart', {
+							labels,
+							series: [values]
+						}, CHART_OPTIONS);
 
-					chartPadding: { top: 15, right: 0, bottom: 0, left: 0 },
-					fullWidth:true,
-					axisX: { showGrid: true, showLabel: true, },
-					axisY: { scaleMinSpace:40, offset: 60, position: 'start', labelInterpolationFnc: n => this.formatNumber(n, n < 100000) },
-				};
+						this.chart.on('draw', data => {
 
-				if(!this.chart){
-					this.chart = new Chartist.Line('.chart', {
-						labels,
-						series: [values]
-					}, CHART_OPTIONS);
-
-					this.chart.on('draw', data => {
-
-						const toggleTooltip = (show = true) => {
-							let parsed = parseFloat(data.value.y);
-							if(this.calculatedBalances.length !== 1) parsed = parsed.toFixed(2);
-							this.graphValue = show ? `${data.meta} -- ${this.formatNumber(parsed, true)}` : null;
-						}
-
-						if (data.type === 'label') {
-							let labelCount = data.axis.ticks.length
-							if ((data.index + 1) === labelCount) {
-								data.element._node.childNodes[0].classList.add('the-last-of-the-labels')
+							const toggleTooltip = (show = true) => {
+								let parsed = parseFloat(data.value.y);
+								if(this.calculatedBalances.length !== 1) parsed = parsed.toFixed(2);
+								this.graphValue = show ? `${data.meta} -- ${this.formatNumber(parsed, true)}` : null;
 							}
-						}
 
-						if (data.type === "point") {
-							data.element._node.addEventListener("mouseenter", e => toggleTooltip())
-							data.element._node.addEventListener("mouseleave", e => toggleTooltip(false));
-						}
-					});
+							if (data.type === 'label') {
+								let labelCount = data.axis.ticks.length
+								if ((data.index + 1) === labelCount) {
+									data.element._node.childNodes[0].classList.add('the-last-of-the-labels')
+								}
+							}
 
-					this.chart.on('created', ctx => {
-						ctx.svg.elem('defs').elem('linearGradient', {
-							id: 'gradient',
-							x1: 0,
-							y1: 1,
-							x2: 0,
-							y2: 0
-						}).elem('stop', {
-							offset: 0.2,
-							'stop-color': 'rgba(255,255,255,0)'
-						}).parent().elem('stop', {
-							offset: 1,
-							'stop-color': 'rgba(255,255,255,1)'
+							if (data.type === "point") {
+								data.element._node.addEventListener("mouseenter", e => toggleTooltip())
+								data.element._node.addEventListener("mouseleave", e => toggleTooltip(false));
+							}
 						});
 
-					});
-				} else {
-					this.chart.update({
-						labels,
-						series:[values]
-					})
-				}
+						this.chart.on('created', ctx => {
+							ctx.svg.elem('defs').elem('linearGradient', {
+								id: 'gradient',
+								x1: 0,
+								y1: 1,
+								x2: 0,
+								y2: 0
+							}).elem('stop', {
+								offset: 0.2,
+								'stop-color': 'rgba(255,255,255,0)'
+							}).parent().elem('stop', {
+								offset: 1,
+								'stop-color': 'rgba(255,255,255,1)'
+							});
+
+						});
+					} else {
+						this.chart.update({
+							labels,
+							series:[values]
+						})
+					}
+				} catch(e){}
 			},
 			change(token, numOnly = false){
 				if(!this.priceData) return;

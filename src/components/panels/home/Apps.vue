@@ -2,7 +2,7 @@
 	<section class="apps">
 		<section class="split-inputs">
 			<SearchBar style="flex:1; margin-left:-10px;" :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
-			<btn small="1" style="margin-right:30px; font-weight: normal;" borderless="1" v-on:clicked="goToApps" text="Browse" />
+			<btn small="1" style="margin-right:30px; font-weight: normal;" v-on:clicked="goToApps" text="Browse" />
 		</section>
 
 		<transition name="slide-right" mode="out-in">
@@ -34,8 +34,8 @@
 								<div class="button" v-if="getAppData(origin).url.length">
 									<btn :text="locale(langKeys.GENERIC.Open)" v-on:clicked="openApp(origin)" />
 								</div>
-								<btn v-if="count !== 0" :icon="icon-pencil" @click="goToPermission(origin)" />
-								<btn v-if="count !== 0" :icon="icon-trash" @click="removePermissions(origin)" />
+								<btn v-if="count !== 0" icon="icon-pencil" style="padding:0 7px;" @click.native="goToPermission(origin)" />
+								<btn v-if="count !== 0" icon="icon-trash" style="padding:0 7px;" @click.native="removePermissions(origin)" />
 							</section>
 
 						</section>
@@ -189,6 +189,7 @@
 	.list {
 		padding:10px;
 		overflow-y: auto;
+		width:100%;
 
 		.item {
 			padding:10px 20px;

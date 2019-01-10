@@ -34,7 +34,7 @@
       flex:1;
       position:relative;
       padding:40px;
-      min-height:545px;
+      min-height:537px;
 
       > section {
         flex:1 1 auto;
@@ -89,6 +89,23 @@
 
             &.bad {
               color:yellow;
+            }
+          }
+
+          &.input {
+            cursor: default;
+            background:#fff;
+            border-radius:0 0 4px 4px;
+            min-height:80px;
+
+            input {
+              height:38px;
+              color:$primary;
+              font-size: 18px;
+
+              &.small {
+                font-size: 13px;
+              }
             }
           }
 

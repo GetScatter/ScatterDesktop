@@ -11,6 +11,7 @@
 				        class="selected-icon"></figure>
 
 				<section class="details" @click="$emit('selected',item)">
+					<p v-if="item.hasOwnProperty('sub')" style="margin-top:0; margin-bottom:10px; font-size: 9px;"><b>{{item.sub}}</b></p>
 					<figure class="title">{{item.title}}</figure>
 					<p v-if="item.hasOwnProperty('description')">{{item.description}}</p>
 				</section>

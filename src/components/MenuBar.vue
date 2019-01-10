@@ -82,6 +82,7 @@
 		right:0;
 
 		.actions {
+			-webkit-app-region: drag;
 			position:absolute;
 			right:0;
 			top:0;
@@ -91,11 +92,11 @@
 			justify-content: center;
 			align-items: center;
 			padding:0 35px;
-			-webkit-app-region: no-drag;
 
 			$action:15px;
 
 			.action {
+				-webkit-app-region: no-drag;
 				float:right;
 				padding:10px;
 				cursor: pointer;
