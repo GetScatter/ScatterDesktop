@@ -167,6 +167,7 @@
 		const description = `${blockchainName(token.blockchain)} ${fiatPrice ? ' - '+fiatPrice : ''}`;
 		return {
 			id:token.unique(),
+			sub:`${token.symbol} - ${token.contract}`,
 			title:`${token.name} (${token.network() ? token.network().name : ''})`,
 			description
 		};

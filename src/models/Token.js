@@ -1,6 +1,6 @@
 import IdGenerator from "../util/IdGenerator";
 import PluginRepository from "../plugins/PluginRepository";
-import {Blockchains} from "./Blockchains";
+import {Blockchains, BlockchainsArray} from "./Blockchains";
 import {store} from "../store/store";
 import BigNumber from "bignumber.js";
 
@@ -18,6 +18,19 @@ export default class Token {
 
 	    this.chainId = chainId;
 	    this.unusable = null;
+
+	    this.fromOrigin = '';
+	    this.createdAt = +new Date();
+    }
+
+    isValid(){
+    	if(Object.keys(this).length !== 11) return false;
+    	return BlockchainsArray.map(x => x.value).includes(this.blockchain) &&
+		    this.contract.length &&
+		    this.symbol.length &&
+		    this.name.length &&
+		    this.decimals.toString().length &&
+		    this.chainId.length
     }
 
     static placeholder(){ return new Token(); }

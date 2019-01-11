@@ -128,8 +128,8 @@ export default class TRX extends Plugin {
 			    const transaction = { transaction:signargs, participants:[account.publicKey], };
 			    const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{} };
 			    return promptForSignature
-				    ? await this.passThroughProvider(payload, account, reject)
-				    : await this.signer(payload, account.publicKey);
+				    ? await this.signerWithPopup(payload, account, reject)
+				    : await this.signer(payload, account.publicKey, false, false, account);
 		    };
 
 		    let unsignedTransaction;
@@ -157,7 +157,10 @@ export default class TRX extends Plugin {
 	    })
     }
 
-    async signer(payload, publicKey, arbitrary = false, isHash = false){
+    async signer(payload, publicKey, arbitrary = false, isHash = false, account = null){
+	    if(account && KeyPairService.isHardware(publicKey))
+		    return await HardwareService.sign(account, payload);
+
         let privateKey = await KeyPairService.publicToPrivate(publicKey);
         if (!privateKey) return;
 
@@ -166,7 +169,7 @@ export default class TRX extends Plugin {
         return utils.signTransaction(privateKey, payload.transaction.transaction);
     }
 
-    async passThroughProvider(payload, account, rejector){
+    async signerWithPopup(payload, account, rejector){
         return new Promise(async resolve => {
             payload.messages = await this.requestParser(payload);
             payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;

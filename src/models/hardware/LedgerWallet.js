@@ -266,7 +266,7 @@ class LedgerAPI {
     }
 
     async [`signTransaction`+Blockchains.ETH](publicKey, payload, abi, network){
-        const {transaction} = payload;
+        const transaction = payload.hasOwnProperty('transaction') ? payload.transaction : payload;
         const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
         const eth = new Eth(getTransport());
         const popup = Popup.checkHardwareWalletScreen();

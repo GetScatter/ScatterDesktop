@@ -179,8 +179,8 @@ export default class ETH extends Plugin {
             const wallet = new ScatterEthereumWallet(account, async (transaction, callback) => {
                 const payload = { transaction, blockchain:Blockchains.TRX, network:account.network(), requiredFields:{}, abi:isEth ? null : erc20abi };
                 const signatures = promptForSignature
-                    ? await this.passThroughProvider(payload, account, x => finished(x), token)
-                    : await this.signer(payload.transaction, account.publicKey);
+                    ? await this.signerWithPopup(payload, account, x => finished(x), token)
+                    : await this.signer(payload, account.publicKey, false, false, account);
 
                 if(callback) callback(null, signatures);
                 return signatures;
@@ -209,7 +209,12 @@ export default class ETH extends Plugin {
         })
     }
 
-    async signer(transaction, publicKey, arbitrary = false, isHash = false){
+    async signer(transaction, publicKey, arbitrary = false, isHash = false, account = null){
+	    if(account && KeyPairService.isHardware(publicKey))
+		    return await HardwareService.sign(account, transaction);
+
+	    if(transaction.hasOwnProperty('transaction')) transaction = transaction.transaction;
+
         const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
         if(!basePrivateKey) return;
 
@@ -219,7 +224,7 @@ export default class ETH extends Plugin {
         return ethUtil.addHexPrefix(tx.serialize().toString('hex'));
     }
 
-    async passThroughProvider(payload, account, rejector, token = null){
+    async signerWithPopup(payload, account, rejector, token = null){
         return new Promise(async resolve => {
             payload.messages = await this.requestParser(payload.transaction, payload.hasOwnProperty('abi') ? payload.abi : null, token);
             payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;

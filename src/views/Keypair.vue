@@ -82,10 +82,13 @@
 		    const {GENERIC} = this.langKeys;
 
 		    this.buttons = [
-			    {text:locale(GENERIC.Export), clicked:this.enableExportKey},
 			    {text:locale(GENERIC.Refresh), clicked:this.refreshAccounts, process:this.keypair.unique()},
 			    {text:locale(GENERIC.Remove), clicked:this.remove, process:this.keypair.unique()},
 		    ];
+
+		    if(!this.keypair.external){
+		    	this.buttons.unshift({text:locale(GENERIC.Export), clicked:this.enableExportKey});
+            }
 
 		    this.lazyLoadResources();
 	    },

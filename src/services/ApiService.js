@@ -29,6 +29,8 @@ import {RouteNames} from "../vue/Routing";
 import Token from "../models/Token";
 import TransferService from "./TransferService";
 import WindowService from "./WindowService";
+import TokenService from "./TokenService";
+import BalanceService from "./BalanceService";
 const NotificationService = remote.getGlobal('appShared').NotificationService;
 remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
     ApiService.handleDeepLink(deepLink);
@@ -505,6 +507,40 @@ export default class ApiService {
             scatter.settings.networks.push(network);
             await store.dispatch(StoreActions.SET_SCATTER, scatter);
             await AccountService.importAllAccountsForNetwork(network);
+
+            resolve({id:request.id, result:true});
+        })
+    }
+
+    static async [Actions.ADD_TOKEN](request){
+        return new Promise(async resolve => {
+	        const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
+	        if(Object.keys(request.payload).length !== 3) return badResult();
+	        if(!request.payload.hasOwnProperty('network')) return badResult();
+	        if(!request.payload.hasOwnProperty('token')) return badResult();
+
+            let {network, token} = request.payload;
+
+            network = Network.fromJson(network);
+            token = Token.fromJson(token);
+
+	        token.name = token.name.length ? token.name : token.symbol;
+	        token.blockchain = network.blockchain;
+	        token.chainId = network.chainId;
+	        token.fromOrigin = request.payload.origin;
+
+	        if(!token.isValid())
+		        return resolve({id:request.id, result:new Error("invalid_token", "The token specified is not a valid token object.")});
+
+            // Applications can only add one token every 12 hours.
+            if(store.state.scatter.settings.tokens.filter(x => x.fromOrigin === request.payload.origin && x.createdAt > (+new Date() - ((3600 * 12)*1000))).length > 5)
+                return resolve({id:request.id, result:new Error("token_timeout", "You can only add up to 5 tokens every 12 hours.")});
+
+            const exists = await TokenService.hasToken(token);
+            if(exists) return resolve({id:request.id, result:new Error("token_exists", "The user already has this token in their Scatter.")});
+
+            await TokenService.addToken(token);
+            BalanceService.loadAllBalances(true);
 
             resolve({id:request.id, result:true});
         })

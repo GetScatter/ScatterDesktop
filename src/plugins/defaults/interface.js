@@ -58,7 +58,7 @@ export default class PluginInterface extends Plugin {
 
 	defaultToken(){}
 
-	async passThroughProvider(payload, account, rejector){}
+	async signerWithPopup(payload, account, rejector){}
 
 	async transfer({account, to, amount, contract, symbol, memo, promptForSignature = true}){}
 

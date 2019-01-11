@@ -187,7 +187,7 @@ export default class EOS extends Plugin {
 	async proxyVote(account, proxyAccount, prompt = false){
 		return new Promise(async (resolve, reject) => {
 			const signProvider = prompt
-				? payload => this.passThroughProvider(payload, account, reject)
+				? payload => this.signerWithPopup(payload, account, reject)
 				: payload => this.signer(payload, account.publicKey);
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
@@ -205,7 +205,7 @@ export default class EOS extends Plugin {
 	async changePermissions(account, keys){
 		if(!keys) return;
 		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, reject);
+			const signProvider = payload => this.signerWithPopup(payload, account, reject);
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
@@ -315,7 +315,7 @@ export default class EOS extends Plugin {
 
 	async refund(account){
 		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, reject);
+			const signProvider = payload => this.signerWithPopup(payload, account, reject);
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			return await eos.refund(account.name, {authorization:[account.formatted()]})
@@ -546,7 +546,7 @@ export default class EOS extends Plugin {
 	async createAccount(creator, name, owner, active, eosUsed){
 		return new Promise(async (resolve, reject) => {
 			const network = creator.network();
-			const signProvider = payload => this.passThroughProvider(payload, creator, reject);
+			const signProvider = payload => this.signerWithPopup(payload, creator, reject);
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
 			const coreSymbol = network.systemToken().symbol;
@@ -587,8 +587,76 @@ export default class EOS extends Plugin {
 	}
 
 
+	async stakeOrUnstake(account, cpu, net, network, staking = true){
+		return new Promise(async (resolve, reject) => {
+			const signProvider = payload => this.signerWithPopup(payload, account, reject);
 
-	async passThroughProvider(payload, account, rejector){
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+			if(staking) resolve(await eos.delegatebw(account.name, account.name, net, cpu, 0, { authorization:[account.formatted()] })
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
+
+			else resolve(await eos.undelegatebw(account.name, account.name, net, cpu, { authorization:[account.formatted()] })
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
+		})
+	}
+
+	async buyOrSellRAM(account, bytes, network, buying = true){
+		return new Promise(async (resolve, reject) => {
+			const signProvider = payload => this.signerWithPopup(payload, account, reject);
+
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+
+			if(buying) resolve(await eos.buyrambytes(account.name, account.name, bytes, { authorization:[account.formatted()] })
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
+
+			else resolve(await eos.sellram(account.name, bytes, { authorization:[account.formatted()] })
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
+		})
+	}
+
+	async transfer({account, to, amount, token, memo, promptForSignature = true}){
+		amount = parseFloat(amount).toFixed(token.decimals);
+		const {contract, symbol} = token;
+		return new Promise(async (resolve, reject) => {
+			const signProvider = promptForSignature
+				? payload => this.signerWithPopup(payload, account, reject)
+				: payload => this.signer(payload, account.publicKey, false, false, account);
+
+			const eos = Eos({httpEndpoint:account.network().fullhost(), chainId:account.network().chainId, signProvider});
+			const contractObject = await eos.contract(contract);
+			const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
+			resolve(await contractObject.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
+				.catch(error => {
+					console.log('error', error);
+					try {
+						return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}
+					} catch(e){
+						return {error};
+					}
+				})
+				.then(result => result));
+		})
+	}
+
+
+
+	async signerWithPopup(payload, account, rejector){
 		return new Promise(async resolve => {
 			payload.messages = await this.requestParser(payload, Network.fromJson(account.network()));
 			payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
@@ -621,71 +689,10 @@ export default class EOS extends Plugin {
 		})
 	}
 
+	async signer(payload, publicKey, arbitrary = false, isHash = false, account = null){
+		if(account && KeyPairService.isHardware(publicKey))
+			return await HardwareService.sign(account, payload);
 
-	async stakeOrUnstake(account, cpu, net, network, staking = true){
-		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, reject);
-
-			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-			if(staking) resolve(await eos.delegatebw(account.name, account.name, net, cpu, 0, { authorization:[account.formatted()] })
-				.then(res => res)
-				.catch(res => {
-					popupError(res);
-					return false;
-				}))
-
-			else resolve(await eos.undelegatebw(account.name, account.name, net, cpu, { authorization:[account.formatted()] })
-				.then(res => res)
-				.catch(res => {
-					popupError(res);
-					return false;
-				}))
-		})
-	}
-
-	async buyOrSellRAM(account, bytes, network, buying = true){
-		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, reject);
-
-			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-
-			if(buying) resolve(await eos.buyrambytes(account.name, account.name, bytes, { authorization:[account.formatted()] })
-				.then(res => res)
-				.catch(res => {
-					popupError(res);
-					return false;
-				}))
-
-			else resolve(await eos.sellram(account.name, bytes, { authorization:[account.formatted()] })
-				.then(res => res)
-				.catch(res => {
-					popupError(res);
-					return false;
-				}))
-		})
-	}
-
-	async transfer({account, to, amount, token, memo, promptForSignature = true}){
-		amount = parseFloat(amount).toFixed(token.decimals);
-		const {contract, symbol} = token;
-		return new Promise(async (resolve, reject) => {
-			const signProvider = promptForSignature
-				? payload => this.passThroughProvider(payload, account, reject)
-				: payload => this.signer(payload, account.publicKey);
-
-			const eos = Eos({httpEndpoint:account.network().fullhost(), chainId:account.network().chainId, signProvider});
-			const contractObject = await eos.contract(contract);
-			const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
-			resolve(await contractObject.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
-				.catch(error => {
-					console.log('error', error);
-					return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}
-				})
-				.then(result => result));
-		})
-	}
-
-	async signer(payload, publicKey, arbitrary = false, isHash = false){
 		let privateKey = await KeyPairService.publicToPrivate(publicKey);
 		if (!privateKey) return;
 
