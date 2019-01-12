@@ -179,10 +179,10 @@
 				    if(!location) return this.screenshotting = false;
 				    location = location[0];
 
-				    const filename = `${location}/${this.keypair.name}.png`;
+				    const filename = `${location}/${this.keypair.name}.jpg`;
 
 				    remote.getCurrentWindow().capturePage(img => {
-					    remote.require('fs').writeFile(filename, img.toPng(), saved => {
+					    remote.require('fs').writeFile(filename, img.toJPEG(99), saved => {
 						    PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.SavedImage), 'check'));
 						    ElectronHelpers.openLinkInBrowser(location);
 						    setTimeout(() => {

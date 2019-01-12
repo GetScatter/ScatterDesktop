@@ -505,6 +505,9 @@ const EXCHANGE = prefixKeys('exchange', {
 
 	ExchangeError:'exchange_error',
 	CantConnect:'cant_connect',
+
+	DisclaimerTitle:'disclaimer_tit',
+	DisclaimerDescription:'disclaimer_desc'
 });
 
 const HISTORY = prefixKeys('history', {

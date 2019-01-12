@@ -30,7 +30,7 @@
             </section>
 
             <section class="split-panel">
-                <Wallets style="flex:1;" class="panel" />
+                <Wallets style="flex:1; max-width:300px;" class="panel" />
                 <Apps style="flex:2;" class="panel" />
             </section>
         </section>

@@ -21,8 +21,8 @@
 						<figure class="account">{{accounts.to}}</figure>
 						<!--<figure class="value">$20.00</figure>-->
 						<section class="memo" style="margin-top:10px;">
-							Please note that this is an estimate!
-							<p>Token prices could change between now and the time it takes to complete the exchange. You may get slightly more or less than estimated.</p>
+							{{locale(langKeys.EXCHANGE.DisclaimerTitle)}}
+							<p>{{locale(langKeys.EXCHANGE.DisclaimerDescription)}}</p>
 						</section>
 					</section>
 				</section>

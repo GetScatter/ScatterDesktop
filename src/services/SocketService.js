@@ -28,16 +28,6 @@ const socketHandler = (socket) => {
 	let origin = null;
 
 
-    // TODO: Testing the event system.
-    // Events are sent to the applications to notify them of changes
-    // such as identity changes, key removals, account un-linking
-    // and scatter being locked.
-    // setInterval(() => {
-    //     if(authenticated)
-    //         socket.emit('event', 'evented');
-    // }, 2000);
-
-
     // When something connects we automatically
     // notify it of a successful connection
     socket.emit('connected');

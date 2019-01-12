@@ -540,6 +540,8 @@ const Locale = {
 	[EXCHANGE.Max]:() => `Max`,
 	[EXCHANGE.ExchangeError]:() => `Exchange Error`,
 	[EXCHANGE.CantConnect]:() => `Can't connect to the Exhange API.`,
+	[EXCHANGE.DisclaimerTitle]:() => `Please note that this is an estimate!`,
+	[EXCHANGE.DisclaimerDescription]:() => `Token prices could change between now and the time it takes to complete the exchange. You may get slightly more or less than estimated.`,
 
 
 
