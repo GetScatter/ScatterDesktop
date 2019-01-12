@@ -1,9 +1,9 @@
 <template>
     <section class="transfer">
-        <back-bar v-on:back="back" :buttons="[{text:'Transfer History', clicked:() => openHistory()}]" />
+        <back-bar v-on:back="back" :buttons="[{text:locale(langKeys.GENERIC.History), clicked:() => openHistory()}]" />
 
         <TokenSelector v-if="selectingToken"
-					   title="Select Token"
+                       :title="locale(langKeys.GENERIC.SelectToken)"
 					   :lists="selectableTokens"
 					   :custom="account"
 					   v-on:custom="setCustomToken" />
@@ -13,7 +13,7 @@
             <section class="tokens-out">
 
                 <section class="panel">
-                    <h5>Sender</h5>
+                    <h5>{{locale(langKeys.TRANSFER.Sender)}}</h5>
 
                     <section>
                         <section class="box">
@@ -43,7 +43,6 @@
                             </section>
                             
                             <section class="row highlighted">
-                                <!-- <figure class="icon icon-right-outline"></figure> -->
                                 <figure class="icon">{{token.truncatedSymbol()}}</figure>
                                 <figure class="fill">
                                     <input style="flex:1;" v-model="token.amount" v-on:input="changedAmount"
@@ -81,7 +80,7 @@
 
                 <!-- RIGHT PANEL -->
                 <section class="panel upper-arrow">
-                    <h5>Recipient</h5>
+                    <h5>{{locale(langKeys.TRANSFER.Recipient)}}</h5>
 
                     <section>
                         <Recipient :account="account"
@@ -91,10 +90,10 @@
                     </section>
 
                     <section style="max-height: 150px;" v-if="token && token.blockchain === 'eos'">
-                        <label>Memo</label>
+                        <label>{{locale(langKeys.GENERIC.Memo)}}</label>
                         <section class="box dark outlined">
                             <section class="row">
-                                <input placeholder="Optional Memo" style="font-size: 14px; height:25px;" v-model="memo" />
+                                <input :placeholder="locale(langKeys.TRANSFER.MemoPlaceholder)" style="font-size: 14px; height:25px;" v-model="memo" />
                             </section>
                         </section>
                     </section>
@@ -105,7 +104,7 @@
 
 
             <section class="action-bar short bottom centered">
-                <btn blue="1" text="Send Tokens" v-on:clicked="send" :disabled="!canSend" :loading="sending" />
+                <btn blue="1" :text="locale(langKeys.TRANSFER.SendButton)" v-on:clicked="send" :disabled="!canSend" :loading="sending" />
             </section>
         </section>
 

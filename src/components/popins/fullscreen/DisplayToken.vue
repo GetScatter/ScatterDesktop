@@ -2,7 +2,7 @@
 	<section>
 		<back-bar v-on:back="back" />
 
-		<TokenSelector title="Display Token & Fiat Symbol" :lists="tokenLists" />
+		<TokenSelector :title="locale(langKeys.GENERIC.DisplayToken)" :lists="tokenLists" />
 
 	</section>
 </template>
@@ -68,8 +68,8 @@
 			},
 			tokenLists(){
 				return [
-					{title:'Fiat Currencies', active:this.displayCurrency, handler:this.setDisplayCurrency, tokens:this.currencyList},
-					{title:'System Tokens', active:this.displayToken, handler:this.setDisplayToken, tokens:this.networkTokensList}
+					{title:this.locale(this.langKeys.TOKENS.FiatCurrencies), active:this.displayCurrency, handler:this.setDisplayCurrency, tokens:this.currencyList},
+					{title:this.locale(this.langKeys.TOKENS.SystemTokens), active:this.displayToken, handler:this.setDisplayToken, tokens:this.networkTokensList}
 				];
 			}
 		},

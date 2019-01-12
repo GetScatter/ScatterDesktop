@@ -201,7 +201,6 @@ p {
       bottom:0;
       left:0;
       right:0;
-      background:$lighter-grey;
     }
   }
 }
@@ -514,7 +513,10 @@ label {
   justify-content: space-between;
   align-items: center;
   padding:0 30px;
-  background:#4a4f65;
+
+  &.dark {
+    background:#4a4f65;
+  }
 
   &:not(.bottom){
     border-bottom:1px solid $border-standard;

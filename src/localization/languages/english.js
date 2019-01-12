@@ -10,6 +10,9 @@ const {
 	PERMISSIONS,
 	SETTINGS,
 	TRANSFER,
+	EXCHANGE,
+	HISTORY,
+	TOKENS,
 	USER_BAR,
 	PROCESSES,
 	SNACKBARS,
@@ -53,6 +56,7 @@ const Locale = {
 	[GENERIC.RemoveAll]:() => `Remove All`,
 	[GENERIC.Copy]:() => `Copy`,
 	[GENERIC.Import]:() => `Import`,
+	[GENERIC.Identity]:() => `Identity`,
 	[GENERIC.Export]:() => `Export`,
 	[GENERIC.Refresh]:() => `Refresh`,
 	[GENERIC.Manage]:() => `Manage`,
@@ -80,6 +84,18 @@ const Locale = {
 	[GENERIC.Sell]:() => `Sell`,
 	[GENERIC.Buying]:() => `Buying`,
 	[GENERIC.Selling]:() => `Selling`,
+	[GENERIC.MyAccounts]:() => `My Accounts`,
+	[GENERIC.Contacts]:() => `Contacts`,
+	[GENERIC.OpenContacts]:() => `Open Contacts`,
+	[GENERIC.ContactName]:() => `Contact Name`,
+	[GENERIC.AddContact]:() => `Add Contact`,
+	[GENERIC.SelectToken]:() => `Select Token`,
+	[GENERIC.DisplayToken]:() => `Display Token & Fiat Symbol`,
+	[GENERIC.History]:() => `History`,
+	[GENERIC.Exchange]:() => `Exchange`,
+	[GENERIC.Redo]:() => `Redo`,
+	[GENERIC.AllNetworks]:() => `All Networks`,
+	[GENERIC.RefreshBalances]:() => `Refresh Balances`,
 
 	
 
@@ -124,8 +140,6 @@ const Locale = {
 	[DASHBOARD.KEYS.NoKeys]:() => `Well, what are we waiting for?`,
 	[DASHBOARD.KEYS.LinkedAccounts]:count => `${count} linked account${plural_s(count)}`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[DASHBOARD.TOOLBARS.HistoryButton]:() => `History`,
-	[DASHBOARD.TOOLBARS.ExchangeButton]:() => `Exchange`,
 	[DASHBOARD.TOOLBARS.SendButton]:() => `Send`,
 	[DASHBOARD.TOOLBARS.ReceiveButton]:() => `Receive`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -228,7 +242,6 @@ const Locale = {
 	],
 	[CREATE_EOS.EXCHANGE.SentTitle]:() => `After sending EOS from an exchange with the above details, copy the transaction ID here.`,
 	[CREATE_EOS.EXCHANGE.SentSubtitle]:() => `You must wait for the transaction to be irreversible, this takes around 3 minutes.`,
-	[CREATE_EOS.EXCHANGE.TransactionIDLabel]:() => `Transaction ID`,
 	[CREATE_EOS.EXCHANGE.ActionBarButton]:() => `Create Account`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[CREATE_EOS.ERRORS.InvalidResources]:() => `Either CPU or NET was below or equal to 0`,
@@ -257,16 +270,13 @@ const Locale = {
 	[KEYPAIR.DASHBOARD.ERRORS.InvalidWalletName]:() => `Enter a name for this Key`,
 	[KEYPAIR.DASHBOARD.ERRORS.WalletNameExists]:() => `A Key with this name already exists`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[KEYPAIR.TOKENS.HiddenTokensCount]:(n) => `${n} tokens filtered out by your token spam filter.`,
-	[KEYPAIR.TOKENS.SearchPlaceholder]:() => `Search Tokens`,
-	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.ACCOUNTS.SearchPlaceholder]:() => `Search Accounts`,
 	[KEYPAIR.ACCOUNTS.ViewTokens]:n => `${n} Token${plural_s(n)}`,
 	[KEYPAIR.ACCOUNTS.EOSClaimRefundButton]:() => `Refund`,
 	[KEYPAIR.ACCOUNTS.EOSDangerousPermissions]:() =>
 		`Both active and owner are on the same key.`,
 	[KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle]:() =>
-		`Consider changing one to another key by clicking the "change permissions" button below.`,
+		`Consider changing one to another key by clicking the "Change Permissions" button below.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.ChangePermissionsButton]:() => `Change Permissions`,
 	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.ProxyVotesButton]:() => `Proxy Votes`,
@@ -383,7 +393,7 @@ const Locale = {
 		`These notifications appear on certain operating systems when you auto-sign whitelisted transactions.`,
 	[SETTINGS.GENERAL.DataPathLabel]:() => `Data Path`,
 	[SETTINGS.GENERAL.DataPathDescription]:() =>
-		`The location on your computer that Scatter saves it's encrypted data to.`,
+		`The location on your computer that Scatter saves its encrypted data to.`,
 	[SETTINGS.GENERAL.DeveloperConsoleLabel]:() => `Developer Console`,
 	[SETTINGS.GENERAL.DeveloperConsoleDescription]:() =>
 		`Sometimes you might need to see if Scatter is throwing any errors.`,
@@ -396,7 +406,7 @@ const Locale = {
 	[SETTINGS.TOKENS.SWITCH.BLACKLIST]:() => `Filtered`,
 	[SETTINGS.TOKENS.SWITCH.SETTINGS]:() => `Settings`,
 	[SETTINGS.TOKENS.ADD_TOKEN.Disclaimer]:() => `Adding tokens will allow you to send them and fetch their balances.`,
-	[SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder]:() => `Name this token or leave empty to use it's symbol.`,
+	[SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder]:() => `Name this token or leave empty to use its symbol.`,
 	[SETTINGS.TOKENS.ADD_TOKEN.TokenNameLabel]:() => `Token Name`,
 	[SETTINGS.TOKENS.ADD_TOKEN.WhitelistTokenButton]:() => `Whitelist Token`,
 	[SETTINGS.TOKENS.ADD_TOKEN.BlacklistTokenButton]:() => `Blacklist Token`,
@@ -451,7 +461,7 @@ const Locale = {
 	[SETTINGS.PASSWORD.ChangePasswordLabel]:() => `Change your Password`,
 	[SETTINGS.PASSWORD.ChangePasswordDescription]:() =>
 		`Every time you change your password you will get a new Mnemonic 
-		( Seed Phrase ) which is your alternate password for unlocking Scatter.`,
+		( Backup Phrase ) which is your alternate password for unlocking Scatter.`,
 	[SETTINGS.PASSWORD.NewPasswordLabel]:() => `New Password`,
 	[SETTINGS.PASSWORD.NewPasswordPlaceholder]:() => `Password`,
 	[SETTINGS.PASSWORD.ConfirmPasswordLabel]:() => `Confirm new Password`,
@@ -477,7 +487,7 @@ const Locale = {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[SETTINGS.DESTROY.Label]:() => `Configure`,
 	[SETTINGS.DESTROY.Description]:() =>
-		`Destroying your Scatter will remove all your data including your Identities and Keypair 
+		`Destroying your Scatter will remove all your data including your identities and Keypair 
 		configurations from your local machine.
         It will not delete your blockchain accounts from the actual blockchain.`,
 	[SETTINGS.DESTROY.Important]:() => `MAKE SURE YOU HAVE A BACKUP BEFORE YOU DO THIS!`,
@@ -488,27 +498,54 @@ const Locale = {
 
 	/****************************************************/
 	/*                                                  */
+	/*                     HISTORY                      */
+	/*                                                  */
+	/****************************************************/
+	[HISTORY.ClearingHistory]:() => `Clearing History`,
+	[HISTORY.ClearingHistoryText]:() => `Your history in Scatter is only stored locally. If you clear it you will not be able to restore it.`,
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                     TOKENS                       */
+	/*                                                  */
+	/****************************************************/
+	[TOKENS.SetDisplayTokens]:() => `Set Display Tokens`,
+	[TOKENS.FiatCurrencies]:() => `Fiat Currencies`,
+	[TOKENS.SystemTokens]:() => `System Tokens`,
+
+
+	/****************************************************/
+	/*                                                  */
 	/*                     TRANSFER                     */
 	/*                                                  */
 	/****************************************************/
-	[TRANSFER.SendButton]:() => `Send`,
-	[TRANSFER.FROM.FromLabel]:() => `From`,
-	[TRANSFER.FROM.SendingAccountsLabel]:() => `Sending Account`,
-	[TRANSFER.TOKENS.AmountLabel]:() => `Amount to Transfer`,
-	[TRANSFER.TOKENS.CustomTokenLabel]:() => `Custom Token`,
-	[TRANSFER.TOKENS.SaveTokenButton]:() => `Save Token`,
-	[TRANSFER.RECIPIENT.RecipientLabel]:() => `Recipient`,
-	[TRANSFER.RECIPIENT.SendToContact]:() => `Contacts`,
-	[TRANSFER.RECIPIENT.SendDirectly]:() => `Direct`,
-	[TRANSFER.RECIPIENT.SendSelf]:() => `Self`,
-	[TRANSFER.RECIPIENT.SearchContactsPlaceholder]:() => `Search Contacts`,
-	[TRANSFER.RECIPIENT.SearchSelfPlaceholder]:() => `Search Accounts`,
-	[TRANSFER.RECIPIENT.ContactsLabel]:() => `Contacts`,
-	[TRANSFER.RECIPIENT.VerifyRecipient]:() => `Make sure to check this twice`,
-	[TRANSFER.RECIPIENT.ContactNamePlaceholder]:() => `Contact Name`,
-	[TRANSFER.RECIPIENT.ContactNameLabel]:(x) => `Do you want to add this ${x} as a contact?`,
-	[TRANSFER.ERRORS.InvalidRecipient]:() => `Invalid Recipient`,
-	[TRANSFER.ERRORS.InvalidAmount]:() => `Invalid amount, must be greater than 0`,
+	[TRANSFER.SendButton]:() => `Send Tokens`,
+	[TRANSFER.Sender]:() => `Sender`,
+	[TRANSFER.Recipient]:() => `Recipient`,
+	[TRANSFER.MemoPlaceholder]:() => `Optional Memo`,
+
+
+	/****************************************************/
+	/*                                                  */
+	/*                     EXCHANGE                     */
+	/*                                                  */
+	/****************************************************/
+	[EXCHANGE.ExchangeButton]:() => `Exchange Tokens`,
+	[EXCHANGE.Exchanging]:() => `Exchanging`,
+	[EXCHANGE.Receiving]:() => `Receiving`,
+	[EXCHANGE.To]:() => `To`,
+	[EXCHANGE.FetchingPairs]:() => `Fetching Pairs`,
+	[EXCHANGE.FetchingRate]:() => `Fetching Rate`,
+	[EXCHANGE.SelectPair]:() => `Select Pair`,
+	[EXCHANGE.NoRates]:() => `No Rates`,
+	[EXCHANGE.Min]:() => `Min`,
+	[EXCHANGE.Max]:() => `Max`,
+	[EXCHANGE.ExchangeError]:() => `Exchange Error`,
+	[EXCHANGE.CantConnect]:() => `Can't connect to the Exhange API.`,
+
+
+
 
 
 	/****************************************************/
@@ -553,7 +590,7 @@ const Locale = {
 	[SNACKBARS.NETWORK.Deleted]:() => `Network Deleted!`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[SNACKBARS.TOKENS.MissingSymbol]:() => `You must add a token symbol`,
-	[SNACKBARS.TOKENS.MissingContract]:() => `You mnust add a token contract`,
+	[SNACKBARS.TOKENS.MissingContract]:() => `You must add a token contract`,
 	[SNACKBARS.TOKENS.TokenExistsAdded]:() => `This token already exists in added tokens`,
 	[SNACKBARS.TOKENS.TokenExistsFiltered]:() => `Token already exists in filtered tokens`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -599,7 +636,7 @@ const Locale = {
 	[POPOUTS.SIGNATURE.WhitelistDesc]:() => `Whitelist this to not have to accept next time`,
 	[POPOUTS.SIGNATURE.DisableWhitelistButton]:() => `Disable Whitelist`,
 	[POPOUTS.SIGNATURE.EnableWhitelistButton]:() => `Enable Whitelist`,
-	[POPOUTS.SIGNATURE.PreviouslyWhitelisted]:() => `This action is previously whitelisted.`,
+	[POPOUTS.SIGNATURE.PreviouslyWhitelisted]:() => `This action was previously whitelisted.`,
 	[POPOUTS.SIGNATURE.HiddenActions]:() => `Action is hidden`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[POPOUTS.TRANSFER.SendingTo]:symbol => `sending ${symbol} to`,
@@ -669,17 +706,17 @@ const Locale = {
 	[POPINS.FULLSCREEN.MNEMONIC.SubDesc]:() => `You can paste this phrase into any field that accepts a password in Scatter.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[POPINS.FULLSCREEN.REMOVE_KEY.Title]:() => `Removing Keys`,
-	[POPINS.FULLSCREEN.REMOVE_KEY.Disclaimer]:() => `Removing keys also removes all of it's accounts and their application permissions.`,
+	[POPINS.FULLSCREEN.REMOVE_KEY.Disclaimer]:() => `Removing keys also removes all of its accounts and their application permissions.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[POPINS.FULLSCREEN.REMOVE_LOCATION.Title]:() => `Removing Location`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.Title]:() => `Unlink Accounts`,
-	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.Desc]:() => `Removing a linked account also removes all of it's application permissions`,
+	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.Desc]:() => `Removing a linked account also removes all of its application permissions`,
 	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.SubDesc]:() => `Select all the authorities you want to remove.`,
 	[POPINS.FULLSCREEN.UNLINK_ACCOUNT.AuthoritiesLabel]:() => `Authorities`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[POPINS.FULLSCREEN.UNLINK_BLOCKCHAIN.Title]:() => `Unlink Blockchain`,
-	[POPINS.FULLSCREEN.UNLINK_BLOCKCHAIN.Disclaimer]:() => `Unlinking a blockchain also removes all of it's accounts and their application permissions.`,
+	[POPINS.FULLSCREEN.UNLINK_BLOCKCHAIN.Disclaimer]:() => `Unlinking a blockchain also removes all of its accounts and their application permissions.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	[POPINS.OVERLAY.ConfirmPin]:() => `Confirm PIN`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////

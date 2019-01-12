@@ -14,7 +14,7 @@
 				<sel :options="[null].concat(fullNetworks)" style="margin-bottom:0; flex:1;"
 				     :selected="networkFilter"
 				     v-on:changed="x => networkFilter = x"
-				     :parser="x => x ? x.name : 'All Networks'" />
+				     :parser="x => x ? x.name : locale(langKeys.GENERIC.AllNetworks)" />
 			</section>
 
 			<section class="tokens">
@@ -46,7 +46,7 @@
 
 						</section>
 						<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto;">
-							<btn style="width:auto;" colorless="1" @click.native="redo(item)" text="Redo" />
+							<btn style="width:auto;" colorless="1" @click.native="redo(item)" :text="locale(langKeys.GENERIC.Redo)" />
 						</section>
 					</section>
 
@@ -196,7 +196,7 @@
 		},
 		mounted(){
 			this.typeFilter = this.popin.data.props.filter;
-			if(!this.typeFilter) this.buttons = [{text:'Clear History', clicked:this.clearHistory}];
+			if(!this.typeFilter) this.buttons = [{text:this.locale(this.langKeys.GENERIC.RemoveAll), clicked:this.clearHistory}];
 		},
 		methods:{
 			back(){
@@ -231,8 +231,8 @@
 			},
 			clearHistory(){
 				PopupService.push(Popup.prompt(
-					"Clearing History",
-					"Your history in Scatter is only stored locally. If you clear it you will not be able to restore it.",
+					this.locale(this.langKeys.HISTORY.ClearingHistory),
+					this.locale(this.langKeys.HISTORY.ClearingHistoryText),
 					accepted => {
 						if(accepted) this[Actions.DELTA_HISTORY](null)
 					}

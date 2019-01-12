@@ -16,7 +16,6 @@ export default class LanguageService {
 	static getLanguage(name){
 		return GET(`languages?name=${name}`)
 		.then(res => {
-			console.log(this.validateLanguage(res), res);
 			if(!this.validateLanguage(res)) return;
 			return res;
 		})

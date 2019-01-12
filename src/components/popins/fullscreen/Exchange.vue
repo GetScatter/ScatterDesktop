@@ -1,15 +1,15 @@
 <template>
 	<section class="transfer">
-		<back-bar v-on:back="back" :buttons="[{text:'Exchange History', clicked:() => openHistory()}]" />
+		<back-bar v-on:back="back" :buttons="[{text:locale(langKeys.GENERIC.History), clicked:() => openHistory()}]" />
 
-		<TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
+		<TokenSelector v-if="selectingToken" :title="locale(langKeys.GENERIC.SelectToken)" :lists="selectableTokens" />
 
 		<section class="full-panel inner limited" v-if="account && token && !selectingToken">
 
 			<section class="tokens-out">
 
 				<section class="panel">
-					<h5>Exchanging</h5>
+					<h5>{{locale(langKeys.EXCHANGE.Exchanging)}}</h5>
 
 					<section>
 						<section class="box">
@@ -81,7 +81,7 @@
 
 				<!-- RIGHT PANEL -->
 				<section class="panel">
-					<h5>Receiving</h5>
+					<h5>{{locale(langKeys.EXCHANGE.Receiving)}}</h5>
 
 					<section>
 						<section class="box dark">
@@ -89,13 +89,13 @@
 								<figure class="fill" style="flex:0 0 auto; padding-right:20px;">
 									<b class="icon-spin4 animate-spin"></b>
 								</figure>
-								<figure class="fill">Fetching Pairs</figure>
+								<figure class="fill">{{locale(langKeys.EXCHANGE.FetchingPairs)}}</figure>
 							</section>
 							<section class="row clickable" v-else @click="selectToken('to')">
 								<figure class="icon" v-if="pair" :class="[{'small':pair && pair.token.symbol.length >= 4}, pair.token.symbolClass()]">
 									<span v-if="!pair.token.symbolClass()">{{pair.token.truncatedSymbol()}}</span>
 								</figure>
-								<figure class="fill">{{flatPairs.length ? pair ? pair.symbol : `Select Pair (${flatPairs.length})` : 'No Available Pairs'}}</figure>
+								<figure class="fill">{{flatPairs.length ? pair ? pair.symbol : `${locale(langKeys.EXCHANGE.SelectPair)} (${flatPairs.length})` : 'No Available Pairs'}}</figure>
 								<figure class="chevron" :class="{'icon-down-open-big':flatPairs.length > 1, 'icon-lock':flatPairs.length === 1}" v-if="flatPairs.length"></figure>
 								<figure class="chevron icon-cancel" v-if="!flatPairs.length"></figure>
 							</section>
@@ -103,27 +103,26 @@
 								<figure class="fill" style="flex:0 0 auto; padding-right:20px;" v-if="loadingRate">
 									<b class="icon-spin4 animate-spin"></b>
 								</figure>
-								<figure class="fill" v-if="loadingRate">Fetching Rate</figure>
-								<figure class="fill" v-else>No Rates</figure>
+								<figure class="fill" v-if="loadingRate">{{locale(langKeys.EXCHANGE.FetchingRate)}}</figure>
+								<figure class="fill" v-else>{{locale(langKeys.EXCHANGE.NoRates)}}</figure>
 							</section>
 							<section class="row" v-else>
-								<!--<figure class="icon" :class="{'small':pair && pair.symbol.length >= 4}">{{pair ? pair.symbol : '&#45;&#45;'}}</figure>-->
 								<figure class="fill">
 									<input v-model="estimatedAmount" :class="{'bad':rate && rate.max && (estimatedAmount > rate.max || estimatedAmount < rate.min)}" :disabled="true" />
 								</figure>
 							</section>
 							<section class="row unpad">
 								<section class="row pad">
-									<figure class="icon small" style="width:auto;">MIN</figure>
+									<figure class="icon small" style="width:auto;">{{locale(langKeys.EXCHANGE.Min)}}</figure>
 									<div class="small" style="flex:0 0 auto;" :class="{'bad':rate && rate.min && (rate.min > estimatedAmount)}">{{rate && rate.min ? rate.min : '--'}}</div>
-									<figure class="icon small" style="margin-left:50px; width:auto;">MAX</figure>
+									<figure class="icon small" style="margin-left:50px; width:auto;">{{locale(langKeys.EXCHANGE.Max)}}</figure>
 									<div class="small" style="flex:0 0 auto;" :class="{'bad':rate && rate.max && (rate.max < estimatedAmount)}">{{rate && rate.max ? rate.max : '--'}}</div>
 								</section>
 							</section>
 						</section>
 					</section>
 
-					<h5 v-if="pair">To</h5>
+					<h5 v-if="pair">{{locale(langKeys.EXCHANGE.To)}}</h5>
 
 					<section>
 						<Recipient v-if="pair" :account="account"
@@ -137,7 +136,7 @@
 
 
 			<section class="action-bar short bottom centered">
-				<btn blue="1" text="Exchange Tokens" v-on:clicked="send" :disabled="!canSend" :loading="sending" />
+				<btn blue="1" :text="locale(langKeys.EXCHANGE.ExchangeButton)" v-on:clicked="send" :disabled="!canSend" :loading="sending" />
 			</section>
 		</section>
 
@@ -387,8 +386,8 @@
 			cantConnect(){
 				this.failedConnection = true;
 				PopupService.push(Popup.prompt(
-					"Exchange Error",
-					"Can't connect to the Exhange API."
+					this.locale(this.langKeys.EXCHANGE.ExchangeError),
+					this.locale(this.langKeys.EXCHANGE.CantConnect)
 				));
 				this.back()
 				this.loadingPairs = false;

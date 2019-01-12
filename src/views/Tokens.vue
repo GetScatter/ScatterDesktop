@@ -1,6 +1,6 @@
 <template>
 	<section class="token-panel">
-		<back-bar style="border-bottom:0;" v-on:back="back" :subtext="account ? account.sendable() : null" :buttons="[{text:'Set Display Tokens', clicked:() => openDisplayToken()}]" />
+		<back-bar style="border-bottom:0;" v-on:back="back" :subtext="account ? account.sendable() : null" :buttons="[{text:locale(langKeys.TOKENS.SetDisplayTokens), clicked:() => openDisplayToken()}]" />
 
 		<section class="panel-container">
 			<figure class="bg"></figure>
@@ -9,7 +9,7 @@
 				<section class="values">
 					<figure class="value">{{totalBalance.symbol}} {{formatNumber(totalBalance.amount, true)}}</figure>
 					<section class="refresh" v-if="account" @click="refreshTokens" :class="{'loading':loadingBalances}">
-						<i v-if="!loadingBalances" class="icon-arrows-ccw"> Refresh Tokens</i>
+						<i v-if="!loadingBalances" class="icon-arrows-ccw"> {{locale(langKeys.GENERIC.RefreshBalances)}}</i>
 						<i v-if="loadingBalances" class="icon-spin4 animate-spin"></i>
 					</section>
 					<p>
@@ -48,7 +48,7 @@
 				<sel :options="[null].concat(fullNetworks)" style="margin-bottom:0; flex:1;"
 				     :selected="networkFilter"
 				     v-on:changed="x => networkFilter = x"
-				     :parser="x => x ? x.name : 'All Networks'" />
+				     :parser="x => x ? x.name : locale(langKeys.GENERIC.AllNetworks)" />
 
 			</section>
 
@@ -73,7 +73,7 @@
 					</section>
 					<section class="split-inputs last" style="flex-direction: row; flex:0 0 auto; min-width:180px;">
 						<!--<btn v-if="canStabilize(token)" colorless="1" style="width:auto;" text="Stabilize" @click.native="stabilizeToken(token)" />-->
-						<btn v-if="canStabilize(token)" style="width:auto;" blue="1" text="Exchange" @click.native="exchangeToken(token)" />
+						<btn v-if="canStabilize(token)" style="width:auto;" blue="1" :text="locale(langKeys.GENERIC.Exchange)" @click.native="exchangeToken(token)" />
 						<figure @click="goToToken(token)" class="chevron icon-right-open-big"></figure>
 					</section>
 				</section>

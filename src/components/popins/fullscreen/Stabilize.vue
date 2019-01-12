@@ -2,7 +2,7 @@
 	<section class="transfer">
 		<back-bar v-on:back="back" />
 
-		<TokenSelector v-if="selectingToken" title="Select Token" :lists="selectableTokens" />
+		<TokenSelector v-if="selectingToken" :title="locale(langKeys.GENERIC.SelectToken)" :lists="selectableTokens" />
 
 		<section class="full-panel inner limited" v-if="account && token && !selectingToken">
 

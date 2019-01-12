@@ -2,7 +2,7 @@
     <section class="home">
 
         <section class="full-panel home" v-if="keypairs.length">
-            <section class="action-bar">
+            <section class="action-bar dark">
                 <section class="token-buttons">
                     <section class="refresh" @click="refreshTokens" :class="{'loading':loadingBalances}">
                         <i v-if="!loadingBalances" class="icon-arrows-ccw"></i>
@@ -24,8 +24,8 @@
                 </section>
                 <section class="actions" v-if="accounts.length">
                     <btn blue="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
-                    <btn blue="1" v-on:clicked="openExchange" :text="locale(langKeys.DASHBOARD.TOOLBARS.ExchangeButton)"></btn>
-                    <btn colorless="1" v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.DASHBOARD.TOOLBARS.HistoryButton)"></btn>
+                    <btn blue="1" v-on:clicked="openExchange" :text="locale(langKeys.GENERIC.Exchange)"></btn>
+                    <btn colorless="1" v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.GENERIC.History)"></btn>
                 </section>
             </section>
 

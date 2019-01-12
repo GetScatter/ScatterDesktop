@@ -67,6 +67,19 @@ const GENERIC = prefixKeys('generic', {
 	Accounts:'account',
 	AccountName:'account_name',
 	Address:'address',
+
+	Contacts:'contacts',
+	MyAccounts:'my_accounts',
+	OpenContacts:'open_contacts',
+	AddContact:'add_contact',
+	ContactName:'contact_name',
+	SelectToken:'select_token',
+	DisplayToken:'display_token',
+	History:'history',
+	Exchange:'exchange',
+	Redo:'redo',
+	AllNetworks:'all_networks',
+	RefreshBalances:'refresh_balances',
 });
 
 const LOGIN = prefixKeys('login', {
@@ -112,8 +125,6 @@ const DASHBOARD = prefixKeys('dashboard', {
 		NoMeta:'no_meta',
 	},
 	TOOLBARS:{
-		HistoryButton:'history',
-		ExchangeButton:'exchange',
 		SendButton:'send',
 		ReceiveButton:'receive',
 	}
@@ -215,11 +226,6 @@ const KEYPAIR = prefixKeys('keypair', {
 		CopyButton:'cpy_btn',
 	},
 
-	TOKENS:{
-		HiddenTokensCount:'hidden_tokens',
-		SearchPlaceholder:'search_tokens',
-	},
-
 	EXPORT:{
 		SELECT:{
 			KeyTitle:'key_tit',
@@ -307,7 +313,6 @@ const CREATE_EOS = prefixKeys('create_eos', {
 		ExchangeFieldParts:'ex_field_parts',
 		SentTitle:'sent_tit',
 		SentSubtitle:'sent_sub',
-		TransactionIDLabel:'tx_id_lbl',
 		ActionBarButton:'act_bar_btn',
 	},
 
@@ -482,35 +487,36 @@ const SETTINGS = prefixKeys('settings', {
 
 const TRANSFER = prefixKeys('transfer', {
 	SendButton:'send_btn',
+	Sender:'sender',
+	Recipient:'recipient',
+	MemoPlaceholder:'memo_placeholder',
+});
 
-	FROM:{
-		FromLabel:'from_lbl',
-		SendingAccountsLabel:'send_acc_lbl',
-	},
+const EXCHANGE = prefixKeys('exchange', {
+	ExchangeButton:'exchange_btn',
+	Exchanging:'exchanging',
+	Receiving:'receiving',
+	To:'to',
+	FetchingPairs:'fetching_pairs',
+	FetchingRate:'fetching_rate',
+	SelectPair:'select_pair',
+	NoRates:'no_rates',
+	Min:'min',
+	Max:'max',
 
-	TOKENS:{
-		AmountLabel:'amount_lbl',
-		CustomTokenLabel:'cus_tok_lbl',
-		SaveTokenButton:'save_tok_btn',
-	},
+	ExchangeError:'exchange_error',
+	CantConnect:'cant_connect',
+});
 
-	RECIPIENT:{
-		RecipientLabel:'rec_lbl',
-		SendToContact:'send_to_contact',
-		SendDirectly:'send_directly',
-		SendSelf:'send_self',
-		SearchContactsPlaceholder:'search_contacts_plc',
-		SearchSelfPlaceholder:'search_self_plc',
-		ContactsLabel:'contacts_lbl',
-		VerifyRecipient:'verify_recipient',
-		ContactNamePlaceholder:'contact_name_plc',
-		ContactNameLabel:'contact_name_lbl',
-	},
+const HISTORY = prefixKeys('history', {
+	ClearingHistory:'clearing_history',
+	ClearingHistoryText:'clearing_history_txt',
+});
 
-	ERRORS:{
-		InvalidRecipient:'invalid_rec',
-		InvalidAmount:'invalid_amnt'
-	}
+const TOKENS = prefixKeys('tokens', {
+	SetDisplayTokens:'set_display_tokens',
+	FiatCurrencies:'fiat_currencies',
+	SystemTokens:'system_tokens'
 });
 
 const USER_BAR = prefixKeys('user_bar', {
@@ -715,6 +721,9 @@ export default {
 	PERMISSIONS,
 	SETTINGS,
 	TRANSFER,
+	EXCHANGE,
+	HISTORY,
+	TOKENS,
 	USER_BAR,
 	PROCESSES,
 	PROMPTS,

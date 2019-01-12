@@ -46,7 +46,6 @@
 	            const scatter = this.scatter.clone();
 	            scatter.settings.language = language;
             	LanguageService.getLanguage(language).then(res => {
-            		console.log('res', res);
 		            res.raw = JSON.stringify(res);
 		            this[Actions.SET_LANGUAGE](res);
 		            this[Actions.SET_SCATTER](scatter);

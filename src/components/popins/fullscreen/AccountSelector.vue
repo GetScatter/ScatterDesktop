@@ -3,7 +3,6 @@
 		<back-bar v-on:back="returnResult(null)" style="border-bottom:0;" />
 		<section class="full-panel inner">
 			<section class="select-bar">
-				<h3>Accounts</h3>
 				<section class="selector">
 					<figure class="option" v-for="s in shownStates"
 					        :class="{'selected':state === s}"
@@ -22,7 +21,7 @@
 					<sel :options="[null].concat(fullNetworks)" style="margin-bottom:0; flex:1;" v-if="state === STATES.MINE"
 					     :selected="networkFilter"
 					     v-on:changed="x => networkFilter = x"
-					     :parser="x => x ? x.name : 'All Networks'" />
+					     :parser="x => x ? x.name : locale(langKeys.GENERIC.AllNetworks)" />
 				</section>
 
 				<section class="panel" v-if="state === STATES.MINE">
@@ -173,8 +172,8 @@
 			},
 			stateText(s){
 				switch(s){
-					case STATES.MINE: return 'My Accounts';
-					case STATES.CONTACTS: return 'Contacts';
+					case STATES.MINE: return this.locale(this.langKeys.GENERIC.MyAccounts);
+					case STATES.CONTACTS: return this.locale(this.langKeys.GENERIC.Contacts);
 				}
 			},
 			async removeContact(item){
@@ -253,7 +252,7 @@
 						right:0;
 						bottom:0;
 						height:5px;
-						background:#fff;
+						background:rgba(255,255,255,0.7);
 					}
 				}
 			}
