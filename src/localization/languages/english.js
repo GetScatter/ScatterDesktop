@@ -96,6 +96,7 @@ const Locale = {
 	[GENERIC.Redo]:() => `Redo`,
 	[GENERIC.AllNetworks]:() => `All Networks`,
 	[GENERIC.RefreshBalances]:() => `Refresh Balances`,
+	[GENERIC.Browse]:() => `Browse`,
 
 	
 
@@ -150,10 +151,6 @@ const Locale = {
 	[DASHBOARD.APPS.LinkPermissionOnly]:() => `Link permission only`,
 	[DASHBOARD.APPS.NPermissions]:n => `${n} Permission${plural_s(n)}`,
 	[DASHBOARD.APPS.NoPermissions]:() => `No Permissions`,
-	[DASHBOARD.APPS.UnlinkedAppsTitle]:() => `Below are apps that you aren't linked with.`,
-	[DASHBOARD.APPS.UnlinkedAppsSubtitle]:() => `Note that these apps are not added by the Scatter team, 
-		but by the apps themselves. The display of any app is not an endorsement of any kind, 
-		just a discovery mechanism.`,
 	[DASHBOARD.APPS.NoMeta]:() => `No Meta`,
 
 

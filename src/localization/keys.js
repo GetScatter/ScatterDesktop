@@ -80,6 +80,7 @@ const GENERIC = prefixKeys('generic', {
 	Redo:'redo',
 	AllNetworks:'all_networks',
 	RefreshBalances:'refresh_balances',
+	Browse:'browse',
 });
 
 const LOGIN = prefixKeys('login', {
@@ -120,8 +121,6 @@ const DASHBOARD = prefixKeys('dashboard', {
 		LinkPermissionOnly:'link_perm_only',
 		NPermissions:'n_permissions',
 		NoPermissions:'no_permissions',
-		UnlinkedAppsTitle:'unlinked_apps_tit',
-		UnlinkedAppsSubtitle:'unlinked_apps_sub',
 		NoMeta:'no_meta',
 	},
 	TOOLBARS:{
