@@ -160,6 +160,7 @@
     import {Popup} from '../../../models/popups/Popup'
     import NetworkService from '../../../services/NetworkService';
     import Token from "../../../models/Token";
+    import {GET} from "../../../services/BackendApiService";
 
 
     const STATES = {
@@ -212,7 +213,7 @@
                 this.endorsedNetworks.push(PluginRepository.plugin(blockchain.value).getEndorsedNetwork());
             })
 
-            fetch(`https://api.get-scatter.com/v1/networks?flat=true`).then(r => r.json())
+	        GET(`networks?flat=true`)
                 .then(networks => {
                 	this.knownNetworks = networks
                         .map(x => Network.fromJson(x));
@@ -311,7 +312,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../variables";
+    @import "../../../styles/variables";
 
     .multi-inputs {
         display:flex;

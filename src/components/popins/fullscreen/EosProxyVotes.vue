@@ -10,13 +10,27 @@
 				<br>
 			</section>
 
-			<section class="auto-vote" v-if="!isHardware">
-				<section class="switch" @click="autoVote = !autoVote">
-					<figure class="dot" :class="{'disabled':!autoVote}"></figure>
+			<section v-if="!isHardware">
+
+				<section v-if="hasRecurring">
+					<FlatList small="1" style="max-width:500px; margin:0 auto;"
+					          icon="icon-cancel"
+					          :selected="hasRecurring.account"
+					          :items="[hasRecurring].map(x => ({
+					id:x.account,
+					title:x.proxy,
+				}))"
+					          v-on:action="unrevote" />
 				</section>
-				<section class="details">
-					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyTitle)}}</figure>
-					<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyDesc)}}</p>
+
+				<section class="auto-vote">
+					<section class="switch" @click="autoVote = !autoVote">
+						<figure class="dot" :class="{'disabled':!autoVote}"></figure>
+					</section>
+					<section class="details">
+						<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyTitle)}}</figure>
+						<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyDesc)}}</p>
+					</section>
 				</section>
 				<br>
 			</section>
@@ -49,7 +63,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../popins.scss';
+	import '../../../styles/popins.scss';
 	import PasswordService from "../../../services/PasswordService";
 	import PopupService from "../../../services/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
@@ -77,12 +91,12 @@
 				if(PluginRepository.plugin(Blockchains.EOSIO).isEndorsedNetwork(this.account.network())){
 					this.proxies = await ProxyService.getProxyList();
 				}
+			});
 
-			})
 		},
 		computed:{
 			...mapState([
-
+				'scatter'
 			]),
 			...mapGetters([
 				'keypairs',
@@ -101,6 +115,9 @@
 			},
 			isHardware(){
 				return !!this.account.keypair().external
+			},
+			hasRecurring(){
+				return this.scatter.recurring.proxies.find(x => x.account === this.account.identifiable())
 			}
 		},
 		methods:{
@@ -108,14 +125,23 @@
 				this.popin.data.callback(truthy);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
+			unrevote(){
+				RecurringService.removeProxies([this.account]);
+			},
 			async setProxy(){
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
 				const proxy = this.selectedProxy ? this.selectedProxy : '';
 				const result = await plugin.proxyVote(this.account, proxy, true);
 				if(result) {
 					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, result.transaction_id));
-					if(this.autoVote && this.selectedProxy) await RecurringService.addProxy(this.account, this.selectedProxy);
-					else await RecurringService.removeProxies([this.account]);
+
+					if(this.selectedProxy && this.selectedProxy.length){
+						if(this.autoVote && this.selectedProxy) await RecurringService.addProxy(this.account, this.selectedProxy);
+						else await RecurringService.removeProxies([this.account]);
+					} else {
+						await RecurringService.removeProxies([this.account])
+					}
+
 				}
 
 				this.returnResult(true)
@@ -129,11 +155,11 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 	.panel-container {
 		overflow: auto;
-		height: calc(100vh - 250px);
+		height: calc(100vh - 240px);
 	}
 
 	.auto-vote {

@@ -4,11 +4,9 @@
         <section v-if="keypair">
             <KeypairDashboard v-if="state === STATES.DASHBOARD"
                               :keypair="keypair"
-                              v-on:tokens="x => tokenAccount = x"
                               v-on:createeos="createEosAccount" />
 
             <KeypairExport v-if="state === STATES.EXPORT" :keypair="keypair" />
-            <KeypairTokens v-if="state === STATES.TOKENS" :account="tokenAccount" />
         </section>
     </section>
 </template>
@@ -19,7 +17,6 @@
 
     import KeypairDashboard from '../components/panels/keypair/KeypairDashboard';
     import KeypairExport from '../components/panels/keypair/existing/KeypairExport';
-    import KeypairTokens from '../components/panels/keypair/existing/KeypairTokens';
 
     import KeyPairService from "../services/KeyPairService";
     import PopupService from "../services/PopupService";
@@ -45,14 +42,11 @@
 
         	buttons:[],
 	        keypair:null,
-
-	        tokenAccount:null,
         }},
 
         components:{
 	        KeypairDashboard,
 	        KeypairExport,
-	        KeypairTokens,
         },
 
         computed:{
@@ -88,17 +82,19 @@
 		    const {GENERIC} = this.langKeys;
 
 		    this.buttons = [
-			    {text:locale(GENERIC.Export), clicked:this.enableExportKey},
 			    {text:locale(GENERIC.Refresh), clicked:this.refreshAccounts, process:this.keypair.unique()},
 			    {text:locale(GENERIC.Remove), clicked:this.remove, process:this.keypair.unique()},
 		    ];
+
+		    if(!this.keypair.external){
+		    	this.buttons.unshift({text:locale(GENERIC.Export), clicked:this.enableExportKey});
+            }
 
 		    this.lazyLoadResources();
 	    },
 
         methods:{
 	        back(){
-	        	if(this.tokenAccount) return this.tokenAccount = null;
 	        	if(this.state !== STATES.DASHBOARD) return this.state = STATES.DASHBOARD;
 	            this.$router.push({name:this.RouteNames.HOME});
             },
@@ -175,17 +171,10 @@
 	            Actions.NEW_KEY
             ])
         },
-
-        watch:{
-            ['tokenAccount'](){
-                if(this.tokenAccount) this.state = STATES.TOKENS;
-                else this.state = STATES.DASHBOARD;
-            },
-        }
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables";
+    @import "../styles/variables";
 
 </style>

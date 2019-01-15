@@ -12,6 +12,8 @@ export default class BalanceService {
 		const tokens = store.getters.allTokens.filter(x => x.blockchain === blockchain)
 			.filter(x => x.chainId === account.network().chainId);
 		const balances = await plugin.balancesFor(account, tokens);
+		const untouchable = await this.loadUntouchables(account);
+		if(untouchable) balances.push(untouchable);
 		return store.dispatch(Actions.SET_BALANCES, {account:account.identifiable(), balances});
 	}
 
@@ -42,6 +44,43 @@ export default class BalanceService {
 		const accountKeys = store.state.scatter.keychain.accounts.map(x => x.identifiable());
 		const keysToRemove = Object.keys(store.state.balances).filter(key => !accountKeys.includes(key));
 		return store.dispatch(Actions.REMOVE_BALANCES, keysToRemove);
+	}
+
+	static async loadUntouchables(account){
+		const plugin = PluginRepository.plugin(account.blockchain());
+		return plugin.hasUntouchableTokens() ? plugin.untouchableBalance(account) : null;
+	}
+
+	static totalBalances(allNetworks = false){
+		const tokens = {};
+		tokens['totals'] = {};
+
+		Object.keys(store.state.balances).map(async accountUnique => {
+			const account = store.state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique);
+			if(!account) return;
+
+			if(!allNetworks && store.getters.mainnetTokensOnly){
+				if(!PluginRepository.plugin(account.blockchain()).isEndorsedNetwork(account.network()))
+					return;
+			}
+
+			if(!tokens.hasOwnProperty(account.networkUnique)){
+				tokens[account.networkUnique] = {};
+			}
+
+			if(!store.state.balances[accountUnique]) return;
+			store.state.balances[accountUnique].map(token => {
+				if(!tokens[account.networkUnique].hasOwnProperty(token.uniqueWithChain())) {
+					tokens[account.networkUnique][token.uniqueWithChain()] = token.clone();
+					tokens['totals'][token.uniqueWithChain()] = token.clone();
+				} else {
+					tokens[account.networkUnique][token.uniqueWithChain()].add(token.amount);
+					tokens['totals'][token.uniqueWithChain()].add(token.amount);
+				}
+			});
+		});
+
+		return tokens;
 	}
 
 }

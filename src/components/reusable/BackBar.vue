@@ -1,5 +1,5 @@
 <template>
-    <section class="action-bar">
+    <section class="action-bar short">
         <section class="back-bar">
             <transition name="slide-left" mode="out-in">
                 <section key="back" class="back" @click="emit" v-if="!hideBackButton">
@@ -46,7 +46,11 @@
 </script>
 
 <style scoped lang="scss">
-    @import "../../_variables";
+    @import "../../styles/variables";
+
+    .action-bar {
+        background:#fff;
+    }
 
     .back-bar {
         display:flex;
@@ -97,17 +101,6 @@
             &:hover {
                 .chevron {
                     margin-right: 14px;
-                }
-            }
-
-            @keyframes bounce {
-                0%, 100% {
-                    transform:translateX(0px);
-                }
-
-                50% {
-                    transform:translateX(4px);
-
                 }
             }
         }

@@ -51,7 +51,6 @@
         }},
         computed:{
             ...mapState([
-            	'seed',
                 'scatter'
             ])
         },
@@ -79,7 +78,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../variables";
+    @import "../../../styles/variables";
 
 
 </style>

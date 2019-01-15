@@ -1,0 +1,67 @@
+@import "./chartist-settings";
+@import "./chartist";
+
+.ct-chart-line {
+  height:180px;
+}
+
+
+.ct-label {
+  color: #6b6d7a;
+  text-shadow:0 1px 1px rgba(0,0,0,0.3);
+  font-weight: bold;
+
+  &.ct-vertical {
+    &.ct-start {
+      text-align:left;
+      justify-content: flex-start;
+
+      &.the-last-of-the-labels {
+        //margin-left:-30px;
+      }
+    }
+  }
+
+  &.ct-horizontal {
+    font-size: 9px;
+    margin-top:5px;
+
+    &.the-last-of-the-labels {
+      //margin-left:-30px;
+    }
+  }
+}
+
+.ct-grid {
+  &.ct-vertical {
+    stroke:rgba(255,255,255,0.1);
+    stroke-dasharray: 0;
+  }
+
+  &.ct-horizontal {
+    display:none;
+  }
+}
+
+.ct-series-a {
+  .ct-line {
+    stroke:#fff;
+    stroke-linecap: round;
+    box-shadow:0 3px 6px rgba(0,0,0,0.1);
+  }
+
+  .ct-area {
+    fill: url(#gradient) !important;
+  }
+
+  .ct-point {
+    cursor: pointer;
+    stroke:rgba(255,255,255,0.05);
+    stroke-width: 15px;
+    position: relative;
+
+    &:hover {
+      stroke:rgba(255,255,255,1);
+    }
+  }
+}

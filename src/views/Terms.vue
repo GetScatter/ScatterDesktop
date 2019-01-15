@@ -397,7 +397,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../variables";
+    @import "../styles/variables";
 
     h1, h2 {
         margin-top:20px;

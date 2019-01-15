@@ -6,6 +6,7 @@ import PriceService from "./PriceService";
 import BigNumber from "bignumber.js";
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
+import Token from "../models/Token";
 
 const filterOutToken = (scatter, token) => {
 	scatter.settings.tokens = scatter.settings.tokens.filter(x => x.unique() !== token.unique());
@@ -15,7 +16,7 @@ const filterOutToken = (scatter, token) => {
 
 export default class TokenService {
 
-    static async addToken(token, blacklist = false){
+    static async addToken(token, blacklist = false, showNotification = true){
 	    const scatter = store.state.scatter.clone();
 
 	    // Never adding system tokens.
@@ -39,7 +40,7 @@ export default class TokenService {
         else scatter.settings.blacklistTokens.unshift(token);
 
         await store.dispatch(Actions.SET_SCATTER, scatter);
-        PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TokenAdded), 'check'));
+        if(showNotification) PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.TokenAdded), 'check'));
         return true;
     }
 
@@ -57,11 +58,23 @@ export default class TokenService {
         }))
     }
 
-	static async toggleDisplayToken(token){
-		const scatter = store.state.scatter.clone();
-		scatter.settings.displayToken = token;
+    static hasToken(token){
+    	const scatter = store.state.scatter.clone();
 
-		// await PriceService.watchPrices(!!token);
+    	return !!store.getters.fullTotalBalances.totals[token.unique()] ||
+		    !!scatter.settings.tokens.find(x => x.unique() === token.unique()) ||
+		    !!scatter.settings.blacklistTokens.find(x => x.unique() === token.unique());
+    }
+
+    static async setDisplayCurrency(ticker){
+	    const scatter = store.state.scatter.clone();
+	    scatter.settings.displayCurrency = ticker;
+	    return store.dispatch(Actions.SET_SCATTER, scatter);
+    }
+
+	static async setDisplayToken(token){
+		const scatter = store.state.scatter.clone();
+		scatter.settings.displayToken = token instanceof Token ? token.uniqueWithChain() : token;
 		return store.dispatch(Actions.SET_SCATTER, scatter);
 	}
 

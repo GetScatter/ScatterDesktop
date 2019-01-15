@@ -1,0 +1,243 @@
+@import "variables";
+
+.token-panel {
+  .panel-container {
+    min-height:$win-height;
+    position: relative;
+    overflow-y:scroll;
+    height:0;
+
+    .bg {
+      background:$reverse-gradient;
+      min-height:$win-height;
+      position:fixed;
+      top:160px;
+      bottom:0;
+      left:0;
+      right:0;
+      z-index:-2;
+
+    }
+  }
+
+  .panel-top {
+    display:flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    max-width:1366px;
+    margin:20px auto 0;
+
+    .values {
+      color:#fff;
+
+      .refresh {
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        display:inline-block;
+        margin-right:20px;
+        margin-left:0;
+      }
+
+      .value {
+        font-size: 48px;
+        font-weight: bold;
+      }
+
+      p {
+        color:#a8a9b0;
+        font-size: 11px;
+      }
+    }
+
+    .graph-actions {
+      display:flex;
+      align-items: center;
+
+      .action {
+        cursor: pointer;
+        padding:5px 8px;
+        color:#a8a9b0;
+        font-size: 11px;
+        margin-left:15px;
+        border-radius:4px;
+
+        &.active {
+          border:1px solid #5b6077;
+        }
+      }
+    }
+  }
+
+  .graph {
+    position:relative;
+    height:180px;
+    max-width:1366px;
+    margin:30px auto 0;
+
+    &.loading {
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      color:rgba(255,255,255,0.15);
+      font-size: 48px;
+    }
+
+    .tip {
+      position:absolute;
+      bottom:-25px;
+      right:0;
+      display:flex;
+      justify-content: center;
+      align-items: center;
+
+      div {
+        font-size: 11px;
+        background:rgba(0,0,0,0.2);
+        border-radius:4px;
+        padding:5px 10px;
+        color:#fff;
+        border:1px solid rgba(0,0,0,0.4);
+      }
+    }
+
+    .chart {
+      height:180px;
+    }
+  }
+
+  .token-filters {
+    max-width:1366px;
+    margin:50px auto 0;
+    display:flex;
+    padding-bottom:10px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+  }
+
+  .tokens {
+    color:#fff;
+    max-width:1366px;
+    margin:10px auto;
+
+    .token {
+      display:flex;
+      align-items: center;
+      padding:20px 0;
+      border-bottom:1px solid rgba(255,255,255,0.1);
+
+      .icon {
+        cursor: pointer;
+        width:60px;
+        height:60px;
+        color:#fff;
+        background:$blue-grad;
+        border-radius:50%;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow:0 3px 6px rgba(0,0,0,0.1);
+
+        &.token-icon {
+          font-size: 36px;
+        }
+
+        &.unusable {
+          background:$red-gradient;
+        }
+
+        &.action {
+          background:$white-gradient;
+          color:$primary;
+        }
+
+        &:hover {
+          ~ .last .chevron {
+            transform:translateX(8px);
+          }
+        }
+      }
+
+      > section {
+        flex:1;
+        display:flex;
+        flex-direction: column;
+        padding-left:20px;
+
+        &.last {
+          justify-content: flex-end;
+        }
+
+        .title {
+
+          &.small {
+            font-size: 13px;
+          }
+        }
+
+        .sub {
+          font-size: 11px;
+          margin-top:5px;
+          color:#a8a9b0;
+
+          &.lighter {
+            color:rgba(255,255,255,0.4);
+          }
+
+          button {
+            width:25px;
+            height:25px;
+            font-size: 11px;
+            padding:0;
+            margin-left:2px;
+            line-height: 25px;
+          }
+
+          &.txid {
+            padding:7px 8px 5px;
+            background:rgba(0,0,0,0.2);
+            border:1px solid $primary;
+            border-radius: 4px;
+            display:table;
+            margin-top:10px;
+
+            &:hover {
+              background:#fff;
+              color:$primary;
+            }
+
+          }
+
+          b {
+            color:$lighter-grey;
+            font-size:14px;
+          }
+
+        }
+
+        .centered {
+          text-align:center;
+        }
+
+        .chevron {
+          cursor: pointer;
+          padding:0 0 0 20px;
+          transition: all 0.2s ease;
+          transition-property: transform;
+
+          &:hover {
+            transform:translateX(8px);
+          }
+        }
+      }
+    }
+  }
+
+  .price-movement-bold b {
+    color:$green !important;
+    font-size:20px !important;
+
+    &.red {
+      color:$red !important;
+    }
+  }
+}

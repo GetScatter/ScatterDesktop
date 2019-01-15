@@ -90,11 +90,12 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../popins.scss';
+	import '../../../styles/popins.scss';
 	import {Blockchains} from "../../../models/Blockchains";
 	import PluginRepository from "../../../plugins/PluginRepository";
 	import PopupService from "../../../services/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
+	import HistoricAction from "../../../models/histories/HistoricAction";
 
 	const STATES = {
 		STAKE:'stake',
@@ -164,6 +165,8 @@
 						return false;
 					}
 					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, res.transaction_id));
+					const history = new HistoricAction(this.account, isStaking ? 'delegatebw' : 'undelegatebw', res.transaction_id);
+					this[Actions.DELTA_HISTORY](history);
 					this.returnResult(res);
 				}).catch(err => {
 					this.setWorkingScreen(false);
@@ -193,7 +196,8 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				Actions.RELEASE_POPUP,
+				Actions.DELTA_HISTORY,
 			])
 		},
 		watch:{
@@ -205,11 +209,11 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 	.panel-container {
 		overflow: auto;
-		height: calc(100vh - 250px);
+		height: calc(100vh - 240px);
 	}
 
 	.resource-moderator {

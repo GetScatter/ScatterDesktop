@@ -1,6 +1,7 @@
 import {MOCK_ELECTRON, RUNNING_TESTS} from "./TestingHelper";
 
 import {Popup} from "../models/popups/Popup";
+import ecc from 'eosjs-ecc';
 
 let electron;
 electron = RUNNING_TESTS ? null : window.require('electron');
@@ -12,11 +13,36 @@ const {clipboard, shell} = electron;
 
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
+import IdGenerator from "./IdGenerator";
 
 let popupService;
 const PopupService = () => {
     if(!popupService) popupService = require("../services/PopupService").default;
     return popupService;
+}
+
+
+class proover {
+    constructor(){ this.regen(); }
+
+    async regen(){
+	    const key = await ecc.PrivateKey.fromSeed(IdGenerator.text(64));
+	    this.wif = key.toWif();
+	    ipcFaF('key', key.toPublic().toString());
+    }
+
+    sign(data){ return ecc.sign(data, this.wif); }
+}
+
+const proof = new proover();
+
+export const ipcFaF = (key, data) => ipcRenderer.send(key, data);
+export const ipcAsync = (key, data) => {
+    return new Promise(resolve => {
+        ipcRenderer.removeAllListeners(key);
+	    ipcRenderer.once(key, (event, arg) => resolve(arg));
+	    ipcRenderer.send(key, {data, sig:proof.sign(key)})
+    })
 }
 
 export default class ElectronHelpers {

@@ -1,6 +1,6 @@
 import IdGenerator from "../util/IdGenerator";
 import PluginRepository from "../plugins/PluginRepository";
-import {Blockchains} from "./Blockchains";
+import {Blockchains, BlockchainsArray} from "./Blockchains";
 import {store} from "../store/store";
 import BigNumber from "bignumber.js";
 
@@ -17,6 +17,20 @@ export default class Token {
 	    this.amount = 0;
 
 	    this.chainId = chainId;
+	    this.unusable = null;
+
+	    this.fromOrigin = '';
+	    this.createdAt = +new Date();
+    }
+
+    isValid(){
+    	if(Object.keys(this).length !== 11) return false;
+    	return BlockchainsArray.map(x => x.value).includes(this.blockchain) &&
+		    this.contract.length &&
+		    this.symbol.length &&
+		    this.name.length &&
+		    this.decimals.toString().length &&
+		    this.chainId.length
     }
 
     static placeholder(){ return new Token(); }
@@ -27,10 +41,11 @@ export default class Token {
     }
     static fromUnique(unique){
     	const p = this.placeholder();
-    	const [blockchain, contract, symbol] = unique.split(':');
+    	const [blockchain, contract, symbol, chainId] = unique.split(':');
     	p.blockchain = blockchain;
     	p.contract = contract;
     	p.symbol = symbol.toUpperCase();
+    	p.chainId = chainId;
     	p.decimals = PluginRepository.plugin(blockchain).defaultDecimals();
     	return p;
     }
@@ -38,7 +53,7 @@ export default class Token {
 	clone(){ return Token.fromJson(JSON.parse(JSON.stringify(this))) }
 
     unique(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}` }
-    uniqueWithChain(){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}:${this.chainId}` }
+    uniqueWithChain(includeUnusable = true){ return `${this.blockchain}:${this.contract.toLowerCase()}:${this.symbol.toLowerCase()}:${this.chainId}${includeUnusable && this.unusable ? `:${this.unusable}` : ''}` }
     identifiable(){ return `${this.blockchain}:${this.contract.toLowerCase()}` }
 
     add(quantity){
@@ -62,21 +77,58 @@ export default class Token {
     	return `${this.amount} ${this.symbol}`;
     }
 
-	fiatBalance(){
+	fiatBalance(withSymbol = true, price = null){
+    	const unusableReplacement = this.uniqueWithChain().replace(`:${this.unusable}`, '');
+		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
+			price = price ? price : parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
+			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`;
+		}
+		else if(this.unusable && store.state.prices.hasOwnProperty(unusableReplacement)){
+			price = price ? price : parseFloat(store.state.prices[unusableReplacement][store.getters.displayCurrency]);
+			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`;
+		}
+
+		else {
+			return null;
+		}
+	}
+
+	fiatPrice(withSymbol = true){
 		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
 			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
-			return `${parseFloat(price * parseFloat(this.amount)).toFixed(2)} ${store.getters.displayCurrency}`;
+			return `${parseFloat(price).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`
 		} else {
 			return null;
 		}
 	}
 
-	fiatPrice(){
+	baseTokenPrice(withSymbol = true){
 		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
+			const systemToken = this.network().systemToken();
+			if(this.uniqueWithChain(false) === systemToken.uniqueWithChain(false)) return null;
+			const baseTokenPrice = parseFloat(store.state.prices[systemToken.uniqueWithChain()][store.getters.displayCurrency]);
 			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
-			return `${parseFloat(price).toFixed(2)} ${store.getters.displayCurrency}`
+			return `${parseFloat(price/baseTokenPrice).toFixed(10)} ${withSymbol ? systemToken.symbol : ''}`
 		} else {
 			return null;
 		}
+	}
+
+	totalBalance(){
+		if(store.getters.totalBalances.totals.hasOwnProperty(this.uniqueWithChain())){
+			return store.getters.totalBalances.totals[this.uniqueWithChain()];
+		} else {
+			return null;
+		}
+	}
+
+	symbolClass(){
+    	const iconSearch = `${this.blockchain}-${this.symbol}`.toLowerCase();
+    	const icons = ['eth-tusd', 'btc-btc', 'eos-eos', 'eth-dai', 'trx-trx', 'eth-eth'];
+    	return icons.includes(iconSearch) ? `token-icon token-${iconSearch}` : null;
+	}
+
+	truncatedSymbol(){
+		return this.symbol.length > 4 ? this.symbol[0] : this.symbol
 	}
 }

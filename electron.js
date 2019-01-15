@@ -1,7 +1,8 @@
 const electron = require('electron');
-const {app, BrowserWindow, Tray, Menu, MenuItem} = electron;
+const {app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
 const path = require("path");
 const url = require("url");
+
 
 const isDev = process.mainModule.filename.indexOf('app.asar') === -1;
 
@@ -20,19 +21,17 @@ let mainUrl = isPopup => isDev ? `http://localhost:8080/${isPopup ? '/#/popout' 
 	hash:isPopup ? '/popout' : null
 });
 
-let splashScreen = url.format({
-	pathname: path.join(__dirname, "dist", "splash.html"),
-	protocol: "file:",
-	slashes: true,
-});
-
 
 const quit = () => {
 	if(global && global.appShared && global.appShared.savingData){
 		setTimeout(() => {
 			quit();
 		}, 100);
-	} else app.quit();
+	} else {
+		if(global && global.appShared && global.appShared.QuitWatcher !== null)
+			global.appShared.QuitWatcher();
+		app.quit();
+	}
 }
 
 let tray, mainWindow;
@@ -96,8 +95,8 @@ const createScatterInstance = () => {
 		radii: [5,5,5,5],
 		icon,
 		resizable: true,
-		minWidth: 620,
-		minHeight:580,
+		minWidth: 800,
+		minHeight:720,
 		titleBarStyle:'hiddenInset',
 		backgroundColor,
 		show,
@@ -241,5 +240,24 @@ class NotificationService {
 }
 
 const Transport = require('@ledgerhq/hw-transport-node-hid');
-global.appShared = { Transport, ApiWatcher:null, LowLevelWindowService, NotificationService, savingData:false };
+
+const NodeMachineId = require('node-machine-id');
+
+global.appShared = { Transport, QuitWatcher:null, ApiWatcher:null, LowLevelWindowService, NotificationService, NodeMachineId, savingData:false };
+
+
+
+const ecc = require("eosjs-ecc");
+let seed, key;
+ipcMain.on('key', (event, arg) => {
+	if(event.sender.history[0].indexOf('popout') > -1) return;
+	if(key) return;
+	key = arg;
+});
+ipcMain.on('seeding', (event, arg) => seed = arg);
+ipcMain.on('seed', (event, arg) => {
+	const {data, sig} = arg;
+	if(!isDev && ecc.recover(sig, 'seed') !== key) return event.sender.send('seed', null);
+	event.sender.send('seed', seed);
+});
 

@@ -1,5 +1,5 @@
 <template>
-    <section class="input" :class="{'big':big, 'small':small, 'important':red, 'centered':centered}">
+    <section class="input" :class="{'big':big, 'medium':medium, 'small':small, 'important':red, 'centered':centered, 'white':white}">
 
         <label v-if="error || label" :class="{'error':error}">
             <span>{{error ? error : label}}</span>
@@ -66,6 +66,7 @@
             'dynamicButton',
             'dynamicTooltip',
             'big',
+            'medium',
             'focus',
             'loaderOnDynamic',
             'red',
@@ -73,6 +74,7 @@
             'textarea',
             'rightText',
             'small',
+            'white',
         ],
         watch:{
             input:function(){ this.emit(); },
@@ -82,7 +84,7 @@
 </script>
 
 <style scoped lang="scss">
-    @import "../../_variables";
+    @import "../../styles/variables";
     .input {
         text-align:left;
         position: relative;
@@ -90,7 +92,7 @@
         margin-bottom:20px;
 
         label {
-            font-size: 11px;
+            font-size: 14px;
             color:#7899a6;
             font-weight: bold;
             margin-bottom:8px;
@@ -242,6 +244,47 @@
             }
         }
 
+        &.medium {
+
+            $medium-font:20px;
+            input, textarea {
+                line-height:48px;
+                height:48px;
+                padding:0 20px;
+                font-size: $medium-font;
+
+                &::-webkit-input-placeholder {
+                    font-size: $medium-font;
+                    color:$placeholder-color;
+                }
+                &::-moz-placeholder {
+                    font-size: $medium-font;
+                    color:$placeholder-color;
+                }
+                &:-ms-input-placeholder {
+                    font-size: $medium-font;
+                    color:$placeholder-color;
+                }
+                &:-moz-placeholder {
+                    font-size: $medium-font;
+                    color:$placeholder-color;
+                }
+
+                &.pad-right {
+                    padding-right:50px;
+                }
+            }
+
+            .dynamic-button {
+                font-size: 26px;
+                bottom:0;
+
+                &.labeled {
+                    bottom:-15px;
+                }
+            }
+        }
+
         &.small {
             $smaller-font:13px;
             margin-bottom:5px;
@@ -271,6 +314,32 @@
 
                 &.pad-right {
                     padding-right:50px;
+                }
+            }
+        }
+
+        &.white {
+
+            input, textarea {
+                color:#fff;
+                border:1px solid rgba(255,255,255,0.5);
+
+                &::-webkit-input-placeholder {
+                    color:#fff;
+                }
+                &::-moz-placeholder {
+                    color:#fff;
+                }
+                &:-ms-input-placeholder {
+                    color:#fff;
+                }
+                &:-moz-placeholder {
+                    color:#fff;
+                }
+
+                &:focus {
+                    border:1px solid rgba(0,0,0,0.22);
+                    background:rgba(0,0,0,0.20);
                 }
             }
         }

@@ -19,13 +19,15 @@ export default class RecurringService {
 
 	static async removeProxies(accounts){
 		const scatter = store.state.scatter.clone();
-		scatter.recurring.proxies = scatter.recurring.proxies.filter(x => !accounts.includes(x.account));
+		const identifiables = accounts.map(x => x.identifiable());
+		scatter.recurring.proxies = scatter.recurring.proxies.filter(x => !identifiables.includes(x.account));
 		return store.dispatch(Actions.SET_SCATTER, scatter);
 	}
 
 	static async touchProxies(accounts){
 		const scatter = store.state.scatter.clone();
-		scatter.recurring.proxies.filter(x => accounts.includes(x.account)).map(x => x.timestamp = +new Date());
+		const identifiables = accounts.map(x => x.identifiable());
+		scatter.recurring.proxies.filter(x => identifiables.includes(x.account)).map(x => x.timestamp = +new Date());
 		return store.dispatch(Actions.SET_SCATTER, scatter);
 	}
 
@@ -45,6 +47,7 @@ export default class RecurringService {
 		const staleProxies = scatter.recurring.proxies.filter(proxy => {
 			return now > proxy.timestamp + staleTime;
 		});
+
 
 		if(!staleProxies) return true;
 

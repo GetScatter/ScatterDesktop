@@ -52,7 +52,7 @@
 </template>
 
 <script>
-    import '../popout.scss';
+    import '../styles/popout.scss';
 
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
@@ -144,7 +144,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables.scss";
+    @import "../styles/variables";
 
 
 

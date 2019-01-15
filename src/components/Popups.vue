@@ -19,6 +19,13 @@
                     <RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                     <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
+                    <AccountSelector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
+                    <ConfirmExchange :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_EXCHANGE" />
+                    <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
+                    <Exchange :popin="popIn" v-if="popIn.data.type === popupTypes.EXCHANGE" />
+                    <Stabilize :popin="popIn" v-if="popIn.data.type === popupTypes.STABILIZE" />
+                    <History :popin="popIn" v-if="popIn.data.type === popupTypes.HISTORY" />
+                    <DisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg" @click="clickedFader"></figure>
@@ -61,7 +68,6 @@
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
     import Prompt from './popins/overlay/Prompt.vue'
-    import PopInHead from './popins/overlay/fragments/PopInHead.vue'
 
     import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
     import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
@@ -77,6 +83,13 @@
     import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
     import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
+    import AccountSelector from "./popins/fullscreen/AccountSelector";
+    import ConfirmExchange from "./popins/fullscreen/ConfirmExchange";
+    import ConfirmTransfer from "./popins/fullscreen/ConfirmTransfer";
+    import DisplayToken from "./popins/fullscreen/DisplayToken";
+    import Exchange from "./popins/fullscreen/Exchange";
+    import Stabilize from "./popins/fullscreen/Stabilize";
+    import History from "./popins/fullscreen/History";
     import RemoveApp from "./popins/overlay/RemoveApp";
     import Selector from "./popins/overlay/Selector";
     import UpdateAvailable from "./popins/overlay/UpdateAvailable";
@@ -90,7 +103,6 @@
 		    Snackbar,
 		    TransactionSuccess,
 		    Prompt,
-		    PopInHead,
 
             // FULLSCREEN
 		    DestroyScatter,
@@ -107,6 +119,13 @@
 		    RemoveKeypair,
 		    CheckHardware,
 		    EnableWhitelist,
+		    AccountSelector,
+		    ConfirmExchange,
+		    ConfirmTransfer,
+		    DisplayToken,
+		    Exchange,
+		    Stabilize,
+		    History,
         },
         data(){ return {
             popupTypes:PopupTypes,
@@ -129,8 +148,8 @@
 	        isFullscreen,
             clickedFader(){
                 if(this.nextPopIn) {
+                	if(this.nextPopIn.hasOwnProperty('data') && typeof this.nextPopIn.data.callback === 'function') this.nextPopIn.data.callback(null);
                     this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length - 1]);
-                    if(this.$tours['scatter']) this.$tours['scatter'].previousStep();
                 }
             },
 	        isWide(popIn){
@@ -145,7 +164,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables.scss";
+    @import "../styles/variables";
 
     .snackbar-holder {
         position:fixed;
@@ -178,7 +197,6 @@
         max-width:100%;
         margin:0 40px;
         position: relative;
-        border-radius:4px;
         overflow:hidden;
     }
 
@@ -189,7 +207,7 @@
         align-items: center;
 
         position:fixed;
-        top:0;
+        top:80px;
         bottom:0;
         left:0;
         right:0;

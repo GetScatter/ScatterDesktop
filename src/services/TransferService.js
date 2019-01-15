@@ -4,11 +4,13 @@ import PopupService from './PopupService';
 import {Popup} from '../models/popups/Popup'
 import BigNumber from 'bignumber.js';
 import TokenService from "./TokenService";
+import HistoricTransfer from "../models/histories/HistoricTransfer";
+import {store} from '../store/store'
+import * as Actions from '../store/constants'
 
 export default class TransferService {
 
     static async [Blockchains.ETH](params){
-	    params.amount = TokenService.formatAmount(params.amount, params.token);
         return this.baseTransfer(params);
     }
 
@@ -18,6 +20,7 @@ export default class TransferService {
     }
 
     static async [Blockchains.EOSIO](params){
+    	params.recipient = params.recipient.toLowerCase();
         return this.baseTransfer(params);
     }
 
@@ -31,7 +34,8 @@ export default class TransferService {
                 to:recipient,
                 amount,
                 token,
-                memo
+                memo,
+	            promptForSignature:params.hasOwnProperty('promptForSignature') ? params.promptForSignature : true
             }).catch(x => x);
 
 
@@ -42,24 +46,28 @@ export default class TransferService {
             }
             else {
                 this.transferSuccessPopup(transfer, token.blockchain);
-                return true;
+
+                if(!params.bypassHistory){
+	                const history = new HistoricTransfer(account, recipient, token, amount, memo, this.getTransferId(transfer, token.blockchain));
+	                store.dispatch(Actions.DELTA_HISTORY, history);
+                }
+                return transfer;
             }
         }
 
     }
 
     static transferSuccessPopup(transfer, blockchain){
+	    PopupService.push(Popup.transactionSuccess(blockchain, this.getTransferId(transfer, blockchain)));
+    }
+
+    static getTransferId(transfer, blockchain){
 	    switch(blockchain){
-		    case Blockchains.EOSIO:
-			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.transaction_id))
-			    break;
-		    case Blockchains.TRX:
-			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.txID))
-			    break;
-		    case Blockchains.ETH:
-			    PopupService.push(Popup.transactionSuccess(blockchain, transfer.transactionHash))
-			    break;
+		    case Blockchains.EOSIO: return transfer.transaction_id;
+		    case Blockchains.TRX: return transfer.txID;
+		    case Blockchains.ETH: return transfer.transactionHash;
 	    }
+	    return null;
     }
 
 }

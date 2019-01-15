@@ -4,6 +4,8 @@ import * as Actions from '../store/constants';
 const Store = window.require('electron-store');
 
 const ABIS_NAME = 'abi';
+const HISTORIES_NAME = 'histories';
+const TRANSLATION_NAME = 'translation';
 const SCATTER_DATA_NAME = 'scatter';
 const SCATTER_INTERMED_NAME = 'scatter_intermed';
 
@@ -18,10 +20,18 @@ const getStore = name => {
 };
 
 const scatterStorage = () => getStore(SCATTER_DATA_NAME);
+const historyStorage = () => getStore(HISTORIES_NAME);
+const translationStorage = () => getStore(TRANSLATION_NAME);
 const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
 
-import {remote} from '../util/ElectronHelpers';
+import {ipcAsync, remote} from '../util/ElectronHelpers';
+import {dateId, daysOld, hourNow} from "../util/DateHelpers";
+import {AES} from "aes-oop";
+import {HISTORY_TYPES} from "../models/histories/History";
+import HistoricTransfer from "../models/histories/HistoricTransfer";
+import HistoricExchange from "../models/histories/HistoricExchange";
+import HistoricAction from "../models/histories/HistoricAction";
 const dataPath = remote.app.getPath('userData');
 const fs = window.require('fs');
 
@@ -85,6 +95,8 @@ export default class StorageService {
     static removeScatter(){
         scatterStorage().clear();
         abiStorage().clear();
+        historyStorage().clear();
+	    translationStorage().clear();
         store.commit(Actions.SET_SCATTER, null);
         store.commit(Actions.SET_SEED, '');
         return true;
@@ -104,5 +116,56 @@ export default class StorageService {
 
     static setSalt(salt){
         return scatterStorage().set('salt', salt);
+    }
+
+    static async getTranslation(){
+	    let translation = translationStorage().get('translation');
+	    if(!translation) return null;
+	    return AES.decrypt(translation, await ipcAsync('seed'));
+    }
+
+    static async setTranslation(translation){
+	    const encrypted = AES.encrypt(translation, await ipcAsync('seed'));
+	    return translationStorage().set('translation', encrypted);
+    }
+
+    static async getHistory(){
+		let history = historyStorage().get('history');
+		if(!history) return [];
+		history = AES.decrypt(history, await ipcAsync('seed'));
+
+		history = history.map(x => {
+			if(x.type === HISTORY_TYPES.Transfer) return HistoricTransfer.fromJson(x);
+			if(x.type === HISTORY_TYPES.Exchange) return HistoricExchange.fromJson(x);
+			if(x.type === HISTORY_TYPES.Action) return HistoricAction.fromJson(x);
+			return null;
+		}).filter(x => x);
+
+		return history;
+    }
+
+    static async updateHistory(x){
+    	let history = await this.getHistory();
+    	if(history.find(h => h.id === x.id)) history = history.filter(h => h.id !== x.id);
+        history.unshift(x);
+	    const encrypted = AES.encrypt(history, await ipcAsync('seed'));
+	    return historyStorage().set('history', encrypted);
+    }
+
+    static async deltaHistory(x){
+    	let history = await this.getHistory();
+	    if(x === null) history = [];
+	    else {
+		    if(history.find(h => h.id === x.id)) history = history.filter(h => h.id !== x.id);
+		    else history.unshift(x);
+	    }
+
+    	const encrypted = AES.encrypt(history, await ipcAsync('seed'));
+        return historyStorage().set('history', encrypted);
+    }
+
+    static async swapHistory(history){
+    	const encrypted = AES.encrypt(history, await ipcAsync('seed'));
+        return historyStorage().set('history', encrypted);
     }
 }

@@ -73,7 +73,7 @@
 
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../../_variables";
+	@import "../../../../styles/variables";
 
 
 	.item {

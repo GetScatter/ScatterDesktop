@@ -24,7 +24,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../popins.scss';
+	import '../../../styles/popins.scss';
 	import SocketService from "../../../services/SocketService";
 	import StorageService from "../../../services/StorageService";
 
@@ -67,11 +67,11 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 	.panel-container {
 		overflow: auto;
-		height: calc(100vh - 250px);
+		height: calc(100vh - 240px);
 	}
 
 	.auto-vote {

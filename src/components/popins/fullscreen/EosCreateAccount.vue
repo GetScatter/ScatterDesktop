@@ -40,9 +40,9 @@
 							<br>
 
 							<cin label="Owner"
-							     :text="ownerPublicKey" />
+							     :text="ownerKey" v-on:changed="x => ownerKey = x" />
 							<cin label="Active"
-							     :text="activePublicKey" />
+							     :text="activeKey" v-on:changed="x => activeKey = x" />
 						</section>
 					</section>
 				</section>
@@ -86,7 +86,24 @@
 		</section>
 
 		<section class="full-panel center-fold inner with-action limited" v-if="state === STATES.SEND_AMOUNT">
-			<section class="padded">
+			<section class="padded" v-if="allowsFreeAccounts">
+				<section class="centered">
+					<h1>Free Account Available!</h1>
+					<br>
+					<img class="eos-logo" src="../../../assets/scrooge_mcpig.png" />
+					<br>
+					<br>
+
+					<section style="max-width:500px;">
+						Thanks to the community and various apps running on EOS, you can create an account for free.
+						<br>
+						<br>
+						<br>
+						<b style="font-size: 13px;">Just click the button below to create your account.</b>
+					</section>
+				</section>
+			</section>
+			<section class="padded" v-else>
 				<b>EOS Mainnet</b>
 				<br>
 				<br>
@@ -107,7 +124,7 @@
 						{{locale(langKeys.CREATE_EOS.EXCHANGE.ExchangeFieldParts)[1]}}
 					</figure>
 					<cin style="margin-bottom:0; flex:1;" disabled="1"
-					     text="makeaccounts" copy="1" />
+					     text="createbridge" copy="1" />
 				</section>
 
 				<br>
@@ -123,24 +140,13 @@
 				</section>
 
 				<figure class="line"></figure>
-
-				<section class="details less-pad" style="display:block;">
-					<section class="title">{{locale(langKeys.CREATE_EOS.EXCHANGE.SentTitle)}}</section>
-					<p>{{locale(langKeys.CREATE_EOS.EXCHANGE.SentSubtitle)}}</p>
-				</section>
-				<br>
-				<cin :placeholder="locale(langKeys.CREATE_EOS.EXCHANGE.TransactionIDLabel)"
-				     big="1"
-				     :text="transactionId"
-				     v-on:changed="x => transactionId = x" />
-
 			</section>
 
 
 
 			<section class="action-bar short bottom centered">
 				<btn blue="1"
-				     :disabled="accountNameError || !transactionId.length"
+				     :disabled="accountNameError"
 				     :text="locale(langKeys.CREATE_EOS.EXCHANGE.ActionBarButton)"
 				     v-on:clicked="createExchangeAccount" />
 			</section>
@@ -168,6 +174,7 @@
 	import {Popup} from "../../../models/popups/Popup";
 	import AccountService from "../../../services/AccountService";
 	import Onboarding from '../../svgs/Onboarding';
+	import EosAccountService from "../../../services/EosAccountService";
 
 	const STATES = {
 		ACCOUNT:'account',
@@ -187,6 +194,7 @@
 		data () {return {
 			state:STATES.EXCHANGE,
 			STATES,
+			allowsFreeAccounts:false,
 
 			accountName:'',
 			accountNameError:' ',
@@ -198,18 +206,23 @@
 			ramPrice:null,
 
 			transactionId:'',
+
+			ownerKey:'',
+			activeKey:'',
 		}},
 
 		created(){
+			this.ownerKey = this.ownerPublicKey;
+			this.activeKey = this.activePublicKey;
 
 			this.checkAccountName();
 			if(this.hasOtherEosAccounts) this.state = STATES.ACCOUNT;
+			else this.checkFreeAccounts();
 			this.getRamPrice();
 		},
 
 		computed:{
 			...mapState([
-				'seed',
 				'balances'
 			]),
 			...mapGetters([
@@ -239,7 +252,7 @@
 				}));
 			},
 			minimumPrice(){
-				return (parseFloat(this.ramPrice ? this.ramPrice : '1.0000') + 1).toFixed(this.decimals);
+				return (parseFloat(this.ramPrice ? this.ramPrice : '1.0000') + 1.2).toFixed(this.decimals);
 			},
 			decimals(){
 				return !this.creator ? 4 : this.creator.network().systemToken().decimals;
@@ -310,39 +323,28 @@
 				}, 500);
 			},
 
+			async checkFreeAccounts(){
+				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+				const network = this.networks.find(x => plugin.isEndorsedNetwork(x));
+				const machineId = await EosAccountService.getMachineId();
+				if(!await EosAccountService.canMakeFreeAccount(machineId)) return false;
+				this.allowsFreeAccounts = await EosAccountService.allowsFreeAccounts(network);
+			},
+
 			async createExchangeAccount(){
 				if(this.accountNameError) return;
 				this.setWorkingScreen(true);
 
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-				const signature = await plugin.signer({data:this.activePublicKey}, this.activePublicKey, true);
-
-				const payload = {
-					transaction_id:this.transactionId,
-					signature,
-					keys:{
-						active:this.activePublicKey,
-						owner:this.ownerPublicKey
-					},
-					account_name:this.accountName
-				};
-
-				const result = await fetch(`https://api.get-scatter.com/v1/create_eos`, {
-					method: 'POST',
-					headers:{
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-					},
-					body:JSON.stringify(payload)
-				}).then(r => r.json()).catch(error => ({error}));
+				const network = this.networks.find(x => plugin.isEndorsedNetwork(x));
+				const result = await EosAccountService.createAccount(this.activePublicKey, this.accountName, this.allowsFreeAccounts);
 
 				if(!result || result.hasOwnProperty('error')){
 					this.setWorkingScreen(false);
 					return PopupService.push(Popup.snackbar(result.error));
 				}
 
-				const network = this.networks.find(x => plugin.isEndorsedNetwork(x));
-				this.finishedAccountCreation(result.created, network, true);
+				this.finishedAccountCreation(result, network, true);
 			},
 
 			async createAccount(){
@@ -359,8 +361,8 @@
 				plugin.createAccount(
 					this.creator,
 					this.accountName,
-					this.ownerPublicKey,
-					this.activePublicKey,
+					this.ownerKey,
+					this.ownerKey,
 					this.eosToUse
 				).then(tx => {
 					this.finishedAccountCreation(tx, this.creator.network());
@@ -368,7 +370,7 @@
 				.catch(error => {
 					this.setWorkingScreen(false);
 					PopupService.push(Popup.prompt("Error", error));
-					console.log('error', error);
+					console.error('error', error);
 				});
 			},
 
@@ -424,7 +426,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 	.line {
 		width:100%;

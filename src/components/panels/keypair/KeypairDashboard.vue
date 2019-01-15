@@ -51,11 +51,6 @@
 			<section class="list-container" style="overflow:auto;" v-if="dashState === DASH_STATES.ADD_ACCOUNT">
 
 				<section style="padding-bottom:20px;">
-					<section class="action-box top-pad" v-if="canCreateAccounts">
-						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountLabel)}}</label>
-						<p>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountDescription)}}</p>
-						<btn :text="locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountButton)" v-on:clicked="$emit('createeos')" />
-					</section>
 
 					<section class="action-box top-pad">
 						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountLabel)}}</label>
@@ -81,6 +76,12 @@
 								     red="1" v-on:clicked="manuallyAddAccount" />
 							</section>
 						</section>
+					</section>
+
+					<section class="action-box top-pad" v-if="canCreateAccounts">
+						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountLabel)}}</label>
+						<p>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountDescription)}}</p>
+						<btn :text="locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountButton)" v-on:clicked="$emit('createeos')" />
 					</section>
 				</section>
 
@@ -151,7 +152,7 @@
 			},
 			filteredAccounts(){
 				return this.keypair.accounts(true)
-					.filter(x => x.name.toLowerCase().match(this.searchTerms))
+					.filter(x => x.name.toLowerCase().indexOf(this.searchTerms) > -1)
 					.sort((a,b) => {
 						return b.tokenCount() - a.tokenCount()
 					})
@@ -226,7 +227,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../_variables";
+	@import "../../../styles/variables";
 
 	.panel-switch {
 		margin-top:0px;
@@ -234,7 +235,7 @@
 
 	.panel-container {
 		position:fixed;
-		top:170px;
+		top:160px;
 		left:0;
 		right:0;
 		bottom:0;

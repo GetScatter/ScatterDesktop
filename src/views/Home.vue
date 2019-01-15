@@ -2,39 +2,35 @@
     <section class="home">
 
         <section class="full-panel home" v-if="keypairs.length">
-            <section class="action-bar short">
+            <section class="action-bar dark">
                 <section class="token-buttons">
                     <section class="refresh" @click="refreshTokens" :class="{'loading':loadingBalances}">
                         <i v-if="!loadingBalances" class="icon-arrows-ccw"></i>
                         <i v-if="loadingBalances" class="icon-spin4 animate-spin"></i>
-                        <!--<btn borderless="1" :disabled="loadingBalances" :loading="loadingBalances" v-on:clicked="refreshTokens" icon="icon-arrows-ccw" />-->
                     </section>
 
-                    <router-link :to="{name:RouteNames.SETTINGS, params:{panel:SETTINGS_OPTIONS.TOKENS}}" class="total-balance">
-                        <section class="icon" :class="{'big':balance.symbol.length === 1}">
-                            <!--<i class="icon-arrows-ccw"></i>-->
-                            {{balance.symbol}}
-                        </section>
-
+                    <router-link :to="{name:RouteNames.TOKENS}" class="total-balance">
                         <section class="total-details">
-                            <figure class="amount">{{formatNumber(balance.amount, true)}}</figure>
+                            <figure class="amount">
+                                {{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}
+                                <div v-if="displayToken">{{formatNumber(totalTokenBalance.amount, true)}} {{totalTokenBalance.symbol}}</div>
+                            </figure>
                             <figure class="dots">
                                 <figure class="dot" v-for="i in [1,1,1]"></figure>
                             </figure>
                         </section>
 
                     </router-link>
-                    <!--<btn text="Buy"></btn>-->
-                    <!--<btn text="Exchange"></btn>-->
                 </section>
-                <section class="actions" style="margin-right:-10px;">
-                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
-                    <btn borderless="1" v-on:clicked="$router.push({name:RouteNames.RECEIVE})" :text="locale(langKeys.DASHBOARD.TOOLBARS.ReceiveButton)"></btn>
+                <section class="actions" v-if="accounts.length">
+                    <btn blue="1" v-on:clicked="$router.push({name:RouteNames.TRANSFER})" :text="locale(langKeys.DASHBOARD.TOOLBARS.SendButton)"></btn>
+                    <btn blue="1" v-on:clicked="openExchange" :text="locale(langKeys.GENERIC.Exchange)"></btn>
+                    <btn colorless="1" v-if="history.length" v-on:clicked="openHistory" :text="locale(langKeys.GENERIC.History)"></btn>
                 </section>
             </section>
 
             <section class="split-panel">
-                <Wallets style="flex:1;" class="panel" />
+                <Wallets style="flex:1; max-width:300px;" class="panel" />
                 <Apps style="flex:2;" class="panel" />
             </section>
         </section>
@@ -65,11 +61,9 @@
     import Wallets from '../components/panels/home/Wallets';
     import BalanceService from "../services/BalanceService";
     import PriceService from "../services/PriceService";
-    import Token from "../models/Token";
-    import RecurringService from "../services/RecurringService";
-    import HardwareService from "../services/HardwareService";
-    import LanguageService from "../services/LanguageService";
-    import AccountService from "../services/AccountService";
+    import SingletonService from "../services/SingletonService";
+    import PopupService from "../services/PopupService";
+    import {Popup} from "../models/popups/Popup";
 
 
     export default {
@@ -87,6 +81,7 @@
             	'scatter',
 	            'balances',
                 'prices',
+                'history',
             ]),
             ...mapGetters([
                 'keypairs',
@@ -95,35 +90,13 @@
                 'displayToken',
                 'displayCurrency',
             ]),
-            balance(){
-            	const totals = this.totalBalances.totals;
-
-
-            	if(this.displayToken){
-            		if(totals.hasOwnProperty(this.displayToken)) return totals[this.displayToken]
-                    else {
-                    	const token = Token.fromUnique(this.displayToken);
-                    	token.amount = parseFloat(0).toFixed(token.decimals);
-                    	return token;
-                    }
-                } else {
-            		let total = 0;
-
-            		Object.keys(this.prices).map(tokenUnique => {
-			            const balance = totals[tokenUnique];
-			            if(balance){
-				            const price = this.prices[tokenUnique][this.displayCurrency];
-				            const value = parseFloat(parseFloat(balance.amount) * parseFloat(price));
-				            if(isNaN(value)) return;
-				            total += value;
-			            }
-                    });
-
-		            return Token.fromJson({
-			            symbol:this.displayCurrency,
-			            amount:total.toFixed(2),
-		            })
-                }
+            totalBalance(){
+	            const totals = this.totalBalances.totals;
+                return PriceService.getTotal(totals);
+            },
+            totalTokenBalance(){
+	            const totals = this.totalBalances.totals;
+                return PriceService.getTotal(totals, null, false, this.displayToken);
             }
         },
 
@@ -133,24 +106,47 @@
 	        	if(this.loadingBalances) return;
 	        	this.loadingBalances = true;
 		        await BalanceService.loadAllBalances(true);
+		        await PriceService.getAll();
 		        this.loadingBalances = false;
-            }
+            },
+	        openExchange(){
+	            PopupService.push(Popup.exchange({}))
+            },
+	        openHistory(){
+	            PopupService.push(Popup.history(null, () => {}))
+            },
+            ...mapActions([
+            	Actions.LOAD_HISTORY,
+                Actions.LOAD_LANGUAGE,
+                Actions.SET_SCATTER,
+            ])
+        },
+        created(){
+
         },
 
         mounted(){
 	        setTimeout(async() => {
-	        	await AccountService.fixOrphanedAccounts();
-		        await PriceService.watchPrices();
+	        	await SingletonService.init();
 		        await this.refreshTokens(false);
-		        await RecurringService.checkProxies();
-		        await LanguageService.regenerateLanguage();
             })
         },
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables";
+    @import "../styles/variables";
+
+    .actions {
+        button {
+            font-weight: normal;  
+            margin-left:8px;  
+        }
+        .separator {
+            margin-left:12px;
+            display:inline;
+        }
+    }
 
     .home {
         position:relative;
@@ -160,7 +156,10 @@
 
     .token-buttons {
         display:flex;
+        color: rgba(255,255,255,0.9);
+
         button {
+
             &:not(:first-child){
                 margin-left:5px;
             }
@@ -179,8 +178,8 @@
                 content:'';
                 display:block;
                 position:absolute;
-                top:-25px;
-                bottom:-25px;
+                top:0;
+                bottom:0;
                 right:0;
                 border-right:2px solid $border-standard;
             }
@@ -191,22 +190,28 @@
         display:flex;
         align-items: center;
         .icon {
-            margin-top:3px;
             font-size: 16px;
+            padding-right:5px;
+            margin-top:2px;
 
             &.big {
                 font-size: 22px;
+                padding-right:0;
+                margin-top:0;
             }
         }
 
         .total-details {
             display:flex;
             align-items: center;
-            padding-left:15px;
+            padding-left:5px;
 
             .amount {
-                font-size: 24px;
-                font-weight: 300;
+                font-size: 32px;
+
+                div {
+                    font-size: 14px;
+                }
             }
 
             .dots {
@@ -218,9 +223,15 @@
                 .dot {
                     width:$dot;
                     height:$dot;
-                    background:$primary;
+                    background:white;
                     border-radius:50%;
                     margin-right:3px;
+                }
+            }
+
+            &:hover {
+                .dots {
+                    animation: bounce-right 0.5s ease infinite;
                 }
             }
         }

@@ -10,6 +10,8 @@ import PopupService from '../services/PopupService'
 import {Popup} from '../models/popups/Popup'
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
+import {ipcAsync, ipcFaF, ipcRenderer} from "../util/ElectronHelpers";
+
 
 export default class PasswordService {
 
@@ -40,7 +42,7 @@ export default class PasswordService {
                     mnemonic = m;
                 }
 
-                if(setToState) await store.commit(Actions.SET_SEED, seed);
+                if(setToState) ipcFaF('seeding', seed);
                 resolve([mnemonic, seed]);
             } catch(e){
                 resolve([null, null]);
@@ -51,29 +53,28 @@ export default class PasswordService {
     static async verifyPassword(password = null){
         return new Promise(async resolve => {
 
-            const testPassword = (setToState, seed, mnemonic = false) => {
+            const testPassword = async (setToState, seed, mnemonic = false) => {
 	            try {
 		            let scatter = StorageService.getScatter();
 		            scatter = AES.decrypt(scatter, seed);
-		            if(setToState) store.commit(Actions.SET_SCATTER, scatter);
+		            if(setToState) await store.commit(Actions.SET_SCATTER, scatter);
 
 		            if(!scatter.hasOwnProperty('keychain')) return resolve(false);
 
 		            scatter = Scatter.fromJson(scatter);
 		            scatter.decrypt(seed);
-		            if(setToState) store.dispatch(Actions.SET_SCATTER, scatter);
+		            if(setToState) await store.dispatch(Actions.SET_SCATTER, scatter);
 		            resolve(mnemonic ? mnemonic : true);
 	            } catch(e) {
-		            console.log('e', e);
 		            resolve(false);
 	            }
             }
 
             if(!password){
-	            testPassword(true, store.state.seed);
+	            await testPassword(true, await ipcAsync('seed'));
             } else {
                 const [mnemonic, seed] = await PasswordService.seedPassword(password, false);
-	            testPassword(false, seed, mnemonic);
+	            await testPassword(false, seed, mnemonic);
             }
 
         })
@@ -82,7 +83,7 @@ export default class PasswordService {
     static async changePassword(newPassword){
         return new Promise(async resolve => {
 
-            const oldSeed = store.state.seed;
+            const oldSeed = await ipcAsync('seed');
 
             // Setting a new salt every time the password is changed.
             await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
@@ -101,6 +102,10 @@ export default class PasswordService {
 
             await store.commit(Actions.SET_SEED, newSeed);
             await store.dispatch(Actions.SET_SCATTER, scatter);
+            await StorageService.swapHistory(store.state.history);
+            await StorageService.setTranslation(store.getters.language);
+            store.dispatch(Actions.LOAD_HISTORY);
+            store.dispatch(Actions.LOAD_LANGUAGE);
             resolve(newMnemonic);
 
         })

@@ -1,5 +1,5 @@
-import './styles.scss'
-import './tour.scss';
+import './styles/styles.scss'
+import './styles/tour.scss';
 
 // MUST BE LOADED FIRST
 import ElectronHelpers from './util/ElectronHelpers';
@@ -17,7 +17,6 @@ import UserBar from './components/UserBar.vue'
 import ViewBase from './components/ViewBase.vue'
 
 // POPUPS
-import PopInHead from './components/popins/overlay/fragments/PopInHead.vue'
 
 // POP OUTS
 import LinkApp from './views/popouts/LinkApp.vue'
@@ -43,7 +42,6 @@ class Main {
 		const hash = location.hash.replace("#/", '');
 
 		const shared = [
-			{tag:'pop-in-head', vue:PopInHead},
 			{tag:'btn', vue:ButtonComponent},
 			{tag:'cin', vue:InputComponent},
 			{tag:'sel', vue:SelectComponent},

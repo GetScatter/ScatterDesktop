@@ -1,14 +1,27 @@
 <template>
 	<section>
-		<section class="panel-container limited">
+		<section class="full-panel center-fold inner with-action">
 			<section class="centered">
-				<!--<h1>Your EOS Keys</h1>-->
+				<h1>EOS Key Created</h1>
+				<br>
 				<img class="eos-logo" src="../../../assets/create_eos.png" />
 				<br>
 				<br>
-				<br>
+
+				<section style="max-width:500px;">
+					You can either click the button below to create an EOS Account on top of the key you just created or click the Back button above
+					to go back to the dashboard.
+					<br>
+					<br>
+					<br>
+					<btn text="Copy Private Key" style="width:auto;" red="1" v-on:clicked="copyPrivateKey()" />
+				</section>
 			</section>
-			<FullWidthRow :items="keysItems" />
+
+			<section class="action-bar short bottom centered" style="border-top:0;">
+				<btn :text="locale(langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountButton)" blue="1" v-on:clicked="createAccount()" />
+			</section>
+			<!--<FullWidthRow :items="keysItems" />-->
 		</section>
 
 
@@ -33,92 +46,25 @@
 			FullWidthRow,
 		},
 		data () {return {
-			keysItems:[],
-			ownerPublicKey:'',
-			activePublicKey:'',
-			ownerId:null,
-			activeId:null,
+			keypair:null,
 		}},
 
 		created(){
-			// this[Actions.HIDE_BACK_BTN](true);
 			setTimeout(async () => {
-				const keypairs = [...new Array(2)].map(() => Keypair.placeholder([Blockchains.EOSIO]));
-				await Promise.all(keypairs.map(KeyPairService.generateKeyPair));
-				await Promise.all(keypairs.map(KeyPairService.makePublicKeys));
-
-				const [active, owner] = keypairs;
-
-				const randomName = IdGenerator.text(5);
-				active.name = `EOS-Active-${randomName}`;
-				owner.name = `EOS-Owner-${randomName}`;
-
-				await KeyPairService.saveKeyPair(active);
-				await KeyPairService.saveKeyPair(owner);
-
-				this.$emit('keys', [active.id, owner.id]);
-
-				this.ownerPublicKey = owner.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
-				this.activePublicKey = active.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
-				this.ownerId = owner.id;
-				this.activeId = active.id;
-
-				this.keysItems = [
-					{
-						id:'owner',
-						icon:'',
-						title:owner.name,
-						description:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.OwnerDescription),
-						actions:[
-							{
-								name:this.locale(this.langKeys.GENERIC.Copy),
-								handler:() => this.copy('owner'),
-								important:true
-							}
-						]
-					},
-					{
-						id:'active',
-						icon:'',
-						title:active.name,
-						description:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.ActiveDescription),
-						actions:[
-							{
-								name:this.locale(this.langKeys.GENERIC.Copy),
-								handler:() => this.copy('active'),
-								important:true
-							}
-						]
-					},
-					{
-						id:'purchase',
-						icon:'',
-						title:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountTitle),
-						description:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountDescription),
-						actions:[
-							{
-								name:this.locale(this.langKeys.ADD_KEYS.EOS_KEYS.CreateEosAccountButton),
-								handler:() => {
-									PopupService.push(Popup.eosCreateAccount(
-										this.activePublicKey,
-										this.ownerPublicKey,
-										this.activeId,
-										this.ownerId,
-									))
-								}
-							}
-						]
-					}
-				];
-
-
+				const keypair = Keypair.placeholder([Blockchains.EOSIO]);
+				await KeyPairService.generateKeyPair(keypair);
+				await KeyPairService.makePublicKeys(keypair);
+				keypair.name = `EOS-${IdGenerator.text(5)}`;
+				await KeyPairService.saveKeyPair(keypair);
+				this.$emit('keys', [keypair.id]);
+				this.keypair = keypair;
 				this.setWorkingScreen(false);
 			});
 		},
 
 		computed:{
 			...mapState([
-				'seed',
+
 			]),
 			...mapGetters([
 				'keypairs',
@@ -128,29 +74,19 @@
 		},
 
 		methods:{
-			copy(keyType){
-				const item = this.keysItems.find(x => x.id === keyType);
-				if(!item) return;
-
-				if(keyType === 'owner'){
-					item.actions = [{name:this.locale(this.langKeys.GENERIC.Remove), handler:this.deleteOwner, red:true, important:true}]
-				} else {
-					item.actions = [{icon:'icon-check', name:'', handler:() => this.copy(keyType), blue:true}];
-				}
-
-				let keypair = this.keypairs.find(x => x.id === this[keyType+'Id']);
-				keypair.decrypt(this.seed);
-				const publicKey = keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
-				this.copyPrivateKey(keyType, keypair.privateKey, publicKey);
-				keypair = null;
+			copyPrivateKey(){
+				const privateKey = Crypto.bufferToPrivateKey(this.keypair.privateKey, Blockchains.EOSIO);
+				const publicKey = this.keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
+				ElectronHelpers.copy(`\nPrivate: ${privateKey} \nPublic: ${publicKey}`);
 			},
-			copyPrivateKey(keyType, privateKeyBuffer, publicKey){
-				const privateKey = Crypto.bufferToPrivateKey(privateKeyBuffer, Blockchains.EOSIO);
-				ElectronHelpers.copy(`${keyType}\nPrivate: ${privateKey} \nPublic: ${publicKey}`);
-			},
-			async deleteOwner(){
-				await KeyPairService.removeKeyPair(this.keypairs.find(x => x.id === this.ownerId));
-				this.keysItems = this.keysItems.filter(x => x.id !== 'owner');
+			createAccount(){
+				const publicKey = this.keypair.publicKeys.find(x => x.blockchain === Blockchains.EOSIO).key;
+				PopupService.push(Popup.eosCreateAccount(
+					publicKey,
+					publicKey,
+					this.keypair.id,
+					this.keypair.id,
+				))
 			},
 
 			...mapActions([
@@ -161,7 +97,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../_variables";
+	@import "../../../styles/variables";
 
 	.eos-logo {
 		margin-bottom:10px;

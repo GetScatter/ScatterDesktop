@@ -30,6 +30,7 @@
             ]),
             ...mapGetters([
                 'networks',
+                'language',
             ]),
             selectedLanguage(){
                 return this.scatter.settings.language
@@ -46,19 +47,20 @@
 	            scatter.settings.language = language;
             	LanguageService.getLanguage(language).then(res => {
 		            res.raw = JSON.stringify(res);
-		            scatter.settings.languageJson = res;
+		            this[Actions.SET_LANGUAGE](res);
 		            this[Actions.SET_SCATTER](scatter);
                 })
             },
             ...mapActions([
-                Actions.SET_SCATTER
+                Actions.SET_SCATTER,
+                Actions.SET_LANGUAGE,
             ])
         },
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../variables";
+    @import "../../../styles/variables";
 
 
 </style>

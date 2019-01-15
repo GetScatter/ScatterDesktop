@@ -110,7 +110,7 @@
 	        isAction(){ return this.selected.isContractAction; },
 	        permissionsList(){
                 return [this.identityPermission].concat(this.contractPermissions).map(permission => ({
-	                id:permission.id,
+	                id:permission ? permission.id : null,
 	                title:this.permissionTitle(permission),
 	                description:this.permissionDescription(permission),
                 }));
@@ -133,11 +133,13 @@
         	    this.selected = this.permissions.find(x => x.id === item.id);
             },
             permissionTitle(permission){
+        		if(!permission) return;
         	    return permission.isIdentity
                     ? this.locale(this.langKeys.PERMISSIONS.LoginPermission) :
                     `${permission.action}`;
             },
 	        permissionDescription(permission){
+        		if(!permission) return;
 		        return permission.isContractAction ? `${this.locale(this.langKeys.PERMISSIONS.ActionWhitelist)} - ${permission.contract}` : '';
 	        },
 	        getAppData:AppsService.getAppData,
@@ -156,7 +158,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../_variables";
+    @import "../styles/variables";
 
     .panel {
         flex:1;

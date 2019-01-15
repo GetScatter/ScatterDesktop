@@ -122,30 +122,6 @@
 
             <br>
             <section v-if="state === STATES.WHITELIST">
-                <section class="disclaimer less-pad" v-if="!searchTerms.length">
-                    {{locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.Disclaimer)}}
-                </section>
-
-                <section v-if="blockchain === null && !searchTerms.length">
-                    <FlatList as-rows="1" style="padding:0;"
-                              :selected="selectedDisplayToken"
-                              :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.FiatCurrencyLabel)"
-                              v-on:selected="selectDisplayToken"
-                              small="1"
-                              :items="currencyList" />
-                    <br>
-                    <br>
-                </section>
-
-                <section v-if="networkTokensList.length">
-                    <FlatList style="padding:0;"
-                              :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.SystemTokensLabel)"
-                              :selected="selectedDisplayToken"
-                              v-on:selected="selectDisplayToken"
-                              :items="networkTokensList" />
-                    <br>
-                    <br>
-                </section>
 
                 <FlatList style="padding:0;"
                           :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.CustomTokensLabel)"
@@ -191,6 +167,7 @@
 		const description = `${blockchainName(token.blockchain)} ${fiatPrice ? ' - '+fiatPrice : ''}`;
 		return {
 			id:token.unique(),
+			sub:`${token.symbol} - ${token.contract}`,
 			title:`${token.name} (${token.network() ? token.network().name : ''})`,
 			description
 		};
@@ -288,10 +265,10 @@
 			filterTokensByTerms(tokensList){
 				return tokensList
 					.filter(x => {
-						return x.symbol.toLowerCase().match(this.terms)
-							|| x.name.toLowerCase().match(this.terms)
-							|| x.blockchain.toLowerCase().match(this.terms)
-							|| this.blockchainName(x.blockchain).toLowerCase().match(this.terms)
+						return x.symbol.toLowerCase().indexOf(this.terms) > -1
+							|| x.name.toLowerCase().indexOf(this.terms) > -1
+							|| x.blockchain.toLowerCase().indexOf(this.terms) > -1
+							|| this.blockchainName(x.blockchain).toLowerCase().indexOf(this.terms) > -1
 					})
 			},
 			defaultDecimals(blockchain){
@@ -308,8 +285,8 @@
 					this[Actions.SET_SCATTER](scatter);
 				}
 
-				if(!token.id || asFiat) return TokenService.toggleDisplayToken(null);
-				TokenService.toggleDisplayToken(token.id);
+				if(!token.id || asFiat) return TokenService.setDisplayToken(null);
+				TokenService.setDisplayToken(token.id);
 			},
 			async addToken(blacklist = false){
 				this.newToken.contract = this.newToken.contract.trim();
@@ -349,7 +326,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../variables";
+    @import "../../../styles/variables";
 
     .fiat-currencies {
         .items {

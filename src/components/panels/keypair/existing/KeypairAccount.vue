@@ -11,13 +11,17 @@
 					<figure class="authority" :class="{'red':authority === 'owner'}" v-for="authority in authorities">{{authority}}</figure>
 				</section>
 				<figure class="identifier" :class="{'mainnet':isMainnet}" @click="openInExplorer">{{account.sendable()}}</figure>
-				<section class="disclaimer less-pad" v-if="!collapsed && authorities.includes('owner') && authorities.includes('active')">
-					{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissions)}}
-					<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle)}}</p>
-				</section>
+				<!--<section class="disclaimer less-pad" v-if="!collapsed && authorities.includes('owner') && authorities.includes('active')">-->
+					<!--{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissions)}}-->
+					<!--<p>{{locale(langKeys.KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle)}}</p>-->
+				<!--</section>-->
 			</section>
-			<section class="tokens" @click="$emit('tokens', account)" v-if="account.tokenCount(systemToken)+1 > 0">
-				{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, account.tokenCount(systemToken)+1)}} <i class="icon-right-open-big"></i>
+			<section class="tokens" @click="$router.push({name:RouteNames.TOKENS, params:{account:account.unique()}})" v-if="account.tokenCount(systemToken)+1 > 0">
+				<section class="total-tokens">
+					{{locale(langKeys.KEYPAIR.ACCOUNTS.ViewTokens, account.tokenCount(systemToken)+1)}}
+					<div class="main-token-balance">{{accountBalance}}</div>
+				</section>
+				<i class="chevron icon-right-open-big"></i>
 			</section>
 			<section class="tokens" v-else>
 				No Tokens
@@ -34,7 +38,7 @@
 			</section>
 			<section key="resources" v-if="accountResources">
 				<section class="moderation" v-for="resource in accountResources">
-					<figure class="name">{{resource.name}}</figure>
+					<figure class="name">{{resource.name}} <b class="info">{{resource.text ? resource.text : parseFloat(resource.percentage).toFixed(2) + '%'}}</b></figure>
 					<figure class="percentage-bar">
 						<figure class="bar" :class="{'red':resource.percentage > 80}" :style="{'width':resource.percentage + '%'}"></figure>
 					</figure>
@@ -42,8 +46,6 @@
 						<btn v-if="resource.actionable"
 						     v-on:clicked="() => moderateResource(resource)"
 						     small="1" :text="resource.actionText"></btn>
-
-						<span v-else>{{resource.text}}</span>
 					</figure>
 				</section>
 			</section>
@@ -104,6 +106,19 @@
 			},
 			systemToken(){
 				return this.account.network().systemToken()
+			},
+			accountBalance(){
+				const plugin = PluginRepository.plugin(this.account.blockchain());
+				const systemToken = this.account.network().systemToken();
+				let result = `${this.account.tokenBalance(systemToken)} `;
+				if(plugin.hasUntouchableTokens()){
+					let untouchable = this.account.tokens().find(x => !!x.unusable);
+					if(untouchable) {
+						untouchable = untouchable.clone();
+						result += `(+${this.formatNumber(untouchable.amount)}) `;
+					}
+				}
+				return `${result} ${systemToken.symbol}`
 			}
 		},
 		methods:{
@@ -134,7 +149,7 @@
 
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../../_variables";
+	@import "../../../../styles/variables";
 
 
 
@@ -178,7 +193,7 @@
 			}
 
 			.network {
-				font-size: 11px;
+				font-size: 14px;
 				color: $mid-dark-grey;
 				display:inline-block;
 
@@ -188,9 +203,8 @@
 			}
 
 			.identifier {
-				margin-top:5px;
-				font-size: 20px;
-				font-weight: 300;
+				margin-top:14px;
+				font-size: 22px;
 				display:table;
 
 				&.mainnet {
@@ -207,7 +221,7 @@
 				display:inline-block;
 
 				.authority {
-					font-size: 9px;
+					font-size: 14px;
 					font-weight: bold;
 					padding:2px 4px;
 					border:1px solid $primary;
@@ -227,14 +241,11 @@
 
 		.tokens {
 			display:flex;
+			justify-content: center;
 			align-items: center;
 			color:$primary;
 			font-weight: bold;
 			cursor: pointer;
-
-			i {
-				margin-left:5px;
-			}
 
 			&:hover {
 				i {
@@ -242,14 +253,33 @@
 				}
 			}
 
-			@keyframes bounce {
-				0%, 100% {
-					transform:translateX(0px);
+			.total-tokens {
+				display:flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: flex-end;
+				margin-right:10px;
+
+				.main-token-balance {
+					margin-top:5px;
+					font-size: 14px;
+					font-weight: normal;
+					display:block;
 				}
 
-				50% {
-					transform:translateX(4px);
+				i {
+					margin-left:5px;
+				}
 
+				@keyframes bounce {
+					0%, 100% {
+						transform:translateX(0px);
+					}
+
+					50% {
+						transform:translateX(4px);
+
+					}
 				}
 			}
 		}
@@ -297,6 +327,15 @@
 
 			.name {
 				font-size: 14px;
+
+				.info {
+					font-size:9px;
+					padding:3px;
+					border:1px solid rgba(0,0,0,0.3);
+					border-radius:4px;
+					vertical-align: middle;
+					margin-left:5px;
+				}
 			}
 
 			.action {

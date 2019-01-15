@@ -87,10 +87,10 @@
 </script>
 
 <style scoped lang="scss">
-    @import "../../_variables";
+    @import "../../styles/variables";
 
     label {
-        font-size: 11px;
+        font-size: 14px;
         color:#7899a6;
         font-weight: bold;
         margin-bottom:5px;

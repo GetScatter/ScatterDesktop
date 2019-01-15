@@ -17,7 +17,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../variables";
+	@import "../../styles/variables";
 
 	.action-info {
 		padding:40px 60px 30px;

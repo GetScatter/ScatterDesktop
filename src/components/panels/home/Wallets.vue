@@ -1,10 +1,10 @@
 <template>
 	<section class="vault">
-		<SearchBar :placeholder="locale(langKeys.DASHBOARD.KEYS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
-		<section class="list">
+		<SearchBar style="margin-left:-10px;" :placeholder="locale(langKeys.DASHBOARD.KEYS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
+		<section class="list wallet-list">
 			<section class="item" v-for="keypair in vaultEntries" @click="goToKeypair(keypair.id)">
 				<section class="details">
-					<figure class="title">{{keypair.name}}</figure>
+					<figure class="title"><b>{{keypair.name}}</b></figure>
 					<p>{{locale(langKeys.DASHBOARD.KEYS.LinkedAccounts, keypair.accounts(true).length)}}</p>
 				</section>
 				<figure class="chevron icon-right-open-big"></figure>
@@ -53,7 +53,7 @@
 
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../_variables";
+	@import "../../../styles/variables";
 
 	.vault {
 		flex:1;
@@ -67,7 +67,10 @@
 		padding:10px 30px;
 		overflow-y: auto;
 		height: 0;
-		border-top:2px solid $border-standard;
+
+		&.wallet-list {
+			background-color:$lighter-grey;
+		}
 
 		.item {
 			padding:20px 0 0;

@@ -70,7 +70,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import FullWidthRow from '../../../reusable/FullWidthRow';
     import Crypto from "../../../../util/Crypto";
-    import ElectronHelpers, {remote} from "../../../../util/ElectronHelpers";
+    import ElectronHelpers, {ipcAsync, remote} from "../../../../util/ElectronHelpers";
     import QRService from "../../../../services/QRService";
     import PopupService from "../../../../services/PopupService";
     import {Popup} from "../../../../models/popups/Popup";
@@ -123,7 +123,7 @@
 
         computed:{
             ...mapState([
-                'seed',
+
             ]),
             ...mapGetters([
                 'keypairs',
@@ -144,22 +144,22 @@
     		getPublicKey(blockchain){
     		    return this.keypair.publicKeys.find(x => x.blockchain === blockchain).key;
             },
-	        getPrivateKey(blockchain){
-		        this.keypair.decrypt(this.seed);
+	        async getPrivateKey(blockchain){
+		        this.keypair.decrypt(await ipcAsync('seed'));
 		        return Crypto.bufferToPrivateKey(this.keypair.privateKey, blockchain);
 	        },
-	        copyPrivateKey(blockchain){
-    			const prv = this.getPrivateKey(blockchain);
+	        async copyPrivateKey(blockchain){
+    			const prv = await this.getPrivateKey(blockchain);
     			const pub = this.getPublicKey(blockchain);
     			const copy = `${this.blockchainName(blockchain)} - ${this.keypair.name}\r\nPublic: ${pub}\r\nPrivate: ${prv}`;
 	        	ElectronHelpers.copy(copy);
             },
-	        revealPrivateKey(blockchain){
+	        async revealPrivateKey(blockchain){
 	        	const display = this.keys.find(x => x.title === this.blockchainName(blockchain));
 	        	const action = display.actions.find(x => x.id === 'reveal');
 
 		        display.description = display.isPublic
-                    ? this.getPrivateKey(blockchain)
+                    ? await this.getPrivateKey(blockchain)
                     : this.getPublicKey(blockchain);
 
 		        action.name = !display.isPublic
@@ -179,10 +179,10 @@
 				    if(!location) return this.screenshotting = false;
 				    location = location[0];
 
-				    const filename = `${location}/${this.keypair.name}.png`;
+				    const filename = `${location}/${this.keypair.name}.jpg`;
 
 				    remote.getCurrentWindow().capturePage(img => {
-					    remote.require('fs').writeFile(filename, img.toPng(), saved => {
+					    remote.require('fs').writeFile(filename, img.toJPEG(99), saved => {
 						    PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.SavedImage), 'check'));
 						    ElectronHelpers.openLinkInBrowser(location);
 						    setTimeout(() => {
@@ -202,7 +202,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../../variables";
+    @import "../../../../styles/variables";
 
     .panel-container {
         text-align: center;

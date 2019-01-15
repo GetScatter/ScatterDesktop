@@ -167,8 +167,38 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHECK_HARDWARE, {}, () => {}))
 	}
 
-	static enableWhitelist(){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, () => {}))
+	static enableWhitelist(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, callback))
+	}
+
+	static selectAccount(callback, accountsOnly = false, account = null, blockchain = null, hideWatch = false){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {accountsOnly, account, blockchain, hideWatch}, callback))
+	}
+
+	static confirmExchange(accounts, symbols, order, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order}, callback))
+	}
+
+	static confirmTransfer(from, to, token, memo, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_TRANSFER, {from, to, token, memo}, callback))
+	}
+
+				// {history, token, account}
+	static exchange(params, callback = () => {}){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EXCHANGE, params, callback))
+	}
+
+				// {history, token, account}
+	static stabilize(params, callback = () => {}){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.STABILIZE, params, callback))
+	}
+
+	static history(filter, callback = () => {}){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.HISTORY, {filter}, callback))
+	}
+
+	static setDisplayToken(callback = () => {}){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DISPLAY_TOKEN, {}, callback))
 	}
 
 }
@@ -196,6 +226,13 @@ export const PopupTypes = {
 	DESTROY_SCATTER:'destroyScatter',
 	CHECK_HARDWARE:'checkHardware',
 	ENABLE_WHITELIST:'enableWhitelist',
+	SELECT_ACCOUNT:'selectAccount',
+	CONFIRM_EXCHANGE:'confirmExchange',
+	CONFIRM_TRANSFER:'confirmTransfer',
+	EXCHANGE:'exchange',
+	STABILIZE:'stabilize',
+	HISTORY:'history',
+	DISPLAY_TOKEN:'displayToken',
 
     TX_SUCCESS:'txSuccess',
 };
@@ -216,6 +253,13 @@ export const isFullscreen = popup => {
         PopupTypes.DESTROY_SCATTER,
         PopupTypes.CHECK_HARDWARE,
         PopupTypes.ENABLE_WHITELIST,
+        PopupTypes.SELECT_ACCOUNT,
+        PopupTypes.CONFIRM_EXCHANGE,
+        PopupTypes.CONFIRM_TRANSFER,
+        PopupTypes.EXCHANGE,
+        PopupTypes.STABILIZE,
+        PopupTypes.HISTORY,
+        PopupTypes.DISPLAY_TOKEN,
     ].includes(popup.data.type);
 
 

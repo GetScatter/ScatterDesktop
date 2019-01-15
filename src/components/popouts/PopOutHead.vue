@@ -1,7 +1,7 @@
 <template>
 	<section class="pop-out-head">
 		<figure class="logo">Scatter</figure>
-		<figure class="close icon-cancel" @click="$emit('closed')"></figure>
+		<figure v-if="!hideClose" class="close icon-cancel" @click="$emit('closed')"></figure>
 	</section>
 </template>
 
@@ -9,12 +9,12 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 
 	export default {
-
+		props:['hideClose']
 	}
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../variables";
+	@import "../../styles/variables";
 
 	.pop-out-head {
 		-webkit-app-region: drag;
@@ -25,6 +25,7 @@
 		align-items: center;
 		padding:0 0 0 30px;
 		border-bottom:1px solid #dfe0e1;
+		background:white;
 
 		.logo {
 			-webkit-app-region: drag;

@@ -10,6 +10,7 @@ export const BlockchainsArray =
 
 export const blockchainName = x => {
     switch(x){
+        case 'btc': return 'Bitcoin';
         case Blockchains.EOSIO: return 'EOSIO';
         case Blockchains.ETH: return 'Ethereum';
         case Blockchains.TRX: return 'Tron';

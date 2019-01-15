@@ -6,7 +6,8 @@ const PopOut = () => import('../views/PopOut')
 
 const Identity = () => import('../views/Identity')
 const Transfer = () => import('../views/Transfer')
-const Receive = () => import('../views/Receive')
+const Tokens = () => import('../views/Tokens')
+const Token = () => import('../views/Token')
 const Permission = () => import('../views/Permission')
 
 
@@ -23,8 +24,9 @@ export const RouteNames = {
     NEW_KEYPAIR:'newKeypair',
     KEYPAIR:'keypair',
     IDENTITY:'identity',
+    TOKENS:'tokens',
+    TOKEN:'token',
     TRANSFER:'transfer',
-    RECEIVE:'receive',
     PERMISSION:'permission',
     TERMS:'terms',
     ONBOARDING:'onboarding',
@@ -43,7 +45,8 @@ const RouteViews = {
     [RouteNames.KEYPAIR]:Keypair,
     [RouteNames.IDENTITY]:Identity,
     [RouteNames.TRANSFER]:Transfer,
-    [RouteNames.RECEIVE]:Receive,
+    [RouteNames.TOKENS]:Tokens,
+    [RouteNames.TOKEN]:Token,
     [RouteNames.PERMISSION]:Permission,
 
     [RouteNames.SETTINGS]:Settings,
@@ -55,6 +58,7 @@ const RoutePaths = {
 	[RouteNames.KEYPAIR]: '/keypair/:id',
 	[RouteNames.PERMISSION]: '/permission/:origin',
 	[RouteNames.SETTINGS]: '/settings/:panel',
+	[RouteNames.TOKEN]: '/token/:id',
 };
 
 export class Routing {

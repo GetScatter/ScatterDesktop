@@ -5,7 +5,7 @@ export const mutations = {
     [Mutations.HIDE_BACK_BTN]:(state, x) => state.hideBackButton = x,
     [Mutations.SET_WORKING_SCREEN]:(state, x) => state.workingScreen = x,
     [Mutations.SET_SEARCH_TERMS]:(state, terms) => state.searchTerms = terms,
-    [Mutations.SET_SEED]:(state, seed) => state.seed = seed,
+    [Mutations.SET_SEED]:(state, seed) => null,
     [Mutations.SET_MNEMONIC]:(state, mnemonic) => state.mnemonic = mnemonic,
     [Mutations.SET_SCATTER]:(state, scatter) => state.scatter = scatter,
     [Mutations.PUSH_POPUP]:(state, popup) => state.popups.push(popup),
@@ -24,8 +24,6 @@ export const mutations = {
 	[Mutations.SET_RESOURCES]:(state, x) => state.resources = x,
 	[Mutations.ADD_RESOURCES]:(state, x) => {
     	Vue.set(state.resources, x.acc, x.res);
-        // state.resources = state.resources.filter(y => y.acc !== x.acc);
-		// state.resources.push(x);
 	},
 	[Mutations.SET_BALANCES]:(state, x) => {
 		Vue.set(state.balances, x.account, x.balances)
@@ -39,4 +37,13 @@ export const mutations = {
 	[Mutations.SET_HARDWARE]:(state, hardware) => Vue.set(state.hardware, hardware.name, hardware.transport),
 	[Mutations.REMOVE_HARDWARE]:(state, key) => Vue.delete(state.hardware, key),
 	[Mutations.NEW_KEY]:(state, x) => state.newKey = x,
+	[Mutations.SET_LANGUAGE]:(state, x) => Vue.set(state.language, 'json', x),
+	[Mutations.LOAD_HISTORY]:(state, x) => state.history = x,
+	[Mutations.DELTA_HISTORY]:(state, x) => {
+    	if(x === null) state.history = [];
+    	else {
+    		if(state.history.find(h => h.id === x.id)) state.history = state.history.filter(h => h.id !== x.id);
+    		else state.history.unshift(x);
+		}
+	},
 };

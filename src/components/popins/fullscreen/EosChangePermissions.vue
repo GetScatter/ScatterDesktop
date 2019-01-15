@@ -9,10 +9,10 @@
 					<br>
 					<section class="disclaimer less-pad">
 						{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Desc)}}
-						<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.SubDesc)}}</p>
+						<p v-if="account.authorities().length > 1">{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.SubDesc)}}</p>
 					</section>
 
-					<section class="split-inputs">
+					<section class="split-inputs" v-if="hasPermission('owner')">
 						<sel :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel)"
 						     v-if="otherKeys.length"
 						     :options="otherKeys"
@@ -26,7 +26,7 @@
 						     :dynamic-button="isValidPermission(ownerKey) ? 'icon-check' : null" />
 					</section>
 
-					<section class="split-inputs">
+					<section class="split-inputs" v-if="hasPermission('active')">
 						<sel :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel)"
 						     v-if="otherKeys.length"
 						     :options="otherKeys"
@@ -55,7 +55,7 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import '../../../popins.scss';
+	import '../../../styles/popins.scss';
 	import PasswordService from "../../../services/PasswordService";
 	import PopupService from "../../../services/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
@@ -82,7 +82,7 @@
 			otherKeys(){
 				return this.keypairs
 					.filter(x => x.publicKeys.some(key => key.blockchain === Blockchains.EOSIO))
-			}
+			},
 		},
 		methods:{
 			returnResult(result){
@@ -102,6 +102,9 @@
 					active:this.activeKey,
 				})
 			},
+			hasPermission(type){
+				return !!this.account.authorities().find(x => x.authority === type || x.authority === 'owner');
+			},
 
 			...mapActions([
 				Actions.RELEASE_POPUP
@@ -111,7 +114,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import "../../../variables";
+	@import "../../../styles/variables";
 
 
 	.split-inputs {

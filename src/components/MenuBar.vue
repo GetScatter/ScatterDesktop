@@ -1,8 +1,5 @@
 <template>
 	<section class="menu-bar">
-		<transition name="slide-up" mode="out-in">
-			<router-link v-if="loaded && $route.name !== RouteNames.LOGIN" :to="{name:RouteNames.HOME}" class="logo">Scatter</router-link>
-		</transition>
 
 		<section class="actions" v-if="!isMacOS">
 
@@ -34,6 +31,7 @@
 <script>
 
 	import {remote} from '../util/ElectronHelpers';
+	import SocketService from "../services/SocketService";
 
 	export default {
 		data(){return {
@@ -46,6 +44,7 @@
 		},
 		methods:{
 			quit(){
+				SocketService.broadcastEvent('dced', {});
 				setTimeout(() => remote.app.quit(), 1);
 			},
 			minimize(){
@@ -65,10 +64,10 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-	@import '../_variables.scss';
+	@import '../styles/variables';
 
 	.menu-bar {
-		-webkit-app-region: drag;
+		-webkit-app-region: drag !important;
 		background:$secondary;
 		background-image: $blue-grad;
 		color:#fff;
@@ -76,24 +75,14 @@
 		line-height: 80px;
 		width:100%;
 		text-align:center;
-		z-index: 10;
+		z-index: 9999999999;
 		position:absolute;
 		top:0;
 		left:0;
 		right:0;
 
-		.logo {
-			font-family: 'Grand Hotel', sans-serif;
-			font-size: 45px;
-			display:inline-block;
-			height:80px;
-			line-height: 80px;
-			padding-top:3px;
-			cursor: default;
-			-webkit-app-region: drag;
-		}
-
 		.actions {
+			-webkit-app-region: drag;
 			position:absolute;
 			right:0;
 			top:0;
@@ -103,11 +92,11 @@
 			justify-content: center;
 			align-items: center;
 			padding:0 35px;
-			-webkit-app-region: no-drag;
 
 			$action:15px;
 
 			.action {
+				-webkit-app-region: no-drag;
 				float:right;
 				padding:10px;
 				cursor: pointer;

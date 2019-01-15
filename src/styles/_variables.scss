@@ -1,0 +1,36 @@
+$red: #e74c3c;
+$green: #2ecc71;
+$dark-red: #c33434;
+
+$black:#333;
+$dark-grey: #525252;
+$mid-dark-grey: #9b9b9b;
+$medium-grey:#b1b1b1;
+$mid-light-grey:#d1d1d1;
+$light-grey: #f2f2f2;
+$lighter-grey: #f6f6f6;
+
+$secondary: #61667d;
+$primary:#50556C;
+
+$link:#00A8FF;
+$link-border: rgba(0, 168, 255, 0.17);
+
+$placeholder-color:rgba(0,0,0,0.25);
+
+//$blue-grad:linear-gradient(-180deg, #62D0FD -20%, #39ADFF 100%);
+$blue-grad:linear-gradient(-180deg, #61667d -20%, #50556c 100%);
+$reverse-gradient:linear-gradient(-180deg, #2c2f3f -10%, #4f5469 120%);
+$red-gradient:linear-gradient(-180deg, $red -20%, #e23b3b 100%);
+$dark-gradient:linear-gradient(-180deg, #202333 -10%, #131521 120%);
+$white-gradient:linear-gradient(-180deg, #f4f4f4 -10%, #cbcbcb 120%);
+
+$border-standard:rgba(0,0,0,0.08);
+
+
+$breakpoint-mobile:        600px;
+$breakpoint-tablet:        920px;
+$breakpoint-small-desktop: 1200px;
+$breakpoint-large-desktop: 1600px;
+
+$win-height:calc(100vh - 160px);

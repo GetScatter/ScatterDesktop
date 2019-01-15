@@ -65,12 +65,32 @@ export default class Account {
 	    return store.state.balances[this.identifiable()].filter(x => !systemToken ? true : x.identifiable() !== systemToken.identifiable()).length;
     }
 
-    systemBalance(){
+    tokens(){
+	    if(!store.state.balances) return [];
+	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return [];
+	    if(!store.state.balances[this.identifiable()]) return [];
+	    return store.state.balances[this.identifiable()];
+    }
+
+    tokenBalance(token){
+    	const balance = this.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain());
+    	if(!balance) return 0;
+    	return balance.amount;
+    }
+
+    systemBalance(withSymbol = false){
 	    if(!store.state.balances) return 0;
 	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
 	    if(!store.state.balances[this.identifiable()]) return 0;
 	    const systemBalance = store.state.balances[this.identifiable()].find(x =>  Token.fromJson(x).identifiable() === this.network().systemToken().identifiable());
 	    if(!systemBalance) return 0;
-	    return `${systemBalance.amount} ${systemBalance.symbol}`;
+	    return `${systemBalance.amount} ${withSymbol ? systemBalance.symbol : ''}`;
+    }
+
+    totalFiatBalance(){
+	    return this.tokens().reduce((acc, x) => {
+	    	acc += x.fiatBalance(false) ? parseFloat(x.fiatBalance(false)) : 0;
+		    return acc;
+	    }, 0)
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small, 'borderless':borderless}">
+    <button :disabled="disabled" v-on:click="emit" :class="{'blue': blue, 'red':red, 'small':small, 'big':big, 'borderless':borderless, 'colorless':colorless}">
         <i :class="icon" v-if="icon && !loading"></i>
         <span v-else>
             <i class="icon-spin4 animate-spin" v-if="loading"></i>
@@ -11,76 +11,89 @@
 <script>
     export default {
         methods: { emit(){ this.$emit('clicked') } },
-        props:['text', 'icon', 'blue', 'red', 'disabled', 'small', 'loading', 'borderless']
+        props:['text', 'icon', 'blue', 'red', 'disabled', 'small', 'big', 'loading', 'borderless', 'colorless']
     }
 </script>
 
 <style scoped lang="scss">
-    @import "../../_variables";
+    @import "../../styles/variables";
 
     button {
         cursor: pointer;
         height:38px;
-        padding:0 12px;
-        width:100%;
+        padding:0 15px 0;
+        display:inline-block;
         outline:0;
-        border:1px solid #dfe0e1;
-        background:#fff;
-        border-radius:3px;
-        color:$primary;
-        font-size: 14px;
-        font-weight: 500;
+        width:100%;
+        background:rgba(252,252,255,0.88);
+        border-radius:4px;
+        color:$link;
+        font-size: 16px;
+        font-weight: normal;
         max-width:360px;
 		line-height:0;
+        transition:all 0.12s ease-in-out;
+        border:1px solid $link-border;
 
-
+        &.big {
+            height:60px;
+            font-size: 18px;
+            padding:0 24px;
+        }
 
         &.small {
             height:32px;
-            font-size: 13px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: normal;
             width:auto;
             padding:0 10px;
         }
 
         &.blue {
-            border:1px solid rgba(0,0,0,0);
             color:#fff;
-            background:$primary;
-            background-image: $blue-grad;
+            background:$link;
+            font-weight: normal;
+            border:0px;
+
+            &:hover {
+                background-color:darken($link,5%);
+            }
         }
 
         &.red {
-            border:1px solid $red;
+            background:rgba( $red, .22 );
             color:$red;
+            border:0px;
+
+            &:hover {
+                background:rgba( $red, .92 );
+                color:white;
+            }
         }
 
         &:hover {
-            border:1px solid rgba(0,0,0,0.22);
+            background-color:darken(rgba(252,252,255,0.88),2%);
         }
 
         &:not(:disabled){
             &:active {
-                border:1px solid $primary;
-                background:rgba(0,0,0,0.04);
+                outline:1px;
 
                 &.blue {
-                    color:$primary;
+                    color:white;
                 }
 
                 &.red {
-                    border:1px solid $red;
-                    background:$red;
-                    background-image: linear-gradient(-180deg, $red -20%, #e23b3b 100%);
+                    background:rgba( $red, .82 );
                     color:#fff;
                 }
             }
         }
 
         &:disabled {
-            border:1px solid #c6c7c8;
-            background: #e3e3e3;
+            background: darken($lighter-grey, 2%) !important;
             color: #ababab;
+            opacity:0.6;
             cursor: not-allowed;
         }
 
@@ -94,6 +107,17 @@
             &:active {
                 border:0;
             }
+        }
+
+        &.colorless {
+	        border:1px solid rgba(255,255,255,0.1);
+	        color:#fff;
+	        background: transparent;
+
+            &:hover {
+                background-color:rgba(0,0,0,0.08);
+            }
+
         }
 
     }

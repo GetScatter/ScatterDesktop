@@ -1,0 +1,102 @@
+@import "./_variables";
+
+.full-panel {
+  background:$reverse-gradient;
+}
+
+.action-bar {
+  button {
+    width:auto;
+    min-width:200px;
+
+    &:last-child {
+      margin-left:10px;
+    }
+  }
+}
+
+.container {
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.exchange {
+  display:flex;
+  align-items: center;
+  width:450px;
+
+  .icon {
+    flex:0 0 auto;
+    width:100px;
+    height:100px;
+    background:#fff;
+    border-radius:50%;
+    margin-right:30px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    align-self: flex-start;
+  }
+
+  .info {
+    text-align:left;
+
+    .account, .value {
+      color: #a4a7b3;
+      font-size: 14px;
+    }
+
+	  .memo {
+		  color:#fff;
+		  font-size: 11px;
+		  padding:10px;
+		  background:rgba(0,0,0,0.1);
+		  margin-top:10px;
+		  border-radius:4px;
+		  border:1px solid $primary;
+
+		  p {
+			  font-size: 11px;
+			  color:rgba(255,255,255,0.6);
+			  margin-top:8px;
+			  line-height: 13px;
+		  }
+	  }
+
+    .amount {
+      color:#fff;
+      font-size: 36px;
+      font-weight: bold;
+
+      &.small {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+.breaker {
+  margin:10px 0;
+  font-size: 48px;
+  color:#999ca7;
+  text-align:left;
+  width:100%;
+  padding-left:17px;
+
+  figure {
+    animation: bounce 1s ease infinite;
+
+    @keyframes bounce {
+      0%, 100% {
+        transform:translateY(-5px);
+      }
+      50% {
+        transform:translateY(5px);
+        color: #c8cddb;
+      }
+    }
+  }
+}

@@ -16,6 +16,7 @@ import ResourceService from '../../services/ResourceService'
 import StorageService from '../../services/StorageService'
 import * as Actions from '../../models/api/ApiActions';
 import {store} from '../../store/store'
+import * as StoreActions from '../../store/constants'
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs2';
 import * as numeric from "eosjs2/dist/eosjs-numeric";
 import Token from "../../models/Token";
@@ -23,6 +24,7 @@ import AccountAction from "../../models/AccountAction";
 import AccountService from "../../services/AccountService";
 import RecurringService from "../../services/RecurringService";
 import HardwareService from "../../services/HardwareService";
+import HistoricAction from "../../models/histories/HistoricAction";
 
 
 const blockchainApiURL = 'https://api.light.xeos.me/api';
@@ -135,7 +137,6 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 
 
 const popupError = result => {
-	console.log('result', result);
 	const json = JSON.parse(result);
 	let error;
 	if(json.hasOwnProperty('error') && json.error.hasOwnProperty('details') && json.error.details.length) {
@@ -186,13 +187,17 @@ export default class EOS extends Plugin {
 	async proxyVote(account, proxyAccount, prompt = false){
 		return new Promise(async (resolve, reject) => {
 			const signProvider = prompt
-				? payload => this.passThroughProvider(payload, account, reject)
+				? payload => this.signerWithPopup(payload, account, reject)
 				: payload => this.signer(payload, account.publicKey);
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			return await eos.voteproducer(account.name, proxyAccount, [], {authorization:[account.formatted()]})
 				.catch(res => reject(popupError(res)))
-				.then(res => resolve(res))
+				.then(res => {
+					const history = new HistoricAction(account, 'proxy', res.transaction_id);
+					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					resolve(res);
+				})
 		})
 
 	}
@@ -200,7 +205,7 @@ export default class EOS extends Plugin {
 	async changePermissions(account, keys){
 		if(!keys) return;
 		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, reject);
+			const signProvider = payload => this.signerWithPopup(payload, account, reject);
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
@@ -267,6 +272,8 @@ export default class EOS extends Plugin {
 					const ownerKeypair = store.state.scatter.keychain.getKeyPairByPublicKey(keys.owner);
 					if(activeKeypair) await addAccount(activeKeypair, 'active');
 					if(ownerKeypair) await addAccount(ownerKeypair, 'owner');
+					const history = new HistoricAction(account, 'permissions', res.transaction_id);
+					store.dispatch(StoreActions.DELTA_HISTORY, history);
 					resolve(true)
 				});
 		})
@@ -289,9 +296,6 @@ export default class EOS extends Plugin {
 			new AccountAction(localizedState(EOS.ProxyVotesButton, null), '', () => {
 				PopupService.push(Popup.eosProxyVotes(account, () => {}));
 			}),
-		];
-
-		const ownerActions = [
 			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), '', () => {
 				PopupService.push(Popup.verifyPassword(verified => {
 					if(!verified) return;
@@ -305,20 +309,22 @@ export default class EOS extends Plugin {
 		// Adding owner only actions.
 		if(accounts.some(x => x.authority !== 'watch'))
 			availableActions = nonWatchActions.concat(availableActions);
-		if(accounts.some(x => x.authority === 'owner'))
-			availableActions = ownerActions.concat(availableActions);
 
 		return availableActions;
 	}
 
 	async refund(account){
 		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, reject);
+			const signProvider = payload => this.signerWithPopup(payload, account, reject);
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 			return await eos.refund(account.name, {authorization:[account.formatted()]})
 				.catch(res => reject(popupError(res)))
-				.then(res => resolve(res));
+				.then(res => {
+					const history = new HistoricAction(account, 'refund', res.transaction_id);
+					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					resolve(res)
+				});
 		})
 	}
 
@@ -427,7 +433,7 @@ export default class EOS extends Plugin {
 		})
 	}
 
-	isValidRecipient(name){ return /(^[a-z1-5.]{1,11}[a-z1-5]$)|(^[a-z1-5.]{12}[a-j1-5]$)/g.test(name); }
+	isValidRecipient(name){ return /(^[a-z1-5]{1}([a-z1-5.]{0,10}[a-z1-5])?$)/g.test(name); }
 	privateToPublic(privateKey, prefix = null){ return ecc.PrivateKey(privateKey).toPublic().toString(prefix ? prefix : Blockchains.EOSIO.toUpperCase()); }
 	validPrivateKey(privateKey){ return privateKey.length >= 50 && ecc.isValidPrivate(privateKey); }
 	validPublicKey(publicKey, prefix = null){
@@ -485,7 +491,7 @@ export default class EOS extends Plugin {
 		const eos = getCachedInstance(account.network());
 
 		const balances = await Promise.race([
-			new Promise(resolve => setTimeout(() => resolve([]), 2000)),
+			new Promise(resolve => setTimeout(() => resolve([]), 10000)),
 			eos.getTableRows({
 				json:true,
 				code:token.contract,
@@ -540,7 +546,7 @@ export default class EOS extends Plugin {
 	async createAccount(creator, name, owner, active, eosUsed){
 		return new Promise(async (resolve, reject) => {
 			const network = creator.network();
-			const signProvider = payload => this.passThroughProvider(payload, creator, reject);
+			const signProvider = payload => this.signerWithPopup(payload, creator, reject);
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
 			const coreSymbol = network.systemToken().symbol;
@@ -581,8 +587,76 @@ export default class EOS extends Plugin {
 	}
 
 
+	async stakeOrUnstake(account, cpu, net, network, staking = true){
+		return new Promise(async (resolve, reject) => {
+			const signProvider = payload => this.signerWithPopup(payload, account, reject);
 
-	async passThroughProvider(payload, account, rejector){
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+			if(staking) resolve(await eos.delegatebw(account.name, account.name, net, cpu, 0, { authorization:[account.formatted()] })
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
+
+			else resolve(await eos.undelegatebw(account.name, account.name, net, cpu, { authorization:[account.formatted()] })
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
+		})
+	}
+
+	async buyOrSellRAM(account, bytes, network, buying = true){
+		return new Promise(async (resolve, reject) => {
+			const signProvider = payload => this.signerWithPopup(payload, account, reject);
+
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
+
+			if(buying) resolve(await eos.buyrambytes(account.name, account.name, bytes, { authorization:[account.formatted()] })
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
+
+			else resolve(await eos.sellram(account.name, bytes, { authorization:[account.formatted()] })
+				.then(res => res)
+				.catch(res => {
+					popupError(res);
+					return false;
+				}))
+		})
+	}
+
+	async transfer({account, to, amount, token, memo, promptForSignature = true}){
+		amount = parseFloat(amount).toFixed(token.decimals);
+		const {contract, symbol} = token;
+		return new Promise(async (resolve, reject) => {
+			const signProvider = promptForSignature
+				? payload => this.signerWithPopup(payload, account, reject)
+				: payload => this.signer(payload, account.publicKey, false, false, account);
+
+			const eos = Eos({httpEndpoint:account.network().fullhost(), chainId:account.network().chainId, signProvider});
+			const contractObject = await eos.contract(contract);
+			const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
+			resolve(await contractObject.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
+				.catch(error => {
+					console.log('error', error);
+					try {
+						return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}
+					} catch(e){
+						return {error};
+					}
+				})
+				.then(result => result));
+		})
+	}
+
+
+
+	async signerWithPopup(payload, account, rejector){
 		return new Promise(async resolve => {
 			payload.messages = await this.requestParser(payload, Network.fromJson(account.network()));
 			payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
@@ -615,71 +689,11 @@ export default class EOS extends Plugin {
 		})
 	}
 
+	async signer(payload, publicKey, arbitrary = false, isHash = false, account = null){
+		if(account && KeyPairService.isHardware(publicKey))
+			return await HardwareService.sign(account, payload);
 
-	async stakeOrUnstake(account, cpu, net, network, staking = true){
-		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, reject);
-
-			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-			if(staking) resolve(await eos.delegatebw(account.name, account.name, net, cpu, 0, { authorization:[account.formatted()] })
-				.then(res => res)
-				.catch(res => {
-					popupError(res);
-					return false;
-				}))
-
-			else resolve(await eos.undelegatebw(account.name, account.name, net, cpu, { authorization:[account.formatted()] })
-				.then(res => res)
-				.catch(res => {
-					popupError(res);
-					return false;
-				}))
-		})
-	}
-
-	async buyOrSellRAM(account, bytes, network, buying = true){
-		return new Promise(async (resolve, reject) => {
-			const signProvider = payload => this.passThroughProvider(payload, account, reject);
-
-			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
-
-			if(buying) resolve(await eos.buyrambytes(account.name, account.name, bytes, { authorization:[account.formatted()] })
-				.then(res => res)
-				.catch(res => {
-					popupError(res);
-					return false;
-				}))
-
-			else resolve(await eos.sellram(account.name, bytes, { authorization:[account.formatted()] })
-				.then(res => res)
-				.catch(res => {
-					popupError(res);
-					return false;
-				}))
-		})
-	}
-
-	async transfer({account, to, amount, token, memo, promptForSignature = true}){
-		const {contract, symbol} = token;
-		return new Promise(async (resolve, reject) => {
-			const signProvider = promptForSignature
-				? payload => this.passThroughProvider(payload, account, reject)
-				: payload => this.signer(payload, account.publicKey);
-
-			const eos = Eos({httpEndpoint:account.network().fullhost(), chainId:account.network().chainId, signProvider});
-			const contractObject = await eos.contract(contract);
-			const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
-			resolve(await contractObject.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
-				.catch(error => {
-					console.log('error', error);
-					return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}
-				})
-				.then(result => result));
-		})
-	}
-
-	async signer(payload, publicKey, arbitrary = false, isHash = false){
-		let privateKey = KeyPairService.publicToPrivate(publicKey);
+		let privateKey = await KeyPairService.publicToPrivate(publicKey);
 		if (!privateKey) return;
 
 		if(typeof privateKey !== 'string') privateKey = this.bufferToHexPrivate(privateKey);
@@ -770,12 +784,6 @@ export default class EOS extends Plugin {
 			const data = abi.fromBuffer(typeName, action.data);
 			const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
 			let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
-
-			if(ricardian){
-				const htmlFormatting = {h1:'div class="ricardian-action"', h2:'div class="ricardian-description"'};
-				const signer = action.authorization.length === 1 ? action.authorization[0].actor : null;
-				ricardian = ricardianParser.parse(action.name, data, ricardian, signer, htmlFormatting);
-			}
 
 			if(transaction.hasOwnProperty('delay_sec') && parseInt(transaction.delay_sec) > 0){
 				data.delay_sec = transaction.delay_sec;

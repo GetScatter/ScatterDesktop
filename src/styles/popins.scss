@@ -1,4 +1,4 @@
-@import "_variables.scss";
+@import "./variables";
 
 .pop-ins {
   width:100%;
@@ -36,6 +36,7 @@
   }
 
   .fullscreen {
+
     .head {
       display:flex;
       flex-direction: column;
