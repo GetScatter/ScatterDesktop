@@ -173,7 +173,6 @@ export default class ApiService {
 
 			const {payload} = request;
 			const {origin, requiredFields, blockchain} = payload;
-			console.log('requiredFields', requiredFields);
 
 
 			const possibleId = PermissionService.identityFromPermissions(origin, false);

@@ -64,7 +64,7 @@
                     <FullWidthRow :items="selectedAccounts" popout="1" />
 
                     <section class="fixed-actions" v-if="!pinning">
-                        <btn blue="1" :text="locale(langKeys.GENERIC.Accept)" v-on:clicked="returnResult(true)" />
+                        <btn blue="1" :text="locale(langKeys.GENERIC.Confirm)" v-on:clicked="returnResult(true)" />
                         <btn :text="locale(langKeys.GENERIC.Deny)" v-on:clicked="returnResult(null)" />
                     </section>
                 </section>
