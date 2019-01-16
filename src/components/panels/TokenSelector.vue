@@ -23,7 +23,7 @@
 					 :text="token.decimals"
 					 v-on:changed="x => token.decimals = x" />
 
-				<btn :text="locale(langKeys.TRANSFER.TOKENS.SaveTokenButton)" v-on:clicked="addToken" />
+				<btn :text="locale(langKeys.GENERIC.Save)" v-on:clicked="addToken" />
 			</section>
 		</section>
 

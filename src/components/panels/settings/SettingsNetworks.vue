@@ -45,7 +45,7 @@
                 </section>
 
                 <section style="flex:1.5;" class="split-inputs" v-else>
-                    <btn style="flex:1; font-size: 11px;" :loading="working" :text="locale(langKeys.GENERIC.Add)" v-on:clicked="addNetwork" />
+                    <btn style="flex:1; font-size: 11px;" :loading="working" :text="locale(langKeys.GENERIC.Add)" blue="1" v-on:clicked="addNetwork" />
                     <btn style="flex:0.1;" v-if="!working" icon="icon-cancel" v-on:clicked="removeNetwork" />
                 </section>
             </section>
