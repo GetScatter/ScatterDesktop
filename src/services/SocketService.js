@@ -86,18 +86,18 @@ const socketHandler = (socket) => {
         if(request.data.passthrough)
             return socket.emit('paired', existingApp && existingApp.checkKey(request.data.appkey));
 
-        const addAuthorizedApp = (newKey = null) => {
+        const addAuthorizedApp = async (newKey = null) => {
             const authedApp = new AuthorizedApp(request.data.origin, newKey ? newKey : request.data.appkey);
             const clone = scatter.clone();
             clone.keychain.updateOrPushApp(authedApp);
-            store.dispatch(Actions.SET_SCATTER, clone);
+            await store.dispatch(Actions.SET_SCATTER, clone);
             socket.emit('paired', true);
         };
 
         const repair = async () => {
             const newKey = await getNewKey(socket);
             if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return socket.emit('paired', false);
-            addAuthorizedApp(newKey.data.appkey)
+            return addAuthorizedApp(newKey.data.appkey)
         }
 
         if(existingApp){

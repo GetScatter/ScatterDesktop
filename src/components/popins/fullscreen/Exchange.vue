@@ -475,7 +475,7 @@
 
 					if(sent){
 						if(!TokenService.hasToken(this.pair.token)){
-							if(this.pair.token.contract && !this.pair.token.contract.length) {
+							if(!!this.pair.token.contract && !!this.pair.token.contract.length) {
 								await TokenService.addToken(this.pair.token, false, false);
 							}
 						}

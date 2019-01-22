@@ -3,13 +3,17 @@ import {Blockchains} from '../../models/Blockchains'
 import {store} from '../../store/store'
 import Crypto from '../../util/Crypto';
 import {BlockchainsArray} from '../../models/Blockchains';
+import {ipcAsync} from "../../util/ElectronHelpers";
 
 export const m9_0_0 = async scatter => {
+	const seed = await ipcAsync('seed');
 
     scatter.keychain.keypairs.map(x => {
         if(x.hasOwnProperty('publicKeys') && x.publicKeys.length) return false;
 
-        x.decrypt(store.state.seed);
+
+
+        x.decrypt(seed);
 
         if(!x.external) {
             x.privateKey = Crypto.privateKeyToBuffer(x.privateKey, x.blockchain);
@@ -31,7 +35,7 @@ export const m9_0_0 = async scatter => {
             }
         });
 
-        x.encrypt(store.state.seed);
+        x.encrypt(seed);
     });
 
     // Wiping out permissions

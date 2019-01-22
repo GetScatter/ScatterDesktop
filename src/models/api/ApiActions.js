@@ -12,3 +12,4 @@ export const CREATE_TRANSACTION =               'createTransaction';
 export const REQUEST_ARBITRARY_SIGNATURE =      'requestArbitrarySignature';
 export const SUGGEST_NETWORK =                  'requestAddNetwork';
 export const AUTHENTICATE =                     'authenticate';
+export const UPDATE_IDENTITY =                  'updateIdentity';

@@ -64,6 +64,9 @@
     import SingletonService from "../services/SingletonService";
     import PopupService from "../services/PopupService";
     import {Popup} from "../models/popups/Popup";
+    import Token from "../models/Token";
+    import {Blockchains} from "../models/Blockchains";
+    import TokenService from "../services/TokenService";
 
 
     export default {

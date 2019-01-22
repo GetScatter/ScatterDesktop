@@ -377,6 +377,23 @@ export default class ApiService {
         })
     }
 
+	static async [Actions.UPDATE_IDENTITY](request){
+		return new Promise(async resolve => {
+
+			const {origin, name, kyc} = request.payload;
+
+
+			const possibleId = PermissionService.identityFromPermissions(origin, false);
+			if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
+
+			PopupService.push(Popup.popout(Object.assign(request, {}), async ({result}) => {
+				if(!result || (!result.accepted || false)) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
+
+				resolve({id:request.id, result:possibleId});
+			}));
+		});
+	}
+
 
 
 

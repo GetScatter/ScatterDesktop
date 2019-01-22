@@ -87,7 +87,7 @@
 
                         <section :class="{'previous-whitelist':isPreviouslyWhitelisted(message)}">
 
-                            <section class="details">
+                            <section class="details contract-action">
                                 <figure class="title">
                                     <input v-if="whitelisted && !isPreviouslyWhitelisted(message)"
                                            :checked="!!getWhitelist(message)"
@@ -432,18 +432,7 @@
         position: relative;
 
         &:not(:first-child){
-            padding:30px 0 20px;
-
-            &:after {
-                content:'';
-                position:absolute;
-                top:0;
-                left:-30px;
-                right:-30px;
-                height:2px;
-                background:rgba(0,0,0,0.05);
-                box-shadow:inset 0 1px 3px rgba(0,0,0,0.08), 0 1px 1px #fff;
-            }
+            margin-top:60px;
         }
 
         .previous-whitelist {
@@ -544,6 +533,21 @@
 
     .json-formatter-dark.json-formatter-row {
         padding:0;
+    }
+
+    .contract-action {
+        margin:-20px -30px 0;
+        border-top:1px solid rgba(0,0,0,0.04);
+        padding:20px 30px;
+        background:rgba(0,0,0,0.02);
+        background:linear-gradient(-180deg, #f2f2f2 -10%, rgba(242, 242, 242, 0) 120%);
+        box-shadow:0 2px 4px rgba(0,0,0,0.04), 0 8px 16px rgba(0,0,0,0.02);
+
+        .title {
+            span {
+                font-size: 18px;
+            }
+        }
     }
 
 

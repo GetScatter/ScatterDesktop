@@ -201,4 +201,11 @@ export default class PermissionService {
         })
     }
 
+    static async removeDanglingPermissions(){
+	    const scatter = store.state.scatter.clone();
+	    const origins = scatter.keychain.permissions.map(x => x.origin);
+	    scatter.keychain.apps = scatter.keychain.apps.filter(x => origins.includes(x.origin));
+	    return store.dispatch(Actions.SET_SCATTER, scatter);
+    }
+
 }

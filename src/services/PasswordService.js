@@ -87,7 +87,7 @@ export default class PasswordService {
 
             // Setting a new salt every time the password is changed.
             await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
-            const [newMnemonic, newSeed] = await Mnemonic.generateMnemonic(newPassword);
+	        const [newMnemonic, newSeed] = await this.seedPassword(newPassword, true);
 
             // Re-encrypting keypairs
             const scatter = store.state.scatter.clone();
@@ -100,7 +100,6 @@ export default class PasswordService {
                 id.encrypt(newSeed);
             });
 
-            await store.commit(Actions.SET_SEED, newSeed);
             await store.dispatch(Actions.SET_SCATTER, scatter);
             await StorageService.swapHistory(store.state.history);
             await StorageService.setTranslation(store.getters.language);

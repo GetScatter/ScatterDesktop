@@ -4,6 +4,7 @@ import AccountService from "./AccountService";
 import LanguageService from "./LanguageService";
 import PriceService from "./PriceService";
 import RecurringService from "./RecurringService";
+import PermissionService from "./PermissionService";
 
 let initialized = false;
 
@@ -14,6 +15,7 @@ export default class SingletonService {
 		initialized = true;
 		store.dispatch(Actions.LOAD_HISTORY);
 		store.dispatch(Actions.LOAD_LANGUAGE);
+		await PermissionService.removeDanglingPermissions();
 		await AccountService.fixOrphanedAccounts();
 		await LanguageService.regenerateLanguage();
 		await PriceService.watchPrices();

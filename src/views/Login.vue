@@ -194,7 +194,7 @@
 			this.confirmPassword = '';
 
 			const lockout = getLockout();
-			this.lockedOutTime = lockout.tried >= 5 ? lockout.stamp > 0 ? lockout.stamp + lockoutTime : 0 : 0;
+			this.lockedOutTime = lockout.tried >= 10 ? lockout.stamp > 0 ? lockout.stamp + lockoutTime : 0 : 0;
 
 			document.addEventListener('keydown', this.modifyDPresses, true);
 		},

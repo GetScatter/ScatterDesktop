@@ -1,27 +1,6 @@
 <template>
     <section>
 
-        <!--<section v-if="windowMessage">-->
-
-            <!--<get-identity v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"-->
-                          <!--:payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></get-identity>-->
-
-            <!--<suggest-network v-if="popupType === apiActions.SUGGEST_NETWORK"-->
-                             <!--:payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></suggest-network>-->
-
-            <!--<signature-request v-if="popupType === apiActions.REQUEST_SIGNATURE || popupType === apiActions.REQUEST_ARBITRARY_SIGNATURE"-->
-                               <!--:payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></signature-request>-->
-
-            <!--<link-app v-if="popupType === 'linkApp'" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></link-app>-->
-
-            <!--<get-public-key v-if="popupType === apiActions.GET_PUBLIC_KEY" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></get-public-key>-->
-
-            <!--<link-account v-if="popupType === apiActions.LINK_ACCOUNT" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></link-account>-->
-
-            <!--<transfer-request v-if="popupType === apiActions.REQUEST_TRANSFER" :payload="payload" :plugin-origin="pluginOrigin" v-on:returned="returnResult"></transfer-request>-->
-
-        <!--</section>-->
-
         <section v-if="windowMessage" class="popout">
 
             <AppLogin v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"
@@ -35,15 +14,16 @@
                       v-on:returned="returnResult" />
 
             <GetPublicKey v-if="popupType === apiActions.GET_PUBLIC_KEY"
-                          :popup="popup"
-                          v-on:returned="returnResult" />
+                          :popup="popup" v-on:returned="returnResult" />
 
             <TransferRequest v-if="popupType === apiActions.REQUEST_TRANSFER"
                              :popup="popup" :pinning="pinning"
                              v-on:returned="returnResult" />
 
-            <LinkApp :popup="popup" v-if="popupType === 'linkApp'" v-on:returned="returnResult" />
+            <UpdateIdentity v-if="popupType === apiActions.UPDATE_IDENTITY"
+                             :popup="popup" v-on:returned="returnResult" />
 
+            <LinkApp :popup="popup" v-if="popupType === 'linkApp'" v-on:returned="returnResult" />
 
         </section>
 
@@ -76,6 +56,7 @@
             AppLogin:() => import('./popouts/AppLogin'),
             Signature:() => import('./popouts/Signature'),
             LinkApp:() => import('./popouts/LinkApp'),
+            UpdateIdentity:() => import('./popouts/UpdateIdentity'),
         },
         mounted(){
             WindowService.watch('popup', windowMessage => {

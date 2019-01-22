@@ -21,6 +21,7 @@ export default class ExchangeService {
 
 	static async pairs(token){
 		return timeout(POST('exchange/pairs', {token})).then(pairs => {
+			if(!pairs) return [];
 			Object.keys(pairs).map(key => pairs[key].map(x => x.token = Token.fromJson(x.token)));
 			return pairs;
 		});

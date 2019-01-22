@@ -29,6 +29,7 @@ export class Popup {
 		    case ApiActions.GET_OR_REQUEST_IDENTITY:
 		    case ApiActions.REQUEST_TRANSFER:
 		    case ApiActions.GET_PUBLIC_KEY:
+		    case ApiActions.UPDATE_IDENTITY:
 			    return {width:420, height:600};
 		    case ApiActions.REQUEST_SIGNATURE:
 			    return {width:920, height:600};
