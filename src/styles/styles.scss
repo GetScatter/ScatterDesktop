@@ -160,6 +160,19 @@ p {
   margin:0;
 }
 
+
+
+
+.dangertip {
+  max-width:200px;
+  background:$red-gradient;
+  color:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.15);
+  border:1px solid rgba(0,0,0,0.2);
+  padding:10px;
+  font-size: 14px;
+}
+
 .full-panel {
   min-height:calc(100vh - 80px);
   width:100%;
@@ -645,7 +658,7 @@ label {
 }
 
 .wiggle {
-  animation: wiggle 0.3s ease infinite;
+  animation: wiggle 0.5s ease infinite;
 }
 
 @keyframes wiggle {

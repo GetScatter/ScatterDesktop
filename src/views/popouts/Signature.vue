@@ -17,6 +17,7 @@
                         </span>
                     </section>
                 </section>
+
                 <section class="participants top-less" v-if="isArbitrarySignature">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.KeysInvolved)}}</label>
                     <section class="participant">{{arbitraryKeypair.name}} -- {{payload.publicKey.substr(0,6)}}.....{{payload.publicKey.substr(payload.publicKey.length - 5)}}</section>
@@ -29,8 +30,12 @@
                         <p>{{locale(langKeys.POPOUTS.SIGNATURE.ArbitraryDisabledDesc)}}</p>
                     </section>
 
+                    <section v-if="isDangerous" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
+                        One of the actions included within this transaction is <b>dangerous</b>.
+                    </section>
+
                     <!-- ACCEPT TRANSACTION -->
-                    <btn blue="1" v-if="!pinning"
+                    <btn :blue="!isDangerous" :red="isDangerous" big="1" v-if="!pinning"
                          :disabled="!isValidIdentity || cannotSignArbitrary"
                          :text="locale(langKeys.GENERIC.Allow)"
                          v-on:clicked="accepted" />
@@ -39,7 +44,7 @@
                     <btn :text="locale(langKeys.GENERIC.Deny)" v-if="!pinning"
                          v-on:clicked="returnResult(false)" />
 
-                    <section v-if="!isArbitrarySignature">
+                    <section v-if="!isArbitrarySignature && !isDangerous">
                         <br>
                         <br>
                         <label style="text-align:center;">{{locale(langKeys.POPOUTS.SIGNATURE.WhitelistDesc)}}</label>
@@ -77,7 +82,8 @@
                                     v-on:locationField="(key, val) => clonedLocation[key] = val"
                                     v-on:personalField="(key, val) => selectedIdentity.personal[key] = val" />
 
-                    <section class="messages" :ref="`message_${index}`" v-for="(message, index) in messages">
+                    <section class="messages" :class="{'dangerous':isDangerous}" :ref="`message_${index}`" v-for="(message, index) in messages">
+
 
                         <section class="whitelist-overlay" v-if="isPreviouslyWhitelisted(message)">
                             <section class="box">
@@ -88,6 +94,11 @@
                         <section :class="{'previous-whitelist':isPreviouslyWhitelisted(message)}">
 
                             <section class="details contract-action">
+
+                                <section class="danger wiggle" v-if="isDangerous" v-tooltip.right="{content:isDangerous, classes:['dangertip']}">
+                                    <i class="icon-help"></i>
+                                </section>
+
                                 <figure class="title">
                                     <input v-if="whitelisted && !isPreviouslyWhitelisted(message)"
                                            :checked="!!getWhitelist(message)"
@@ -96,6 +107,7 @@
 
                                     <span @click="collapse(message)">{{message.code}} <i class="contract-split icon-right-open-big"></i> {{message.type}}</span>
                                 </figure>
+                                <span class="danger-title" v-if="isDangerous">This action is <b>dangerous</b>!</span>
                             </section>
 
                             <section v-if="!isCollapsed(message)">
@@ -250,6 +262,12 @@
             cannotSignArbitrary(){
 				if(!this.isArbitrarySignature) return false;
 				return this.payload.messages[0].data.signing.split(' ').some(x => x.length > 12);
+            },
+            isDangerous(){
+				if(this.messages.find(x => x.code === 'eosio' && x.type === 'updateauth')){
+					return `This action is dangerous. Accepting it will change your keys and possibly give your account to someone else. <br><br><b>Check to make sure the keys are correct.</b>`;
+                }
+				return false;
             }
 		},
 		methods: {
@@ -527,6 +545,36 @@
                 .value {
                     margin-bottom:20px;
                 }
+            }
+        }
+
+        &.dangerous {
+
+            .danger {
+                cursor: pointer;
+                float:left;
+                padding:6px 5px 5px;
+                background:rgba(0,0,0,0.1);
+                box-shadow:inset 0 5px 10px rgba(0,0,0,0.1);
+                text-shadow:0 2px 0 rgba(0,0,0,0.1);
+                border-radius:4px;
+                margin-top:7px;
+                margin-right:10px;
+
+            }
+
+            .details {
+                &.contract-action {
+                    background:red;
+                    background:$red-gradient;
+                    border-bottom:1px solid darkred;
+                    color:#fff;
+                }
+            }
+
+            .danger-title {
+                font-size: 11px;
+                width:100%;
             }
         }
     }
