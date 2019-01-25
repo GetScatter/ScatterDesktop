@@ -97,8 +97,8 @@ export default class TRX extends Plugin {
 			new Promise(resolve => setTimeout(() => resolve({asset:[], balance:0}), 2000)),
 			tron.trx.getAccount(account.sendable()).catch(() => ({asset:[], balance:0}))
 		]);
-		if(!asset) return [trx];
 		trx.amount = formatBalance(balance);
+		if(!asset) return [trx];
 		const altTokens = asset.map(({key:symbol, value}) => {
 			return Token.fromJson({
 				blockchain:Blockchains.TRX,
