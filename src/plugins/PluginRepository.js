@@ -49,6 +49,12 @@ class PluginRepositorySingleton {
             return acc;
         }, {})
     }
+
+    bustCaches(){
+        this.signatureProviders().map(sp => {
+            sp.bustCache();
+        })
+    }
 }
 
 const PluginRepository = new PluginRepositorySingleton();

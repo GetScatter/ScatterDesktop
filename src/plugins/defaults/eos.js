@@ -161,6 +161,8 @@ const EXPLORER = {
 export default class EOS extends Plugin {
 
 	constructor(){ super(Blockchains.EOSIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
+
+	bustCache(){ cachedInstances = {}; }
 	defaultExplorer(){ return EXPLORER; }
 	accountFormatter(account){ return `${account.name}@${account.authority}` }
 	returnableAccount(account){ return { name:account.name, authority:account.authority, publicKey:account.publicKey, blockchain:Blockchains.EOSIO }}
@@ -209,6 +211,7 @@ export default class EOS extends Plugin {
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
+
 			const perms = Object.keys(keys).map(permission => {
 				if(!keys[permission].length) return;
 
@@ -245,7 +248,8 @@ export default class EOS extends Plugin {
 				}
 			}).filter(x => !!x);
 
-			const options = {authorization:[`${account.name}@owner`]};
+			const hasOwner = (keys.hasOwnProperty('owner') && keys.owner.length) || account.authorities().map(x => x.authority).includes('owner');
+			const options = {authorization:[`${account.name}@${hasOwner?'owner':'active'}`]};
 			return eos.transaction(tr => perms.map(perm => tr.updateauth(perm, options)))
 				.catch(res => {
 					popupError(res);

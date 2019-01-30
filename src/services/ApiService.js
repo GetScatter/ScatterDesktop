@@ -518,6 +518,10 @@ export default class ApiService {
             if(store.state.scatter.settings.networks.find(x => x.fromOrigin === request.payload.origin && x.createdAt > (+new Date() - ((3600 * 12)*1000))))
                 return resolve({id:request.id, result:new Error("network_timeout", "You can only add 1 network every 12 hours.")});
 
+            // All applications can only add 5 networks every 12 hours.
+            if(store.state.scatter.settings.networks.filter(x => x.createdAt > (+new Date() - ((3600 * 12)*1000))) > 5)
+                return resolve({id:request.id, result:new Error("network_timeout", "Too many networks were added over the past 12 hours")});
+
             network.fromOrigin = request.payload.origin;
             const scatter = store.state.scatter.clone();
             scatter.settings.networks.push(network);
@@ -551,6 +555,10 @@ export default class ApiService {
             // Applications can only add one token every 12 hours.
             if(store.state.scatter.settings.tokens.filter(x => x.fromOrigin === request.payload.origin && x.createdAt > (+new Date() - ((3600 * 12)*1000))).length > 5)
                 return resolve({id:request.id, result:new Error("token_timeout", "You can only add up to 5 tokens every 12 hours.")});
+
+            // All applications can only add 15 tokens every 12 hours.
+            if(store.state.scatter.settings.tokens.filter(x => x.createdAt > (+new Date() - ((3600 * 12)*1000))).length > 15)
+                return resolve({id:request.id, result:new Error("token_timeout", "Too many tokens were added over the past 12 hours.")});
 
             const exists = await TokenService.hasToken(token);
             if(exists) return resolve({id:request.id, result:new Error("token_exists", "The user already has this token in their Scatter.")});

@@ -24,6 +24,7 @@ import BigNumber from "bignumber.js";
 import TokenService from "../../services/TokenService";
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
+import nacl from 'tweetnacl'
 const erc20abi = require('../../data/abis/erc20');
 
 const web3util = new Web3();
@@ -67,6 +68,8 @@ const EXPLORER = {
 export default class ETH extends Plugin {
 
     constructor(){ super(Blockchains.ETH, PluginTypes.BLOCKCHAIN_SUPPORT) }
+
+	bustCache(){ cachedInstances = {}; }
     defaultExplorer(){ return EXPLORER; }
     accountFormatter(account){ return `${account.publicKey}` }
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.ETH }}
@@ -213,13 +216,20 @@ export default class ETH extends Plugin {
 	    if(account && KeyPairService.isHardware(publicKey))
 		    return await HardwareService.sign(account, transaction);
 
+	    const loom = transaction.hasOwnProperty('loom') && !!transaction.loom;
 	    if(transaction.hasOwnProperty('transaction')) transaction = transaction.transaction;
 
         const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
         if(!basePrivateKey) return;
 
-        const privateKey = ethUtil.addHexPrefix(basePrivateKey);
+
+        if(loom){
+	        const sigMsg = nacl.sign(transaction, basePrivateKey);
+	        return sigMsg.slice(0, nacl.sign.signatureLength);
+        }
+
         const tx = new EthTx(transaction);
+	    const privateKey = ethUtil.addHexPrefix(basePrivateKey);
         tx.sign(ethUtil.toBuffer(privateKey));
         return ethUtil.addHexPrefix(tx.serialize().toString('hex'));
     }

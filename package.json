@@ -63,6 +63,7 @@
     "node-notifier": "^5.3.0",
     "scrypt-async": "^2.0.1",
     "socket.io": "^2.1.1",
+    "tweetnacl": "^1.0.1",
     "vue-markdown": "^2.2.4"
   },
   "devDependencies": {

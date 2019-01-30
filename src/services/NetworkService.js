@@ -7,6 +7,7 @@ import {Popup} from '../models/popups/Popup'
 import BalanceService from "./BalanceService";
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
+import PluginRepository from "../plugins/PluginRepository";
 
 
 export default class NetworkService {
@@ -37,6 +38,7 @@ export default class NetworkService {
         await AccountService.importAllAccountsForNetwork(network);
         BalanceService.loadAllBalances(true);
         PopupService.push(Popup.snackbar(localizedState(NETWORK.Saved), "check"));
+	    PluginRepository.bustCaches();
         return true;
     }
 
@@ -44,6 +46,7 @@ export default class NetworkService {
         return new Promise(resolve => {
             PopupService.push(Popup.prompt("Deleting Network", "This will delete this network, as well as all associated accounts and their permissions.", async accepted => {
 	            if(accepted) {
+		            PluginRepository.bustCaches();
 		            const scatter = store.state.scatter.clone();
 
 		            // Removing accounts and permissions for this network
@@ -64,6 +67,7 @@ export default class NetworkService {
 	    scatter.settings.updateOrPushNetwork(network);
 	    await store.dispatch(Actions.SET_SCATTER, scatter);
 		PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.NETWORK.Saved), "check"));
+	    PluginRepository.bustCaches();
     }
 
 }
