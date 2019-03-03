@@ -41,6 +41,7 @@ export default class VueInitializer {
 	                RouteNames,
 	                SETTINGS_OPTIONS,
                     langKeys:LANG_KEYS,
+	                loadingReputation:false,
                     // now:0,
                 }},
                 mounted(){

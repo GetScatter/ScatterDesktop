@@ -184,6 +184,7 @@ export default class ApiService {
 
 			const network = store.state.scatter.settings.networks.find(x => x.unique() === Network.fromJson(payload.network).unique());
 			if(!network) return resolve({id:request.id, result:Error.noNetwork()});
+			payload.network = network;
 
 			// Convert buf and abi to messages
 			switch(blockchain){
@@ -396,8 +397,8 @@ export default class ApiService {
 			const possibleId = PermissionService.identityFromPermissions(origin, false);
 			if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
 
-			if(possibleId.ridl < +new Date())
-				return resolve({id:request.id, result:Error.signatureError("ridl_enabled", "This user already has a RIDL enabled identity and can't change their name externally.")});
+			// if(possibleId.ridl < +new Date())
+			// 	return resolve({id:request.id, result:Error.signatureError("ridl_enabled", "This user already has a RIDL enabled identity and can't change their name externally.")});
 
 			PopupService.push(Popup.popout(Object.assign(request, {}), async ({result}) => {
 				console.log('result', result);

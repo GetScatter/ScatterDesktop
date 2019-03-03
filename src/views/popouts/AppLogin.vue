@@ -1,6 +1,6 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" />
+        <PopOutHead v-on:closed="returnResult" :reputation="reputation" />
         <section class="multi-pane">
             <section class="main-panel">
                 <PopOutAction :origin="popup.origin()" action="login" />
@@ -96,6 +96,7 @@
     import {IdentityRequiredFields} from "../../models/Identity";
     import Network from "../../models/Network";
     import RequiredFields from "../../components/popouts/RequiredFields";
+    import RIDLService from "../../services/RIDLService";
 
     export default {
 	    props:['popup', 'expanded'],
@@ -113,6 +114,7 @@
             clonedLocation:null,
             selectedIdentity:null,
             showingAll:false,
+	        reputation:null,
         }},
 	    created(){
 	    	this.selectedIdentity = this.identity.clone();
@@ -122,6 +124,12 @@
 	    	if(this.locationFields.length || this.personalFields.length){
 	    		this.$emit('expanded');
             }
+
+            setTimeout(async() => {
+	            this.loadingReputation = true;
+	            this.reputation = await RIDLService.checkApp(this.popup.origin());
+	            this.loadingReputation = false;
+            })
 	    },
         computed: {
 	        ...mapState([

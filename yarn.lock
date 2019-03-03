@@ -1269,6 +1269,11 @@ bignumber.js@^7.2.1:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-7.2.1.tgz#80c048759d826800807c4bfd521e50edbba57a5f"
 
+bignumber.js@^8.0.1:
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-8.1.1.tgz#4b072ae5aea9c20f6730e4e5d529df1271c4d885"
+  integrity sha512-QD46ppGintwPGuL1KqmwhR0O+N2cZUg8JG/VzwI2e28sM9TqHjQB10lI4QAaMHVbLzwVLLAwEglpKPViWX+5NQ==
+
 binary-extensions@^1.0.0:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.12.0.tgz#c2d780f53d45bba8317a8902d4ceeaf3a6385b14"
@@ -8437,11 +8442,13 @@ rgb2hex@^0.1.9:
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/rgb2hex/-/rgb2hex-0.1.9.tgz#5d3e0e14b0177b568e6f0d5b43e34fbfdb670346"
 
-ridl@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/ridl/-/ridl-1.1.1.tgz#17c2e90dc72f7265678c50febabfd6a9ee4131e7"
+ridl@^2.0.36:
+  version "2.0.36"
+  resolved "https://registry.yarnpkg.com/ridl/-/ridl-2.0.36.tgz#4c642e35cb5bfafd2709c242d70f52a8bf35e0c7"
+  integrity sha512-pebGsbFG1T1vt4nYpv56SdA2QiWqh/L5AUoePnBzAjFLiZ9ffZYVCV3EO5xrxZ9lRLQOlWg1bvUKJKn3M4kWbw==
   dependencies:
     aes-oop "^1.0.4"
+    bignumber.js "^8.0.1"
     eosjs "^16.0.0"
     eosjs-ecc "^4.0.2"
     murmurhash "0.0.2"

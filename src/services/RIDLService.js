@@ -1,125 +1,114 @@
-import {store} from '../store/store'
-import PluginRepository from '../plugins/PluginRepository';
-import {Blockchains} from '../models/Blockchains'
-import {Popup} from '../models/popups/Popup'
-import PopupService from '../services/PopupService';
-import * as Actions from '../store/constants';
-import * as ApiActions from '../models/api/ApiActions';
-import ApiService from '../services/ApiService';
-import Network from '../models/Network';
-import ecc from 'eosjs-ecc';
+import ridl, {FRAG_TYPES} from 'ridl';
+import Network from "../models/Network";
+import murmur from 'murmurhash';
 
-// import ridl from '../../../../Frameworks/ridl/src/ridl'
-import ridl from 'ridl'
+export const RIDL_WEB_HOST = `http://localhost:8081`;
 
+export const network = Network.fromJson({
+	host:'192.168.1.5',
+	port:8888,
+	protocol:'http',
+	chainId:'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f',
+	blockchain:'eos',
+});
 
-const ridlNetwork = () => store.state.scatter.settings ? store.state.scatter.settings.networks.find(x => x.name === 'RIDL') : null;
+// export const network = Network.fromJson({
+// 	host:'ridlnet.get-scatter.com',
+// 	port:80,
+// 	protocol:'http',
+// 	chainId:'cf057bbfb72640471fd910bcb67639c22df9f92470936cddc1ade0e2f2e7dc4f',
+// 	blockchain:'eos',
+// });
 
-let connectionAttempts = 0;
+ridl.init(network);
 
-const updateIdentity = identity => {
-    const scatter = store.state.scatter.clone();
-    scatter.keychain.updateOrPushIdentity(identity);
-    store.dispatch(Actions.SET_SCATTER, scatter);
-};
+const finger = x => murmur.v2(x);
 
-const getIdAndAccount = async (identity, reject) => {
-    const ridlId = await ridl.identity.get(identity.name);
-    if(!ridlId) {
-        identity.ridl = -1;
-        updateIdentity(identity);
-        console.error('No such identity')
-        return reject(false);
-    }
+//TODO: GET FROM API
+const dangerFrags = [
+	finger('scam'),
+	finger('dangerous'),
+	finger('privacy'),
+];
 
-    const account = store.state.scatter.keychain.accounts.find(x => x.name === ridlId.account);
-    if(!account) {
-        console.error('The account bound to this Identity is no longer on the users keychain')
-        return reject(false);
-    }
+let dangerFragTypes = null;
+const fillFrags = async reputable => {
+	const fragments = reputable.reputation.fragments.filter(x => dangerFrags.includes(x.fingerprint));
+	const fragTypes = !dangerFragTypes ? await ridl.reputation.getFragmentsFor(reputable) : dangerFragTypes;
 
-    return {ridlId, account};
+	fragments.map(frag => {
+		const typed = fragTypes.find(x => x.fingerprint === frag.fingerprint);
+		frag.upTag = typed ? typed.upTag : 'good';
+		frag.downTag = typed ? typed.downTag : 'bad';
+	});
+
+	return fragments;
 }
 
 export default class RIDLService {
 
-    constructor(){
+    static async checkApp(app){
+        console.log(FRAG_TYPES.APPLICATION, app);
+        await ridl.init(network);
+        const reputable = await ridl.reputation.searchByFingerprint(FRAG_TYPES.APPLICATION, app.trim());
+        if(!reputable) return;
+
+        const fragments = await fillFrags(reputable);
+
+        return {
+	        decimal:reputable.decimalReputation(true, dangerFrags),
+	        fragments,
+	        reputable
+        };
+    }
+
+    static async checkContracts(contractNetwork, contracts){
+    	console.log(contractNetwork, contracts);
+	    await ridl.init(network);
+
+    	const networkId = `${contractNetwork.blockchain}::${contractNetwork.chainId}`;
+    	let fragTypes = [];
+
+    	const reputables = await Promise.all(contracts.map(({code:contract, type:action}) => {
+		    return ridl.reputation.searchByFingerprint(FRAG_TYPES.BLOCKCHAIN_ADDR, contract.toLowerCase(), networkId).then(async reputable => {
+		    	reputable.code = contract;
+			    reputable.decimal = reputable.decimalReputation(true, dangerFrags);
+			    reputable.children = (await this.getChildren(reputable)).filter(x => x.entity.toLowerCase() === action.toLowerCase());
+			    reputable.children.map(child => {
+			    	child.code = contract+action;
+				    child.decimal = child.decimalReputation(true, dangerFrags);
+			    });
+			    await fillFrags(reputable);
+			    return reputable;
+		    });
+	    }));
+
+    	let total = 0;
+    	let actionables = [];
+    	reputables.map(reputable => {
+    		if(reputable.children.length){
+			    reputable.children.map(child => {
+				    total += parseFloat(child.decimal);
+				    actionables.push(child);
+			    })
+		    }
+		    else {
+		    	total += parseFloat(reputable.decimal);
+			    actionables.push(reputable);
+		    }
+	    });
+
+    	return {
+    		decimal:parseFloat(total).toFixed(1),
+		    reputables:actionables,
+	    }
 
     }
 
-    static bindNetwork(){
-        fetch('https://raw.githubusercontent.com/GetScatter/Endpoints/master/ridl.json').then(res => res.json()).then(async network => {
-            network = Network.fromJson(network.testnet);
+	static async getChildren(reputable){
+		await ridl.canConnect()
+		return ridl.reputation.searchByParent(reputable.id);
+	}
 
-            const plugin = PluginRepository.plugin(network.blockchain);
-            network.chainId = await plugin.getChainId(network);
-            network.name = 'RIDL';
-
-            const scatter = store.state.scatter.clone();
-
-            const oldNetwork = scatter.settings.networks.find(x => x.name === 'RIDL');
-            if(oldNetwork) network.id = oldNetwork.id;
-
-            scatter.settings.updateOrPushNetwork(network);
-            await store.dispatch(Actions.SET_SCATTER, scatter);
-
-            return true;
-        });
-    }
-
-    static getNetwork(){
-        return ridlNetwork();
-    }
-
-    static async canConnect(type = null){
-        if(connectionAttempts > 3) return false;
-        connectionAttempts++;
-
-        if(type === 'refreshing'){
-            await this.bindNetwork();
-            return await this.canConnect();
-        }
-
-        if(!ridlNetwork()){
-            await this.bindNetwork();
-        }
-
-        if(!ridlNetwork()) return false;
-
-        await ridl.init( ridlNetwork() );
-        const connected = await ridl.canConnect();
-        if(!connected){
-            return await this.canConnect('refreshing');
-        } else return connected;
-    }
-
-    static buildEntityName(type, entityName, user = null){
-        return `${type}::${entityName}${user && user.length ? '::'+user : ''}`.toLowerCase().trim();
-    }
-
-    static async getReputableEntity(entity){
-        await ridl.init( ridlNetwork() );
-        return ridl.reputation.getEntity(entity);
-    }
-
-    static async getReputation(entity){
-        await ridl.init( ridlNetwork() );
-        return ridl.reputation.getEntityReputation(entity);
-    }
-
-    static async shouldWarn(entity){
-        await ridl.init( ridlNetwork() );
-        const reputable = await this.getReputableEntity(entity);
-        if(!reputable) return false;
-
-        const reputation = await this.getReputation(entity);
-        if(!reputation || !reputation.hasOwnProperty('fragments')) return false;
-
-        const maliciousFragments = ['scam', 'privacy', 'security'];
-        return reputation.fragments
-            .filter(x => maliciousFragments.includes(x.type))
-            .filter(x => x.reputation < -0.01)
-            .map(x => {x.total_reputes = reputation.total_reputes; return x;});
-    }
 
 }
