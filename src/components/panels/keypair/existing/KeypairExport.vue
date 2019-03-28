@@ -112,10 +112,6 @@
 		                    name:this.locale(this.langKeys.KEYPAIR.EXPORT.KEY.RevealButton),
 		                    handler:() => this.revealPrivateKey(blockchain)
 	                    },
-                        {
-	                        name:this.locale(this.langKeys.GENERIC.Copy),
-	                        handler:() => this.copyPrivateKey(blockchain)
-                        },
                     ]
                 }
             });
@@ -148,12 +144,6 @@
 		        this.keypair.decrypt(await ipcAsync('seed'));
 		        return Crypto.bufferToPrivateKey(this.keypair.privateKey, blockchain);
 	        },
-	        async copyPrivateKey(blockchain){
-    			const prv = await this.getPrivateKey(blockchain);
-    			const pub = this.getPublicKey(blockchain);
-    			const copy = `${this.blockchainName(blockchain)} - ${this.keypair.name}\r\nPublic: ${pub}\r\nPrivate: ${prv}`;
-	        	ElectronHelpers.copy(copy);
-            },
 	        async revealPrivateKey(blockchain){
 	        	const display = this.keys.find(x => x.title === this.blockchainName(blockchain));
 	        	const action = display.actions.find(x => x.id === 'reveal');
