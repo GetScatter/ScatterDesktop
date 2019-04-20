@@ -41,7 +41,7 @@ class EosTokenAccountAPI {
 				Object.keys(rawAccounts).map(name => {
 					rawAccounts[name]
 						.filter(acc => {
-							return acc.auth.some(x => x.keys.find(({pubkey}) => pubkey === publicKey));
+							return acc.auth.keys.some(({pubkey}) => pubkey === publicKey);
 						})
 						.map(acc => {
 							accounts.push({name, authority: acc.perm})
@@ -49,6 +49,7 @@ class EosTokenAccountAPI {
 				});
 				return accounts;
 			}).catch(err => {
+				console.log('err', err);
 				return null;
 			})
 		])
@@ -93,7 +94,6 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 		if(!accountsFromApi) return getAccountsFromPublicKey(publicKey, network, process, progressDelta, true);
 		else return accountsFromApi;
 	}
-
 
 	return Promise.race([
 		new Promise(resolve => setTimeout(() => resolve([]), 20000)),
@@ -857,8 +857,6 @@ export default class EOS extends Plugin {
 		parsed.actions.map(x => {
 			x.code = x.account;
 			x.type = x.name;
-			delete x.account;
-			delete x.name;
 		});
 
 		payload.buf = Buffer.concat([
@@ -866,6 +864,9 @@ export default class EOS extends Plugin {
 			buffer,                                         // Transaction
 			new Buffer(new Uint8Array(32)),                 // Context free actions
 		]);
+
+		payload.transaction.parsed = Object.assign({}, parsed);
+		payload.transaction.parsed.actions = await api.serializeActions(parsed.actions);
 
 		return parsed.actions;
 	}

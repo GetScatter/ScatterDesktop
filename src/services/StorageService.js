@@ -25,7 +25,7 @@ const translationStorage = () => getStore(TRANSLATION_NAME);
 const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
 
-import {ipcAsync, remote} from '../util/ElectronHelpers';
+import {ipcAsync, ipcFaF, remote} from '../util/ElectronHelpers';
 import {dateId, daysOld, hourNow} from "../util/DateHelpers";
 import {AES} from "aes-oop";
 import {HISTORY_TYPES} from "../models/histories/History";
@@ -100,6 +100,7 @@ export default class StorageService {
         store.commit(Actions.SET_SCATTER, null);
         store.commit(Actions.SET_SEED, '');
         window.localStorage.removeItem('scatter');
+        ipcFaF('key', null);
         return true;
     }
 

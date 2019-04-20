@@ -41,7 +41,7 @@ export const ipcAsync = (key, data) => {
     return new Promise(resolve => {
         ipcRenderer.removeAllListeners(key);
 	    ipcRenderer.once(key, (event, arg) => resolve(arg));
-	    ipcRenderer.send(key, {data, sig:proof.sign(key)})
+	    ipcRenderer.send(key, {data:data ? data : key, sig:proof.sign(key)})
     })
 }
 

@@ -11,7 +11,7 @@
 
             <section class="panel-container scroller limited" v-if="state === STATES.RIDL">
 
-                <h1>RIDL</h1>
+                <h1>Reputation & Identity Layer (RIDL)</h1>
                 <br>
 
                 <!------------------------>

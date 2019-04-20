@@ -62,7 +62,7 @@
                          :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'"
                     ></cin>
                     <span class="locked" v-if="isLockedOut">Locked: {{formatTime(lockedTimeLeft)}}</span>
-                    <section v-if="dPresses >= 10" class="bottom-stuck">
+                    <section class="bottom-stuck">
                         <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" :text="locale(langKeys.LOGIN.EXISTING.ResetButton)"></btn>
                     </section>
                 </section>
@@ -119,6 +119,7 @@
 	import Scatter from "../models/Scatter";
 	import AccountService from "../services/AccountService";
 	import UpdateService from "../services/UpdateService";
+	import {ipcFaF} from "../util/ElectronHelpers";
 
 	const lockoutTime = 1000*60*5;
 	const resetLockout = () => window.localStorage.removeItem('lockout');
@@ -304,6 +305,7 @@
 
 
 	                    resetLockout();
+	                    ipcFaF('key', null);
 	                    location.reload();
                     } else {
 	                    unrestore();
@@ -350,6 +352,7 @@
 							return AccountService.importAllAccounts(keypair);
 						}));
 						resetLockout();
+						ipcFaF('key', null);
 						location.reload();
 					} else {
 						unrestore();

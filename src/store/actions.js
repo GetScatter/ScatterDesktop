@@ -17,6 +17,7 @@ import PopupService from "../services/PopupService";
 import {Popup} from '../models/popups/Popup'
 import {RUNNING_TESTS} from "../util/TestingHelper";
 import {ipcAsync} from "../util/ElectronHelpers";
+import Process from "../models/Process";
 
 export const actions = {
     [Actions.HIDE_BACK_BTN]:({commit}, x) => commit(Actions.HIDE_BACK_BTN, x),
@@ -78,16 +79,19 @@ export const actions = {
 
     [Actions.SET_SCATTER]:async ({commit, state}, scatter) => {
         return new Promise(async resolve => {
+	        const process = Process.savingData();
 
             const seed = await ipcAsync('seed');
             const savable = AES.encrypt(scatter.savable(seed), seed);
             StorageService.setLocalScatter(savable);
+	        process.updateProgress(50);
             StorageService.setScatter(savable).then(() => {
 	            BackupService.createAutoBackup()
             });
 
             commit(Actions.SET_SCATTER, scatter);
             resolve(scatter);
+	        process.updateProgress(100);
         })
     },
 

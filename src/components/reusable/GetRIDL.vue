@@ -3,7 +3,7 @@
         <section style="padding:30px 0 100px;" v-if="ridlCycle && account">
             <section style="display:flex; margin-top:-10px;">
                 <section style="flex:1;">
-                    <h4>Getting RIDL</h4>
+                    <h4>Getting RIDL Tokens</h4>
                     <span>
 					            By donating to Scatter you can get RIDL tokens as a thank you.
 					            Every 12 hours 170,000 RIDL is released to all donors. Depending on the amount you
