@@ -206,34 +206,20 @@ class LedgerAPI {
         let offset = 0;
 
         let b, rawTx;
-        const IS_EOSJS2 = transaction.transaction.hasOwnProperty('serializedTransaction');
 
-        // eosjs2
-	    if(IS_EOSJS2){
-		    try {
-			    const { fc } = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId});
-			    b = serialize(network.chainId, transaction.transaction.parsed, fc.types).toString('hex');
-			    rawTx = Buffer.from(b, "hex");
-		    } catch(e){
-		    	console.log('e', e);
-			    WindowService.flashWindow();
-			    PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
-			    return null;
-		    }
-	    }
-	    // eosjs1
-	    else {
-		    try {
-			    const { fc } = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId});
-			    b = serialize(network.chainId, transaction.transaction, fc.types).toString('hex');
-			    rawTx = Buffer.from(b, "hex");
-		    } catch(e){
-			    WindowService.flashWindow();
-			    PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
-			    return null;
-		    }
-	    }
 
+	    try {
+		    const { fc } = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId});
+	    	rawTx = Buffer.from(serialize(
+	    		network.chainId,
+			    transaction.transaction.hasOwnProperty('serializedTransaction') ? transaction.transaction.parsed : transaction.transaction,
+			    fc.types
+		    ).toString('hex'), "hex");
+	    } catch(e){
+		    WindowService.flashWindow();
+		    PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
+		    return null;
+	    }
 
         const toSend = [];
         let response;
@@ -262,8 +248,7 @@ class LedgerAPI {
             const v = response.slice(0, 1).toString("hex");
             const r = response.slice(1, 1 + 32).toString("hex");
             const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
-            if(IS_EOSJS2) return ecc.Signature.fromHex(v+r+s).toString();
-            return v + r + s;
+            return ecc.Signature.fromHex(v+r+s).toString();
         }).catch(err => {
         	console.log('err', err);
             PopupService.remove(popup);
