@@ -42,22 +42,26 @@ export default class NetworkService {
         return true;
     }
 
-    static async removeNetwork(network){
+    static async removeNetwork(network, noPrompt = false){
         return new Promise(resolve => {
-            PopupService.push(Popup.prompt("Deleting Network", "This will delete this network, as well as all associated accounts and their permissions.", async accepted => {
-	            if(accepted) {
-		            PluginRepository.bustCaches();
-		            const scatter = store.state.scatter.clone();
+        	const remove = async () => {
+		        PluginRepository.bustCaches();
+		        const scatter = store.state.scatter.clone();
 
-		            // Removing accounts and permissions for this network
-		            const accounts = scatter.keychain.accounts.filter(x => x.networkUnique === network.unique());
-		            accounts.map(account => scatter.keychain.removeAccount(account));
-		            scatter.settings.removeNetwork(network);
-		            store.dispatch(Actions.SET_SCATTER, scatter);
-		            PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.NETWORK.Deleted), "check"));
-		            BalanceService.removeStaleBalances();
-		            resolve(true);
-	            } else resolve(false);
+		        // Removing accounts and permissions for this network
+		        const accounts = scatter.keychain.accounts.filter(x => x.networkUnique === network.unique());
+		        accounts.map(account => scatter.keychain.removeAccount(account));
+		        scatter.settings.removeNetwork(network);
+		        store.dispatch(Actions.SET_SCATTER, scatter);
+		        if(!noPrompt) PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.NETWORK.Deleted), "check"));
+		        BalanceService.removeStaleBalances();
+		        resolve(true);
+	        }
+
+	        if(noPrompt) return remove();
+            PopupService.push(Popup.prompt("Deleting Network", "This will delete this network, as well as all associated accounts and their permissions.", async accepted => {
+	            if(accepted) await remove();
+	            else resolve(false);
             }))
         })
     }

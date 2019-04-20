@@ -1,39 +1,40 @@
 <template>
 	<section>
 		<back-bar v-on:back="returnResult(null)" />
-		<section class="panel-container limited">
-			<section class="head">
-				<figure class="icon icon-trash"></figure>
-				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.Title)}}</figure>
-				<p>{{account.sendable()}}</p>
+		<section v-if="account">
+			<section class="panel-container limited">
+				<section class="head">
+					<figure class="icon icon-trash"></figure>
+					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.Title)}}</figure>
+					<p>{{account.sendable()}}</p>
 
-				<br>
-				<section class="disclaimer less-pad red">
-					{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.Desc)}}
+					<br>
+					<section class="disclaimer less-pad red">
+						{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.Desc)}}
 
-					<p v-if="authorities.length">
-						{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.SubDesc)}}
-					</p>
+						<p v-if="authorities.length">
+							{{locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.SubDesc)}}
+						</p>
+					</section>
+				</section>
+
+
+				<section class="list">
+					<FlatList :label="locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.AuthoritiesLabel)"
+					          select-blue="1"
+					          :selected="selectedAuthorities"
+					          :items="authorities"
+					          v-on:selected="addOrRemoveAuthority" />
 				</section>
 			</section>
 
-
-			<section class="list">
-				<FlatList :label="locale(langKeys.POPINS.FULLSCREEN.UNLINK_ACCOUNT.AuthoritiesLabel)"
-						  select-blue="1"
-						  :selected="selectedAuthorities"
-						  :items="authorities"
-						  v-on:selected="addOrRemoveAuthority" />
+			<section class="action-bar short bottom centered">
+				<btn :disabled="authorities.length > 1 && !selectedAuthorities.length"
+				     :text="locale(langKeys.GENERIC.Confirm)" blue="1"
+				     v-on:clicked="unlinkAccount" />
 			</section>
-
-
-
 		</section>
-		<section class="action-bar short bottom centered">
-			<btn :disabled="authorities.length > 1 && !selectedAuthorities.length"
-				 :text="locale(langKeys.GENERIC.Confirm)" blue="1"
-				 v-on:clicked="unlinkAccount" />
-		</section>
+
 	</section>
 </template>
 

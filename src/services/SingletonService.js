@@ -17,6 +17,7 @@ export default class SingletonService {
 		store.dispatch(Actions.LOAD_HISTORY);
 		store.dispatch(Actions.LOAD_LANGUAGE);
 		await RIDLService.init();
+		await RIDLService.checkAccounts();
 		await PermissionService.removeDanglingPermissions();
 		await AccountService.fixOrphanedAccounts();
 		await LanguageService.regenerateLanguage();

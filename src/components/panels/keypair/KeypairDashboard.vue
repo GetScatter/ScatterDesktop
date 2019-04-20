@@ -52,31 +52,31 @@
 
 				<section style="padding-bottom:20px;">
 
-					<section class="action-box top-pad">
-						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountLabel)}}</label>
-						<p>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountDescription)}}</p>
-						<br>
-						<br>
+					<!--<section class="action-box top-pad">-->
+						<!--<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountLabel)}}</label>-->
+						<!--<p>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.LinkEosAccountDescription)}}</p>-->
+						<!--<br>-->
+						<!--<br>-->
 
-						<section class="key-val">
-							<section class="split-inputs">
-								<sel style="flex:1; margin-left:0;" :label="locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.AccountNetworkLabel)"
-								     :selected="manualAccountNetwork"
-								     :options="eosNetworks"
-								     :parser="network => network.name"
-								     v-on:changed="x => manualAccountNetwork = x"></sel>
+						<!--<section class="key-val">-->
+							<!--<section class="split-inputs">-->
+								<!--<sel style="flex:1; margin-left:0;" :label="locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.AccountNetworkLabel)"-->
+								     <!--:selected="manualAccountNetwork"-->
+								     <!--:options="eosNetworks"-->
+								     <!--:parser="network => network.name"-->
+								     <!--v-on:changed="x => manualAccountNetwork = x"></sel>-->
 
-								<cin style="margin-bottom:0; flex:1;"
-								     :text="newAccountName"
-								     v-on:changed="x => newAccountName = x"
-								     placeholder="your.account@owner"
-								     :label="locale(langKeys.GENERIC.AccountName)" />
+								<!--<cin style="margin-bottom:0; flex:1;"-->
+								     <!--:text="newAccountName"-->
+								     <!--v-on:changed="x => newAccountName = x"-->
+								     <!--placeholder="your.account@owner"-->
+								     <!--:label="locale(langKeys.GENERIC.AccountName)" />-->
 
-								<btn :disabled="invalidNewAccountName" :text="locale(langKeys.GENERIC.Add)" style="margin-top:20px; flex:0.2;"
-								     red="1" v-on:clicked="manuallyAddAccount" />
-							</section>
-						</section>
-					</section>
+								<!--<btn :disabled="invalidNewAccountName" :text="locale(langKeys.GENERIC.Add)" style="margin-top:20px; flex:0.2;"-->
+								     <!--red="1" v-on:clicked="manuallyAddAccount" />-->
+							<!--</section>-->
+						<!--</section>-->
+					<!--</section>-->
 
 					<section class="action-box top-pad" v-if="canCreateAccounts">
 						<label>{{locale(langKeys.KEYPAIR.DASHBOARD.ADD_ACCOUNT.CreateEosAccountLabel)}}</label>
@@ -163,7 +163,7 @@
 				return false;
 			},
 			canCreateAccounts(){
-				if(!this.keypair.external) return true;
+				if(this.keypair.external && this.keypair.accounts().length) return true;
 				if(this.accounts.find(x => x.blockchain() === Blockchains.EOSIO && !x.keypair().external)) return true;
 				return false;
 			},

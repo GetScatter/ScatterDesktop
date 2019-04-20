@@ -53,6 +53,7 @@ const fetchChainId = network => {
 };
 
 let isConnected = false;
+let checkedAccounts = false;
 export default class RIDLService {
 
 	static async init(){
@@ -68,6 +69,7 @@ export default class RIDLService {
 
 		await ridl.init(network);
 		isConnected = true;
+		return true;
 	}
 
 	static networkUnique(){
@@ -84,9 +86,28 @@ export default class RIDLService {
 		return NetworkService.addNetwork(network, false);
 	}
 
+	static async checkAccounts(){
+		if(checkedAccounts) return;
+		checkedAccounts = true;
+		const n = store.state.scatter.settings.networks.find(x => x.chainId === network.chainId);
+		if(!n) return console.error("No RIDL network found!");
+
+		const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+		const accounts = store.state.scatter.keychain.accounts.filter(x => x.networkUnique === n.unique()).reduce((acc,x) => {
+			if(acc.find(y => y.name === x.name)) return acc;
+			acc.push(x);
+			return acc;
+		}, []);
+		return await Promise.all(accounts.map(async account => {
+			const data = await plugin.accountData(account, network);
+			if(!data) await AccountService.removeAccounts([account]);
+			return true;
+		}));
+	}
+
 	static getAccount(){
 		const n = store.state.scatter.settings.networks.find(x => x.chainId === network.chainId);
-		if(!n) throw new Error("No RIDL network found!");
+		if(!n) return console.error("No RIDL network found!");
 		return store.state.scatter.keychain.accounts.find(x => x.networkUnique === n.unique());
 	}
 

@@ -36,6 +36,7 @@ class EosTokenAccountAPI {
 		return await Promise.race([
 			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
 			fetch(`${blockchainApiURL}/key/${publicKey}`).then(r => r.json()).then(res => {
+				if(!res.eos) return null;
 				const rawAccounts = res.eos.accounts;
 				let accounts = [];
 				Object.keys(rawAccounts).map(name => {
