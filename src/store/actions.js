@@ -31,12 +31,12 @@ export const actions = {
     [Actions.HOLD_SCATTER]:({commit}, scatter) => commit(Actions.SET_SCATTER, scatter),
     [Actions.SET_SEED]:({commit}, password) => {
         return new Promise(async (resolve, reject) => {
-            const [mnemonic, seed] = await PasswordService.seedPassword(password);
+            const [mnemonic, seed] = await PasswordService.seedPassword(password, true);
             resolve(mnemonic);
         })
     },
 
-    [Actions.LOAD_SCATTER]:async ({commit, state, dispatch}) => {
+    [Actions.LOAD_SCATTER]:async ({commit, state, dispatch}, forceLocal = false) => {
 
         if(!state.scatter) {
             let scatter = StorageService.getScatter();
@@ -44,7 +44,7 @@ export const actions = {
             return commit(Actions.SET_SCATTER, scatter);
         }
 
-        if(await PasswordService.verifyPassword()){
+        if(await PasswordService.verifyPassword(null, forceLocal)){
             const scatter = state.scatter.clone();
 
             if(!RUNNING_TESTS){
@@ -80,7 +80,9 @@ export const actions = {
         return new Promise(async resolve => {
 
             const seed = await ipcAsync('seed');
-            StorageService.setScatter(AES.encrypt(scatter.savable(seed), seed)).then(() => {
+            const savable = AES.encrypt(scatter.savable(seed), seed);
+            StorageService.setLocalScatter(savable);
+            StorageService.setScatter(savable).then(() => {
 	            BackupService.createAutoBackup()
             });
 

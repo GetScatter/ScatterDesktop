@@ -50,6 +50,10 @@ export default class Error {
         return this.signatureError("account_missing", "You are trying to sign a request with an account that isn't currently linked or doesn't exist in the user's Scatter");
     }
 
+    static cantParseTransaction(){
+        return this.signatureError("parsing_error", "Something happened while trying to parse the transaction internally.");
+    }
+
     static noNetwork(){
         return this.signatureError("no_network", "This user does not have this network in their Scatter.");
     }

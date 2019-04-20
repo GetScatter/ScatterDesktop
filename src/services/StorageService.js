@@ -99,6 +99,7 @@ export default class StorageService {
 	    translationStorage().clear();
         store.commit(Actions.SET_SCATTER, null);
         store.commit(Actions.SET_SEED, '');
+        window.localStorage.removeItem('scatter');
         return true;
     }
 
@@ -167,5 +168,15 @@ export default class StorageService {
     static async swapHistory(history){
     	const encrypted = AES.encrypt(history, await ipcAsync('seed'));
         return historyStorage().set('history', encrypted);
+    }
+
+
+    static async setLocalScatter(scatter){
+	    window.localStorage.setItem('scatter', scatter);
+	    return true;
+    }
+
+    static getLocalScatter(){
+		return window.localStorage.getItem('scatter');
     }
 }

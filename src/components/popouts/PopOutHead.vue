@@ -1,7 +1,7 @@
 <template>
 	<section class="pop-out-head" :class="{'danger':reputation && reputation.decimal < 0}">
 		<section class="details">
-			<figure class="logo" v-if="!loadingReputation && !reputation">Scatter</figure>
+			<figure class="logo" v-if="!loadingRep && !reputation">Scatter</figure>
 			<figure class="reputation" v-if="reputation">
 				<ReputationScore class="score" :class="{'danger':reputation.decimal < 0}" :reputable="reputation" />
 				<section class="info">
@@ -10,7 +10,7 @@
 					<div class="red" v-if="reputation.decimal < 0">Reported as <b>Dangerous</b></div>
 				</section>
 			</figure>
-			<figure v-if="loadingReputation">
+			<figure v-if="loadingRep">
 				<i class="icon-spin4 animate-spin"></i>
 			</figure>
 		</section>
@@ -23,7 +23,7 @@
 	import ReputationScore from '../../components/reusable/ReputationScore';
 
 	export default {
-		props:['hideClose', 'reputation'],
+		props:['hideClose', 'reputation', 'loadingRep'],
 		components:{
 			ReputationScore
 		},

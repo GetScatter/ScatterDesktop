@@ -310,7 +310,6 @@
 			    return this.reputation.reputables.find(x => x.code === `${message.code}${message.type}`);
             },
 			ridlLink(reputable){
-				console.log(reputable);
 			    return `${RIDL_WEB_HOST}/reputable?id=${reputable.id}`
             },
 

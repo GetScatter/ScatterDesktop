@@ -5,7 +5,9 @@
             <label>{{locale(langKeys.SETTINGS.FIREWALL.ENABLED.Label)}}</label>
             <p>{{locale(langKeys.SETTINGS.FIREWALL.ENABLED.Description)}}</p>
 
-            <btn :disabled="true" text="Coming Soon" />
+            <section class="switch bottomed" @click="toggleFirewall">
+                <figure class="dot" :class="{'disabled':!scatter.settings.firewall.enabled}"></figure>
+            </section>
         </section>
 
     </section>
@@ -21,14 +23,18 @@
         }},
         computed:{
             ...mapState([
-
+                'scatter',
             ]),
             ...mapGetters([
 
             ]),
         },
         methods: {
-
+	        toggleFirewall(){
+		        const scatter = this.scatter.clone();
+		        scatter.settings.firewall.enabled = !scatter.settings.firewall.enabled;
+		        this[Actions.SET_SCATTER](scatter);
+            },
             ...mapActions([
                 Actions.SET_SCATTER
             ])

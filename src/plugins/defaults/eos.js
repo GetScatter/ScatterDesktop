@@ -9,7 +9,6 @@ import LANG_KEYS from '../../localization/keys'
 import Eos from 'eosjs'
 let {ecc} = Eos.modules;
 import ObjectHelpers from '../../util/ObjectHelpers'
-import * as ricardianParser from 'eos-rc-parser';
 import {Popup} from '../../models/popups/Popup'
 import PopupService from '../../services/PopupService'
 import ResourceService from '../../services/ResourceService'
@@ -663,6 +662,7 @@ export default class EOS extends Plugin {
 	async signerWithPopup(payload, account, rejector){
 		return new Promise(async resolve => {
 			payload.messages = await this.requestParser(payload, Network.fromJson(account.network()));
+			if(!payload.messages) return rejector({error:'Error re-parsing transaction buffer'});
 			payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
 			payload.participants = [account];
 			payload.network = account.network();
@@ -771,36 +771,46 @@ export default class EOS extends Plugin {
 	}
 
 	async parseEosjsRequest(payload, network){
-		const {transaction} = payload;
+		try {
+			const {transaction} = payload;
 
-		const eos = getCachedInstance(network);
+			const eos = getCachedInstance(network);
 
-		const contracts = ObjectHelpers.distinct(transaction.actions.map(action => action.account));
-		const abis = await this.getAbis(contracts, network, eos);
+			const contracts = ObjectHelpers.distinct(transaction.actions.map(action => action.account));
+			const abis = await this.getAbis(contracts, network, eos);
 
+			const results = await Promise.all(transaction.actions.map(async (action, index) => {
+				const contractAccountName = action.account;
 
-		return await Promise.all(transaction.actions.map(async (action, index) => {
-			const contractAccountName = action.account;
+				let abi = abis[contractAccountName];
 
-			let abi = abis[contractAccountName];
+				const typeName = abi.abi.actions.find(x => x.name === action.name).type;
+				const data = abi.fromBuffer(typeName, action.data);
+				const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
+				let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
+				eos.fc.abiCache.abi(contractAccountName, abi.abi);
 
-			const typeName = abi.abi.actions.find(x => x.name === action.name).type;
-			const data = abi.fromBuffer(typeName, action.data);
-			const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
-			let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
+				if(transaction.hasOwnProperty('delay_sec') && parseInt(transaction.delay_sec) > 0){
+					data.delay_sec = transaction.delay_sec;
+				}
 
-			if(transaction.hasOwnProperty('delay_sec') && parseInt(transaction.delay_sec) > 0){
-				data.delay_sec = transaction.delay_sec;
-			}
+				return {
+					data,
+					code:action.account,
+					type:action.name,
+					authorization:action.authorization,
+					ricardian
+				};
+			}));
 
-			return {
-				data,
-				code:action.account,
-				type:action.name,
-				authorization:action.authorization,
-				ricardian
-			};
-		}));
+			if(!transaction.hasOwnProperty('max_net_usage_words')) transaction.max_net_usage_words = 0;
+			payload.buf = Buffer.concat([Buffer.from(network.chainId, 'hex'), eos.fc.toBuffer("transaction", transaction), Buffer.from(new Uint8Array(32))]);
+
+			return results;
+		} catch(e){
+			console.log(e);
+			return null;
+		}
 	}
 
 	async parseEosjs2Request(payload, network){

@@ -1,6 +1,6 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" :reputation="reputation" />
+        <PopOutHead v-on:closed="returnResult" :reputation="reputation" :loading-rep="loadingReputation" />
         <section class="multi-pane">
             <section class="main-panel">
                 <PopOutAction :origin="popup.origin()" action="login" />
@@ -117,6 +117,14 @@
 	        reputation:null,
         }},
 	    created(){
+		    setTimeout(async() => {
+			    console.log(this.popup);
+			    this.loadingReputation = true;
+			    this.reputation = await RIDLService.checkApp(this.popup.data.props.payload.origin);
+			    if(!this.reputation) this.reputation = await RIDLService.checkApp(this.popup.origin());
+			    this.loadingReputation = false;
+		    })
+
 	    	this.selectedIdentity = this.identity.clone();
 	    	this.selectedLocation = this.selectedIdentity.locations[0];
 	    	this.clonedLocation = this.selectedIdentity.locations[0].clone();
@@ -124,12 +132,6 @@
 	    	if(this.locationFields.length || this.personalFields.length){
 	    		this.$emit('expanded');
             }
-
-            setTimeout(async() => {
-	            this.loadingReputation = true;
-	            this.reputation = await RIDLService.checkApp(this.popup.origin());
-	            this.loadingReputation = false;
-            })
 	    },
         computed: {
 	        ...mapState([

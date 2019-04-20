@@ -194,6 +194,8 @@ export default class ApiService {
 					payload.messages = await plugin.requestParser(payload, payload.hasOwnProperty('abi') ? payload.abi : null); break;
 			}
 
+			if(!payload.messages) return resolve({id:request.id, result:Error.cantParseTransaction()});
+
 
 			const availableAccounts = possibleId.accounts.map(x => x.formatted());
 			const participants = ObjectHelpers.distinct(plugin.actionParticipants(payload))

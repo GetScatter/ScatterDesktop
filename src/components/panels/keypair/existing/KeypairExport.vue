@@ -217,6 +217,10 @@
         .key {
             font-size: 11px;
         }
+
+        .public {
+            font-size: 11px;
+        }
     }
 
     .types {

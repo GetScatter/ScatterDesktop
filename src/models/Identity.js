@@ -121,6 +121,8 @@ export default class Identity {
 
     constructor(){
         // Basic fields
+        this.id = IdGenerator.text(24);
+
         this.hash = '';
         this.privateKey = '';
         this.publicKey = '';

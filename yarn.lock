@@ -8442,10 +8442,10 @@ rgb2hex@^0.1.9:
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/rgb2hex/-/rgb2hex-0.1.9.tgz#5d3e0e14b0177b568e6f0d5b43e34fbfdb670346"
 
-ridl@^2.0.36:
-  version "2.0.36"
-  resolved "https://registry.yarnpkg.com/ridl/-/ridl-2.0.36.tgz#4c642e35cb5bfafd2709c242d70f52a8bf35e0c7"
-  integrity sha512-pebGsbFG1T1vt4nYpv56SdA2QiWqh/L5AUoePnBzAjFLiZ9ffZYVCV3EO5xrxZ9lRLQOlWg1bvUKJKn3M4kWbw==
+ridl@^2.0.47:
+  version "2.0.47"
+  resolved "https://registry.yarnpkg.com/ridl/-/ridl-2.0.47.tgz#6d20e0aa06cb3954ff3128d68ed27388db02bcd6"
+  integrity sha512-zM5vzwlbOgNcbR34/CtJU+3psYl/rDHMILFcqm1gCvrSurfBpjKZwrFArdffySMzTTQBSnvdUf2DiznGrrmO5Q==
   dependencies:
     aes-oop "^1.0.4"
     bignumber.js "^8.0.1"

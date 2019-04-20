@@ -12,7 +12,7 @@ import PluginRepository from "../plugins/PluginRepository";
 
 export default class NetworkService {
 
-    static async addNetwork(network){
+    static async addNetwork(network, withNotifications = true){
         // Can't modify existing networks.
         const scatter = store.state.scatter.clone();
         const networks = scatter.settings.networks;
@@ -37,7 +37,7 @@ export default class NetworkService {
         await store.dispatch(Actions.SET_SCATTER, scatter);
         await AccountService.importAllAccountsForNetwork(network);
         BalanceService.loadAllBalances(true);
-        PopupService.push(Popup.snackbar(localizedState(NETWORK.Saved), "check"));
+        if(withNotifications) PopupService.push(Popup.snackbar(localizedState(NETWORK.Saved), "check"));
 	    PluginRepository.bustCaches();
         return true;
     }
