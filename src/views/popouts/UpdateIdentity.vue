@@ -10,12 +10,21 @@
                     <figure class="value">{{payload.name}}</figure>
                 </section>
 
+                <section class="changing" v-if="payload.kyc">
+                    <br>
+                    <br>
+                    <figure class="field">Adding KYC proof</figure>
+                    <figure class="value">{{payload.kyc.split('::')[0]}}</figure>
+                    <!--<figure style="font-size: 9px;" class="value">{{payload.kyc.split('::')[1]}}</figure>-->
+                    <figure style="font-size: 9px; line-height:6px;" v-for="b in kycBlock" class="value">{{b}}</figure>
+                </section>
+
                 <section style="padding:0 30px;">
                     <br>
                     <br>
 
                     <section class="fixed-actions">
-                        <btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" big="1" v-on:clicked="returnResult(null)" />
+                        <btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" big="1" v-on:clicked="returnResult(true)" />
                         <btn :text="locale(langKeys.GENERIC.Deny)" red="1" v-on:clicked="returnResult(null)" />
                     </section>
                 </section>
@@ -62,6 +71,16 @@
 				'networks'
 			]),
 			payload(){ return this.popup.payload(); },
+            kycBlock(){
+				if(!this.payload.kyc) return [];
+				let c=0;
+				return this.payload.kyc.split('::')[1].split('').reduce((acc,x,i) => {
+					if(i>1&&i%24===0) c++;
+					if(!acc.hasOwnProperty(c)) acc[c]='';
+					acc[c] += x;
+					return acc;
+                }, [])
+            }
 		},
 		methods: {
 			returnResult(result){

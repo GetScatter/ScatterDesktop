@@ -5,6 +5,7 @@ import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
 
 export const PROCESS_TYPES = {
+	SAVING_DATA:'saving_data',
 	IMPORT_ACCOUNTS:'import_accounts',
 	LOAD_RESOURCES:'load_resources',
 };
@@ -56,6 +57,13 @@ export default class Process {
 
 	static getProcessFromIdentifier(identifier){
 		return store.state.processes.find(x => x.identifier === identifier);
+	}
+
+	static savingData(){
+		let process = new Process(PROCESS_TYPES.SAVING_DATA, 'Saving', PROCESS_TYPES.SAVING_DATA)
+		process.id = PROCESS_TYPES.SAVING_DATA;
+		store.dispatch(Actions.SET_PROCESS, process);
+		return process;
 	}
 
 	static importAccounts(identifier){

@@ -35,7 +35,7 @@ export default class Permission {
     static fromAction(origin, identity, accounts, added){
         const base = Permission.fromJson({
             origin,
-            identity:identity.publicKey,
+            identity:identity.id,
             accounts:accounts.map(x => x.unique())
         });
         return Object.assign(base, added);
@@ -51,7 +51,6 @@ export default class Permission {
             this.action+
             (this.identityRequirements||[]).join(',')
         )
-        // (this.mutableActionFields||[]).join(',')+
     }
 
     getIdentity(){

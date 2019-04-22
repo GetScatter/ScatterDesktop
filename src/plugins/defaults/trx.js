@@ -40,6 +40,8 @@ const EXPLORER = {
 export default class TRX extends Plugin {
 
     constructor(){ super(Blockchains.TRX, PluginTypes.BLOCKCHAIN_SUPPORT) }
+
+	bustCache(){ cachedInstances = {}; }
     defaultExplorer(){ return EXPLORER; }
     accountFormatter(account){ return `${account.publicKey}` }
     returnableAccount(account){ return { address:account.publicKey, blockchain:Blockchains.TRX }}

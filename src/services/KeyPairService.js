@@ -121,7 +121,7 @@ export default class KeyPairService {
 
     static getKeyPairFromPublicKey(publicKey, decrypt = false){
         const keypair = store.getters.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
-        if(keypair) return keypair;
+        if(keypair) return keypair.clone();
 
 
         const identity = store.state.scatter.keychain.identities.find(x => x.publicKey === publicKey);
@@ -142,6 +142,23 @@ export default class KeyPairService {
         if(keypair) return keypair.privateKey;
         return null;
     }
+
+    static async encryptPrivateKey(privateKey) {
+	    const keypair = Keypair.fromJson({
+		    privateKey
+        });
+	    keypair.encrypt(await ipcAsync('seed'));
+	    return keypair.privateKey;
+    }
+
+    static async decryptPrivateKey(encryptedPrivateKey) {
+	    const keypair = Keypair.fromJson({
+            privateKey:encryptedPrivateKey
+        });
+	    keypair.decrypt(await ipcAsync('seed'));
+	    return keypair.privateKey;
+    }
+
 
     static async loadFromHardware(keypair, tries = 0){
         if(typeof keypair.external.interface.getPublicKey !== 'function') return false;

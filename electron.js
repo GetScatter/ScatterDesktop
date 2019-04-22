@@ -239,6 +239,7 @@ class NotificationService {
 	}
 }
 
+require("babel-polyfill")
 const Transport = require('@ledgerhq/hw-transport-node-hid');
 
 const NodeMachineId = require('node-machine-id');
@@ -251,13 +252,14 @@ const ecc = require("eosjs-ecc");
 let seed, key;
 ipcMain.on('key', (event, arg) => {
 	if(event.sender.history[0].indexOf('popout') > -1) return;
+	if(arg === null) key = null;
 	if(key) return;
 	key = arg;
 });
 ipcMain.on('seeding', (event, arg) => seed = arg);
 ipcMain.on('seed', (event, arg) => {
 	const {data, sig} = arg;
-	if(!isDev && ecc.recover(sig, 'seed') !== key) return event.sender.send('seed', null);
+	if(!isDev && ecc.recover(sig, data) !== key) return event.sender.send('seed', null);
 	event.sender.send('seed', seed);
 });
 

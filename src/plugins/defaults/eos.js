@@ -9,7 +9,6 @@ import LANG_KEYS from '../../localization/keys'
 import Eos from 'eosjs'
 let {ecc} = Eos.modules;
 import ObjectHelpers from '../../util/ObjectHelpers'
-import * as ricardianParser from 'eos-rc-parser';
 import {Popup} from '../../models/popups/Popup'
 import PopupService from '../../services/PopupService'
 import ResourceService from '../../services/ResourceService'
@@ -37,12 +36,13 @@ class EosTokenAccountAPI {
 		return await Promise.race([
 			new Promise(resolve => setTimeout(() => resolve(null), 5000)),
 			fetch(`${blockchainApiURL}/key/${publicKey}`).then(r => r.json()).then(res => {
+				if(!res.eos) return null;
 				const rawAccounts = res.eos.accounts;
 				let accounts = [];
 				Object.keys(rawAccounts).map(name => {
 					rawAccounts[name]
 						.filter(acc => {
-							return acc.auth.some(x => x.keys.find(({pubkey}) => pubkey === publicKey));
+							return acc.auth.keys.some(({pubkey}) => pubkey === publicKey);
 						})
 						.map(acc => {
 							accounts.push({name, authority: acc.perm})
@@ -50,6 +50,7 @@ class EosTokenAccountAPI {
 				});
 				return accounts;
 			}).catch(err => {
+				console.error('err', err);
 				return null;
 			})
 		])
@@ -94,7 +95,6 @@ const getAccountsFromPublicKey = async (publicKey, network, process, progressDel
 		if(!accountsFromApi) return getAccountsFromPublicKey(publicKey, network, process, progressDelta, true);
 		else return accountsFromApi;
 	}
-
 
 	return Promise.race([
 		new Promise(resolve => setTimeout(() => resolve([]), 20000)),
@@ -161,6 +161,8 @@ const EXPLORER = {
 export default class EOS extends Plugin {
 
 	constructor(){ super(Blockchains.EOSIO, PluginTypes.BLOCKCHAIN_SUPPORT) }
+
+	bustCache(){ cachedInstances = {}; }
 	defaultExplorer(){ return EXPLORER; }
 	accountFormatter(account){ return `${account.name}@${account.authority}` }
 	returnableAccount(account){ return { name:account.name, authority:account.authority, publicKey:account.publicKey, blockchain:Blockchains.EOSIO }}
@@ -209,6 +211,7 @@ export default class EOS extends Plugin {
 			const network = account.network();
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider});
 
+
 			const perms = Object.keys(keys).map(permission => {
 				if(!keys[permission].length) return;
 
@@ -245,7 +248,8 @@ export default class EOS extends Plugin {
 				}
 			}).filter(x => !!x);
 
-			const options = {authorization:[`${account.name}@owner`]};
+			const hasOwner = (keys.hasOwnProperty('owner') && keys.owner.length) || account.authorities().map(x => x.authority).includes('owner');
+			const options = {authorization:[`${account.name}@${hasOwner?'owner':'active'}`]};
 			return eos.transaction(tr => perms.map(perm => tr.updateauth(perm, options)))
 				.catch(res => {
 					popupError(res);
@@ -643,7 +647,7 @@ export default class EOS extends Plugin {
 			const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
 			resolve(await contractObject.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
 				.catch(error => {
-					console.log('error', error);
+					console.error('error', error);
 					try {
 						return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}
 					} catch(e){
@@ -659,6 +663,7 @@ export default class EOS extends Plugin {
 	async signerWithPopup(payload, account, rejector){
 		return new Promise(async resolve => {
 			payload.messages = await this.requestParser(payload, Network.fromJson(account.network()));
+			if(!payload.messages) return rejector({error:'Error re-parsing transaction buffer'});
 			payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
 			payload.participants = [account];
 			payload.network = account.network();
@@ -729,7 +734,7 @@ export default class EOS extends Plugin {
 				try {
 					contracts[formatContract(action.contract)][action.action](...action.params, actionOptions);
 				} catch(e){
-					console.log('err', e);
+					console.error('err', e);
 				}
 			});
 		}, {broadcast:false}).catch(() => {});
@@ -767,36 +772,46 @@ export default class EOS extends Plugin {
 	}
 
 	async parseEosjsRequest(payload, network){
-		const {transaction} = payload;
+		try {
+			const {transaction} = payload;
 
-		const eos = getCachedInstance(network);
+			const eos = getCachedInstance(network);
 
-		const contracts = ObjectHelpers.distinct(transaction.actions.map(action => action.account));
-		const abis = await this.getAbis(contracts, network, eos);
+			const contracts = ObjectHelpers.distinct(transaction.actions.map(action => action.account));
+			const abis = await this.getAbis(contracts, network, eos);
 
+			const results = await Promise.all(transaction.actions.map(async (action, index) => {
+				const contractAccountName = action.account;
 
-		return await Promise.all(transaction.actions.map(async (action, index) => {
-			const contractAccountName = action.account;
+				let abi = abis[contractAccountName];
 
-			let abi = abis[contractAccountName];
+				const typeName = abi.abi.actions.find(x => x.name === action.name).type;
+				const data = abi.fromBuffer(typeName, action.data);
+				const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
+				let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
+				eos.fc.abiCache.abi(contractAccountName, abi.abi);
 
-			const typeName = abi.abi.actions.find(x => x.name === action.name).type;
-			const data = abi.fromBuffer(typeName, action.data);
-			const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
-			let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
+				if(transaction.hasOwnProperty('delay_sec') && parseInt(transaction.delay_sec) > 0){
+					data.delay_sec = transaction.delay_sec;
+				}
 
-			if(transaction.hasOwnProperty('delay_sec') && parseInt(transaction.delay_sec) > 0){
-				data.delay_sec = transaction.delay_sec;
-			}
+				return {
+					data,
+					code:action.account,
+					type:action.name,
+					authorization:action.authorization,
+					ricardian
+				};
+			}));
 
-			return {
-				data,
-				code:action.account,
-				type:action.name,
-				authorization:action.authorization,
-				ricardian
-			};
-		}));
+			if(!transaction.hasOwnProperty('max_net_usage_words')) transaction.max_net_usage_words = 0;
+			payload.buf = Buffer.concat([Buffer.from(network.chainId, 'hex'), eos.fc.toBuffer("transaction", transaction), Buffer.from(new Uint8Array(32))]);
+
+			return results;
+		} catch(e){
+			console.error(e);
+			return null;
+		}
 	}
 
 	async parseEosjs2Request(payload, network){
@@ -843,8 +858,6 @@ export default class EOS extends Plugin {
 		parsed.actions.map(x => {
 			x.code = x.account;
 			x.type = x.name;
-			delete x.account;
-			delete x.name;
 		});
 
 		payload.buf = Buffer.concat([
@@ -852,6 +865,9 @@ export default class EOS extends Plugin {
 			buffer,                                         // Transaction
 			new Buffer(new Uint8Array(32)),                 // Context free actions
 		]);
+
+		payload.transaction.parsed = Object.assign({}, parsed);
+		payload.transaction.parsed.actions = await api.serializeActions(parsed.actions);
 
 		return parsed.actions;
 	}

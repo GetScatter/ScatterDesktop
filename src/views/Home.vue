@@ -67,6 +67,7 @@
     import Token from "../models/Token";
     import {Blockchains} from "../models/Blockchains";
     import TokenService from "../services/TokenService";
+    import Action from "../models/api/Action";
 
 
     export default {

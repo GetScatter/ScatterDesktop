@@ -4,8 +4,8 @@
             <section :key="process.id" class="process" v-for="process in processes">
                 <figure class="kill icon-cancel" @click="process.kill()"></figure>
                 <figure class="title">
-                    <span key="title" v-if="process.progress < 100">{{process.title}}</span>
-                    <b key="done" v-else>Done!</b>
+                    <span key="title">{{process.title}}</span>
+                    <b key="done" v-if="process.progress === 100">Done!</b>
                 </figure>
                 <transition name="delayed-fade" mode="out-in">
                     <figure class="sub-title" v-if="process.subTitle && process.progress < 100">{{process.subTitle}}</figure>

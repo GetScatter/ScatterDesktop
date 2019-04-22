@@ -32,7 +32,7 @@ export default class PermissionService {
         const scatter = store.state.scatter.clone();
 
         // Permission already exists
-        if(scatter.keychain.permissions.find(x => x.isIdentity && x.origin === origin && x.identity === identity.publicKey)) return;
+        if(scatter.keychain.permissions.find(x => x.isIdentity && x.origin === origin && x.identity === identity.id)) return;
 
         const permission = Permission.fromAction(origin, identity, accounts, {
             identityRequirements,
@@ -63,7 +63,7 @@ export default class PermissionService {
         const scatter = store.state.scatter.clone();
 
         const permission = Permission.fromJson({
-            origin, identity:identity.publicKey, identityRequirements, isIdentityRequirements:true
+            origin, identity:identity.id, identityRequirements, isIdentityRequirements:true
         });
 
         // Don't duplicate requirements.
@@ -78,7 +78,7 @@ export default class PermissionService {
         identityRequirements = identityRequirements.forPermission();
 
         const permission = Permission.fromJson({
-            origin, identity:identity.publicKey, identityRequirements, isIdentityRequirements:true
+            origin, identity:identity.id, identityRequirements, isIdentityRequirements:true
         });
 
         return store.state.scatter.keychain.permissions.find(x => x.checksum() === permission.checksum());
@@ -172,6 +172,24 @@ export default class PermissionService {
     static checkAppLinkPermissions(origin){
         const permissions = store.state.scatter.keychain.permissions.filter(x => x.origin === origin);
         if(!permissions.length) SocketService.sendEvent('logout', {}, origin);
+    }
+
+    static removeAllPermissions(){
+        return new Promise(resolve => {
+            PopupService.push(Popup.removeApp(null, async removed => {
+	            if(!removed) return resolve(false);
+	            const scatter = store.state.scatter.clone();
+
+	            scatter.keychain.permissions = [];
+	            scatter.keychain.apps.map(app => {
+		            scatter.keychain.removeApp(app);
+		            SocketService.sendEvent('logout', {}, app.origin);
+                })
+
+	            await store.dispatch(Actions.SET_SCATTER, scatter);
+	            resolve(true);
+            }))
+        })
     }
 
     static removeAllPermissionsFor(origin){

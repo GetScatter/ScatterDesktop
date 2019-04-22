@@ -184,6 +184,7 @@ export default class ApiService {
 
 			const network = store.state.scatter.settings.networks.find(x => x.unique() === Network.fromJson(payload.network).unique());
 			if(!network) return resolve({id:request.id, result:Error.noNetwork()});
+			payload.network = network;
 
 			// Convert buf and abi to messages
 			switch(blockchain){
@@ -192,6 +193,8 @@ export default class ApiService {
 				case Blockchains.TRX:
 					payload.messages = await plugin.requestParser(payload, payload.hasOwnProperty('abi') ? payload.abi : null); break;
 			}
+
+			if(!payload.messages) return resolve({id:request.id, result:Error.cantParseTransaction()});
 
 
 			const availableAccounts = possibleId.accounts.map(x => x.formatted());
@@ -380,16 +383,37 @@ export default class ApiService {
 	static async [Actions.UPDATE_IDENTITY](request){
 		return new Promise(async resolve => {
 
-			const {origin, name, kyc} = request.payload;
+			const {origin, name, kyc, ridl} = request.payload;
 
+			if(name && (name.length < 2 || name.length > 21))
+				return resolve({id:request.id, result:Error.signatureError("invalid_name", "Invalid name length (2 - 21)")});
+
+			if(kyc && kyc.length){
+				if(kyc.indexOf('::') === -1)
+					return resolve({id:request.id, result:Error.signatureError("invalid_kyc", "KYC properties must be formatted as: domain::hash")});
+
+				if(!/^([A-Za-z0-9:-]+)$/.test(kyc))
+					return resolve({id:request.id, result:Error.signatureError("invalid_kyc", "Invalid kyc value ([^A-Za-z0-9:-])")});
+			}
 
 			const possibleId = PermissionService.identityFromPermissions(origin, false);
 			if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
 
-			PopupService.push(Popup.popout(Object.assign(request, {}), async ({result}) => {
-				if(!result || (!result.accepted || false)) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
+			// if(possibleId.ridl < +new Date())
+			// 	return resolve({id:request.id, result:Error.signatureError("ridl_enabled", "This user already has a RIDL enabled identity and can't change their name externally.")});
 
-				resolve({id:request.id, result:possibleId});
+			PopupService.push(Popup.popout(Object.assign(request, {}), async ({result}) => {
+				if(!result) return resolve({id:request.id, result:Error.signatureError("update_rejected", "User rejected the update request")});
+
+				const scatter = store.state.scatter.clone();
+				const identity = scatter.keychain.identities.find(x => x.id === possibleId.id);
+				if(name && name.length) identity.name = name;
+				if(kyc && kyc.length) identity.name = name;
+
+				scatter.keychain.updateOrPushIdentity(identity);
+				await store.dispatch(StoreActions.SET_SCATTER, scatter);
+
+				resolve({id:request.id, result:PermissionService.identityFromPermissions(origin, true)});
 			}));
 		});
 	}
@@ -415,8 +439,8 @@ export default class ApiService {
 
 
 	static async [Actions.IDENTITY_FROM_PERMISSIONS](request){
-		const perm = PermissionService.identityFromPermissions(request.payload.origin, true);
-		return {id:request.id, result:PermissionService.identityFromPermissions(request.payload.origin, true)};
+		const result = PermissionService.identityFromPermissions(request.payload.origin, true);
+		return {id:request.id, result};
 	}
 
 	static async [Actions.AUTHENTICATE](request){
@@ -518,6 +542,10 @@ export default class ApiService {
             if(store.state.scatter.settings.networks.find(x => x.fromOrigin === request.payload.origin && x.createdAt > (+new Date() - ((3600 * 12)*1000))))
                 return resolve({id:request.id, result:new Error("network_timeout", "You can only add 1 network every 12 hours.")});
 
+            // All applications can only add 5 networks every 12 hours.
+            if(store.state.scatter.settings.networks.filter(x => x.createdAt > (+new Date() - ((3600 * 12)*1000))) > 5)
+                return resolve({id:request.id, result:new Error("network_timeout", "Too many networks were added over the past 12 hours")});
+
             network.fromOrigin = request.payload.origin;
             const scatter = store.state.scatter.clone();
             scatter.settings.networks.push(network);
@@ -551,6 +579,10 @@ export default class ApiService {
             // Applications can only add one token every 12 hours.
             if(store.state.scatter.settings.tokens.filter(x => x.fromOrigin === request.payload.origin && x.createdAt > (+new Date() - ((3600 * 12)*1000))).length > 5)
                 return resolve({id:request.id, result:new Error("token_timeout", "You can only add up to 5 tokens every 12 hours.")});
+
+            // All applications can only add 15 tokens every 12 hours.
+            if(store.state.scatter.settings.tokens.filter(x => x.createdAt > (+new Date() - ((3600 * 12)*1000))).length > 15)
+                return resolve({id:request.id, result:new Error("token_timeout", "Too many tokens were added over the past 12 hours.")});
 
             const exists = await TokenService.hasToken(token);
             if(exists) return resolve({id:request.id, result:new Error("token_exists", "The user already has this token in their Scatter.")});

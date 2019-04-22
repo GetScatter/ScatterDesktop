@@ -1,6 +1,6 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" :hide-close="hideCloseButton" />
+        <PopOutHead v-on:closed="returnResult" :hide-close="hideCloseButton" :reputation="reputation" />
         <section class="multi-pane">
 
 
@@ -35,7 +35,7 @@
                     </section>
 
                     <!-- ACCEPT TRANSACTION -->
-                    <btn :blue="!isDangerous" :red="isDangerous" big="1" v-if="!pinning"
+                    <btn :blue="!isDangerous && (reputation && reputation.decimal >= 0)" :red="isDangerous || (reputation && reputation.decimal < 0)" big="1" v-if="!pinning"
                          :disabled="!isValidIdentity || cannotSignArbitrary"
                          :text="locale(langKeys.GENERIC.Allow)"
                          v-on:clicked="accepted" />
@@ -82,7 +82,7 @@
                                     v-on:locationField="(key, val) => clonedLocation[key] = val"
                                     v-on:personalField="(key, val) => selectedIdentity.personal[key] = val" />
 
-                    <section class="messages" :class="{'dangerous':isDangerous}" :ref="`message_${index}`" v-for="(message, index) in messages">
+                    <section class="messages" :class="{'dangerous':isDangerous || (reputable(message) && reputable(message).decimal < 0)}" :ref="`message_${index}`" v-for="(message, index) in messages">
 
 
                         <section class="whitelist-overlay" v-if="isPreviouslyWhitelisted(message)">
@@ -105,6 +105,7 @@
                                            type="checkbox"
                                            @change="addWhitelist(message)" />
 
+                                    <ReputationScore class="score" :reputable="reputable(message)" small="1" />
                                     <span @click="collapse(message)">{{message.code}} <i class="contract-split icon-right-open-big"></i> {{message.type}}</span>
                                 </figure>
                                 <span class="danger-title" v-if="isDangerous">This action is <b>dangerous</b>!</span>
@@ -141,12 +142,29 @@
             </section>
         </section>
 
+
+        <section class="ridl-popup" v-if="showingRidlWarning">
+            <figure class="bg" @click="showingRidlWarning = false"></figure>
+            <section class="box">
+                <h2>Danger!</h2>
+                <p style="font-size: 11px; line-height: 13px;">
+                    Users of RIDL have rated contracts and/or actions within this transaction negatively.
+                    <b>This does not mean indefinitely that it is a scam, just that it is dangerous in some way.</b>
+                </p>
+
+                <br>
+                <span style="font-size: 9px;">Related Entities</span>
+                <i class="link" v-for="reputable in reputation.reputables.filter(x => x.decimal < 0)" @click="openInBrowser(ridlLink(reputable))">View <b>{{reputable.entity}}</b> on RIDL.</i>
+            </section>
+        </section>
+
     </section>
 </template>
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
+	import ReputationScore from '../../components/reusable/ReputationScore';
 	import PopOutHead from '../../components/popouts/PopOutHead';
 	import PopOutAction from '../../components/popouts/PopOutAction';
 	import SearchBar from '../../components/reusable/SearchBar';
@@ -162,6 +180,7 @@
 	import RequiredFields from "../../components/popouts/RequiredFields";
 	import KeyPairService from "../../services/KeyPairService";
 	import ResourceService from "../../services/ResourceService";
+	import RIDLService, {RIDL_WEB_HOST} from "../../services/RIDLService";
 
 	const VIEW_TYPES = {
 	    HUMAN:'human',
@@ -172,6 +191,7 @@
 	export default {
 		props:['popup', 'expanded', 'pinning'],
 		components:{
+			ReputationScore,
 			RequiredFields,
 			PopOutHead,
 			PopOutAction,
@@ -191,6 +211,9 @@
 			selectedLocation:null,
 			clonedLocation:null,
 			hideCloseButton:false,
+
+			reputation:null,
+            showingRidlWarning:false,
 		}},
 		created(){
 			this.selectedIdentity = this.identity.clone();
@@ -203,6 +226,13 @@
 					this[Actions.ADD_RESOURCES]({acc:acc.identifiable(), res:resources});
                 }
             })
+
+			setTimeout(async() => {
+				this.loadingReputation = true;
+				this.reputation = await RIDLService.checkContracts(this.payload.network, this.messages);
+				if(this.reputation && this.reputation.decimal < 0) this.showingRidlWarning = true;
+				this.loadingReputation = false;
+			}, 50);
 		},
 		computed: {
 			...mapState([
@@ -274,6 +304,14 @@
 			returnResult(result){
 				this.$emit('returned', result);
 			},
+
+            reputable(message){
+				if(!this.reputation) return;
+			    return this.reputation.reputables.find(x => x.code === `${message.code}${message.type}`);
+            },
+			ridlLink(reputable){
+			    return `${RIDL_WEB_HOST}/reputable?id=${reputable.id}`
+            },
 
 			resourcesFor(account){
 			    const resources = this.resources[account.identifiable()];
@@ -402,6 +440,45 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../styles/variables";
+
+    .ridl-popup {
+        position: fixed;
+        top:79px;
+        left:0;
+        right:0;
+        bottom:0;
+        z-index:9999;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+
+        .bg {
+            position:absolute;
+            top:0;
+            bottom:0;
+            left:0;
+            right:0;
+            background: rgba(255, 0, 0, 0.8);
+            z-index:-1;
+        }
+
+        .box {
+            background:#fff;
+            border-radius:4px;
+            padding:30px;
+            text-align:center;
+            min-width:250px;
+            max-width:450px;
+            width:100%;
+            box-shadow:0 0 0 3px red, 0 0 0 6px white;
+
+            .link {
+                cursor: pointer;
+                display:block;
+                text-decoration: underline;
+            }
+        }
+    }
 
     .scroller {
         display:flex;

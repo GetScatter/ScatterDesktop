@@ -3,6 +3,7 @@ import {LANG} from '../localization/locales';
 import PluginRepository from '../plugins/PluginRepository';
 import Token from "./Token";
 import Explorer from "./Explorer";
+import Firewall from "./Firewall";
 
 export const BACKUP_STRATEGIES = {
     MANUAL:'manual',
@@ -31,6 +32,8 @@ export default class Settings {
         this.backupLocation = '';
         this.explorers = PluginRepository.defaultExplorers();
 	    this.showNotifications = true;
+
+	    this.firewall = Firewall.placeholder();
 
         // Tokens
         this.showMainnetsOnly = true;

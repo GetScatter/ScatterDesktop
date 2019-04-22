@@ -2,7 +2,84 @@
     <section class="identity">
         <section v-if="identity">
             <back-bar v-on:back="$router.push({name:RouteNames.HOME})"></back-bar>
-            <section class="panel-container scroller limited">
+
+            <!--<section class="panel-switch">-->
+                <!--<figure class="button" :class="{'active':state === STATES.DETAILS}" @click="state = STATES.DETAILS">{{locale(langKeys.IDENTITY.Title)}}</figure>-->
+                <!--<figure class="button" :class="{'active':state === STATES.RIDL}" @click="state = STATES.RIDL">RIDL</figure>-->
+            <!--</section>-->
+
+
+            <section class="panel-container scroller limited" v-if="state === STATES.RIDL">
+
+                <h1>Reputation & Identity Layer (RIDL)</h1>
+                <br>
+
+                <!------------------------>
+                <!----- IDENTITY NAME ---->
+                <!------------------------>
+                <cin big="1"
+                     :error="isValidName ? null : locale(langKeys.IDENTITY.NameError)"
+                     :label="locale(langKeys.IDENTITY.NameLabel)"
+                     :placeholder="locale(langKeys.IDENTITY.NamePlaceholder)"
+                     :text="identity.name" v-on:changed="x => identity.name = x" />
+
+                <section style="display:flex; margin-top:-10px;" v-if="!isUsingIdentity">
+                    <section style="flex:1;">
+                        <figure class="ridl-name-status" v-if="identityIsAvailable">This identity name is available.</figure>
+                        <figure class="ridl-name-status" v-else-if="identityIsClaimable">You are the owner of this name, but you need to claim it first.</figure>
+                        <figure class="ridl-name-status" v-else-if="identityIsUsable">You own and can use this identity.</figure>
+                        <figure class="ridl-name-status" v-else>This identity is already owned by another user.</figure>
+                    </section>
+                    <section style="flex:1; text-align:right;">
+                        <btn small="1" v-if="identityIsAvailable && isValidName" :loading="working" text="Register RIDL Name" @click.native="registerForRIDL" />
+                        <btn small="1" v-if="identityIsClaimable" :loading="working" text="Claim RIDL Name" @click.native="registerForRIDL" />
+                        <btn small="1" v-if="identityIsUsable" :loading="working" text="Use RIDL Identity" @click.native="useRidlIdentity" />
+                    </section>
+                </section>
+
+                <section style="display:flex; margin-top:-10px;" v-if="isUsingIdentity">
+                    <section style="flex:1;">
+                        <figure class="ridl-name-status">You are currently using this RIDL Identity</figure>
+                    </section>
+                    <section style="flex:1; text-align:right;">
+                        <btn red="1" small="1" :loading="working" text="Stop Using RIDL Identity" @click.native="identity.ridl = -1" />
+                    </section>
+                </section>
+
+                <br>
+                <br>
+
+                <section class="keys">
+	                <section class="disclaimer red less-pad">
+		                <b>Changing the identity key while you have a RIDL identity linked will cause the identity's key to change too.</b>
+	                </section>
+
+                    <label>Public Key</label>
+                    <figure class="public" style="font-size: 13px;"><b>{{identity.publicKey}}</b></figure>
+                    <br>
+
+                    <section class="split-inputs">
+                        <cin label="Private Key" style="flex:1;" :disabled="!revealed"
+                             placeholder="5jk..." :type="revealed ? 'text' : 'password'"
+                             :text="privateKey" v-on:changed="x => privateKey = x" />
+                        <btn @click.native="reveal()"
+                             :text="revealed ? locale(langKeys.GENERIC.Hide) : locale(langKeys.GENERIC.Reveal)"
+                             style="flex:0.2; margin-top:4px;" />
+                        <btn blue="1" @click.native="saveIdentityPrivateKey" v-if="changingPrivateKey"
+                             :text="locale(langKeys.GENERIC.Save)"
+                             style="flex:0.2; margin-top:4px;" />
+                    </section>
+                </section>
+
+	            <figure class="line"></figure>
+
+
+	            <GetRIDL />
+
+
+            </section>
+
+            <section class="panel-container scroller limited" v-if="state === STATES.DETAILS">
 
                 <h1>{{locale(langKeys.IDENTITY.Title)}}</h1>
                 <br>
@@ -14,14 +91,15 @@
                 <br>
 
 
+
                 <!------------------------>
                 <!----- IDENTITY NAME ---->
                 <!------------------------>
-                <cin big="1"
-                     :error="isValidName ? null : locale(langKeys.IDENTITY.NameError)"
-                     :label="locale(langKeys.IDENTITY.NameLabel)"
-                     :placeholder="locale(langKeys.IDENTITY.NamePlaceholder)"
-                     :text="identity.name" v-on:changed="x => identity.name = x" />
+                <!--<cin big="1"-->
+                     <!--:error="isValidName ? null : locale(langKeys.IDENTITY.NameError)"-->
+                     <!--:label="locale(langKeys.IDENTITY.NameLabel)"-->
+                     <!--:placeholder="locale(langKeys.IDENTITY.NamePlaceholder)"-->
+                     <!--:text="identity.name" v-on:changed="x => identity.name = x" />-->
 
                 <!------------------------>
                 <!------ NAME / DOB ------>
@@ -133,6 +211,8 @@
                 <br>
                 <br>
 
+
+
             </section>
         </section>
     </section>
@@ -142,15 +222,35 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
 
+    import GetRIDL from '../components/reusable/GetRIDL'
     import IdGenerator from '../util/IdGenerator'
     import PopupService from '../services/PopupService';
     import {Popup} from '../models/popups/Popup';
     import Identity, {LocationInformation} from '../models/Identity';
     import {Countries} from '../data/Countries'
+    import KeyPairService from "../services/KeyPairService";
+    import RIDLService from "../services/RIDLService";
+    import {Blockchains} from "../models/Blockchains";
+    import PluginRepository from '../plugins/PluginRepository'
+    import BalanceService from "../services/BalanceService";
+    import Account from "../models/Account";
     let saveTimeout;
 
+    const TEMP_KEY = '................................................................';
+
+    const STATES = {
+        DETAILS:'details',
+        RIDL:'ridl',
+    };
+
     export default {
+    	components:{
+		    GetRIDL
+	    },
         data () {return {
+	        STATES,
+            state:STATES.DETAILS,
+
             countries:Countries,
             location:null,
             phone:{
@@ -159,7 +259,11 @@
                 suffix:'',
             },
             fullname:'',
-            identity:null
+            identity:null,
+	        privateKey:TEMP_KEY,
+	        revealed:false,
+	        availableIdentity:false,
+	        working:false,
         }},
         computed:{
             ...mapState([
@@ -169,20 +273,126 @@
                 'accounts',
                 'contacts',
                 'identities',
+	            'networks',
             ]),
             isValidName(){
                 return this.identity && Identity.nameIsValid(this.identity.name);
             },
             isValidLocationName(){
             	return this.location && this.location.name.length;
-            }
+            },
+	        changingPrivateKey(){
+            	if(!this.privateKey || !this.privateKey.length) return false;
+            	if(this.privateKey === TEMP_KEY) return false;
+            	return PluginRepository.plugin(Blockchains.EOSIO).validPrivateKey(this.privateKey);
+            },
+	        ridlAccount(){
+                return this.accounts.find(x => x.networkUnique === RIDLService.networkUnique());
+	        },
+	        identityIsAvailable(){
+            	return !this.availableIdentity;
+	        },
+	        identityIsClaimable(){
+		        if(!this.availableIdentity) return false;
+		        return this.availableIdentity.key === this.identity.publicKey && this.availableIdentity.account === 'ridlridlridl';
+	        },
+	        identityIsUsable(){
+            	return this.availableIdentity
+		            && this.ridlAccount
+		            && this.availableIdentity.key === this.identity.publicKey
+		            && this.availableIdentity.account === this.ridlAccount.name;
+	        },
+	        isUsingIdentity(){
+            	if(!this.availableIdentity) return false;
+		        return this.availableIdentity.id === this.identity.ridl
+	        },
+
         },
         mounted(){
+    		if(this.$route.query.ridl){
+    			this.state = STATES.RIDL;
+		    }
+
             this.identity = this.identities[0].clone();
             this.fullname = [this.identity.personal.firstname, this.identity.personal.lastname].filter(x => x && x.length).join(' ');
             this.location = this.identity.locations[0];
+
         },
         methods:{
+	        reveal(){
+        		if(this.revealed) return this.revealed = false;
+        	    PopupService.push(Popup.verifyPassword(proved => {
+        	    	if(!proved) return;
+        	    	this.revealed = true;
+	            }))
+	        },
+	        async saveIdentityPrivateKey(){
+                if(!this.changingPrivateKey) return false;
+                if(this.privateKey === await KeyPairService.publicToPrivate(this.identity.publicKey)){
+	                this.revealed = false;
+	                return this.privateKey = TEMP_KEY;
+                }
+
+                const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+                const publicKey = plugin.privateToPublic(this.privateKey);
+                const encrypted = await KeyPairService.encryptPrivateKey(this.privateKey);
+
+                if(this.availableIdentity.id === this.identity.ridl){
+					if(!await RIDLService.changeKey(this.identity.name, publicKey)) return;
+                } else this.identity.ridl = -1;
+
+		        this.identity.privateKey = encrypted;
+		        this.identity.publicKey = publicKey;
+		        this.privateKey = TEMP_KEY;
+		        this.revealed = false;
+            },
+	        async registerForRIDL(){
+	        	if(this.working) return;
+
+	            const name = this.identity.name;
+		        const identity = await RIDLService.identityNameIsAvailable(name);
+
+		        let account;
+		        account = await RIDLService.getAccount();
+				if(!account){
+					account = await RIDLService.createAccount();
+					if(!account) return console.error("Could not create account.");
+				}
+
+				this.working = true;
+
+		        if(identity){
+		            const claimed = await RIDLService.claim(this.identity.name, this.identity.publicKey).catch(() => null);
+			        this.working = false;
+			        // TODO: ERROR HANDLING
+			        if(!claimed) {
+				        return console.error("Could not claim identity.");
+			        }
+
+			        this.identity.ridl = this.availableIdentity.id;
+		        }
+
+		        else {
+					const identified = await RIDLService.identify(name, this.identity.publicKey).catch(() => null);
+			        this.working = false;
+					// TODO: ERROR HANDLING
+					if(!identified) {
+						return console.error("Could not identify identity.");
+					}
+
+					this.identity.ridl = identified.id;
+					this.availableIdentity = identified;
+		        }
+	        },
+	        async useRidlIdentity(){
+		        if(this.working) return;
+	        	this.identity.ridl = this.availableIdentity.id;
+	        },
+
+
+
+
+
             setPhone(){
                 let area, prefix, suffix, presuffix;
                 if(this.location.phone.length){
@@ -261,13 +471,34 @@
             },
             ['location'](){
                 this.setPhone();
-            }
+            },
+            async ['revealed'](){
+            	if(!this.revealed) return this.privateKey = TEMP_KEY;
+
+            	this.privateKey = await KeyPairService.publicToPrivate(this.identity.publicKey);
+            },
+            async ['privateKey'](){
+            	if(!this.privateKey) return;
+            	this.privateKey = this.privateKey.trim();
+            },
+            async ['identity.name'](){
+	            this.availableIdentity = null;
+            	if(!this.isValidName) return;
+            	this.working = true;
+            	this.availableIdentity = await RIDLService.identityNameIsAvailable(this.identity.name);
+            	this.working = false;
+            },
         },
     }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../styles/variables";
+    @import "../styles/transfer";
+
+    .panel-switch {
+	    background:rgba(0,0,0,0.02);
+    }
 
     .line {
         width:100%;
@@ -285,6 +516,16 @@
     }
 
     .identity {
+
+        .ridl-name-status {
+            font-size: 11px;
+            font-weight: bold;
+            padding:5px 8px;
+            border:1px solid rgba(0,0,0,0.2);
+            background:rgba(0,0,0,0.04);
+            display:table;
+            border-radius:4px;
+        }
 
         .split {
             display:flex;

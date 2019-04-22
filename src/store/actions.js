@@ -17,6 +17,7 @@ import PopupService from "../services/PopupService";
 import {Popup} from '../models/popups/Popup'
 import {RUNNING_TESTS} from "../util/TestingHelper";
 import {ipcAsync} from "../util/ElectronHelpers";
+import Process from "../models/Process";
 
 export const actions = {
     [Actions.HIDE_BACK_BTN]:({commit}, x) => commit(Actions.HIDE_BACK_BTN, x),
@@ -31,12 +32,12 @@ export const actions = {
     [Actions.HOLD_SCATTER]:({commit}, scatter) => commit(Actions.SET_SCATTER, scatter),
     [Actions.SET_SEED]:({commit}, password) => {
         return new Promise(async (resolve, reject) => {
-            const [mnemonic, seed] = await PasswordService.seedPassword(password);
+            const [mnemonic, seed] = await PasswordService.seedPassword(password, true);
             resolve(mnemonic);
         })
     },
 
-    [Actions.LOAD_SCATTER]:async ({commit, state, dispatch}) => {
+    [Actions.LOAD_SCATTER]:async ({commit, state, dispatch}, forceLocal = false) => {
 
         if(!state.scatter) {
             let scatter = StorageService.getScatter();
@@ -44,7 +45,7 @@ export const actions = {
             return commit(Actions.SET_SCATTER, scatter);
         }
 
-        if(await PasswordService.verifyPassword()){
+        if(await PasswordService.verifyPassword(null, forceLocal)){
             const scatter = state.scatter.clone();
 
             if(!RUNNING_TESTS){
@@ -78,14 +79,19 @@ export const actions = {
 
     [Actions.SET_SCATTER]:async ({commit, state}, scatter) => {
         return new Promise(async resolve => {
+	        const process = Process.savingData();
 
             const seed = await ipcAsync('seed');
-            StorageService.setScatter(AES.encrypt(scatter.savable(seed), seed)).then(() => {
+            const savable = AES.encrypt(scatter.savable(seed), seed);
+            StorageService.setLocalScatter(savable);
+	        process.updateProgress(50);
+            StorageService.setScatter(savable).then(() => {
 	            BackupService.createAutoBackup()
             });
 
             commit(Actions.SET_SCATTER, scatter);
             resolve(scatter);
+	        process.updateProgress(100);
         })
     },
 

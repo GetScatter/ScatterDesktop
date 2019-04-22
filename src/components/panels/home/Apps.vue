@@ -2,6 +2,7 @@
 	<section class="apps">
 		<section class="split-inputs">
 			<SearchBar style="flex:1; margin-left:-10px;" :placeholder="locale(langKeys.DASHBOARD.APPS.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
+			<btn v-if="permissions.length" small="1" borderless="1" v-on:clicked="removeAll" :text="locale(langKeys.GENERIC.RemoveAll)" />
 			<btn small="1" style="margin-right:30px; font-weight: normal;" v-on:clicked="goToApps" :text="locale(langKeys.GENERIC.Browse)" />
 		</section>
 
@@ -126,6 +127,9 @@
 			},
 			removePermissions(origin){
 				PermissionService.removeAllPermissionsFor(origin);
+			},
+			removeAll(){
+				PermissionService.removeAllPermissions();
 			},
 			goToPermission(origin){
 				this.$router.push({name:this.RouteNames.PERMISSION, params:{origin}})

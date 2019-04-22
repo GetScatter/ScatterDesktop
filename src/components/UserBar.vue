@@ -1,8 +1,11 @@
 <template>
     <section class="user-bar" v-if="keypairs.length">
         <section class="actions">
-            <router-link :to="{name:RouteNames.IDENTITY}" class="action">
+            <router-link :to="{name:RouteNames.IDENTITY, query:{ridl:false}}" class="action">
                 {{locale(langKeys.USER_BAR.ManageIdentity)}}
+            </router-link>
+            <router-link :to="{name:RouteNames.IDENTITY, query:{ridl:true}}" class="action">
+                RIDL
             </router-link>
 
         </section>

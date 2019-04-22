@@ -62,7 +62,7 @@
                          :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'"
                     ></cin>
                     <span class="locked" v-if="isLockedOut">Locked: {{formatTime(lockedTimeLeft)}}</span>
-                    <section v-if="dPresses >= 10" class="bottom-stuck">
+                    <section class="bottom-stuck">
                         <btn :disabled="working" style="width:auto;" v-on:clicked="destroy" :text="locale(langKeys.LOGIN.EXISTING.ResetButton)"></btn>
                     </section>
                 </section>
@@ -119,6 +119,7 @@
 	import Scatter from "../models/Scatter";
 	import AccountService from "../services/AccountService";
 	import UpdateService from "../services/UpdateService";
+	import {ipcFaF} from "../util/ElectronHelpers";
 
 	const lockoutTime = 1000*60*5;
 	const resetLockout = () => window.localStorage.removeItem('lockout');
@@ -210,7 +211,7 @@
 				// !! DO NOT REMOVE !!
 				// Gathering entropy causes slowdowns,
 				// doing this when idle
-				KeyPairService.generateKeyPair(Keypair.placeholder());
+				// KeyPairService.generateKeyPair(Keypair.placeholder());
 
 				this.$router.push({name:route});
 			},
@@ -236,19 +237,22 @@
 				if(this.scatter.settings.backupLocation === '') return this.pushTo(this.RouteNames.ONBOARDING);
 	            this.pushTo(this.RouteNames.HOME);
             },
-			async unlock(){
-				const lockout = getLockout();
-                if(lockout.tries >= 5 && +new Date() < lockout.stamp + lockoutTime){
-                	this.lockedOutTime = lockout.stamp + lockoutTime;
-	                return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.LockedOut), "attention-circled"));
-                }
+			async unlock(usingLocalStorage = false){
+				if(!usingLocalStorage){
+					const lockout = getLockout();
+					if(lockout.tries >= 5 && +new Date() < lockout.stamp + lockoutTime){
+						this.lockedOutTime = lockout.stamp + lockoutTime;
+						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.LockedOut), "attention-circled"));
+					}
 
-                if(this.working) return;
-				this.working = true;
+					if(this.working) return;
+					this.working = true;
+				}
+
 
 				setTimeout(async () => {
 					await this[Actions.SET_SEED](this.password);
-					await this[Actions.LOAD_SCATTER]();
+					await this[Actions.LOAD_SCATTER](usingLocalStorage);
 
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
@@ -257,6 +261,10 @@
 
 						this.openScatter();
 					} else {
+						if(!usingLocalStorage){
+							return this.unlock(true);
+						}
+
 						this.working = false;
 						PopupService.push(Popup.snackbarBadPassword());
 						setLockout();
@@ -296,6 +304,7 @@
 
 
 	                    resetLockout();
+	                    ipcFaF('key', null);
 	                    location.reload();
                     } else {
 	                    unrestore();
@@ -342,6 +351,7 @@
 							return AccountService.importAllAccounts(keypair);
 						}));
 						resetLockout();
+						ipcFaF('key', null);
 						location.reload();
 					} else {
 						unrestore();

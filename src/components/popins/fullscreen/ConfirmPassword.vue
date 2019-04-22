@@ -60,7 +60,7 @@
 				if(!this.password.length) return;
 				if(this.returnOnly) return this.returnResult(this.password);
 
-				const verified = await PasswordService.verifyPassword(this.password, false);
+				const verified = await PasswordService.verifyPassword(this.password);
 				if(!verified) PopupService.push(Popup.snackbarBadPassword());
 				this.returnResult(verified);
 			},

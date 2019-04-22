@@ -50,12 +50,12 @@ export default class PasswordService {
         })
     }
 
-    static async verifyPassword(password = null){
+    static async verifyPassword(password = null, forceLocal = false){
         return new Promise(async resolve => {
 
             const testPassword = async (setToState, seed, mnemonic = false) => {
 	            try {
-		            let scatter = StorageService.getScatter();
+		            let scatter = forceLocal ? StorageService.getLocalScatter() : StorageService.getScatter();
 		            scatter = AES.decrypt(scatter, seed);
 		            if(setToState) await store.commit(Actions.SET_SCATTER, scatter);
 

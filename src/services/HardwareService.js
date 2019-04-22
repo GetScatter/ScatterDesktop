@@ -86,6 +86,7 @@ export default class HardwareService {
 		if(!canConnect) return false;
 
 		const keypair = KeyPairService.getKeyPairFromPublicKey(account.publicKey);
+		if(typeof keypair.external.interface.setAddressIndex === 'undefined') keypair.external.interface.open();
 		keypair.external.interface.setAddressIndex(keypair.external.addressIndex);
 		return keypair.external.interface.sign(account.publicKey, payload, payload.abi, account.network());
 	}
