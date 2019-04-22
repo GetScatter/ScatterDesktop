@@ -50,7 +50,7 @@ class EosTokenAccountAPI {
 				});
 				return accounts;
 			}).catch(err => {
-				console.log('err', err);
+				console.error('err', err);
 				return null;
 			})
 		])
@@ -647,7 +647,7 @@ export default class EOS extends Plugin {
 			const amountWithSymbol = amount.indexOf(symbol) > -1 ? amount : `${amount} ${symbol}`;
 			resolve(await contractObject.transfer(account.name, to, amountWithSymbol, memo, { authorization:[account.formatted()] })
 				.catch(error => {
-					console.log('error', error);
+					console.error('error', error);
 					try {
 						return {error:JSON.parse(error).error.details[0].message.replace('assertion failure with message:', '').trim()}
 					} catch(e){
@@ -734,7 +734,7 @@ export default class EOS extends Plugin {
 				try {
 					contracts[formatContract(action.contract)][action.action](...action.params, actionOptions);
 				} catch(e){
-					console.log('err', e);
+					console.error('err', e);
 				}
 			});
 		}, {broadcast:false}).catch(() => {});
@@ -809,7 +809,7 @@ export default class EOS extends Plugin {
 
 			return results;
 		} catch(e){
-			console.log(e);
+			console.error(e);
 			return null;
 		}
 	}

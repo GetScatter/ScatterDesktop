@@ -118,7 +118,6 @@
         }},
 	    created(){
 		    setTimeout(async() => {
-			    console.log(this.popup);
 			    this.loadingReputation = true;
 			    this.reputation = await RIDLService.checkApp(this.popup.data.props.payload.origin);
 			    if(!this.reputation) this.reputation = await RIDLService.checkApp(this.popup.origin());

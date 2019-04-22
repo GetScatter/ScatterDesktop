@@ -250,7 +250,7 @@ class LedgerAPI {
             const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
             return ecc.Signature.fromHex(v+r+s).toString();
         }).catch(err => {
-        	console.log('err', err);
+        	console.error('err', err);
             PopupService.remove(popup);
             return null;
         })

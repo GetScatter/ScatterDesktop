@@ -136,7 +136,7 @@ export default class ETH extends Plugin {
 		            try {
 			            balance = TokenService.formatAmount(await contract.methods.balanceOf(account.sendable()).call(), token, true);
 		            } catch(e){
-			            console.log(`${token.name} is not an ERC20 token`, e);
+			            console.error(`${token.name} is not an ERC20 token`, e);
 			            balance = TokenService.formatAmount('0', token, true);
 		            }
 	            }

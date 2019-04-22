@@ -403,7 +403,6 @@ export default class ApiService {
 			// 	return resolve({id:request.id, result:Error.signatureError("ridl_enabled", "This user already has a RIDL enabled identity and can't change their name externally.")});
 
 			PopupService.push(Popup.popout(Object.assign(request, {}), async ({result}) => {
-				console.log('result', result);
 				if(!result) return resolve({id:request.id, result:Error.signatureError("update_rejected", "User rejected the update request")});
 
 				const scatter = store.state.scatter.clone();
@@ -416,24 +415,6 @@ export default class ApiService {
 
 				resolve({id:request.id, result:PermissionService.identityFromPermissions(origin, true)});
 			}));
-		});
-	}
-
-	static async [Actions.TRIGGER_RIDL](request){
-		return new Promise(async resolve => {
-
-			const {origin} = request.payload;
-
-			const possibleId = PermissionService.identityFromPermissions(origin, false);
-			if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
-
-			if(possibleId.ridl > +new Date() || !possibleId.ridl){
-				//TODO: Check RIDL
-			}
-
-
-
-			resolve({id:request.id, result:true});
 		});
 	}
 

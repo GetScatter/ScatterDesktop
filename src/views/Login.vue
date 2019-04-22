@@ -262,7 +262,6 @@
 						this.openScatter();
 					} else {
 						if(!usingLocalStorage){
-							console.log('using local')
 							return this.unlock(true);
 						}
 
