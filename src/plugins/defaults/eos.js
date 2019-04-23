@@ -660,13 +660,19 @@ export default class EOS extends Plugin {
 
 
 
-	async signerWithPopup(payload, account, rejector){
+	async signerWithPopup(payload, accounts, rejector){
 		return new Promise(async resolve => {
-			payload.messages = await this.requestParser(payload, Network.fromJson(account.network()));
+
+			if(accounts instanceof Account){
+				accounts = [accounts];
+			}
+
+
+			payload.messages = await this.requestParser(payload, Network.fromJson(accounts[0].network()));
 			if(!payload.messages) return rejector({error:'Error re-parsing transaction buffer'});
 			payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
-			payload.participants = [account];
-			payload.network = account.network();
+			payload.participants = accounts;
+			payload.network = accounts[0].network();
 			payload.origin = 'Scatter';
 			const request = {
 				payload,
@@ -680,16 +686,21 @@ export default class EOS extends Plugin {
 			PopupService.push(Popup.popout(request, async ({result}) => {
 				if(!result || (!result.accepted || false)) return rejector({error:'Could not get signature'});
 
-				let signature = null;
-				if(KeyPairService.isHardware(account.publicKey)){
-					signature = await HardwareService.sign(account, payload);
-				} else signature = await this.signer({data:payload.buf}, account.publicKey, true);
+				let signatures = [];
+				for(let i = 0; i < accounts.length; i++){
+					let account = accounts[i];
+					signatures.push(await this.signer({data:payload.buf}, account.publicKey, true, false, account));
 
-				if(!signature) return rejector({error:'Could not get signature'});
+					if(signatures.length !== i+1) return rejector({error:'Could not get signature'});
+					// if(result.needResources) await ResourceService.addResources(account);
+				}
 
-				if(result.needResources) await await ResourceService.addResources(account);
+				signatures = signatures.reduce((acc,x) => {
+					if(!acc.includes(x)) acc.push(x);
+					return acc;
+				}, []);
 
-				resolve(signature);
+				resolve(signatures);
 			}, true));
 		})
 	}

@@ -98,11 +98,24 @@ export default class RIDLService {
 			acc.push(x);
 			return acc;
 		}, []);
-		return await Promise.all(accounts.map(async account => {
+
+		await Promise.all(accounts.map(async account => {
 			const data = await plugin.accountData(account, network);
 			if(!data) await AccountService.removeAccounts([account]);
 			return true;
 		}));
+
+		const identity = store.state.scatter.keychain.identities[0];
+		if(identity.ridl !== -1){
+			const exists = await RIDLService.identityNameIsAvailable(identity.name);
+			if(!exists || exists.id !== identity.ridl){
+				const scatter = store.state.scatter.clone();
+				scatter.keychain.identities[0].ridl = -1;
+				await store.dispatch(Actions.SET_SCATTER, scatter);
+			}
+		}
+
+		return true;
 	}
 
 	static getAccount(){
@@ -332,6 +345,22 @@ export default class RIDLService {
 				console.error(error);
 				reject(null);
 			})
+		})
+	}
+
+	static async claimRidlTokens(accounts){
+		return new Promise(async (resolve, reject) => {
+			const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+			const network = store.state.scatter.settings.networks.find(x => x.chainId === plugin.getEndorsedNetwork().chainId);
+
+			const provider = async payload => plugin.signerWithPopup(payload, accounts, reject);
+			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider:provider});
+
+			return eos.transaction('scatterfunds', contract => {
+				accounts.map(account => {
+					contract.claim(account.name, {authorization:[`${account.name}@${account.authority}`]});
+				})
+			}).then(res => resolve(res)).catch(err => reject(err));
 		})
 	}
 

@@ -39,6 +39,8 @@
                     <btn blue="1" big="1" @click.native="donate"
                          text="Donate to Scatter" />
 
+                    <btn @click.native="claim" text="Claim RIDL" v-if="claimableRidlAccounts.length" style="margin-top:5px;" />
+
                     <div style="font-size: 11px; margin-top:20px; display:block;">
                         <div>Your total contributions for this cycle: <b>{{eosContributions}}</b></div>
                         You will get <b>{{ridlContributions}}</b> at <b>{{(new Date(ridlCycle.ends*1000)).toLocaleString()}}</b>
@@ -58,6 +60,7 @@
     import PopupService from "../../services/PopupService";
     import Account from "../../models/Account";
 
+    // TODO: Automatic claiming
     export default {
         data(){return {
 	        buyRidlAmount:null,
@@ -100,6 +103,13 @@
 		        if(!this.ridlCycle) return null;
 		        return parseFloat(this.contributions[0]).toFixed(4) + ' EOS';
 	        },
+            claimableRidlAccounts(){
+	            if(!this.ridlCycle) return false;
+	            return this.ridlCycle.contributions.reduce((acc, x) => {
+	            	if(x.rows.some(row => row.cycle !== this.ridlCycle.data.cycle)) acc.push(x.account);
+	            	return acc;
+	            }, []);
+            }
         },
         created(){
 	        this.getRidlCycleData();
@@ -134,11 +144,20 @@
 		        }, true, this.account || Account.fromJson({networkUnique:network.unique()}), Blockchains.EOSIO, true));
 	        },
 	        async donate(){
+	        	if(parseFloat(this.buyRidlAmount.split(' ')[0]) < 1) return PopupService.push(Popup.snackbar('1.0000 EOS Minimum'));
 		        const donated = await RIDLService.donateToScatter(this.account, this.buyRidlAmount);
 		        if(donated) setTimeout(() => {
 			        this.getRidlCycleData();
 		        }, 1000);
 	        },
+	        async claim(){
+		        const network = this.networks.find(x => x.chainId === PluginRepository.plugin(Blockchains.EOSIO).getEndorsedNetwork().chainId);
+	        	const accounts = this.claimableRidlAccounts.map(name => this.accounts.find(x => x.network().unique() === network.unique() && name === x.name));
+		        const claimed = await RIDLService.claimRidlTokens(accounts);
+		        if(claimed) setTimeout(() => {
+			        this.getRidlCycleData();
+		        }, 1000);
+            }
         }
     }
 </script>
