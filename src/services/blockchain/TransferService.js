@@ -2,7 +2,6 @@ import {Blockchains, BlockchainsArray} from '../../models/Blockchains'
 import PluginRepository from '../../plugins/PluginRepository';
 import PopupService from '../utility/PopupService';
 import {Popup} from '../../models/popups/Popup'
-import BigNumber from 'bignumber.js';
 import TokenService from "../utility/TokenService";
 import HistoricTransfer from "../../models/histories/HistoricTransfer";
 import * as Actions from '../../store/constants'

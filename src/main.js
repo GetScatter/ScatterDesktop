@@ -11,18 +11,11 @@ import { QrcodeReader } from 'vue-qrcode-reader'
 import WindowService from './services/utility/WindowService';
 ElectronHelpers.bindContextMenu();
 
-// Globals
 import MenuBar from './components/MenuBar.vue'
 import UserBar from './components/UserBar.vue'
 import ViewBase from './components/ViewBase.vue'
-
-// POPUPS
-
-// POP OUTS
 import LinkApp from './views/popouts/LinkApp.vue'
 import TransferRequest from './views/popouts/TransferRequest.vue'
-
-// Reusable components
 import InputComponent from './components/reusable/InputComponent.vue'
 import ButtonComponent from './components/reusable/ButtonComponent.vue'
 import SelectComponent from './components/reusable/SelectComponent.vue'
