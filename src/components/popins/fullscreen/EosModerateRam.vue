@@ -73,7 +73,7 @@
 	import '../../../styles/popins.scss';
 	import {Blockchains} from "../../../models/Blockchains";
 	import PluginRepository from "../../../plugins/PluginRepository";
-	import PopupService from "../../../services/PopupService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import HistoricAction from "../../../models/histories/HistoricAction";
 

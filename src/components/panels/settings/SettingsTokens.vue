@@ -159,8 +159,8 @@
 	import FlatList from '../../reusable/FlatList';
 	import SearchBar from '../../reusable/SearchBar';
 	import Token from "../../../models/Token";
-	import TokenService from "../../../services/TokenService";
-	import PriceService from "../../../services/PriceService";
+	import TokenService from "../../../services/utility/TokenService";
+	import PriceService from "../../../services/apis/PriceService";
 
 	const formatter = list => list.map(token => {
 		const fiatPrice = token.fiatPrice();

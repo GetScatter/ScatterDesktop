@@ -41,10 +41,10 @@
 	import ExternalWallet, {EXT_WALLET_TYPES, EXT_WALLET_TYPES_ARR} from '../../../../models/hardware/ExternalWallet';
 	import {Blockchains, BlockchainsArray} from "../../../../models/Blockchains";
 	import Keypair from "../../../../models/Keypair";
-	import KeyPairService from "../../../../services/KeyPairService";
-	import PopupService from "../../../../services/PopupService";
+	import KeyPairService from "../../../../services/secure/KeyPairService";
+	import PopupService from "../../../../services/utility/PopupService";
 	import {Popup} from "../../../../models/popups/Popup";
-	import HardwareService from "../../../../services/HardwareService";
+	import HardwareService from "../../../../services/secure/HardwareService";
 
 	export default {
 		data(){return {

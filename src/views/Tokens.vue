@@ -89,15 +89,15 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../store/constants';
 	import SearchBar from '../components/reusable/SearchBar';
-	import StorageService from "../services/StorageService";
-	import PriceService from "../services/PriceService";
+	import StorageService from "../services/utility/StorageService";
+	import PriceService from "../services/apis/PriceService";
 	import Token from "../models/Token";
 
 	import Chartist from 'chartist';
 	import {dateId, hourNow, utcToLocal} from "../util/DateHelpers";
-	import BalanceService from "../services/BalanceService";
-	import ExchangeService from "../services/ExchangeService";
-	import PopupService from "../services/PopupService";
+	import BalanceService from "../services/blockchain/BalanceService";
+	import ExchangeService from "../services/apis/ExchangeService";
+	import PopupService from "../services/utility/PopupService";
 	import {Popup} from "../models/popups/Popup";
 	require("../styles/charts.scss");
 	require("../styles/tokens.scss");

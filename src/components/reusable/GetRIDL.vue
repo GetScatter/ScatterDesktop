@@ -53,11 +53,11 @@
 
 <script>
     import {mapState, mapGetters} from 'vuex';
-    import RIDLService from "../../services/RIDLService";
+    import RIDLService from "../../services/apis/RIDLService";
     import {Blockchains} from "../../models/Blockchains";
     import {Popup} from "../../models/popups/Popup";
     import PluginRepository from "../../plugins/PluginRepository";
-    import PopupService from "../../services/PopupService";
+    import PopupService from "../../services/utility/PopupService";
     import Account from "../../models/Account";
 
     // TODO: Automatic claiming

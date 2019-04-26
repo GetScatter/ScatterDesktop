@@ -3,10 +3,10 @@ import {testScatter} from '../mocks'
 
 import {assert} from 'chai';
 import 'mocha';
-import BalanceService from "../../src/services/BalanceService";
+import BalanceService from "../../src/services/blockchain/BalanceService";
 import {store} from "../../src/store/store";
 import {SET_SCATTER} from "../../src/store/constants";
-import KeyPairService from "../../src/services/KeyPairService";
+import KeyPairService from "../../src/services/secure/KeyPairService";
 
 let scatter;
 describe('BalanceService', async () => {

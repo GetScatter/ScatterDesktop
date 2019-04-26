@@ -33,7 +33,7 @@
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import Network from "../../models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import KeyPairService from "../../services/KeyPairService";
+	import KeyPairService from "../../services/secure/KeyPairService";
 	import Keypair from "../../models/Keypair";
 	import IdGenerator from "../../util/IdGenerator";
 

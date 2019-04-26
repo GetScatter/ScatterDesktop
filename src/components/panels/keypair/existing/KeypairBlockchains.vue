@@ -22,12 +22,12 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import {Blockchains} from "../../../../models/Blockchains";
-	import KeyPairService from "../../../../services/KeyPairService";
-	import PriceService from "../../../../services/PriceService";
+	import KeyPairService from "../../../../services/secure/KeyPairService";
+	import PriceService from "../../../../services/apis/PriceService";
 	import Process from "../../../../models/Process";
 	import ElectronHelpers from "../../../../util/ElectronHelpers";
-	import BalanceService from "../../../../services/BalanceService";
-	import PopupService from "../../../../services/PopupService";
+	import BalanceService from "../../../../services/blockchain/BalanceService";
+	import PopupService from "../../../../services/utility/PopupService";
 	import {Popup} from "../../../../models/popups/Popup";
 
 	export default {

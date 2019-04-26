@@ -3,7 +3,7 @@ import {testScatter, mockKeypair, mockEosAccount, mockTrxAccount, mockNetworks} 
 
 import {assert} from 'chai';
 import 'mocha';
-import AccountService from "../../src/services/AccountService";
+import AccountService from "../../src/services/blockchain/AccountService";
 import {store} from "../../src/store/store";
 import {SET_SCATTER} from "../../src/store/constants";
 import {Blockchains} from "../../src/models/Blockchains";

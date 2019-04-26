@@ -1,6 +1,6 @@
-import {store} from '../store/store'
 import Hasher from '../util/Hasher';
 import IdGenerator from '../util/IdGenerator';
+import StoreService from "../services/utility/StoreService";
 
 export default class Permission {
 
@@ -54,11 +54,11 @@ export default class Permission {
     }
 
     getIdentity(){
-        return store.state.scatter.keychain.findIdentity(this.identity);
+        return StoreService.get().state.scatter.keychain.findIdentity(this.identity);
     }
 
     getAccounts(){
-        const accounts = store.state.scatter.keychain.accounts;
+        const accounts = StoreService.get().state.scatter.keychain.accounts;
         return this.accounts.map(unique => accounts.find(x => x.unique() === unique));
     }
 

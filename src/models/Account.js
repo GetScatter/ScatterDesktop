@@ -1,7 +1,7 @@
 import PluginRepository from '../plugins/PluginRepository';
-import {store} from '../store/store'
 import {Blockchains} from "./Blockchains";
 import Token from "./Token";
+import StoreService from "../services/utility/StoreService";
 
 export default class Account {
     constructor(){
@@ -26,11 +26,11 @@ export default class Account {
     }
 
     network(){
-        return store.state.scatter.settings.networks.find(x => x.unique() === this.networkUnique);
+        return StoreService.get().state.scatter.settings.networks.find(x => x.unique() === this.networkUnique);
     }
 
     keypair(){
-        return store.state.scatter.keychain.keypairs.find(x => x.unique() === this.keypairUnique);
+        return StoreService.get().state.scatter.keychain.keypairs.find(x => x.unique() === this.keypairUnique);
     }
 
     blockchain(){
@@ -40,7 +40,7 @@ export default class Account {
 
     authorities(){
 	    if(!this.authority.length) return [];
-	    return store.getters.accounts
+	    return StoreService.get().getters.accounts
             .filter(x => x.identifiable() === this.identifiable() && x.keypairUnique === this.keypairUnique)
             .sort((a,b) => a.authority.localeCompare(b.authority));
     }
@@ -59,17 +59,17 @@ export default class Account {
     }
 
     tokenCount(systemToken = null){
-	    if(!store.state.balances) return 0;
-	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
-	    if(!store.state.balances[this.identifiable()]) return 0;
-	    return store.state.balances[this.identifiable()].filter(x => !systemToken ? true : x.identifiable() !== systemToken.identifiable()).length;
+	    if(!StoreService.get().state.balances) return 0;
+	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return 0;
+	    if(!StoreService.get().state.balances[this.identifiable()]) return 0;
+	    return StoreService.get().state.balances[this.identifiable()].filter(x => !systemToken ? true : x.identifiable() !== systemToken.identifiable()).length;
     }
 
     tokens(){
-	    if(!store.state.balances) return [];
-	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return [];
-	    if(!store.state.balances[this.identifiable()]) return [];
-	    return store.state.balances[this.identifiable()];
+	    if(!StoreService.get().state.balances) return [];
+	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return [];
+	    if(!StoreService.get().state.balances[this.identifiable()]) return [];
+	    return StoreService.get().state.balances[this.identifiable()];
     }
 
     tokenBalance(token){
@@ -79,10 +79,10 @@ export default class Account {
     }
 
     systemBalance(withSymbol = false){
-	    if(!store.state.balances) return 0;
-	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
-	    if(!store.state.balances[this.identifiable()]) return 0;
-	    const systemBalance = store.state.balances[this.identifiable()].find(x =>  Token.fromJson(x).identifiable() === this.network().systemToken().identifiable());
+	    if(!StoreService.get().state.balances) return 0;
+	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return 0;
+	    if(!StoreService.get().state.balances[this.identifiable()]) return 0;
+	    const systemBalance = StoreService.get().state.balances[this.identifiable()].find(x =>  Token.fromJson(x).identifiable() === this.network().systemToken().identifiable());
 	    if(!systemBalance) return 0;
 	    return `${systemBalance.amount} ${withSymbol ? systemBalance.symbol : ''}`;
     }

@@ -118,15 +118,15 @@
 	import TokenSelector from '../components/panels/TokenSelector';
 	import Recipient from '../components/panels/transfer/Recipient';
 	import PluginRepository from "../plugins/PluginRepository";
-	import ExchangeService from "../services/ExchangeService";
+	import ExchangeService from "../services/apis/ExchangeService";
 	import Account from "../models/Account";
-	import PopupService from "../services/PopupService";
+	import PopupService from "../services/utility/PopupService";
 	import {Popup} from "../models/popups/Popup";
-	import TransferService from "../services/TransferService";
-	import BalanceService from "../services/BalanceService";
-	import PasswordService from "../services/PasswordService";
+	import TransferService from "../services/blockchain/TransferService";
+	import BalanceService from "../services/blockchain/BalanceService";
+	import PasswordService from "../services/secure/PasswordService";
 	import {Blockchains} from "../models/Blockchains";
-	import ContactService from "../services/ContactService";
+	import ContactService from "../services/utility/ContactService";
 
 	export default {
 		components:{

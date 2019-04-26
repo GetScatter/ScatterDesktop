@@ -23,7 +23,7 @@
 	import * as Actions from '../../../store/constants';
 	import PluginRepository from "../../../plugins/PluginRepository";
 	import {Blockchains} from "../../../models/Blockchains";
-	import ContactService from "../../../services/ContactService";
+	import ContactService from "../../../services/utility/ContactService";
 
 	export default {
 		props:['recipient', 'account'],

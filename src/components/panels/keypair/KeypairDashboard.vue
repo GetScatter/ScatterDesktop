@@ -100,15 +100,15 @@
 	import KeypairAccount from './existing/KeypairAccount';
 	import KeypairBlockchains from '../../../components/panels/keypair/existing/KeypairBlockchains';
 
-	import KeyPairService from "../../../services/KeyPairService";
-	import ResourceService from "../../../services/ResourceService";
-	import PopupService from "../../../services/PopupService";
+	import KeyPairService from "../../../services/secure/KeyPairService";
+	import ResourceService from "../../../services/blockchain/ResourceService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import {Blockchains} from "../../../models/Blockchains";
-	import AccountService from "../../../services/AccountService";
+	import AccountService from "../../../services/blockchain/AccountService";
 	import Account from "../../../models/Account";
 	import PluginRepository from "../../../plugins/PluginRepository";
-	import BalanceService from "../../../services/BalanceService";
+	import BalanceService from "../../../services/blockchain/BalanceService";
 	import * as Actions from "../../../store/constants";
 
 	let saveTimeout;

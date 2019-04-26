@@ -4,7 +4,6 @@ import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
 
 import * as Actions from '../../models/api/ApiActions';
-import {store} from '../../store/store'
 const EthTx = require('ethereumjs-tx')
 const ethUtil = require('ethereumjs-util');
 import Web3 from 'web3';
@@ -13,18 +12,18 @@ import RpcSubprovider from 'web3-provider-engine/subproviders/rpc';
 import HookedWalletSubprovider from "web3-provider-engine/subproviders/hooked-wallet";
 
 import IdGenerator from '../../util/IdGenerator';
-import KeyPairService from '../../services/KeyPairService';
+import KeyPairService from '../../services/secure/KeyPairService';
 import ObjectHelpers from '../../util/ObjectHelpers'
 
-import PopupService from '../../services/PopupService'
+import PopupService from '../../services/utility/PopupService'
 import {Popup} from '../../models/popups/Popup'
 import Token from "../../models/Token";
-import HardwareService from "../../services/HardwareService";
-import BigNumber from "bignumber.js";
-import TokenService from "../../services/TokenService";
+import HardwareService from "../../services/secure/HardwareService";
+import TokenService from "../../services/utility/TokenService";
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 import nacl from 'tweetnacl'
+import StoreService from "../../services/utility/StoreService";
 const erc20abi = require('../../data/abis/erc20');
 
 const web3util = new Web3();
@@ -237,7 +236,7 @@ export default class ETH extends Plugin {
     async signerWithPopup(payload, account, rejector, token = null){
         return new Promise(async resolve => {
             payload.messages = await this.requestParser(payload.transaction, payload.hasOwnProperty('abi') ? payload.abi : null, token);
-            payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+            payload.identityKey = StoreService.get().state.scatter.keychain.identities[0].publicKey;
             payload.participants = [account];
             payload.network = account.network();
             payload.origin = 'Scatter';

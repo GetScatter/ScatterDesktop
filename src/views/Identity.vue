@@ -224,15 +224,15 @@
 
     import GetRIDL from '../components/reusable/GetRIDL'
     import IdGenerator from '../util/IdGenerator'
-    import PopupService from '../services/PopupService';
+    import PopupService from '../services/utility/PopupService';
     import {Popup} from '../models/popups/Popup';
     import Identity, {LocationInformation} from '../models/Identity';
     import {Countries} from '../data/Countries'
-    import KeyPairService from "../services/KeyPairService";
-    import RIDLService from "../services/RIDLService";
+    import KeyPairService from "../services/secure/KeyPairService";
+    import RIDLService from "../services/apis/RIDLService";
     import {Blockchains} from "../models/Blockchains";
     import PluginRepository from '../plugins/PluginRepository'
-    import BalanceService from "../services/BalanceService";
+    import BalanceService from "../services/blockchain/BalanceService";
     import Account from "../models/Account";
     let saveTimeout;
 

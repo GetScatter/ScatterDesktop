@@ -27,9 +27,9 @@
 	import '../../../styles/popins.scss';
 	import {Blockchains} from "../../../models/Blockchains";
 	import FlatList from '../../reusable/FlatList';
-	import AccountService from "../../../services/AccountService";
-	import KeyPairService from "../../../services/KeyPairService";
-	import BalanceService from "../../../services/BalanceService";
+	import AccountService from "../../../services/blockchain/AccountService";
+	import KeyPairService from "../../../services/secure/KeyPairService";
+	import BalanceService from "../../../services/blockchain/BalanceService";
 
 	export default {
 		props:['popin'],

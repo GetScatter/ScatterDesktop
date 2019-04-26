@@ -18,14 +18,14 @@
     import KeypairDashboard from '../components/panels/keypair/KeypairDashboard';
     import KeypairExport from '../components/panels/keypair/existing/KeypairExport';
 
-    import KeyPairService from "../services/KeyPairService";
-    import PopupService from "../services/PopupService";
+    import KeyPairService from "../services/secure/KeyPairService";
+    import PopupService from "../services/utility/PopupService";
     import {Popup} from "../models/popups/Popup";
-    import PriceService from "../services/PriceService";
-    import AccountService from "../services/AccountService";
-    import ResourceService from "../services/ResourceService";
-    import PasswordService from "../services/PasswordService";
-    import BalanceService from "../services/BalanceService";
+    import PriceService from "../services/apis/PriceService";
+    import AccountService from "../services/blockchain/AccountService";
+    import ResourceService from "../services/blockchain/ResourceService";
+    import PasswordService from "../services/secure/PasswordService";
+    import BalanceService from "../services/blockchain/BalanceService";
     import Process from "../models/Process";
     import {Blockchains} from "../models/Blockchains";
 

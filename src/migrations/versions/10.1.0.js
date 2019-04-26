@@ -1,7 +1,7 @@
 import PluginRepository from '../../plugins/PluginRepository';
 import Explorer from "../../models/Explorer";
 import {Blockchains, BlockchainsArray} from "../../models/Blockchains";
-import KeyPairService from "../../services/KeyPairService";
+import KeyPairService from "../../services/secure/KeyPairService";
 
 export const m10_1_0 = async scatter => {
 

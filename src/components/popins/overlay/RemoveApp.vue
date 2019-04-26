@@ -30,7 +30,7 @@
     import * as Actions from '../../../store/constants';
     import {PopupDisplayTypes} from '../../../models/popups/Popup'
     import PopinHead from "./PopinHead";
-    import AppsService from "../../../services/AppsService";
+    import AppsService from "../../../services/apps/AppsService";
 
     export default {
 	    components: {PopinHead},

@@ -56,8 +56,8 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import '../../../styles/popins.scss';
-	import PasswordService from "../../../services/PasswordService";
-	import PopupService from "../../../services/PopupService";
+	import PasswordService from "../../../services/secure/PasswordService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import {Blockchains} from "../../../models/Blockchains";
 	import PluginRepository from "../../../plugins/PluginRepository";

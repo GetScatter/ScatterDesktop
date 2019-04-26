@@ -56,7 +56,7 @@
 	import SearchBar from '../../reusable/SearchBar';
 	import FlatList from '../../reusable/FlatList';
 	import PluginRepository from "../../../plugins/PluginRepository";
-	import ContactService from "../../../services/ContactService";
+	import ContactService from "../../../services/utility/ContactService";
 
 	const STATES = {
 		MINE:'mine',

@@ -64,15 +64,15 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import '../../../styles/popins.scss';
-	import PasswordService from "../../../services/PasswordService";
-	import PopupService from "../../../services/PopupService";
+	import PasswordService from "../../../services/secure/PasswordService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import {Blockchains} from "../../../models/Blockchains";
 	import PluginRepository from "../../../plugins/PluginRepository";
 	import FlatList from '../../reusable/FlatList';
-	import ProxyService from "../../../services/ProxyService";
 	import ObjectHelpers from "../../../util/ObjectHelpers";
-	import RecurringService from "../../../services/RecurringService";
+	import RecurringService from "../../../services/blockchain/RecurringService";
+	import {GET} from "../../../services/apis/BackendApiService";
 
 	export default {
 		props:['popin'],
@@ -89,7 +89,7 @@
 			if(this.isHardware) this.autoVote = false;
 			setTimeout(async () => {
 				if(PluginRepository.plugin(Blockchains.EOSIO).isEndorsedNetwork(this.account.network())){
-					this.proxies = await ProxyService.getProxyList();
+					this.proxies = await this.getProxyList();
 				}
 			});
 
@@ -124,6 +124,12 @@
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
 				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			getProxyList(){
+				return Promise.race([
+					new Promise((resolve) => setTimeout(() => resolve([]), 3000)),
+					GET(`proxies`).catch(() => [])
+				]);
 			},
 			unrevote(){
 				RecurringService.removeProxies([this.account]);

@@ -3,27 +3,25 @@ import * as PluginTypes from '../PluginTypes';
 import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
 import Account from '../../models/Account'
-import KeyPairService from '../../services/KeyPairService'
+import KeyPairService from '../../services/secure/KeyPairService'
 import {localized, localizedState} from '../../localization/locales'
 import LANG_KEYS from '../../localization/keys'
 import Eos from 'eosjs'
 let {ecc} = Eos.modules;
 import ObjectHelpers from '../../util/ObjectHelpers'
 import {Popup} from '../../models/popups/Popup'
-import PopupService from '../../services/PopupService'
-import ResourceService from '../../services/ResourceService'
-import StorageService from '../../services/StorageService'
+import PopupService from '../../services/utility/PopupService'
+import StorageService from '../../services/utility/StorageService'
 import * as Actions from '../../models/api/ApiActions';
-import {store} from '../../store/store'
 import * as StoreActions from '../../store/constants'
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs2';
 import * as numeric from "eosjs2/dist/eosjs-numeric";
 import Token from "../../models/Token";
 import AccountAction from "../../models/AccountAction";
-import AccountService from "../../services/AccountService";
-import RecurringService from "../../services/RecurringService";
-import HardwareService from "../../services/HardwareService";
+import AccountService from "../../services/blockchain/AccountService";
+import HardwareService from "../../services/secure/HardwareService";
 import HistoricAction from "../../models/histories/HistoricAction";
+import StoreService from "../../services/utility/StoreService";
 
 
 const blockchainApiURL = 'https://api.light.xeos.me/api';
@@ -197,7 +195,7 @@ export default class EOS extends Plugin {
 				.catch(res => reject(popupError(res)))
 				.then(res => {
 					const history = new HistoricAction(account, 'proxy', res.transaction_id);
-					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					StoreService.get().dispatch(StoreActions.DELTA_HISTORY, history);
 					resolve(res);
 				})
 		})
@@ -261,7 +259,7 @@ export default class EOS extends Plugin {
 					const keypairs = [account.keypair()];
 
 					const authorities = Object.keys(keys).filter(x => keys[x].length);
-					const accounts = store.getters.accounts.filter(x => x.identifiable() === account.identifiable() && authorities.includes(x.authority));
+					const accounts = StoreService.get().getters.accounts.filter(x => x.identifiable() === account.identifiable() && authorities.includes(x.authority));
 					await AccountService.removeAccounts(accounts);
 
 					const addAccount = async (keypair, authority) => {
@@ -272,12 +270,12 @@ export default class EOS extends Plugin {
 						return AccountService.addAccount(acc);
 					};
 
-					const activeKeypair = store.state.scatter.keychain.getKeyPairByPublicKey(keys.active);
-					const ownerKeypair = store.state.scatter.keychain.getKeyPairByPublicKey(keys.owner);
+					const activeKeypair = StoreService.get().state.scatter.keychain.getKeyPairByPublicKey(keys.active);
+					const ownerKeypair = StoreService.get().state.scatter.keychain.getKeyPairByPublicKey(keys.owner);
 					if(activeKeypair) await addAccount(activeKeypair, 'active');
 					if(ownerKeypair) await addAccount(ownerKeypair, 'owner');
 					const history = new HistoricAction(account, 'permissions', res.transaction_id);
-					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					StoreService.get().dispatch(StoreActions.DELTA_HISTORY, history);
 					resolve(true)
 				});
 		})
@@ -285,7 +283,7 @@ export default class EOS extends Plugin {
 	}
 
 	accountActions(account){
-		const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable() && x.keypairUnique === account.keypairUnique);
+		const accounts = StoreService.get().state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable() && x.keypairUnique === account.keypairUnique);
 
 		const {EOS} = LANG_KEYS.KEYPAIR.ACCOUNTS.ACTIONS;
 
@@ -326,7 +324,7 @@ export default class EOS extends Plugin {
 				.catch(res => reject(popupError(res)))
 				.then(res => {
 					const history = new HistoricAction(account, 'refund', res.transaction_id);
-					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					StoreService.get().dispatch(StoreActions.DELTA_HISTORY, history);
 					resolve(res)
 				});
 		})
@@ -513,7 +511,7 @@ export default class EOS extends Plugin {
 		if(!fallback && this.isEndorsedNetwork(account.network())){
 			const balances = await EosTokenAccountAPI.getAllTokens(account);
 			if(!balances) return this.balanceFor(account, tokens, true);
-			const blacklist = store.getters.blacklistTokens.filter(x => x.blockchain === Blockchains.EOSIO).map(x => x.unique());
+			const blacklist = StoreService.get().getters.blacklistTokens.filter(x => x.blockchain === Blockchains.EOSIO).map(x => x.unique());
 			return balances.filter(x => !blacklist.includes(x.unique()));
 		}
 
@@ -670,7 +668,7 @@ export default class EOS extends Plugin {
 
 			payload.messages = await this.requestParser(payload, Network.fromJson(accounts[0].network()));
 			if(!payload.messages) return rejector({error:'Error re-parsing transaction buffer'});
-			payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+			payload.identityKey = StoreService.get().state.scatter.keychain.identities[0].publicKey;
 			payload.participants = accounts;
 			payload.network = accounts[0].network();
 			payload.origin = 'Scatter';
@@ -692,7 +690,6 @@ export default class EOS extends Plugin {
 					signatures.push(await this.signer({data:payload.buf}, account.publicKey, true, false, account));
 
 					if(signatures.length !== i+1) return rejector({error:'Could not get signature'});
-					// if(result.needResources) await ResourceService.addResources(account);
 				}
 
 				signatures = signatures.reduce((acc,x) => {

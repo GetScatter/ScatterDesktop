@@ -60,10 +60,10 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from "../../../../store/constants";
 	import {Blockchains} from "../../../../models/Blockchains";
-	import ResourceService from "../../../../services/ResourceService";
+	import ResourceService from "../../../../services/blockchain/ResourceService";
 	import ElectronHelpers from "../../../../util/ElectronHelpers";
 	import PluginRepository from "../../../../plugins/PluginRepository";
-	import BalanceService from "../../../../services/BalanceService";
+	import BalanceService from "../../../../services/blockchain/BalanceService";
 
 	export default {
 		props:['account', 'collapse'],

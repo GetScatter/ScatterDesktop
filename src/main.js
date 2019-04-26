@@ -8,7 +8,7 @@ import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
 import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
-import WindowService from './services/WindowService';
+import WindowService from './services/utility/WindowService';
 ElectronHelpers.bindContextMenu();
 
 // Globals
@@ -29,6 +29,7 @@ import SelectComponent from './components/reusable/SelectComponent.vue'
 import SwitchComponent from './components/reusable/SwitchComponent.vue'
 import SliderComponent from './components/reusable/SliderComponent.vue'
 import BackBar from './components/reusable/BackBar.vue'
+import StoreService from "./services/utility/StoreService";
 
 // f12 to open console from anywhere.
 document.addEventListener("keydown", function (e) {
@@ -54,22 +55,16 @@ class Main {
 		];
 
 		let fragments;
-		if(hash === 'popout'){
-			fragments = [
-				{tag:'link-app', vue:LinkApp},
-				{tag:'transfer-request', vue:TransferRequest},
-			]
-		} else {
-			fragments = [
-				{tag:'slider', vue:SliderComponent},
-				{tag:'qr-reader', vue:QrcodeReader},
-			]
-		}
+		if(hash === 'popout') fragments = [
+			{tag:'link-app', vue:LinkApp},
+			{tag:'transfer-request', vue:TransferRequest},
+		]
+		else fragments = [
+			{tag:'slider', vue:SliderComponent},
+			{tag:'qr-reader', vue:QrcodeReader},
+		]
 
 		const components = shared.concat(fragments);
-
-		const routes = Routing.routes();
-
 		const middleware = (to, next, store) => {
 			if(hash === 'popout') return next();
 			if(Routing.isRestricted(to.name))
@@ -77,8 +72,8 @@ class Main {
 			else next();
 		};
 
-		new VueInitializer(routes, components, middleware, async (router, store) => {
-
+		new VueInitializer(Routing.routes(), components, middleware, async (router, store) => {
+			StoreService.init();
 		});
 
 		// window.onerror = log => {

@@ -88,12 +88,12 @@
 	import FullWidthRow from '../../../components/reusable/FullWidthRow';
 	import SearchBar from '../../../components/reusable/SearchBar';
 	import HistoricTransfer from "../../../models/histories/HistoricTransfer";
-	import PopupService from "../../../services/PopupService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import ElectronHelpers from "../../../util/ElectronHelpers";
 	import {HISTORY_TYPES} from "../../../models/histories/History";
-	import StorageService from "../../../services/StorageService";
-	import ExchangeService from "../../../services/ExchangeService";
+	import StorageService from "../../../services/utility/StorageService";
+	import ExchangeService from "../../../services/apis/ExchangeService";
 	import PluginRepository from "../../../plugins/PluginRepository";
 
 

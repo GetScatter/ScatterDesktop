@@ -44,12 +44,11 @@
     import ImportHardwareKey from '../components/panels/keypair/import/ImportHardwareKey';
     import ImportQRKey from '../components/panels/keypair/import/ImportQRKey';
     import IdGenerator from "../util/IdGenerator";
-    import KeyPairService from "../services/KeyPairService";
-    import AccountService from "../services/AccountService";
+    import KeyPairService from "../services/secure/KeyPairService";
+    import AccountService from "../services/blockchain/AccountService";
     import Keypair from "../models/Keypair";
-    import BalanceService from "../services/BalanceService";
-    import {store} from "../store/store";
-    import PopupService from "../services/PopupService";
+    import BalanceService from "../services/blockchain/BalanceService";
+    import PopupService from "../services/utility/PopupService";
     import {Popup} from "../models/popups/Popup";
 
     const STATES = {
@@ -164,7 +163,7 @@
 
 	            await KeyPairService.saveKeyPair(keypair);
 	            AccountService.importAllAccounts(keypair, isNewKeypair).then(async () => {
-                    const accounts = store.state.scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique());
+                    const accounts = this.scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique());
                     for(let i = 0; i < accounts.length; i++){ await BalanceService.loadBalancesFor(accounts[i]) }
                 });
 	            setTimeout(async () => {

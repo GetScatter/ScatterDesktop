@@ -34,11 +34,11 @@
 	import {Blockchains} from "../../../models/Blockchains";
 	import FullWidthRow from '../../reusable/FullWidthRow';
 	import Keypair from "../../../models/Keypair";
-	import KeyPairService from "../../../services/KeyPairService";
+	import KeyPairService from "../../../services/secure/KeyPairService";
 	import IdGenerator from "../../../util/IdGenerator";
 	import ElectronHelpers from "../../../util/ElectronHelpers";
 	import Crypto from "../../../util/Crypto";
-	import PopupService from "../../../services/PopupService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 
 	export default {

@@ -16,10 +16,10 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import PopupService from "../../../../services/PopupService";
-	import QRService from "../../../../services/QRService";
+	import PopupService from "../../../../services/utility/PopupService";
+	import QRService from "../../../../services/secure/QRService";
 	import Keypair from "../../../../models/Keypair";
-	import KeyPairService from "../../../../services/KeyPairService";
+	import KeyPairService from "../../../../services/secure/KeyPairService";
 	import {Popup} from "../../../../models/popups/Popup";
 
 	export default {

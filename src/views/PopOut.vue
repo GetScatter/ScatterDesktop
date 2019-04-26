@@ -38,10 +38,10 @@
     import * as Actions from '../store/constants';
     import Scatter from '../models/Scatter';
     import {remote} from '../util/ElectronHelpers';
-    import WindowService from '../services/WindowService'
+    import WindowService from '../services/utility/WindowService'
     import * as ApiActions from '../models/api/ApiActions';
     import {Popup} from "../models/popups/Popup";
-    import PasswordService from "../services/PasswordService";
+    import PasswordService from "../services/secure/PasswordService";
 
     export default {
         data () {return {

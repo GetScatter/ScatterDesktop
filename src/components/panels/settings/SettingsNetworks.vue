@@ -156,11 +156,11 @@
     import {Blockchains, BlockchainsArray, blockchainName} from '../../../models/Blockchains';
     import PluginRepository from '../../../plugins/PluginRepository'
     import Network from '../../../models/Network';
-    import PopupService from '../../../services/PopupService'
+    import PopupService from '../../../services/utility/PopupService'
     import {Popup} from '../../../models/popups/Popup'
-    import NetworkService from '../../../services/NetworkService';
+    import NetworkService from '../../../services/blockchain/NetworkService';
     import Token from "../../../models/Token";
-    import {GET} from "../../../services/BackendApiService";
+    import {GET} from "../../../services/apis/BackendApiService";
 
 
     const STATES = {

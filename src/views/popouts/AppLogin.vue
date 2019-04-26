@@ -96,7 +96,7 @@
     import {IdentityRequiredFields} from "../../models/Identity";
     import Network from "../../models/Network";
     import RequiredFields from "../../components/popouts/RequiredFields";
-    import RIDLService from "../../services/RIDLService";
+    import RIDLService from "../../services/apis/RIDLService";
 
     export default {
 	    props:['popup', 'expanded'],

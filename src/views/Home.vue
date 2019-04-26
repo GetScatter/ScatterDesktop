@@ -59,14 +59,14 @@
     import PiggyWaiting from '../components/svgs/PiggyWaiting'
     import Apps from '../components/panels/home/Apps';
     import Wallets from '../components/panels/home/Wallets';
-    import BalanceService from "../services/BalanceService";
-    import PriceService from "../services/PriceService";
-    import SingletonService from "../services/SingletonService";
-    import PopupService from "../services/PopupService";
+    import BalanceService from "../services/blockchain/BalanceService";
+    import PriceService from "../services/apis/PriceService";
+    import SingletonService from "../services/utility/SingletonService";
+    import PopupService from "../services/utility/PopupService";
     import {Popup} from "../models/popups/Popup";
     import Token from "../models/Token";
     import {Blockchains} from "../models/Blockchains";
-    import TokenService from "../services/TokenService";
+    import TokenService from "../services/utility/TokenService";
     import Action from "../models/api/Action";
 
 

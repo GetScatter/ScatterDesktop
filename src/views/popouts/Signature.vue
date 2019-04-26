@@ -172,15 +172,15 @@
 	import JSONFormatter from 'json-formatter-js'
 	import Hasher from "../../util/Hasher";
 	import Account from "../../models/Account";
-	import PopupService from "../../services/PopupService";
+	import PopupService from "../../services/utility/PopupService";
 	import {Popup} from "../../models/popups/Popup";
-	import PermissionService from "../../services/PermissionService";
+	import PermissionService from "../../services/apps/PermissionService";
 	import {Blockchains} from "../../models/Blockchains";
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import KeyPairService from "../../services/KeyPairService";
-	import ResourceService from "../../services/ResourceService";
-	import RIDLService, {RIDL_WEB_HOST} from "../../services/RIDLService";
+	import KeyPairService from "../../services/secure/KeyPairService";
+	import ResourceService from "../../services/blockchain/ResourceService";
+	import RIDLService, {RIDL_WEB_HOST} from "../../services/apis/RIDLService";
 
 	const VIEW_TYPES = {
 	    HUMAN:'human',

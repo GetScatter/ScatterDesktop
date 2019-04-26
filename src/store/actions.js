@@ -1,19 +1,16 @@
 import * as Actions from './constants'
-import StorageService from '../services/StorageService';
-import SocketService from '../services/SocketService';
-import PasswordService from '../services/PasswordService';
-import BackupService from '../services/BackupService';
+import StorageService from '../services/utility/StorageService';
+import SocketService from '../services/utility/SocketService';
+import PasswordService from '../services/secure/PasswordService';
+import BackupService from '../services/utility/BackupService';
 import PluginRepository from '../plugins/PluginRepository';
 import Hasher from '../util/Hasher'
 import IdGenerator from '../util/IdGenerator'
-import Mnemonic from '../util/Mnemonic'
-import {store} from '../store/store';
 
-import Identity from '../models/Identity';
 import Scatter from '../models/Scatter';
 
 import AES from 'aes-oop';
-import PopupService from "../services/PopupService";
+import PopupService from "../services/utility/PopupService";
 import {Popup} from '../models/popups/Popup'
 import {RUNNING_TESTS} from "../util/TestingHelper";
 import {ipcAsync} from "../util/ElectronHelpers";

@@ -170,11 +170,11 @@
 	import FlatList from '../../reusable/FlatList';
 	import FullWidthRow from '../../reusable/FullWidthRow';
 	import PluginRepository from "../../../plugins/PluginRepository";
-	import PopupService from "../../../services/PopupService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
-	import AccountService from "../../../services/AccountService";
+	import AccountService from "../../../services/blockchain/AccountService";
 	import Onboarding from '../../svgs/Onboarding';
-	import EosAccountService from "../../../services/EosAccountService";
+	import EosAccountService from "../../../services/blockchain/EosAccountService";
 
 	const STATES = {
 		ACCOUNT:'account',

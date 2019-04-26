@@ -104,21 +104,21 @@
 
     import OnboardingSvg from '../components/svgs/Onboarding';
 
-	import SocketService from '../services/SocketService'
-	import BackupService, {getFileLocation} from '../services/BackupService'
-	import PasswordService from '../services/PasswordService'
-	import StorageService from '../services/StorageService'
-	import PopupService from "../services/PopupService";
+	import SocketService from '../services/utility/SocketService'
+	import BackupService, {getFileLocation} from '../services/utility/BackupService'
+	import PasswordService from '../services/secure/PasswordService'
+	import StorageService from '../services/utility/StorageService'
+	import PopupService from "../services/utility/PopupService";
 	import {Popup} from '../models/popups/Popup'
-	import KeyPairService from "../services/KeyPairService";
+	import KeyPairService from "../services/secure/KeyPairService";
 	import Keypair from "../models/Keypair";
 	import Mnemonic from "../util/Mnemonic";
 	const fs = window.require('fs');
 	import AES from 'aes-oop';
 	import Crypto from "../util/Crypto";
 	import Scatter from "../models/Scatter";
-	import AccountService from "../services/AccountService";
-	import UpdateService from "../services/UpdateService";
+	import AccountService from "../services/blockchain/AccountService";
+	import UpdateService from "../services/utility/UpdateService";
 	import {ipcFaF} from "../util/ElectronHelpers";
 
 	const lockoutTime = 1000*60*5;

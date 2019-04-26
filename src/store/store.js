@@ -7,12 +7,11 @@ import {actions} from './actions';
 import {PopupDisplayTypes} from '../models/popups/Popup'
 import PluginRepository from '../plugins/PluginRepository'
 import Locale from "../models/Locale";
-import PriceService from "../services/PriceService";
-import BalanceService from "../services/BalanceService";
+import BalanceService from "../services/blockchain/BalanceService";
 
 Vue.use(Vuex);
 
-const state = {
+export const state = {
     dappLogos:{},
     dappData:{},
     workingScreen:null,
@@ -38,7 +37,7 @@ const state = {
 	language:{},
 };
 
-const getters = {
+export const getters = {
     // App State
     unlocked:state =>       state.scatter !== null
                                 && typeof state.scatter !== 'string'

@@ -64,7 +64,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
     import {Popup} from '../models/popups/Popup'
-    import PopupService from '../services/PopupService'
+    import PopupService from '../services/utility/PopupService'
 
     import {SETTINGS_OPTIONS} from '../models/Settings';
 

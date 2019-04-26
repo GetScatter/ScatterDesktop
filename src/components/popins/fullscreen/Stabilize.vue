@@ -127,14 +127,14 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import TokenSelector from '../../../components/panels/TokenSelector';
-	import ExchangeService from "../../../services/ExchangeService";
+	import ExchangeService from "../../../services/apis/ExchangeService";
 	import Account from "../../../models/Account";
-	import PopupService from "../../../services/PopupService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
-	import TransferService from "../../../services/TransferService";
-	import BalanceService from "../../../services/BalanceService";
+	import TransferService from "../../../services/blockchain/TransferService";
+	import BalanceService from "../../../services/blockchain/BalanceService";
 	import HistoricExchange from "../../../models/histories/HistoricExchange";
-	import KeyPairService from "../../../services/KeyPairService";
+	import KeyPairService from "../../../services/secure/KeyPairService";
 
 	export default {
 		props:['popin'],

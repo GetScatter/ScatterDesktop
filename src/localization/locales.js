@@ -1,6 +1,5 @@
 import KEYS from './keys';
 import ObjectHelpers from '../util/ObjectHelpers'
-// import {store} from '../store/store'
 
 let store;
 const getStore = () => {

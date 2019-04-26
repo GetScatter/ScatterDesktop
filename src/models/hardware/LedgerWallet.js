@@ -1,8 +1,7 @@
-import WindowService from '../../services/WindowService'
-import {store} from '../../store/store';
+import WindowService from '../../services/utility/WindowService'
 import bippath from 'bip32-path';
 import {Blockchains} from '../Blockchains';
-import PopupService from '../../services/PopupService';
+import PopupService from '../../services/utility/PopupService';
 import {Popup} from '../popups/Popup';
 
 const fcbuffer = require('fcbuffer');
@@ -13,6 +12,7 @@ import ecc from 'eosjs-ecc';
 const EthTx = require('ethereumjs-tx')
 import Eth from "@ledgerhq/hw-app-eth";
 import {EXT_WALLET_TYPES} from "./ExternalWallet";
+import StoreService from "../../services/utility/StoreService";
 
 const throwErr = () => PopupService.push(Popup.prompt(
     'No Hardware Available',
@@ -25,8 +25,8 @@ export const LEDGER_PATHS = {
 }
 
 const getTransport = () => {
-    if(!store.state.hardware.hasOwnProperty(EXT_WALLET_TYPES.LEDGER)) return null;
-    return store.state.hardware[EXT_WALLET_TYPES.LEDGER];
+    if(!StoreService.get().state.hardware.hasOwnProperty(EXT_WALLET_TYPES.LEDGER)) return null;
+    return StoreService.get().state.hardware[EXT_WALLET_TYPES.LEDGER];
 }
 
 export default class LedgerWallet {

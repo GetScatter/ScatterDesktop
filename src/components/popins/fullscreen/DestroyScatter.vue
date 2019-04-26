@@ -25,8 +25,8 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import '../../../styles/popins.scss';
-	import SocketService from "../../../services/SocketService";
-	import StorageService from "../../../services/StorageService";
+	import SocketService from "../../../services/utility/SocketService";
+	import StorageService from "../../../services/utility/StorageService";
 
 	export default {
 		props:['popin'],

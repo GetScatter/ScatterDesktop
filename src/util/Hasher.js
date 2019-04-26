@@ -1,6 +1,6 @@
 const ecc = require('eosjs-ecc');
 const scrypt = require('scrypt-async');
-import StorageService from '../services/StorageService'
+import StorageService from '../services/utility/StorageService'
 
 export default class Hasher {
 

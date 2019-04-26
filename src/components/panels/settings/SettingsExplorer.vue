@@ -20,7 +20,7 @@
     import * as Actions from '../../../store/constants';
     import {Blockchains, BlockchainsArray, blockchainName} from '../../../models/Blockchains';
     import PluginRepository from '../../../plugins/PluginRepository'
-    import ExplorerService from "../../../services/ExplorerService";
+    import ExplorerService from "../../../services/blockchain/ExplorerService";
 
 
 

@@ -357,7 +357,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
 
-    import StorageService from '../services/StorageService';
+    import StorageService from '../services/utility/StorageService';
 
     export default {
         data () {return {

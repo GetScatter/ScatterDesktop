@@ -30,7 +30,7 @@
     import * as Actions from '../../../store/constants';
 
     import {BACKUP_STRATEGIES} from '../../../models/Settings';
-    import BackupService from '../../../services/BackupService';
+    import BackupService from '../../../services/utility/BackupService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
 
     export default {

@@ -71,8 +71,8 @@
     import FullWidthRow from '../../../reusable/FullWidthRow';
     import Crypto from "../../../../util/Crypto";
     import ElectronHelpers, {ipcAsync, remote} from "../../../../util/ElectronHelpers";
-    import QRService from "../../../../services/QRService";
-    import PopupService from "../../../../services/PopupService";
+    import QRService from "../../../../services/secure/QRService";
+    import PopupService from "../../../../services/utility/PopupService";
     import {Popup} from "../../../../models/popups/Popup";
     import Mnemonic from "../../../../util/Mnemonic";
 

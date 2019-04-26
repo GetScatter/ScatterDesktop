@@ -74,8 +74,8 @@
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
-    import PermissionService from "../services/PermissionService";
-    import AppsService from "../services/AppsService";
+    import PermissionService from "../services/apps/PermissionService";
+    import AppsService from "../services/apps/AppsService";
     import FlatList from '../components/reusable/FlatList';
 
     export default {

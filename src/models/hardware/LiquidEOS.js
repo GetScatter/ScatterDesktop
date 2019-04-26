@@ -1,6 +1,6 @@
 import {ExternalWalletInterface} from './ExternalWallet'
 import * as Http from '../../util/Http'
-import PopupService from '../../services/PopupService';
+import PopupService from '../../services/utility/PopupService';
 import {Popup} from '../popups/Popup';
 import {Blockchains} from '../../models/Blockchains';
 

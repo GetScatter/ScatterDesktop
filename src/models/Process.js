@@ -1,8 +1,8 @@
 import IdGenerator from "../util/IdGenerator";
-import {store} from "../store/store";
 import * as Actions from '../store/constants';
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
+import StoreService from "../services/utility/StoreService";
 
 export const PROCESS_TYPES = {
 	SAVING_DATA:'saving_data',
@@ -36,13 +36,13 @@ export default class Process {
 
 	kill(){
 		this.isKilled = true;
-		store.dispatch(Actions.RELEASE_PROCESS, this);
+		StoreService.get().dispatch(Actions.RELEASE_PROCESS, this);
 	}
 
 	updateProgress(delta){
 		if(this.isKilled) return;
 		this.progress += delta;
-		store.dispatch(Actions.SET_PROCESS, this);
+		StoreService.get().dispatch(Actions.SET_PROCESS, this);
 	}
 
 	setSubTitle(subTitle){
@@ -56,25 +56,25 @@ export default class Process {
 	}
 
 	static getProcessFromIdentifier(identifier){
-		return store.state.processes.find(x => x.identifier === identifier);
+		return StoreService.get().state.processes.find(x => x.identifier === identifier);
 	}
 
 	static savingData(){
 		let process = new Process(PROCESS_TYPES.SAVING_DATA, 'Saving', PROCESS_TYPES.SAVING_DATA)
 		process.id = PROCESS_TYPES.SAVING_DATA;
-		store.dispatch(Actions.SET_PROCESS, process);
+		StoreService.get().dispatch(Actions.SET_PROCESS, process);
 		return process;
 	}
 
 	static importAccounts(identifier){
 		let process = new Process(PROCESS_TYPES.IMPORT_ACCOUNTS, localizedState(LANG_KEYS.PROCESSES.ImportingAccounts), identifier)
-		store.dispatch(Actions.SET_PROCESS, process);
+		StoreService.get().dispatch(Actions.SET_PROCESS, process);
 		return process;
 	}
 
 	static loadResources(identifier){
 		let process = new Process(PROCESS_TYPES.LOAD_RESOURCES, localizedState(LANG_KEYS.PROCESSES.LoadingResources), identifier)
-		store.dispatch(Actions.SET_PROCESS, process);
+		StoreService.get().dispatch(Actions.SET_PROCESS, process);
 		return process;
 	}
 

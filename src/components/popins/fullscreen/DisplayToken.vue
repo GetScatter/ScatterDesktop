@@ -12,8 +12,8 @@
 	import * as Actions from '../../../store/constants';
 	import SearchBar from '../../../components/reusable/SearchBar';
 	import TokenSelector from '../../../components/panels/TokenSelector';
-	import PriceService from '../../../services/PriceService';
-	import TokenService from "../../../services/TokenService";
+	import PriceService from '../../../services/apis/PriceService';
+	import TokenService from "../../../services/utility/TokenService";
 
 	export default {
 		props:['popin'],

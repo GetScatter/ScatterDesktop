@@ -1,47 +1,31 @@
 {
   "name": "scatter",
   "version": "10.2.0",
-  "description": "Scatter Desktop Companion",
   "private": true,
-  "main": "electron.js",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/GetScatter/ScatterDesktop.git"
-  },
-  "bugs": {
-    "url": "https://github.com/GetScatter/ScatterDesktop/issues"
-  },
-  "keywords": [
-    "scatter",
-    "blockchain",
-    "signatures",
-    "eos",
-    "ethereum"
-  ],
-  "homepage": "https://get-scatter.com",
+  "description": "Scatter Desktop Companion",
   "author": {
     "name": "GetScatter",
     "email": "support@get-scatter.com",
     "url": "https://get-scatter.com/"
   },
   "scripts": {
+    "build": "concurrently \"npm run copybuildfiles\" \"node build/build.js\"",
+    "e2e": "node test/e2e/runner.js",
+    "copybuildfiles": "copyfiles splash.html dist",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "postinstall": "electron-rebuild --force",
+    "release-linux": "electron-builder --linux",
+    "release-mac": "electron-builder --mac",
+    "release-win": "electron-builder --win",
     "start": "npm run dev",
     "testfile": "mocha --require test/babel --exit --timeout 1000000",
     "test": "npm run testfile \"test/**/*.spec.js\" --timeout 1000000",
-    "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
-    "e2e": "node test/e2e/runner.js",
-    "copybuildfiles": "copyfiles splash.html dist",
-    "build": "concurrently \"npm run copybuildfiles\" \"node build/build.js\"",
-    "release-win": "electron-builder --win",
-    "release-linux": "electron-builder --linux",
-    "release-mac": "electron-builder --mac",
-    "postinstall": "electron-rebuild --force"
+    "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run"
   },
   "dependencies": {
     "@ledgerhq/hw-app-eth": "^4.23.0",
     "@ledgerhq/hw-transport-node-hid": "^4.54.0",
+    "@vue/cli-service": "^3.6.0",
     "aes-oop": "^1.0.4",
     "animate.css": "^3.7.0",
     "asn1-ber": "^1.0.9",
@@ -68,6 +52,7 @@
     "vue-markdown": "^2.2.4"
   },
   "devDependencies": {
+    "@vue/test-utils": "1.0.0-beta.29",
     "autoprefixer": "^7.1.2",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "babel-loader": "^7.1.5",
@@ -152,15 +137,14 @@
     "webpack-dev-server": "^2.11.3",
     "webpack-merge": "^4.1.4"
   },
-  "engines": {
-    "node": ">= 6.0.0",
-    "npm": ">= 3.0.0"
-  },
   "browserslist": [
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
   ],
+  "bugs": {
+    "url": "https://github.com/GetScatter/ScatterDesktop/issues"
+  },
   "build": {
     "productName": "scatter",
     "appId": "com.get-scatter.server",
@@ -238,5 +222,23 @@
       "icon": "static/icons",
       "target": "AppImage"
     }
+  },
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "homepage": "https://get-scatter.com",
+  "keywords": [
+    "scatter",
+    "blockchain",
+    "signatures",
+    "eos",
+    "ethereum"
+  ],
+  "license": "MIT",
+  "main": "electron.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GetScatter/ScatterDesktop.git"
   }
 }

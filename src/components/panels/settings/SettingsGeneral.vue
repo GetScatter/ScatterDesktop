@@ -49,8 +49,8 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
 
-    import UpdateService from '../../../services/UpdateService';
-    import WindowService from '../../../services/WindowService';
+    import UpdateService from '../../../services/utility/UpdateService';
+    import WindowService from '../../../services/utility/WindowService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
 
     import {remote} from '../../../util/ElectronHelpers';

@@ -17,7 +17,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
     import {LANG} from '../../../localization/locales';
-    import LanguageService from "../../../services/LanguageService";
+    import LanguageService from "../../../services/utility/LanguageService";
 
     export default {
         data () {return {

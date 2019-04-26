@@ -27,7 +27,7 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
 
-    import BackupService from '../services/BackupService';
+    import BackupService from '../services/utility/BackupService';
     import {BACKUP_STRATEGIES} from '../models/Settings';
 
     export default {

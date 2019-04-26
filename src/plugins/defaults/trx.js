@@ -3,21 +3,18 @@ import * as Actions from '../../models/api/ApiActions';
 import * as PluginTypes from '../PluginTypes';
 import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
-
-import KeyPairService from '../../services/KeyPairService';
-import {store} from '../../store/store';
-
-import PopupService from '../../services/PopupService'
+import KeyPairService from '../../services/secure/KeyPairService';
+import PopupService from '../../services/utility/PopupService'
 import {Popup} from '../../models/popups/Popup'
-
 import TronWeb from 'tronweb';
 import * as utils from 'tronweb/src/utils/crypto';
 const ethUtil = require('ethereumjs-util');
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 import Token from "../../models/Token";
-import HardwareService from "../../services/HardwareService";
+import HardwareService from "../../services/secure/HardwareService";
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
+import StoreService from "../../services/utility/StoreService";
 
 let cachedInstances = {};
 const getCachedInstance = network => {
@@ -174,7 +171,7 @@ export default class TRX extends Plugin {
     async signerWithPopup(payload, account, rejector){
         return new Promise(async resolve => {
             payload.messages = await this.requestParser(payload);
-            payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+            payload.identityKey = StoreService.get().state.scatter.keychain.identities[0].publicKey;
             payload.participants = [account];
             payload.network = account.network();
             payload.origin = 'Scatter';

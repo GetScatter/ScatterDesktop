@@ -1,8 +1,7 @@
 import IdGenerator from "../util/IdGenerator";
 import PluginRepository from "../plugins/PluginRepository";
 import {Blockchains, BlockchainsArray} from "./Blockchains";
-import {store} from "../store/store";
-import BigNumber from "bignumber.js";
+import StoreService from "../services/utility/StoreService";
 
 export default class Token {
 
@@ -61,7 +60,7 @@ export default class Token {
     }
 
     network(){
-    	const networks = store.state.scatter.settings.networks;
+    	const networks = StoreService.get().state.scatter.settings.networks;
     	if(!this.chainId || !this.chainId.length) return networks.find(x => x.unique() === PluginRepository.plugin(this.blockchain).getEndorsedNetwork().unique());
     	return networks.find(x => x.blockchain === this.blockchain && x.chainId === this.chainId);
     }
@@ -79,13 +78,13 @@ export default class Token {
 
 	fiatBalance(withSymbol = true, price = null){
     	const unusableReplacement = this.uniqueWithChain().replace(`:${this.unusable}`, '');
-		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
-			price = price ? price : parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
-			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`;
+		if(StoreService.get().state.prices.hasOwnProperty(this.uniqueWithChain())){
+			price = price ? price : parseFloat(StoreService.get().state.prices[this.uniqueWithChain()][StoreService.get().getters.displayCurrency]);
+			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? StoreService.get().getters.displayCurrency : ''}`;
 		}
-		else if(this.unusable && store.state.prices.hasOwnProperty(unusableReplacement)){
-			price = price ? price : parseFloat(store.state.prices[unusableReplacement][store.getters.displayCurrency]);
-			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`;
+		else if(this.unusable && StoreService.get().state.prices.hasOwnProperty(unusableReplacement)){
+			price = price ? price : parseFloat(StoreService.get().state.prices[unusableReplacement][StoreService.get().getters.displayCurrency]);
+			return `${parseFloat(price * parseFloat(this.amount)).toFixed(4)} ${withSymbol ? StoreService.get().getters.displayCurrency : ''}`;
 		}
 
 		else {
@@ -94,20 +93,20 @@ export default class Token {
 	}
 
 	fiatPrice(withSymbol = true){
-		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
-			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
-			return `${parseFloat(price).toFixed(4)} ${withSymbol ? store.getters.displayCurrency : ''}`
+		if(StoreService.get().state.prices.hasOwnProperty(this.uniqueWithChain())){
+			const price = parseFloat(StoreService.get().state.prices[this.uniqueWithChain()][StoreService.get().getters.displayCurrency]);
+			return `${parseFloat(price).toFixed(4)} ${withSymbol ? StoreService.get().getters.displayCurrency : ''}`
 		} else {
 			return null;
 		}
 	}
 
 	baseTokenPrice(withSymbol = true){
-		if(store.state.prices.hasOwnProperty(this.uniqueWithChain())){
+		if(StoreService.get().state.prices.hasOwnProperty(this.uniqueWithChain())){
 			const systemToken = this.network().systemToken();
 			if(this.uniqueWithChain(false) === systemToken.uniqueWithChain(false)) return null;
-			const baseTokenPrice = parseFloat(store.state.prices[systemToken.uniqueWithChain()][store.getters.displayCurrency]);
-			const price = parseFloat(store.state.prices[this.uniqueWithChain()][store.getters.displayCurrency]);
+			const baseTokenPrice = parseFloat(StoreService.get().state.prices[systemToken.uniqueWithChain()][StoreService.get().getters.displayCurrency]);
+			const price = parseFloat(StoreService.get().state.prices[this.uniqueWithChain()][StoreService.get().getters.displayCurrency]);
 			return `${parseFloat(price/baseTokenPrice).toFixed(10)} ${withSymbol ? systemToken.symbol : ''}`
 		} else {
 			return null;
@@ -115,8 +114,8 @@ export default class Token {
 	}
 
 	totalBalance(){
-		if(store.getters.totalBalances.totals.hasOwnProperty(this.uniqueWithChain())){
-			return store.getters.totalBalances.totals[this.uniqueWithChain()];
+		if(StoreService.get().getters.totalBalances.totals.hasOwnProperty(this.uniqueWithChain())){
+			return StoreService.get().getters.totalBalances.totals[this.uniqueWithChain()];
 		} else {
 			return null;
 		}

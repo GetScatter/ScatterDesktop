@@ -3,7 +3,7 @@ import {Blockchains} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
 import Crypto from '../util/Crypto';
 import ExternalWallet from './hardware/ExternalWallet';
-import {store} from '../store/store';
+import StoreService from "../services/utility/StoreService";
 
 export default class Keypair {
 
@@ -39,7 +39,7 @@ export default class Keypair {
     }
 
     accounts(unique = false){
-        const accounts = store.state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique());
+        const accounts = StoreService.get().state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique());
 	    if(!unique) return accounts;
 	    return accounts.reduce((acc, account) => {
 		    if(!acc.find(x => account.network().unique() === x.network().unique()

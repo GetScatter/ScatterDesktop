@@ -149,16 +149,16 @@
 	import * as Actions from '../../../store/constants';
 	import TokenSelector from '../../../components/panels/TokenSelector';
 	import Recipient from '../../../components/panels/transfer/Recipient';
-	import ExchangeService from "../../../services/ExchangeService";
+	import ExchangeService from "../../../services/apis/ExchangeService";
 	import PluginRepository from "../../../plugins/PluginRepository";
 	import Account from "../../../models/Account";
-	import PopupService from "../../../services/PopupService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
-	import TransferService from "../../../services/TransferService";
-	import BalanceService from "../../../services/BalanceService";
+	import TransferService from "../../../services/blockchain/TransferService";
+	import BalanceService from "../../../services/blockchain/BalanceService";
 	import HistoricExchange from "../../../models/histories/HistoricExchange";
 	import ObjectHelpers from "../../../util/ObjectHelpers";
-	import TokenService from "../../../services/TokenService";
+	import TokenService from "../../../services/utility/TokenService";
 
 	export default {
 		props:['popin'],

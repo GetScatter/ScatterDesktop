@@ -13,7 +13,7 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import KeyPairService from '../../../../services/KeyPairService'
+	import KeyPairService from '../../../../services/secure/KeyPairService'
 	import Keypair from "../../../../models/Keypair";
 
 	let keyTimeout;

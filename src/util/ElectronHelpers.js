@@ -17,7 +17,7 @@ import IdGenerator from "./IdGenerator";
 
 let popupService;
 const PopupService = () => {
-    if(!popupService) popupService = require("../services/PopupService").default;
+    if(!popupService) popupService = require("../services/utility/PopupService").default;
     return popupService;
 }
 
