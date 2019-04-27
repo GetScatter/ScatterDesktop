@@ -1,3 +1,5 @@
+import * as Actions from '../../store/constants'
+
 import {RUNNING_TESTS} from "../../util/TestingHelper";
 let STORE;
 
@@ -13,6 +15,10 @@ export default class StoreService {
 
 	static get(){
 		return STORE;
+	}
+
+	static setWorking(working = true){
+		this.get().dispatch(Actions.SET_WORKING_SCREEN, working);
 	}
 
 }

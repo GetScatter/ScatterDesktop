@@ -56,7 +56,7 @@
             background:#fff;
             padding:10px;
             border-radius:2px;
-            border:1px solid $primary;
+            border:1px solid $blue;
             margin-top:2px;
             position: relative;
 
@@ -79,7 +79,7 @@
             .title {
                 font-size: 11px;
                 margin-bottom:5px;
-                color: $primary;
+                color: $blue;
                 font-weight: bold;
             }
 

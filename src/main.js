@@ -12,16 +12,12 @@ import WindowService from './services/utility/WindowService';
 ElectronHelpers.bindContextMenu();
 
 import MenuBar from './components/MenuBar.vue'
-import UserBar from './components/UserBar.vue'
 import ViewBase from './components/ViewBase.vue'
-import LinkApp from './views/popouts/LinkApp.vue'
-import TransferRequest from './views/popouts/TransferRequest.vue'
-import InputComponent from './components/reusable/InputComponent.vue'
-import ButtonComponent from './components/reusable/ButtonComponent.vue'
-import SelectComponent from './components/reusable/SelectComponent.vue'
-import SwitchComponent from './components/reusable/SwitchComponent.vue'
-import SliderComponent from './components/reusable/SliderComponent.vue'
-import BackBar from './components/reusable/BackBar.vue'
+import Button from './components/reusable/Button.vue'
+import Input from './components/reusable/Input.vue'
+import ActionBar from './components/reusable/ActionBar.vue'
+// import LinkApp from './views/popouts/LinkApp.vue'
+// import TransferRequest from './views/popouts/TransferRequest.vue'
 import StoreService from "./services/utility/StoreService";
 
 // f12 to open console from anywhere.
@@ -36,14 +32,11 @@ class Main {
 		const hash = location.hash.replace("#/", '');
 
 		const shared = [
-			{tag:'btn', vue:ButtonComponent},
-			{tag:'cin', vue:InputComponent},
-			{tag:'sel', vue:SelectComponent},
-			{tag:'swch', vue:SwitchComponent},
-			{tag:'back-bar', vue:BackBar},
+			{tag:'Button', vue:Button},
+			{tag:'Input', vue:Input},
+			{tag:'ActionBar', vue:ActionBar},
 
 			{tag:'menu-bar', vue:MenuBar},
-			{tag:'user-bar', vue:UserBar},
 			{tag:'view-base', vue:ViewBase},
 		];
 
@@ -53,8 +46,8 @@ class Main {
 			{tag:'transfer-request', vue:TransferRequest},
 		]
 		else fragments = [
-			{tag:'slider', vue:SliderComponent},
-			{tag:'qr-reader', vue:QrcodeReader},
+			// {tag:'slider', vue:SliderComponent},
+			// {tag:'qr-reader', vue:QrcodeReader},
 		]
 
 		const components = shared.concat(fragments);
@@ -66,7 +59,7 @@ class Main {
 		};
 
 		new VueInitializer(Routing.routes(), components, middleware, async (router, store) => {
-			StoreService.init();
+
 		});
 
 		// window.onerror = log => {

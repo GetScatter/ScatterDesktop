@@ -68,11 +68,10 @@
 
 	.menu-bar {
 		-webkit-app-region: drag !important;
-		background:$secondary;
-		background-image: $blue-grad;
+		background: $blue;
 		color:#fff;
-		height:80px;
-		line-height: 80px;
+		height:40px;
+		line-height: 40px;
 		width:100%;
 		text-align:center;
 		z-index: 9999999999;
@@ -86,12 +85,12 @@
 			position:absolute;
 			right:0;
 			top:0;
-			height:80px;
-			line-height: 80px;
+			height:40px;
+			line-height: 40px;
 			display:flex;
 			justify-content: center;
 			align-items: center;
-			padding:0 35px;
+			padding:0 10px;
 
 			$action:15px;
 

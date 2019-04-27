@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import {mapState} from 'vuex';
 import VTooltip from 'v-tooltip'
 import VueQrcodeReader from 'vue-qrcode-reader'
 import VueTour from 'vue-tour'
@@ -6,13 +7,13 @@ import VueTour from 'vue-tour'
 
 import VueRouter from 'vue-router'
 import {RouteNames, Routing} from './Routing';
-import {store} from '../store/store'
 import * as Actions from '../store/constants'
 import {blockchainName} from '../models/Blockchains'
 import {SETTINGS_OPTIONS} from '../models/Settings'
 import ElectronHelpers from '../util/ElectronHelpers'
 import {localized} from '../localization/locales'
 import LANG_KEYS from '../localization/keys'
+import StoreService from "../services/utility/StoreService";
 
 Vue.config.productionTip = false
 
@@ -28,11 +29,13 @@ export default class VueInitializer {
                 components,
                 middleware = () => {},
                 routerCallback = () => {}){
+	    StoreService.init();
+
         this.setupVuePlugins();
         this.registerComponents(components);
         router = this.setupRouting(routes, middleware);
 
-        store.dispatch(Actions.LOAD_SCATTER).then(async () => {
+        StoreService.get().dispatch(Actions.LOAD_SCATTER).then(async () => {
 
 
 
@@ -44,18 +47,18 @@ export default class VueInitializer {
 	                loadingReputation:false,
                     // now:0,
                 }},
-                mounted(){
-                    // setInterval(() => {
-                    //     this.now = +new Date();
-                    // }, 1000);
-                },
+	            computed:{
+		            ...mapState([
+		            	'working',
+		            ])
+	            },
                 methods: {
 	                blockchainName,
-	                locale:(key, args) => localized(key, args, store.getters.language),
+	                locale:(key, args) => localized(key, args, StoreService.get().getters.language),
 	                newKeypair(){ this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
 	                goToApps(){ this.openInBrowser('https://get-scatter.com/Apps') },
 	                openInBrowser(url){ ElectronHelpers.openLinkInBrowser(url); },
-	                setWorkingScreen(bool){ store.dispatch(Actions.SET_WORKING_SCREEN, bool); },
+	                setWorkingScreen(bool){ StoreService.get().dispatch(Actions.SET_WORKING_SCREEN, bool); },
 	                copyText(text){ ElectronHelpers.copy(text) },
 
 
@@ -88,7 +91,7 @@ export default class VueInitializer {
 
             this.setupVue(router);
 
-            routerCallback(router, store);
+            routerCallback(router, StoreService.get());
         });
 
         return router;
@@ -99,8 +102,8 @@ export default class VueInitializer {
         Vue.use(VTooltip, {
             defaultOffset:5
         });
-        Vue.use(VueQrcodeReader);
-        Vue.use(VueTour);
+        // Vue.use(VueQrcodeReader);
+        // Vue.use(VueTour);
     }
 
     registerComponents(components){
@@ -112,14 +115,14 @@ export default class VueInitializer {
     setupRouting(routes, middleware){
         const router = new VueRouter({routes});
         router.beforeEach((to, from, next) => {
-            store.dispatch(Actions.SET_SEARCH_TERMS, '');
-            return middleware(to, next, store)
+	        StoreService.get().dispatch(Actions.SET_SEARCH_TERMS, '');
+            return middleware(to, next, StoreService.get())
         });
         return router;
     }
 
     setupVue(router){
-        const app = new Vue({router, store});
+        const app = new Vue({router, store:StoreService.get()});
         app.$mount('#scatter');
 
         // This removes the browser console's ability to

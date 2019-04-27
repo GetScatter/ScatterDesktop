@@ -10,15 +10,12 @@
         <section v-else>
             <menu-bar></menu-bar>
 
-            <transition name="slide-up">
-                <user-bar v-if="route === routeNames.HOME"></user-bar>
-            </transition>
-
             <section class="app-content">
-
-                <transition :name="route === 'login' ? 'fade' : ''" mode="out-in">
-                    <router-view></router-view>
-                </transition>
+                <Sidebar v-if="unlocked" />
+                <section class="view-pane">
+                    <QuickActions v-if="showQuickActions" />
+                    <router-view class="router-view" :class="{'lowered':true, 'floated':unlocked}"></router-view>
+                </section>
 
                 <Processes />
             </section>
@@ -40,11 +37,15 @@
 
     import Processes from './Processes';
     import Popups from './Popups';
+    import Sidebar from './Sidebar';
+    import QuickActions from './QuickActions';
 
     export default {
     	components:{
 		    Popups,
-		    Processes
+		    Processes,
+            Sidebar,
+		    QuickActions
         },
         data(){ return {
             routeNames:RouteNames,
@@ -58,15 +59,20 @@
             ...mapGetters([
                 'unlocked',
             ]),
-            onboarding(){
-                return this.scatter && this.scatter.meta && !this.scatter.meta.acceptedTerms;
-            },
             isPopout(){
                 return this.$route.name === 'popout';
             },
             route(){
                 return this.$route.name
+            },
+            showQuickActions(){
+            	if(!this.unlocked) return false;
+            	switch(this.$route.name){
+                    case RouteNames.ITEMS: return false;
+                }
+            	return true;
             }
+
         },
         mounted(){
 
@@ -103,15 +109,11 @@
     }
 
     .app-content {
-        position:fixed;
-        overflow-y: auto;
-        overflow-x:hidden;
-        left: 0;
-        right: 0;
-        top: 80px;
-        bottom:0;
-        z-index: 1;
-        background: white;
+        height:$fullheight;
+        width:100%;
+        display:flex;
+        background:$white;
+        margin-top:40px;
     }
 
     .view-base {
@@ -120,6 +122,16 @@
         display: flex;
         flex-direction: column;
         flex: 1;
+    }
+
+    .view-pane {
+        flex:1;
+        position: relative;
+        overflow-y: auto;
+    }
+
+    .floated {
+        flex:1;
     }
 
 

@@ -44,7 +44,7 @@
       height:calc(100vh - 70px);
       width:20px;
       background:$secondary;
-      border-left:1px solid $primary;
+      border-left:1px solid $blue;
       display:flex;
       justify-content: center;
       align-items: center;
@@ -68,13 +68,13 @@
       font-size:11px;
       color:#fff;
       border-radius:4px;
-      border:1px solid $primary;
+      border:1px solid $blue;
       background:$secondary;
       display:inline-block;
       padding:3px 6px;
 
       span {
-        background:$primary;
+        background: $blue;
         padding:2px 5px;
         display: inline-block;
         margin-left:10px;

@@ -6,6 +6,7 @@ import RecurringService from "../blockchain/RecurringService";
 import PermissionService from "../apps/PermissionService";
 import RIDLService from "../apis/RIDLService";
 import StoreService from "./StoreService";
+import SocketService from "./SocketService";
 
 let initialized = false;
 
@@ -14,6 +15,7 @@ export default class SingletonService {
 	static async init(){
 		if(initialized) return true;
 		initialized = true;
+		await SocketService.initialize();
 		StoreService.get().dispatch(Actions.LOAD_HISTORY);
 		StoreService.get().dispatch(Actions.LOAD_LANGUAGE);
 		await RIDLService.init();

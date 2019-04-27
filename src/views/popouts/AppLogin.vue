@@ -346,7 +346,7 @@
                     &.blue {
                         background:$secondary;
                         background-image: $blue-grad;
-                        border:1px solid $primary;
+                        border:1px solid $blue;
                         color:#fff;
                     }
                 }
@@ -365,7 +365,7 @@
         cursor: pointer;
 
         &:hover {
-            color:$primary;
+            color: $blue;
         }
     }
 

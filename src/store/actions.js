@@ -60,14 +60,10 @@ export const actions = {
         return new Promise(async (resolve, reject) => {
             const scatter = await Scatter.create();
 
-            await SocketService.initialize();
-
             await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 
             dispatch(Actions.SET_SEED, password).then(mnemonic => {
                 dispatch(Actions.SET_SCATTER, scatter).then(_scatter => {
-
-                    PopupService.push(Popup.mnemonic(mnemonic));
                     resolve();
                 })
             })
@@ -76,19 +72,19 @@ export const actions = {
 
     [Actions.SET_SCATTER]:async ({commit, state}, scatter) => {
         return new Promise(async resolve => {
-	        const process = Process.savingData();
+	        // const process = Process.savingData();
 
             const seed = await ipcAsync('seed');
             const savable = AES.encrypt(scatter.savable(seed), seed);
             StorageService.setLocalScatter(savable);
-	        process.updateProgress(50);
+	        // process.updateProgress(50);
             StorageService.setScatter(savable).then(() => {
 	            BackupService.createAutoBackup()
             });
 
             commit(Actions.SET_SCATTER, scatter);
             resolve(scatter);
-	        process.updateProgress(100);
+	        // process.updateProgress(100);
         })
     },
 

@@ -68,7 +68,7 @@
     @import "../../../styles/variables";
 
     .description {
-        color:$primary;
+        color: $blue;
         text-align:center;
         font-size: 9px;
 

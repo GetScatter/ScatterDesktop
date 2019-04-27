@@ -64,7 +64,7 @@
 			.logo {
 				font-family: 'Grand Hotel', sans-serif;
 				font-size: 30px;
-				color:$primary;
+				color: $blue;
 			}
 
 			.reputation {

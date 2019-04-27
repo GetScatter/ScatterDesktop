@@ -147,7 +147,7 @@
 
         &.action {
           background:$white-gradient;
-          color:$primary;
+          color: $blue;
         }
 
         &:hover {
@@ -195,14 +195,14 @@
           &.txid {
             padding:7px 8px 5px;
             background:rgba(0,0,0,0.2);
-            border:1px solid $primary;
+            border:1px solid $blue;
             border-radius: 4px;
             display:table;
             margin-top:10px;
 
             &:hover {
               background:#fff;
-              color:$primary;
+              color: $blue;
             }
 
           }

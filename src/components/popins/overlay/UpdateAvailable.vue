@@ -68,7 +68,7 @@
 
     b {
         &.blue {
-            color:$primary;
+            color: $blue;
         }
     }
 
@@ -77,7 +77,7 @@
 
         &.link {
             text-decoration: underline;
-            color:$primary;
+            color: $blue;
             cursor: pointer;
 
             &:hover {

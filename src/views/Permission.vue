@@ -173,7 +173,7 @@
         border-radius:24px;
         font-size: 12px;
         font-weight:bold;
-        background:$primary;
+        background: $blue;
         color:#fff;
         overflow: hidden;
         margin-bottom:30px;
