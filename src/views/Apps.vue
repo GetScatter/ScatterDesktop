@@ -138,6 +138,10 @@
             linkedApps(){
                 return this.apps.map(({origin:applink}) => {
                 	return this.getAppData(applink);
+                }).filter(app => {
+                	return app.type === this.typeFilter || !this.typeFilter
+                }).filter(app => {
+                	return app.name.toLowerCase().indexOf(this.terms) > -1
                 });
             }
         },
