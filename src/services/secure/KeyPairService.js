@@ -13,6 +13,7 @@ import AccountService from "../blockchain/AccountService";
 import HardwareService from "./HardwareService";
 import {ipcAsync} from "../../util/ElectronHelpers";
 import StoreService from "../utility/StoreService";
+import IdGenerator from "../../util/IdGenerator";
 
 export default class KeyPairService {
 
@@ -80,6 +81,7 @@ export default class KeyPairService {
     }
 
     static async saveKeyPair(keypair){
+        if(!keypair.name.length) keypair.name = `Key-${IdGenerator.text(8)}`;
         const scatter = StoreService.get().state.scatter.clone();
         scatter.keychain.keypairs.push(Keypair.fromJson(keypair));
         return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);

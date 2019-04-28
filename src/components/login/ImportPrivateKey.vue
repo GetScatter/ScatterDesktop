@@ -21,6 +21,7 @@
 	import {mapGetters} from 'vuex';
 	import KeyPairService from "../../services/secure/KeyPairService";
 	import Keypair from "../../models/Keypair";
+	import AccountService from "../../services/blockchain/AccountService";
 
 	export default {
 		data(){return {
@@ -60,6 +61,7 @@
 				}
 				setTimeout(async () => {
 					await KeyPairService.saveKeyPair(keypair);
+					await AccountService.importAllAccounts(keypair);
 					this.$emit('next');
 					this.importing = false;
 				}, 1);

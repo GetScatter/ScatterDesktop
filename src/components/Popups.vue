@@ -1,10 +1,10 @@
 <template>
     <section>
 
-        <!--<section class="fader" :class="{'show':showFader}">-->
+        <section class="fader" :class="{'show':showFader}">
 
-            <!--<section class="pop-ins" v-for="popIn in popIns" style="position:absolute;">-->
-                <!--<section class="fullscreen" v-if="isFullscreen(popIn)">-->
+            <section class="pop-ins" v-for="popIn in popIns" style="position:absolute;">
+                <section class="fullscreen" v-if="isFullscreen(popIn)">
                     <!--<ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />-->
                     <!--<EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />-->
                     <!--<EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />-->
@@ -14,7 +14,7 @@
                     <!--<UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />-->
                     <!--<UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />-->
                     <!--<Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />-->
-                    <!--<RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />-->
+                    <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
                     <!--<CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />-->
                     <!--<RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />-->
                     <!--<DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />-->
@@ -26,21 +26,21 @@
                     <!--<Stabilize :popin="popIn" v-if="popIn.data.type === popupTypes.STABILIZE" />-->
                     <!--<History :popin="popIn" v-if="popIn.data.type === popupTypes.HISTORY" />-->
                     <!--<DisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />-->
-                <!--</section>-->
-                <!--<section class="overlay" :class="{'wide':isWide(popIn)}" v-else>-->
-                    <!--<figure class="bg" @click="clickedFader"></figure>-->
-                    <!--<section class="pop-in">-->
+                </section>
+                <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
+                    <figure class="bg" @click="clickedFader"></figure>
+                    <section class="pop-in-over">
                         <!--<RemoveApp :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_APP" />-->
                         <!--<EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />-->
                         <!--<Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />-->
                         <!--<Selector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />-->
                         <!--<TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />-->
                         <!--<UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />-->
-                    <!--</section>-->
-                <!--</section>-->
-            <!--</section>-->
+                    </section>
+                </section>
+            </section>
 
-        <!--</section>-->
+        </section>
 
 
         <section class="snackbar-holder" :class="{'has-snackbar':snackbars.length}">
@@ -48,10 +48,6 @@
                 <Snackbar :popup="popup" v-for="popup in snackbars" :key="popup.id" />
             </transition-group>
         </section>
-
-        <!--<section class="snackbar-holder">-->
-            <!--<snackbar :popup="{data:{props:{message:'This is just some message whatever', icon:'trash'}}}"></snackbar>-->
-        <!--</section>-->
 
 
 
@@ -78,7 +74,7 @@
     // import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
     // import Mnemonic from '../components/popins/fullscreen/Mnemonic'
     // import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
-    // import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
+    import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
     // import CheckHardware from "./popins/fullscreen/CheckHardware";
     // import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     // import DestroyScatter from "./popins/fullscreen/DestroyScatter";
@@ -116,7 +112,7 @@
 		    // UnlinkAccount,
 		    // UnlinkBlockchain,
 		    // Mnemonic,
-		    // RemoveKeypair,
+		    RemoveKeypair,
 		    // CheckHardware,
 		    // EnableWhitelist,
 		    // AccountSelector,
@@ -181,16 +177,16 @@
 
     .fullscreen {
         background:#fff;
-        height:calc(100vh - 80px);
+        height:calc(100vh - 40px);
         width:100%;
         position:fixed;
-        top:80px;
+        top:40px;
         bottom:0;
         left:0;
         right:0;
     }
 
-    .pop-in {
+    .pop-in-over {
         -webkit-app-region: no-drag;
         background:#fff;
         box-shadow:0 10px 50px rgba(0,0,0,0.1), 0 0 250px rgba(0,0,0,0.1);
@@ -207,17 +203,14 @@
         align-items: center;
 
         position:fixed;
-        top:80px;
+        top:40px;
         bottom:0;
         left:0;
         right:0;
-        //background:$light-grey;
         opacity:0;
         visibility: hidden;
-        transition: all 0.05s ease;
-        transition-property: opacity, visibility;
 
-        z-index:10000;
+        z-index:10001;
 
         &.show {
             opacity:1;

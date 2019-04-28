@@ -21,7 +21,7 @@
 		display:flex;
 		margin-top:-40px;
 		padding:0 40px;
-		margin-bottom:20px;
+		margin-bottom:19px;
 
 		.tab-name {
 			cursor: pointer;

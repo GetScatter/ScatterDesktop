@@ -1,0 +1,10 @@
+@keyframes pulsate {
+  0%, 100% { transform:scale(1); }
+  50% { transform:scale(1.2); }
+}
+
+.spin { animation: spin 1s ease infinite; }
+@keyframes spin {
+  0%, 100% { transform:rotateZ(0deg); }
+  50% { transform:rotateZ(360deg); }
+}

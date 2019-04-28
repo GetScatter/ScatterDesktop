@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import {mapState} from 'vuex';
+import {mapState, mapActions} from 'vuex';
 import VTooltip from 'v-tooltip'
 import VueQrcodeReader from 'vue-qrcode-reader'
 import VueTour from 'vue-tour'
@@ -14,6 +14,7 @@ import ElectronHelpers from '../util/ElectronHelpers'
 import {localized} from '../localization/locales'
 import LANG_KEYS from '../localization/keys'
 import StoreService from "../services/utility/StoreService";
+import AppsService from "../services/apps/AppsService";
 
 Vue.config.productionTip = false
 
@@ -56,11 +57,18 @@ export default class VueInitializer {
 	                blockchainName,
 	                locale:(key, args) => localized(key, args, StoreService.get().getters.language),
 	                newKeypair(){ this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
-	                goToApps(){ this.openInBrowser('https://get-scatter.com/Apps') },
+	                canOpenApp(applink){
+		                const data = AppsService.getAppData(applink);
+		                return data.url.length;
+	                },
+	                openApp(applink){
+		                const data = AppsService.getAppData(applink);
+		                if(data.url.length) this.openInBrowser(data.url);
+	                },
 	                openInBrowser(url){ ElectronHelpers.openLinkInBrowser(url); },
 	                setWorkingScreen(bool){ StoreService.get().dispatch(Actions.SET_WORKING_SCREEN, bool); },
 	                copyText(text){ ElectronHelpers.copy(text) },
-
+					setQuickActionsBack(bool){ this[Actions.SET_QUICK_BACK](bool); },
 
 
                     formatNumber(num, commaOnly = false){
@@ -86,6 +94,11 @@ export default class VueInitializer {
 		                const minutes = Math.trunc(milliseconds / 60) % 60;
                         return `${formatTimeNumber(minutes)}:${formatTimeNumber(seconds)}`;
                     },
+
+
+	                ...mapActions([
+	                	Actions.SET_QUICK_BACK
+	                ])
                 }
             })
 

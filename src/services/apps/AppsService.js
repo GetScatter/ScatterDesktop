@@ -59,6 +59,7 @@ export default class AppsService {
 
 	static getAppData(origin){
 		const emptyResult = {
+			applink:origin,
 			type:'',
 			name:origin,
 			description:'',

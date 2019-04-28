@@ -11,7 +11,7 @@
             <menu-bar></menu-bar>
 
             <section class="app-content">
-                <Sidebar v-if="unlocked" />
+                <Sidebar v-if="unlocked && onboarded" />
                 <section class="view-pane">
                     <QuickActions v-if="showQuickActions" />
                     <router-view class="router-view" :class="{'lowered':true, 'floated':unlocked}"></router-view>
@@ -59,6 +59,9 @@
             ...mapGetters([
                 'unlocked',
             ]),
+            onboarded(){
+                return this.unlocked && this.scatter.onboarded
+            },
             isPopout(){
                 return this.$route.name === 'popout';
             },
@@ -66,7 +69,7 @@
                 return this.$route.name
             },
             showQuickActions(){
-            	if(!this.unlocked) return false;
+            	if(!this.onboarded) return false;
             	switch(this.$route.name){
                     case RouteNames.ITEMS: return false;
                 }

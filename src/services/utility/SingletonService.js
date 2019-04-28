@@ -7,6 +7,7 @@ import PermissionService from "../apps/PermissionService";
 import RIDLService from "../apis/RIDLService";
 import StoreService from "./StoreService";
 import SocketService from "./SocketService";
+import AppsService from "../apps/AppsService";
 
 let initialized = false;
 
@@ -16,6 +17,7 @@ export default class SingletonService {
 		if(initialized) return true;
 		initialized = true;
 		await SocketService.initialize();
+		await AppsService.getApps();
 		StoreService.get().dispatch(Actions.LOAD_HISTORY);
 		StoreService.get().dispatch(Actions.LOAD_LANGUAGE);
 		await RIDLService.init();

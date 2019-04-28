@@ -12,15 +12,26 @@
 </template>
 
 <script>
-
+	import {mapActions, mapState} from 'vuex';
+	import * as Actions from '../../store/constants'
 	import {RouteNames} from "../../vue/Routing";
 
 	export default {
-
+		computed:{
+			...mapState([
+				'scatter'
+			]),
+		},
 		methods:{
 			async go(){
+				const scatter = this.scatter.clone();
+				scatter.onboarded = true;
+				this[Actions.SET_SCATTER](scatter);
 				this.$router.push({name:RouteNames.HOME})
-			}
+			},
+			...mapActions([
+				Actions.SET_SCATTER
+			])
 		}
 	}
 </script>

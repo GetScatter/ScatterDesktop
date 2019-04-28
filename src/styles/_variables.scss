@@ -12,12 +12,16 @@ $tiny:9px;
 $white:#fff;
 $border:#dfe0e1;
 $blue:#0799ff;
+$light-blue:#f3faff;
 $green: #00ff7e;
 $yellow: #ffd300;
 $silver:#7a7a7a;
+$grey: #c8c8c8;
+$red: #ff0707;
 
 // Gradients
 $blue-gradient:linear-gradient(170deg, #007fd7 0%,#00a8ff 100%);
+$blue-gradient-completer:linear-gradient(135deg, #0095ed 0%,#00a8ff 100%);;
 
 // Shadows
 $blue-shadow:rgba(7,155,232,0.23);
@@ -32,7 +36,6 @@ $blue-shadow:rgba(7,155,232,0.23);
 
 // DEPRECATED
 
-$red: #e74c3c;
 $dark-red: #c33434;
 $secondary: #0799ff;
 

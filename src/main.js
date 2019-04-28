@@ -1,5 +1,5 @@
 import './styles/styles.scss'
-import './styles/tour.scss';
+import './styles/animations.scss'
 
 // MUST BE LOADED FIRST
 import ElectronHelpers from './util/ElectronHelpers';
@@ -15,15 +15,22 @@ import MenuBar from './components/MenuBar.vue'
 import ViewBase from './components/ViewBase.vue'
 import Button from './components/reusable/Button.vue'
 import Input from './components/reusable/Input.vue'
+import Select from './components/reusable/Select.vue'
+import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
-// import LinkApp from './views/popouts/LinkApp.vue'
-// import TransferRequest from './views/popouts/TransferRequest.vue'
+import LinkApp from './views/popouts/LinkApp.vue'
+import TransferRequest from './views/popouts/TransferRequest.vue'
 import StoreService from "./services/utility/StoreService";
 
 // f12 to open console from anywhere.
-document.addEventListener("keydown", function (e) {
+document.addEventListener("keydown", e => {
 	if (e.which === 123) WindowService.openTools();
 });
+
+document.onmousedown= e => {
+	if( e.which === 2 ) e.preventDefault();
+	// TODO: Add CMD click logic prevention
+}
 
 class Main {
 
@@ -34,6 +41,8 @@ class Main {
 		const shared = [
 			{tag:'Button', vue:Button},
 			{tag:'Input', vue:Input},
+			{tag:'Select', vue:Select},
+			{tag:'SearchAndFilter', vue:SearchAndFilter},
 			{tag:'ActionBar', vue:ActionBar},
 
 			{tag:'menu-bar', vue:MenuBar},

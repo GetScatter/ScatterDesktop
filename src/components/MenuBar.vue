@@ -81,7 +81,7 @@
 		right:0;
 
 		.actions {
-			-webkit-app-region: drag;
+			-webkit-app-region: drag !important;
 			position:absolute;
 			right:0;
 			top:0;

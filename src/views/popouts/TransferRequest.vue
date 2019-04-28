@@ -30,9 +30,9 @@
                              :placeholder="parseFloat(1).toFixed(decimals)" />
                     </section>
 
-                    <SearchBar style="flex:1;" short="1"
-							   :placeholder="locale(langKeys.POPOUTS.TRANSFER.SearchPlaceholder)"
-							   v-on:terms="x => searchTerms = x" />
+                    <!--<SearchBar style="flex:1;" short="1"-->
+							   <!--:placeholder="locale(langKeys.POPOUTS.TRANSFER.SearchPlaceholder)"-->
+							   <!--v-on:terms="x => searchTerms = x" />-->
 
                     <section class="popout-list">
                         <FullWidthRow :items="validAccounts" popout="1" />
@@ -82,7 +82,7 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import PopOutHead from '../../components/popouts/PopOutHead';
 	import PopOutAction from '../../components/popouts/PopOutAction';
-	import SearchBar from '../../components/reusable/SearchBar';
+	// import SearchBar from '../../components/reusable/SearchBar';
 	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import Network from "../../models/Network";
@@ -101,7 +101,7 @@
 			PopOutHead,
 			PopOutAction,
 			FullWidthRow,
-			SearchBar,
+			// SearchBar,
 		},
 		data () {return {
 			searchTerms:'',

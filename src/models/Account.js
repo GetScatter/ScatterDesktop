@@ -45,6 +45,10 @@ export default class Account {
             .sort((a,b) => a.authority.localeCompare(b.authority));
     }
 
+    hasDangerousAuthority(){
+    	return this.authorities().find(x => x.authority === 'owner');
+    }
+
     static placeholder(){ return new Account(); }
     static fromJson(json){ return Object.assign(this.placeholder(), json); }
     unique(){ return this.keypairUnique + this.networkUnique + this.name + this.authority + this.publicKey; }
@@ -91,6 +95,6 @@ export default class Account {
 	    return this.tokens().reduce((acc, x) => {
 	    	acc += x.fiatBalance(false) ? parseFloat(x.fiatBalance(false)) : 0;
 		    return acc;
-	    }, 0)
+	    }, 0).toFixed(2)
     }
 }

@@ -14,9 +14,11 @@
 // const Keypair = () => import('../views/Keypair')
 
 const Login = () => import('../views/Login')
-const Home = () => import('../views/Home')
+const Home = () => import('../views/Apps')
+const App = () => import('../views/App')
 const Wallet = () => import('../views/Wallet')
 const Items = () => import('../views/Items')
+const ImportKey = () => import('../views/ImportKey')
 
 
 
@@ -25,6 +27,11 @@ export const RouteNames = {
     HOME:'home',
     WALLET:'wallet',
     ITEMS:'items',
+
+
+    APP:'app',
+    IMPORT_KEY:'importKey',
+
     // NEW_KEYPAIR:'newKeypair',
     // KEYPAIR:'keypair',
     // IDENTITY:'identity',
@@ -45,11 +52,16 @@ const RouteViews = {
     [RouteNames.HOME]:Home,
     [RouteNames.WALLET]:Wallet,
     [RouteNames.ITEMS]:Items,
+
+
+    [RouteNames.APP]:App,
+    [RouteNames.IMPORT_KEY]:ImportKey,
     // [RouteNames.POP_OUT]:PopOut,
 };
 
 const RoutePaths = {
 	[RouteNames.HOME]: '/',
+	[RouteNames.APP]: '/:applink',
 	// [RouteNames.KEYPAIR]: '/keypair/:id',
 	// [RouteNames.PERMISSION]: '/permission/:origin',
 	// [RouteNames.SETTINGS]: '/settings/:panel',

@@ -49,6 +49,12 @@ export default class Keypair {
 
     }
 
+    enabledKeys(){
+        return this.blockchains.map(blockchain => {
+            return this.publicKeys.find(x => x.blockchain === blockchain);
+        })
+    }
+
     unique(){ return this.id; }
     clone(){ return Keypair.fromJson(JSON.parse(JSON.stringify(this))) }
 

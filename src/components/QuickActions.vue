@@ -1,13 +1,18 @@
 <template>
 	<section class="quick-actions">
-		<section class="left">
+		<section class="left" v-if="!quickBack">
 			<section class="fiat">
-				<span class="balance">$1,2345.20</span>
-				<Refresh class="refresh" />
+				<span class="balance">{{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}</span>
+				<Refresh class="refresh" :class="{'spin':loadingBalances}" @click.native="refreshTokens" />
 			</section>
-			<section class="token">
+			<section class="token" v-if="displayToken">
 				<i class="symbol token-eos-eos"></i>
-				<span class="balance">$1,2345.20</span>
+				<span class="balance">{{formatNumber(totalTokenBalance.amount, true)}} {{totalTokenBalance.symbol}}</span>
+			</section>
+		</section>
+		<section class="left" v-if="quickBack">
+			<section class="quick-back" @click="goBack">
+				<i class="icon-left-small"></i>
 			</section>
 		</section>
 
@@ -29,10 +34,13 @@
 </template>
 
 <script>
+	import {mapGetters, mapState} from 'vuex';
 	import Send from './svgs/quick-actions/Send';
 	import Refresh from './svgs/quick-actions/Refresh';
 	import Exchange from './svgs/quick-actions/Exchange';
 	import Receive from './svgs/quick-actions/Receive';
+	import PriceService from "../services/apis/PriceService";
+	import BalanceService from "../services/blockchain/BalanceService";
 
 	export default {
 		components:{
@@ -40,6 +48,50 @@
 			Refresh,
 			Exchange,
 			Receive
+		},
+		data(){return {
+			loadingBalances:false,
+		}},
+		computed:{
+			...mapState([
+				'scatter',
+				'balances',
+				'prices',
+				'history',
+				'quickBack',
+			]),
+			...mapGetters([
+				'keypairs',
+				'accounts',
+				'totalBalances',
+				'displayToken',
+				'displayCurrency',
+			]),
+			totalBalance(){
+				const totals = this.totalBalances.totals;
+				return PriceService.getTotal(totals);
+			},
+			totalTokenBalance(){
+				const totals = this.totalBalances.totals;
+				return PriceService.getTotal(totals, null, false, this.displayToken);
+			}
+		},
+		mounted(){
+			this.refreshTokens();
+		},
+		methods:{
+			async refreshTokens(force = true){
+				if(!force && Object.keys(this.balances).length) return;
+				if(this.loadingBalances) return;
+				this.loadingBalances = true;
+				await BalanceService.loadAllBalances(true);
+				await PriceService.getAll();
+				this.loadingBalances = false;
+			},
+			goBack(){
+				this.setQuickActionsBack(false);
+				this.$router.back()
+			}
 		}
 
 	}
@@ -66,6 +118,21 @@
 			display:flex;
 		}
 
+		.quick-back {
+			font-size: 48px;
+			line-height:0;
+			cursor: pointer;
+			display:inline-block;
+
+			i {
+				&:before {
+					padding:0;
+					margin:0;
+				}
+			}
+
+		}
+
 		.fiat {
 			display:flex;
 			align-items: center;
@@ -74,6 +141,7 @@
 				font-size: 24px;
 				font-weight: bold;
 			}
+
 			.refresh {
 				cursor: pointer;
 				font-size: 24px;
