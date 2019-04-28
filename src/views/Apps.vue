@@ -36,7 +36,7 @@
         <section v-if="state === STATES.MINE">
             <SearchAndFilter v-on:terms="x => terms = x" :filters="filters" />
 
-            <section class="scroller">
+            <section class="scroller with-search">
                 <section class="linked-apps">
                     <section class="app" v-for="app in linkedApps">
                         <figure class="image">
@@ -194,6 +194,10 @@
             position: relative;
             height:calc(100vh - 220px);
             overflow-y:scroll;
+
+            &.with-search {
+                height:calc(100vh - 290px);
+            }
 
             .blue-bg {
                 position: absolute;
