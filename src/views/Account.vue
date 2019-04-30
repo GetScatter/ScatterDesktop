@@ -51,7 +51,7 @@
                 <section class="action" :key="action.id" v-for="action in accountActions">
                     <figure class="icon" :class="`${action.icon} ${action.isDangerous ? ' red' : ''}`"></figure>
                     <figure class="name">{{action.title}}</figure>
-                    <Button :text="action.buttonText" @click.native="action.onclick" />
+                    <Button :red="action.isDangerous" :text="action.buttonText" @click.native="action.onclick" />
                 </section>
             </section>
         </section>
@@ -136,10 +136,10 @@
 		        }
 	        },
 	        async moderateResource(resource){
-		        // if(await ResourceService.moderateResource(resource, this.account)){
-		        //     this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:await ResourceService.getResourcesFor(this.account)});
-		        //     await BalanceService.loadBalancesFor(this.account);
-		        // }
+		        if(await ResourceService.moderateResource(resource, this.account)){
+		            this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:await ResourceService.getResourcesFor(this.account)});
+		            await BalanceService.loadBalancesFor(this.account);
+		        }
 	        },
 	        copyAuthKey(account){
 	            ElectronHelpers.copy(account.publicKey);
@@ -269,6 +269,8 @@
 
             .actions {
                 padding:30px;
+                height:calc(100vh - 590px);
+                overflow-y:auto;
 
                 .action {
                     display:flex;

@@ -1,12 +1,12 @@
 <template>
-	<button :class="{'blue':blue, 'red':red}" @click="click ? click() : ()=>{}">
+	<button :disabled="disabled" :class="{'blue':blue, 'red':red}" @click="click ? click() : ()=>{}">
 		{{text}}
 	</button>
 </template>
 
 <script>
 	export default {
-		props:['text','click', 'blue', 'red']
+		props:['text','click', 'blue', 'red', 'disabled']
 	}
 </script>
 

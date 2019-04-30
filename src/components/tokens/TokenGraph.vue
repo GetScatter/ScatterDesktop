@@ -23,17 +23,11 @@
 		}},
 		computed:{
 			...mapState([
-				'priceData',
 				'prices',
 			]),
 			...mapGetters([
 				'displayCurrency',
 			]),
-			totalBalance(){
-				return {
-					amount:'1.0000 EOS',
-				}
-			}
 		},
 		mounted(){
 			this.init();
@@ -47,20 +41,10 @@
 				this[Actions.SET_PRICE_DATA]({prices, yesterday, today});
 				this.setupGraph();
 			},
-			getTotaled(){
-				let totaled = [];
-				Object.keys(this.priceData.yesterday).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
-					totaled.push({hour, data:this.priceData.yesterday[hour], date:dateId(1)}));
-				Object.keys(this.priceData.today).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
-					totaled.push({hour, data:this.priceData.today[hour], date:dateId()}));
-				totaled = totaled.slice(totaled.length-(totaled.length > 24 ? 24 : totaled.length), totaled.length);
-				return totaled;
-			},
 			async setupGraph(){
 				try {
-					const labels = [];
 					const values = [];
-					let totaled = this.getTotaled();
+					let totaled = this.getTokensTotaled();
 					const onlyShowingSystemAndUntouchable = (() => {
 						if(this.balances.length !== 2) return false;
 						const tokenUnique = this.balances[0].uniqueWithChain();
@@ -68,35 +52,26 @@
 					})();
 					totaled.map(({hour, data, date}, i) => {
 						[date, hour] = utcToLocal(date, hour);
-						const label = `${hour}:00`;
 
 						let total;
-
 						if(this.balances.length === 1 || onlyShowingSystemAndUntouchable){
 							let tokenUnique = this.balances[0].uniqueWithChain(false);
-							total = (data[tokenUnique] / this.prices[tokenUnique].USD) * this.prices[tokenUnique][this.displayCurrency];
+							if(!this.prices[tokenUnique]) return;
+							total = (data[tokenUnique] / this.prices[tokenUnique].USD) * this.priceData.prices[tokenUnique][this.displayCurrency];
 						} else {
 							total = this.balances.reduce((acc,balance) => {
 								const priceData = data[balance.uniqueWithChain()];
 								if(!priceData) return acc;
-								acc += parseFloat(balance.fiatBalance(false, priceData * this.priceData.prices[this.displayCurrency]));
+
+								const parsed = parseFloat(balance.fiatBalance(false, priceData * this.priceData.prices[this.displayCurrency]));
+								if(isNaN(parsed)) return acc;
+								acc += parsed;
 								return acc;
 							}, 0);
 						}
 
-						// let total = this.balances.reduce((acc,balance) => {
-						// 	const priceData = data[balance.uniqueWithChain()];
-						// 	if(!priceData) return acc;
-						// 	acc += parseFloat(balance.fiatBalance(false, priceData * this.priceData.prices[this.displayCurrency]));
-						// 	return acc;
-						// }, 0);
-						values.push({value:total, meta:`${date} ${label}`});
+						values.push({value:total, meta:`${date} ${`${hour}:00`}`});
 					})
-
-					if(this.balances.length !== 1 && !onlyShowingSystemAndUntouchable){
-						values.pop();
-						values.push({value:this.totalBalance.amount, meta:'Now'});
-					}
 
 					const CHART_OPTIONS = {
 						showArea:true,
@@ -105,26 +80,18 @@
 						chartPadding: { top: 50, right: -20, bottom: -20, left: 0 },
 						fullWidth:true,
 						axisX: { showGrid: true, showLabel: false, },
-						axisY: { showGrid:false, scaleMinSpace:0, showLabel: false, offset: 0, position: 'start', labelInterpolationFnc: n => this.formatNumber(n, n < 100000) },
+						axisY: { showGrid:true, scaleMinSpace:0, showLabel: false, offset: 0, position: 'start', labelInterpolationFnc: n => this.formatNumber(n, n < 100000) },
 					};
 
 					if(!this.chart){
 						this.chart = new Chartist.Line('.chart', {
-							labels,
 							series: [values]
 						}, CHART_OPTIONS);
 						this.chart.on('draw', data => {
 							const toggleTooltip = (show = true) => {
 								let parsed = parseFloat(data.value.y);
 								if(this.balances.length !== 1) parsed = parsed.toFixed(2);
-								// TODO:
 								this.graphValue = show ? `${data.meta} -- ${this.formatNumber(parsed, true)}` : null;
-							}
-							if (data.type === 'label') {
-								let labelCount = data.axis.ticks.length
-								if ((data.index + 1) === labelCount) {
-									data.element._node.childNodes[0].classList.add('the-last-of-the-labels')
-								}
 							}
 							if (data.type === "point") {
 								data.element._node.addEventListener("mouseenter", e => toggleTooltip())
@@ -148,7 +115,6 @@
 						});
 					} else {
 						this.chart.update({
-							labels,
 							series:[values]
 						})
 					}

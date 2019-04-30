@@ -11,8 +11,8 @@
 					<figure class="amount">{{token.amount}} {{token.symbol}}</figure>
 					<section class="row">
 						<figure class="unusable" v-if="token.unusable">{{token.unusable}}</figure>
-						<figure class="change" v-if="!token.unusable">+0.20%</figure>
-						<figure class="fiat">{{token.fiatBalance()}}</figure>
+						<figure class="change" v-if="!token.unusable"><b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></figure>
+						<figure class="fiat">{{token.fiatBalance()}} <span v-if="token.fiatPrice()">({{token.fiatPrice()}})</span></figure>
 					</section>
 				</section>
 
@@ -33,16 +33,22 @@
 			terms:'',
 		}},
 		computed:{
+			...mapState([
+
+			]),
 			...mapGetters([
 				'networkTokens',
 			]),
 			sortedBalances(){
 				return this.balances.filter(token => {
 					if(!this.terms.length) return true;
+					if(this.terms === '-') return this.change(token) && !this.change(token).plus && token.fiatBalance(false);
+					if(this.terms === '+') return this.change(token) && this.change(token).plus && token.fiatBalance(false);
 					if(this.terms.indexOf('::') > -1) return `${token.contract.toLowerCase()}::${token.symbol.toLowerCase()}` === this.terms;
 					if(isNaN(this.terms)) return token.symbol.toLowerCase().indexOf(this.terms) > -1 || token.contract.toLowerCase().indexOf(this.terms) > -1;
 					return token.amount >= parseFloat(this.terms);
 				}).sort((a,b) => {
+					if(this.terms === '+' || this.terms === '-') return this.change(b, true) - this.change(a, true);
 					const systemToken = !this.account ? null : this.account.network().systemToken().uniqueWithChain();
 					const system = systemToken === b.uniqueWithChain() ? 1 : systemToken === a.uniqueWithChain() ? -1 : 0;
 					const untouchable = this.account && !!b.unusable ? 1 : this.account && !!a.unusable ? -1 : 0;
@@ -51,6 +57,23 @@
 					return isSelfSystem || system || untouchable || (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);
 				})
 			}
+		},
+		methods:{
+			change(token, numOnly = false){
+				const dummy = {plus:false, perc:'0%'};
+				if(!this.priceData || !this.priceData.hasOwnProperty('today')) return dummy;
+				if(token.unusable) return dummy;
+				const hour = this.priceData.today.latest;
+				const totaled = this.getTokensTotaled();
+				const latest = totaled[totaled.length-1] ? totaled[totaled.length-1].data : null;
+				const earliest = totaled[0] ? totaled[0].data : null;
+				if(!latest || !earliest || !latest[token.uniqueWithChain()] || !earliest[token.uniqueWithChain()]) return '--';
+				const diff = earliest[token.uniqueWithChain()] - latest[token.uniqueWithChain()];
+				const change = (diff / earliest[token.uniqueWithChain()]) * 100;
+				if(numOnly) return Math.abs(parseFloat(change).toFixed(2));
+				const symbol = change > 0 ? '-' : '+';
+				return {plus:change <= 0, perc:`${symbol}${Math.abs(parseFloat(change).toFixed(2))}%`};
+			},
 		},
 		watch:{
 			['terms'](){
@@ -76,7 +99,9 @@
 
 			.token {
 				display:flex;
-				margin-bottom:20px;
+				margin-bottom:15px;
+				border-bottom:1px solid rgba(0,0,0,0.04);
+				padding-bottom:10px;
 
 				.symbol {
 					width:45px;
@@ -127,6 +152,7 @@
 
 					.row {
 						display:flex;
+						justify-content: space-between;
 						margin-top:3px;
 					}
 
@@ -138,6 +164,7 @@
 					.fiat {
 						font-size: $small;
 						margin-left:10px;
+						color:$silver;
 					}
 
 					.unusable {

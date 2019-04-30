@@ -3,13 +3,13 @@
 
         <section class="fader" :class="{'show':showFader}">
 
-            <section class="pop-ins" v-for="popIn in popIns" style="position:absolute;">
+            <section class="pop-ins" v-for="popIn in popIns">
                 <section class="fullscreen" v-if="isFullscreen(popIn)">
-                    <!--<ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />-->
-                    <!--<EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />-->
+                    <ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />
                     <!--<EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />-->
-                    <!--<EosModerateRam :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_RAM" />-->
-                    <!--<EosModerateCpuNet :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_CPU_NET" />-->
+                    <EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />
+                    <EosModerateRam :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_RAM" />
+                    <EosModerateCpuNet :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_CPU_NET" />
                     <!--<EosCreateAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CREATE_ACCOUNT" />-->
                     <!--<UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />-->
                     <!--<UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />-->
@@ -66,10 +66,10 @@
     // import Prompt from './popins/overlay/Prompt.vue'
     //
     // import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
-    // import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
-    // import EosModerateRam from './popins/fullscreen/EosModerateRam'
-    // import EosModerateCpuNet from './popins/fullscreen/EosModerateCpuNet'
-    // import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
+    import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
+    import EosModerateRam from './popins/fullscreen/EosModerateRam'
+    import EosModerateCpuNet from './popins/fullscreen/EosModerateCpuNet'
+    import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
     // import UnlinkAccount from '../components/popins/fullscreen/UnlinkAccount'
     // import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
     // import Mnemonic from '../components/popins/fullscreen/Mnemonic'
@@ -103,11 +103,11 @@
             // // FULLSCREEN
 		    // DestroyScatter,
 		    // RemoveLocation,
-		    // ConfirmPassword,
-		    // EosChangePermissions,
+		    ConfirmPassword,
+		    EosChangePermissions,
 		    // EosProxyVotes,
-		    // EosModerateRam,
-		    // EosModerateCpuNet,
+		    EosModerateRam,
+		    EosModerateCpuNet,
 		    // EosCreateAccount,
 		    // UnlinkAccount,
 		    // UnlinkBlockchain,
@@ -184,6 +184,9 @@
         bottom:0;
         left:0;
         right:0;
+        display:flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .pop-in-over {

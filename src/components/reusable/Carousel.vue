@@ -95,6 +95,8 @@
 		position: relative;
 		height:300px;
 		width:100%;
+		max-width:860px;
+		margin:0 auto;
 		margin-top:1px;
 
 		.go-right, .go-left {

@@ -1,13 +1,14 @@
 <template>
-	<section class="select" :class="{'open':open, 'disabled':disabled}">
+	<section class="select" :class="{'bordered':bordered, 'open':open, 'disabled':disabled}">
 		<input ref="terms" placeholder="Search..." v-model="optionsTerms" />
-		<section class="selected" @click="toggle">
-			<figure class="text">{{parse(selected)}}</figure>
+		<section class="selected" @click="toggle" :class="{'bordered':bordered}">
+			<figure class="text">{{parse(selectedOption)}}</figure>
 			<figure class="chevron icon-down-open-big"></figure>
 		</section>
 		<section class="options">
 			<figure class="option" :class="{'hovered':hovered === index}" @click="select(item)" @mouseover="hovered = index" v-for="(item, index) in filteredOptions">
 				{{parse(item)}}
+				<span class="subtitle" v-if="subparser">{{subparser(item)}}</span>
 			</figure>
 			<figure class="option" v-if="!filteredOptions.length">
 				No results
@@ -18,7 +19,7 @@
 
 <script>
 	export default {
-		props:['selected', 'disabled', 'options', 'parser'],
+		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'bordered'],
 		data(){return {
 			open:false,
 			optionsTerms:'',
@@ -38,6 +39,9 @@
 					const parsed = this.parse(x);
 					return !parsed || parsed.toLowerCase().indexOf(this.optionsTerms.toLowerCase()) > -1
 				});
+			},
+			selectedOption(){
+				return this.selected || this.placeholder || this.options[0];
 			}
 		},
 		methods:{
@@ -74,7 +78,8 @@
 				},1)
 			},
 			parse(item){
-				if(typeof item === 'string' && !this.parser) return item;
+				if(typeof item === 'string') return item;
+				if(typeof this.parser !== 'function') return item;
 				return this.parser(item);
 			},
 			select(item){
@@ -105,6 +110,7 @@
 		.selected {
 			cursor: pointer;
 			height:24px;
+			width:100%;
 			line-height:24px;
 			border-radius:$radius;
 			padding:0 10px;
@@ -186,6 +192,25 @@
 
 				.chevron {
 					transform:rotateZ(180deg) translateY(-1px);
+				}
+
+				&.bordered {
+					.chevron {
+						transform:rotateZ(180deg) translateY(4px);
+					}
+				}
+			}
+		}
+
+		&.bordered {
+			border:1px solid $border;
+			border-radius:$radius;
+			padding:6px 0;
+
+			.selected {
+				.chevron {
+					top:6px;
+					right:10px;
 				}
 			}
 		}

@@ -91,36 +91,6 @@
 		width:100%;
 		margin-bottom:20px;
 
-		label {
-			font-size: 14px;
-			color:#7899a6;
-			font-weight: bold;
-			margin-bottom:8px;
-			display: flex;
-
-			span {
-				flex:2;
-
-				&:nth-child(2) {
-					flex:1;
-					cursor: pointer;
-					text-align:right;
-					text-decoration: underline;
-
-					&:hover {
-						color:$blue;
-					}
-				}
-			}
-
-			&.error {
-				color:$red;
-				animation: blink 1s ease infinite;
-			}
-
-
-		}
-
 		.copy, .dynamic-button {
 			cursor: pointer;
 			position: absolute;

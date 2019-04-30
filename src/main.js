@@ -16,6 +16,7 @@ import ViewBase from './components/ViewBase.vue'
 import Button from './components/reusable/Button.vue'
 import Input from './components/reusable/Input.vue'
 import Select from './components/reusable/Select.vue'
+import Slider from './components/reusable/Slider.vue'
 import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
@@ -42,6 +43,7 @@ class Main {
 			{tag:'Button', vue:Button},
 			{tag:'Input', vue:Input},
 			{tag:'Select', vue:Select},
+			{tag:'Slider', vue:Slider},
 			{tag:'SearchAndFilter', vue:SearchAndFilter},
 			{tag:'ActionBar', vue:ActionBar},
 

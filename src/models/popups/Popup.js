@@ -211,6 +211,7 @@ export const PopupTypes = {
     ENTER_PIN:'enterPIN',
     REMOVE_APP:'removeApp',
     UPDATE_AVAILABLE:'updateAvailable',
+	TX_SUCCESS:'txSuccess',
 
     // FULLSCREEN
     VERIFY_PASSWORD:'verifyPassword',
@@ -235,32 +236,16 @@ export const PopupTypes = {
 	HISTORY:'history',
 	DISPLAY_TOKEN:'displayToken',
 
-    TX_SUCCESS:'txSuccess',
 };
 
 export const isFullscreen = popup => {
-    return [
-        PopupTypes.VERIFY_PASSWORD,
-        PopupTypes.EOS_CHANGE_PERMISSIONS,
-        PopupTypes.EOS_PROXY_VOTES,
-        PopupTypes.UNLINK_ACCOUNT,
-        PopupTypes.UNLINK_BLOCKCHAIN,
-        PopupTypes.REMOVE_KEYPAIR,
-        PopupTypes.EOS_MODERATE_RAM,
-        PopupTypes.EOS_MODERATE_CPU_NET,
-        PopupTypes.EOS_CREATE_ACCOUNT,
-        PopupTypes.MNEMONIC,
-        PopupTypes.REMOVE_LOCATION,
-        PopupTypes.DESTROY_SCATTER,
-        PopupTypes.CHECK_HARDWARE,
-        PopupTypes.ENABLE_WHITELIST,
-        PopupTypes.SELECT_ACCOUNT,
-        PopupTypes.CONFIRM_EXCHANGE,
-        PopupTypes.CONFIRM_TRANSFER,
-        PopupTypes.EXCHANGE,
-        PopupTypes.STABILIZE,
-        PopupTypes.HISTORY,
-        PopupTypes.DISPLAY_TOKEN,
+    return ![
+        PopupTypes.PROMPT,
+        PopupTypes.SELECTOR,
+        PopupTypes.ENTER_PIN,
+        PopupTypes.REMOVE_APP,
+        PopupTypes.UPDATE_AVAILABLE,
+        PopupTypes.TX_SUCCESS,
     ].includes(popup.data.type);
 
 

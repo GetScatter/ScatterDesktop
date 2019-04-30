@@ -15,6 +15,7 @@ import {localized} from '../localization/locales'
 import LANG_KEYS from '../localization/keys'
 import StoreService from "../services/utility/StoreService";
 import AppsService from "../services/apps/AppsService";
+import {dateId} from "../util/DateHelpers";
 
 Vue.config.productionTip = false
 
@@ -51,6 +52,7 @@ export default class VueInitializer {
 	            computed:{
 		            ...mapState([
 		            	'working',
+			            'priceData',
 		            ])
 	            },
                 methods: {
@@ -61,6 +63,15 @@ export default class VueInitializer {
 	                canOpenApp(applink){
 		                const data = AppsService.getAppData(applink);
 		                return data.url.length;
+	                },
+	                getTokensTotaled(){
+		                let totaled = [];
+		                Object.keys(this.priceData.yesterday).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
+			                totaled.push({hour, data:this.priceData.yesterday[hour], date:dateId(1)}));
+		                Object.keys(this.priceData.today).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
+			                totaled.push({hour, data:this.priceData.today[hour], date:dateId()}));
+		                totaled = totaled.slice(totaled.length-(totaled.length > 24 ? 24 : totaled.length), totaled.length);
+		                return totaled;
 	                },
 	                openApp(applink){
 		                const data = AppsService.getAppData(applink);

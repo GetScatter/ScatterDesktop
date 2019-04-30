@@ -1,6 +1,11 @@
 @import "./variables";
 
 .pop-ins {
+  position: absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
 
   .pop-in {
     display:flex;
@@ -8,12 +13,26 @@
     align-items: center;
     height:$fullheight;
     text-align:center;
+    width:100%;
 
     .icon {
       width:120px;
       height:120px;
       margin:0 auto;
       margin-bottom:30px;
+
+      &.font {
+        width:90px;
+        height:90px;
+        font-size: 64px;
+        box-shadow:0 1px 2px $blue-shadow, 0 8px 20px $blue-shadow;
+        border-radius:50%;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        color:$blue;
+        margin-bottom:20px;
+      }
     }
 
     .title {
