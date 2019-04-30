@@ -17,6 +17,7 @@ import {ipcAsync} from "../util/ElectronHelpers";
 import Process from "../models/Process";
 
 export const actions = {
+    [Actions.SET_PRICE_DATA]:({commit}, x) => commit(Actions.SET_PRICE_DATA, x),
     [Actions.SET_QUICK_BACK]:({commit}, x) => commit(Actions.SET_QUICK_BACK, x),
     [Actions.HIDE_BACK_BTN]:({commit}, x) => commit(Actions.HIDE_BACK_BTN, x),
     [Actions.ADD_RESOURCES]:({commit}, x) => commit(Actions.ADD_RESOURCES, x),

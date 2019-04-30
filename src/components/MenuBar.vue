@@ -67,7 +67,8 @@
 	@import '../styles/variables';
 
 	.menu-bar {
-		-webkit-app-region: drag !important;
+		-webkit-app-region: drag;
+		-webkit-user-select: none;
 		background: $blue;
 		color:#fff;
 		height:40px;
@@ -81,7 +82,8 @@
 		right:0;
 
 		.actions {
-			-webkit-app-region: drag !important;
+			-webkit-app-region: drag;
+			-webkit-user-select: none;
 			position:absolute;
 			right:0;
 			top:0;

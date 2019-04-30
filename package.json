@@ -2,7 +2,7 @@
   "name": "scatter",
   "version": "10.2.0",
   "private": true,
-  "description": "Scatter Desktop Companion",
+  "buttonText": "Scatter Desktop Companion",
   "author": {
     "name": "GetScatter",
     "email": "support@get-scatter.com",

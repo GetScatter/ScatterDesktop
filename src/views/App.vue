@@ -1,6 +1,6 @@
 <template>
     <section class="app">
-        <PanelTabs :tabs="tabs" :state="applink" v-on:selected="$router.back()" />
+        <PanelTabs :tabs="tabs" :state="applink" v-on:selected="back" />
 
         <section class="scroller">
             <figure class="blue-bg"></figure>

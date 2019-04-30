@@ -39,3 +39,4 @@ export const SET_LANGUAGE =	    'setLanguage';
 export const LOAD_LANGUAGE =	'loadLanguage';
 
 export const SET_QUICK_BACK =	'setQuickBack';
+export const SET_PRICE_DATA =	'setPriceData';

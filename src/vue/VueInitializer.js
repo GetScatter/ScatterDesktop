@@ -55,6 +55,7 @@ export default class VueInitializer {
 	            },
                 methods: {
 	                blockchainName,
+	                back(){ this.setQuickActionsBack(false); this.$router.back(); },
 	                locale:(key, args) => localized(key, args, StoreService.get().getters.language),
 	                newKeypair(){ this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
 	                canOpenApp(applink){

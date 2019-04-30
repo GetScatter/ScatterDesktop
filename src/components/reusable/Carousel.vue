@@ -5,22 +5,24 @@
 		<section v-if="slides.length > 1" @click="slide(1)" class="go-left icon-left-open-big"></section>
 
 
-		<section class="slider" :style="{'left':left+'px'}">
+		<section class="slider-container">
+			<section class="slider" :style="{'left':left+'px'}">
 
-			<section class="slide" v-for="(slide,i) in slides" :style="{'left':i*slideWidth+'px', 'width':slideWidth+'px'}">
+				<section class="slide" v-for="(slide,i) in slides" :style="{'left':i*slideWidth+'px', 'width':slideWidth+'px'}">
 
-				<section class="image-container" :class="{'full-height':noInfo}">
-					<figure class="bg" :style="`background-image:url(${slide.img});`"></figure>
-					<figure class="image" :style="`background-image:url(${slide.img});`"></figure>
-				</section>
-
-				<section class="info" v-if="!noInfo">
-					<section>
-						<figure class="name">{{slide.name}}</figure>
-						<figure class="description">{{slide.description}}</figure>
+					<section class="image-container" :class="{'full-height':noInfo}">
+						<figure class="bg" :style="`background-image:url(${slide.img});`"></figure>
+						<figure class="image" :style="`background-image:url(${slide.img});`"></figure>
 					</section>
-					<section>
-						<Button text="Go to App" :blue="1" />
+
+					<section class="info" v-if="!noInfo">
+						<section>
+							<figure class="name">{{slide.name}}</figure>
+							<figure class="description">{{slide.description}}</figure>
+						</section>
+						<section>
+							<Button text="View App" :blue="1" />
+						</section>
 					</section>
 				</section>
 			</section>
@@ -93,46 +95,49 @@
 		position: relative;
 		height:300px;
 		width:100%;
-		overflow:hidden;
-		border-radius:20px;
-		box-shadow:0 -1px 0 rgba(255,255,255,0.4), 0 12px 24px $blue-shadow;
 		margin-top:1px;
 
 		.go-right, .go-left {
 			cursor: pointer;
 			position: absolute;
-			top:calc(50% - 80px);
 			color:$blue;
-			font-size: 18px;
+			font-size: 28px;
 			width:44px;
 			height:44px;
 			line-height:44px;
 			text-align:center;
-			background:rgba(255,255,255,0.84);
 			z-index:3;
 			transition:all 0.12s ease-in-out;
 
 			&:hover {
-				width:54px;
-				background:$white;
+				width:40px;
 				box-shadow:$blue-shadow;
 			}
 		}
 
 		.go-left {
-			left:0;
-			top:50%;
+			left:-40px;
+			top:60%;
 			margin-top:-54px;
 			border-top-right-radius: 3px;
 			border-bottom-right-radius: 3px;
 		}
 
 		.go-right {
-			right:0;
-			top:50%;
+			right:-40px;
+			top:60%;
 			margin-top:-54px;
 			border-top-left-radius: 3px;
 			border-bottom-left-radius: 3px;
+		}
+
+		.slider-container {
+			position: relative;
+			overflow:hidden;
+			height:300px;
+			width:100%;
+			border-radius:20px;
+			box-shadow:0 12px 24px $blue-shadow;
 		}
 
 		.slider {

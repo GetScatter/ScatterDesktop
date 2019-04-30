@@ -33,7 +33,7 @@
 			transition-property: color;
 
 			&:hover, &.active {
-				color:$yellow;
+				color: $mid-light-blue;
 				text-shadow:0 1px 2px rgba(0,0,0,0.1);
 			}
 		}

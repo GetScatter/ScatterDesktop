@@ -36,6 +36,8 @@ export const state = {
 
 	history:[],
 	language:{},
+
+	priceData:{},
 };
 
 export const getters = {

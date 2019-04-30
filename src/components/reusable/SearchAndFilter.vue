@@ -5,7 +5,7 @@
 			<input placeholder="Search" v-model="terms" />
 		</figure>
 
-		<section class="filters">
+		<section class="filters" v-if="!fullSearch">
 			<Select v-on:selected="x => filter.onSelect(x)" :key="JSON.stringify(filter.selected)" v-for="filter in filters" v-bind="filter" /> <!--  :selected="options[0]" :options="options" -->
 		</section>
 
@@ -14,7 +14,7 @@
 
 <script>
 	export default {
-		props:['filters'],
+		props:['filters', 'fullSearch'],
 		data(){return {
 			terms:'',
 		}},

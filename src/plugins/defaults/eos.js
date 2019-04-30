@@ -289,23 +289,23 @@ export default class EOS extends Plugin {
 
 
 		let availableActions = [
-			new AccountAction(localizedState(EOS.UnlinkAccountButton, null), '', () => {
+			new AccountAction(localizedState(EOS.UnlinkAccountButton, null), 'Unlink', 'icon-trash', () => {
 				PopupService.push(Popup.unlinkAccount(account, () => {}));
 			})
 		];
 
 		const nonWatchActions = [
-			new AccountAction(localizedState(EOS.ProxyVotesButton, null), '', () => {
-				PopupService.push(Popup.eosProxyVotes(account, () => {}));
-			}),
-			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), '', () => {
+			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), 'Change', 'icon-key', () => {
 				PopupService.push(Popup.verifyPassword(verified => {
 					if(!verified) return;
 					PopupService.push(Popup.eosChangePermissions(account, async permissions => {
 						await this.changePermissions(account, permissions);
 					}));
 				}));
-			})
+			}, true),
+			new AccountAction(localizedState(EOS.ProxyVotesButton, null), 'Proxy', 'icon-heart-1', () => {
+				PopupService.push(Popup.eosProxyVotes(account, () => {}));
+			}),
 		];
 
 		// Adding owner only actions.

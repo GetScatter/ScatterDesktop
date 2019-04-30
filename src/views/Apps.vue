@@ -111,6 +111,7 @@
                     acc.find(x => x.type === item.type).apps.push(item);
                     return acc;
                 }, []).map(cat => {
+                	ObjectHelpers.shuffle(cat.apps);
                 	if(this.selectedCategory) return cat;
                 	cat.apps = cat.apps.filter(({applink}) => this.getAppData(applink).hasOwnProperty('img'));
                 	return cat;
@@ -255,7 +256,7 @@
 
                         .app {
                             display:inline-block;
-                            width:calc(25% - 15px);
+                            width:calc(20% - 15px);
                             max-width:200px;
 
                             .image {
@@ -308,7 +309,7 @@
                             justify-content: space-between;
 
                             .app {
-                                margin-bottom:20px;
+                                margin-bottom:50px;
 
                                 &:last-child {
                                     margin-left:20px;

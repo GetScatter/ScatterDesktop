@@ -1,3 +1,4 @@
+@import "./variables";
 @import "./chartist-settings";
 @import "./chartist";
 
@@ -33,8 +34,10 @@
 }
 
 .ct-grid {
+
+
   &.ct-vertical {
-    stroke:rgba(255,255,255,0.1);
+    stroke:transparent;
     stroke-dasharray: 0;
   }
 
@@ -45,9 +48,9 @@
 
 .ct-series-a {
   .ct-line {
-    stroke:#fff;
+    stroke:$blue;
+    stroke-width: 2px;
     stroke-linecap: round;
-    box-shadow:0 3px 6px rgba(0,0,0,0.1);
   }
 
   .ct-area {
@@ -56,12 +59,15 @@
 
   .ct-point {
     cursor: pointer;
-    stroke:rgba(255,255,255,0.05);
-    stroke-width: 15px;
+    stroke:$border;
+    stroke-opacity: 0;
+    stroke-width: 30px;
     position: relative;
 
+
     &:hover {
-      stroke:rgba(255,255,255,1);
+      stroke:$blue;
+      stroke-opacity: 0.6;
     }
   }
 }

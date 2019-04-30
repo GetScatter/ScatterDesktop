@@ -128,6 +128,6 @@ export default class Token {
 	}
 
 	truncatedSymbol(){
-		return this.symbol.length > 4 ? this.symbol[0] : this.symbol
+		return this.symbol.length > 4 ? this.symbol.substr(0,4) : this.symbol
 	}
 }

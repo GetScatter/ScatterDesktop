@@ -8,7 +8,7 @@
         <!--------- ACCOUNTS ---------->
         <!----------------------------->
         <section class="accounts-list" v-if="state === STATES.ACCOUNTS">
-            <section class="account" v-for="account in filteredAccounts">
+            <section class="account" v-for="account in filteredAccounts" @click="goToAccount(account)">
                 <section class="head">
                     <figure class="network">{{account.network().name}}</figure>
                     <figure class="danger" v-if="account.hasDangerousAuthority()">Owner imported <i class="icon-attention"></i></figure>
@@ -57,7 +57,12 @@
                 <section class="actions">
                     <section class="row">
                         <figure class="linked-accounts">
-                            <Select :selected="`${keypair.accounts().length} linked accounts`" :options="keypair.accounts().map(x => x.formatted())" />
+                            <Select v-if="keypair.accounts().length" :selected="`${keypair.accounts().length} linked accounts`" :options="keypair.accounts().map(x => x.formatted())" />
+                            <figure class="no-accounts" v-if="!keypair.accounts().length">No linked accounts</figure>
+                            <figure class="refresh-accounts">
+                                <i class="icon icon-arrows-ccw"></i>
+                                Refresh linked accounts
+                            </figure>
                         </figure>
                     </section>
                     <section class="row">
@@ -83,8 +88,8 @@
                 </section>
             </section>
             <section class="right">
-                <Button @click.native="$router.push({name:RouteNames.IMPORT_KEY})" text="Import key" />
-                <Button text="Generate new key" />
+                <Button blue="1" @click.native="$router.push({name:RouteNames.IMPORT_KEY})" text="Import key" />
+                <Button blue="1" text="Generate new key" />
             </section>
         </section>
     </section>
@@ -180,6 +185,10 @@
             },
 	        copyPublicKey(publicKey){
 		        ElectronHelpers.copy(publicKey);
+            },
+            goToAccount(account){
+    			this.setQuickActionsBack(true);
+    			this.$router.push({name:this.RouteNames.ACCOUNT, params:{unique:account.unique()}});
             }
         },
     }
@@ -269,6 +278,17 @@
                         font-size: $medium;
                         color:$silver;
                         font-weight: bold;
+                        text-align:right;
+
+                        .refresh-accounts {
+                            font-size: $small;
+                            margin-top:5px;
+                            padding:3px 5px;
+                            border-radius:$radius;
+                            border:1px solid $border;
+                            display:inline-block;
+                            cursor: pointer;
+                        }
                     }
                 }
 
