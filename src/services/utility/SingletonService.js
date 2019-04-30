@@ -16,17 +16,19 @@ export default class SingletonService {
 	static async init(){
 		if(initialized) return true;
 		initialized = true;
-		await SocketService.initialize();
-		await AppsService.getApps();
+		SocketService.initialize();
+		AppsService.getApps();
 		StoreService.get().dispatch(Actions.LOAD_HISTORY);
 		StoreService.get().dispatch(Actions.LOAD_LANGUAGE);
-		await RIDLService.init();
-		await RIDLService.checkAccounts();
-		await PermissionService.removeDanglingPermissions();
-		await AccountService.fixOrphanedAccounts();
-		await LanguageService.regenerateLanguage();
-		await PriceService.watchPrices();
-		await RecurringService.checkProxies();
+		RIDLService.init().then(() => {
+			RIDLService.checkAccounts();
+		})
+
+		PermissionService.removeDanglingPermissions();
+		AccountService.fixOrphanedAccounts();
+		LanguageService.regenerateLanguage();
+		PriceService.watchPrices();
+		RecurringService.checkProxies();
 		return true;
 	}
 

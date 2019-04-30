@@ -1,7 +1,7 @@
 <template>
     <section class="processes">
         <transition-group name="slide-right" mode="out-in">
-            <section :key="process.id" class="process" v-for="process in processes">
+            <section :key="process.id" class="process" v-for="process in processes.filter(x => x.display)">
                 <figure class="kill icon-cancel" @click="process.kill()"></figure>
                 <figure class="title">
                     <span key="title">{{process.title}}</span>

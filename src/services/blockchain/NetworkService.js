@@ -12,7 +12,7 @@ import StoreService from "../utility/StoreService";
 
 export default class NetworkService {
 
-    static async addNetwork(network, withNotifications = true){
+    static async addNetwork(network){
         // Can't modify existing networks.
         const scatter = StoreService.get().state.scatter.clone();
         const networks = scatter.settings.networks;
@@ -37,33 +37,21 @@ export default class NetworkService {
         await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
         await AccountService.importAllAccountsForNetwork(network);
         BalanceService.loadAllBalances(true);
-        if(withNotifications) PopupService.push(Popup.snackbar(localizedState(NETWORK.Saved), "check"));
 	    PluginRepository.bustCaches();
         return true;
     }
 
-    static async removeNetwork(network, noPrompt = false){
-        return new Promise(resolve => {
-        	const remove = async () => {
-		        PluginRepository.bustCaches();
-		        const scatter = StoreService.get().state.scatter.clone();
+    static async removeNetwork(network){
+	    PluginRepository.bustCaches();
+	    const scatter = StoreService.get().state.scatter.clone();
 
-		        // Removing accounts and permissions for this network
-		        const accounts = scatter.keychain.accounts.filter(x => x.networkUnique === network.unique());
-		        accounts.map(account => scatter.keychain.removeAccount(account));
-		        scatter.settings.removeNetwork(network);
-		        StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
-		        if(!noPrompt) PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.NETWORK.Deleted), "check"));
-		        BalanceService.removeStaleBalances();
-		        resolve(true);
-	        }
-
-	        if(noPrompt) return remove();
-            PopupService.push(Popup.prompt("Deleting Network", "This will delete this network, as well as all associated accounts and their permissions.", async accepted => {
-	            if(accepted) await remove();
-	            else resolve(false);
-            }))
-        })
+	    // Removing accounts and permissions for this network
+	    const accounts = scatter.keychain.accounts.filter(x => x.networkUnique === network.unique());
+	    accounts.map(account => scatter.keychain.removeAccount(account));
+	    scatter.settings.removeNetwork(network);
+	    StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+	    BalanceService.removeStaleBalances();
+	    return true;
     }
 
     static async updateNetwork(network){

@@ -24,7 +24,7 @@
       &.font {
         width:90px;
         height:90px;
-        font-size: 64px;
+        font-size: 48px;
         box-shadow:0 1px 2px $blue-shadow, 0 8px 20px $blue-shadow;
         border-radius:50%;
         display:flex;
@@ -43,6 +43,7 @@
 
     .subtitle {
       font-size: $small;
+      color:$silver;
     }
 
     .disclaimer {

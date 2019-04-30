@@ -289,23 +289,23 @@ export default class EOS extends Plugin {
 
 
 		let availableActions = [
-			new AccountAction(localizedState(EOS.UnlinkAccountButton, null), 'Unlink', 'icon-trash', () => {
-				PopupService.push(Popup.unlinkAccount(account, () => {}));
-			})
+			new AccountAction(localizedState(EOS.UnlinkAccountButton, null), 'Unlink', 'icon-trash', () => new Promise(resolve => {
+				PopupService.push(Popup.unlinkAccount(account, removed => resolve(removed)));
+			}))
 		];
 
 		const nonWatchActions = [
-			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), 'Change', 'icon-key', () => {
+			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), 'Change', 'icon-key', () => new Promise(resolve => {
 				PopupService.push(Popup.verifyPassword(verified => {
-					if(!verified) return;
+					if(!verified) return resolve(false);
 					PopupService.push(Popup.eosChangePermissions(account, async permissions => {
-						await this.changePermissions(account, permissions);
+						resolve(await this.changePermissions(account, permissions));
 					}));
 				}));
-			}, true),
-			new AccountAction(localizedState(EOS.ProxyVotesButton, null), 'Proxy', 'icon-heart-1', () => {
-				PopupService.push(Popup.eosProxyVotes(account, () => {}));
-			}),
+			}), true),
+			new AccountAction(localizedState(EOS.ProxyVotesButton, null), 'Proxy', 'icon-heart-1', () => new Promise(resolve => {
+				PopupService.push(Popup.eosProxyVotes(account, () => resolve(true)));
+			})),
 		];
 
 		// Adding owner only actions.

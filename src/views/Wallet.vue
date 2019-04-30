@@ -59,8 +59,8 @@
                         <figure class="linked-accounts">
                             <Select v-if="keypair.accounts().length" :selected="`${keypair.accounts().length} linked accounts`" :options="keypair.accounts().map(x => x.formatted())" />
                             <figure class="no-accounts" v-if="!keypair.accounts().length">No linked accounts</figure>
-                            <figure class="refresh-accounts">
-                                <i class="icon icon-arrows-ccw"></i>
+                            <figure class="refresh-accounts" @click="refreshAccountsFor(keypair)" :class="{'disabled':!!refreshingAccounts}">
+                                <i class="icon icon-arrows-ccw" :class="{'animate-spin':keypair.id === refreshingAccounts}"></i>
                                 Refresh linked accounts
                             </figure>
                         </figure>
@@ -103,6 +103,7 @@
     import PopupService from "../services/utility/PopupService";
     import {Popup} from "../models/popups/Popup";
     import ElectronHelpers from "../util/ElectronHelpers";
+    import AccountService from "../services/blockchain/AccountService";
 
     const STATES = {
     	ACCOUNTS:'accounts',
@@ -122,6 +123,7 @@
             terms:'',
 
             clonedKeypairs:[],
+            refreshingAccounts:null,
         }},
         computed:{
             ...mapState([
@@ -189,6 +191,12 @@
             goToAccount(account){
     			this.setQuickActionsBack(true);
     			this.$router.push({name:this.RouteNames.ACCOUNT, params:{unique:account.unique()}});
+            },
+            async refreshAccountsFor(keypair){
+    			if(this.refreshingAccounts) return;
+    			this.refreshingAccounts = keypair.unique();
+    			await AccountService.importAllAccounts(keypair);
+    			this.refreshingAccounts = false;
             }
         },
     }
@@ -288,6 +296,11 @@
                             border:1px solid $border;
                             display:inline-block;
                             cursor: pointer;
+
+                            &.disabled {
+                                opacity:0.3;
+                                cursor: not-allowed;
+                            }
                         }
                     }
                 }

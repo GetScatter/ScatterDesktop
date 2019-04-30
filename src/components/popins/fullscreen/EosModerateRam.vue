@@ -2,7 +2,7 @@
 	<section class="pop-in">
 		<section>
 			<section class="head">
-				<figure class="icon font icon-microchip" style="font-size: 48px;"></figure>
+				<figure class="icon font icon-microchip" style="padding-top:7px;"></figure>
 				<figure class="subtitle">{{account.sendable()}}</figure>
 				<figure class="title">RAM</figure>
 			</section>

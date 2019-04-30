@@ -101,7 +101,7 @@ input {
     height:38px;
     line-height:38px;
     font-weight: bold;
-    color:$mid-dark-grey;
+    color:$border;
     font-size: 16px;
     position: relative;
     cursor: pointer;
@@ -128,7 +128,7 @@ input {
     }
 
     &:hover {
-      color:$dark-grey;
+      color:$silver;
     }
 
     &.active {
@@ -189,6 +189,106 @@ label {
   max-width:400px;
   margin:0 auto;
   text-align:center;
+}
+
+
+.badge-item {
+  display:flex;
+  margin-bottom:15px;
+  padding-bottom:10px;
+
+  .badge {
+    background:$white;
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    box-shadow:0 1px 2px $blue-shadow, 0 2px 3px $blue-shadow;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    position: relative;
+    color:$silver;
+
+    transition: all 0.2s ease;
+    transition-property: background, color, box-shadow;
+
+    &.small {
+      font-size: 11px;
+    }
+
+    &.iconed {
+      font-size: 36px;
+    }
+
+    &.unusable {
+      background:$blue-gradient;
+      color:$white;
+      border:3px solid $white;
+    }
+
+    .locked {
+      position:absolute;
+      font-size: 13px;
+      top:5px;
+      right:3px;
+      text-shadow:0 1px 2px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.3);
+    }
+  }
+
+  .details {
+    flex:1;
+    padding:0 10px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .title {
+      font-size: $medium;
+      font-weight: bold;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+
+      .primary {
+        font-size: $small;
+        font-weight: bold;
+        margin-right:10px;
+      }
+
+      .secondary {
+        font-size: $small;
+        color: $silver;
+        margin-right:10px;
+      }
+
+      .red {
+        color: $red;
+        font-weight: bold;
+        font-size: $small;
+      }
+    }
+  }
+
+  &.hoverable {
+    cursor: pointer;
+    padding:10px;
+    border-radius:$radius;
+    margin-bottom:2px;
+
+    &:hover, &.active {
+      background:rgba(0,0,0,0.03);
+
+      .badge {
+        background:$blue;
+        color:$white;
+        box-shadow:0 0 0 transparent, 0 0 0 transparent;
+      }
+    }
+  }
 }
 
 

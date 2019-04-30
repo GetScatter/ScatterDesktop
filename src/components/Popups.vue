@@ -11,7 +11,7 @@
                     <EosModerateRam :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_RAM" />
                     <EosModerateCpuNet :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_CPU_NET" />
                     <!--<EosCreateAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CREATE_ACCOUNT" />-->
-                    <!--<UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />-->
+                    <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
                     <!--<UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />-->
                     <!--<Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />-->
                     <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
@@ -70,7 +70,7 @@
     import EosModerateRam from './popins/fullscreen/EosModerateRam'
     import EosModerateCpuNet from './popins/fullscreen/EosModerateCpuNet'
     import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
-    // import UnlinkAccount from '../components/popins/fullscreen/UnlinkAccount'
+    import UnlinkAccount from '../components/popins/fullscreen/UnlinkAccount'
     // import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
     // import Mnemonic from '../components/popins/fullscreen/Mnemonic'
     // import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
@@ -109,7 +109,7 @@
 		    EosModerateRam,
 		    EosModerateCpuNet,
 		    // EosCreateAccount,
-		    // UnlinkAccount,
+		    UnlinkAccount,
 		    // UnlinkBlockchain,
 		    // Mnemonic,
 		    RemoveKeypair,

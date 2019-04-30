@@ -19,6 +19,7 @@ const App = () => import('../views/App')
 const Wallet = () => import('../views/Wallet')
 const Account = () => import('../views/Account')
 const Items = () => import('../views/Items')
+const Networks = () => import('../views/Networks')
 const ImportKey = () => import('../views/ImportKey')
 
 
@@ -28,6 +29,7 @@ export const RouteNames = {
     HOME:'home',
     WALLET:'wallet',
     ITEMS:'items',
+    NETWORKS:'networks',
 
 
     APP:'app',
@@ -54,6 +56,7 @@ const RouteViews = {
     [RouteNames.HOME]:Home,
     [RouteNames.WALLET]:Wallet,
     [RouteNames.ITEMS]:Items,
+    [RouteNames.NETWORKS]:Networks,
 
 
     [RouteNames.APP]:App,

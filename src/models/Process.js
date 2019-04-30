@@ -12,7 +12,7 @@ export const PROCESS_TYPES = {
 
 export default class Process {
 
-	constructor(type, title, identifier){
+	constructor(type, title, identifier, display = true){
 		this.id = IdGenerator.text(12);
 		this.type = type;
 		this.title = title;
@@ -20,6 +20,7 @@ export default class Process {
 		this.subTitle = null;
 		this.progress = 0;
 		this.isKilled = false;
+		this.display = display;
 
 		let interval = setInterval(() => {
 			if(this.progress >= 100) {
@@ -72,8 +73,8 @@ export default class Process {
 		return process;
 	}
 
-	static loadResources(identifier){
-		let process = new Process(PROCESS_TYPES.LOAD_RESOURCES, localizedState(LANG_KEYS.PROCESSES.LoadingResources), identifier)
+	static loadResources(identifier, display = true){
+		let process = new Process(PROCESS_TYPES.LOAD_RESOURCES, localizedState(LANG_KEYS.PROCESSES.LoadingResources), identifier, display)
 		StoreService.get().dispatch(Actions.SET_PROCESS, process);
 		return process;
 	}

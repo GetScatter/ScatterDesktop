@@ -1,67 +1,66 @@
 <template>
-    <section class="account">
-        <!--<PanelTabs :tabs="tabs" :state="account.sendable()" v-on:selected="back" />-->
+    <section>
 
+        <section class="account" v-if="account">
+            <section class="manage">
 
-
-        <section class="manage">
-
-            <!--------------------------->
-            <!-------- DETAILS ---------->
-            <!--------------------------->
-            <section class="details">
-                <figure class="blockchain token-eos-eos"></figure>
-                <figure class="name">{{account.sendable()}}</figure>
-                <figure class="network">{{account.network().name}}</figure>
-                <figure class="permissions">
-                    <figure class="permission" @click="copyAuthKey(acc)"
-                            :class="{'red':acc.authority === 'owner'}"
-                            v-for="acc in account.authorities()">
-                        {{acc.authority}}
+                <!--------------------------->
+                <!-------- DETAILS ---------->
+                <!--------------------------->
+                <section class="details">
+                    <figure class="blockchain token-eos-eos"></figure>
+                    <figure class="name">{{account.sendable()}}</figure>
+                    <figure class="network">{{account.network().name}}</figure>
+                    <figure class="permissions">
+                        <figure class="permission" @click="copyAuthKey(acc)"
+                                :class="{'red':acc.authority === 'owner'}"
+                                v-for="acc in account.authorities()">
+                            {{acc.authority}}
+                        </figure>
                     </figure>
-                </figure>
-            </section>
-
-
-            <!--------------------------->
-            <!-------- RESOURCES -------->
-            <!--------------------------->
-            <section class="resources" v-if="usesResources">
-                <section class="loading" v-if="!accountResources">
-                    <figure class="spinner icon-spin4 animate-spin"></figure>
                 </section>
-                <section class="resource" v-for="resource in accountResources">
-                    <figure class="icon" :class="{
+
+
+                <!--------------------------->
+                <!-------- RESOURCES -------->
+                <!--------------------------->
+                <section class="resources" v-if="usesResources">
+                    <section class="loading" v-if="!accountResources">
+                        <figure class="spinner icon-spin4 animate-spin"></figure>
+                    </section>
+                    <section class="resource" v-for="resource in accountResources">
+                        <figure class="icon" :class="{
                         'icon-check':resource.percentage <= 50,
                         'icon-attention red':resource.percentage > 50
                     }"></figure>
-                    <figure class="type">{{resource.name}}</figure>
-                    <figure class="percentage">{{resource.text ? resource.text : parseFloat(resource.percentage).toFixed(2) + '%'}}</figure>
-                    <figure class="action" v-if="resource.actionable">
-                        <Button @click.native="moderateResource(resource)" :text="resource.actionText" />
-                    </figure>
+                        <figure class="type">{{resource.name}}</figure>
+                        <figure class="percentage">{{resource.text ? resource.text : parseFloat(resource.percentage).toFixed(2) + '%'}}</figure>
+                        <figure class="action" v-if="resource.actionable">
+                            <Button @click.native="moderateResource(resource)" :text="resource.actionText" />
+                        </figure>
+                    </section>
+                </section>
+
+
+                <!--------------------------->
+                <!-------- ACTIONS ---------->
+                <!--------------------------->
+                <section class="actions" v-if="accountActions">
+                    <section class="action" :key="action.id" v-for="action in accountActions">
+                        <figure class="icon" :class="`${action.icon} ${action.isDangerous ? ' red' : ''}`"></figure>
+                        <figure class="name">{{action.title}}</figure>
+                        <Button :red="action.isDangerous" :text="action.buttonText" @click.native="commitAction(action)" />
+                    </section>
                 </section>
             </section>
 
 
-            <!--------------------------->
-            <!-------- ACTIONS ---------->
-            <!--------------------------->
-            <section class="actions" v-if="accountActions">
-                <section class="action" :key="action.id" v-for="action in accountActions">
-                    <figure class="icon" :class="`${action.icon} ${action.isDangerous ? ' red' : ''}`"></figure>
-                    <figure class="name">{{action.title}}</figure>
-                    <Button :red="action.isDangerous" :text="action.buttonText" @click.native="action.onclick" />
-                </section>
+
+
+            <section class="assets">
+                <TokenGraph :balances="filteredBalances || account.tokens()" />
+                <TokenList :balances="account.tokens()" v-on:balances="x => filteredBalances = x" />
             </section>
-        </section>
-
-
-
-
-        <section class="assets">
-            <TokenGraph :balances="filteredBalances || account.tokens()" />
-            <TokenList :balances="account.tokens()" v-on:balances="x => filteredBalances = x" />
         </section>
 
 
@@ -115,9 +114,6 @@
 			    if(!hasActions) return null;
 			    return plugin.accountActions(this.account);
 		    },
-		    accountBalances(){
-
-            }
         },
         mounted(){
 	    	this.lazyLoadResources();
@@ -128,9 +124,8 @@
 		        if(Process.isProcessRunning(processKey)) return;
 		        const accounts = [this.account]
 		        if(accounts.length){
-			        let process = Process.loadResources(processKey);
+			        let process = Process.loadResources(processKey, false);
 			        const resources = await ResourceService.getResourcesFor(this.account);
-			        process.updateProgress(50);
 			        this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:resources});
 			        process.updateProgress(100);
 		        }
@@ -143,6 +138,12 @@
 	        },
 	        copyAuthKey(account){
 	            ElectronHelpers.copy(account.publicKey);
+            },
+            async commitAction(action){
+	            const result = await action.onclick();
+	            if(result && !this.account){
+                    this.$router.back();
+                }
             },
 
             ...mapActions([

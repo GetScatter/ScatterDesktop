@@ -33,12 +33,12 @@
 
 					<section style="width:200px; align-self: flex-end;">
 						<Input v-if="state === STATES.STAKE"
-						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Available, systemToken.symbol)"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Available, systemToken.symbol)" :disabled="true"
 						     :text="parseFloat(balance - cpu - net).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 
 						<Input v-if="state === STATES.UNSTAKE"
-						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Reclaiming, systemToken.symbol)"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Reclaiming, systemToken.symbol)" :disabled="true"
 						     :text="parseFloat(cpu + net).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 					</section>

@@ -39,7 +39,7 @@
 						name:'Administrative',
 						items:[
 							{name:'History', route:RouteNames.HOME},
-							{name:'Networks', route:RouteNames.HOME},
+							{name:'Networks', route:RouteNames.NETWORKS},
 							{name:'Settings', route:RouteNames.HOME},
 						]
 					}
