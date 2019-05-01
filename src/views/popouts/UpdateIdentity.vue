@@ -24,8 +24,8 @@
                     <br>
 
                     <section class="fixed-actions">
-                        <btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" big="1" v-on:clicked="returnResult(true)" />
-                        <btn :text="locale(langKeys.GENERIC.Deny)" red="1" v-on:clicked="returnResult(null)" />
+                        <Button :text="locale(langKeys.GENERIC.Confirm)" blue="1" big="1" @click.native="returnResult(true)" />
+                        <Button :text="locale(langKeys.GENERIC.Deny)" red="1" @click.native="returnResult(null)" />
                     </section>
                 </section>
             </section>

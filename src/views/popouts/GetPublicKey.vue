@@ -6,7 +6,7 @@
                 <PopOutAction :origin="popup.origin()" action="public key" />
 
                 <section class="padded">
-                    <btn blue="1" :text="locale(langKeys.POPOUTS.GET_KEY.GenerateKeyButton)" v-on:clicked="generateNewKey" />
+                    <Button blue="1" :text="locale(langKeys.POPOUTS.GET_KEY.GenerateKeyButton)" @click.native="generateNewKey" />
                     <br>
                     <br>
                 </section>

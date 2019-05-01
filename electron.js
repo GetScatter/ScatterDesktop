@@ -176,10 +176,13 @@ class LowLevelWindowService {
 	}
 
 	static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600, dontHide = false){
+		console.log('opening popup');
 
 		let win = waitingPopup;
 		if(!win) win = await this.getWindow();
 		else waitingPopup = null;
+
+		console.log('got popup');
 
 		win.setSize(width, height);
 
@@ -205,7 +208,11 @@ class LowLevelWindowService {
 			win = null;
 		});
 
+		console.log('readying');
+
 		onReady(win);
+
+		console.log('ready');
 
 		win.show();
 		win.setAlwaysOnTop(true, "floating");

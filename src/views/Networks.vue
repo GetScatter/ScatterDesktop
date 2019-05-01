@@ -110,17 +110,14 @@
 		methods:{
 			async init(){
 				this.setWorkingScreen(true);
-				this.knownNetworks = await GET(`networks?flat=true`).then(networks => networks.map(x => Network.fromJson(x))).catch(() => []);
-				await Promise.all(this.networks.map(async network => {
-					const reachable = await PluginRepository.plugin(network.blockchain).checkNetwork(network);
-					if(!reachable){
-						this.unreachable[network.unique()] = true;
-						this.$forceUpdate();
-					}
-
-					return true;
-				}));
+				this.knownNetworks = await Promise.race([
+					new Promise(resolve => setTimeout(() => resolve([]), 2000)),
+					GET(`networks?flat=true`).then(networks => networks.map(x => Network.fromJson(x))).catch(() => [])
+				]);
 				this.setWorkingScreen(false);
+				this.networks.map(async network => {
+					await this.checkReachable(network);
+				})
 			},
 			cantReach(network){
 				return this.unreachable[network.unique()]
@@ -188,9 +185,16 @@
 				this.expandedUnique = null;
 			},
 			addCustomNetwork(){
-				PopupService.push(Popup.addCustomNetwork(done => {
-
+				PopupService.push(Popup.addCustomNetwork(this.selectedBlockchain, async network => {
+					this.checkReachable(network);
 				}));
+			},
+			async checkReachable(network){
+				const reachable = await PluginRepository.plugin(network.blockchain).checkNetwork(network);
+				if(!reachable){
+					this.unreachable[network.unique()] = true;
+					this.$forceUpdate();
+				}
 			}
 
 		}

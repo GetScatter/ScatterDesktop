@@ -20,13 +20,13 @@
                 <section class="fixed-actions">
 
                     <!-- ACCEPT TRANSACTION -->
-                    <btn blue="1"
+                    <Button blue="1"
                          :text="locale(langKeys.GENERIC.Allow)"
-                         v-on:clicked="returnResult(true)" />
+                         @click.native="returnResult(true)" />
 
                     <!-- DENY TRANSACTION -->
-                    <btn :text="locale(langKeys.GENERIC.Deny)"
-                         v-on:clicked="returnResult(false)" />
+                    <Button :text="locale(langKeys.GENERIC.Deny)"
+                         @click.native="returnResult(false)" />
 
                 </section>
             </section>

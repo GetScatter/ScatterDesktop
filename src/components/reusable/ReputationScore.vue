@@ -1,6 +1,8 @@
 <template>
-	<section class="reputation" :class="{'red':reputable.decimal < 0, 'small':small}">
-		<b>{{reputable.decimal}}</b>
+	<section v-if="reputable">
+		<section class="reputation" :class="{'red':reputable.decimal < 0, 'small':small}">
+			<b>{{reputable.decimal}}</b>
+		</section>
 	</section>
 </template>
 

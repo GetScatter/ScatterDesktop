@@ -21,7 +21,7 @@
                     <br v-if="stillNeedsFields" />
 
                     <section style="padding:0 30px;" v-if="stillNeedsFields">
-                        <btn :text="locale(langKeys.POPOUTS.LOGIN.LoginButton)" blue="1" v-on:clicked="selectAccount" :disabled="!isValidIdentity" />
+                        <Button :text="locale(langKeys.POPOUTS.LOGIN.LoginButton)" blue="1" @click.native="selectAccount" :disabled="!isValidIdentity" />
                     </section>
 
 
@@ -55,7 +55,7 @@
                     </section>
 
                     <section class="fixed-actions">
-                        <btn :text="locale(langKeys.GENERIC.Cancel)" red="1" v-on:clicked="returnResult(null)" />
+                        <Button :text="locale(langKeys.GENERIC.Cancel)" red="1" @click.native="returnResult(null)" />
                     </section>
                 </section>
             </section>

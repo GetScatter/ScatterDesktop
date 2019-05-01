@@ -65,6 +65,7 @@ export default class VueInitializer {
 		                return data.url.length;
 	                },
 	                getTokensTotaled(){
+	                	if(!this.priceData || !this.priceData.hasOwnProperty('yesterday')) return [];
 		                let totaled = [];
 		                Object.keys(this.priceData.yesterday).filter(x => x !== 'latest').sort((a,b) => a - b).map(hour =>
 			                totaled.push({hour, data:this.priceData.yesterday[hour], date:dateId(1)}));

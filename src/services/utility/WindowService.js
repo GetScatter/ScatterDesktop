@@ -19,9 +19,8 @@ ipcRenderer.on('result', (event, result) => {
     const pending = getPending(result.original);
     if(pending) pending.resolver(result.result);
 
-	remote.BrowserWindow.fromId(result.windowId)
-		.webContents
-		.send('ack', true);
+    const rWin = remote.BrowserWindow.fromId(result.windowId);
+	rWin.webContents.send('ack', true);
 
 });
 

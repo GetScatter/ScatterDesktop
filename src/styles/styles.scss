@@ -246,6 +246,7 @@ label {
     .title {
       font-size: $medium;
       font-weight: bold;
+      margin-bottom:5px;
     }
 
     .row {
@@ -275,7 +276,7 @@ label {
 
   &.hoverable {
     cursor: pointer;
-    padding:10px;
+    padding:15px 10px;
     border-radius:$radius;
     margin-bottom:2px;
 

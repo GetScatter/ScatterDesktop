@@ -883,6 +883,7 @@ export default class EOS extends Plugin {
 
 		payload.transaction.parsed = Object.assign({}, parsed);
 		payload.transaction.parsed.actions = await api.serializeActions(parsed.actions);
+		delete payload.transaction.abis;
 
 		return parsed.actions;
 	}

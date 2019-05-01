@@ -16,6 +16,7 @@ import ViewBase from './components/ViewBase.vue'
 import Button from './components/reusable/Button.vue'
 import Input from './components/reusable/Input.vue'
 import Select from './components/reusable/Select.vue'
+import SearchBar from './components/reusable/SearchBar.vue'
 import Slider from './components/reusable/Slider.vue'
 import Switcher from './components/reusable/Switcher.vue'
 import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
@@ -39,6 +40,7 @@ class Main {
 	constructor(){
 
 		const hash = location.hash.replace("#/", '');
+		console.log('hash', hash)
 
 		const shared = [
 			{tag:'Button', vue:Button},
@@ -46,6 +48,7 @@ class Main {
 			{tag:'Select', vue:Select},
 			{tag:'Slider', vue:Slider},
 			{tag:'Switcher', vue:Switcher},
+			{tag:'SearchBar', vue:SearchBar},
 			{tag:'SearchAndFilter', vue:SearchAndFilter},
 			{tag:'ActionBar', vue:ActionBar},
 

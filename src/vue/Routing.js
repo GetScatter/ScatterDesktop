@@ -1,7 +1,7 @@
 // const Terms = () => import('../views/Terms')
 // const Onboarding = () => import('../views/Onboarding')
 // const Settings = () => import('../views/Settings')
-// const PopOut = () => import('../views/PopOut')
+const PopOut = () => import('../views/PopOut')
 //
 // const Identity = () => import('../views/Identity')
 // const Transfer = () => import('../views/Transfer')
@@ -26,6 +26,8 @@ const ImportKey = () => import('../views/ImportKey')
 
 
 export const RouteNames = {
+	POP_OUT:'popout',
+
     LOGIN:'login',
     HOME:'home',
     WALLET:'wallet',
@@ -50,7 +52,6 @@ export const RouteNames = {
     // SETTINGS:'settings',
     //
     // // POPOUT
-    // POP_OUT:'popout',
 };
 
 const RouteViews = {
@@ -65,7 +66,7 @@ const RouteViews = {
     [RouteNames.APP]:App,
     [RouteNames.ACCOUNT]:Account,
     [RouteNames.IMPORT_KEY]:ImportKey,
-    // [RouteNames.POP_OUT]:PopOut,
+    [RouteNames.POP_OUT]:PopOut,
 };
 
 const RoutePaths = {

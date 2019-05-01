@@ -139,8 +139,8 @@ export class Popup {
 		}, callback))
 	}
 
-	static addCustomNetwork(callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ADD_CUSTOM_NETWORK, {}, callback))
+	static addCustomNetwork(blockchain, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ADD_CUSTOM_NETWORK, {blockchain}, callback))
 	}
 
 	static unlinkAccount(account, callback){

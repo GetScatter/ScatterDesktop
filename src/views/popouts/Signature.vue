@@ -35,25 +35,25 @@
                     </section>
 
                     <!-- ACCEPT TRANSACTION -->
-                    <btn :blue="!isDangerous && (reputation && reputation.decimal >= 0)" :red="isDangerous || (reputation && reputation.decimal < 0)" big="1" v-if="!pinning"
+                    <Button :blue="!isDangerous && (reputation && reputation.decimal >= 0)" :red="isDangerous || (reputation && reputation.decimal < 0)" big="1" v-if="!pinning"
                          :disabled="!isValidIdentity || cannotSignArbitrary"
                          :text="locale(langKeys.GENERIC.Allow)"
-                         v-on:clicked="accepted" />
+                         @click.native="accepted" />
 
                     <!-- DENY TRANSACTION -->
-                    <btn :text="locale(langKeys.GENERIC.Deny)" v-if="!pinning"
-                         v-on:clicked="returnResult(false)" />
+                    <Button :text="locale(langKeys.GENERIC.Deny)" v-if="!pinning"
+                         @click.native="returnResult(false)" />
 
                     <section v-if="!isArbitrarySignature && !isDangerous">
                         <br>
                         <br>
                         <label style="text-align:center;">{{locale(langKeys.POPOUTS.SIGNATURE.WhitelistDesc)}}</label>
 
-                        <btn :red="!whitelisted" :blue="whitelisted"
+                        <Button :red="!whitelisted" :blue="whitelisted"
                              :text="whitelisted
                              	? locale(langKeys.POPOUTS.SIGNATURE.DisableWhitelistButton)
 								: locale(langKeys.POPOUTS.SIGNATURE.EnableWhitelistButton)"
-                             v-on:clicked="whitelist" />
+                             @click.native="whitelist" />
                     </section>
                 </section>
             </section>
@@ -64,10 +64,10 @@
             <section class="side-panel" v-if="!expanded">
 
                 <section class="view-types">
-                    <sel :selected="viewType" short="1"
+                    <Select :selected="viewType" short="1"
                          :options="viewTypesArray"
                          :parser="x => formatViewType(x)"
-                         v-on:changed="x => viewType = x"></sel>
+                         v-on:changed="x => viewType = x"></Select>
                 </section>
 
                 <section class="scroller">
@@ -227,12 +227,12 @@
                 }
             })
 
-			setTimeout(async() => {
-				this.loadingReputation = true;
-				this.reputation = await RIDLService.checkContracts(this.payload.network, this.messages);
-				if(this.reputation && this.reputation.decimal < 0) this.showingRidlWarning = true;
-				this.loadingReputation = false;
-			}, 50);
+			// setTimeout(async() => {
+			// 	this.loadingReputation = true;
+			// 	this.reputation = await RIDLService.checkContracts(this.payload.network, this.messages);
+			// 	if(this.reputation && this.reputation.decimal < 0) this.showingRidlWarning = true;
+			// 	this.loadingReputation = false;
+			// }, 50);
 		},
 		computed: {
 			...mapState([

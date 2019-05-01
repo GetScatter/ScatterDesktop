@@ -8,11 +8,11 @@
 			<section class="details" :class="{'has-icon':item.hasOwnProperty('icon') && item.icon.length}">
 				<figure class="title">{{item.title}}</figure>
 				<p v-if="!item.asInput">{{item.description}}</p>
-				<cin style="width:100%;" v-else :text="item.description" copy="1" />
+				<Input style="width:100%;" v-else :text="item.description" copy="1" />
 			</section>
 
 			<section class="actions" :class="{'multiple':item.actions.length > 1}">
-				<btn :key="action.name" v-for="action in item.actions"
+				<Button :key="action.name" v-for="action in item.actions"
 				     :class="{'important':action.hasOwnProperty('important')}"
 				     :icon="action.hasOwnProperty('icon') ? action.icon : null"
 				     :text="action.name"
@@ -20,7 +20,7 @@
 				     :blue="action.hasOwnProperty('blue') && action.blue"
 				     :red="action.hasOwnProperty('red') && action.red"
 				     :disabled="action.hasOwnProperty('disabled') && action.disabled"
-				     v-on:clicked="action.handler"></btn>
+				     @click.native="action.handler"></Button>
 			</section>
 		</section>
 	</section>

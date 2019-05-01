@@ -32,7 +32,10 @@ export default class PopupService {
 
     static openPopOut(popup){
         let responded = false;
-        const scatter = StoreService.get().state.scatter;
+
+        const scatter = StoreService.get().state.scatter.clone();
+        scatter.keychain.keypairs.map(keypair => delete keypair.privateKey);
+        scatter.keychain.identities.map(identity => delete identity.privateKey);
 
         const respond = result => {
             popouts = popouts.filter(x => x.id !== popup.id);

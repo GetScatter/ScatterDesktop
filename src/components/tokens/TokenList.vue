@@ -12,7 +12,11 @@
 					<section class="row">
 						<figure class="red" v-if="token.unusable">{{token.unusable}}</figure>
 						<figure class="primary" v-if="!token.unusable"><b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></figure>
-						<figure class="secondary">{{token.fiatBalance()}} <span v-if="token.fiatPrice()">({{token.fiatPrice()}})</span></figure>
+						<figure class="secondary">{{token.fiatBalance()}} </figure>
+					</section>
+					<section class="row" v-if="token.fiatPrice()">
+						<figure class="secondary">{{token.baseTokenPrice()}}</figure>
+						<figure class="secondary">{{token.fiatPrice()}}</figure>
 					</section>
 				</section>
 

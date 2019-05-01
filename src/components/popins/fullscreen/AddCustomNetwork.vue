@@ -36,15 +36,14 @@
 			]),
 		},
 		methods:{
-			returnResult(truthy){
-				this.popin.data.callback(truthy);
+			returnResult(){
+				this.popin.data.callback(this.network);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			async saveNetwork(){
+				this.network.blockchain = this.popin.data.props.blockchain;
 				const added = await NetworkService.addNetwork(this.network);
-				if(added){
-					this.returnResult(true);
-				}
+				if(added) this.returnResult();
 			},
 
 			...mapActions([

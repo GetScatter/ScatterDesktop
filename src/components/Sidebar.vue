@@ -29,16 +29,16 @@
 						items:[
 							{name:'Apps', route:RouteNames.HOME},
 							{name:'Wallet', route:RouteNames.WALLET},
+							{name:'Assets', route:RouteNames.ASSETS},
 							{name:'Items', route:RouteNames.ITEMS},
 							{name:'RIDL', route:RouteNames.HOME},
-							{name:'Assets', route:RouteNames.ASSETS},
 							{name:'Identities', route:RouteNames.HOME},
-							{name:'Contacts', route:RouteNames.HOME},
 						]
 					},
 					{
 						name:'Administrative',
 						items:[
+							{name:'Contacts', route:RouteNames.HOME},
 							{name:'History', route:RouteNames.HOME},
 							{name:'Networks', route:RouteNames.NETWORKS},
 							{name:'Settings', route:RouteNames.HOME},
