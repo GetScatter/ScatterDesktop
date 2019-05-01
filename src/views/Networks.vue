@@ -55,7 +55,7 @@
 				</section>
 			</section>
 			<section class="tail">
-				<Button text="Add custom network" blue="1" />
+				<Button @click.native="addCustomNetwork" text="Add custom network" blue="1" />
 			</section>
 		</section>
 
@@ -71,6 +71,8 @@
 	import NetworkService from "../services/blockchain/NetworkService";
 	import EditNetwork from "../components/misc/EditNetwork";
 	import AccountService from "../services/blockchain/AccountService";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
 
 	export default {
 		components: {EditNetwork},
@@ -87,7 +89,10 @@
 				'networks',
 			]),
 			visibleNetworks(){
-				return this.networksFor(this.selectedBlockchain);
+				return this.networksFor(this.selectedBlockchain).sort((a,b) => {
+					const endorsed = PluginRepository.plugin(this.selectedBlockchain).getEndorsedNetwork();
+					return endorsed.unique() === b.unique() ? 1 : endorsed.unique() === a.unique() ? -1 : 0;
+				});
 			},
 		},
 		created(){
@@ -153,6 +158,11 @@
 				await NetworkService.updateNetwork(this.expanded);
 				this.expanded = null;
 				this.expandedUnique = null;
+			},
+			addCustomNetwork(){
+				PopupService.push(Popup.addCustomNetwork(done => {
+
+				}));
 			}
 
 		}

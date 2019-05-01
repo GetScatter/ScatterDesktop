@@ -139,6 +139,10 @@ export class Popup {
 		}, callback))
 	}
 
+	static addCustomNetwork(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ADD_CUSTOM_NETWORK, {}, callback))
+	}
+
 	static unlinkAccount(account, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UNLINK_ACCOUNT, {account}, callback))
 	}
@@ -220,6 +224,7 @@ export const PopupTypes = {
 	EOS_MODERATE_RAM:'eosModerateRam',
 	EOS_MODERATE_CPU_NET:'eosModerateCpuNet',
 	EOS_CREATE_ACCOUNT:'eosCreateAccount',
+	ADD_CUSTOM_NETWORK:'addCustomNetwork',
 	UNLINK_ACCOUNT:'unlinkAccount',
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 	REMOVE_KEYPAIR:'removeKeypair',
