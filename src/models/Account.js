@@ -76,10 +76,8 @@ export default class Account {
 	    return StoreService.get().state.balances[this.identifiable()];
     }
 
-    tokenBalance(token){
-    	const balance = this.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain());
-    	if(!balance) return 0;
-    	return balance.amount;
+    balanceFor(token){
+    	return this.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain());
     }
 
     systemBalance(withSymbol = false){

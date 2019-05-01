@@ -40,10 +40,14 @@
 							<section class="details" @click="toggleExpansion(network)">
 								<figure class="name">{{network.name}}</figure>
 								<figure class="host">{{network.host}}</figure>
+								<figure class="connection-error" v-if="cantReach(network)">
+									<i class="icon-attention"></i> Connection error!
+								</figure>
 							</section>
 							<section class="actions">
 								<figure class="system-token">{{network.systemToken().symbol}}</figure>
-								<Switcher class="switch" :state="isEnabled(network)" v-on:switched="toggleNetwork(network)" />
+								<Switcher v-if="!isCustom(network)" class="switch" :state="isEnabled(network)" v-on:switched="toggleNetwork(network)" />
+								<Button v-if="isCustom(network)" blue="1" text="Remove" @click.native="toggleNetwork(network)" />
 							</section>
 						</section>
 
@@ -82,16 +86,21 @@
 			knownNetworks:[],
 			test:false,
 			blockchains: BlockchainsArray.map(x => x.value),
-			selectedBlockchain:BlockchainsArray[0].value
+			selectedBlockchain:BlockchainsArray[0].value,
+			unreachable:{},
 		}},
 		computed:{
 			...mapGetters([
 				'networks',
+				'accounts',
 			]),
 			visibleNetworks(){
 				return this.networksFor(this.selectedBlockchain).sort((a,b) => {
 					const endorsed = PluginRepository.plugin(this.selectedBlockchain).getEndorsedNetwork();
-					return endorsed.unique() === b.unique() ? 1 : endorsed.unique() === a.unique() ? -1 : 0;
+					const isEndorsed = endorsed.unique() === b.unique() ? 1 : endorsed.unique() === a.unique() ? -1 : 0;
+					let byName = a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+
+					return isEndorsed || byName;
 				});
 			},
 		},
@@ -100,7 +109,24 @@
 		},
 		methods:{
 			async init(){
+				this.setWorkingScreen(true);
 				this.knownNetworks = await GET(`networks?flat=true`).then(networks => networks.map(x => Network.fromJson(x))).catch(() => []);
+				await Promise.all(this.networks.map(async network => {
+					const reachable = await PluginRepository.plugin(network.blockchain).checkNetwork(network);
+					if(!reachable){
+						this.unreachable[network.unique()] = true;
+						this.$forceUpdate();
+					}
+
+					return true;
+				}));
+				this.setWorkingScreen(false);
+			},
+			cantReach(network){
+				return this.unreachable[network.unique()]
+			},
+			isCustom(network){
+				return !this.networksFor(network.blockchain, false).find(x => x.unique() === network.unique())
 			},
 			selectBlockchain(blockchain){
 				this.selectedBlockchain = blockchain;
@@ -110,11 +136,13 @@
 				return !!this.networks.find(x => x.unique() === network.unique());
 			},
 			async toggleNetwork(network){
+				this.setWorkingScreen(true);
 				if(this.isEnabled(network)) await NetworkService.removeNetwork(network);
 				else {
 					await NetworkService.addNetwork(network);
-					AccountService.importAllAccountsForNetwork(network);
+					await AccountService.importAllAccountsForNetwork(network);
 				}
+				this.setWorkingScreen(false);
 			},
 			toggleExpansion(network){
 				if(this.expanded && this.expanded.unique() === network.unique()) {
@@ -142,12 +170,12 @@
 				}
 				return clone;
 			},
-			networksFor(blockchain){
+			networksFor(blockchain, withSaved = true){
 				const endorsed = (() => {
 					const n = PluginRepository.plugin(blockchain).getEndorsedNetwork();
 					return this.networks.find(x => x.unique() === n.unique()) ? [] : [n];
 				})();
-				const savedNetworks = this.networks.filter(x => x.blockchain === blockchain);
+				const savedNetworks = withSaved ? this.networks.filter(x => x.blockchain === blockchain) : [];
 				const knownNetworks = this.knownNetworks.filter(x => x.blockchain === blockchain);
 				return endorsed.concat(savedNetworks).concat(knownNetworks).reduce((acc,network) => {
 					if(!acc.find(x => x.unique() === network.unique())) acc.push(network);
@@ -277,6 +305,17 @@
 								font-size: $small;
 								margin-top:3px;
 								color:$grey;
+							}
+
+							.connection-error {
+								background:$red;
+								color:$white;
+								padding:4px 5px;
+								border-radius:$radius;
+								display:inline-block;
+								font-size: $small;
+								font-weight: bold;
+								margin-top:8px;
 							}
 						}
 

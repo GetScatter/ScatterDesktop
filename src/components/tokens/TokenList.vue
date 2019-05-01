@@ -2,7 +2,7 @@
 	<section class="token-list">
 		<SearchAndFilter full-search="1" v-on:terms="x => terms = x" />
 		<section class="tokens">
-			<section class="badge-item" v-for="token in sortedBalances">
+			<section class="badge-item" :class="{'hoverable':hoverable, 'active':selected && selected.unique() === token.unique()}" v-for="token in sortedBalances" @click="selectToken(token)">
 				<figure class="badge" :class="[{'iconed':token.symbolClass(), 'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]">
 					<span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
 					<div class="locked icon-lock" v-if="token.unusable"></div>
@@ -28,7 +28,7 @@
 
 	export default {
 		components: {SearchAndFilter},
-		props:['balances'],
+		props:['balances', 'hoverable', 'selected'],
 		data(){return {
 			terms:'',
 		}},
@@ -59,6 +59,10 @@
 			}
 		},
 		methods:{
+			selectToken(token){
+				if(!this.hoverable) return;
+				this.$emit('token', token);
+			},
 			change(token, numOnly = false){
 				const dummy = {plus:false, perc:'0%'};
 				if(!this.priceData || !this.priceData.hasOwnProperty('today')) return dummy;
@@ -87,6 +91,7 @@
 	@import "../../styles/variables";
 
 	.token-list {
+
 		.search-and-filter {
 			padding:0 20px;
 			border-bottom:0;
@@ -95,7 +100,8 @@
 		.tokens {
 			padding:20px;
 			overflow-y:auto;
-			height:calc(100vh - 470px);
+			height:calc(100% - 70px);
+			//height:calc(100vh - 470px);
 		}
 	}
 

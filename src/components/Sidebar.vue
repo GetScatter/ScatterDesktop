@@ -30,7 +30,8 @@
 							{name:'Apps', route:RouteNames.HOME},
 							{name:'Wallet', route:RouteNames.WALLET},
 							{name:'Items', route:RouteNames.ITEMS},
-							{name:'Assets', route:RouteNames.HOME},
+							{name:'RIDL', route:RouteNames.HOME},
+							{name:'Assets', route:RouteNames.ASSETS},
 							{name:'Identities', route:RouteNames.HOME},
 							{name:'Contacts', route:RouteNames.HOME},
 						]

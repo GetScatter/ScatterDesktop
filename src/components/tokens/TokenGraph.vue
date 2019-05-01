@@ -57,7 +57,7 @@
 						if(this.balances.length === 1 || onlyShowingSystemAndUntouchable){
 							let tokenUnique = this.balances[0].uniqueWithChain(false);
 							if(!this.prices[tokenUnique]) return;
-							total = (data[tokenUnique] / this.prices[tokenUnique].USD) * this.priceData.prices[tokenUnique][this.displayCurrency];
+							total = (data[tokenUnique] / this.prices[tokenUnique].USD) * this.prices[tokenUnique][this.displayCurrency];
 						} else {
 							total = this.balances.reduce((acc,balance) => {
 								const priceData = data[balance.uniqueWithChain()];
@@ -141,7 +141,6 @@
 	.token-graph {
 		height:180px;
 		width:100%;
-		border-bottom:1px solid $border;
 		position: relative;
 
 		.tip {

@@ -130,4 +130,23 @@ export default class Token {
 	truncatedSymbol(){
 		return this.symbol.length > 4 ? this.symbol.substr(0,4) : this.symbol
 	}
+
+	accounts(){
+    	const state = StoreService.get().state;
+		if(!state.balances) return [];
+		return Object.keys(state.balances).reduce((acc,accountUnique) => {
+			if(state.balances[accountUnique].find(token => token.unique() === this.unique())){
+				if(!acc.find(x => x.identifiable() === accountUnique)){
+					acc.push(state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique));
+				}
+			}
+			return acc;
+		}, []);
+    	/*
+    	if(!StoreService.get().state.balances) return [];
+	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return [];
+	    if(!StoreService.get().state.balances[this.identifiable()]) return [];
+	    return StoreService.get().state.balances[this.identifiable()];
+    	 */
+	}
 }

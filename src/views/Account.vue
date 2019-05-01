@@ -309,6 +309,10 @@
 
         .assets {
             flex:1;
+
+            .token-list {
+                height:calc(100vh - 400px);
+            }
         }
 
 

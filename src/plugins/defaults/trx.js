@@ -46,6 +46,14 @@ export default class TRX extends Plugin {
 	contractPlaceholder(){ return '0x.....'; }
 	recipientLabel(){ return localizedState(LANG_KEYS.GENERIC.Address); }
 
+	checkNetwork(network){
+		return Promise.race([
+			new Promise(resolve => setTimeout(() => resolve(null), 2000)),
+			//TODO:
+			new Promise(resolve => setTimeout(() => resolve(true), 10)),
+		])
+	}
+
     getEndorsedNetwork(){
         return new Network('Tron Mainnet', 'https', 'api.trongrid.io', 443, Blockchains.TRX, '1');
     }

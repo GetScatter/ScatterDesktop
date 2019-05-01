@@ -168,6 +168,13 @@ export default class EOS extends Plugin {
 	contractPlaceholder(){ return 'eosio.token'; }
 	recipientLabel(){ return localizedState(LANG_KEYS.GENERIC.AccountName); }
 
+	checkNetwork(network){
+		return Promise.race([
+			new Promise(resolve => setTimeout(() => resolve(null), 2000)),
+			fetch(`${network.fullhost()}/v1/chain/get_info`).then(() => true).catch(() => false),
+		])
+	}
+
 	getEndorsedNetwork(){
 		return new Network('EOS Mainnet', 'https', 'nodes.get-scatter.com', 443, Blockchains.EOSIO, mainnetChainId)
 	}

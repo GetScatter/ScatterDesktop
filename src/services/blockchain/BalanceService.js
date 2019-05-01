@@ -7,14 +7,18 @@ let lastBalanceTime;
 export default class BalanceService {
 
 	static async loadBalancesFor(account){
-		const blockchain = account.blockchain();
-		const plugin = PluginRepository.plugin(blockchain);
-		const tokens = StoreService.get().getters.allTokens.filter(x => x.blockchain === blockchain)
-			.filter(x => x.chainId === account.network().chainId);
-		const balances = await plugin.balancesFor(account, tokens);
-		const untouchable = await this.loadUntouchables(account);
-		if(untouchable) balances.push(untouchable);
-		return StoreService.get().dispatch(Actions.SET_BALANCES, {account:account.identifiable(), balances});
+		try {
+			const blockchain = account.blockchain();
+			const plugin = PluginRepository.plugin(blockchain);
+			const tokens = StoreService.get().getters.allTokens.filter(x => x.blockchain === blockchain)
+				.filter(x => x.chainId === account.network().chainId);
+			const balances = await plugin.balancesFor(account, tokens);
+			const untouchable = await this.loadUntouchables(account);
+			if(untouchable) balances.push(untouchable);
+			return StoreService.get().dispatch(Actions.SET_BALANCES, {account:account.identifiable(), balances});
+		} catch(e){
+			return null;
+		}
 	}
 
 	static async loadAllBalances(force = false){

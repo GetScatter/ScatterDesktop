@@ -96,7 +96,7 @@
     .working-screen {
         background:rgba(255,255,255,0.93);
         position:fixed;
-        top:80px;
+        top:40px;
         left:0;
         right:0;
         bottom:0;
