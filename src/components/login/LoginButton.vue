@@ -42,7 +42,7 @@
 		&:not(.blue){
 			color: $blue;
 			background:transparent;
-			border:1px solid $border;
+			border:1px solid $lightgrey;
 		}
 
 		&:not(:first-child){

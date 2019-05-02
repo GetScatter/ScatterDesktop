@@ -72,7 +72,7 @@
 	.sidebar {
 		flex:0 0 auto;
 		width:$closed;
-		border-right:1px solid $border;
+		border-right:1px solid $lightgrey;
 		padding:20px 0;
 		transition:all $time ease;
 		transition-property: width;
@@ -101,7 +101,7 @@
 			padding:0 20px;
 			display:flex;
 			align-items: center;
-			color:$border;
+			color: $lightgrey;
 			transition:all $time ease;
 			transition-property: background;
 

@@ -2,13 +2,16 @@
 	<section class="select" :class="{'bordered':bordered, 'open':open, 'disabled':disabled}">
 		<input ref="terms" placeholder="Search..." v-model="optionsTerms" />
 		<section class="selected" @click="toggle" :class="{'bordered':bordered}">
-			<figure class="text">{{parse(selectedOption)}}</figure>
+			<figure class="text">
+				{{parse(selectedOption)}}
+				<div class="subtitle" v-if="subparser">{{subparser(selectedOption)}}</div>
+			</figure>
 			<figure class="chevron icon-down-open-big"></figure>
 		</section>
-		<section class="options">
+		<section class="options" v-if="!noClick">
 			<figure class="option" :class="{'hovered':hovered === index}" @click="select(item)" @mouseover="hovered = index" v-for="(item, index) in filteredOptions">
 				{{parse(item)}}
-				<span class="subtitle" v-if="subparser">{{subparser(item)}}</span>
+				<div class="subtitle" v-if="subparser">{{subparser(item)}}</div>
 			</figure>
 			<figure class="option" v-if="!filteredOptions.length">
 				No results
@@ -19,7 +22,7 @@
 
 <script>
 	export default {
-		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'bordered'],
+		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'bordered', 'noClick'],
 		data(){return {
 			open:false,
 			optionsTerms:'',
@@ -78,7 +81,7 @@
 				},1)
 			},
 			parse(item){
-				if(typeof item === 'string') return item;
+				if(typeof item === 'string' && !this.parser) return item;
 				if(typeof this.parser !== 'function') return item;
 				return this.parser(item);
 			},
@@ -107,6 +110,14 @@
 			opacity:0;
 		}
 
+		.subtitle {
+			font-size: $small;
+			line-height:$small;
+			margin:0;
+			padding:0;
+			color:$silver;
+		}
+
 		.selected {
 			cursor: pointer;
 			height:24px;
@@ -119,6 +130,7 @@
 			opacity:1;
 			padding-right:26px;
 			display:inline-block;
+			position: relative;
 
 			transition: all 0.2s ease;
 			transition-property: opacity;
@@ -131,6 +143,8 @@
 			}
 
 			.chevron {
+				display:flex;
+				align-items: center;
 				position: absolute;
 				right:0;
 				top:0;
@@ -154,7 +168,7 @@
 			z-index:2;
 			border-radius:$radius;
 			overflow: hidden;
-			border:1px solid $border;
+			border:1px solid $lightgrey;
 			box-shadow:0 0 1px rgba(0,0,0,0);
 			opacity:0;
 			visibility: hidden;
@@ -203,7 +217,7 @@
 		}
 
 		&.bordered {
-			border:1px solid $border;
+			border:1px solid $lightgrey;
 			border-radius:$radius;
 			padding:6px 0;
 

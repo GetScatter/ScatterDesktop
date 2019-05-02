@@ -55,7 +55,7 @@ p {
 
 input {
   background:transparent;
-  border:1px solid $border;
+  border:1px solid $lightgrey;
   height:44px;
   width:100%;
   outline:0;
@@ -101,7 +101,7 @@ input {
     height:38px;
     line-height:38px;
     font-weight: bold;
-    color:$border;
+    color: $lightgrey;
     font-size: 16px;
     position: relative;
     cursor: pointer;
@@ -183,6 +183,11 @@ label {
 
 
 
+
+.limit-width {
+  max-width:1280px;
+  margin:0 auto;
+}
 
 
 .center-panel {

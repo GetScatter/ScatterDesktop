@@ -33,7 +33,7 @@
 			content:'';
 			display:block;
 			width:100%;
-			background:$border;
+			background: $lightgrey;
 			height:1px;
 			position: relative;
 			z-index:-2;
@@ -49,7 +49,7 @@
 				height:16px;
 				border-radius:50%;
 				margin:0 10px;
-				border:1px solid $border;
+				border:1px solid $lightgrey;
 				background: $white;
 				transition:all 0.2s ease;
 				transition-property: border, background;

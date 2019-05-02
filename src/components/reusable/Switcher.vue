@@ -54,7 +54,7 @@
 
 			.dot {
 				margin-left:1px;
-				background: $border;
+				background: $lightgrey;
 			}
 		}
 	}

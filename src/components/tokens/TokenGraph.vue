@@ -3,7 +3,10 @@
 		<section class="tip" v-if="graphValue">
 			<div>{{graphValue}}</div>
 		</section>
-		<section class="chart"></section>
+		<section class="chart" v-show="hasValues"></section>
+		<section class="no-graph" v-if="!hasValues">
+			No Price Data
+		</section>
 	</section>
 </template>
 
@@ -20,6 +23,7 @@
 		data(){return {
 			chart:null,
 			graphValue:null,
+			hasValues:false,
 		}},
 		computed:{
 			...mapState([
@@ -42,6 +46,7 @@
 				this.setupGraph();
 			},
 			async setupGraph(){
+				this.hasValues = true;
 				try {
 					const values = [];
 					let totaled = this.getTokensTotaled();
@@ -83,41 +88,44 @@
 						axisY: { showGrid:true, scaleMinSpace:0, showLabel: false, offset: 0, position: 'start', labelInterpolationFnc: n => this.formatNumber(n, n < 100000) },
 					};
 
-					if(!this.chart){
-						this.chart = new Chartist.Line('.chart', {
-							series: [values]
-						}, CHART_OPTIONS);
-						this.chart.on('draw', data => {
-							const toggleTooltip = (show = true) => {
-								let parsed = parseFloat(data.value.y);
-								if(this.balances.length !== 1) parsed = parsed.toFixed(2);
-								this.graphValue = show ? `${data.meta} -- ${this.formatNumber(parsed, true)}` : null;
-							}
-							if (data.type === "point") {
-								data.element._node.addEventListener("mouseenter", e => toggleTooltip())
-								data.element._node.addEventListener("mouseleave", e => toggleTooltip(false));
-							}
-						});
-						this.chart.on('created', ctx => {
-							ctx.svg.elem('defs').elem('linearGradient', {
-								id: 'gradient',
-								x1: 0,
-								y1: 1,
-								x2: 0,
-								y2: 0
-							}).elem('stop', {
-								offset: 0,
-								'stop-color': 'rgba(0, 168, 255, 0)'
-							}).parent().elem('stop', {
-								offset: 0.5,
-								'stop-color': 'rgba(0, 168, 255, 1)'
+					this.$nextTick(() => {
+						if(!this.chart){
+							this.chart = new Chartist.Line('.chart', {
+								series: [values]
+							}, CHART_OPTIONS);
+							this.chart.on('draw', data => {
+								const toggleTooltip = (show = true) => {
+									let parsed = parseFloat(data.value.y);
+									if(this.balances.length !== 1) parsed = parsed.toFixed(2);
+									this.graphValue = show ? `${data.meta} -- ${this.formatNumber(parsed, true)}` : null;
+								}
+								if (data.type === "point") {
+									data.element._node.addEventListener("mouseenter", e => toggleTooltip())
+									data.element._node.addEventListener("mouseleave", e => toggleTooltip(false));
+								}
 							});
-						});
-					} else {
-						this.chart.update({
-							series:[values]
-						})
-					}
+							this.chart.on('created', ctx => {
+								ctx.svg.elem('defs').elem('linearGradient', {
+									id: 'gradient',
+									x1: 0,
+									y1: 1,
+									x2: 0,
+									y2: 0
+								}).elem('stop', {
+									offset: 0,
+									'stop-color': 'rgba(0, 168, 255, 0)'
+								}).parent().elem('stop', {
+									offset: 0.5,
+									'stop-color': 'rgba(0, 168, 255, 1)'
+								});
+							});
+						} else {
+							this.chart.update({
+								series:[values]
+							})
+						}
+						this.hasValues = !!values.length;
+					})
 				} catch(e){
 					console.log('err', e);
 				}
@@ -137,6 +145,18 @@
 
 <style scoped lang="scss">
 	@import "../../styles/variables";
+
+	.no-graph {
+		width:100%;
+		height:180px;
+		background:$lightergrey;
+		color:$silver;
+		display:flex;
+		justify-content: center;
+		align-items: center;
+		font-size: $medium;
+		font-weight: bold;
+	}
 
 	.token-graph {
 		height:180px;

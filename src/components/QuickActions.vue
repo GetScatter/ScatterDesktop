@@ -21,7 +21,7 @@
 				<Receive />
 				<span>Receive</span>
 			</section>
-			<section class="action">
+			<section class="action" @click="$router.push({name:RouteNames.TRANSFER})">
 				<Send />
 				<span>Send</span>
 			</section>
@@ -80,7 +80,7 @@
 			this.refreshTokens();
 		},
 		methods:{
-			async refreshTokens(force = true){
+			async refreshTokens(force = false){
 				if(!force && Object.keys(this.balances).length) return;
 				if(this.loadingBalances) return;
 				this.loadingBalances = true;

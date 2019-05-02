@@ -8,6 +8,7 @@ import RIDLService from "../apis/RIDLService";
 import StoreService from "./StoreService";
 import SocketService from "./SocketService";
 import AppsService from "../apps/AppsService";
+import UpdateService from "./UpdateService";
 
 let initialized = false;
 
@@ -17,6 +18,7 @@ export default class SingletonService {
 		if(initialized) return true;
 		initialized = true;
 		SocketService.initialize();
+		UpdateService.needsUpdate();
 		AppsService.getApps();
 		StoreService.get().dispatch(Actions.LOAD_HISTORY);
 		StoreService.get().dispatch(Actions.LOAD_LANGUAGE);

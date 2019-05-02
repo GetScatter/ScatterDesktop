@@ -38,7 +38,7 @@
 		display:flex;
 		align-items: center;
 		padding:0 40px;
-		border-bottom:1px solid $border;
+		border-bottom:1px solid $lightgrey;
 		height:70px;
 
 		.search-bar {

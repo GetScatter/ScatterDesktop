@@ -2,7 +2,7 @@
 	<section class="token-list">
 		<SearchAndFilter full-search="1" v-on:terms="x => terms = x" />
 		<section class="tokens">
-			<section class="badge-item" :class="{'hoverable':hoverable, 'active':selected && selected.unique() === token.unique()}" v-for="token in sortedBalances" @click="selectToken(token)">
+			<section class="badge-item" :class="{'hoverable':hoverable, 'active':selected && selected.uniqueWithChain() === token.uniqueWithChain()}" v-for="token in sortedBalances" @click="selectToken(token)">
 				<figure class="badge" :class="[{'iconed':token.symbolClass(), 'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]">
 					<span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
 					<div class="locked icon-lock" v-if="token.unusable"></div>
@@ -29,10 +29,11 @@
 	import {mapState, mapGetters, mapActions} from 'vuex';
 	import * as Actions from '../../store/constants';
 	import SearchAndFilter from "../reusable/SearchAndFilter";
+	import Token from "../../models/Token";
 
 	export default {
 		components: {SearchAndFilter},
-		props:['balances', 'hoverable', 'selected'],
+		props:['balances', 'hoverable', 'selected', 'noSearch'],
 		data(){return {
 			terms:'',
 		}},
@@ -53,12 +54,7 @@
 					return token.amount >= parseFloat(this.terms);
 				}).sort((a,b) => {
 					if(this.terms === '+' || this.terms === '-') return this.change(b, true) - this.change(a, true);
-					const systemToken = !this.account ? null : this.account.network().systemToken().uniqueWithChain();
-					const system = systemToken === b.uniqueWithChain() ? 1 : systemToken === a.uniqueWithChain() ? -1 : 0;
-					const untouchable = !!b.unusable ? 1 : !!a.unusable ? -1 : 0;
-					const systemTokenUniques = this.networkTokens.map(x => x.uniqueWithChain(false));
-					const isSelfSystem = systemTokenUniques.includes(b.uniqueWithChain(false)) ? 1 : systemTokenUniques.includes(a.uniqueWithChain(false)) ? -1 : 0;
-					return isSelfSystem || system || untouchable || (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);
+					return Token.sorter(a,b);
 				})
 			}
 		},

@@ -20,6 +20,7 @@ const Assets = () => import('../views/Assets')
 const Wallet = () => import('../views/Wallet')
 const Account = () => import('../views/Account')
 const Items = () => import('../views/Items')
+const Transfer = () => import('../views/Transfer')
 const Networks = () => import('../views/Networks')
 const ImportKey = () => import('../views/ImportKey')
 
@@ -34,6 +35,7 @@ export const RouteNames = {
     ITEMS:'items',
     NETWORKS:'networks',
     ASSETS:'assets',
+    TRANSFER:'transfer',
 
 
     APP:'app',
@@ -61,6 +63,7 @@ const RouteViews = {
     [RouteNames.ITEMS]:Items,
     [RouteNames.NETWORKS]:Networks,
     [RouteNames.ASSETS]:Assets,
+    [RouteNames.TRANSFER]:Transfer,
 
 
     [RouteNames.APP]:App,

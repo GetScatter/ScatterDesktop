@@ -216,7 +216,7 @@
 			font-size: $medium;
 			font-weight: bold;
 			height:60px;
-			border-bottom:1px solid $border;
+			border-bottom:1px solid $lightgrey;
 		}
 
 		.tail {
@@ -225,7 +225,7 @@
 			align-items: center;
 			padding:0 20px;
 			height:60px;
-			border-top:1px solid $border;
+			border-top:1px solid $lightgrey;
 
 			button {
 				width:100%;
@@ -246,7 +246,7 @@
 		.blockchains {
 			flex:0 0 auto;
 			width:250px;
-			border-right:1px solid $border;
+			border-right:1px solid $lightgrey;
 		}
 
 		.networks {
@@ -331,7 +331,7 @@
 								font-size: $small;
 								font-weight: bold;
 								padding:3px 10px;
-								background:$border;
+								background: $lightgrey;
 								border-radius:20px;
 								margin-right:10px;
 							}

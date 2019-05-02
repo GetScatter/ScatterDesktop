@@ -1,22 +1,18 @@
 <template>
-    <section>
+    <section class="pop-over">
 
-        <PopinHead :popin="popin" :name="locale(langKeys.POPINS.OVERLAY.UPDATE_AVAIL.Title)" />
         <section class="panel centered">
+            <h1>Update Available!</h1>
             <figure class="description"><b>Scatter Desktop</b> - <b class="blue">{{update.name}}</b> (v{{update.stringVersion}})</figure>
             <br>
             <section class="markdown">
                 <VueMarkdown>{{update.body}}</VueMarkdown>
             </section>
-            <br>
-            <br>
-            <label>{{locale(langKeys.POPINS.OVERLAY.UPDATE_AVAIL.ClickLink)}}</label>
-            <figure class="description link" @click="open">{{update.url}}</figure>
 
             <br>
             <br>
-            <btn :text="locale(langKeys.GENERIC.Okay)"
-                 v-on:clicked="returnResult(true)" />
+            <Button text="Get Update" big="1" blue="1"
+                 @click.native="open" />
         </section>
 
 
@@ -28,11 +24,11 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
     import ElectronHelpers from '../../../util/ElectronHelpers'
-    import PopinHead from "./PopinHead";
+    // import PopinHead from "./PopinHead";
     import VueMarkdown from 'vue-markdown'
 
     export default {
-	    components: {VueMarkdown, PopinHead},
+	    components: {VueMarkdown},
 	    props:['popin'],
         data(){ return {
 
@@ -55,6 +51,7 @@
             },
             open(){
                 ElectronHelpers.openLinkInBrowser(this.update.url);
+                this.returnResult(true);
             },
             ...mapActions([
                 Actions.RELEASE_POPUP
@@ -65,6 +62,10 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../styles/variables";
+
+    .pop-over {
+        padding:30px;
+    }
 
     b {
         &.blue {

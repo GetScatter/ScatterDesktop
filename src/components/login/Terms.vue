@@ -378,7 +378,7 @@
         max-height:400px;
         overflow-y: scroll;
         border-radius:$radius;
-        border:1px solid $border;
+        border:1px solid $lightgrey;
         padding:20px;
         margin-left:-100px;
         margin-right:-100px;

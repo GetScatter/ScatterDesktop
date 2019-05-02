@@ -22,22 +22,27 @@
                     <!--<EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />-->
                     <!--<AccountSelector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />-->
                     <!--<ConfirmExchange :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_EXCHANGE" />-->
-                    <!--<ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />-->
                     <!--<Exchange :popin="popIn" v-if="popIn.data.type === popupTypes.EXCHANGE" />-->
                     <!--<Stabilize :popin="popIn" v-if="popIn.data.type === popupTypes.STABILIZE" />-->
                     <!--<History :popin="popIn" v-if="popIn.data.type === popupTypes.HISTORY" />-->
                     <!--<DisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />-->
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
-                    <figure class="bg" @click="clickedFader"></figure>
-                    <section class="pop-in-over">
-                        <!--<RemoveApp :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_APP" />-->
-                        <!--<EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />-->
-                        <!--<Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />-->
-                        <!--<Selector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />-->
-                        <!--<TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />-->
-                        <!--<UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />-->
-                    </section>
+                    <figure class="bg-holder">
+                        <section class="pop-in-over">
+                            <figure class="bg" @click="clickedFader"></figure>
+                            <!--<RemoveApp :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_APP" />-->
+                            <!--<EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />-->
+                            <!--<Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />-->
+                            <!--<Selector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />-->
+                            <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
+                            <UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />
+                            <SelectAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
+                            <SelectToken :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN" />
+                            <SelectTokenAndAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN_AND_ACCOUNT" />
+                            <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
+                        </section>
+                    </figure>
                 </section>
             </section>
 
@@ -63,7 +68,7 @@
 
     // import EnterPIN from './popins/overlay/EnterPIN.vue'
     import Snackbar from './popins/overlay/Snackbar.vue'
-    // import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
+    import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
     // import Prompt from './popins/overlay/Prompt.vue'
     //
     // import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
@@ -77,29 +82,35 @@
     // import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
     import AddCustomNetwork from "./popins/fullscreen/AddCustomNetwork";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
+    import SelectAccount from "./popins/overlay/SelectAccount";
+    import SelectToken from "./popins/overlay/SelectToken";
+    import SelectTokenAndAccount from "./popins/overlay/SelectTokenAndAccount";
     // import CheckHardware from "./popins/fullscreen/CheckHardware";
     // import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     // import DestroyScatter from "./popins/fullscreen/DestroyScatter";
     // import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
     // import AccountSelector from "./popins/fullscreen/AccountSelector";
     // import ConfirmExchange from "./popins/fullscreen/ConfirmExchange";
-    // import ConfirmTransfer from "./popins/fullscreen/ConfirmTransfer";
+    import ConfirmTransfer from "./popins/overlay/ConfirmTransfer";
     // import DisplayToken from "./popins/fullscreen/DisplayToken";
     // import Exchange from "./popins/fullscreen/Exchange";
     // import Stabilize from "./popins/fullscreen/Stabilize";
     // import History from "./popins/fullscreen/History";
     // import RemoveApp from "./popins/overlay/RemoveApp";
     // import Selector from "./popins/overlay/Selector";
-    // import UpdateAvailable from "./popins/overlay/UpdateAvailable";
+    import UpdateAvailable from "./popins/overlay/UpdateAvailable";
 
     export default {
     	components:{
-		    // UpdateAvailable,
+		    SelectTokenAndAccount,
+		    SelectAccount,
+		    SelectToken,
+		    UpdateAvailable,
 		    // Selector,
 		    // RemoveApp,
     		// EnterPIN,
 		    Snackbar,
-		    // TransactionSuccess,
+		    TransactionSuccess,
 		    // Prompt,
             //
             // // FULLSCREEN
@@ -120,7 +131,7 @@
 		    // EnableWhitelist,
 		    // AccountSelector,
 		    // ConfirmExchange,
-		    // ConfirmTransfer,
+		    ConfirmTransfer,
 		    // DisplayToken,
 		    // Exchange,
 		    // Stabilize,
@@ -194,12 +205,17 @@
 
     .pop-in-over {
         -webkit-app-region: no-drag;
-        background:#fff;
-        box-shadow:0 10px 50px rgba(0,0,0,0.1), 0 0 250px rgba(0,0,0,0.1);
-        max-width:100%;
-        margin:0 40px;
-        position: relative;
-        overflow:hidden;
+
+        position:fixed;
+        top:40px;
+        bottom:0;
+        left:0;
+        right:0;
+
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        margin:0 50px;
     }
 
     .fader {
@@ -224,15 +240,14 @@
         }
 
         .bg {
-            cursor: pointer;
             position:fixed;
             top:0;
             bottom:0;
             left:0;
             right:0;
             //background:rgba(255,255,255,0.92);
-            background:rgba(0,0,0,0.7);
-            z-index: 0;
+            background: rgba(3, 25, 49, 0.71);
+            z-index: -1;
         }
     }
 

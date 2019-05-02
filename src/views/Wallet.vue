@@ -7,32 +7,8 @@
         <!----------------------------->
         <!--------- ACCOUNTS ---------->
         <!----------------------------->
-        <section class="accounts-list" v-if="state === STATES.ACCOUNTS">
-            <section class="account" v-for="account in filteredAccounts" @click="goToAccount(account)">
-                <section class="head">
-                    <figure class="network">{{account.network().name}}</figure>
-                    <figure class="danger" v-if="account.hasDangerousAuthority()">Owner imported <i class="icon-attention"></i></figure>
-                </section>
-
-                <section class="info">
-                    <figure class="symbol token-eos-eos"></figure>
-                    <figure class="account-name">{{account.sendable()}}</figure>
-                    <figure class="keypair-name">{{account.keypair().name}}</figure>
-                </section>
-
-                <section class="tail">
-                    <section class="resources">
-                        <section class="resource" v-for="i in [1,1,1]">
-                            <figure class="icon-check"></figure>
-                            <figure class="type">CPU</figure>
-                        </section>
-                    </section>
-                    <section class="tokens">
-                        <figure class="balance">${{account.totalFiatBalance()}}</figure>
-                        <figure class="count">in {{account.tokens().length}} tokens</figure>
-                    </section>
-                </section>
-            </section>
+        <section class="accounts-list-container" v-if="state === STATES.ACCOUNTS">
+            <AccountList :accounts="filteredAccounts" v-on:account="goToAccount" />
         </section>
 
 
@@ -104,6 +80,7 @@
     import {Popup} from "../models/popups/Popup";
     import ElectronHelpers from "../util/ElectronHelpers";
     import AccountService from "../services/blockchain/AccountService";
+    import AccountList from "../components/misc/AccountList";
 
     const STATES = {
     	ACCOUNTS:'accounts',
@@ -112,6 +89,7 @@
 
     export default {
     	components:{
+		    AccountList,
     	    PanelTabs
         },
         data () {return {
@@ -210,6 +188,10 @@
         height:calc(100vh - 180px);
         padding-bottom:50px;
 
+        .accounts-list-container {
+            overflow-y: auto;
+            height:calc(100% - 130px);
+        }
 
         .keys-list {
             padding:40px;
@@ -227,7 +209,7 @@
                 margin-bottom:40px;
 
                 &:not(:last-child){
-                    border-bottom:1px solid $border;
+                    border-bottom:1px solid $lightgrey;
                 }
 
                 .row {
@@ -293,7 +275,7 @@
                             margin-top:5px;
                             padding:3px 5px;
                             border-radius:$radius;
-                            border:1px solid $border;
+                            border:1px solid $lightgrey;
                             display:inline-block;
                             cursor: pointer;
 
@@ -309,116 +291,7 @@
         }
 
 
-        .accounts-list {
-            padding:40px;
-            display:flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-content: flex-start;
-            overflow-y: auto;
-            height:calc(100% - 110px);
 
-            .account {
-                cursor: pointer;
-                width:calc(50% - 10px);
-                border-radius:10px;
-                box-shadow:0 1px 3px $blue-shadow;
-                border:1px solid rgba(0,0,0,0.05);
-                padding:15px;
-                margin-bottom:20px;
-                height:200px;
-                background:$white;
-
-                @media (min-width:$breakpoint-large-desktop){
-                    width:calc(25% - 10px);
-                }
-
-                transition:all 0.2s ease;
-                transition-property: box-shadow;
-
-                .head {
-                    font-size: $small;
-                    display:flex;
-                    justify-content: space-between;
-
-                    .danger {
-                        color:$red;
-                        font-weight: bold;
-
-                        i {
-                            display:inline-block;
-                            animation: pulsate 1s ease infinite;
-                        }
-                    }
-                }
-
-                .info {
-                    display:flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    text-align:center;
-                    height:122px;
-
-                    .symbol {
-                        font-size: 48px;
-                    }
-
-                    .account-name {
-                        font-size: 18px;
-                        font-weight: bold;
-                    }
-
-                    .keypair-name {
-                        font-size: $tiny;
-                        font-weight: bold;
-                        margin-top:2px;
-                    }
-                }
-
-                .tail {
-                    display:flex;
-                    justify-content: space-between;
-                    align-items: flex-end;
-                    height:36px;
-
-                    .resources {
-                        display:flex;
-
-                        .resource {
-                            padding-right:10px;
-
-                            .icon {
-                                color:$blue;
-                                margin-bottom:2px;
-                            }
-
-                            .type {
-                                font-size: $small;
-                            }
-                        }
-                    }
-
-                    .tokens {
-                        text-align:right;
-
-                        .balance {
-                            font-size: $medium;
-                            font-weight: bold;
-                            margin-bottom:2px;
-                        }
-
-                        .count {
-                            font-size: $small;
-                        }
-                    }
-                }
-
-                &:hover {
-                    box-shadow:0 8px 18px $blue-shadow;
-                }
-            }
-
-        }
 
 
 
@@ -427,7 +300,7 @@
             bottom:0;
             left:0;
             right:0;
-            border-top:1px solid $border;
+            border-top:1px solid $lightgrey;
             height:70px;
             background:$white;
 

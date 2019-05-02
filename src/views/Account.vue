@@ -165,10 +165,10 @@
             min-width:340px;
             max-width:30%;
             width:100%;
-            border-right:1px solid $border;
+            border-right:1px solid $lightgrey;
 
             .details {
-                border-bottom:1px solid $border;
+                border-bottom:1px solid $lightgrey;
                 padding:30px;
                 display:flex;
                 align-items: center;
@@ -212,13 +212,13 @@
 
             .resources {
                 padding:30px;
-                border-bottom:1px solid $border;
+                border-bottom:1px solid $lightgrey;
                 display:flex;
                 justify-content: space-between;
 
                 .loading {
                     font-size: 36px;
-                    color:$border;
+                    color: $lightgrey;
                     display:flex;
                     align-items: center;
                     justify-content: center;

@@ -196,7 +196,6 @@
 					await this[Actions.LOAD_SCATTER](usingLocalStorage);
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
-						UpdateService.needsUpdate();
 						this.$router.push({name:this.RouteNames.HOME});
 						StoreService.setWorking(false);
 					} else {

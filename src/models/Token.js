@@ -135,7 +135,7 @@ export default class Token {
     	const state = StoreService.get().state;
 		if(!state.balances) return [];
 		return Object.keys(state.balances).reduce((acc,accountUnique) => {
-			if(state.balances[accountUnique].find(token => token.unique() === this.unique())){
+			if(state.balances[accountUnique].find(token => token.uniqueWithChain() === this.uniqueWithChain())){
 				if(!acc.find(x => x.identifiable() === accountUnique)){
 					acc.push(state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique));
 				}
@@ -148,5 +148,12 @@ export default class Token {
 	    if(!StoreService.get().state.balances[this.identifiable()]) return [];
 	    return StoreService.get().state.balances[this.identifiable()];
     	 */
+	}
+
+	static sorter(a,b){
+		const untouchable = !!b.unusable ? 1 : !!a.unusable ? -1 : 0;
+		const systemTokenUniques = StoreService.get().getters.networkTokens.map(x => x.uniqueWithChain(false));
+		const isSelfSystem = systemTokenUniques.includes(b.uniqueWithChain(false)) ? 1 : systemTokenUniques.includes(a.uniqueWithChain(false)) ? -1 : 0;
+		return isSelfSystem || untouchable || (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);
 	}
 }

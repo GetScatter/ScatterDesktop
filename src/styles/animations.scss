@@ -8,3 +8,9 @@
   0%, 100% { transform:rotateZ(0deg); }
   50% { transform:rotateZ(360deg); }
 }
+
+.bounce-right { animation: bounce-right 1s ease infinite; }
+@keyframes bounce-right {
+  0%, 100% { transform:translateX(-2px); }
+  50% { transform:translateX(2px); }
+}

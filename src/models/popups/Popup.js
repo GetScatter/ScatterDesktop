@@ -176,8 +176,16 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, callback))
 	}
 
-	static selectAccount(callback, accountsOnly = false, account = null, blockchain = null, hideWatch = false){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {accountsOnly, account, blockchain, hideWatch}, callback))
+	static selectTokenAndAccount(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN_AND_ACCOUNT, {}, callback))
+	}
+
+	static selectAccount(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {}, callback))
+	}
+
+	static selectToken(tokens, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN, {tokens}, callback))
 	}
 
 	static confirmExchange(accounts, symbols, order, callback){
@@ -216,6 +224,9 @@ export const PopupTypes = {
     REMOVE_APP:'removeApp',
     UPDATE_AVAILABLE:'updateAvailable',
 	TX_SUCCESS:'txSuccess',
+	SELECT_TOKEN_AND_ACCOUNT:'selectTokenAndAccount',
+	SELECT_ACCOUNT:'selectAccount',
+	SELECT_TOKEN:'selectToken',
 
     // FULLSCREEN
     VERIFY_PASSWORD:'verifyPassword',
@@ -233,7 +244,6 @@ export const PopupTypes = {
 	DESTROY_SCATTER:'destroyScatter',
 	CHECK_HARDWARE:'checkHardware',
 	ENABLE_WHITELIST:'enableWhitelist',
-	SELECT_ACCOUNT:'selectAccount',
 	CONFIRM_EXCHANGE:'confirmExchange',
 	CONFIRM_TRANSFER:'confirmTransfer',
 	EXCHANGE:'exchange',
@@ -251,6 +261,10 @@ export const isFullscreen = popup => {
         PopupTypes.REMOVE_APP,
         PopupTypes.UPDATE_AVAILABLE,
         PopupTypes.TX_SUCCESS,
+        PopupTypes.SELECT_TOKEN_AND_ACCOUNT,
+        PopupTypes.SELECT_ACCOUNT,
+        PopupTypes.SELECT_TOKEN,
+        PopupTypes.CONFIRM_TRANSFER,
     ].includes(popup.data.type);
 
 
