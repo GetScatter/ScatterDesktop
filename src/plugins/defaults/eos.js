@@ -488,12 +488,43 @@ export default class EOS extends Plugin {
 
 	hasUntouchableTokens(){ return true; }
 	async untouchableBalance(account){
-		const accData = await this.accountData(account).catch(() => null);
-		if(!accData || !accData.hasOwnProperty('self_delegated_bandwidth') || !accData.self_delegated_bandwidth) return null;
-		const token = account.network().systemToken().clone();
-		token.amount = parseFloat(parseFloat(accData.self_delegated_bandwidth.cpu_weight.split(' ')[0]) + parseFloat(accData.self_delegated_bandwidth.net_weight.split(' ')[0])).toFixed(token.decimals);
-		token.unusable = 'CPU / NET';
-		return token;
+		const getCpuAndNet = async () => {
+			const accData = await this.accountData(account).catch(() => null);
+			if(!accData || !accData.hasOwnProperty('self_delegated_bandwidth') || !accData.self_delegated_bandwidth) return null;
+			const token = account.network().systemToken().clone();
+			token.amount = parseFloat(parseFloat(accData.self_delegated_bandwidth.cpu_weight.split(' ')[0]) + parseFloat(accData.self_delegated_bandwidth.net_weight.split(' ')[0])).toFixed(token.decimals);
+			token.unusable = 'CPU / NET';
+			return token;
+		}
+
+		const getRex = async () => {
+			if(account.network().chainId !== mainnetChainId) return null;
+			return fetch(`${account.network().fullhost()}/v1/chain/get_table_rows`, {
+				method:"POST",
+				body:JSON.stringify({
+					code: "eosio",
+					index_position: 1,
+					json: true,
+					limit: 1,
+					lower_bound: account.name,
+					scope: "eosio",
+					table: "rexbal",
+				})
+			}).then(x => x.json()).then(result => {
+				if(!result) return null;
+				const rex = result.rows[0];
+				if(rex.owner !== account.name) return null;
+				const token = account.network().systemToken().clone();
+				token.symbol = 'REX';
+				token.amount = parseFloat(rex.rex_balance.split(' ')[0]).toFixed(4);
+				token.unusable = 'REX';
+				return token;
+			}).catch(() => null)
+		}
+
+		const cpunet = await getCpuAndNet();
+		const rex = await getRex();
+		return [cpunet, rex].filter(x => !!x);
 	}
 
 	async balanceFor(account, token){

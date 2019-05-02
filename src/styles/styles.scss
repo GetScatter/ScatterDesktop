@@ -199,22 +199,23 @@ label {
 
   .badge {
     background:$white;
-    width:45px;
-    height:45px;
+    width:60px;
+    height:60px;
     border-radius:50%;
-    box-shadow:0 1px 2px $blue-shadow, 0 2px 3px $blue-shadow;
+    box-shadow:0 1px 2px $blue-shadow, 0 4px 6px $blue-shadow;
     display:flex;
     justify-content: center;
     align-items: center;
-    font-size: 14px;
+    font-size: 16px;
     position: relative;
     color:$silver;
+    border:0 solid transparent;
 
     transition: all 0.2s ease;
-    transition-property: background, color, box-shadow;
+    transition-property: background, color, box-shadow, border;
 
     &.small {
-      font-size: 11px;
+      font-size: 13px;
     }
 
     &.iconed {
@@ -222,23 +223,22 @@ label {
     }
 
     &.unusable {
-      background:$blue-gradient;
+      background:$blue;
       color:$white;
       border:3px solid $white;
     }
 
     .locked {
       position:absolute;
-      font-size: 13px;
-      top:5px;
-      right:3px;
-      text-shadow:0 1px 2px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.3);
+      font-size: 18px;
+      bottom:-8px;
+      text-shadow:0 1px 2px rgba(0,0,0,0.2), 0 1px 16px rgba(0,0,0,0.3), 0 1px 2px $blue-shadow, 0 3px 16px $blue-shadow;
     }
   }
 
   .details {
     flex:1;
-    padding:0 10px;
+    padding:0 0 0 20px;
     display:flex;
     flex-direction: column;
     justify-content: center;
@@ -286,7 +286,8 @@ label {
       .badge {
         background:$blue;
         color:$white;
-        box-shadow:0 0 0 transparent, 0 0 0 transparent;
+        border:0 solid transparent;
+        box-shadow:inset 0 3px 2px rgba(0,0,0,0.1), 0 0 0 transparent;
       }
     }
   }

@@ -16,7 +16,7 @@
 
 					<section class="actions">
 						<Button text="Send" />
-						<Button text="Exchange" />
+						<!--<Button text="Exchange" />-->
 					</section>
 				</section>
 			</section>
@@ -52,7 +52,7 @@
 			}
 		},
 		mounted(){
-			console.log(this.balances);
+
 		},
 		methods:{
 			selectToken(token){

@@ -13,8 +13,7 @@ export default class BalanceService {
 			const tokens = StoreService.get().getters.allTokens.filter(x => x.blockchain === blockchain)
 				.filter(x => x.chainId === account.network().chainId);
 			const balances = await plugin.balancesFor(account, tokens);
-			const untouchable = await this.loadUntouchables(account);
-			if(untouchable) balances.push(untouchable);
+			(await this.loadUntouchables(account)).map(x => balances.push(x));
 			return StoreService.get().dispatch(Actions.SET_BALANCES, {account:account.identifiable(), balances});
 		} catch(e){
 			return null;
@@ -52,7 +51,7 @@ export default class BalanceService {
 
 	static async loadUntouchables(account){
 		const plugin = PluginRepository.plugin(account.blockchain());
-		return plugin.hasUntouchableTokens() ? plugin.untouchableBalance(account) : null;
+		return plugin.hasUntouchableTokens() ? plugin.untouchableBalance(account) : [];
 	}
 
 	static totalBalances(allNetworks = false){

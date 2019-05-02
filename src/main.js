@@ -40,7 +40,6 @@ class Main {
 	constructor(){
 
 		const hash = location.hash.replace("#/", '');
-		console.log('hash', hash)
 
 		const shared = [
 			{tag:'Button', vue:Button},

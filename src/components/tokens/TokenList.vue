@@ -55,7 +55,7 @@
 					if(this.terms === '+' || this.terms === '-') return this.change(b, true) - this.change(a, true);
 					const systemToken = !this.account ? null : this.account.network().systemToken().uniqueWithChain();
 					const system = systemToken === b.uniqueWithChain() ? 1 : systemToken === a.uniqueWithChain() ? -1 : 0;
-					const untouchable = this.account && !!b.unusable ? 1 : this.account && !!a.unusable ? -1 : 0;
+					const untouchable = !!b.unusable ? 1 : !!a.unusable ? -1 : 0;
 					const systemTokenUniques = this.networkTokens.map(x => x.uniqueWithChain(false));
 					const isSelfSystem = systemTokenUniques.includes(b.uniqueWithChain(false)) ? 1 : systemTokenUniques.includes(a.uniqueWithChain(false)) ? -1 : 0;
 					return isSelfSystem || system || untouchable || (b.fiatBalance(false) || 0) - (a.fiatBalance(false) || 0);

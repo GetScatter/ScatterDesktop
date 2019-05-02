@@ -162,7 +162,6 @@
 	.edit-network {
 		padding:0 20px 20px;
 		border-radius:$radius;
-		border:1px solid $border;
 		margin-top:20px;
 		width:100%;
 		max-width:500px;
