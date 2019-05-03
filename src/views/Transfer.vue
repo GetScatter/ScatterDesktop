@@ -4,7 +4,7 @@
 		<!----------------------->
 		<!--------- FROM -------->
 		<!----------------------->
-		<section class="from" v-if="account && token && toSend">
+		<section class="greyback" v-if="account && token && toSend">
 			<section class="limit-width">
 				<label>Sending</label>
 				<section class="boxes">
@@ -38,7 +38,7 @@
 		<!----------------------->
 		<!---------- TO --------->
 		<!----------------------->
-		<section class="to">
+		<section class="whiteback">
 			<section class="limit-width">
 				<section class="split-inputs" style="width:calc(50% - 10px);">
 					<label style="flex:1;">Recipient</label>
@@ -76,6 +76,7 @@
 	import TransferService from "../services/blockchain/TransferService";
 	import PasswordService from "../services/secure/PasswordService";
 	import PriceService from "../services/apis/PriceService";
+	require('../styles/transfers.scss');
 
 	export default {
 		data(){return {
@@ -157,138 +158,6 @@
 <style scoped lang="scss">
 	@import "../styles/variables";
 
-	.transfer {
-		height:$quickheightnobuffer;
-		display:flex;
-		flex-direction: column;
 
-		.from {
-			flex:1;
-			padding:40px;
-			background: $lightergrey;
-		}
-
-		.to {
-			flex:1;
-			padding:40px;
-		}
-
-		.tail {
-			justify-content: center;
-			display:flex;
-			align-items: center;
-			padding:20px 20px;
-			border-top:1px solid $lightgrey;
-			text-align:center;
-
-			button {
-				display:inline-block;
-				padding:0 60px;
-			}
-		}
-
-		.boxes {
-			margin-top:20px;
-			display:flex;
-			justify-content: space-between;
-
-			.box {
-				width:calc(50% - 10px);
-				background:$white;
-				//box-shadow:0 3px 8px $blue-shadow;
-				border:1px solid $lightgrey;
-				border-radius:$radius;
-
-				&:hover {
-					border:1px solid $blue;
-				}
-
-				.line {
-					width:calc(100%);
-					height:2px;
-					background:$blue;
-				}
-
-				&.account-selector {
-					height:105px;
-					padding:20px;
-					display:flex;
-					align-items: center;
-					position: relative;
-					cursor: pointer;
-
-					.name {
-						font-size: $medium;
-						font-weight: bold;
-						color:$blue;
-						margin-bottom:2px;
-					}
-
-					.network {
-						font-size: $small;
-						margin-bottom:10px;
-
-					}
-
-					.token {
-						font-size: $medium;
-						font-weight: bold;
-					}
-
-					.price {
-						font-size: $tiny;
-						font-weight: bold;
-						color:$silver;
-					}
-
-					.chevron {
-						position:absolute;
-						top:0;
-						bottom:0;
-						right:20px;
-						display:flex;
-						align-items: center;
-						font-size: 24px;
-						color:$blue;
-					}
-				}
-
-				.input-container {
-					height:50px;
-					display:flex;
-					align-items: center;
-					padding:10px 20px;
-
-					.label {
-						flex:0 0 auto;
-						width:50px;
-						font-size: $medium;
-						font-weight: bold;
-					}
-
-					.input {
-						flex:1;
-						font-size: $medium;
-						color:$blue;
-						font-weight: bold;
-						text-align:left;
-
-						&.not-available {
-							color:$grey;
-						}
-					}
-
-					input {
-						height:36px;
-						border:0;
-						font-size: $medium;
-						text-align:left;
-						padding:0;
-						margin:0;
-					}
-				}
-			}
-		}
-	}
 
 </style>

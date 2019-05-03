@@ -21,7 +21,7 @@
 				<Send />
 				<span>Send</span>
 			</section>
-			<section class="action">
+			<section class="action" @click="$router.push({name:RouteNames.RECEIVE})">
 				<Receive />
 				<span>Receive</span>
 			</section>
@@ -81,6 +81,7 @@
 					RouteNames.ASSETS,
 					RouteNames.TRANSFER,
 					RouteNames.ACCOUNT,
+					RouteNames.RECEIVE,
 				].includes(this.$route.name);
 			}
 		},

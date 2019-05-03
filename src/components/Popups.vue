@@ -37,6 +37,7 @@
                             <!--<Selector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />-->
                             <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                             <UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />
+                            <SelectAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
                             <SelectTokenAndAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN_AND_ACCOUNT" />
                             <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
                         </section>
@@ -80,6 +81,7 @@
     import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
     import AddCustomNetwork from "./popins/fullscreen/AddCustomNetwork";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
+    import SelectAccount from "./popins/overlay/SelectAccount";
     import SelectTokenAndAccount from "./popins/overlay/SelectTokenAndAccount";
     // import CheckHardware from "./popins/fullscreen/CheckHardware";
     // import RemoveLocation from "./popins/fullscreen/RemoveLocation";
@@ -99,6 +101,7 @@
     export default {
     	components:{
 		    SelectTokenAndAccount,
+		    SelectAccount,
 		    UpdateAvailable,
 		    // Selector,
 		    // RemoveApp,
