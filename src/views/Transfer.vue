@@ -6,17 +6,46 @@
 		<!----------------------->
 		<section class="greyback" v-if="account && token && toSend">
 			<section class="limit-width">
-				<label>Sending</label>
 				<section class="boxes">
-					<section class="box account-selector" @click="selectTokenAndAccount">
-						<section>
-							<figure class="name">{{account.sendable()}}</figure>
-							<figure class="network">{{account.network().name}}</figure>
-							<figure class="token">{{token.amount}} {{token.symbol}}</figure>
-							<figure class="price">{{token.fiatPrice()}}</figure>
+					<section class="box-container">
+						<label>Sending from</label>
+						<section class="box nested account-selector" @click="selectTokenAndAccount">
+							<section>
+								<figure class="name">{{account.sendable()}}</figure>
+								<figure class="network">{{account.network().name}}</figure>
+								<figure class="token">{{token.amount}} {{token.symbol}}</figure>
+								<figure class="price">{{token.fiatPrice()}}</figure>
+							</section>
+							<figure class="chevron icon-dot-3"></figure>
 						</section>
-						<figure class="chevron icon-dot-3"></figure>
 					</section>
+					<section class="box-container">
+						<label>Receiving to</label>
+						<section class="box nested">
+							<section class="padded recipient-selector">
+								<figure class="name">Contacts</figure>
+								<figure class="chevron icon-dot-3"></figure>
+							</section>
+							<figure class="line"></figure>
+							<section class="input-container">
+								<input placeholder="Address / Account" v-model="recipient" class="input" />
+							</section>
+						</section>
+					</section>
+
+				</section>
+			</section>
+		</section>
+
+
+
+		<!----------------------->
+		<!---------- TO --------->
+		<!----------------------->
+		<section class="whiteback" v-if="account && token && toSend">
+			<section class="limit-width">
+				<label>Amount & Details</label>
+				<section class="boxes">
 					<section class="box">
 						<section class="input-container">
 							<figure class="label">{{token.symbol}}</figure>
@@ -29,31 +58,9 @@
 							<figure class="input not-available" v-else>Price not available</figure>
 						</section>
 					</section>
-				</section>
-			</section>
-		</section>
-
-
-
-		<!----------------------->
-		<!---------- TO --------->
-		<!----------------------->
-		<section class="whiteback">
-			<section class="limit-width">
-				<section class="split-inputs" style="width:calc(50% - 10px);">
-					<label style="flex:1;">Recipient</label>
-					<Button text="contacts" blue="1" />
-				</section>
-
-				<section class="boxes">
 					<section class="box">
 						<section class="input-container">
-							<input placeholder="account name / address" v-model="recipient" class="input" />
-						</section>
-					</section>
-					<section class="box">
-						<section class="input-container">
-							<input placeholder="optional memo" v-model="memo" class="input" />
+							<textarea placeholder="optional memo" v-model="memo" class="input"></textarea>
 						</section>
 					</section>
 				</section>

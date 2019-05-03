@@ -25,7 +25,7 @@
 				<Receive />
 				<span>Receive</span>
 			</section>
-			<section class="action">
+			<section class="action" @click="$router.push({name:RouteNames.EXCHANGE})">
 				<Exchange />
 				<span>Exchange</span>
 			</section>
@@ -80,8 +80,9 @@
 				return [
 					RouteNames.ASSETS,
 					RouteNames.TRANSFER,
-					RouteNames.ACCOUNT,
 					RouteNames.RECEIVE,
+					RouteNames.EXCHANGE,
+					RouteNames.ACCOUNT,
 				].includes(this.$route.name);
 			}
 		},

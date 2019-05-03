@@ -31,10 +31,8 @@
 						<section>
 							<figure class="small-info" v-if="account.blockchain() === Blockchains.EOSIO">
 								Some exchanges will ask you for an addressTag, memo, or some other form of secondary input.
-								You can enter anything, since this is a real EOSIO account it isn't required.
+								You can enter anything in that field since this is a real EOSIO account.
 							</figure>
-
-							<br>
 
 							<Button blue="1" text="Copy to clipboard" @click.native="copy" />
 						</section>

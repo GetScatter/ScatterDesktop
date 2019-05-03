@@ -674,6 +674,8 @@ export default class EOS extends Plugin {
 	}
 
 	async transfer({account, to, amount, token, memo, promptForSignature = true}){
+		if(!this.isValidRecipient(to)) return {error:'Invalid recipient account name'};
+
 		amount = parseFloat(amount).toFixed(token.decimals);
 		const {contract, symbol} = token;
 		return new Promise(async (resolve, reject) => {

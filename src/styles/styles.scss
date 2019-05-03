@@ -85,6 +85,11 @@ input {
   }
 }
 
+.split-flex {
+  display:flex;
+  justify-content: space-between;
+}
+
 
 .panel-switch {
   height:60px;

@@ -1,17 +1,4 @@
-// const Terms = () => import('../views/Terms')
-// const Onboarding = () => import('../views/Onboarding')
-// const Settings = () => import('../views/Settings')
 const PopOut = () => import('../views/PopOut')
-//
-// const Identity = () => import('../views/Identity')
-// const Transfer = () => import('../views/Transfer')
-// const Tokens = () => import('../views/Tokens')
-// const Token = () => import('../views/Token')
-// const Permission = () => import('../views/Permission')
-//
-//
-// const NewKeypair = () => import('../views/NewKeypair')
-// const Keypair = () => import('../views/Keypair')
 
 const Login = () => import('../views/Login')
 const Home = () => import('../views/Apps')
@@ -21,6 +8,7 @@ const Wallet = () => import('../views/Wallet')
 const Account = () => import('../views/Account')
 const Items = () => import('../views/Items')
 const Transfer = () => import('../views/Transfer')
+const Exchange = () => import('../views/Exchange')
 const Receive = () => import('../views/Receive')
 const Networks = () => import('../views/Networks')
 const ImportKey = () => import('../views/ImportKey')
@@ -30,49 +18,51 @@ const ImportKey = () => import('../views/ImportKey')
 export const RouteNames = {
 	POP_OUT:'popout',
 
-    LOGIN:'login',
-    HOME:'home',
-    WALLET:'wallet',
-    ITEMS:'items',
-    NETWORKS:'networks',
-    ASSETS:'assets',
-    TRANSFER:'transfer',
-    RECEIVE:'receive',
+	LOGIN:'login',
+	HOME:'home',
+	WALLET:'wallet',
+	ITEMS:'items',
+	NETWORKS:'networks',
+	ASSETS:'assets',
+	TRANSFER:'transfer',
+	RECEIVE:'receive',
+	EXCHANGE:'exchange',
 
 
-    APP:'app',
-    ACCOUNT:'account',
-    IMPORT_KEY:'importKey',
+	APP:'app',
+	ACCOUNT:'account',
+	IMPORT_KEY:'importKey',
 
-    // NEW_KEYPAIR:'newKeypair',
-    // KEYPAIR:'keypair',
-    // IDENTITY:'identity',
-    // TOKENS:'tokens',
-    // TOKEN:'token',
-    // TRANSFER:'transfer',
-    // PERMISSION:'permission',
-    // TERMS:'terms',
-    // ONBOARDING:'onboarding',
-    // SETTINGS:'settings',
-    //
-    // // POPOUT
+	// NEW_KEYPAIR:'newKeypair',
+	// KEYPAIR:'keypair',
+	// IDENTITY:'identity',
+	// TOKENS:'tokens',
+	// TOKEN:'token',
+	// TRANSFER:'transfer',
+	// PERMISSION:'permission',
+	// TERMS:'terms',
+	// ONBOARDING:'onboarding',
+	// SETTINGS:'settings',
+	//
+	// // POPOUT
 };
 
 const RouteViews = {
-    [RouteNames.LOGIN]:Login,
-    [RouteNames.HOME]:Home,
-    [RouteNames.WALLET]:Wallet,
-    [RouteNames.ITEMS]:Items,
-    [RouteNames.NETWORKS]:Networks,
-    [RouteNames.ASSETS]:Assets,
-    [RouteNames.TRANSFER]:Transfer,
-    [RouteNames.RECEIVE]:Receive,
+	[RouteNames.LOGIN]:Login,
+	[RouteNames.HOME]:Home,
+	[RouteNames.WALLET]:Wallet,
+	[RouteNames.ITEMS]:Items,
+	[RouteNames.NETWORKS]:Networks,
+	[RouteNames.ASSETS]:Assets,
+	[RouteNames.TRANSFER]:Transfer,
+	[RouteNames.RECEIVE]:Receive,
+	[RouteNames.EXCHANGE]:Exchange,
 
 
-    [RouteNames.APP]:App,
-    [RouteNames.ACCOUNT]:Account,
-    [RouteNames.IMPORT_KEY]:ImportKey,
-    [RouteNames.POP_OUT]:PopOut,
+	[RouteNames.APP]:App,
+	[RouteNames.ACCOUNT]:Account,
+	[RouteNames.IMPORT_KEY]:ImportKey,
+	[RouteNames.POP_OUT]:PopOut,
 };
 
 const RoutePaths = {
@@ -87,39 +77,39 @@ const RoutePaths = {
 
 export class Routing {
 
-    static builder(){
-        const routeNames = Object.keys(RouteNames).map(key => RouteNames[key]);
+	static builder(){
+		const routeNames = Object.keys(RouteNames).map(key => RouteNames[key]);
 
-        let routesBuilder = {};
-        routeNames.map(routeName => {
-            routesBuilder[routeName] = {
-	            path:RoutePaths.hasOwnProperty(routeName) ? RoutePaths[routeName] : `/${routeName}`,
-                name:routeName,
-                component: RouteViews[routeName]
-            }
-        });
+		let routesBuilder = {};
+		routeNames.map(routeName => {
+			routesBuilder[routeName] = {
+				path:RoutePaths.hasOwnProperty(routeName) ? RoutePaths[routeName] : `/${routeName}`,
+				name:routeName,
+				component: RouteViews[routeName]
+			}
+		});
 
-        return routesBuilder;
-    }
+		return routesBuilder;
+	}
 
-    static routes(){
-        return Object.keys(Routing.builder())
-            .map(routeName => Routing.builder()[routeName]);
-    }
+	static routes(){
+		return Object.keys(Routing.builder())
+			.map(routeName => Routing.builder()[routeName]);
+	}
 
-    static isRestricted(routeName) {
-        return ![
-            RouteNames.LOGIN,
-            RouteNames.POP_OUT,
-            // RouteNames.LOAD_FROM_BACKUP
-        ].includes(routeName)
-    }
+	static isRestricted(routeName) {
+		return ![
+			RouteNames.LOGIN,
+			RouteNames.POP_OUT,
+			// RouteNames.LOAD_FROM_BACKUP
+		].includes(routeName)
+	}
 
-    static hasSidebar(routeName){
-        return ![
-            RouteNames.ONBOARDING,
-            RouteNames.POP_OUT,
-        ].includes(routeName)
-    }
+	static hasSidebar(routeName){
+		return ![
+			RouteNames.ONBOARDING,
+			RouteNames.POP_OUT,
+		].includes(routeName)
+	}
 
 }
