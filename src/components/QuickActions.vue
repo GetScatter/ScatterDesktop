@@ -1,5 +1,5 @@
 <template>
-	<section class="quick-actions">
+	<section class="quick-actions" :class="{'short':isShort}">
 		<section class="left" v-if="!quickBack">
 			<section class="fiat">
 				<span class="balance">{{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}</span>
@@ -17,13 +17,13 @@
 		</section>
 
 		<section class="right">
-			<section class="action">
-				<Receive />
-				<span>Receive</span>
-			</section>
 			<section class="action" @click="$router.push({name:RouteNames.TRANSFER})">
 				<Send />
 				<span>Send</span>
+			</section>
+			<section class="action">
+				<Receive />
+				<span>Receive</span>
 			</section>
 			<section class="action">
 				<Exchange />
@@ -41,6 +41,7 @@
 	import Receive from './svgs/quick-actions/Receive';
 	import PriceService from "../services/apis/PriceService";
 	import BalanceService from "../services/blockchain/BalanceService";
+	import {RouteNames} from "../vue/Routing";
 
 	export default {
 		components:{
@@ -74,6 +75,13 @@
 			totalTokenBalance(){
 				const totals = this.totalBalances.totals;
 				return PriceService.getTotal(totals, null, false, this.displayToken);
+			},
+			isShort(){
+				return [
+					RouteNames.ASSETS,
+					RouteNames.TRANSFER,
+					RouteNames.ACCOUNT,
+				].includes(this.$route.name);
 			}
 		},
 		mounted(){
@@ -101,7 +109,12 @@
 	@import "../styles/variables";
 
 	.quick-actions {
-		height:180px;
+		height:$quickactionsheight;
+
+		&:not(.short){
+			height:calc(#{$quickactionsheight} + #{$quickactionsbuffer});
+		}
+
 		width:100%;
 		background:$blue;
 		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#007fd7+0,00a8ff+100 */

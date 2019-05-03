@@ -158,7 +158,7 @@
 	@import "../styles/variables";
 
 	.transfer {
-		height:calc(100vh - 220px);
+		height:$quickheightnobuffer;
 		display:flex;
 		flex-direction: column;
 

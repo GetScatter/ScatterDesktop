@@ -1,5 +1,11 @@
 // Helpers
-$fullheight:calc(100vh - 40px);
+$menuheight:40px;
+$quickactionsheight:135px;
+$quickactionsbuffer:45px;
+
+$fullheight:calc(100vh - #{$menuheight});
+$quickheight:calc(100vh - #{$menuheight} - #{$quickactionsheight - #{$quickactionsbuffer}});
+$quickheightnobuffer:calc(100vh - #{$menuheight} - #{$quickactionsheight});
 $radius:4px;
 
 

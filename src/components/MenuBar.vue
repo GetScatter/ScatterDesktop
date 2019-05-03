@@ -68,11 +68,11 @@
 
 	.menu-bar {
 		-webkit-app-region: drag;
-		-webkit-user-select: none;
+		-webkit-user-select: none !important;
 		background: $blue;
 		color:#fff;
-		height:40px;
-		line-height: 40px;
+		height:$menuheight;
+		line-height: $menuheight;
 		width:100%;
 		text-align:center;
 		z-index: 9999999999;
@@ -83,12 +83,12 @@
 
 		.actions {
 			-webkit-app-region: drag;
-			-webkit-user-select: none;
+			-webkit-user-select: none !important;
 			position:absolute;
 			right:0;
 			top:0;
-			height:40px;
-			line-height: 40px;
+			height:$menuheight;
+			line-height: $menuheight;
 			display:flex;
 			justify-content: center;
 			align-items: center;

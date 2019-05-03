@@ -174,14 +174,6 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN_AND_ACCOUNT, {}, callback))
 	}
 
-	static selectAccount(callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {}, callback))
-	}
-
-	static selectToken(tokens, callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN, {tokens}, callback))
-	}
-
 	static confirmExchange(accounts, symbols, order, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order}, callback))
 	}
@@ -219,8 +211,6 @@ export const PopupTypes = {
     UPDATE_AVAILABLE:'updateAvailable',
 	TX_SUCCESS:'txSuccess',
 	SELECT_TOKEN_AND_ACCOUNT:'selectTokenAndAccount',
-	SELECT_ACCOUNT:'selectAccount',
-	SELECT_TOKEN:'selectToken',
 
     // FULLSCREEN
     VERIFY_PASSWORD:'verifyPassword',

@@ -63,6 +63,7 @@
 	$open:200px;
 
 	.sidebar-container {
+		-webkit-user-select: none !important;
 		.placeholder {
 			width:$closed;
 			height:$fullheight;

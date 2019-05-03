@@ -162,9 +162,10 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../styles/variables";
+    $panelheight:180px;
 
     .account {
-        height:calc(100vh - 220px);
+        height:$quickheightnobuffer;
         display:flex;
 
         .manage {
@@ -173,6 +174,7 @@
             width:100%;
             border-right:1px solid $lightgrey;
 
+
             .details {
                 border-bottom:1px solid $lightgrey;
                 padding:30px;
@@ -180,7 +182,7 @@
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
-                height:180px;
+                height:$panelheight;
 
                 .blockchain {
                     font-size: 48px;
@@ -217,6 +219,7 @@
             }
 
             .resources {
+                height:$panelheight;
                 padding:30px;
                 border-bottom:1px solid $lightgrey;
                 display:flex;
@@ -276,7 +279,7 @@
 
             .actions {
                 padding:30px;
-                height:calc(100vh - 590px);
+                height:calc(#{$quickheightnobuffer} - #{$panelheight * 2});
                 overflow-y:auto;
 
                 .action {
@@ -317,7 +320,7 @@
             flex:1;
 
             .token-list {
-                height:calc(100vh - 400px);
+                height:calc(#{$quickheightnobuffer} - #{$panelheight});
             }
         }
 

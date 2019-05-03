@@ -20,7 +20,7 @@
 	@import "../styles/variables";
 
 	.assets {
-		height:calc(100vh - 220px);
+		height:$quickheightnobuffer;
 	}
 
 
