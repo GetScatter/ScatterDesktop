@@ -57,12 +57,12 @@
 
 						<section class="box" :class="{'not-allowed':!rate}">
 							<section class="input-container">
-								<figure class="label">{{token.symbol}}</figure>
+								<figure class="label">{{token.truncatedSymbol()}}</figure>
 								<input :disabled="!rate" placeholder="0.00" v-on:input="changedAmount" v-model="toSend.amount" class="input" />
 							</section>
 							<figure class="line"></figure>
 							<section class="input-container">
-								<figure class="label">USD</figure>
+								<figure class="label">{{displayCurrency}}</figure>
 								<input :disabled="!rate" placeholder="0.00" v-if="toSend.fiatPrice()" v-on:input="changedFiat" v-model="fiat" class="input" />
 								<figure class="input not-available" v-else>Price not available</figure>
 							</section>
@@ -93,14 +93,15 @@
 
 
 							<section v-if="!pair">
-								<figure class="name">Select a Token</figure>
+								<figure class="name" v-if="pairs.length">Select a Token</figure>
+								<figure class="name" v-else>No pairs found</figure>
 							</section>
 							<section v-if="pair">
 								<figure class="name" v-if="!loadingRate">{{estimatedAmount}}</figure>
 								<figure class="name" v-if="loadingRate">Loading Rate</figure>
 								<figure class="network" v-if="pair">{{pair.symbol}}</figure>
 							</section>
-							<figure class="chevron icon-dot-3"></figure>
+							<figure class="chevron icon-dot-3" v-if="pairs.length"></figure>
 						</section>
 					</section>
 
@@ -149,6 +150,7 @@
 		computed:{
 			...mapGetters([
 				'accounts',
+				'displayCurrency'
 			]),
 			sendableTokens(){
 				return this.account.tokens().filter(x => !x.unusable).sort((a,b) => {
@@ -189,6 +191,7 @@
 				}))
 			},
 			selectToken(){
+				if(!this.pairs.length) return;
 				PopupService.push(Popup.selectToken(this.pairs, token => {
 					if(!token) return;
 					this.setPair(token.clone());
@@ -201,6 +204,8 @@
 				this.toSend.amount = 0;
 				this.fiat = 0;
 				this.rate = null;
+				this.pair = null;
+				this.recipient = null;
 			},
 			changedFiat(){
 				this.toSend.amount = parseFloat(this.fiat / this.toSend.fiatPrice(false)).toFixed(this.toSend.decimals);

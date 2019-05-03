@@ -48,12 +48,12 @@
 				<section class="boxes">
 					<section class="box">
 						<section class="input-container">
-							<figure class="label">{{token.symbol}}</figure>
+							<figure class="label">{{token.truncatedSymbol()}}</figure>
 							<input placeholder="0.00" v-on:input="changedAmount" v-model="toSend.amount" class="input" />
 						</section>
 						<figure class="line"></figure>
 						<section class="input-container">
-							<figure class="label">USD</figure>
+							<figure class="label">{{displayCurrency}}</figure>
 							<input placeholder="0.00" v-if="toSend.fiatPrice()" v-on:input="changedFiat" v-model="fiat" class="input" />
 							<figure class="input not-available" v-else>Price not available</figure>
 						</section>
@@ -100,6 +100,7 @@
 		computed:{
 			...mapGetters([
 				'accounts',
+				'displayCurrency',
 			]),
 			sendableTokens(){
 				return this.account.tokens().filter(x => !x.unusable).sort((a,b) => {

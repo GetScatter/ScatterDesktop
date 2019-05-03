@@ -8,14 +8,14 @@
 					<div class="locked icon-lock" v-if="token.unusable"></div>
 				</figure>
 				<section class="details">
-					<figure class="title">{{token.amount}} {{token.symbol}}</figure>
+					<figure class="title"><span v-if="token.amount">{{token.amount}}</span> {{token.symbol}}</figure>
 					<section class="row">
 						<figure class="red" v-if="token.unusable">{{token.unusable}}</figure>
 						<figure class="primary" v-if="!token.unusable"><b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></figure>
-						<figure class="secondary">{{token.fiatBalance()}} </figure>
+						<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{token.fiatBalance()}} </figure>
 					</section>
 					<section class="row" v-if="token.fiatPrice()">
-						<figure class="secondary">{{token.baseTokenPrice()}}</figure>
+						<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{token.baseTokenPrice()}}</figure>
 						<figure class="secondary">{{token.fiatPrice()}}</figure>
 					</section>
 				</section>
@@ -91,6 +91,8 @@
 	@import "../../styles/variables";
 
 	.token-list {
+		width:100%;
+		flex:1;
 
 		.search-and-filter {
 			padding:0 20px;

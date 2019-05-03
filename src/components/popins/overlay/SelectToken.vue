@@ -1,7 +1,7 @@
 <template>
 	<section class="select-token pop-over">
 		<section style="display:flex;" class="scroller">
-			<section v-for="category in categories">
+			<section v-for="category in categories" style="flex:1;">
 				<TokenList :key="category.title" :balances="category.tokens" hoverable="1" v-on:token="returnResult" />
 			</section>
 		</section>

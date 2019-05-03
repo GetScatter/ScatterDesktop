@@ -3,9 +3,13 @@
 		<section class="tip" v-if="graphValue">
 			<div>{{graphValue}}</div>
 		</section>
-		<section class="chart" v-show="hasValues"></section>
-		<section class="no-graph" v-if="!hasValues">
-			No Price Data
+
+		<section v-show="loading" class="no-graph">
+			<i class="icon-spin4 animate-spin"></i>
+		</section>
+		<section v-show="!loading">
+			<section class="chart" v-show="hasValues"></section>
+			<section class="no-graph" v-if="!hasValues">No Price Data</section>
 		</section>
 	</section>
 </template>
@@ -24,6 +28,7 @@
 			chart:null,
 			graphValue:null,
 			hasValues:false,
+			loading:false,
 		}},
 		computed:{
 			...mapState([
@@ -39,10 +44,12 @@
 		methods:{
 			async init(){
 				if(this.priceData && this.priceData.hasOwnProperty('prices')) await this.setupGraph();
+				else this.loading = true;
 				const prices = await PriceService.getCurrencyPrices();
 				const yesterday = await PriceService.getTimeline(dateId(1));
 				const today = await PriceService.getTimeline();
 				this[Actions.SET_PRICE_DATA]({prices, yesterday, today});
+				this.loading = false;
 				this.setupGraph();
 			},
 			async setupGraph(){
