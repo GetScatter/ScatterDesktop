@@ -10,7 +10,7 @@
                     <EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />
                     <EosModerateRam :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_RAM" />
                     <EosModerateCpuNet :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_CPU_NET" />
-                    <!--<EosCreateAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CREATE_ACCOUNT" />-->
+                    <EosCreateAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CREATE_ACCOUNT" />
                     <AddCustomNetwork :popin="popIn" v-if="popIn.data.type === popupTypes.ADD_CUSTOM_NETWORK" />
                     <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
                     <!--<UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />-->
@@ -79,7 +79,7 @@
     import UnlinkAccount from '../components/popins/fullscreen/UnlinkAccount'
     // import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
     // import Mnemonic from '../components/popins/fullscreen/Mnemonic'
-    // import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
+    import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
     import AddCustomNetwork from "./popins/fullscreen/AddCustomNetwork";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
     import SelectAccount from "./popins/overlay/SelectAccount";
@@ -122,7 +122,7 @@
 		    // EosProxyVotes,
 		    EosModerateRam,
 		    EosModerateCpuNet,
-		    // EosCreateAccount,
+		    EosCreateAccount,
 		    UnlinkAccount,
 		    // UnlinkBlockchain,
 		    // Mnemonic,

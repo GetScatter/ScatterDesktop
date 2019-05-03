@@ -116,7 +116,10 @@
 		    },
         },
         mounted(){
-	    	this.lazyLoadResources();
+	    	setTimeout(() => {
+			    this.lazyLoadResources();
+			    this.lazyLoadBalances();
+            }, 250);
         },
         methods:{
 	        async lazyLoadResources(){
@@ -129,6 +132,9 @@
 			        this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:resources});
 			        process.updateProgress(100);
 		        }
+	        },
+	        async lazyLoadBalances(){
+		        BalanceService.loadBalancesFor(this.account);
 	        },
 	        async moderateResource(resource){
 		        if(await ResourceService.moderateResource(resource, this.account)){

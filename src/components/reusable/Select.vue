@@ -81,7 +81,7 @@
 				},1)
 			},
 			parse(item){
-				if(typeof item === 'string' && !this.parser) return item;
+				if(typeof item === 'string' && (!this.parser || !this.parser(item))) return item;
 				if(typeof this.parser !== 'function') return item;
 				return this.parser(item);
 			},

@@ -53,7 +53,9 @@ export default class AccountService {
 
             await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
 	        process.updateProgress(100);
-            resolve(true);
+            setTimeout(() => {
+	            resolve(true);
+            }, 100);
         })
     }
 

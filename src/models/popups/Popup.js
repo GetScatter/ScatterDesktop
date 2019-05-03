@@ -129,14 +129,8 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_MODERATE_CPU_NET, {account}, callback))
 	}
 
-	static eosCreateAccount(activePublicKey, ownerPublicKey, activeId, ownerId, showKeys = false, callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_CREATE_ACCOUNT, {
-			activePublicKey,
-			ownerPublicKey,
-			activeId,
-			ownerId,
-			showKeys
-		}, callback))
+	static eosCreateAccount(account, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_CREATE_ACCOUNT, { account }, callback))
 	}
 
 	static addCustomNetwork(blockchain, callback){

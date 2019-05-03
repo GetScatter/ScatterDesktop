@@ -79,11 +79,6 @@
 				this.popin.data.callback(result);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
-			publicKeyForKeypair(keypair){
-				if(!keypair) return null;
-				if(!keypair.hasOwnProperty('publicKeys')) return null;
-				return keypair.publicKeys.find(key => key.blockchain === Blockchains.EOSIO).key;
-			},
 			changePermissions(){
 				this.returnResult({
 					owner:this.publicKeyForKeypair(this.ownerKey),

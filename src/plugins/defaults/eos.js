@@ -313,6 +313,9 @@ export default class EOS extends Plugin {
 			new AccountAction(localizedState(EOS.ProxyVotesButton, null), 'Proxy', 'icon-heart-1', () => new Promise(resolve => {
 				PopupService.push(Popup.eosProxyVotes(account, () => resolve(true)));
 			})),
+			new AccountAction('Create Account', 'Create', 'icon-user-add', () => new Promise(resolve => {
+				PopupService.push(Popup.eosCreateAccount(account, () => resolve(true)));
+			})),
 		];
 
 		// Adding owner only actions.

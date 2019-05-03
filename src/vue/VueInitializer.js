@@ -8,7 +8,7 @@ import VueTour from 'vue-tour'
 import VueRouter from 'vue-router'
 import {RouteNames, Routing} from './Routing';
 import * as Actions from '../store/constants'
-import {blockchainName} from '../models/Blockchains'
+import {blockchainName, Blockchains} from '../models/Blockchains'
 import {SETTINGS_OPTIONS} from '../models/Settings'
 import ElectronHelpers from '../util/ElectronHelpers'
 import {localized} from '../localization/locales'
@@ -82,6 +82,11 @@ export default class VueInitializer {
 	                setWorkingScreen(bool){ StoreService.get().dispatch(Actions.SET_WORKING_SCREEN, bool); },
 	                copyText(text){ ElectronHelpers.copy(text) },
 					setQuickActionsBack(bool){ this[Actions.SET_QUICK_BACK](bool); },
+	                publicKeyForKeypair(keypair){
+		                if(!keypair) return null;
+		                if(!keypair.hasOwnProperty('publicKeys')) return null;
+		                return keypair.publicKeys.find(key => key.blockchain === Blockchains.EOSIO).key;
+	                },
 
 
                     formatNumber(num, commaOnly = false){
