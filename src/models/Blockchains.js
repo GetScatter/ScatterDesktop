@@ -14,5 +14,6 @@ export const blockchainName = x => {
         case Blockchains.EOSIO: return 'EOSIO';
         case Blockchains.ETH: return 'Ethereum';
         case Blockchains.TRX: return 'Tron';
+        default: return 'Other';
     }
 }

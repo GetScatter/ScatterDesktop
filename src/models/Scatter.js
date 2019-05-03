@@ -7,6 +7,8 @@ import IdGenerator from '../util/IdGenerator'
 import Recurring from "./Recurring";
 import PluginRepository from "../plugins/PluginRepository";
 import Identity from "./Identity";
+import Contact from "./Contact";
+import Keypair from "./Keypair";
 
 export default class Scatter {
 
@@ -48,6 +50,8 @@ export default class Scatter {
         if(json.hasOwnProperty('keychain'))
             p.keychain = (typeof json.keychain === 'string')
                 ? json.keychain : Keychain.fromJson(json.keychain);
+
+	    if(json.hasOwnProperty('contacts')) p.contacts = json.contacts.map(x => Contact.fromJson(x));
 
         return p;
     }

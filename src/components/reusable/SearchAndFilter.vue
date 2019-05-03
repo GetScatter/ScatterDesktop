@@ -1,5 +1,5 @@
 <template>
-	<section class="search-and-filter">
+	<section class="search-and-filter" :class="{'full':fullSearch}">
 
 		<figure class="search-bar">
 			<input placeholder="Search" v-model="terms" />
@@ -56,6 +56,13 @@
 			flex:1;
 			text-align:right;
 			display:flex;
+		}
+
+		&.full {
+			width:100%;
+			.search-bar {
+				margin:0;
+			}
 		}
 
 

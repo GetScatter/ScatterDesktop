@@ -23,7 +23,6 @@
 		},
 		methods:{
 			returnResult(result){
-				console.log(result);
 				this.popin.data.callback(result);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},

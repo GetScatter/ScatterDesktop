@@ -1,5 +1,5 @@
 <template>
-	<section class="networks-panel">
+	<section class="blockchain-list-container">
 
 		<!-------------------------->
 		<!------ BLOCKCHAINS ------->
@@ -26,20 +26,20 @@
 		<!-------------------------->
 		<!------- NETWORKS --------->
 		<!-------------------------->
-		<section class="networks">
+		<section class="list-container">
 			<section class="head">
 				Networks
 			</section>
 			<section class="scroller with-tail">
-				<section class="network-list">
-					<section class="network" v-for="network in visibleNetworks">
+				<section class="item-list">
+					<section class="item" v-for="network in visibleNetworks">
 						<section class="basics" :class="{'open':expanded && expanded.unique() === network.unique()}">
 							<figure class="chevron" @click="toggleExpansion(network)">
 								<i class="icon-right-open-big"></i>
 							</figure>
 							<section class="details" @click="toggleExpansion(network)">
 								<figure class="name">{{network.name}}</figure>
-								<figure class="host">{{network.host}}</figure>
+								<figure class="text">{{network.host}}</figure>
 								<figure class="connection-error" v-if="cantReach(network)">
 									<i class="icon-attention"></i> Connection error!
 								</figure>
@@ -51,7 +51,7 @@
 							</section>
 						</section>
 
-						<section class="expanded" ref="jsonNetwork" v-if="expandedUnique === network.unique()">
+						<section class="expanded" v-if="expandedUnique === network.unique()">
 							<pre v-if="!isEnabled(network)">{{networkJson(network)}}</pre>
 							<EditNetwork v-else :original="expanded" v-on:updated="x => expanded = x" v-on:save="saveNetwork" />
 						</section>
@@ -77,6 +77,7 @@
 	import AccountService from "../services/blockchain/AccountService";
 	import PopupService from "../services/utility/PopupService";
 	import {Popup} from "../models/popups/Popup";
+	require('../styles/blockchain-lists.scss');
 
 	export default {
 		components: {EditNetwork},
@@ -186,6 +187,7 @@
 			},
 			addCustomNetwork(){
 				PopupService.push(Popup.addCustomNetwork(this.selectedBlockchain, async network => {
+					if(!network) return;
 					this.checkReachable(network);
 				}));
 			},
@@ -204,146 +206,6 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../styles/variables";
 
-	.networks-panel {
-		display:flex;
-		height: $fullheight;
 
-		.head {
-			flex:1;
-			display:flex;
-			align-items: center;
-			padding:0 20px;
-			font-size: $medium;
-			font-weight: bold;
-			height:60px;
-			border-bottom:1px solid $lightgrey;
-		}
-
-		.tail {
-			flex:1;
-			display:flex;
-			align-items: center;
-			padding:0 20px;
-			height:60px;
-			border-top:1px solid $lightgrey;
-
-			button {
-				width:100%;
-			}
-		}
-
-		.scroller {
-			flex:1;
-			height:calc(100vh - 40px - 60px);
-			overflow:auto;
-			padding:20px;
-
-			&.with-tail {
-				height:calc(100vh - 40px - 60px - 60px);
-			}
-		}
-
-		.blockchains {
-			flex:0 0 auto;
-			width:250px;
-			border-right:1px solid $lightgrey;
-		}
-
-		.networks {
-			flex:1;
-
-			.network-list {
-				padding:20px;
-
-				.network {
-					margin-bottom:40px;
-					display:flex;
-					flex-direction: column;
-
-					.expanded {
-						pre {
-							font-size: $small;
-							white-space: pre-wrap;
-							padding:20px;
-							background:$blue;
-							color:$white;
-							border-radius:$radius;
-						}
-					}
-
-					.basics {
-						display:flex;
-						width:100%;
-						align-items: center;
-
-						.chevron{
-							padding:0 30px 0 0;
-							color:$blue;
-							cursor: pointer;
-
-							i {
-								display:block;
-								transition:all 0.2s ease;
-								transition-property: transform;
-							}
-						}
-
-						&.open {
-							.chevron {
-								i {
-									transform:rotateZ(90deg);
-								}
-							}
-						}
-
-						.details {
-							flex:1;
-							cursor: pointer;
-
-							.name {
-								font-size: $medium;
-								font-weight: bold;
-							}
-
-							.host {
-								font-size: $small;
-								margin-top:3px;
-								color:$grey;
-							}
-
-							.connection-error {
-								background:$red;
-								color:$white;
-								padding:4px 5px;
-								border-radius:$radius;
-								display:inline-block;
-								font-size: $small;
-								font-weight: bold;
-								margin-top:8px;
-							}
-						}
-
-						.actions {
-							display:flex;
-							align-items: center;
-
-							.system-token {
-								font-size: $small;
-								font-weight: bold;
-								padding:3px 10px;
-								background: $lightgrey;
-								border-radius:20px;
-								margin-right:10px;
-							}
-
-							.switch {
-
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 
 </style>

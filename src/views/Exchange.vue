@@ -58,12 +58,12 @@
 						<section class="box" :class="{'not-allowed':!rate}">
 							<section class="input-container">
 								<figure class="label">{{token.symbol}}</figure>
-								<input placeholder="0.00" v-on:input="changedAmount" v-model="toSend.amount" class="input" />
+								<input :disabled="!rate" placeholder="0.00" v-on:input="changedAmount" v-model="toSend.amount" class="input" />
 							</section>
 							<figure class="line"></figure>
 							<section class="input-container">
 								<figure class="label">USD</figure>
-								<input placeholder="0.00" v-if="toSend.fiatPrice()" v-on:input="changedFiat" v-model="fiat" class="input" />
+								<input :disabled="!rate" placeholder="0.00" v-if="toSend.fiatPrice()" v-on:input="changedFiat" v-model="fiat" class="input" />
 								<figure class="input not-available" v-else>Price not available</figure>
 							</section>
 						</section>
@@ -200,6 +200,7 @@
 				this.toSend = token.clone();
 				this.toSend.amount = 0;
 				this.fiat = 0;
+				this.rate = null;
 			},
 			changedFiat(){
 				this.toSend.amount = parseFloat(this.fiat / this.toSend.fiatPrice(false)).toFixed(this.toSend.decimals);

@@ -11,32 +11,37 @@ export default class ContactService {
 
     constructor(){}
 
-    static async add(recipient, name){
-        recipient = recipient.trim();
-	    name = name.trim();
+    static async addOrUpdate(contact){
+	    contact.recipient = contact.recipient.trim();
+	    contact.name = contact.name.trim();
+	    const scatter = StoreService.get().state.scatter.clone();
 
-        const scatter = StoreService.get().state.scatter.clone();
+	    if(!contact.name.length) return PopupService.push(Popup.snackbar('Invalid contact name'));
+	    if(!contact.recipient.length) return PopupService.push(Popup.snackbar('Invalid contact account / address'));
 
-        if(scatter.contacts.find(x => x.recipient.toLowerCase() === recipient.toLowerCase()))
-            return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.ContactExists)))
+	    if(scatter.contacts.find(x => x.id !== contact.id && x.recipient.toLowerCase() === contact.recipient.toLowerCase()))
+		    return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.ContactExists)))
 
-	    if(scatter.contacts.find(x => x.name.toLowerCase() === name.toLowerCase()))
+	    if(scatter.contacts.find(x => x.id !== contact.id && x.name.toLowerCase() === contact.name.toLowerCase()))
 		    return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.ContactNameExists)))
 
-	    scatter.contacts.push(new Contact(name, recipient));
+
+	    const c = scatter.contacts.find(x => x.id === contact.id);
+	    if(c){
+		    c.recipient = contact.recipient;
+		    c.name = contact.name;
+		    c.blockchain = contact.blockchain;
+	    } else {
+		    scatter.contacts.push(contact);
+	    }
+
 	    return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 
     static async remove(contact){
-        return new Promise(async resolve => {
-	        PopupService.push(Popup.prompt('Removing Contact', 'Are you sure you want to remove this contact?', async bool => {
-	        	if(!bool) return resolve(false);
-		        const scatter = StoreService.get().state.scatter.clone();
-		        scatter.contacts = scatter.contacts.filter(x => x.id !== contact.id);
-		        return resolve(StoreService.get().dispatch(Actions.SET_SCATTER, scatter));
-	        }))
-        })
-
+	    const scatter = StoreService.get().state.scatter.clone();
+	    scatter.contacts = scatter.contacts.filter(x => x.id !== contact.id);
+	    return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 
 }

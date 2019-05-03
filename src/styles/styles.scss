@@ -69,6 +69,10 @@ input {
   &.center {
     text-align: center;
   }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 
 

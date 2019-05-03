@@ -137,6 +137,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ADD_CUSTOM_NETWORK, {blockchain}, callback))
 	}
 
+	static addNewContact(blockchain, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ADD_NEW_CONTACT, {blockchain}, callback))
+	}
+
 	static unlinkAccount(account, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.UNLINK_ACCOUNT, {account}, callback))
 	}
@@ -230,6 +234,7 @@ export const PopupTypes = {
 	EOS_MODERATE_CPU_NET:'eosModerateCpuNet',
 	EOS_CREATE_ACCOUNT:'eosCreateAccount',
 	ADD_CUSTOM_NETWORK:'addCustomNetwork',
+	ADD_NEW_CONTACT:'addNewContact',
 	UNLINK_ACCOUNT:'unlinkAccount',
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 	REMOVE_KEYPAIR:'removeKeypair',

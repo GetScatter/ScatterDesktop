@@ -55,9 +55,9 @@
       background:$white;
 
       &.not-allowed {
-        opacity:0.2;
+        opacity:0.4;
         cursor: not-allowed;
-        pointer-events: none;
+        background:rgba(0,0,0,0.03);
       }
 
       &:not(.nested){

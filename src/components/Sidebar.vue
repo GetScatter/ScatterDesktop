@@ -38,7 +38,7 @@
 					{
 						name:'Administrative',
 						items:[
-							{name:'Contacts', route:RouteNames.HOME},
+							{name:'Contacts', route:RouteNames.CONTACTS},
 							{name:'History', route:RouteNames.HOME},
 							{name:'Networks', route:RouteNames.NETWORKS},
 							{name:'Settings', route:RouteNames.HOME},

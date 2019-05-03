@@ -8,7 +8,7 @@
 			<EditNetwork :original="network" v-on:updated="x => network = x" brand-new="1" />
 
 
-			<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:'Save new network', red:true, click:() => saveNetwork()}]" />
+			<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:'Save new network', blue:true, click:() => saveNetwork()}]" />
 		</section>
 	</section>
 </template>

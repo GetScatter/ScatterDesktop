@@ -70,11 +70,11 @@
             },
             showQuickActions(){
             	if(!this.onboarded) return false;
-            	switch(this.$route.name){
-                    case RouteNames.ITEMS: return false;
-                    case RouteNames.NETWORKS: return false;
-                }
-            	return true;
+            	return ![
+		            RouteNames.ITEMS,
+		            RouteNames.NETWORKS,
+		            RouteNames.CONTACTS,
+                ].includes(this.$route.name);
             }
 
         },

@@ -11,6 +11,7 @@ const Transfer = () => import('../views/Transfer')
 const Exchange = () => import('../views/Exchange')
 const Receive = () => import('../views/Receive')
 const Networks = () => import('../views/Networks')
+const Contacts = () => import('../views/Contacts')
 const ImportKey = () => import('../views/ImportKey')
 
 
@@ -27,24 +28,12 @@ export const RouteNames = {
 	TRANSFER:'transfer',
 	RECEIVE:'receive',
 	EXCHANGE:'exchange',
+	CONTACTS:'contacts',
 
 
 	APP:'app',
 	ACCOUNT:'account',
 	IMPORT_KEY:'importKey',
-
-	// NEW_KEYPAIR:'newKeypair',
-	// KEYPAIR:'keypair',
-	// IDENTITY:'identity',
-	// TOKENS:'tokens',
-	// TOKEN:'token',
-	// TRANSFER:'transfer',
-	// PERMISSION:'permission',
-	// TERMS:'terms',
-	// ONBOARDING:'onboarding',
-	// SETTINGS:'settings',
-	//
-	// // POPOUT
 };
 
 const RouteViews = {
@@ -57,6 +46,7 @@ const RouteViews = {
 	[RouteNames.TRANSFER]:Transfer,
 	[RouteNames.RECEIVE]:Receive,
 	[RouteNames.EXCHANGE]:Exchange,
+	[RouteNames.CONTACTS]:Contacts,
 
 
 	[RouteNames.APP]:App,
@@ -69,10 +59,6 @@ const RoutePaths = {
 	[RouteNames.HOME]: '/',
 	[RouteNames.APP]: '/:applink',
 	[RouteNames.ACCOUNT]: '/:unique',
-	// [RouteNames.KEYPAIR]: '/keypair/:id',
-	// [RouteNames.PERMISSION]: '/permission/:origin',
-	// [RouteNames.SETTINGS]: '/settings/:panel',
-	// [RouteNames.TOKEN]: '/token/:id',
 };
 
 export class Routing {

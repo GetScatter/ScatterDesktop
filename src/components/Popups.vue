@@ -12,6 +12,7 @@
                     <EosModerateCpuNet :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_CPU_NET" />
                     <EosCreateAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CREATE_ACCOUNT" />
                     <AddCustomNetwork :popin="popIn" v-if="popIn.data.type === popupTypes.ADD_CUSTOM_NETWORK" />
+                    <AddNewContact :popin="popIn" v-if="popIn.data.type === popupTypes.ADD_NEW_CONTACT" />
                     <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
                     <!--<UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />-->
                     <!--<Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />-->
@@ -81,6 +82,7 @@
     // import Mnemonic from '../components/popins/fullscreen/Mnemonic'
     import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
     import AddCustomNetwork from "./popins/fullscreen/AddCustomNetwork";
+    import AddNewContact from "./popins/fullscreen/AddNewContact";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
     import SelectAccount from "./popins/overlay/SelectAccount";
     import SelectToken from "./popins/overlay/SelectToken";
@@ -117,6 +119,7 @@
 		    // DestroyScatter,
 		    // RemoveLocation,
 		    AddCustomNetwork,
+		    AddNewContact,
 		    ConfirmPassword,
 		    EosChangePermissions,
 		    // EosProxyVotes,
