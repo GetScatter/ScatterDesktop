@@ -15,6 +15,7 @@
 </template>
 
 <script>
+	import {mapGetters} from 'vuex';
 	import {RouteNames} from "../vue/Routing";
 
 	export default {
@@ -22,6 +23,10 @@
 
 		}},
 		computed:{
+			...mapGetters([
+				'accounts',
+			]),
+
 			items(){
 				return [
 					{
@@ -29,11 +34,11 @@
 						items:[
 							{name:'Apps', route:RouteNames.HOME},
 							{name:'Wallet', route:RouteNames.WALLET},
-							{name:'Assets', route:RouteNames.ASSETS},
-							{name:'Items', route:RouteNames.ITEMS},
-							{name:'RIDL', route:RouteNames.HOME},
+							this.accounts.length ? {name:'Assets', route:RouteNames.ASSETS} : null,
+							this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
+							this.accounts.length ? {name:'RIDL', route:RouteNames.HOME} : null,
 							{name:'Identities', route:RouteNames.HOME},
-						]
+						].filter(x => !!x)
 					},
 					{
 						name:'Administrative',
@@ -42,7 +47,7 @@
 							{name:'History', route:RouteNames.HOME},
 							{name:'Networks', route:RouteNames.NETWORKS},
 							{name:'Settings', route:RouteNames.HOME},
-						]
+						].filter(x => !!x)
 					}
 				]
 			}

@@ -59,6 +59,7 @@
 	import KeyPairService from "../../../services/secure/KeyPairService";
 	import Keypair from "../../../models/Keypair";
 	import AccountService from "../../../services/blockchain/AccountService";
+	import BalanceService from "../../../services/blockchain/BalanceService";
 
 	const STATES = {
 		SELECT_TYPE:'selectType',
@@ -178,6 +179,7 @@
 			async finishImporting(keypair){
 				await KeyPairService.saveKeyPair(keypair);
 				await AccountService.importAllAccounts(keypair);
+				BalanceService.loadAllBalances(true);
 				this.setWorkingScreen(false);
 				this.returnResult(keypair);
 			},

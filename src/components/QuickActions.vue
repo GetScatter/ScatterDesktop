@@ -1,6 +1,6 @@
 <template>
 	<section class="quick-actions" :class="{'short':isShort}">
-		<section class="left" v-if="!quickBack">
+		<section class="left" v-if="!quickBack && accounts.length">
 			<section class="fiat">
 				<span class="balance">{{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}</span>
 				<Refresh class="refresh" :class="{'spin':loadingBalances}" @click.native="refreshTokens" />
@@ -10,13 +10,20 @@
 				<span class="balance">{{formatNumber(totalTokenBalance.amount, true)}} {{totalTokenBalance.symbol}}</span>
 			</section>
 		</section>
+		<section class="left" v-if="!quickBack && !accounts.length">
+			<section class="fiat">
+				<span class="balance" style="opacity:0.2;">No accounts</span>
+			</section>
+		</section>
+
+
 		<section class="left" v-if="quickBack">
 			<section class="quick-back" @click="goBack">
 				<i class="icon-left-small"></i>
 			</section>
 		</section>
 
-		<section class="right">
+		<section class="right" v-if="accounts.length">
 			<section class="action" @click="$router.push({name:RouteNames.TRANSFER})">
 				<Send />
 				<span>Send</span>
