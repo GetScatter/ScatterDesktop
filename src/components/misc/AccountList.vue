@@ -7,7 +7,7 @@
 			</section>
 
 			<section class="info">
-				<figure class="symbol token-eos-eos"></figure>
+				<figure class="symbol" :class="`token-${account.blockchain()}-${account.blockchain()}`"></figure>
 				<figure class="account-name">{{account.sendable()}}</figure>
 				<figure class="keypair-name">{{account.keypair().name}}</figure>
 			</section>

@@ -8,7 +8,7 @@
                 <!-------- DETAILS ---------->
                 <!--------------------------->
                 <section class="details">
-                    <figure class="blockchain token-eos-eos"></figure>
+                    <figure class="blockchain" :class="`token-${account.blockchain()}-${account.blockchain()}`"></figure>
                     <figure class="name">{{account.sendable()}}</figure>
                     <figure class="network">{{account.network().name}}</figure>
                     <figure class="permissions">

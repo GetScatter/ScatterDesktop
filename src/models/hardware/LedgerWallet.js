@@ -92,7 +92,7 @@ class LedgerAPI {
         try {
 	        getTransport().decorateAppAPIMethods(
 		        this,
-		        [ "getPublicKey", "signTransaction", "getAppConfiguration" ],
+		        [ "getAddress", "getPublicKey", "signTransaction", "getAppConfiguration" ],
 		        scrambleKey
 	        );
         } catch(e){}
@@ -103,6 +103,13 @@ class LedgerAPI {
         const prefix = this.api ? this.api : this;
         prefix.addressIndex = index;
     }
+
+	async getAddress(){
+	    if(!getTransport()) return;
+        const prefix = this.api ? this.api : this;
+        return prefix[`getAddress`+this.blockchain]();
+    }
+
 
 	async getPublicKey(){
 	    if(!getTransport()) return;
@@ -123,6 +130,46 @@ class LedgerAPI {
     }
 
 
+
+
+
+
+
+    /*************************************************/
+    /*                 GET ADDRESS                   */
+    /*************************************************/
+
+	[`getAddress`+Blockchains.EOSIO](boolChaincode = false){
+		const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
+		const paths = bippath.fromString(path).toPathArray();
+		let buffer = new Buffer(1 + paths.length * 4);
+		buffer[0] = paths.length;
+		paths.forEach((element, index) => buffer.writeUInt32BE(element, 1 + 4 * index));
+		return getTransport().send(0xD4, 0x02, 0x00, 0x00, buffer).then((response) => {
+			let result = {};
+			let publicKeyLength = response[0];
+			let addressLength = response[1 + publicKeyLength];
+			result.publicKey = response.slice(1, 1 + publicKeyLength).toString("hex");
+			result.address = response.slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength).toString("ascii");
+			if (boolChaincode) {
+				result.chainCode = response.slice(1 + publicKeyLength + 1 + addressLength, 1 + publicKeyLength + 1 + addressLength + 32).toString("hex");
+			}
+			return result;
+		});
+	}
+
+	[`getAddress`+Blockchains.ETH](){
+		return new Promise(async (resolve, reject) => {
+			const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
+			const eth = new Eth(getTransport());
+			eth.getAddress(path, false)
+				.then(response => {
+					resolve(response.address);
+				}).catch(err => {
+				reject(err);
+			});
+		})
+	}
 
 
 

@@ -105,7 +105,7 @@
 		IMPORT_KEYS:{
 			TERMS:1,
 			PASSWORD:2,
-			IMPORT_KEY:3,
+			IMPORT_KEYPAIR:3,
 			START:4
 		}
 	}

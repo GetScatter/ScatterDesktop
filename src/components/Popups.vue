@@ -17,6 +17,7 @@
                     <!--<UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />-->
                     <!--<Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />-->
                     <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
+                    <ImportKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_KEYPAIR" />
                     <!--<CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />-->
                     <!--<RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />-->
                     <!--<DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />-->
@@ -83,6 +84,7 @@
     import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
     import AddCustomNetwork from "./popins/fullscreen/AddCustomNetwork";
     import AddNewContact from "./popins/fullscreen/AddNewContact";
+    import ImportKeypair from "./popins/fullscreen/ImportKeypair";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
     import SelectAccount from "./popins/overlay/SelectAccount";
     import SelectToken from "./popins/overlay/SelectToken";
@@ -130,6 +132,7 @@
 		    // UnlinkBlockchain,
 		    // Mnemonic,
 		    RemoveKeypair,
+		    ImportKeypair,
 		    // CheckHardware,
 		    // EnableWhitelist,
 		    // AccountSelector,

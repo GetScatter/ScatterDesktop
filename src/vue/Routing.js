@@ -12,7 +12,6 @@ const Exchange = () => import('../views/Exchange')
 const Receive = () => import('../views/Receive')
 const Networks = () => import('../views/Networks')
 const Contacts = () => import('../views/Contacts')
-const ImportKey = () => import('../views/ImportKey')
 
 
 
@@ -33,7 +32,6 @@ export const RouteNames = {
 
 	APP:'app',
 	ACCOUNT:'account',
-	IMPORT_KEY:'importKey',
 };
 
 const RouteViews = {
@@ -51,7 +49,6 @@ const RouteViews = {
 
 	[RouteNames.APP]:App,
 	[RouteNames.ACCOUNT]:Account,
-	[RouteNames.IMPORT_KEY]:ImportKey,
 	[RouteNames.POP_OUT]:PopOut,
 };
 

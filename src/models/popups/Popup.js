@@ -165,6 +165,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DESTROY_SCATTER, {}, callback))
 	}
 
+	static importKeypair(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.IMPORT_KEYPAIR, {}, callback))
+	}
+
 	static checkHardwareWalletScreen(){
 		NotificationService().pushNotification('Check Hardware', 'Please check your hardware screen.');
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHECK_HARDWARE, {}, () => {}))
@@ -249,6 +253,7 @@ export const PopupTypes = {
 	STABILIZE:'stabilize',
 	HISTORY:'history',
 	DISPLAY_TOKEN:'displayToken',
+	IMPORT_KEYPAIR:'importKeypair',
 
 };
 

@@ -23,7 +23,7 @@
                     </section>
                     <section class="row">
                         <section class="blockchain-key" v-for="key in keypair.enabledKeys()">
-                            <figure class="symbol token-eos-eos"></figure>
+                            <figure class="symbol" :class="`token-${key.blockchain}-${key.blockchain}`"></figure>
                             <figure class="key">{{key.key}}</figure>
                             <Button text="Copy" @click.native="copyPublicKey(key.key)" />
                         </section>
@@ -64,7 +64,7 @@
                 </section>
             </section>
             <section class="right">
-                <Button blue="1" @click.native="$router.push({name:RouteNames.IMPORT_KEY})" text="Import key" />
+                <Button blue="1" @click.native="importKeypair" text="Import key" />
                 <Button blue="1" text="Generate new key" />
             </section>
         </section>
@@ -160,8 +160,13 @@
             },
     		removeKeypair(keypair){
 			    PopupService.push(Popup.removeKeypair(keypair, removed => {
-				    if(removed) this.cloneKeypairs();
+				    this.cloneKeypairs();
 			    }));
+            },
+            importKeypair(){
+    		    PopupService.push(Popup.importKeypair(keypair => {
+			        this.cloneKeypairs();
+                }));
             },
 	        copyPublicKey(publicKey){
 		        ElectronHelpers.copy(publicKey);
