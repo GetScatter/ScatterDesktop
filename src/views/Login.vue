@@ -86,7 +86,7 @@
 	import LoginButton from '../components/login/LoginButton'
 	import Terms from '../components/login/Terms'
 	import SetPassword from '../components/login/SetPassword'
-	import ImportPrivateKey from '../components/login/ImportPrivateKey'
+	import ImportPrivateKey from '../components/panels/keypair/ImportPrivateKey'
 	import SelectBackupLocation from "../components/login/SelectBackupLocation";
 	import Welcome from "../components/login/Welcome";
 	import PopupService from "../services/utility/PopupService";

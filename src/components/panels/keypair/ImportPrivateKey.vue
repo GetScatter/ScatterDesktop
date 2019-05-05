@@ -19,9 +19,9 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import KeyPairService from "../../services/secure/KeyPairService";
-	import Keypair from "../../models/Keypair";
-	import AccountService from "../../services/blockchain/AccountService";
+	import KeyPairService from "../../../services/secure/KeyPairService";
+	import Keypair from "../../../models/Keypair";
+	import AccountService from "../../../services/blockchain/AccountService";
 
 	export default {
 		props:['returnOnly'],

@@ -47,6 +47,7 @@ export default class LedgerWallet {
     open(){
         this.api = new LedgerAPI(this.blockchain);
 	    this.getPublicKey = this.api.getPublicKey;
+	    this.getAddress = this.api.getAddress;
 	    this.sign = this.api.signTransaction;
 	    this.canConnect = this.api.getAppConfiguration;
 	    this.setAddressIndex = this.api.setAddressIndex;
@@ -55,6 +56,7 @@ export default class LedgerWallet {
     close(){
         this.api = null;
 	    delete this.getPublicKey;
+	    delete this.getAddress;
 	    delete this.sign;
 	    delete this.canConnect;
 	    delete this.setAddressIndex;
@@ -104,10 +106,10 @@ class LedgerAPI {
         prefix.addressIndex = index;
     }
 
-	async getAddress(){
+	async getAddress(delta = 0){
 	    if(!getTransport()) return;
         const prefix = this.api ? this.api : this;
-        return prefix[`getAddress`+this.blockchain]();
+        return prefix[`getAddress`+this.blockchain](delta);
     }
 
 
@@ -139,8 +141,8 @@ class LedgerAPI {
     /*                 GET ADDRESS                   */
     /*************************************************/
 
-	[`getAddress`+Blockchains.EOSIO](boolChaincode = false){
-		const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
+	[`getAddress`+Blockchains.EOSIO](delta = 0, boolChaincode = false){
+		const path = LEDGER_PATHS[this.blockchain](parseInt(this.addressIndex) + parseInt(delta));
 		const paths = bippath.fromString(path).toPathArray();
 		let buffer = new Buffer(1 + paths.length * 4);
 		buffer[0] = paths.length;
@@ -154,13 +156,13 @@ class LedgerAPI {
 			if (boolChaincode) {
 				result.chainCode = response.slice(1 + publicKeyLength + 1 + addressLength, 1 + publicKeyLength + 1 + addressLength + 32).toString("hex");
 			}
-			return result;
+			return result.address;
 		});
 	}
 
-	[`getAddress`+Blockchains.ETH](){
+	[`getAddress`+Blockchains.ETH](delta = 0){
 		return new Promise(async (resolve, reject) => {
-			const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
+			const path = LEDGER_PATHS[this.blockchain](parseInt(this.addressIndex) + parseInt(delta));
 			const eth = new Eth(getTransport());
 			eth.getAddress(path, false)
 				.then(response => {

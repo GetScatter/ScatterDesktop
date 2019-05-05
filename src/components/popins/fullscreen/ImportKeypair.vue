@@ -25,7 +25,8 @@
 
 			<!-- IMPORT KEY -->
 			<section v-if="state === STATES.IMPORT_KEY">
-				<ImportPrivateKey return-only="1" v-on:key="x => privateKey = x" />
+				<ImportPrivateKey v-if="importType === IMPORT_TYPES.TEXT" return-only="1" v-on:key="x => privateKey = x" />
+				<ImportHardwareKey v-if="importType === IMPORT_TYPES.HARDWARE" v-on:key="finishImporting" />
 			</section>
 
 
@@ -53,7 +54,8 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import ImportPrivateKey from '../../login/ImportPrivateKey';
+	import ImportPrivateKey from '../../panels/keypair/ImportPrivateKey';
+	import ImportHardwareKey from '../../panels/keypair/ImportHardwareKey';
 	import KeyPairService from "../../../services/secure/KeyPairService";
 	import Keypair from "../../../models/Keypair";
 	import AccountService from "../../../services/blockchain/AccountService";
@@ -73,7 +75,8 @@
 	export default {
 		props:['popin'],
 		components:{
-			ImportPrivateKey
+			ImportPrivateKey,
+			ImportHardwareKey
 		},
 		data(){return {
 			STATES,

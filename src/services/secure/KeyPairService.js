@@ -162,11 +162,24 @@ export default class KeyPairService {
 	    return keypair.privateKey;
     }
 
+    static async getHardwareKeyList(external, delta = 0, tries = 0){
+	    if(typeof external.interface.getAddress !== 'function') return false;
+	    if(tries >= 5) return false;
+
+	    return external.interface.getAddress(delta).catch(async err => {
+		    if(err.toString().match('CLA_NOT_SUPPORTED') || err.toString().match('Cannot write to HID device')){
+			    await HardwareService.openConnections();
+			    return this.getHardwareKeyList(external, delta, tries++);
+		    }
+		    return false;
+	    })
+    }
+
 
     static async loadFromHardware(keypair, tries = 0){
         if(typeof keypair.external.interface.getPublicKey !== 'function') return false;
-
         if(tries >= 5) return false;
+
         return keypair.external.interface.getPublicKey().then(key => {
             if(PluginRepository.plugin(keypair.external.blockchain).validPublicKey(key)){
                 keypair.external.publicKey = key;
