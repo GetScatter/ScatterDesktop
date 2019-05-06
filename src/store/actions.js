@@ -61,6 +61,7 @@ export const actions = {
     [Actions.CREATE_SCATTER]:({state, commit, dispatch}, password) => {
         return new Promise(async (resolve, reject) => {
             const scatter = await Scatter.create();
+            scatter.meta.acceptedTerms = true;
 
             await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 

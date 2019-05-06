@@ -323,7 +323,7 @@
 
         </section>
 
-        <ActionBar :buttons-left="[{text:'Deny', click:() => $emit('back')}]" :buttons-right="[{text:'Accept Terms', blue:true, click:() => acceptTerms()}]" />
+        <ActionBar :buttons-left="[{text:'Deny', click:() => $emit('back')}]" :buttons-right="[{text:'Accept Terms', blue:true, click:() => $emit('next')}]" />
 
     </section>
 </template>
@@ -350,12 +350,6 @@
 
         },
         methods: {
-            async acceptTerms(){
-                const scatter = this.scatter.clone();
-                scatter.meta.acceptedTerms = true;
-                await this[Actions.SET_SCATTER](scatter);
-	            this.$emit('next');
-            },
             ...mapActions([
                 Actions.SET_SCATTER
             ])

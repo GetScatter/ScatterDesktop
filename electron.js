@@ -112,7 +112,7 @@ const createScatterInstance = () => {
   		mainWindow.focus(); 
 	});
 
-	mainWindow.openDevTools();
+	// mainWindow.openDevTools();
 	// mainWindow.loadURL(mainUrl(false));
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => quit());
@@ -259,7 +259,7 @@ const secp256k1 = require('secp256k1');
 let seed, key;
 ipcMain.on('key', (event, arg) => {
 	if(event.sender.history[0].indexOf('popout') > -1) return;
-	if(arg === null) key = null;
+	if(arg === null) return key = null;
 	if(key) return;
 	key = Buffer.from(arg, 'base64');
 });
