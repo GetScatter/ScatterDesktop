@@ -37,14 +37,14 @@
 							this.accounts.length ? {name:'Assets', route:RouteNames.ASSETS} : null,
 							this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
 							this.accounts.length ? {name:'RIDL', route:RouteNames.HOME} : null,
-							{name:'Identities', route:RouteNames.HOME},
+							{name:'Identities', route:RouteNames.IDENTITIES},
 						].filter(x => !!x)
 					},
 					{
 						name:'Administrative',
 						items:[
 							{name:'Contacts', route:RouteNames.CONTACTS},
-							{name:'History', route:RouteNames.HOME},
+							{name:'History', route:RouteNames.HISTORIES},
 							{name:'Networks', route:RouteNames.NETWORKS},
 							{name:'Settings', route:RouteNames.HOME},
 						].filter(x => !!x)
@@ -80,8 +80,6 @@
 		width:$closed;
 		border-right:1px solid $lightgrey;
 		padding:20px 0;
-		transition:all $time ease;
-		transition-property: width;
 		overflow-x:hidden;
 		white-space: nowrap;
 		position:fixed;
@@ -90,6 +88,9 @@
 		bottom:0;
 		background:$white;
 		z-index:10000;
+		box-shadow:0 0 0 transparent, 0 0 0 transparent;
+
+		transition: width $time ease, box-shadow 1.1s ease;
 
 		.bar-bg {
 			width:$closed;
@@ -157,7 +158,8 @@
 
 		&:not(.no-collapse){
 			&:hover {
-				box-shadow:2px 0 30px $blue-shadow;
+				transition: width $time ease, box-shadow 0.3s ease;
+				box-shadow:10px 0 30px rgba(0,0,0,0.15), 2px 0 10px $blue-shadow;
 				border:0;
 			}
 		}

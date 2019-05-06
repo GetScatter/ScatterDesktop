@@ -90,6 +90,7 @@
 					RouteNames.RECEIVE,
 					RouteNames.EXCHANGE,
 					RouteNames.ACCOUNT,
+					RouteNames.IDENTITIES,
 				].includes(this.$route.name);
 			}
 		},

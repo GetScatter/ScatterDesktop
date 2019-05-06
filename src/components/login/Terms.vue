@@ -323,7 +323,7 @@
 
         </section>
 
-        <ActionBar :buttons-left="[{text:'Deny', click:() => $emit('back')}]" :buttons-right="[{text:'Accept Terms', click:() => $emit('next')}]" />
+        <ActionBar :buttons-left="[{text:'Deny', click:() => $emit('back')}]" :buttons-right="[{text:'Accept Terms', blue:true, click:() => $emit('next')}]" />
 
     </section>
 </template>

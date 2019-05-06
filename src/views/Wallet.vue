@@ -164,7 +164,7 @@
 			    }));
             },
             importKeypair(){
-    		    PopupService.push(Popup.importKeypair(keypair => {
+    		    PopupService.push(Popup.importKeypair({}, keypair => {
 			        this.cloneKeypairs();
                 }));
             },

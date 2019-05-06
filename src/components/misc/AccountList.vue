@@ -8,17 +8,19 @@
 
 			<section class="info">
 				<figure class="symbol" :class="`token-${account.blockchain()}-${account.blockchain()}`"></figure>
-				<figure class="account-name">{{account.sendable()}}</figure>
+				<figure class="account-name" :class="{'small':account.sendable().length > 12}">{{account.sendable()}}</figure>
 				<figure class="keypair-name">{{account.keypair().name}}</figure>
 			</section>
 
 			<section class="tail">
-				<section class="resources" v-if="!limitedInfo">
+				<section class="resources" v-if="usesResources(account) && !limitedInfo">
 					<section class="resource" v-for="i in [1,1,1]">
 						<figure class="icon-check"></figure>
 						<figure class="type">CPU</figure>
 					</section>
 				</section>
+				<figure v-else class="dummy"></figure>
+
 				<section class="tokens" :class="{'full-width':limitedInfo}">
 					<figure class="balance">${{account.totalFiatBalance()}}</figure>
 					<figure class="count">in {{account.tokens().length}} tokens</figure>
@@ -29,8 +31,18 @@
 </template>
 
 <script>
+	import PluginRepository from "../../plugins/PluginRepository";
+
 	export default {
 		props:['accounts', 'limitedInfo'],
+		computed:{
+
+		},
+		methods:{
+			usesResources(account){
+				return PluginRepository.plugin(account.blockchain()).usesResources()
+			}
+		}
 
 	}
 </script>
@@ -91,8 +103,13 @@
 				}
 
 				.account-name {
+					margin-top:5px;
 					font-size: 18px;
 					font-weight: bold;
+
+					&.small {
+						font-size: $medium;
+					}
 				}
 
 				.keypair-name {
@@ -124,6 +141,8 @@
 						}
 					}
 				}
+
+				.dummy {}
 
 				.tokens {
 					text-align:right;

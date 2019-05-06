@@ -110,7 +110,7 @@
 
 
 			<section class="tail">
-				<Button :disabled="!canExchange" big="1" text="Exchange" blue="1" @click.native="send" />
+				<Button :disabled="!canExchange" big="1" text="Exchange" blue="1" @click.native="exchange" />
 			</section>
 		</section>
 
@@ -118,13 +118,17 @@
 </template>
 
 <script>
-	import {mapGetters} from 'vuex';
+	import {mapGetters, mapActions} from 'vuex';
 	import PopupService from "../services/utility/PopupService";
 	import {Popup} from "../models/popups/Popup";
 	import BalanceService from "../services/blockchain/BalanceService";
 	import PriceService from "../services/apis/PriceService";
 	import Token from "../models/Token";
 	import ExchangeService from "../services/apis/ExchangeService";
+	import TokenService from "../services/utility/TokenService";
+	import * as Actions from "../store/constants";
+	import TransferService from "../services/blockchain/TransferService";
+	import HistoricExchange from "../models/histories/HistoricExchange";
 	require('../styles/transfers.scss');
 
 	export default {
@@ -179,6 +183,7 @@
 		mounted(){
 			this.account = this.accounts.filter(x => x.tokens().length)
 				.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];
+			this.recipient = this.account.sendable();
 			this.setToken(this.sendableTokens[0]);
 		},
 		methods:{
@@ -188,6 +193,8 @@
 					const {token, account} = result;
 					this.account = account;
 					this.setToken(token);
+
+					this.recipient = this.account.sendable();
 				}))
 			},
 			selectToken(){
@@ -205,7 +212,7 @@
 				this.fiat = 0;
 				this.rate = null;
 				this.pair = null;
-				this.recipient = null;
+				// this.recipient = null;
 			},
 			changedFiat(){
 				this.toSend.amount = parseFloat(this.fiat / this.toSend.fiatPrice(false)).toFixed(this.toSend.decimals);
@@ -229,7 +236,6 @@
 			},
 			setPair(pair){
 				this.pair = pair;
-				this.recipient = null;
 				this.getRate();
 			},
 
@@ -284,7 +290,9 @@
 				this.sending = true;
 				const from = { account:this.account.sendable() };
 				const to = { account:this.recipient };
-				const order = await ExchangeService.order(this.pair.service, this.token, this.pair.symbol, this.token.amount, from, to);
+				const amount = parseFloat(this.toSend.amount).toFixed(this.toSend.decimals);
+				const order = await ExchangeService.order(this.rawPair.service, this.token, this.pair.symbol, amount, from, to);
+				console.log('order', order);
 				if(!order) {
 					this.cantConnect();
 					this.sending = false;
@@ -298,7 +306,7 @@
 					from:this.token.symbol,
 					to:this.pair.symbol
 				}
-				PopupService.push(Popup.confirmExchange(accounts, symbols, order, async accepted => {
+				PopupService.push(Popup.confirmExchange(accounts, symbols, order, this.pair, async accepted => {
 					if(!accepted) {
 						ExchangeService.cancelled(order.id);
 						this.sending = false;
@@ -308,19 +316,19 @@
 					const sent = await TransferService[this.account.blockchain()]({
 						account:this.account,
 						recipient:order.account,
-						amount:order.deposit.toString(),
+						amount,
 						memo:order.memo,
 						token:this.token,
 						promptForSignature:false,
 						bypassHistory:true,
 					}).catch(() => false);
 					if(sent){
-						if(!TokenService.hasToken(this.pair.token)){
-							if(!!this.pair.token.contract && !!this.pair.token.contract.length) {
-								await TokenService.addToken(this.pair.token, false, false);
+						if(!TokenService.hasToken(this.rawPair.token)){
+							if(!!this.rawPair.token.contract && !!this.rawPair.token.contract.length) {
+								await TokenService.addToken(this.rawPair.token, false, false);
 							}
 						}
-						const history = new HistoricExchange(this.account, this.recipient, this.token, this.pair, order, TransferService.getTransferId(sent, this.token.blockchain));
+						const history = new HistoricExchange(this.account, this.recipient, this.toSend, this.pair, order, TransferService.getTransferId(sent, this.token.blockchain));
 						this[Actions.DELTA_HISTORY](history);
 						setTimeout(() => {
 							ExchangeService.watch(history);
@@ -330,6 +338,11 @@
 					this.sending = false;
 				}));
 			},
+
+
+			...mapActions([
+				Actions.DELTA_HISTORY
+			])
 
 
 

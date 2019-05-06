@@ -20,10 +20,10 @@
                     <ImportKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_KEYPAIR" />
                     <!--<CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />-->
                     <!--<RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />-->
-                    <!--<DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />-->
+                    <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
+                    <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
                     <!--<EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />-->
                     <!--<AccountSelector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />-->
-                    <!--<ConfirmExchange :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_EXCHANGE" />-->
                     <!--<Exchange :popin="popIn" v-if="popIn.data.type === popupTypes.EXCHANGE" />-->
                     <!--<Stabilize :popin="popIn" v-if="popIn.data.type === popupTypes.STABILIZE" />-->
                     <!--<History :popin="popIn" v-if="popIn.data.type === popupTypes.HISTORY" />-->
@@ -43,6 +43,7 @@
                             <SelectToken :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN" />
                             <SelectTokenAndAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN_AND_ACCOUNT" />
                             <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
+                            <ConfirmExchange :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_EXCHANGE" />
                         </section>
                     </figure>
                 </section>
@@ -91,10 +92,11 @@
     import SelectTokenAndAccount from "./popins/overlay/SelectTokenAndAccount";
     // import CheckHardware from "./popins/fullscreen/CheckHardware";
     // import RemoveLocation from "./popins/fullscreen/RemoveLocation";
-    // import DestroyScatter from "./popins/fullscreen/DestroyScatter";
+    import DestroyScatter from "./popins/fullscreen/DestroyScatter";
+    import ImportBackup from "./popins/fullscreen/ImportBackup";
     // import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
     // import AccountSelector from "./popins/fullscreen/AccountSelector";
-    // import ConfirmExchange from "./popins/fullscreen/ConfirmExchange";
+    import ConfirmExchange from "./popins/overlay/ConfirmExchange";
     import ConfirmTransfer from "./popins/overlay/ConfirmTransfer";
     // import DisplayToken from "./popins/fullscreen/DisplayToken";
     // import Exchange from "./popins/fullscreen/Exchange";
@@ -118,7 +120,8 @@
 		    // Prompt,
             //
             // // FULLSCREEN
-		    // DestroyScatter,
+		    ImportBackup,
+		    DestroyScatter,
 		    // RemoveLocation,
 		    AddCustomNetwork,
 		    AddNewContact,
@@ -136,7 +139,7 @@
 		    // CheckHardware,
 		    // EnableWhitelist,
 		    // AccountSelector,
-		    // ConfirmExchange,
+		    ConfirmExchange,
 		    ConfirmTransfer,
 		    // DisplayToken,
 		    // Exchange,

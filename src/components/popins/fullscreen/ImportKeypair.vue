@@ -2,16 +2,16 @@
 	<section class="pop-in import-key">
 
 		<section>
-			<!--<section class="head">-->
-				<!--<figure class="icon font icon-key"></figure>-->
-				<!--<figure class="title">Import Keypair</figure>-->
-			<!--</section>-->
-			<!--<br>-->
-			<!--<br>-->
 
 
 			<!-- SELECT IMPORT TYPE -->
 			<section class="select-type" v-if="state === STATES.SELECT_TYPE">
+				<section class="head">
+					<figure class="icon font icon-key"></figure>
+					<figure class="title">Import Keypair</figure>
+				</section>
+				<br>
+				<br>
 
 				<section class="import-types">
 					<section class="import-type" v-for="type in importTypes" @click="type.onClick()">
@@ -41,7 +41,7 @@
 			</section>
 
 
-			<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" /> <!--  :buttons-right="[{text:'Save Key', blue:true, click:() => saveKeypair()}]" -->
+			<ActionBar v-if="buttonsLeft.length" :buttons-left="buttonsLeft" /> <!--  :buttons-right="[{text:'Save Key', blue:true, click:() => saveKeypair()}]" -->
 		</section>
 
 
@@ -95,6 +95,15 @@
 				'keypairs'
 			]),
 
+			options(){
+				return this.popin.data.props.options;
+			},
+
+			buttonsLeft(){
+				if(this.options.noCancel) return [];
+				return [{text:'Cancel', click:() => this.returnResult(false)}];
+			},
+
 			importTypes(){
 				return [
 					{
@@ -118,12 +127,11 @@
 		methods:{
 			saveKeypair(){},
 			returnResult(){
-				this.popin.data.callback(this.contact);
+				this.popin.data.callback(this.keypair);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 
 			selectImportType(type){
-				console.log(STATES.IMPORT_KEY);
 				this.state = STATES.IMPORT_KEY;
 				this.importType = type;
 			},
@@ -158,7 +166,6 @@
 				this.keypair = keypair;
 
 				const blockchains = KeyPairService.getImportedKeyBlockchains(key);
-				console.log('blockchains', blockchains);
 				if(blockchains.length === 1){
 					this.selectBlockchain(blockchains[0]);
 				} else {

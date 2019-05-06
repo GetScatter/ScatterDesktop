@@ -149,7 +149,7 @@
 					const sent = await TransferService[this.account.blockchain()]({
 						account:this.account,
 						recipient:this.recipient,
-						amount:this.token.amount,
+						amount:this.toSend.amount,
 						memo:this.memo,
 						token:this.token,
 						promptForSignature:false,

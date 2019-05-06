@@ -165,8 +165,12 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DESTROY_SCATTER, {}, callback))
 	}
 
-	static importKeypair(callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.IMPORT_KEYPAIR, {}, callback))
+	static importFullBackup(options, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.IMPORT_FULL_BACKUP, {options}, callback))
+	}
+
+	static importKeypair(options, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.IMPORT_KEYPAIR, {options}, callback))
 	}
 
 	static checkHardwareWalletScreen(){
@@ -190,8 +194,8 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN, {tokens}, callback))
 	}
 
-	static confirmExchange(accounts, symbols, order, callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order}, callback))
+	static confirmExchange(accounts, symbols, order, pair, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order, pair}, callback))
 	}
 
 	static confirmTransfer(from, to, token, memo, callback){
@@ -254,6 +258,7 @@ export const PopupTypes = {
 	HISTORY:'history',
 	DISPLAY_TOKEN:'displayToken',
 	IMPORT_KEYPAIR:'importKeypair',
+	IMPORT_FULL_BACKUP:'importFullBackup',
 
 };
 
@@ -269,6 +274,7 @@ export const isFullscreen = popup => {
         PopupTypes.SELECT_ACCOUNT,
         PopupTypes.SELECT_TOKEN,
         PopupTypes.CONFIRM_TRANSFER,
+        PopupTypes.CONFIRM_EXCHANGE,
     ].includes(popup.data.type);
 
 

@@ -4,13 +4,15 @@
 
         <section class="entry" v-if="state === STATES.NEW_OR_LOGIN">
 
-            <figure class="logo">Scatter</figure>
+            <section class="head">
+	            <figure class="logo">Scatter</figure>
+            </section>
 
 	        <!-------------------------->
 	        <!------ NEW SCATTER ------->
 	        <!-------------------------->
-            <section v-if="isNewScatter">
-	            <section>
+            <section class="body">
+	            <section v-if="isNewScatter">
 		            <LoginButton
 				            @click.native="state = STATES.CREATE_NEW"
 				            blue="1"
@@ -21,22 +23,40 @@
 				            title="I have my own private keys"
 				            description="Import your accounts manually" />
 	            </section>
+
+	            <!-------------------------->
+	            <!---- EXISTING SCATTER ---->
+	            <!-------------------------->
+	            <section v-if="!isNewScatter">
+		            <Input class="welcome-password" :focus="true" big="1"
+		                   placeholder="Enter your password"
+		                   type="password" :disabled="isLockedOut"
+		                   :loader-on-dynamic="working"
+		                   :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="x => password = x"
+		                   :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'" />
+
+	            </section>
             </section>
 
-	        <!-------------------------->
-	        <!---- EXISTING SCATTER ---->
-	        <!-------------------------->
-	        <section v-if="!isNewScatter">
-		        <section>
-			        <Input style="width:350px;" class="welcome-password" :focus="true" big="1"
-			             placeholder="password"
-			             type="password" :disabled="isLockedOut"
-			             :loader-on-dynamic="working"
-			             :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="x => password = x"
-			             :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'" />
-
-
+	        <section class="tail">
+		        <section class="terms">
+			        Use of Scatter is limited to our <u>Terms of Use</u>.<br>
+			        Please make sure to also read our <u>Privacy Policy</u>.
 		        </section>
+				<section class="actions">
+					<section class="action" @click="destroy" v-if="!isNewScatter">
+						<Reset class="logo" />
+						<figure class="text">Reset</figure>
+					</section>
+					<section class="action" @click="importBackup" v-if="isNewScatter">
+						<Restore class="logo" />
+						<figure class="text">Restore</figure>
+					</section>
+					<section class="action">
+						<Support class="logo" />
+						<figure class="text">Support</figure>
+					</section>
+				</section>
 	        </section>
 
         </section>
@@ -67,8 +87,8 @@
 		    <section class="panel">
 			    <Terms v-if="step === 1" v-on:back="stepBack" v-on:next="stepForward" />
 			    <SetPassword v-if="step === 2" v-on:back="stepBack" v-on:next="stepForward" />
-			    <SelectBackupLocation v-if="step === 3" v-on:back="stepBack" v-on:next="stepForward" />
-			    <ImportPrivateKey v-if="step === 4" v-on:back="stepBack" v-on:next="stepForward" />
+			    <SelectBackupLocation v-if="step === 3" v-on:back="stepBack" v-on:next="importKeypair" />
+			    <!--<ImportKeypair v-if="step === 4" v-on:back="stepBack" v-on:next="stepForward" />-->
 			    <Welcome v-if="step === 5" />
 		    </section>
 
@@ -86,13 +106,16 @@
 	import LoginButton from '../components/login/LoginButton'
 	import Terms from '../components/login/Terms'
 	import SetPassword from '../components/login/SetPassword'
-	import ImportPrivateKey from '../components/panels/keypair/ImportPrivateKey'
 	import SelectBackupLocation from "../components/login/SelectBackupLocation";
 	import Welcome from "../components/login/Welcome";
 	import PopupService from "../services/utility/PopupService";
 	import UpdateService from "../services/utility/UpdateService";
 	import {Popup} from "../models/popups/Popup";
 	import StoreService from "../services/utility/StoreService";
+
+	import Reset from '../components/svgs/login/Reset';
+	import Restore from '../components/svgs/login/Restore';
+	import Support from '../components/svgs/login/Support';
 
 	const STATES = {
 		NEW_OR_LOGIN:'newOrLogin',
@@ -131,8 +154,11 @@
 			ProgressBubbles,
 			LoginButton,
 			SetPassword,
-			ImportPrivateKey,
-			Terms
+			Terms,
+
+			Reset,
+			Restore,
+			Support,
 		},
 		data(){return {
 			state:STATES.NEW_OR_LOGIN,
@@ -178,8 +204,18 @@
 				this.step++;
 			},
 
+			importBackup(){
+				PopupService.push(Popup.importFullBackup({}, done => {
 
-
+				}));
+			},
+			importKeypair(){
+				this.stepForward();
+				PopupService.push(Popup.importKeypair({noCancel:true}, keypair => {
+					this.stepForward();
+					console.log(keypair);
+				}));
+			},
 
 			async unlock(usingLocalStorage = false){
 				if(!usingLocalStorage){
@@ -206,6 +242,9 @@
 					}
 				}, 400)
 			},
+			destroy(){
+				PopupService.push(Popup.destroyScatter());
+			},
 
 
 			...mapActions([
@@ -224,6 +263,66 @@
         justify-content: center;
         align-items: center;
         height:$fullheight;
+
+	    .entry {
+		    display:flex;
+		    flex-direction: column;
+		    justify-content: space-between;
+		    height:$fullheight;
+
+		    .head {
+			    padding:100px 0 0;
+			    flex:1;
+		    }
+
+		    .body {
+			    flex:1;
+		    }
+
+		    .tail {
+			    flex:1;
+		    }
+
+		    .terms {
+			    max-width:500px;
+			    margin:0 auto;
+			    font-size: $small;
+
+			    u {
+				    color:$blue;
+				    text-decoration: underline;
+			    }
+		    }
+
+		    .actions {
+			    max-width:180px;
+			    margin:0 auto;
+			    padding:40px 0;
+			    display:flex;
+			    justify-content: space-between;
+
+			    .action {
+				    cursor: pointer;
+
+				    .icon {
+
+				    }
+
+				    .text {
+						font-size: $medium;
+					    font-weight: bold;
+					    color:$blue;
+				    }
+
+			    }
+		    }
+	    }
+
+
+
+	    .welcome-password {
+		    width:350px;
+	    }
     }
 
 

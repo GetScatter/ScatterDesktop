@@ -1,24 +1,20 @@
 <template>
-	<section class="pop-over">
-
-		<!--<section class="confirmation">-->
-			<!--<figure class="title">Confirm Transfer</figure>-->
-		<!--</section>-->
+	<section class="pop-over confirm">
 
 		<section class="details">
-			<Send class="icon" />
-			<label>Transferring</label>
+			<Exchange class="icon" />
+			<label>Exchanging</label>
 
-			<figure class="amount">{{token.amount}} {{token.symbol}}</figure>
-			<section class="accounts">
-				<figure class="account">{{from}}</figure>
+			<section class="amounts">
+				<figure class="amount">{{order.deposit}} {{symbols.from}}</figure>
 				<figure class="arrow bounce-right icon-right-small"></figure>
-				<figure class="account">{{to}}</figure>
+				<figure class="amount">{{parseFloat(order.expected).toFixed(pair.decimals)}} {{symbols.to}}</figure>
 			</section>
-			<figure class="memo" v-if="memo">
-				<b>memo</b>
-				<span>{{memo}}</span>
-			</figure>
+			<section class="accounts">
+				<figure class="account">{{accounts.from}}</figure>
+				<figure class="arrow bounce-right icon-right-small"></figure>
+				<figure class="account">{{accounts.to}}</figure>
+			</section>
 		</section>
 		<section class="tail">
 			<Button :text="locale(langKeys.GENERIC.Cancel)" @click.native="returnResult(false)" />
@@ -31,11 +27,11 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import '../../../styles/popins.scss';
-	import Send from '../../svgs/quick-actions/Send'
+	import Exchange from '../../svgs/quick-actions/Exchange'
 
 	export default {
 		props:['popin'],
-		components:{Send},
+		components:{Exchange},
 		data () {return {
 
 		}},
@@ -43,10 +39,10 @@
 
 		},
 		computed:{
-			from(){ return this.popin.data.props.from; },
-			to(){ return this.popin.data.props.to; },
-			token(){ return this.popin.data.props.token; },
-			memo(){ return this.popin.data.props.memo; },
+			symbols(){ return this.popin.data.props.symbols; },
+			accounts(){ return this.popin.data.props.accounts; },
+			order(){ return this.popin.data.props.order; },
+			pair(){ return this.popin.data.props.pair; },
 		},
 		methods:{
 			returnResult(x){
@@ -62,6 +58,7 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../../styles/confirm";
+
 
 
 </style>

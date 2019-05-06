@@ -12,6 +12,8 @@ const Exchange = () => import('../views/Exchange')
 const Receive = () => import('../views/Receive')
 const Networks = () => import('../views/Networks')
 const Contacts = () => import('../views/Contacts')
+const Identities = () => import('../views/Identities')
+const Histories = () => import('../views/Histories')
 
 
 
@@ -28,6 +30,8 @@ export const RouteNames = {
 	RECEIVE:'receive',
 	EXCHANGE:'exchange',
 	CONTACTS:'contacts',
+	IDENTITIES:'identities',
+	HISTORIES:'histories',
 
 
 	APP:'app',
@@ -45,6 +49,8 @@ const RouteViews = {
 	[RouteNames.RECEIVE]:Receive,
 	[RouteNames.EXCHANGE]:Exchange,
 	[RouteNames.CONTACTS]:Contacts,
+	[RouteNames.IDENTITIES]:Identities,
+	[RouteNames.HISTORIES]:Histories,
 
 
 	[RouteNames.APP]:App,

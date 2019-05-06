@@ -74,6 +74,7 @@
 		            RouteNames.ITEMS,
 		            RouteNames.NETWORKS,
 		            RouteNames.CONTACTS,
+		            RouteNames.HISTORIES,
                 ].includes(this.$route.name);
             }
 

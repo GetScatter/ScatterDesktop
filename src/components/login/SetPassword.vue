@@ -14,7 +14,7 @@
 		</section>
 		<input class="center" type="password" v-model="confirmation" placeholder="one more time" />
 
-		<ActionBar :buttons-left="[{text:'Back', click:() => $emit('back')}]" :buttons-right="[{text:'Next', click:checkPassword}]" />
+		<ActionBar :buttons-left="[{text:'Back', click:() => $emit('back')}]" :buttons-right="[{text:'Next', blue:true, click:checkPassword}]" />
 	</section>
 </template>
 
