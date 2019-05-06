@@ -255,18 +255,18 @@ global.appShared = { Transport, QuitWatcher:null, ApiWatcher:null, LowLevelWindo
 
 
 
-const ecc = require("eosjs-ecc");
+const secp256k1 = require('secp256k1');
 let seed, key;
 ipcMain.on('key', (event, arg) => {
 	if(event.sender.history[0].indexOf('popout') > -1) return;
 	if(arg === null) key = null;
 	if(key) return;
-	key = arg;
+	key = Buffer.from(arg, 'base64');
 });
 ipcMain.on('seeding', (event, arg) => seed = arg);
 ipcMain.on('seed', (event, arg) => {
 	const {data, sig} = arg;
-	if(!isDev && ecc.recover(sig, data) !== key) return event.sender.send('seed', null);
+	if(!isDev && !secp256k1.verify(Buffer.from(data), Buffer.from(sig, 'base64'), key)) return event.sender.send('seed', null);
 	event.sender.send('seed', seed);
 });
 

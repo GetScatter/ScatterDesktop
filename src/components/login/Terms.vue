@@ -323,7 +323,7 @@
 
         </section>
 
-        <ActionBar :buttons-left="[{text:'Deny', click:() => $emit('back')}]" :buttons-right="[{text:'Accept Terms', blue:true, click:() => $emit('next')}]" />
+        <ActionBar :buttons-left="[{text:'Deny', click:() => $emit('back')}]" :buttons-right="[{text:'Accept Terms', blue:true, click:() => acceptTerms()}]" />
 
     </section>
 </template>
@@ -350,18 +350,11 @@
 
         },
         methods: {
-            async acceptTerms(accepted){
-                if(!accepted){
-                    await StorageService.removeScatter();
-                    location.reload();
-                    return false;
-                }
-
+            async acceptTerms(){
                 const scatter = this.scatter.clone();
                 scatter.meta.acceptedTerms = true;
                 await this[Actions.SET_SCATTER](scatter);
-                this.$router.push({name:this.RouteNames.ONBOARDING});
-
+	            this.$emit('next');
             },
             ...mapActions([
                 Actions.SET_SCATTER
