@@ -52,8 +52,6 @@ class Main {
 			{tag:'SearchBar', vue:SearchBar},
 			{tag:'SearchAndFilter', vue:SearchAndFilter},
 			{tag:'ActionBar', vue:ActionBar},
-
-			{tag:'menu-bar', vue:MenuBar},
 			{tag:'view-base', vue:ViewBase},
 		];
 

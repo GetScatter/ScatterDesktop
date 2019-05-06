@@ -8,7 +8,7 @@
         </section>
 
         <section v-else>
-            <menu-bar></menu-bar>
+            <MenuBar />
 
             <section class="app-content">
                 <Sidebar v-if="unlocked && onboarded" />
@@ -39,13 +39,15 @@
     import Popups from './Popups';
     import Sidebar from './Sidebar';
     import QuickActions from './QuickActions';
+    import MenuBar from './MenuBar';
 
     export default {
     	components:{
 		    Popups,
 		    Processes,
             Sidebar,
-		    QuickActions
+		    QuickActions,
+		    MenuBar
         },
         data(){ return {
             routeNames:RouteNames,

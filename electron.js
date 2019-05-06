@@ -100,6 +100,7 @@ const createScatterInstance = () => {
 		titleBarStyle:'hiddenInset',
 		backgroundColor,
 		show,
+		webPreferences:{ nodeIntegration:true, }
 	});
 
 	mainWindow = createMainWindow(false, '#111111');
@@ -111,8 +112,8 @@ const createScatterInstance = () => {
   		mainWindow.focus(); 
 	});
 
-	// mainWindow.openDevTools();
-	mainWindow.loadURL(mainUrl(false));
+	mainWindow.openDevTools();
+	// mainWindow.loadURL(mainUrl(false));
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => quit());
 
@@ -125,6 +126,10 @@ const createScatterInstance = () => {
 app.on('ready', createScatterInstance);
 app.on('activate', activateInstance);
 app.on('window-all-closed', () => quit())
+app.on('second-instance', () => {
+	if (process.platform === 'win32') callDeepLink(argv.slice(1));
+	if (mainWindow) activateInstance();
+})
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
 	const isLocal = url.startsWith('https://127.0.0.1');
@@ -141,12 +146,14 @@ const callDeepLink = url => {
 		global.appShared.ApiWatcher(url);
 }
 
-const shouldQuit = app.makeSingleInstance(argv => {
-	if (process.platform === 'win32') callDeepLink(argv.slice(1));
-	if (mainWindow) activateInstance();
-})
-
-if (shouldQuit) quit();
+const singleInstanceLock = app.requestSingleInstanceLock();
+if(!singleInstanceLock) quit();
+// const shouldQuit = app.makeSingleInstance(argv => {
+// 	if (process.platform === 'win32') callDeepLink(argv.slice(1));
+// 	if (mainWindow) activateInstance();
+// })
+//
+// if (shouldQuit) quit();
 
 app.on('will-finish-launching', () => {
 	app.on('open-url', (e, url) => {
@@ -165,7 +172,7 @@ class LowLevelWindowService {
 
 	static getWindow(width = 800, height = 600){
 		return new Promise(resolve => {
-			const win = new BrowserWindow({ width, height, frame: false, radii: [5,5,5,5], icon:'assets/icon.png', show:false, });
+			const win = new BrowserWindow({ width, height, frame: false, radii: [5,5,5,5], icon:'assets/icon.png', show:false, webPreferences:{ nodeIntegration:true, } });
 			win.loadURL(mainUrl(true));
 			win.once('ready-to-show', () => resolve(win));
 		})

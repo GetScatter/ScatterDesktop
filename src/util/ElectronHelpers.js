@@ -4,6 +4,7 @@ import {Popup} from "../models/popups/Popup";
 import ecc from 'eosjs-ecc';
 
 let electron;
+console.log('window', window);
 electron = RUNNING_TESTS ? null : window.require('electron');
 if(!electron) electron = MOCK_ELECTRON;
 

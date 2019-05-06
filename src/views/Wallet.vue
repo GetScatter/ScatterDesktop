@@ -162,6 +162,7 @@
             }
         },
 	    mounted(){
+    		console.log(this.keypairs);
     		this.cloneKeypairs();
 	    },
         methods:{

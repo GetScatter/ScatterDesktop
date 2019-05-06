@@ -26,7 +26,7 @@
 			async go(){
 				const scatter = this.scatter.clone();
 				scatter.onboarded = true;
-				this[Actions.SET_SCATTER](scatter);
+				await this[Actions.SET_SCATTER](scatter);
 				this.$router.push({name:RouteNames.HOME})
 			},
 			...mapActions([
