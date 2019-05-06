@@ -67,7 +67,7 @@
                     <Select :selected="viewType" short="1"
                          :options="viewTypesArray"
                          :parser="x => formatViewType(x)"
-                         v-on:changed="x => viewType = x"></Select>
+                         v-on:selected="x => viewType = x"></Select>
                 </section>
 
                 <section class="scroller">
@@ -118,7 +118,7 @@
                                     <section class="split-inputs">
                                         <input v-if="whitelisted && !isPreviouslyWhitelisted(message)" type="checkbox" @change="toggleWhitelistProp(getWhitelist(message), key)" />
                                         <figure class="value object" v-if="typeof value === 'object'">
-                                            <div :ref="key + hash(value)" :v-html="formatJson(value, key)"></div>
+                                            <div :ref="hash(JSON.stringify(message)) + key + hash(value)" :v-html="formatJson(value, hash(JSON.stringify(message))+key)"></div>
                                         </figure>
                                         <figure class="value" v-else>{{value}}</figure>
                                     </section>

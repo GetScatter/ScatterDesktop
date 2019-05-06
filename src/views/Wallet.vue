@@ -19,7 +19,7 @@
             <section class="keypair" v-for="keypair in filteredKeypairs">
                 <section class="details">
                     <section class="row">
-                        <input placeholder="Give this keypair a memorable name" v-model="keypair.name" />
+                        <input placeholder="Give this keypair a memorable name" v-model="keypair.name" @change="saveKeypair(keypair)" />
                     </section>
                     <section class="row">
                         <section class="blockchain-key" v-for="key in keypair.enabledKeys()">
@@ -65,7 +65,7 @@
             </section>
             <section class="right">
                 <Button blue="1" @click.native="importKeypair" text="Import key" />
-                <Button blue="1" text="Generate new key" />
+                <Button blue="1" text="Generate new key" @click.native="generateKeypair" />
             </section>
         </section>
     </section>
@@ -81,12 +81,14 @@
     import ElectronHelpers from "../util/ElectronHelpers";
     import AccountService from "../services/blockchain/AccountService";
     import AccountList from "../components/misc/AccountList";
+    import KeyPairService from "../services/secure/KeyPairService";
 
     const STATES = {
     	ACCOUNTS:'accounts',
         KEYS:'keys',
     }
 
+    let saveTimeout;
     export default {
     	components:{
 		    AccountList,
@@ -98,6 +100,7 @@
 
             tab:null,
             blockchainFilter:null,
+            keypairFilter:null,
             terms:'',
 
             clonedKeypairs:[],
@@ -124,6 +127,8 @@
                 }, []).filter(x => {
                 	return !this.blockchainFilter || this.blockchainFilter === x.blockchain()
                 }).filter(x => {
+	                return !this.keypairFilter || x.keypairUnique === this.keypairFilter.unique()
+                }).filter(x => {
                 	return x.sendable().toLowerCase().indexOf(this.terms) > -1
                         || x.authorities().find(a => a.authority.toLowerCase().indexOf(this.terms) > -1)
                 }).sort((a,b) => {
@@ -142,12 +147,17 @@
             },
             filters(){
             	return [
-                    {
-                    	selected:this.blockchainFilter,
-                        options:[null].concat(BlockchainsArray.map(x => x.value)),
-                        parser:x => x === null ? 'All Blockchains' : blockchainName(x),
-                        onSelect:x => this.blockchainFilter = x,
-                    }
+		            {
+			            selected:this.blockchainFilter,
+			            options:[null].concat(BlockchainsArray.map(x => x.value)),
+			            parser:x => x === null ? 'All Blockchains' : blockchainName(x),
+			            onSelect:x => this.blockchainFilter = x,
+		            },{
+			            selected:this.keypairFilter,
+			            options:[null].concat(this.keypairs),
+			            parser:x => x === null ? 'All Keypairs' : x.name,
+			            onSelect:x => this.keypairFilter = x,
+		            },
                 ]
             }
         },
@@ -155,6 +165,14 @@
     		this.cloneKeypairs();
 	    },
         methods:{
+	        generateKeypair(){
+	            PopupService.push(Popup.generateKeypair({}, keypair => {
+                    if(keypair) {
+                    	this.cloneKeypairs();
+                    	this.state = STATES.KEYS;
+                    }
+                }));
+            },
     		cloneKeypairs(){
 			    this.clonedKeypairs = this.keypairs.map(x => x.clone());
             },
@@ -180,6 +198,13 @@
     			this.refreshingAccounts = keypair.unique();
     			await AccountService.importAllAccounts(keypair);
     			this.refreshingAccounts = false;
+            },
+            saveKeypair(keypair){
+	        	clearTimeout(saveTimeout);
+	            saveTimeout = setTimeout(() => {
+		            KeyPairService.updateKeyPair(keypair);
+                }, 250);
+
             }
         },
     }
@@ -233,11 +258,6 @@
 
                 .details {
                     flex:2;
-
-                    input {
-                        box-shadow:0 1px 6px $blue-shadow;
-                        border:0;
-                    }
 
                     .blockchain-key {
                         display:flex;

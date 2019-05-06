@@ -8,15 +8,15 @@
 					<div class="locked icon-lock" v-if="token.unusable"></div>
 				</figure>
 				<section class="details">
-					<figure class="title"><span v-if="token.amount">{{token.amount}}</span> {{token.symbol}}</figure>
+					<figure class="title"><span v-if="token.amount">{{formatNumber(token.amount, true)}}</span> {{token.symbol}}</figure>
 					<section class="row">
 						<figure class="red" v-if="token.unusable">{{token.unusable}}</figure>
 						<figure class="primary" v-if="!token.unusable"><b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></figure>
-						<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{token.fiatBalance()}} </figure>
+						<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{formatNumber(token.fiatBalance(), true)}} </figure>
 					</section>
 					<section class="row" v-if="token.fiatPrice()">
-						<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{token.baseTokenPrice()}}</figure>
-						<figure class="secondary">{{token.fiatPrice()}}</figure>
+						<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{formatNumber(token.baseTokenPrice(), true)}}</figure>
+						<figure class="secondary">{{formatNumber(token.fiatPrice(), true)}}</figure>
 					</section>
 				</section>
 

@@ -77,7 +77,6 @@
 	import AccountService from "../services/blockchain/AccountService";
 	import PopupService from "../services/utility/PopupService";
 	import {Popup} from "../models/popups/Popup";
-	require('../styles/blockchain-lists.scss');
 
 	export default {
 		components: {EditNetwork},

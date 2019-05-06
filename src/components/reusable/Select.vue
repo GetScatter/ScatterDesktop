@@ -1,7 +1,7 @@
 <template>
 	<section class="select" :class="{'bordered':bordered, 'open':open, 'disabled':disabled}">
 		<input ref="terms" placeholder="Search..." v-model="optionsTerms" />
-		<section class="selected" @click="toggle" :class="{'bordered':bordered}">
+		<section class="selected" @click="toggle" :class="{'bordered':bordered, 'truncate':truncate}">
 			<figure class="text">
 				{{parse(selectedOption)}}
 				<div class="subtitle" v-if="subparser">{{subparser(selectedOption)}}</div>
@@ -22,7 +22,7 @@
 
 <script>
 	export default {
-		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'bordered', 'noClick'],
+		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'bordered', 'noClick', 'truncate'],
 		data(){return {
 			open:false,
 			optionsTerms:'',
@@ -128,7 +128,7 @@
 			z-index:1;
 			background:#fff;
 			opacity:1;
-			padding-right:26px;
+			padding-right:30px;
 			display:inline-block;
 			position: relative;
 
@@ -140,6 +140,19 @@
 				font-size: $medium;
 				font-weight: bold;
 				display:inline-block;
+			}
+
+			&.truncate {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+
+				.text {
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					width:100%;
+				}
 			}
 
 			.chevron {

@@ -1,5 +1,8 @@
 import './styles/styles.scss'
 import './styles/animations.scss'
+import './styles/popins.scss'
+import './styles/confirm.scss'
+import './styles/blockchain-lists.scss'
 
 // MUST BE LOADED FIRST
 import ElectronHelpers from './util/ElectronHelpers';
@@ -23,7 +26,6 @@ import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
 import TransferRequest from './views/popouts/TransferRequest.vue'
-import StoreService from "./services/utility/StoreService";
 
 // f12 to open console from anywhere.
 document.addEventListener("keydown", e => {

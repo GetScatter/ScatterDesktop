@@ -22,8 +22,8 @@
 				<figure v-else class="dummy"></figure>
 
 				<section class="tokens" :class="{'full-width':limitedInfo}">
-					<figure class="balance">${{account.totalFiatBalance()}}</figure>
-					<figure class="count">in {{account.tokens().length}} tokens</figure>
+					<figure class="balance">${{formatNumber(account.totalFiatBalance(), true)}}</figure>
+					<figure class="count">in {{formatNumber(account.tokens().length, true)}} tokens</figure>
 				</section>
 			</section>
 		</section>

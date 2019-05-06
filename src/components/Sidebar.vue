@@ -15,7 +15,7 @@
 </template>
 
 <script>
-	import {mapGetters} from 'vuex';
+	import {mapGetters, mapState} from 'vuex';
 	import {RouteNames} from "../vue/Routing";
 
 	export default {
@@ -23,6 +23,9 @@
 
 		}},
 		computed:{
+			...mapState([
+				'history',
+			]),
 			...mapGetters([
 				'accounts',
 			]),
@@ -44,7 +47,7 @@
 						name:'Administrative',
 						items:[
 							{name:'Contacts', route:RouteNames.CONTACTS},
-							{name:'History', route:RouteNames.HISTORIES},
+							this.history.length ? {name:'History', route:RouteNames.HISTORIES} : null,
 							{name:'Networks', route:RouteNames.NETWORKS},
 							{name:'Settings', route:RouteNames.HOME},
 						].filter(x => !!x)

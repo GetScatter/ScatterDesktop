@@ -6,7 +6,7 @@
 		</figure>
 
 		<section class="filters" v-if="!fullSearch">
-			<Select v-on:selected="x => filter.onSelect(x)" :key="JSON.stringify(filter.selected)" v-for="filter in filters" v-bind="filter" /> <!--  :selected="options[0]" :options="options" -->
+			<Select class="filter" v-on:selected="x => filter.onSelect(x)" :key="JSON.stringify(filter.selected)+i" v-for="(filter,i) in filters" v-bind="filter" truncate="1" />
 		</section>
 
 	</section>
@@ -56,6 +56,13 @@
 			flex:1;
 			text-align:right;
 			display:flex;
+			justify-content: flex-end;
+
+			.filter {
+				flex:1;
+				max-width:150px;
+				margin-left:20px;
+			}
 		}
 
 		&.full {

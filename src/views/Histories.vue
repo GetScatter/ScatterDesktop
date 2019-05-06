@@ -1,6 +1,6 @@
 <template>
 	<section class="histories">
-		<SearchAndFilter />
+		<SearchAndFilter v-on:terms="x => terms = x" />
 
 		<section class="events">
 			
@@ -22,8 +22,9 @@
 							Received {{formatNumber(parseFloat(item.toAmount).toFixed(decimalsOrDefault(item.toToken)), true)}} {{item.toToken.symbol}}
 						</figure>
 						<section class="row">
-							<figure class="status" v-if="item.type === 'exchange'">
-								<i class="icon-check"></i> {{item.status}}
+							<figure class="status" @click="refreshStatus(item.id)" v-if="item.type === 'exchange'">
+								<span v-if="!loadingStatus"><i class="icon-check"></i> {{item.status}}</span>
+								<i class="icon-arrows-ccw animate-spin" v-else></i>
 							</figure>
 							<figure class="date">{{new Date(item.timestamp).toLocaleString()}}</figure>
 						</section>
@@ -83,12 +84,16 @@
 </template>
 
 <script>
-	import {mapState, mapActions} from 'vuex';
+	import {mapState, mapActions, mapGetters} from 'vuex';
 	import SearchAndFilter from "../components/reusable/SearchAndFilter";
 	import Exchange from '../components/svgs/quick-actions/Exchange'
 	import Transfer from '../components/svgs/quick-actions/Send'
 	import {HISTORY_TYPES} from "../models/histories/History";
 	import * as Actions from "../store/constants";
+	import ExchangeService from "../services/apis/ExchangeService";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
+	import ElectronHelpers from "../util/ElectronHelpers";
 
 	export default {
 		components: {
@@ -100,10 +105,14 @@
 			networkFilter:null,
 			typeFilter:null,
 			terms:'',
+			loadingStatus:false,
 		}},
 		computed:{
 			...mapState([
 				'history',
+			]),
+			...mapGetters([
+				'accounts',
 			]),
 			filteredTokenHistories(){
 				return this.history

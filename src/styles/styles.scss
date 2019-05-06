@@ -73,6 +73,10 @@ input {
   &:disabled {
     cursor: not-allowed;
   }
+
+  &:hover, &:focus {
+    border:1px solid $blue;
+  }
 }
 
 

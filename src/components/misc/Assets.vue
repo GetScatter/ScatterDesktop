@@ -12,8 +12,8 @@
 					<figure class="network">{{account.network().name}}</figure>
 					<section class="details">
 						<section>
-							<figure class="balance">{{account.balanceFor(selectedToken).amount}} {{selectedToken.symbol}}</figure>
-							<figure class="fiat">{{account.balanceFor(selectedToken).fiatBalance()}}</figure>
+							<figure class="balance">{{formatNumber(account.balanceFor(selectedToken).amount, true)}} {{selectedToken.symbol}}</figure>
+							<figure class="fiat">{{formatNumber(account.balanceFor(selectedToken).fiatBalance(), true)}}</figure>
 						</section>
 
 						<section class="actions" v-if="!asSelector">
@@ -144,7 +144,7 @@
 					}
 
 					.name {
-						font-size: $medium;
+						font-size: $large;
 						font-weight: bold;
 						color:$blue;
 						margin-bottom:2px;

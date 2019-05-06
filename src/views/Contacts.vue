@@ -74,7 +74,6 @@
 	import SearchAndFilter from "../components/reusable/SearchAndFilter";
 	import ContactService from "../services/utility/ContactService";
 	import EditContact from "../components/misc/EditContact";
-	require('../styles/blockchain-lists.scss');
 
 	export default {
 		components: {EditContact, SearchAndFilter, EditNetwork},

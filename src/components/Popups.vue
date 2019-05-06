@@ -18,6 +18,7 @@
                     <!--<Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />-->
                     <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
                     <ImportKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_KEYPAIR" />
+                    <GenerateKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.GENERATE_KEYPAIR" />
                     <!--<CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />-->
                     <!--<RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />-->
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
@@ -80,12 +81,11 @@
     import EosModerateCpuNet from './popins/fullscreen/EosModerateCpuNet'
     import ConfirmPassword from '../components/popins/fullscreen/ConfirmPassword'
     import UnlinkAccount from '../components/popins/fullscreen/UnlinkAccount'
-    // import UnlinkBlockchain from '../components/popins/fullscreen/UnlinkBlockchain'
-    // import Mnemonic from '../components/popins/fullscreen/Mnemonic'
     import EosCreateAccount from "./popins/fullscreen/EosCreateAccount";
     import AddCustomNetwork from "./popins/fullscreen/AddCustomNetwork";
     import AddNewContact from "./popins/fullscreen/AddNewContact";
     import ImportKeypair from "./popins/fullscreen/ImportKeypair";
+    import GenerateKeypair from "./popins/fullscreen/GenerateKeypair";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
     import SelectAccount from "./popins/overlay/SelectAccount";
     import SelectToken from "./popins/overlay/SelectToken";
@@ -95,15 +95,9 @@
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
     import ImportBackup from "./popins/fullscreen/ImportBackup";
     // import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
-    // import AccountSelector from "./popins/fullscreen/AccountSelector";
     import ConfirmExchange from "./popins/overlay/ConfirmExchange";
     import ConfirmTransfer from "./popins/overlay/ConfirmTransfer";
     // import DisplayToken from "./popins/fullscreen/DisplayToken";
-    // import Exchange from "./popins/fullscreen/Exchange";
-    // import Stabilize from "./popins/fullscreen/Stabilize";
-    // import History from "./popins/fullscreen/History";
-    // import RemoveApp from "./popins/overlay/RemoveApp";
-    // import Selector from "./popins/overlay/Selector";
     import UpdateAvailable from "./popins/overlay/UpdateAvailable";
 
     export default {
@@ -112,14 +106,10 @@
 		    SelectAccount,
 		    SelectToken,
 		    UpdateAvailable,
-		    // Selector,
-		    // RemoveApp,
     		// EnterPIN,
 		    Snackbar,
 		    TransactionSuccess,
 		    // Prompt,
-            //
-            // // FULLSCREEN
 		    ImportBackup,
 		    DestroyScatter,
 		    // RemoveLocation,
@@ -132,19 +122,14 @@
 		    EosModerateCpuNet,
 		    EosCreateAccount,
 		    UnlinkAccount,
-		    // UnlinkBlockchain,
-		    // Mnemonic,
 		    RemoveKeypair,
 		    ImportKeypair,
+		    GenerateKeypair,
 		    // CheckHardware,
 		    // EnableWhitelist,
-		    // AccountSelector,
 		    ConfirmExchange,
 		    ConfirmTransfer,
 		    // DisplayToken,
-		    // Exchange,
-		    // Stabilize,
-		    // History,
         },
         data(){ return {
             popupTypes:PopupTypes,

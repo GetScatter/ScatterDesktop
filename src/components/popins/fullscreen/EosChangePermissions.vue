@@ -19,6 +19,7 @@
 							        :options="otherKeys"
 							        :selected="ownerKey ? ownerKey.name : ''"
 							        :parser="x => x.name"
+							        truncate="1"
 							        :subparser="x => publicKeyForKeypair(x)"
 							        v-on:selected="x => ownerKey = x" />
 						</section>
@@ -29,6 +30,7 @@
 							        :options="otherKeys"
 							        :selected="activeKey ? activeKey.name : ''"
 							        :parser="x => x.name"
+							        truncate="1"
 							        :subparser="x => publicKeyForKeypair(x)"
 							        v-on:selected="x => activeKey = x" />
 						</section>
@@ -37,7 +39,7 @@
 				</section>
 			</section>
 
-			<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:'Confirm', red:true, click:() => returnResult(true)}]" />
+			<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:'Confirm', red:true, click:() => changePermissions()}]" />
 		</section>
 	</section>
 </template>
