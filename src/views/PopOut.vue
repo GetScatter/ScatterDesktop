@@ -66,9 +66,7 @@
 
                 // Hardware wallets cause slowdowns to initialize
                 // which makes popups slow down too.
-                scatter.keychain.keypairs.map(x => {
-                    if(x.external) x.external = null;
-                });
+                scatter.keychain.keypairs.map(x => x.external = null);
 
                 this[Actions.HOLD_SCATTER](Scatter.fromJson(scatter));
 

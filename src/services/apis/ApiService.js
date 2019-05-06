@@ -245,7 +245,20 @@ export default class ApiService {
 				return await signAndReturn(identity.locations[0]);
 			}
 
-			PopupService.push(Popup.popout(request, async ({result}) => {
+			const sendableRequest = {};
+			sendableRequest.plugin = request.plugin;
+			sendableRequest.type = request.type;
+			sendableRequest.appkey = request.appkey;
+			sendableRequest.payload = {
+				messages:request.payload.messages,
+				network:request.payload.network,
+				origin:request.payload.origin,
+				participants:request.payload.participants,
+				requiredFields:request.payload.requiredFields,
+			};
+
+
+			PopupService.push(Popup.popout(sendableRequest, async ({result}) => {
 				if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
 				await updateIdentity(result);

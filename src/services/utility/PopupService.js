@@ -4,6 +4,7 @@ import {PopupDisplayTypes, Popup} from '../../models/popups/Popup';
 import {RUNNING_TESTS, SHOW_POPUPS_AS_CONSOLE} from "../../util/TestingHelper";
 import AppsService from "../apps/AppsService";
 import StoreService from "./StoreService";
+import Recurring from "../../models/Recurring";
 
 let popouts = [];
 
@@ -36,6 +37,8 @@ export default class PopupService {
         const scatter = StoreService.get().state.scatter.clone();
         scatter.keychain.keypairs.map(keypair => delete keypair.privateKey);
         scatter.keychain.identities.map(identity => delete identity.privateKey);
+        scatter.recurring = Recurring.placeholder();
+        scatter.contacts = [];
 
         const respond = result => {
             popouts = popouts.filter(x => x.id !== popup.id);
