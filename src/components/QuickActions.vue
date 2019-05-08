@@ -91,6 +91,7 @@
 					RouteNames.EXCHANGE,
 					RouteNames.ACCOUNT,
 					RouteNames.IDENTITIES,
+					RouteNames.WALLET,
 				].includes(this.$route.name);
 			}
 		},

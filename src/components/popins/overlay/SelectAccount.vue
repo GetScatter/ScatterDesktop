@@ -2,7 +2,7 @@
 	<section class="select-account pop-over">
 		<SearchAndFilter v-on:terms="x => terms = x" :filters="filters" />
 		<section class="scroller">
-			<AccountList :accounts="filteredAccounts" v-on:account="returnResult" limited-info="1" />
+			<KeysAndAccountList :accounts="filteredAccounts" v-on:account="returnResult" limited-info="1" />
 		</section>
 	</section>
 </template>
@@ -10,12 +10,12 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import AccountList from "../../misc/AccountList";
+	import KeysAndAccountList from "../../misc/KeysAndAccountList";
 	import SearchAndFilter from "../../reusable/SearchAndFilter";
 	import {BlockchainsArray, blockchainName} from '../../../models/Blockchains';
 
 	export default {
-		components: {SearchAndFilter, AccountList},
+		components: {SearchAndFilter, KeysAndAccountList},
 		props:['popin'],
 		data(){return {
 			terms:'',

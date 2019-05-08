@@ -18,6 +18,8 @@ export default class Keypair {
 
         this.publicKeys = [];
         this.blockchains = blockchains ? blockchains : [Blockchains.EOSIO, Blockchains.ETH, Blockchains.TRX];
+
+        this.createdAt = +new Date();
     }
 
     static placeholder(blockchains){ return new Keypair(blockchains); }

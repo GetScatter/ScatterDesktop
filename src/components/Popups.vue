@@ -23,7 +23,7 @@
                     <!--<RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />-->
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                     <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
-                    <!--<EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />-->
+                    <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
                     <!--<AccountSelector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />-->
                     <!--<Exchange :popin="popIn" v-if="popIn.data.type === popupTypes.EXCHANGE" />-->
                     <!--<Stabilize :popin="popIn" v-if="popIn.data.type === popupTypes.STABILIZE" />-->
@@ -94,7 +94,7 @@
     // import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
     import ImportBackup from "./popins/fullscreen/ImportBackup";
-    // import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
+    import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
     import ConfirmExchange from "./popins/overlay/ConfirmExchange";
     import ConfirmTransfer from "./popins/overlay/ConfirmTransfer";
     // import DisplayToken from "./popins/fullscreen/DisplayToken";
@@ -126,7 +126,7 @@
 		    ImportKeypair,
 		    GenerateKeypair,
 		    // CheckHardware,
-		    // EnableWhitelist,
+		    EnableWhitelist,
 		    ConfirmExchange,
 		    ConfirmTransfer,
 		    // DisplayToken,

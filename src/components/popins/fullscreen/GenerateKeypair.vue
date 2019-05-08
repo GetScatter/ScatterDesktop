@@ -33,6 +33,7 @@
 	import Keypair from "../../../models/Keypair";
 	import {BlockchainsArray} from '../../../models/Blockchains'
 	import IdGenerator from "../../../util/IdGenerator";
+	import AccountService from "../../../services/blockchain/AccountService";
 
 	export default {
 		props:['popin'],
@@ -62,6 +63,7 @@
 				await KeyPairService.makePublicKeys(keypair);
 				keypair.name = `${this.blockchainName(blockchain)} Key - ${new Date().toDateString()} - ${IdGenerator.text(4)}`
 				await KeyPairService.saveKeyPair(keypair);
+				await AccountService.importAllAccounts(keypair, true, [blockchain]);
 				this.returnResult(keypair);
 				this.setWorkingScreen(false);
 			},

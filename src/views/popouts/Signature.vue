@@ -23,6 +23,7 @@
                     <section class="participant">{{arbitraryKeypair.name}} -- {{payload.publicKey.substr(0,6)}}.....{{payload.publicKey.substr(payload.publicKey.length - 5)}}</section>
                 </section>
 
+
                 <section class="fixed-actions">
 
                     <section v-if="cannotSignArbitrary" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
@@ -33,6 +34,7 @@
                     <section v-if="isDangerous" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
                         One of the actions included within this transaction is <b>dangerous</b>.
                     </section>
+
 
                     <!-- ACCEPT TRANSACTION -->
                     <Button :blue="!isDangerous && (reputation && reputation.decimal >= 0)" :red="isDangerous || (reputation && reputation.decimal < 0)" big="1" v-if="!pinning"
@@ -216,7 +218,6 @@
             showingRidlWarning:false,
 		}},
 		created(){
-			console.log(this.popup);
 			this.selectedIdentity = this.identity.clone();
 			this.selectedLocation = this.selectedIdentity.locations[0];
 			this.clonedLocation = this.selectedIdentity.locations[0].clone();
