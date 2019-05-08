@@ -194,6 +194,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {}, callback))
 	}
 
+	static selectRecipient(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_RECIPIENT, {}, callback))
+	}
+
 	static selectToken(tokens, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN, {tokens}, callback))
 	}
@@ -236,6 +240,7 @@ export const PopupTypes = {
 	TX_SUCCESS:'txSuccess',
 	SELECT_TOKEN_AND_ACCOUNT:'selectTokenAndAccount',
 	SELECT_ACCOUNT:'selectAccount',
+	SELECT_RECIPIENT:'selectRecipient',
 	SELECT_TOKEN:'selectToken',
 
     // FULLSCREEN
@@ -277,6 +282,7 @@ export const isFullscreen = popup => {
         PopupTypes.TX_SUCCESS,
         PopupTypes.SELECT_TOKEN_AND_ACCOUNT,
         PopupTypes.SELECT_ACCOUNT,
+        PopupTypes.SELECT_RECIPIENT,
         PopupTypes.SELECT_TOKEN,
         PopupTypes.CONFIRM_TRANSFER,
         PopupTypes.CONFIRM_EXCHANGE,

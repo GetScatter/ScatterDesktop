@@ -22,7 +22,7 @@
 					<section class="box-container">
 						<label>Receiving to</label>
 						<section class="box nested">
-							<section class="padded recipient-selector">
+							<section class="padded recipient-selector" @click="selectRecipient">
 								<figure class="name">Contacts</figure>
 								<figure class="chevron icon-dot-3"></figure>
 							</section>
@@ -124,6 +124,12 @@
 					this.account = account;
 					this.setToken(token);
 				}))
+			},
+			selectRecipient(){
+				PopupService.push(Popup.selectRecipient(recipient => {
+					if(!recipient) return;
+					this.recipient = recipient;
+				}));
 			},
 			setToken(token){
 				PriceService.setPrices();

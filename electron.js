@@ -100,7 +100,7 @@ const createScatterInstance = () => {
 		titleBarStyle:'hiddenInset',
 		backgroundColor,
 		show,
-		webPreferences:{ nodeIntegration:true, }
+		webPreferences:{ nodeIntegration:true, webviewTag:true, }
 	});
 
 	mainWindow = createMainWindow(false, '#111111');

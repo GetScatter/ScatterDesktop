@@ -41,6 +41,7 @@
                             <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                             <UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />
                             <SelectAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
+                            <SelectRecipient :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_RECIPIENT" />
                             <SelectToken :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN" />
                             <SelectTokenAndAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN_AND_ACCOUNT" />
                             <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
@@ -99,9 +100,11 @@
     import ConfirmTransfer from "./popins/overlay/ConfirmTransfer";
     // import DisplayToken from "./popins/fullscreen/DisplayToken";
     import UpdateAvailable from "./popins/overlay/UpdateAvailable";
+    import SelectRecipient from "./popins/overlay/SelectRecipient";
 
     export default {
     	components:{
+		    SelectRecipient,
 		    SelectTokenAndAccount,
 		    SelectAccount,
 		    SelectToken,
@@ -242,6 +245,7 @@
             //background:rgba(255,255,255,0.92);
             background: rgba(3, 25, 49, 0.71);
             z-index: -1;
+            cursor: pointer;
         }
     }
 
