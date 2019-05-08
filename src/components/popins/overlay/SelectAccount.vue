@@ -1,9 +1,6 @@
 <template>
 	<section class="select-account pop-over">
-		<SearchAndFilter v-on:terms="x => terms = x" :filters="filters" />
-		<section class="scroller">
-			<KeysAndAccountList :accounts="filteredAccounts" v-on:account="returnResult" limited-info="1" />
-		</section>
+		<KeysAndAccountList :accounts="filteredAccounts" v-on:account="returnResult" limited-info="1" />
 	</section>
 </template>
 
