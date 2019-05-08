@@ -311,6 +311,14 @@ label {
   }
 }
 
+.action-box {
+  border:5px solid $lightergrey;
+  border-radius:$radius;
+  padding:20px;
 
+  &:not(:last-child){
+    margin-bottom:20px;
+  }
+}
 
 

@@ -20,26 +20,26 @@
             </section>
 
             <section class="split-inputs">
-                <sel style="flex:1; margin-left:0;" :label="locale(langKeys.GENERIC.Network)"
+                <Select style="flex:1; margin-left:0;" :label="locale(langKeys.GENERIC.Network)"
                      :selected="filteredNetworks.find(x => x.chainId === newToken.chainId)"
                      :options="filteredNetworks"
                      :parser="x => x.name"
                      v-on:changed="x => newToken.chainId = x.chainId" />
 
-                <cin style="flex:1; margin-bottom:0;" :placeholder="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder)"
+                <Input style="flex:1; margin-bottom:0;" :placeholder="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder)"
                      :label="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNameLabel)"
                      :text="newToken.name" v-on:changed="x => newToken.name = x" />
             </section>
             <br>
 
             <section class="split-inputs">
-                <sel style="flex:1; margin-left:0;" :label="locale(langKeys.GENERIC.Blockchain)"
+                <Select style="flex:1; margin-left:0;" :label="locale(langKeys.GENERIC.Blockchain)"
                      :selected="{value:newToken.blockchain}"
                      :options="blockchains"
                      :parser="x => blockchainName(x.value)"
                      v-on:changed="x => newToken.blockchain = x.value" />
 
-                <cin style="flex:1; margin-bottom:0;"
+                <Input style="flex:1; margin-bottom:0;"
                      v-if="newToken.needsContract()"
                      :placeholder="contractPlaceholder"
                      :label="locale(langKeys.GENERIC.Contract)"
@@ -48,13 +48,13 @@
             </section>
             <br>
             <section class="split-inputs">
-                <cin placeholder="XXX" :label="locale(langKeys.GENERIC.Symbol)" :text="newToken.symbol" v-on:changed="x => newToken.symbol = x" />
-                <cin placeholder="4" type="number" :label="locale(langKeys.GENERIC.Decimals)" :text="newToken.decimals" v-on:changed="x => newToken.decimals = x" />
+                <Input placeholder="XXX" :label="locale(langKeys.GENERIC.Symbol)" :text="newToken.symbol" v-on:changed="x => newToken.symbol = x" />
+                <Input placeholder="4" type="number" :label="locale(langKeys.GENERIC.Decimals)" :text="newToken.decimals" v-on:changed="x => newToken.decimals = x" />
             </section>
 
             <section class="split-inputs">
-                <btn style="max-width:100%;" :text="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.WhitelistTokenButton)" v-on:clicked="addToken(false)" />
-                <btn style="max-width:100%;" red="1" :text="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.BlacklistTokenButton)" v-on:clicked="addToken(true)" />
+                <Button style="max-width:100%;" :text="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.WhitelistTokenButton)" @click.native="addToken(false)" />
+                <Button style="max-width:100%;" red="1" :text="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.BlacklistTokenButton)" @click.native="addToken(true)" />
             </section>
         </section>
 
@@ -93,7 +93,7 @@
                 <br>
                 <br>
 
-                <cin v-for="blockchain in blockchains"
+                <Input v-for="blockchain in blockchains"
                      :key="blockchain.value"
                      :placeholder="defaultDecimals(blockchain.value)"
                      :label="blockchainName(blockchain.value)"
@@ -110,7 +110,7 @@
         <!---------------------------------------->
         <section v-if="state === STATES.WHITELIST || state === STATES.BLACKLIST">
 
-            <sel style="flex:2;" :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.TokenFilterLabel)"
+            <Select style="flex:2;" :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.TokenFilterLabel)"
                  :selected="blockchain ? {value:blockchain} : null"
                  :options="[null].concat(blockchains)"
                  :parser="x => x ? blockchainName(x.value) : 'No Blockchain Filter'"
@@ -123,14 +123,14 @@
             <br>
             <section v-if="state === STATES.WHITELIST">
 
-                <FlatList style="padding:0;"
-                          :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.CustomTokensLabel)"
-                          :items="tokensList"
-                          icon="icon-cancel"
-                          v-if="tokensList.length"
-                          :selected="selectedDisplayToken"
-                          v-on:selected="selectDisplayToken"
-                          v-on:action="removeToken" />
+                <!--<FlatList style="padding:0;"-->
+                          <!--:label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.CustomTokensLabel)"-->
+                          <!--:items="tokensList"-->
+                          <!--icon="icon-cancel"-->
+                          <!--v-if="tokensList.length"-->
+                          <!--:selected="selectedDisplayToken"-->
+                          <!--v-on:selected="selectDisplayToken"-->
+                          <!--v-on:action="removeToken" />-->
             </section>
 
             <section v-if="state === STATES.BLACKLIST">
@@ -140,10 +140,10 @@
                     <p>{{locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.BLACKLIST.DisclaimerSubtitle)}}</p>
                 </section>
 
-                <FlatList style="padding:0 0 20px 0;"
-                          :items="blacklistTokensList"
-                          icon="icon-cancel"
-                          v-on:action="removeToken" />
+                <!--<FlatList style="padding:0 0 20px 0;"-->
+                          <!--:items="blacklistTokensList"-->
+                          <!--icon="icon-cancel"-->
+                          <!--v-on:action="removeToken" />-->
             </section>
         </section>
 
@@ -156,7 +156,6 @@
 
 	import PluginRepository from '../../../plugins/PluginRepository';
 	import {BlockchainsArray, Blockchains, blockchainName} from '../../../models/Blockchains';
-	import FlatList from '../../reusable/FlatList';
 	import SearchBar from '../../reusable/SearchBar';
 	import Token from "../../../models/Token";
 	import TokenService from "../../../services/utility/TokenService";
@@ -184,7 +183,6 @@
 
 	export default {
 		components:{
-			FlatList,
 			SearchBar
 		},
 		data () {return {

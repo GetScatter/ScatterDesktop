@@ -77,6 +77,8 @@
 		            RouteNames.NETWORKS,
 		            RouteNames.CONTACTS,
 		            RouteNames.HISTORIES,
+		            RouteNames.RIDL,
+		            RouteNames.SETTINGS,
                 ].includes(this.$route.name);
             }
 

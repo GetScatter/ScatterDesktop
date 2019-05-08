@@ -12,12 +12,10 @@ export const BACKUP_STRATEGIES = {
 
 export const SETTINGS_OPTIONS = {
 	GENERAL:{ locked:false, name:'General' },
-	LANGUAGE:{ locked:false, name:'Language' },
 	TOKENS:{ locked:false, name:'Tokens' },
 	EXPLORER:{ locked:false, name:'Explorers' },
 	PIN:{ locked:true, name:'PIN' },
 	FIREWALL:{ locked:true, name:'Firewall' },
-	NETWORKS:{ locked:true, name:'Networks' },
 	PASSWORD:{ locked:true, name:'Password' },
 	BACKUP:{ locked:true, name:'Backup' },
 	DESTROY:{ locked:true, name:'Destroy' },

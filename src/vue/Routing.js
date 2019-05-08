@@ -13,6 +13,8 @@ import Networks from '../views/Networks';
 import Contacts from '../views/Contacts';
 import Identities from '../views/Identities';
 import Histories from '../views/Histories';
+import Settings from '../views/Settings';
+import RIDL from '../views/RIDL';
 
 
 
@@ -31,6 +33,8 @@ export const RouteNames = {
 	CONTACTS:'contacts',
 	IDENTITIES:'identities',
 	HISTORIES:'histories',
+	RIDL:'ridl',
+	SETTINGS:'settings',
 
 
 	APP:'app',
@@ -50,6 +54,8 @@ const RouteViews = {
 	[RouteNames.CONTACTS]:Contacts,
 	[RouteNames.IDENTITIES]:Identities,
 	[RouteNames.HISTORIES]:Histories,
+	[RouteNames.RIDL]:RIDL,
+	[RouteNames.SETTINGS]:Settings,
 
 
 	[RouteNames.APP]:App,

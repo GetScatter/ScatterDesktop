@@ -39,7 +39,7 @@
 							{name:'Wallet', route:RouteNames.WALLET},
 							this.accounts.length ? {name:'Assets', route:RouteNames.ASSETS} : null,
 							this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
-							this.accounts.length ? {name:'RIDL', route:RouteNames.HOME} : null,
+							this.accounts.length ? {name:'RIDL', route:RouteNames.RIDL} : null,
 							{name:'Identities', route:RouteNames.IDENTITIES},
 						].filter(x => !!x)
 					},
@@ -49,7 +49,7 @@
 							{name:'Contacts', route:RouteNames.CONTACTS},
 							this.history.length ? {name:'History', route:RouteNames.HISTORIES} : null,
 							{name:'Networks', route:RouteNames.NETWORKS},
-							{name:'Settings', route:RouteNames.HOME},
+							{name:'Settings', route:RouteNames.SETTINGS},
 						].filter(x => !!x)
 					}
 				]

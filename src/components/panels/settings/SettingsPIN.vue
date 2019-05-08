@@ -10,7 +10,7 @@
 
             <br><br>
 
-            <cin style="margin-bottom:0;" big="1"
+            <Input style="margin-bottom:0;" big="1"
                  :placeholder="locale(langKeys.SETTINGS.PIN.Placeholder)"
                  type="password"
                  :text="pin"

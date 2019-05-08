@@ -35,6 +35,10 @@
     overflow:auto;
     padding:20px;
 
+    &.dynamic {
+      height:auto;
+    }
+
     &.with-tail {
       height:calc(100vh - 40px - 70px - 60px);
 
@@ -48,6 +52,12 @@
     flex:0 0 auto;
     width:250px;
     border-right:1px solid $lightgrey;
+
+    .head {
+      &:not(:first-child){
+        border-top:1px solid $lightgrey;
+      }
+    }
   }
 
   .list-container {

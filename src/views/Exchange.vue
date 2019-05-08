@@ -73,7 +73,7 @@
 
 						<!--- LOADING PAIRS --->
 						<section class="box account-selector" v-if="loadingPairs">
-							<section class="symbol icon-clock"></section>
+							<section class="symbol"><i class="icon-spin4 animate-spin"></i></section>
 							<section>
 								<figure class="name">Loading Pairs</figure>
 								<figure class="network">Please wait</figure>
@@ -84,7 +84,7 @@
 						<section class="box account-selector" @click="selectToken" v-if="!loadingPairs">
 
 							<section class="symbol icon-attention-circled" v-if="!pair"></section>
-							<section class="symbol icon-clock" v-else-if="loadingRate"></section>
+							<section class="symbol" v-else-if="loadingRate"><i class="icon-spin4 animate-spin"></i></section>
 							<section class="symbol" v-else>
 								<figure class="icon" :class="[{'small':pair && pair.symbol.length >= 4}, pair.symbolClass()]">
 									<span v-if="!pair.symbolClass()">{{pair.truncatedSymbol()}}</span>

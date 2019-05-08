@@ -7,19 +7,19 @@
 
             <br><br>
 
-            <cin :label="locale(langKeys.SETTINGS.PASSWORD.NewPasswordLabel)"
+            <Input :label="locale(langKeys.SETTINGS.PASSWORD.NewPasswordLabel)"
                  :placeholder="locale(langKeys.SETTINGS.PASSWORD.NewPasswordPlaceholder)"
                  type="password"
                  :text="password"
                  v-on:changed="x => password = x" />
 
-            <cin :label="locale(langKeys.SETTINGS.PASSWORD.ConfirmPasswordLabel)"
+            <Input :label="locale(langKeys.SETTINGS.PASSWORD.ConfirmPasswordLabel)"
                  :placeholder="locale(langKeys.SETTINGS.PASSWORD.ConfirmPasswordPlaceholder)"
                  type="password"
                  :text="confirmPassword"
                  v-on:changed="x => confirmPassword = x" />
 
-            <btn red="true" v-on:clicked="changePassword"
+            <Button red="true" @click.native="changePassword"
                  :text="locale(langKeys.SETTINGS.PASSWORD.ChangePasswordButton)" />
 
         </section>
@@ -28,7 +28,7 @@
             <label>{{locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicLabel)}}</label>
             <p>{{locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicDescription)}}</p>
 
-            <btn v-on:clicked="viewMnemonic" :text="locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicButton)" />
+            <Button @click.native="viewMnemonic" :text="locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicButton)" />
 
         </section>
 
