@@ -33,28 +33,12 @@
 		}},
 		computed:{
 			passwordStrength(){
-				const special = "!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?".split('');
-				const p = this.password;
-				let points = 0;
-				const upper = p.split('').filter(x => x === x.toUpperCase()).length;
-				points += upper < 5 ? upper : (5 * 2) + (upper-5);
-				const specs = p.split('').filter(x => special.includes(x)).length;
-				points += specs < 5 ? specs : (5 * 2) + (specs-5);
-				points += p.length;
-				const good = 60;
-				const percentage = points / good > 1 ? 1 : points / good;
-				return (percentage*100).toString();
+				return PasswordService.passwordStrength(this.password);
 			},
 		},
 		methods:{
 			async checkPassword(){
-				if(!PasswordService.isValidPassword(this.password, this.confirmation)) {
-					return false;
-				}
-
-				if(this.features.enforcePasswordStrength){
-					if(this.passwordStrength < 50) return PopupService.push(Popup.snackbar("Password not strong enough."))
-				}
+				if(!PasswordService.isValidPassword(this.password, this.confirmation)) return false;
 
 				StoreService.setWorking(true);
 				await this[Actions.CREATE_SCATTER](this.password);

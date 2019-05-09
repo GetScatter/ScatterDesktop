@@ -12,20 +12,37 @@ import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 import {ipcAsync, ipcFaF, ipcRenderer} from "../../util/ElectronHelpers";
 import StoreService from "../utility/StoreService";
+import features from "../../features";
 
 
 export default class PasswordService {
 
+    static passwordStrength(p){
+	    const special = "!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?".split('');
+	    let points = 0;
+	    const upper = p.split('').filter(x => x === x.toUpperCase()).length;
+	    points += upper < 5 ? upper : (5 * 2) + (upper-5);
+	    const specs = p.split('').filter(x => special.includes(x)).length;
+	    points += specs < 5 ? specs : (5 * 2) + (specs-5);
+	    points += p.length;
+	    const good = 60;
+	    const percentage = points / good > 1 ? 1 : points / good;
+	    return (percentage*100).toString();
+    }
+
     static isValidPassword(password, confirmPassword = null){
         if(!password || password.length < 8) {
-            PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.AUTH.PasswordLength)));
-            return false;
+            return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.AUTH.PasswordLength)));
         }
 
         if(confirmPassword !== null && password !== confirmPassword) {
-          PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.AUTH.InvalidConfirmation)));
-            return false;
+            return PopupService.push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.AUTH.InvalidConfirmation)));
         }
+
+	    if(features.enforceStrongPasswords){
+		    if(this.passwordStrength(password) < 50)
+		        return PopupService.push(Popup.snackbar("Password not strong enough."))
+	    }
 
         return true;
     }
