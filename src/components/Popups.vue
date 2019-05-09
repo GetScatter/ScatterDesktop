@@ -5,6 +5,7 @@
 
             <section class="pop-ins" v-for="popIn in popIns">
                 <section class="fullscreen" v-if="isFullscreen(popIn)">
+                    <EnterSecurityCode :popin="popIn" v-if="popIn.data.type === popupTypes.SECURITY_CODE" />
                     <ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />
                     <!--<EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />-->
                     <EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />
@@ -101,9 +102,11 @@
     // import DisplayToken from "./popins/fullscreen/DisplayToken";
     import UpdateAvailable from "./popins/overlay/UpdateAvailable";
     import SelectRecipient from "./popins/overlay/SelectRecipient";
+    import EnterSecurityCode from "./popins/fullscreen/EnterSecurityCode";
 
     export default {
     	components:{
+		    EnterSecurityCode,
 		    SelectRecipient,
 		    SelectTokenAndAccount,
 		    SelectAccount,

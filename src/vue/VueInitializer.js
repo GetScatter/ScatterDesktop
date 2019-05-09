@@ -16,6 +16,7 @@ import LANG_KEYS from '../localization/keys'
 import StoreService from "../services/utility/StoreService";
 import AppsService from "../services/apps/AppsService";
 import {dateId} from "../util/DateHelpers";
+import features from '../features';
 
 Vue.config.productionTip = false
 
@@ -47,6 +48,7 @@ export default class VueInitializer {
 	                SETTINGS_OPTIONS,
                     langKeys:LANG_KEYS,
 	                loadingReputation:false,
+	                features,
                     // now:0,
                 }},
 	            computed:{

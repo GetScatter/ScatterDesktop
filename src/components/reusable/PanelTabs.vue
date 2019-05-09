@@ -26,7 +26,7 @@
 		.tab-name {
 			cursor: pointer;
 			font-size: 18px;
-			padding-right:20px;
+			padding-right:30px;
 			font-weight: bold;
 			color:rgba(255,255,255,0.5);
 			transition:all 0.1s ease;

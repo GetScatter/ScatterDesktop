@@ -79,6 +79,7 @@
 		            RouteNames.HISTORIES,
 		            RouteNames.RIDL,
 		            RouteNames.SETTINGS,
+		            RouteNames.PURCHASE,
                 ].includes(this.$route.name);
             }
 

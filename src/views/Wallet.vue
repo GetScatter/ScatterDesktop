@@ -1,25 +1,42 @@
 <template>
-    <section class="wallet">
-        <!--<PanelTabs :tabs="tabs" :state="state" v-on:selected="x => state = x" />-->
+    <section>
+        <PanelTabs v-if="features.creditCards" :tabs="tabs" :state="state" v-on:selected="x => state = x" />
+        <section class="wallet" :class="{'no-panels':!features.creditCards}">
 
 
 
-        <section class="keys-and-accounts">
-            <KeysAndAccountList v-on:account="goToAccount" />
-        </section>
+            <section class="scroller">
+                <KeysAndAccountList v-on:account="goToAccount" v-if="state === STATES.KEYS" />
+                <CreditCardsList v-if="features.creditCards && state === STATES.CARDS" />
+            </section>
 
 
-        <section class="wallet-actions">
-            <section class="left">
-                <section class="info">
-                    <figure class="keys">{{keypairs.length}} keys</figure>
-                    <figure class="accounts">{{accounts.length}} accounts</figure>
+            <section class="wallet-actions" v-if="state === STATES.KEYS">
+                <section class="left">
+                    <section class="info">
+                        <figure class="keys">{{keypairs.length}} keys</figure>
+                        <figure class="accounts">{{accounts.length}} accounts</figure>
+                    </section>
+                </section>
+                <section class="right">
+                    <Button @click.native="importKeypair" text="Import Key" />
+                    <Button blue="1" text="Generate Key" @click.native="generateKeypair" />
                 </section>
             </section>
-            <section class="right">
-                <Button blue="1" @click.native="importKeypair" text="Import key" />
-                <Button blue="1" text="Generate new key" @click.native="generateKeypair" />
+
+            <section class="wallet-actions" v-if="state === STATES.CARDS">
+                <section class="left">
+                    <section class="info">
+                        <figure class="keys">{{cards.length}} cards</figure>
+                        <figure class="accounts">0 expired</figure>
+                    </section>
+                </section>
+                <section class="right">
+                    <Button blue="1" @click.native="importKeypair" text="Add Credit Card" />
+                </section>
             </section>
+
+
         </section>
     </section>
 </template>
@@ -35,20 +52,22 @@
     import AccountService from "../services/blockchain/AccountService";
     import KeysAndAccountList from "../components/misc/KeysAndAccountList";
     import KeyPairService from "../services/secure/KeyPairService";
+    import CreditCardsList from "../components/misc/CreditCardsList";
 
     const STATES = {
-    	ACCOUNTS:'accounts',
         KEYS:'keys',
+        CARDS:'cards',
     }
 
     let saveTimeout;
     export default {
     	components:{
+		    CreditCardsList,
 		    KeysAndAccountList,
     	    PanelTabs
         },
         data () {return {
-        	state:STATES.ACCOUNTS,
+        	state:STATES.KEYS,
 	        STATES,
 
             tab:null,
@@ -66,11 +85,12 @@
             ...mapGetters([
             	'keypairs',
             	'accounts',
+                'cards',
             ]),
             tabs(){
             	return [
-                    {name:'Accounts', state:STATES.ACCOUNTS},
-                    {name:'Keys', state:STATES.KEYS},
+                    {name:'Blockchain', state:STATES.KEYS},
+                    {name:'Credit Cards', state:STATES.CARDS},
                 ]
             },
         },
@@ -103,13 +123,26 @@
 
     .wallet {
         position: relative;
-        height:calc(100vh - 180px);
+        height:calc(100vh - 220px);
         padding-bottom:50px;
 
+        .scroller {
 
-        .keys-and-accounts {
-            overflow-y: auto;
-            height:calc(100% - 20px);
+            .keys-and-accounts-list {
+                overflow-y: auto;
+                height:calc(100vh - 290px);
+            }
+        }
+
+        &.no-panels {
+            height:calc(100vh - 180px);
+
+            .scroller {
+
+                .keys-and-accounts-list {
+                    height:calc(100vh - 250px);
+                }
+            }
         }
 
 

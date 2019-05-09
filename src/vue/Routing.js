@@ -15,6 +15,7 @@ import Identities from '../views/Identities';
 import Histories from '../views/Histories';
 import Settings from '../views/Settings';
 import RIDL from '../views/RIDL';
+import Purchase from '../views/Purchase';
 
 
 
@@ -35,6 +36,7 @@ export const RouteNames = {
 	HISTORIES:'histories',
 	RIDL:'ridl',
 	SETTINGS:'settings',
+	PURCHASE:'purchase',
 
 
 	APP:'app',
@@ -56,6 +58,7 @@ const RouteViews = {
 	[RouteNames.HISTORIES]:Histories,
 	[RouteNames.RIDL]:RIDL,
 	[RouteNames.SETTINGS]:Settings,
+	[RouteNames.PURCHASE]:Purchase,
 
 
 	[RouteNames.APP]:App,

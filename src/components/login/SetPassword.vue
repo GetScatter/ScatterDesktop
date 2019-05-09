@@ -23,6 +23,8 @@
 	import * as Actions from '../../store/constants';
 	import PasswordService from "../../services/secure/PasswordService";
 	import StoreService from "../../services/utility/StoreService";
+	import PopupService from "../../services/utility/PopupService";
+	import {Popup} from "../../models/popups/Popup";
 
 	export default {
 		data(){return {
@@ -48,6 +50,10 @@
 			async checkPassword(){
 				if(!PasswordService.isValidPassword(this.password, this.confirmation)) {
 					return false;
+				}
+
+				if(this.features.enforcePasswordStrength){
+					if(this.passwordStrength < 50) return PopupService.push(Popup.snackbar("Password not strong enough."))
 				}
 
 				StoreService.setWorking(true);

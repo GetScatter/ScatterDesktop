@@ -54,6 +54,7 @@ export const getters = {
     identity:state =>       state.scatter.keychain.identities[0],
     identities:state =>     state.scatter.keychain.identities || [],
     keypairs:state =>       state.scatter.keychain.keypairs || [],
+    cards:state =>          state.scatter.keychain.cards || [],
     accounts:state =>       state.scatter.keychain.accounts || [],
     permissions:state =>    state.scatter.keychain.permissions || [],
     apps:state =>           state.scatter.keychain.apps || [],

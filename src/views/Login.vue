@@ -71,8 +71,8 @@
 		    <section class="panel">
 			    <Terms v-if="step === 1" v-on:back="stepBack" v-on:next="stepForward" />
 			    <SetPassword v-if="step === 2" v-on:back="stepBack" v-on:next="stepForward" />
-			    <SelectBackupLocation v-if="step === 3" v-on:back="stepBack" v-on:next="stepForward" />
-			    <Welcome v-if="step === 4" />
+			    <!--<SelectBackupLocation v-if="step === 3" v-on:back="stepBack" v-on:next="stepForward" />-->
+			    <Welcome v-if="step === 3" />
 		    </section>
 
 	    </section>
@@ -87,9 +87,9 @@
 		    <section class="panel">
 			    <Terms v-if="step === 1" v-on:back="stepBack" v-on:next="stepForward" />
 			    <SetPassword v-if="step === 2" v-on:back="stepBack" v-on:next="stepForward" />
-			    <SelectBackupLocation v-if="step === 3" v-on:back="stepBack" v-on:next="importKeypair" />
-			    <!--<ImportKeypair v-if="step === 4" v-on:back="stepBack" v-on:next="stepForward" />-->
-			    <Welcome v-if="step === 5" />
+			    <!--<SelectBackupLocation v-if="step === 3" v-on:back="stepBack" v-on:next="importKeypair" />-->
+			    <ImportKeypair v-if="step === 3" v-on:back="stepBack" v-on:next="stepForward" />
+			    <Welcome v-if="step === 4" />
 		    </section>
 
 	    </section>
@@ -123,15 +123,6 @@
 		IMPORT_KEYS:'importKeys',
 		IMPORT_BACKUP:'importBackup',
 	};
-
-	const STEPS = {
-		IMPORT_KEYS:{
-			TERMS:1,
-			PASSWORD:2,
-			IMPORT_KEYPAIR:3,
-			START:4
-		}
-	}
 
 
 
@@ -180,8 +171,8 @@
 			},
 			steps(){
 				switch(this.state){
-					case STATES.CREATE_NEW: return 5;
-					case STATES.IMPORT_KEYS: return 5;
+					case STATES.CREATE_NEW: return 4;
+					case STATES.IMPORT_KEYS: return 4;
 					case STATES.IMPORT_BACKUP: return 3;
 				}
 			},

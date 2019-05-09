@@ -80,9 +80,8 @@
 		}
 
 		.keys-and-accounts-list {
-			.keys-list {
-				height: calc(100vh - 260px);
-			}
+			height: calc(100vh - 190px);
+			overflow-y:auto;
 		}
 
 		.blockchain-list-container {

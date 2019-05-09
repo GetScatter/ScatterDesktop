@@ -250,4 +250,8 @@ export default class Identity {
     static nameIsValid(name){
         return /^[a-zA-Z0-9_-]{3,20}$/.test(name)
     }
+
+    fullname(){
+        return `${this.personal.firstname || '[NO FIRST NAME]'} ${this.personal.lastname || '[NO LAST NAME]'}`
+    }
 }

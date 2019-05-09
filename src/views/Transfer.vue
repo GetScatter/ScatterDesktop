@@ -88,10 +88,10 @@
 	export default {
 		data(){return {
 			account:null,
+			token:null,
 			recipient:null,
 			memo:'',
 
-			token:null,
 			toSend:null,
 			fiat:0,
 

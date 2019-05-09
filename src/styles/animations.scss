@@ -3,10 +3,10 @@
   50% { transform:scale(1.2); }
 }
 
-.spin { animation: spin 1s ease infinite; }
+.spin, .animate-spin { animation: spin 0.65s linear infinite; }
 @keyframes spin {
-  0%, 100% { transform:rotateZ(0deg); }
-  50% { transform:rotateZ(360deg); }
+  0% { transform:rotateZ(0deg); }
+  100% { transform:rotateZ(360deg); }
 }
 
 .bounce-right { animation: bounce-right 1s ease infinite; }

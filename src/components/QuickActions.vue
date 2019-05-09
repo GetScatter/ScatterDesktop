@@ -91,8 +91,8 @@
 					RouteNames.EXCHANGE,
 					RouteNames.ACCOUNT,
 					RouteNames.IDENTITIES,
-					RouteNames.WALLET,
-				].includes(this.$route.name);
+					this.features.creditCards ? null : RouteNames.WALLET,
+				].filter(x => !!x).includes(this.$route.name);
 			}
 		},
 		mounted(){

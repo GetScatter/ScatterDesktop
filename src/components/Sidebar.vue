@@ -41,6 +41,7 @@
 							this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
 							this.accounts.length ? {name:'RIDL', route:RouteNames.RIDL} : null,
 							{name:'Identities', route:RouteNames.IDENTITIES},
+							this.features.creditCards ? {name:'Purchase', route:RouteNames.PURCHASE} : null,
 						].filter(x => !!x)
 					},
 					{

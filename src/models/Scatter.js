@@ -79,14 +79,14 @@ export default class Scatter {
     }
 
     savable(seed){
+        // Encrypting in-place.
+        this.keychain.cards.map(card => card.encrypt(seed));
         this.keychain.keypairs.map(keypair => keypair.encrypt(seed));
+        this.keychain.identities.map(id => id.encrypt(seed));
 
+        // Encrypting clone
         const clone = this.clone();
-        clone.keychain.identities.map(id => id.encrypt(seed));
-
-        // Keychain is always stored encrypted.
         clone.encrypt(seed);
-
         return clone;
     }
 }

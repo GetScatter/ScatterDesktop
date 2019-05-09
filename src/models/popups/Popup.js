@@ -109,6 +109,10 @@ export class Popup {
     /*********   FULLSCREEN POPINS ***********/
     /*****************************************/
 
+	static enterSecurityCode(subtitle, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SECURITY_CODE, {subtitle}, callback))
+	}
+
 	static verifyPassword(callback, returnOnly = false){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VERIFY_PASSWORD, {returnOnly}, callback))
 	}
@@ -244,6 +248,7 @@ export const PopupTypes = {
 	SELECT_TOKEN:'selectToken',
 
     // FULLSCREEN
+	SECURITY_CODE:'securityCode',
     VERIFY_PASSWORD:'verifyPassword',
     EOS_CHANGE_PERMISSIONS:'eosChangePermissions',
 	EOS_PROXY_VOTES:'eosProxyVotes',

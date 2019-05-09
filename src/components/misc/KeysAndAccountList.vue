@@ -132,7 +132,7 @@
 	@import "../../styles/variables";
 
 	.keys-list {
-		height:calc(100vh - 320px);
+		height:calc(100% - 70px);
 		overflow-y:auto;
 		padding:30px;
 

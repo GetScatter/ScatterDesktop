@@ -228,6 +228,7 @@ label {
     position: relative;
     color:$silver;
     border:0 solid transparent;
+    margin-right:20px;
 
     transition: all 0.2s ease;
     transition-property: background, color, box-shadow, border;
@@ -256,7 +257,6 @@ label {
 
   .details {
     flex:1;
-    padding:0 0 0 20px;
     display:flex;
     flex-direction: column;
     justify-content: center;
@@ -294,7 +294,7 @@ label {
 
   &.hoverable {
     cursor: pointer;
-    padding:15px 10px;
+    padding:15px 20px;
     border-radius:$radius;
     margin-bottom:2px;
 
@@ -319,6 +319,16 @@ label {
   &:not(:last-child){
     margin-bottom:20px;
   }
+}
+
+.greyback {
+  padding:40px;
+  background: $lightergrey;
+}
+
+.whiteback {
+  flex:1;
+  padding:40px;
 }
 
 

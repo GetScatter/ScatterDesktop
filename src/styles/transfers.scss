@@ -1,32 +1,22 @@
 @import "./variables";
 
-.transfer, .receive, .exchange {
+.transfer, .receive, .exchange, .purchase {
   height:$quickheightnobuffer;
   display:flex;
   flex-direction: column;
 
-  .greyback {
-    padding:40px;
-    background: $lightergrey;
-  }
+  .min-max {
+    display:flex;
 
-  .whiteback {
-    flex:1;
-    padding:40px;
+    div {
+      font-size: $small;
+      margin-left:30px;
 
-    .min-max {
-      display:flex;
-
-      div {
-        font-size: $small;
-        margin-left:30px;
-
-        span {
-          margin-left:8px;
-          font-weight: bold;
-          text-decoration: underline;
-          cursor: pointer;
-        }
+      span {
+        margin-left:8px;
+        font-weight: bold;
+        text-decoration: underline;
+        cursor: pointer;
       }
     }
   }

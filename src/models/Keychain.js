@@ -3,6 +3,7 @@ import Permission from './Permission';
 import Keypair from './Keypair';
 import Account from './Account';
 import AuthorizedApp from './AuthorizedApp';
+import CreditCard from "./CreditCard";
 
 export default class Keychain {
 
@@ -11,6 +12,7 @@ export default class Keychain {
         this.accounts = [];
         this.identities = [];
         this.permissions = [];
+        this.cards = [];
         this.apps = [];
     }
 
@@ -21,6 +23,7 @@ export default class Keychain {
         if(json.hasOwnProperty('accounts')) p.accounts = json.accounts.map(x => Account.fromJson(x));
         if(json.hasOwnProperty('identities')) p.identities = json.identities.map(x => Identity.fromJson(x));
         if(json.hasOwnProperty('permissions')) p.permissions = json.permissions.map(x => Permission.fromJson(x));
+        if(json.hasOwnProperty('cards')) p.cards = json.cards.map(x => CreditCard.fromJson(x));
         if(json.hasOwnProperty('apps')) p.apps = json.apps.map(x => AuthorizedApp.fromJson(x));
         return p;
     }

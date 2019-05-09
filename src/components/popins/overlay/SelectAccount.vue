@@ -66,5 +66,9 @@
 	.select-account {
 		min-width:800px;
 	}
+	.keys-and-accounts-list {
+		overflow-y: auto;
+		height:calc(100vh - 120px);
+	}
 
 </style>
