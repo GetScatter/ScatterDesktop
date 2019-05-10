@@ -40,7 +40,7 @@
 					</section>
 
 					<section class="actions">
-						<Button text="Redo" />
+						<Button text="Redo" @click.native="redo(item)" />
 					</section>
 				</section>
 
@@ -71,7 +71,7 @@
 					</section>
 
 					<section class="actions">
-						<Button text="Redo" />
+						<Button text="Redo" @click.native="redo(item)" />
 					</section>
 				</section>
 				
@@ -193,7 +193,6 @@
 				}
 				else {
 					this.$router.push({name:this.RouteNames.TRANSFER, query:{history:item.id}});
-					this.back();
 				}
 			},
 			clearHistory(){

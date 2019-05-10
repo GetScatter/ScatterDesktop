@@ -22,9 +22,7 @@
                 <br>
                 <br>
                 <section class="split-inputs">
-                    <section class="switch" @click="togglePinForAll()">
-                        <figure class="dot" :class="{'disabled':!scatter.pinForAll}"></figure>
-                    </section>
+                    <Switcher :state="scatter.pinForAll" @click.native="togglePinForAll" />
                     <section class="details">
                         <figure class="title">{{locale(langKeys.SETTINGS.PIN.PinForAllTitle)}}</figure>
                         <p>{{locale(langKeys.SETTINGS.PIN.PinForAllDescription)}}</p>

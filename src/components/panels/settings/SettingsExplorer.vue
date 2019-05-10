@@ -5,7 +5,7 @@
             <section v-for="blockchain in blockchainsArray">
                 <label>{{blockchainName(blockchain.value)}}</label>
 
-                <Select :options="availableExplorers.hasOwnProperty(blockchain.value) ? availableExplorers[blockchain.value] : defaultExplorers[blockchain.value]"
+                <Select bordered="1" :options="availableExplorers.hasOwnProperty(blockchain.value) ? availableExplorers[blockchain.value] : defaultExplorers[blockchain.value]"
                      :selected="explorers[blockchain.value]"
                      :parser="x => x.name"
                      v-on:changed="x => changedExplorer(blockchain.value, x)" />

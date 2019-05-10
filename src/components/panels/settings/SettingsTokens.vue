@@ -20,26 +20,34 @@
             </section>
 
             <section class="split-inputs">
-                <Select style="flex:1; margin-left:0;" :label="locale(langKeys.GENERIC.Network)"
-                     :selected="filteredNetworks.find(x => x.chainId === newToken.chainId)"
-                     :options="filteredNetworks"
-                     :parser="x => x.name"
-                     v-on:changed="x => newToken.chainId = x.chainId" />
+                <section style="flex:1; margin-left:0;">
+                    <label>{{locale(langKeys.GENERIC.Network)}}</label>
+                    <Select bordered="1"
+                            :selected="filteredNetworks.find(x => x.chainId === newToken.chainId)"
+                            :options="filteredNetworks"
+                            :parser="x => x.name"
+                            v-on:changed="x => newToken.chainId = x.chainId" />
+                </section>
 
-                <Input style="flex:1; margin-bottom:0;" :placeholder="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder)"
-                     :label="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNameLabel)"
-                     :text="newToken.name" v-on:changed="x => newToken.name = x" />
+                <section style="flex:1; margin-bottom:0;">
+                    <Input style="margin-bottom:4px;" :placeholder="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder)"
+                           :label="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNameLabel)"
+                           :text="newToken.name" v-on:changed="x => newToken.name = x" />
+                </section>
             </section>
             <br>
 
             <section class="split-inputs">
-                <Select style="flex:1; margin-left:0;" :label="locale(langKeys.GENERIC.Blockchain)"
-                     :selected="{value:newToken.blockchain}"
-                     :options="blockchains"
-                     :parser="x => blockchainName(x.value)"
-                     v-on:changed="x => newToken.blockchain = x.value" />
+                <section style="flex:1; margin-left:0;">
+                    <label>{{locale(langKeys.GENERIC.Blockchain)}}</label>
+                    <Select bordered="1"
+                            :selected="{value:newToken.blockchain}"
+                            :options="blockchains"
+                            :parser="x => blockchainName(x.value)"
+                            v-on:changed="x => newToken.blockchain = x.value" />
+                </section>
 
-                <Input style="flex:1; margin-bottom:0;"
+                <Input style="flex:1; margin-bottom:4px;"
                      v-if="newToken.needsContract()"
                      :placeholder="contractPlaceholder"
                      :label="locale(langKeys.GENERIC.Contract)"
@@ -66,26 +74,26 @@
         <!--------------------------->
         <section v-if="state === STATES.SETTINGS">
 
-            <section class="action-box top-pad">
-                <label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayLabel)}}</label>
-                <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayDescription)}}</p>
+            <!--<section class="action-box top-pad">-->
+                <!--<label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayLabel)}}</label>-->
+                <!--<p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayDescription)}}</p>-->
 
-                <br>
-                <br>
-                <section class="split-inputs">
-                    <section class="switch" style="flex:0 0 auto;" @click="toggleMainnetsOnly">
-                        <figure class="dot" :class="{'disabled':!mainnetTokensOnly}"></figure>
-                    </section>
-                    <section class="details" v-if="mainnetTokensOnly">
-                        <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton)}}</figure>
-                        <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksDesc)}}</p>
-                    </section>
-                    <section class="details" v-if="!mainnetTokensOnly">
-                        <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton)}}</figure>
-                        <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetDesc)}}</p>
-                    </section>
-                </section>
-            </section>
+                <!--<br>-->
+                <!--<br>-->
+                <!--<section class="split-inputs">-->
+                    <!--<section class="switch" style="flex:0 0 auto;" @click="toggleMainnetsOnly">-->
+                        <!--<figure class="dot" :class="{'disabled':!mainnetTokensOnly}"></figure>-->
+                    <!--</section>-->
+                    <!--<section class="details" v-if="mainnetTokensOnly">-->
+                        <!--<figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton)}}</figure>-->
+                        <!--<p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksDesc)}}</p>-->
+                    <!--</section>-->
+                    <!--<section class="details" v-if="!mainnetTokensOnly">-->
+                        <!--<figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton)}}</figure>-->
+                        <!--<p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetDesc)}}</p>-->
+                    <!--</section>-->
+                <!--</section>-->
+            <!--</section>-->
 
             <section class="action-box top-pad">
                 <label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.FilterSmallBalancesLabel)}}</label>
@@ -110,7 +118,7 @@
         <!---------------------------------------->
         <section v-if="state === STATES.WHITELIST || state === STATES.BLACKLIST">
 
-            <Select style="flex:2;" :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.TokenFilterLabel)"
+            <Select bordered="1" style="flex:2;" :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.TokenFilterLabel)"
                  :selected="blockchain ? {value:blockchain} : null"
                  :options="[null].concat(blockchains)"
                  :parser="x => x ? blockchainName(x.value) : 'No Blockchain Filter'"

@@ -10,6 +10,8 @@
             <section class="disclaimer red" style="margin-bottom:0;">
 				<b>{{locale(langKeys.SETTINGS.DESTROY.Important)}}</b>
 			</section>
+            <br>
+            <br>
             <Button :text="locale(langKeys.SETTINGS.DESTROY.Button)" red="true" @click.native="destroy" />
         </section>
 

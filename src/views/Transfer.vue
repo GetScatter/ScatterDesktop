@@ -75,7 +75,7 @@
 </template>
 
 <script>
-	import {mapGetters} from 'vuex';
+	import {mapGetters, mapState} from 'vuex';
 	import PopupService from "../services/utility/PopupService";
 	import {Popup} from "../models/popups/Popup";
 	import Token from "../models/Token";
@@ -98,6 +98,9 @@
 			sending:false,
 		}},
 		computed:{
+			...mapState([
+				'history',
+			]),
 			...mapGetters([
 				'accounts',
 				'displayCurrency',
@@ -112,9 +115,22 @@
 			},
 		},
 		mounted(){
-			this.account = this.accounts.filter(x => x.tokens().length)
-				.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];
-			this.setToken(this.sendableTokens[0]);
+			const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;
+			console.log('history', history);
+			if(!history){
+				this.account = this.accounts.filter(x => x.tokens().length)
+					.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];
+				this.setToken(this.sendableTokens[0]);
+			} else {
+
+				this.account = history.from;
+				this.recipient = history.to;
+				this.memo = history.memo;
+				this.token = this.account.tokens().find(x => x.uniqueWithChain() === history.token.uniqueWithChain());
+				this.toSend = history.token.clone();
+				this.toSend.amount = history.amount;
+				this.changedAmount();
+			}
 		},
 		methods:{
 			selectTokenAndAccount(){

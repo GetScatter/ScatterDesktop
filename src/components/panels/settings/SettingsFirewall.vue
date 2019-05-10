@@ -5,9 +5,7 @@
             <label>{{locale(langKeys.SETTINGS.FIREWALL.ENABLED.Label)}}</label>
             <p>{{locale(langKeys.SETTINGS.FIREWALL.ENABLED.Description)}}</p>
 
-            <section class="switch bottomed" @click="toggleFirewall">
-                <figure class="dot" :class="{'disabled':!scatter.settings.firewall.enabled}"></figure>
-            </section>
+            <Switcher :state="scatter.settings.firewall.enabled" @click.native="toggleFirewall" />
         </section>
 
     </section>

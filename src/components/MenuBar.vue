@@ -92,9 +92,9 @@
 			display:flex;
 			justify-content: center;
 			align-items: center;
-			padding:0 10px;
+			padding:0 20px;
 
-			$action:15px;
+			$action:10px;
 
 			.action {
 				-webkit-app-region: no-drag;
@@ -121,11 +121,11 @@
 				}
 
 				&:not(:first-child){
-					margin-left:25px;
+					margin-left:5px;
 				}
 
 				.x1, .x2 {
-					width:18px;
+					width:12px;
 					height:2px;
 					background:#fff;
 					transform-origin: center center;
@@ -138,6 +138,7 @@
 					height:$action;
 					width:$action;
 					border:2px solid #fff;
+					border-radius:2px;
 				}
 
 				.line {

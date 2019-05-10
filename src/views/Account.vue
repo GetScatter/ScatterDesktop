@@ -35,8 +35,8 @@
                     }"></figure>
                         <figure class="type">{{resource.name}}</figure>
                         <figure class="percentage">{{resource.text ? resource.text : parseFloat(resource.percentage).toFixed(2) + '%'}}</figure>
-                        <figure class="action" v-if="resource.actionable">
-                            <Button @click.native="moderateResource(resource)" :text="resource.actionText" />
+                        <figure class="action"> <!--  v-if="resource.actionable" -->
+                            <Button small="1" :disabled="!resource.actionable" @click.native="moderateResource(resource)" :text="resource.actionText" />
                         </figure>
                     </section>
                 </section>
@@ -169,7 +169,7 @@
         display:flex;
 
         .manage {
-            min-width:340px;
+            min-width:380px;
             max-width:30%;
             width:100%;
             border-right:1px solid $lightgrey;

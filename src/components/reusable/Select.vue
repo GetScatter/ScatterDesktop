@@ -173,6 +173,7 @@
 		.options {
 			position: absolute;
 			top:25px;
+			width:100%;
 			max-height:150px;
 			min-height:25px;
 			background: #fff;
@@ -239,6 +240,10 @@
 					top:6px;
 					right:10px;
 				}
+			}
+
+			.options {
+				top:38px;
 			}
 		}
 	}

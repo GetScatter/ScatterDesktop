@@ -6,13 +6,23 @@
 				<section class="personal greyback">
 
 					<section class="split-inputs">
-						<Input :error="nameError" placeholder="ScatterUser1234" label="Username" :text="clone.name" v-on:changed="x => clone.name = x" />
-						<Input label="Full name" placeholder="Nicolaus Copernicus" :text="fullname" v-on:changed="x => fullname = x" />
+						<Input :error="nameError"
+						       :label="locale(langKeys.IDENTITY.NameLabel)"
+						       :placeholder="locale(langKeys.IDENTITY.NamePlaceholder)"
+						       :text="clone.name" v-on:changed="x => clone.name = x" />
+
+						<Input :label="locale(langKeys.IDENTITY.PERSONAL.NameLabel)"
+						       :placeholder="locale(langKeys.IDENTITY.PERSONAL.NamePlaceholder)"
+						       :text="fullname" v-on:changed="x => fullname = x" />
 					</section>
 
 					<section class="split-inputs">
-						<Input label="Birthday" placeholder="DD/MM/YYYY" style="flex:0.4" />
-						<Input label="Email" placeholder="support@get-scatter.com"
+						<Input :label="locale(langKeys.IDENTITY.PERSONAL.DateOfBirthLabel)"
+						       type="date" placeholder="MM/DD/YYYY" style="flex:0.4"
+						       :text="clone.personal.birthdate"
+						       v-on:changed="x => clone.personal.birthdate = x" />
+
+						<Input :label="locale(langKeys.IDENTITY.PERSONAL.EmailLabel)" placeholder="support@get-scatter.com"
 						       style="flex:1"
 						       :text="clone.personal.email"
 						       v-on:changed="x => clone.personal.email = x" />
@@ -22,7 +32,7 @@
 				<section class="locations">
 					<section class="location-list">
 						<section class="head">
-							Locations
+							{{locale(langKeys.IDENTITY.LOCATION.SelectorLabel)}}
 							<Button text="Add Location" small="1" @click.native="addLocation" />
 						</section>
 
@@ -30,8 +40,11 @@
 							<section class="badge-item hoverable" :class="{'active':selectedLocation.id === location.id}" v-for="location in clone.locations" @click="selectedLocation = location">
 								<section class="details">
 									<figure class="title">{{location.name}}</figure>
-									<Button @click.native="removeLocation(location)" v-if="selectedLocation.id !== location.id && clone.locations.length > 1"
+
+									<Button @click.native="removeLocation(location)"
+									        v-if="selectedLocation.id !== location.id && clone.locations.length > 1"
 									        icon="icon-trash" small="1" />
+
 									<Button v-if="selectedLocation.id === location.id" blue="1" icon="icon-pencil" small="1" />
 								</section>
 							</section>
@@ -39,16 +52,41 @@
 					</section>
 
 					<section class="selected-location" v-if="selectedLocation">
-						<Input label="Location Name" :text="selectedLocation.name" v-on:changed="x => selectedLocation.name = x" />
+						<Input :label="locale(langKeys.IDENTITY.LOCATION.NameLabel)"
+						       :placeholder="locale(langKeys.IDENTITY.LOCATION.NamePlaceholder)"
+						       :text="selectedLocation.name"
+						       v-on:changed="x => selectedLocation.name = x" />
+
+						<section>
+							<label>{{locale(langKeys.IDENTITY.LOCATION.CountryLabel)}}</label>
+							<Select bordered="1" :label="locale(langKeys.IDENTITY.LOCATION.CountryLabel)"
+							        :selected="selectedLocation.country" style="flex:3;"
+							        :options="[null].concat(countries)"
+							        :parser="x => x ? x.name : locale(langKeys.IDENTITY.LOCATION.CountryItemNone)"
+							        v-on:selected="x => selectedLocation.country = x" />
+						</section>
+
+						<br>
 						<Input label="Address" :text="selectedLocation.address" v-on:changed="x => selectedLocation.address = x" />
-						<Input label="Phone Number" :text="selectedLocation.phone" v-on:changed="x => selectedLocation.phone = x" />
-						<Input label="Country" :text="selectedLocation.country" v-on:changed="x => selectedLocation.country = x" />
+
+						<section class="split-inputs">
+							<Input :label="locale(langKeys.IDENTITY.LOCATION.CityLabel)"
+							       :placeholder="locale(langKeys.IDENTITY.LOCATION.CityPlaceholder)"
+							       :text="selectedLocation.city"
+							       v-on:changed="x => selectedLocation.city = x" />
+							<Input :label="locale(langKeys.IDENTITY.LOCATION.StateLabel)"
+							       :placeholder="locale(langKeys.IDENTITY.LOCATION.StatePlaceholder)"
+							       :text="selectedLocation.state"
+							       v-on:changed="x => selectedLocation.state = x" />
+						</section>
+
+						<Input :label="locale(langKeys.IDENTITY.LOCATION.PhoneLabel)"
+						       placeholder="5555555555"
+						       :text="selectedLocation.phone"
+						       v-on:changed="x => selectedLocation.phone = x" />
+
 					</section>
 				</section>
-			</section>
-
-			<section class="tail">
-				<Button blue="1" text="Save Identity" />
 			</section>
 		</section>
 
@@ -63,6 +101,7 @@
 	import {Popup} from "../models/popups/Popup";
 	import PopupService from "../services/utility/PopupService";
 	import Identity from "../models/Identity";
+	import {Countries} from '../data/Countries'
 
 	let saveTimeout;
 	export default {
@@ -70,6 +109,7 @@
 			selectedLocation:null,
 			clone:null,
 			fullname:'',
+			countries:Countries,
 		}},
 		computed:{
 			...mapState([
@@ -139,7 +179,6 @@
 			},
 			clone:{
 				handler(){
-					console.log('saving')
 					clearTimeout(saveTimeout);
 					saveTimeout = setTimeout(() => {
 						this.save();
@@ -159,23 +198,9 @@
 
 		.scroller {
 			flex:1;
-			height:calc(100vh - 40px - 135px - 70px);
+			height:calc(100vh - 40px - 135px);
 			overflow:auto;
 
-		}
-
-		.tail {
-			flex:1;
-			display:flex;
-			align-items: center;
-			padding:0 20px;
-			height:70px;
-			border-top:1px solid $lightgrey;
-			justify-content: flex-end;
-
-			button {
-
-			}
 		}
 
 		.personal {

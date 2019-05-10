@@ -17,7 +17,7 @@
 
         <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.LANGUAGE.Label)}}</label>
-            <Select :options="names"
+            <Select bordered="1" :options="names"
                     :selected="selectedLanguage"
                     :parser="x => x"
                     v-on:changed="selectLanguage" />
@@ -27,9 +27,7 @@
             <label>{{locale(langKeys.SETTINGS.GENERAL.WhitelistNotificationsLabel)}}</label>
             <p>{{locale(langKeys.SETTINGS.GENERAL.WhitelistNotificationsDescription)}}</p>
 
-            <section class="switch bottomed" @click="toggleNotifications">
-                <figure class="dot" :class="{'disabled':!showNotifications}"></figure>
-            </section>
+            <Switcher :state="showNotifications" @click.native="toggleNotifications" />
         </section>
 
         <section class="action-box top-pad">
