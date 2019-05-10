@@ -6,7 +6,7 @@
 			        :class="{'active':i < parseInt(index)}"></figure>
 
 			<figure class="grower" :style="{'width':(index*36)-20+'px'}">
-
+				<i v-if="index === total" class="icon-check"></i>
 			</figure>
 		</section>
 	</section>
@@ -36,7 +36,7 @@
 			background: $lightgrey;
 			height:1px;
 			position: relative;
-			z-index:-2;
+			z-index:0;
 		}
 
 		.bubbles {
@@ -77,6 +77,7 @@
 
 			.grower {
 				height:16px;
+				line-height:15px;
 				background: $blue;
 				border:1px solid $blue;
 				position:absolute;
@@ -84,6 +85,9 @@
 				border-radius:100px;
 				transition:all 0.2s ease-out;
 				transition-property: width, background, border;
+				text-align:center;
+				color:$white;
+				font-size: 13px;
 			}
 
 			&.done {

@@ -7,7 +7,9 @@
 			<!-- SELECT IMPORT TYPE -->
 			<section class="select-type" v-if="state === STATES.SELECT_TYPE">
 				<section class="head">
-					<figure class="icon font icon-key"></figure>
+					<Key />
+					<br>
+					<br>
 					<figure class="title">Import Keypair</figure>
 				</section>
 				<br>
@@ -62,6 +64,7 @@
 	import AccountService from "../../../services/blockchain/AccountService";
 	import BalanceService from "../../../services/blockchain/BalanceService";
 	import ImportQRKey from "../../panels/keypair/ImportQRKey";
+	import Key from '../../../components/svgs/Key'
 
 	const STATES = {
 		SELECT_TYPE:'selectType',
@@ -80,7 +83,8 @@
 		components:{
 			ImportQRKey,
 			ImportPrivateKey,
-			ImportHardwareKey
+			ImportHardwareKey,
+			Key
 		},
 		data(){return {
 			STATES,

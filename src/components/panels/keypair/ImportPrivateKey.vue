@@ -1,5 +1,8 @@
 <template>
 	<section class="center-panel">
+		<Key />
+		<br>
+		<br>
 		<h2>Import your Private Key</h2>
 		<p>
 			Your private key never leaves your device. We only use this to sign transactions and
@@ -22,8 +25,10 @@
 	import KeyPairService from "../../../services/secure/KeyPairService";
 	import Keypair from "../../../models/Keypair";
 	import AccountService from "../../../services/blockchain/AccountService";
+	import Key from '../../svgs/Key'
 
 	export default {
+		components:{Key},
 		props:['returnOnly'],
 		data(){return {
 			privateKey:'',

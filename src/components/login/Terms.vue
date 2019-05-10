@@ -1,10 +1,12 @@
 <template>
     <section class="center-panel">
 
+        <Terms />
+        <br>
+        <br>
+
         <h2>Before we get started</h2>
-        <p>
-            Please read through our Terms of Use.
-        </p>
+        <p>Please read through our Terms of Use.</p>
 
         <br>
 
@@ -333,8 +335,10 @@
     import * as Actions from '../../store/constants';
 
     import StorageService from '../../services/utility/StorageService';
+    import Terms from '../svgs/Terms';
 
     export default {
+    	components:{Terms},
         data () {return {
 
         }},
@@ -362,13 +366,13 @@
     @import "../../styles/variables";
 
     .scroller {
-        max-height:400px;
+        max-height:300px;
         overflow-y: scroll;
         border-radius:$radius;
         border:1px solid $lightgrey;
         padding:20px;
-        margin-left:-100px;
-        margin-right:-100px;
+        margin-left:-150px;
+        margin-right:-150px;
         text-align:left;
     }
 

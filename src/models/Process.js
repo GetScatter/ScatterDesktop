@@ -68,7 +68,7 @@ export default class Process {
 	}
 
 	static importAccounts(identifier){
-		let process = new Process(PROCESS_TYPES.IMPORT_ACCOUNTS, localizedState(LANG_KEYS.PROCESSES.ImportingAccounts), identifier)
+		let process = new Process(PROCESS_TYPES.IMPORT_ACCOUNTS, localizedState(LANG_KEYS.PROCESSES.ImportingAccounts), identifier, false)
 		StoreService.get().dispatch(Actions.SET_PROCESS, process);
 		return process;
 	}

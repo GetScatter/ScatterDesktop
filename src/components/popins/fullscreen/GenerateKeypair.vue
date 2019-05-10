@@ -4,7 +4,9 @@
 		<!-- SELECT IMPORT TYPE -->
 		<section class="select-type">
 			<section class="head">
-				<figure class="icon font icon-key"></figure>
+				<Key />
+				<br>
+				<br>
 				<figure class="title">Generate Keypair</figure>
 			</section>
 			<br>
@@ -34,8 +36,10 @@
 	import {BlockchainsArray} from '../../../models/Blockchains'
 	import IdGenerator from "../../../util/IdGenerator";
 	import AccountService from "../../../services/blockchain/AccountService";
+	import Key from '../../svgs/Key'
 
 	export default {
+		components:{Key},
 		props:['popin'],
 		data(){return {
 			Blockchains:BlockchainsArray.map(x => x.value)

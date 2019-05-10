@@ -19,8 +19,8 @@
                     </section>
                 </section>
                 <section class="right">
-                    <Button @click.native="importKeypair" text="Import Key" />
-                    <Button blue="1" text="Generate Key" @click.native="generateKeypair" />
+                    <Button          text="Generate Key" @click.native="generateKeypair" />
+                    <Button blue="1" text="Import Key" @click.native="importKeypair" />
                 </section>
             </section>
 

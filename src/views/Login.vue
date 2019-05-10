@@ -170,7 +170,7 @@
 			},
 			steps(){
 				switch(this.state){
-					case STATES.CREATE_NEW: return 4;
+					case STATES.CREATE_NEW: return 3;
 					case STATES.IMPORT_KEYS: return 4;
 					case STATES.IMPORT_BACKUP: return 3;
 				}

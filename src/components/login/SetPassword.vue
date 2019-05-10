@@ -1,10 +1,10 @@
 <template>
 	<section class="center-panel">
+		<Lock />
+		<br>
+		<br>
 		<h2>Set a strong password</h2>
-		<p>
-			This is your Scatter's password. Make sure to memorize it or keep it safe.
-			<b>Please note that this is not your blockchain account's password, that is your private key.</b>
-		</p>
+		<p><b>Use a strong password</b>, and then memorize it or keep it safe.</p>
 
 		<br>
 
@@ -25,8 +25,10 @@
 	import StoreService from "../../services/utility/StoreService";
 	import PopupService from "../../services/utility/PopupService";
 	import {Popup} from "../../models/popups/Popup";
+	import Lock from '../svgs/Lock'
 
 	export default {
+		components:{Lock},
 		data(){return {
 			password:'',
 			confirmation:'',
