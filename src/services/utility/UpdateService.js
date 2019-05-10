@@ -17,8 +17,13 @@ export default class UpdateService {
 	        const {version, body, prerelease, name} = update;
 	        if(prerelease) return;
 
-	        scatter.meta.lastSuggestedVersion = version;
-	        StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+	        // Not setting last version anymore.
+	        // We want to always pop it up to annoy users
+	        // whenever they open Scatter so that they update
+	        // since there's often security updates.
+	        // --------------------------------------
+	        // scatter.meta.lastSuggestedVersion = version;
+	        // StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
 
             PopupService.push(Popup.updateAvailable(update, updated => {
 
