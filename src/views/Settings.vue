@@ -13,8 +13,8 @@
                     </section>
                 </section>
                 <section class="head">
+                    <i :class="{'unlocked':unlocked}" class="danger icon-lock"></i>
                     Secure Settings
-                    <figure class="danger icon-lock"></figure>
                 </section>
                 <section class="scroller dynamic">
                     <section class="blockchain-list">
@@ -133,15 +133,41 @@
     @import "../styles/variables";
 
     .head {
-        display:flex;
-        justify-content: space-between;
-
         .danger {
             background:$red;
             color:$white;
             font-size: $small;
             border-radius:$radius;
-            padding:3px 8px;
+            padding:3px 3px;
+            margin-right:10px;
+            overflow:hidden;
+
+            &.unlocked {
+                animation: popLock 0.6s normal forwards ease;
+                animation-delay: 0.1s;
+            }
+
+            @keyframes popLock {
+                0% {
+                    transform:scale(1);
+                }
+                20% {
+                    transform:scale(0.8);
+                }
+                60% {
+                    opacity:1;
+                    transform:scale(2);
+                }
+                80% {
+                    transform:scale(0.5);
+                    opacity:0;
+                    margin-left:0;
+                }
+                100% {
+                    margin-left:-30px;
+                    opacity:0;
+                }
+            }
         }
     }
 

@@ -3,17 +3,18 @@
 		<!--<back-bar v-on:back="returnResult(null)" />-->
 		<section>
 			<section class="head">
-				<figure class="icon font icon-lock"></figure>
+				<Lock />
+				<br>
+				<br>
 				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.CONFIRM_PASS.Title)}}</figure>
 
-				<br>
 				<br>
 				<Input  style="width:350px;" big="1"
 				        :text="password"
 				        v-on:enter="verify"
 				        v-on:changed="x => password = x"
-				        type="password"
-				        :label="locale(langKeys.POPINS.FULLSCREEN.CONFIRM_PASS.Label)" />
+				        centered="1" placeholder="Enter you password"
+				        type="password" />
 			</section>
 
 
@@ -29,8 +30,10 @@
 	import PasswordService from "../../../services/secure/PasswordService";
 	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
+	import Lock from '../../svgs/Lock'
 
 	export default {
+		components:{Lock},
 		props:['popin'],
 		data () {return {
 			password:'',

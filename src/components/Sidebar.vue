@@ -6,7 +6,7 @@
 			<figure class="category" v-for="category in items">
 				<figure class="category-name" v-if="category.name">{{category.name}}</figure>
 				<router-link @click.native="clearBacks" :key="item.name" :to="{name:item.route}" class="item" :class="{'active':$route.name === item.route}" v-for="(item, i) in category.items">
-					<i :class="`sidebar-sidebar_${item.name.toLowerCase()}`"></i>
+					<i :class="itemIcon(item)"></i>
 					<span>{{item.name}}</span>
 				</router-link>
 			</figure>
@@ -39,7 +39,7 @@
 							{name:'Wallet', route:RouteNames.WALLET},
 							this.accounts.length ? {name:'Assets', route:RouteNames.ASSETS} : null,
 							this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
-							this.accounts.length ? {name:'RIDL', route:RouteNames.RIDL} : null,
+							this.accounts.length ? {name:'Reputation', route:RouteNames.RIDL} : null,
 							{name:'Identities', route:RouteNames.IDENTITIES},
 							this.features.creditCards ? {name:'Purchase', route:RouteNames.PURCHASE} : null,
 						].filter(x => !!x)
@@ -59,6 +59,10 @@
 		methods:{
 			clearBacks(){
 				this.setQuickActionsBack(false);
+			},
+			itemIcon(item){
+				if(item.name === 'Reputation') return 'sidebar-sidebar_ridl';
+				return `sidebar-sidebar_${item.name.toLowerCase()}`
 			}
 		}
 	}
