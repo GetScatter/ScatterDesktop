@@ -80,6 +80,9 @@
 		top:0;
 		left:0;
 		right:0;
+		border-top:1px solid $darkerblue;
+		border-left:1px solid $darkerblue;
+		border-right:1px solid $darkerblue;
 
 		.actions {
 			-webkit-app-region: drag;

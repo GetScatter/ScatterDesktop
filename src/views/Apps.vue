@@ -39,15 +39,16 @@
 			<section class="scroller with-search">
 				<section class="linked-apps">
 					<section class="app" v-for="app in linkedApps">
-						<figure class="image">
+						<figure class="image" @click="goToApp(app)">
 							<img v-if="getAppData(app.applink).hasOwnProperty('img')" :src="getAppData(app.applink).img" />
+							<figure v-else class="dummy-image"></figure>
 						</figure>
-						<section class="info">
+						<section class="info" @click="goToApp(app)">
 							<figure class="name">{{app.name}}</figure>
 							<figure class="category">{{app.type}}</figure>
 						</section>
 						<section class="actions">
-							<Button @click.native="$router.push({name:RouteNames.APP, params:{applink:app.applink}})" text="Manage" />
+							<Button @click.native="goToApp(app)" text="Manage" />
 							<Button v-if="canOpenApp(app.applink)" @click.native="openApp(app.applink)" text="Open" blue="1" />
 						</section>
 					</section>
@@ -162,6 +163,9 @@
 
 				await SingletonService.init();
 				await AppsService.getApps();
+			},
+			goToApp(app){
+				this.$router.push({name:this.RouteNames.APP, params:{applink:app.applink}})
 			},
 			getAppData:AppsService.getAppData,
 			setState(state){
@@ -327,6 +331,7 @@
 				.app {
 					display:flex;
 					align-items: center;
+					margin-bottom:20px;
 
 					.image {
 						flex:0 0 auto;
@@ -334,20 +339,26 @@
 						width:90px;
 						border-radius:20px;
 						overflow:hidden;
+						cursor: pointer;
 
 						&.no-image {
 							background:rgba(0,0,0,0.02);
 						}
 
-						img {
+						img, .dummy-image {
 							height:90px;
 							width:90px;
+						}
+
+						.dummy-image {
+							background:$lightergrey;
 						}
 					}
 
 					.info {
 						flex:1;
 						padding:0 20px;
+						cursor: pointer;
 
 						.name {
 							font-size: $medium;

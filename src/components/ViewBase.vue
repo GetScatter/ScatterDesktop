@@ -124,6 +124,7 @@
         display:flex;
         background:$white;
         margin-top:40px;
+        box-shadow:inset 0 0 0 1px $lightgrey;
     }
 
     .view-base {

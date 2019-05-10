@@ -121,6 +121,7 @@
 
 	.quick-actions {
 		height:$quickactionsheight;
+		border-right:1px solid $darkerblue;
 
 		&:not(.short){
 			height:calc(#{$quickactionsheight} + #{$quickactionsbuffer});

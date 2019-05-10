@@ -2,10 +2,14 @@
     <section class="app">
         <PanelTabs :tabs="tabs" :state="state" v-on:selected="tabSelected" />
 
+
+        <!--------------------------------->
+        <!------------ APP DATA ----------->
+        <!--------------------------------->
         <section class="scroller" v-if="state === applink">
-            <figure class="blue-bg"></figure>
+            <figure class="blue-bg" v-if="getAppData(applink).hasOwnProperty('img')"></figure>
             <section class="padder">
-                <section class="featured">
+                <section class="featured" v-if="getAppData(applink).hasOwnProperty('img')">
                     <Carousel :no-info="true" :slides="[getAppData(applink)]" />
                 </section>
 
@@ -20,13 +24,23 @@
                         </section>
                     </section>
 
-                    <figure class="category">{{getAppData(applink).type}}</figure>
-                    <p>{{getAppData(applink).description}}</p>
+                    <section v-if="getAppData(applink).type">
+                        <figure class="category">{{getAppData(applink).type}}</figure>
+                        <p>{{getAppData(applink).description}}</p>
+                    </section>
+                    <section v-else>
+                        <figure class="category">No Data</figure>
+                        <p>This app doesn't have any registered data available.</p>
+                    </section>
 
                 </section>
             </section>
         </section>
 
+
+        <!--------------------------------->
+        <!---------- PERMISSIONS ---------->
+        <!--------------------------------->
         <section class="permissions scroller" v-if="state === 'permissions'">
             <section class="perms-list">
                 <section class="badge-item hoverable" :class="{'active':selected.id === item.id}" v-for="item in permissionsList" @click="selectPermission(item)">

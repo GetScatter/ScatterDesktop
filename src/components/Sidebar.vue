@@ -83,6 +83,8 @@
 		flex:0 0 auto;
 		width:$closed;
 		border-right:1px solid $lightgrey;
+		border-bottom:1px solid $lightgrey;
+		border-left:1px solid $lightgrey;
 		padding:20px 0;
 		overflow-x:hidden;
 		white-space: nowrap;
@@ -164,7 +166,7 @@
 			&:hover {
 				transition: width $time ease, box-shadow 0.3s ease;
 				box-shadow:10px 0 30px rgba(0,0,0,0.15), 2px 0 10px $blue-shadow;
-				border:0;
+				border-right:0;
 			}
 		}
 
