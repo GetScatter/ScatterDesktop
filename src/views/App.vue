@@ -1,8 +1,8 @@
 <template>
     <section class="app">
-        <PanelTabs :tabs="tabs" :state="applink" v-on:selected="back" />
+        <PanelTabs :tabs="tabs" :state="state" v-on:selected="tabSelected" />
 
-        <section class="scroller">
+        <section class="scroller" v-if="state === applink">
             <figure class="blue-bg"></figure>
             <section class="padder">
                 <section class="featured">
@@ -15,7 +15,7 @@
                         <section v-if="canOpenApp(applink)">
                             <Button @click.native="openApp(applink)" text="Open" :blue="true" />
                         </section>
-                        <section v-if="appPermissions.length">
+                        <section v-if="permissionsList.length">
                             <Button text="Revoke access" />
                         </section>
                     </section>
@@ -27,6 +27,53 @@
             </section>
         </section>
 
+        <section class="permissions scroller" v-if="state === 'permissions'">
+            <section class="perms-list">
+                <section class="badge-item hoverable" :class="{'active':selected.id === item.id}" v-for="item in permissionsList" @click="selectPermission(item)">
+                    <!--<figure class="badge iconed" :class="item.icon"></figure>-->
+                    <section class="details">
+                        <figure class="title">{{item.title}}</figure>
+                        <figure class="row" style="margin-top:0;">
+                            <figure class="secondary">{{item.description}}</figure>
+                        </figure>
+                    </section>
+                </section>
+            </section>
+
+            <section class="selected-permission">
+
+                <section class="key-val" v-if="isIdentity && selected.accounts.length">
+                    <figure>{{locale(langKeys.PERMISSIONS.AccountsLabel)}}</figure>
+                    <figure>{{selected.getAccounts().map(x => x.formatted()).join(', ')}}</figure>
+                </section>
+
+                <section class="key-val" v-if="selected.isIdentityRequirements">
+                    <figure>{{locale(langKeys.PERMISSIONS.RequiredFieldsLabel)}}</figure>
+                    <figure>{{selected.identityRequirements.join(', ')}}</figure>
+                </section>
+
+                <section class="key-val" v-if="isAction">
+                    <figure>{{locale(langKeys.PERMISSIONS.MutableFieldsLabel)}}</figure>
+                    <figure>{{selected.mutableActionFields.join(', ')}}</figure>
+                </section>
+
+                <br>
+                <br>
+
+                <section class="action-box">
+                    <section class="key-val">
+                        <figure>{{locale(langKeys.PERMISSIONS.RemoveLabel)}}</figure>
+                        <p v-if="isIdentity">{{locale(langKeys.PERMISSIONS.RemoveIdentityText)}}</p>
+                        <p v-if="isAction">{{locale(langKeys.PERMISSIONS.RemoveWhitelistLabel)}}</p>
+
+                        <br>
+
+                        <Button :text="locale(langKeys.GENERIC.Remove)" red="1"
+                             @click.native="removeSelected" />
+                    </section>
+                </section>
+            </section>
+        </section>
 
     </section>
 </template>
@@ -39,12 +86,14 @@
     import ObjectHelpers from "../util/ObjectHelpers";
     import AppsService from "../services/apps/AppsService";
     import Carousel from "../components/reusable/Carousel";
+    import PermissionService from "../services/apps/PermissionService";
 
 
     export default {
 	    components: {Carousel, PanelTabs},
 	    data () {return {
-
+		    state:null,
+		    selected:null,
         }},
         computed:{
             ...mapState([
@@ -61,18 +110,72 @@
 	        tabs(){
 		        return [
 			        {name:this.getAppData(this.applink).name, state:this.applink},
-		        ]
+			        this.perms.length ? {name:'Permissions', state:'permissions'} : null,
+		        ].filter(x => !!x)
 	        },
-	        appPermissions(){
-                return this.permissions.filter(x => x.origin === this.applink);
+	        perms(){
+		        return this.permissions.filter(x => x.origin === this.applink);
+	        },
+	        identityPermission(){
+		        return this.perms.find(x => x.isIdentity);
+	        },
+	        contractPermissions(){
+		        return this.perms.filter(x => x.isContractAction);
+	        },
+	        identityRequirementPermissions(){
+		        return this.perms.filter(x => x.isIdentityRequirements);
+	        },
+	        isIdentity(){ return this.selected.isIdentity; },
+	        isAction(){ return this.selected.isContractAction; },
+	        permissionsList(){
+		        return [this.identityPermission].concat(this.contractPermissions).map(permission => ({
+			        id:permission ? permission.id : null,
+			        title:this.permissionTitle(permission),
+			        description:this.permissionDescription(permission),
+                    icon:this.permissionIcon(permission),
+		        }));
 	        }
         },
 	    mounted(){
+	    	this.state = this.applink;
             this.setQuickActionsBack(true);
+            this.selected = this.identityPermission;
 	    },
         methods:{
 	        getAppData:AppsService.getAppData,
+            tabSelected(tab){
+	        	this.state = tab;
+            },
+	        selectPermission(item){
+		        this.selected = this.permissions.find(x => x.id === item.id);
+	        },
+	        permissionTitle(permission){
+		        if(!permission) return;
+		        return permission.isIdentity
+			        ? this.locale(this.langKeys.PERMISSIONS.LoginPermission) :
+			        `${permission.action}`;
+	        },
+	        permissionDescription(permission){
+		        if(!permission) return;
+		        return permission.isContractAction ? permission.contract : '';
+	        },
+            permissionIcon(permission){
+	        	if(!permission) return;
+	        	return permission.isIdentity ? 'icon-user' : 'icon-flow-tree'
 
+            },
+	        async removeSelected(){
+	        	console.log(this.perms);
+	        	if(this.perms.length === 1) return this.removeAll();
+
+		        await PermissionService.removePermission(this.selected);
+		        if(!this.perms.length) return this.back();
+		        this.selected = this.perms[0];
+	        },
+	        async removeAll(){
+		        await PermissionService.removeAllPermissionsFor(this.applink)
+                this.back();
+	        }
         },
     }
 </script>
@@ -126,6 +229,22 @@
 
 
             }
+        }
+    }
+
+    .permissions {
+        display:flex;
+
+        .perms-list {
+            flex:0 0 auto;
+            width:260px;
+            padding:20px;
+            border-right:1px solid $lightgrey;
+        }
+
+        .selected-permission {
+            flex:1;
+            padding:30px;
         }
     }
 

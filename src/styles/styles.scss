@@ -318,6 +318,10 @@ label {
   &:not(:last-child){
     margin-bottom:20px;
   }
+
+  p {
+    font-size: $small;
+  }
 }
 
 .greyback {
@@ -359,6 +363,41 @@ label {
     &:hover {
       background:$blue;
       color:$white;
+    }
+  }
+}
+
+
+.key-val {
+
+  figure {
+    &:first-child {
+      font-size: 11px;
+      color:#7899a6;
+      font-weight: bold;
+      margin-bottom:8px;
+      display: block;
+    }
+
+    &:last-child {
+
+    }
+
+    &.clickable {
+      cursor: pointer;
+      font-size: 13px;
+      color:$blue;
+      padding:8px 12px;
+      border:1px solid $blue;
+      border-radius:4px;
+      margin-top:4px;
+      margin-bottom:2px;
+      display:table;
+
+      &:hover {
+        background:$blue;
+        color:#fff;
+      }
     }
   }
 }

@@ -151,6 +151,9 @@
 			async init(){
 				if(this.$route.query.hasOwnProperty('state')){
 					this.state = this.$route.query.state;
+					if(this.state === STATES.MINE && !this.linkedApps.length){
+						this.state = STATES.EXPLORE;
+					}
 				}
 
 				if(this.$route.query.hasOwnProperty('category')){

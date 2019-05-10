@@ -192,31 +192,24 @@ export default class PermissionService {
         })
     }
 
-    static removeAllPermissionsFor(origin){
-        return new Promise(resolve => {
-            PopupService.push(Popup.removeApp(origin, async removed => {
-	            if(!removed) return resolve(false);
-	            const scatter = StoreService.get().state.scatter.clone();
+    static async removeAllPermissionsFor(origin){
+	    const scatter = StoreService.get().state.scatter.clone();
 
-	            const app = scatter.keychain.apps.find(x => x.origin === origin);
-	            if(app) scatter.keychain.removeApp(app);
+	    const app = scatter.keychain.apps.find(x => x.origin === origin);
+	    if(app) scatter.keychain.removeApp(app);
 
-	            scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.origin !== origin);
-	            await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
-	            this.checkAppLinkPermissions(origin);
-	            resolve(true);
-            }))
-        })
+	    scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.origin !== origin);
+	    await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+	    this.checkAppLinkPermissions(origin);
+	    return true;
     }
 
-    static removePermission(permission){
-        return new Promise(async resolve => {
-	        const scatter = StoreService.get().state.scatter.clone();
-	        scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.id !== permission.id);
-	        await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
-	        this.checkAppLinkPermissions(permission.origin);
-	        resolve(true)
-        })
+    static async removePermission(permission){
+	    const scatter = StoreService.get().state.scatter.clone();
+	    scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.id !== permission.id);
+	    await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+	    this.checkAppLinkPermissions(permission.origin);
+	    return true;
     }
 
     static async removeDanglingPermissions(){
