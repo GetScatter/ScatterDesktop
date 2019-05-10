@@ -3,6 +3,7 @@ import * as Actions from '../../store/constants';
 import {BACKUP_STRATEGIES} from '../../models/Settings';
 import StorageService from './StorageService';
 import StoreService from "./StoreService";
+import ElectronHelpers from "../../util/ElectronHelpers";
 const fs = window.require('fs');
 
 export const getFileLocation = () => remote.dialog.showOpenDialog({ filters: [ { name: 'JSON', extensions: ['json', 'txt'] } ] });
@@ -44,12 +45,23 @@ export default class BackupService {
         await saveFile(location[0]);
     }
 
-    static async setBackupLocation(){
-        const location = getFolderLocation();
+    static async setBackupLocation(location = null){
+	    if(!location) location = (() => {
+	        const f = getFolderLocation();
+	        if(f) return f[0];
+	        return null;
+        })();
         if(!location) return false;
         const scatter = StoreService.get().state.scatter.clone();
-        scatter.settings.backupLocation = location[0];
+        scatter.settings.backupLocation = location;
         return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+    }
+
+    static async setDefaultBackupLocation(){
+        const defaultPath = ElectronHelpers.getDefaultPath();
+        const backupPath = `${defaultPath.split(':')[0]}:/scatter_backups`;
+        if(!fs.existsSync(backupPath)) fs.mkdirSync(backupPath);
+        return this.setBackupLocation(backupPath);
     }
 
     static async createAutoBackup(){

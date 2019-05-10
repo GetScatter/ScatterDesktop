@@ -86,9 +86,7 @@
 
 		    <section class="panel">
 			    <Terms v-if="step === 1" v-on:back="stepBack" v-on:next="stepForward" />
-			    <SetPassword v-if="step === 2" v-on:back="stepBack" v-on:next="stepForward" />
-			    <!--<SelectBackupLocation v-if="step === 3" v-on:back="stepBack" v-on:next="importKeypair" />-->
-			    <ImportKeypair v-if="step === 3" v-on:back="stepBack" v-on:next="stepForward" />
+			    <SetPassword v-if="step === 2" v-on:back="stepBack" v-on:next="importKeypair" />
 			    <Welcome v-if="step === 4" />
 		    </section>
 
@@ -116,6 +114,7 @@
 	import Reset from '../components/svgs/login/Reset';
 	import Restore from '../components/svgs/login/Restore';
 	import Support from '../components/svgs/login/Support';
+	import ElectronHelpers from "../util/ElectronHelpers";
 
 	const STATES = {
 		NEW_OR_LOGIN:'newOrLogin',
@@ -160,7 +159,7 @@
 			password:'',
 		}},
 		created(){
-
+			console.log('f', ElectronHelpers.getDefaultPath());
 		},
 		computed:{
 			...mapState([
@@ -202,9 +201,8 @@
 			},
 			importKeypair(){
 				this.stepForward();
-				PopupService.push(Popup.importKeypair({noCancel:true}, keypair => {
+				PopupService.push(Popup.importKeypair({forSignup:true}, keypair => {
 					this.stepForward();
-					console.log(keypair);
 				}));
 			},
 

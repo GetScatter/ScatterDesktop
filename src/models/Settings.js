@@ -14,10 +14,9 @@ export const SETTINGS_OPTIONS = {
 	GENERAL:{ locked:false, name:'General' },
 	TOKENS:{ locked:false, name:'Tokens' },
 	EXPLORER:{ locked:false, name:'Explorers' },
-	PIN:{ locked:true, name:'PIN' },
+	BACKUP:{ locked:false, name:'Backup' },
 	FIREWALL:{ locked:true, name:'Firewall' },
 	PASSWORD:{ locked:true, name:'Password' },
-	BACKUP:{ locked:true, name:'Backup' },
 	DESTROY:{ locked:true, name:'Destroy' },
 };
 

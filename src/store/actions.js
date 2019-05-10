@@ -66,7 +66,8 @@ export const actions = {
             await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 
             dispatch(Actions.SET_SEED, password).then(mnemonic => {
-                dispatch(Actions.SET_SCATTER, scatter).then(_scatter => {
+                dispatch(Actions.SET_SCATTER, scatter).then(async _scatter => {
+	                await BackupService.setDefaultBackupLocation();
                     resolve();
                 })
             })

@@ -13,8 +13,8 @@
                     </section>
                 </section>
                 <section class="head">
-                    Advanced
-                    <figure class="danger">Danger</figure>
+                    Secure Settings
+                    <figure class="danger icon-lock"></figure>
                 </section>
                 <section class="scroller dynamic">
                     <section class="blockchain-list">
@@ -35,7 +35,6 @@
                 <SettingsPassword v-if="selectedOption.name === settingsOptions.PASSWORD.name" />
                 <SettingsBackup v-if="selectedOption.name === settingsOptions.BACKUP.name" />
                 <SettingsDestroy v-if="selectedOption.name === settingsOptions.DESTROY.name" />
-                <SettingsPIN v-if="selectedOption.name === settingsOptions.PIN.name" />
                 <SettingsFirewall v-if="selectedOption.name === settingsOptions.FIREWALL.name" />
             </section>
         </section>
@@ -59,7 +58,6 @@
     import SettingsBackup from '../components/panels/settings/SettingsBackup.vue'
     import SettingsDestroy from '../components/panels/settings/SettingsDestroy.vue'
     import SettingsPassword from '../components/panels/settings/SettingsPassword.vue'
-    import SettingsPIN from '../components/panels/settings/SettingsPIN.vue'
     import SettingsFirewall from '../components/panels/settings/SettingsFirewall.vue'
 
 
@@ -72,7 +70,6 @@
             SettingsBackup,
             SettingsDestroy,
             SettingsPassword,
-            SettingsPIN,
 		    SettingsFirewall,
         },
 	    data () {return {
@@ -93,13 +90,12 @@
 		            SETTINGS_OPTIONS.GENERAL,
 		            SETTINGS_OPTIONS.TOKENS,
 		            SETTINGS_OPTIONS.EXPLORER,
+		            SETTINGS_OPTIONS.BACKUP,
                 ]
             },
 	        lockedItems(){
             	return [
-		            SETTINGS_OPTIONS.PIN,
 		            SETTINGS_OPTIONS.PASSWORD,
-		            SETTINGS_OPTIONS.BACKUP,
 		            SETTINGS_OPTIONS.FIREWALL,
 		            SETTINGS_OPTIONS.DESTROY,
                 ]

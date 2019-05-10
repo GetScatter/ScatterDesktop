@@ -5,7 +5,7 @@
             <label>{{locale(langKeys.SETTINGS.BACKUP.Label)}}</label>
             <p>{{locale(langKeys.SETTINGS.BACKUP.Description)}}</p>
 
-            <br><br>
+            <br>
 
             <section class="split-inputs">
                 <Button style="flex:1;" :text="locale(langKeys.SETTINGS.BACKUP.AutoBackupLocationLabel)"

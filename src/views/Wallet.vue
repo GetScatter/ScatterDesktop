@@ -89,7 +89,7 @@
             ]),
             tabs(){
             	return [
-                    {name:'Blockchain', state:STATES.KEYS},
+                    {name:'Blockchain Accounts', state:STATES.KEYS},
                     {name:'Credit Cards', state:STATES.CARDS},
                 ]
             },

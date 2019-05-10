@@ -4,7 +4,6 @@ import {Popup} from "../models/popups/Popup";
 
 
 let electron;
-console.log('window', window);
 electron = RUNNING_TESTS ? null : window.require('electron');
 if(!electron) electron = MOCK_ELECTRON;
 
@@ -103,6 +102,10 @@ export default class ElectronHelpers {
                 node = node.parentNode;
             }
         });
+    }
+
+    static getDefaultPath(){
+	    return electron.remote.app.getPath('userData');
     }
 
 }

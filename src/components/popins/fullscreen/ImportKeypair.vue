@@ -42,7 +42,7 @@
 			</section>
 
 
-			<ActionBar v-if="buttonsLeft.length" :buttons-left="buttonsLeft" /> <!--  :buttons-right="[{text:'Save Key', blue:true, click:() => saveKeypair()}]" -->
+			<ActionBar v-if="buttonsLeft.length || buttonsRight.length" :buttons-left="buttonsLeft" :buttons-right="buttonsRight" /> <!--  :buttons-right="[{text:'Save Key', blue:true, click:() => saveKeypair()}]" -->
 		</section>
 
 
@@ -103,8 +103,22 @@
 			},
 
 			buttonsLeft(){
-				if(this.options.noCancel) return [];
-				return [{text:'Cancel', click:() => this.returnResult(false)}];
+				if(!this.options.forSignup) {
+					if(this.state === STATES.SELECT_TYPE){
+						return [{text:'Cancel', click:() => this.returnResult(null)}];
+					} else {
+						return [{text:'Back', click:() => this.state = STATES.SELECT_TYPE}];
+					}
+
+				} else {
+					if(this.state === STATES.SELECT_TYPE) return [];
+					return [{text:'Back', click:() => this.state = STATES.SELECT_TYPE}];
+				}
+			},
+
+			buttonsRight(){
+				if(this.options.forSignup) return [{text:'Skip', click:() => this.returnResult(false)}];
+				return [];
 			},
 
 			importTypes(){
