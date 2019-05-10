@@ -188,7 +188,8 @@
 			},
 			redo(item){
 				if(item.type === HISTORY_TYPES.Exchange){
-					PopupService.push(Popup.exchange({history:item.id}));
+					// TODO: REDO EXCHANGE
+					// PopupService.push(Popup.exchange({history:item.id}));
 				}
 				else {
 					this.$router.push({name:this.RouteNames.TRANSFER, query:{history:item.id}});

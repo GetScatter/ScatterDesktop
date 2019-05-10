@@ -15,20 +15,13 @@
                     <AddCustomNetwork :popin="popIn" v-if="popIn.data.type === popupTypes.ADD_CUSTOM_NETWORK" />
                     <AddNewContact :popin="popIn" v-if="popIn.data.type === popupTypes.ADD_NEW_CONTACT" />
                     <UnlinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_ACCOUNT" />
-                    <!--<UnlinkBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.UNLINK_BLOCKCHAIN" />-->
-                    <!--<Mnemonic :popin="popIn" v-if="popIn.data.type === popupTypes.MNEMONIC" />-->
                     <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
                     <ImportKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_KEYPAIR" />
                     <GenerateKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.GENERATE_KEYPAIR" />
                     <!--<CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />-->
-                    <!--<RemoveLocation :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_LOCATION" />-->
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                     <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
                     <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
-                    <!--<AccountSelector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />-->
-                    <!--<Exchange :popin="popIn" v-if="popIn.data.type === popupTypes.EXCHANGE" />-->
-                    <!--<Stabilize :popin="popIn" v-if="popIn.data.type === popupTypes.STABILIZE" />-->
-                    <!--<History :popin="popIn" v-if="popIn.data.type === popupTypes.HISTORY" />-->
                     <!--<DisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />-->
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
@@ -37,12 +30,12 @@
                             <figure class="bg" @click="clickedFader"></figure>
                             <!--<RemoveApp :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_APP" />-->
                             <!--<EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />-->
-                            <!--<Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />-->
-                            <!--<Selector :popin="popIn" v-if="popIn.data.type === popupTypes.SELECTOR" />-->
+                            <Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
                             <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                             <UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />
                             <SelectAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
                             <SelectRecipient :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_RECIPIENT" />
+                            <SelectBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_BLOCKCHAIN" />
                             <SelectToken :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN" />
                             <SelectTokenAndAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN_AND_ACCOUNT" />
                             <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
@@ -75,8 +68,7 @@
     // import EnterPIN from './popins/overlay/EnterPIN.vue'
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
-    // import Prompt from './popins/overlay/Prompt.vue'
-    //
+
     // import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
     import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
     import EosModerateRam from './popins/fullscreen/EosModerateRam'
@@ -90,10 +82,10 @@
     import GenerateKeypair from "./popins/fullscreen/GenerateKeypair";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
     import SelectAccount from "./popins/overlay/SelectAccount";
+    import Prompt from "./popins/overlay/Prompt";
     import SelectToken from "./popins/overlay/SelectToken";
     import SelectTokenAndAccount from "./popins/overlay/SelectTokenAndAccount";
     // import CheckHardware from "./popins/fullscreen/CheckHardware";
-    // import RemoveLocation from "./popins/fullscreen/RemoveLocation";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
     import ImportBackup from "./popins/fullscreen/ImportBackup";
     import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
@@ -102,12 +94,14 @@
     // import DisplayToken from "./popins/fullscreen/DisplayToken";
     import UpdateAvailable from "./popins/overlay/UpdateAvailable";
     import SelectRecipient from "./popins/overlay/SelectRecipient";
+    import SelectBlockchain from "./popins/overlay/SelectBlockchain";
     import EnterSecurityCode from "./popins/fullscreen/EnterSecurityCode";
 
     export default {
     	components:{
 		    EnterSecurityCode,
 		    SelectRecipient,
+		    SelectBlockchain,
 		    SelectTokenAndAccount,
 		    SelectAccount,
 		    SelectToken,
@@ -115,7 +109,7 @@
     		// EnterPIN,
 		    Snackbar,
 		    TransactionSuccess,
-		    // Prompt,
+		    Prompt,
 		    ImportBackup,
 		    DestroyScatter,
 		    // RemoveLocation,

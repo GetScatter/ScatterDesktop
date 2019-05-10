@@ -61,7 +61,7 @@
 				keypair.blockchains = [blockchain];
 				await KeyPairService.generateKeyPair(keypair);
 				await KeyPairService.makePublicKeys(keypair);
-				keypair.name = `${this.blockchainName(blockchain)} Key - ${new Date().toDateString()} - ${IdGenerator.text(4)}`
+				keypair.setName();
 				await KeyPairService.saveKeyPair(keypair);
 				await AccountService.importAllAccounts(keypair, true, [blockchain]);
 				this.returnResult(keypair);

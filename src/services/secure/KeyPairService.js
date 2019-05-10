@@ -1,4 +1,4 @@
-import {BlockchainsArray, Blockchains} from '../../models/Blockchains';
+import {BlockchainsArray, Blockchains, blockchainName} from '../../models/Blockchains';
 import PluginRepository from '../../plugins/PluginRepository'
 import * as Actions from '../../store/constants';
 
@@ -76,39 +76,27 @@ export default class KeyPairService {
 
     static async generateKeyPair(keypair){
         keypair.privateKey = await Crypto.generatePrivateKey();
-        keypair.hash();
         return true;
+    }
+
+    static convertKey(keypair, blockchain){
+	    const clone = keypair.clone();
+	    clone.id = IdGenerator.text(24);
+	    clone.name = `${blockchainName(blockchain)} copy of ${keypair.name}`;
+	    clone.blockchains = [blockchain];
+	    clone.createdAt = +new Date();
+	    return clone;
     }
 
     static async saveKeyPair(keypair){
         if(!keypair.name.length) keypair.name = `Key-${IdGenerator.text(8)}`;
+        if(!keypair.isUnique()) return PopupService.push(Popup.snackbar("Keypair already exists."));
         const scatter = StoreService.get().state.scatter.clone();
         scatter.keychain.keypairs.push(Keypair.fromJson(keypair));
         return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static async addOrRemoveBlockchain(keypair, blockchain){
-
-        // Removing
-	    if(keypair.blockchains.includes(blockchain)){
-		    keypair.blockchains = keypair.blockchains.filter(x => x !== blockchain);
-		    const accountsToRemove = keypair.accounts().filter(x => x.blockchain() === blockchain);
-		    await AccountService.removeAccounts(accountsToRemove);
-		    KeyPairService.updateKeyPair(keypair);
-        }
-
-        // Adding
-	    else {
-		    keypair.blockchains.push(blockchain);
-		    await AccountService.importAllAccounts(keypair, false, [blockchain]);
-		    KeyPairService.updateKeyPair(keypair);
-        }
-
-
-	    return true;
-    }
-
-    static updateKeyPair(keypair){
+    static async updateKeyPair(keypair){
         if(!keypair.name.length) return;
         const scatter = StoreService.get().state.scatter.clone();
         scatter.keychain.keypairs.find(x => x.unique() === keypair.unique()).name = keypair.name;
@@ -146,22 +134,6 @@ export default class KeyPairService {
         return null;
     }
 
-    static async encryptPrivateKey(privateKey) {
-	    const keypair = Keypair.fromJson({
-		    privateKey
-        });
-	    keypair.encrypt(await ipcAsync('seed'));
-	    return keypair.privateKey;
-    }
-
-    static async decryptPrivateKey(encryptedPrivateKey) {
-	    const keypair = Keypair.fromJson({
-            privateKey:encryptedPrivateKey
-        });
-	    keypair.decrypt(await ipcAsync('seed'));
-	    return keypair.privateKey;
-    }
-
     static async getHardwareKeyList(external, delta = 0, tries = 0){
 	    if(typeof external.interface.getAddress !== 'function') return false;
 	    if(tries >= 5) return false;
@@ -184,7 +156,6 @@ export default class KeyPairService {
             if(PluginRepository.plugin(keypair.external.blockchain).validPublicKey(key)){
                 keypair.external.publicKey = key;
                 keypair.publicKeys.push({blockchain:keypair.external.blockchain, key});
-                keypair.hash();
                 return true;
             } else return false;
         }).catch(async err => {

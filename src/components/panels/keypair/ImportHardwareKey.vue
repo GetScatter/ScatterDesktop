@@ -112,46 +112,16 @@
 
 				keypair.external.publicKey = key;
 				keypair.publicKeys.push({blockchain:keypair.external.blockchain, key});
-				keypair.hash();
 
-				const found = this.keypairs.find(x => x.keyHash === keypair.keyHash);
-				if(this.keypairs.find(x => x.keyHash === keypair.keyHash)) {
+				if(!keypair.isUnique()) {
 					this.setWorkingScreen(false);
-					console.error('Keypair already exists');
-					return false;
+					return PopupService.push(Popup.snackbar('Keypair already exists'));
 				}
 
 				setTimeout(() => {
 					this.setWorkingScreen(false);
 					this.$emit('key', keypair);
 				}, 1);
-
-
-
-
-				// if(await KeyPairService.loadFromHardware(keypair)) {
-				// 	const found = this.keypairs.find(x => x.keyHash === keypair.keyHash);
-				// 	if(this.keypairs.find(x => x.keyHash === keypair.keyHash)) {
-				// 		this.importing = false;
-				// 		return this.$router.push({name: this.RouteNames.KEYPAIR, params: {id: found.id}});
-				// 	}
-				//
-				// 	setTimeout(() => {
-				// 		this.importing = false;
-				// 		this.setWorkingScreen(true);
-				// 		this.$emit('keypair', keypair);
-				// 	}, 1);
-				// } else {
-				// 	this.importing = false;
-				// 	const Messages = {
-				// 		[EXT_WALLET_TYPES.LEDGER]:this.locale(this.langKeys.ADD_KEYS.IMPORT_HW.UnlockLedgerError, this.blockchainName(this.blockchain)),
-				// 		[EXT_WALLET_TYPES.LIQUID_EOS]:this.locale(this.langKeys.ADD_KEYS.IMPORT_HW.UnlockedLiquidEOSError)
-				// 	}
-				// 	PopupService.push(Popup.prompt(
-				// 		this.locale(this.langKeys.ADD_KEYS.IMPORT_HW.HardwareError),
-				// 		Messages[this.hardwareType]
-				// 	))
-				// }
 			}
 		},
 

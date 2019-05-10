@@ -1,6 +1,6 @@
 const isDev = !process.mainModule;
 
 export default {
-	creditCards:true,
+	creditCards:false,
     enforceStrongPasswords:!isDev,
 }

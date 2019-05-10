@@ -24,14 +24,6 @@
 
         </section>
 
-        <section class="action-box top-pad">
-            <label>{{locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicLabel)}}</label>
-            <p>{{locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicDescription)}}</p>
-
-            <Button @click.native="viewMnemonic" :text="locale(langKeys.SETTINGS.PASSWORD.ViewMnemonicButton)" />
-
-        </section>
-
     </section>
 </template>
 
@@ -60,15 +52,9 @@
             async changePassword(){
                 if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) return false;
 
-                const mnemonic = await PasswordService.changePassword(this.password);
-                this.$emit('mnemonic', mnemonic);
-                PopupService.push(Popup.mnemonic(mnemonic));
-                PopupService.push(Popup.snackbar(this.locale(this.langKeys.SETTINGS.PASSWORD.ChangedPasswordSnackbar), "lock"));
+                await PasswordService.changePassword(this.password);
                 this.password = '';
                 this.confirmPassword = '';
-            },
-	        viewMnemonic(){
-                PopupService.push(Popup.mnemonic(this.mnemonic));
             },
             ...mapActions([
                 Actions.SET_SCATTER

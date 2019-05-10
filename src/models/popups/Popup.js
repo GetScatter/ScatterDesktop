@@ -4,6 +4,7 @@ import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 
 import {remote} from '../../util/ElectronHelpers';
+import {BlockchainsArray} from "../Blockchains";
 const NotificationService = () => remote ? remote.getGlobal('appShared').NotificationService : null;
 
 export const PopupDisplayTypes = {
@@ -63,15 +64,10 @@ export class Popup {
 
 
 
-    static prompt(title, description, callback, acceptDeny = false){
-        let params = { title, description, acceptDeny };
+    static prompt(title, description, callback, acceptDeny = false, inputField = false){
+        let params = { title, description, acceptDeny, inputField };
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
     }
-
-	static selector(title, items, callback){
-		let params = { title, items };
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECTOR, params, callback))
-	}
 
     static transactionSuccess(blockchain, tx, callback){
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
@@ -157,10 +153,6 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_KEYPAIR, {keypair}, callback))
 	}
 
-	static mnemonic(mnemonic){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, {mnemonic}, () => {}))
-	}
-
 	static removeLocation(identity, location, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_LOCATION, {identity, location}, callback))
 	}
@@ -206,26 +198,16 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN, {tokens}, callback))
 	}
 
+	static selectBlockchain(callback, blockchains = BlockchainsArray.map(x => x.value)){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_BLOCKCHAIN, {blockchains}, callback))
+	}
+
 	static confirmExchange(accounts, symbols, order, pair, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order, pair}, callback))
 	}
 
 	static confirmTransfer(from, to, token, memo, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_TRANSFER, {from, to, token, memo}, callback))
-	}
-
-				// {history, token, account}
-	static exchange(params, callback = () => {}){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EXCHANGE, params, callback))
-	}
-
-				// {history, token, account}
-	static stabilize(params, callback = () => {}){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.STABILIZE, params, callback))
-	}
-
-	static history(filter, callback = () => {}){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.HISTORY, {filter}, callback))
 	}
 
 	static setDisplayToken(callback = () => {}){
@@ -237,7 +219,6 @@ export class Popup {
 export const PopupTypes = {
     // OVERLAYS
     PROMPT:'prompt',
-	SELECTOR:'selector',
     ENTER_PIN:'enterPIN',
     REMOVE_APP:'removeApp',
     UPDATE_AVAILABLE:'updateAvailable',
@@ -246,6 +227,7 @@ export const PopupTypes = {
 	SELECT_ACCOUNT:'selectAccount',
 	SELECT_RECIPIENT:'selectRecipient',
 	SELECT_TOKEN:'selectToken',
+	SELECT_BLOCKCHAIN:'selectBlockchain',
 
     // FULLSCREEN
 	SECURITY_CODE:'securityCode',
@@ -267,9 +249,6 @@ export const PopupTypes = {
 	ENABLE_WHITELIST:'enableWhitelist',
 	CONFIRM_EXCHANGE:'confirmExchange',
 	CONFIRM_TRANSFER:'confirmTransfer',
-	EXCHANGE:'exchange',
-	STABILIZE:'stabilize',
-	HISTORY:'history',
 	DISPLAY_TOKEN:'displayToken',
 	GENERATE_KEYPAIR:'generateKeypair',
 	IMPORT_KEYPAIR:'importKeypair',
@@ -280,7 +259,6 @@ export const PopupTypes = {
 export const isFullscreen = popup => {
     return ![
         PopupTypes.PROMPT,
-        PopupTypes.SELECTOR,
         PopupTypes.ENTER_PIN,
         PopupTypes.REMOVE_APP,
         PopupTypes.UPDATE_AVAILABLE,
@@ -289,6 +267,7 @@ export const isFullscreen = popup => {
         PopupTypes.SELECT_ACCOUNT,
         PopupTypes.SELECT_RECIPIENT,
         PopupTypes.SELECT_TOKEN,
+        PopupTypes.SELECT_BLOCKCHAIN,
         PopupTypes.CONFIRM_TRANSFER,
         PopupTypes.CONFIRM_EXCHANGE,
     ].includes(popup.data.type);

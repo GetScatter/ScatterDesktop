@@ -35,9 +35,7 @@
 			}
 		},
 		methods:{
-			usesexpirations(account){
-				return PluginRepository.plugin(account.blockchain()).usesexpirations()
-			}
+
 		}
 	}
 </script>

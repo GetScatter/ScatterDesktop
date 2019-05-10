@@ -42,7 +42,7 @@ export default class CreditCard {
     }
 	unique(){ return this.id; }
 	clone(){ return CreditCard.fromJson(JSON.parse(JSON.stringify(this))) }
-    hash(){ this.keyHash = Crypto.bufferToHash(this.number); }
+    hash(){ this.cardHash = Crypto.bufferToHash(this.secure.number); }
 
     isEncrypted(){
         return typeof this.secure === 'string' && this.secure.length > 100;

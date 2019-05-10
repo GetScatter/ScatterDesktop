@@ -103,7 +103,6 @@
 									blockchains:[x.blockchain],
 									privateKey:Crypto.privateKeyToBuffer(x.privateKey, x.blockchain),
 								});
-								keypair.hash();
 								await KeyPairService.makePublicKeys(keypair);
 								return keypair;
 							}));

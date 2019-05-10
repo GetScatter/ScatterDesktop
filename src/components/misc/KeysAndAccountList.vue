@@ -4,19 +4,21 @@
 		<section class="keys-list">
 			<section class="keypair" v-for="keypair in filteredKeypairs" :class="{'new':isNew(keypair)}">
 				<section class="keypair-info">
-					<figure class="blockchain" :class="`token-${keypair.enabledKeys()[0].blockchain}-${keypair.enabledKeys()[0].blockchain}`"></figure>
+					<figure class="blockchain" :class="`token-${keypair.enabledKey().blockchain}-${keypair.enabledKey().blockchain}`"></figure>
 					<section class="info">
 						<figure class="name">{{keypair.name}}</figure>
-						<figure class="key">{{keypair.enabledKeys()[0].key}}</figure>
+						<figure class="key">{{keypair.enabledKey().key}}</figure>
 					</section>
 					<section class="actions">
 						<figure class="action icon-key"></figure>
 						<figure class="action icon-dot-3" @click="setActionsMenu(keypair)"></figure>
 
 						<section class="action-menu" :class="{'hidden':actionsMenu !== keypair.id}">
+							<figure class="item" @click="editKeypairName(keypair)">Edit Name</figure>
 							<figure class="item" @click="copyPublicKey(keypair)">Copy Public Key</figure>
 							<figure class="item" @click="removeKeypair(keypair)">Remove Key</figure>
 							<figure class="item" :class="{'disabled':refreshingAccounts}" @click="refreshAccountsFor(keypair)">Refresh Accounts</figure>
+							<figure class="item" v-if="!keypair.external" @click="convertKeypair(keypair)">Convert Keypair</figure>
 						</section>
 					</section>
 				</section>
@@ -57,6 +59,9 @@
 	import PopupService from "../../services/utility/PopupService";
 	import {Popup} from "../../models/popups/Popup";
 	import AccountService from "../../services/blockchain/AccountService";
+	import KeyPairService from "../../services/secure/KeyPairService";
+	import IdGenerator from "../../util/IdGenerator";
+	import BalanceService from "../../services/blockchain/BalanceService";
 
 	export default {
 		components: {SearchAndFilter},
@@ -85,10 +90,10 @@
 			},
 			filteredKeypairs(){
 				return this.keypairs.filter(x => {
-					return !this.blockchainFilter || x.enabledKeys().map(({blockchain}) => blockchain).includes(this.blockchainFilter)
+					return !this.blockchainFilter || x.enabledKey().blockchain === this.blockchainFilter;
 				}).filter(x => {
 					return x.accounts().find(account => account.sendable().toLowerCase().indexOf(this.terms) > -1)
-						|| x.enabledKeys().some(key => key.key.toLowerCase().indexOf(this.terms) > -1)
+						|| x.enabledKey().key.toLowerCase().indexOf(this.terms) > -1
 				}).sort((a,b) => {
 					return b.accounts().length - a.accounts().length;
 				})
@@ -110,11 +115,41 @@
 			},
 			copyPublicKey(keypair){
 				this.actionsMenu = null;
-				ElectronHelpers.copy(keypair.enabledKeys()[0].key);
+				ElectronHelpers.copy(keypair.enabledKey().key);
 			},
 			removeKeypair(keypair){
 				this.actionsMenu = null;
 				PopupService.push(Popup.removeKeypair(keypair, removed => {}));
+			},
+			convertKeypair(keypair){
+				PopupService.push(Popup.selectBlockchain(async blockchain => {
+					if(!blockchain) return;
+					const clone = KeyPairService.convertKey(keypair, blockchain);
+					await KeyPairService.saveKeyPair(clone);
+					const accounts = await AccountService.importAllAccounts(clone);
+					for(let i = 0; i < accounts.length; i++){
+						await BalanceService.loadBalancesFor(accounts[i]);
+					}
+				}, BlockchainsArray.map(x => x.value).filter(x => x !== keypair.blockchains[0])));
+			},
+			editKeypairName(keypair){
+				PopupService.push(Popup.prompt(
+					`Change Keypair Name`,
+					`A keypair's name is only for organization.`,
+					name => {
+						if(!name || !name.trim().length) return;
+						const clone = keypair.clone();
+						clone.name = name.trim();
+						if(this.keypairs.find(x => x.id !== keypair.id && x.name.toLowerCase() === clone.name.toLowerCase())){
+							return PopupService.push(Popup.snackbar("A keypair with that name already exists"));
+						}
+						KeyPairService.updateKeyPair(clone);
+					},
+					false,
+					{
+						placeholder:'Enter a name',
+					}
+				))
 			},
 			async refreshAccountsFor(keypair){
 				if(this.refreshingAccounts) return;

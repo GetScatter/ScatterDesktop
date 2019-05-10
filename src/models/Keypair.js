@@ -1,5 +1,5 @@
 import AES from 'aes-oop';
-import {Blockchains} from './Blockchains';
+import {blockchainName, Blockchains} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
 import Crypto from '../util/Crypto';
 import ExternalWallet from './hardware/ExternalWallet';
@@ -11,7 +11,6 @@ export default class Keypair {
         this.id = IdGenerator.text(24);
         this.name = '';
         this.privateKey = '';
-        this.keyHash = '';
 
         this.external = null;
         this.fork = null;
@@ -35,11 +34,6 @@ export default class Keypair {
         // this.external = ExternalWallet.fromJson(this.external);
     }
 
-    hash(){
-        if(!this.external) this.keyHash = Crypto.bufferToHash(this.privateKey);
-        else this.keyHash = `${this.external.type}:${this.external.publicKey}`
-    }
-
     accounts(unique = false){
         const accounts = StoreService.get().state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique());
 	    if(!unique) return accounts;
@@ -51,11 +45,19 @@ export default class Keypair {
 
     }
 
-    enabledKeys(){
-        return this.blockchains.map(blockchain => {
-            return this.publicKeys.find(x => x.blockchain === blockchain);
-        })
+    enabledKey(){
+        return this.publicKeys.find(x => x.blockchain === this.blockchains[0]);
     }
+
+	isUnique(){
+		return !StoreService.get().getters.keypairs.find(x => {
+			return x.enabledKey().key === this.enabledKey().key
+		})
+	}
+
+	setName(){
+		this.name = `${blockchainName(this.enabledKey().blockchain)} Key - ${new Date().toDateString()} - ${IdGenerator.text(4)}`
+	}
 
     unique(){ return this.id; }
     clone(){ return Keypair.fromJson(JSON.parse(JSON.stringify(this))) }

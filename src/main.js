@@ -62,7 +62,7 @@ class Main {
 		]
 		else fragments = [
 			// {tag:'slider', vue:SliderComponent},
-			// {tag:'qr-reader', vue:QrcodeReader},
+			{tag:'qr-reader', vue:QrcodeReader},
 		]
 
 		const components = shared.concat(fragments);
