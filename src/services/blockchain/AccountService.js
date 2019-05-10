@@ -6,6 +6,7 @@ import Process from "../../models/Process";
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 import StoreService from "../utility/StoreService";
+import BalanceService from "./BalanceService";
 
 let checkedOrphanedAccounts = false;
 
@@ -20,7 +21,8 @@ export default class AccountService {
     static async removeAccounts(accounts){
         const scatter = StoreService.get().state.scatter.clone();
 	    accounts.map(account => scatter.keychain.removeAccount(account));
-        return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+        await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+        return BalanceService.removeStaleBalances();
     }
 
     static async importAllAccounts(keypair, isNewKeypair = false, blockchains = null, networks = null, addOnly = false){
@@ -50,6 +52,8 @@ export default class AccountService {
 	        scatter = StoreService.get().state.scatter.clone();
             if(!addOnly) accountsToRemove.map(account => scatter.keychain.removeAccount(account));
             accounts.map(account => scatter.keychain.addAccount(account));
+
+            await BalanceService.removeStaleBalances();
 
             await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
 	        process.updateProgress(100);
@@ -139,6 +143,7 @@ export default class AccountService {
         if(!orphaned.length) return true;
 
 	    orphaned.map(x => scatter.keychain.removeAccount(x));
+	    await BalanceService.removeStaleBalances();
 	    return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 }

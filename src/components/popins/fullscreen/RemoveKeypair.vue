@@ -41,6 +41,7 @@
 	import * as Actions from '../../../store/constants'
 	import '../../../styles/popins.scss';
 	import KeyPairService from "../../../services/secure/KeyPairService";
+	import BalanceService from "../../../services/blockchain/BalanceService";
 
 	export default {
 		props:['popin'],
@@ -51,7 +52,10 @@
 		},
 		methods:{
 			async returnResult(removing){
-				if(removing) await KeyPairService.removeKeyPair(this.keypair);
+				if(removing) {
+					await KeyPairService.removeKeyPair(this.keypair);
+					await BalanceService.removeStaleBalances();
+				}
 				this.popin.data.callback(removing);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},

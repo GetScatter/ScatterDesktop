@@ -171,13 +171,6 @@
 				// Buffer conversion
 				await KeyPairService.convertHexPrivateToBuffer(keypair);
 
-				// Check duplicates
-				if(!keypair.isUnique()){
-					// TODO: Back to key
-					console.error('Keypair already exists');
-					return reset();
-				}
-
 				this.keypair = keypair;
 
 				const blockchains = KeyPairService.getImportedKeyBlockchains(key);
