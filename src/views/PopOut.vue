@@ -42,6 +42,7 @@
     import * as ApiActions from '../models/api/ApiActions';
     import {Popup} from "../models/popups/Popup";
     import PasswordService from "../services/secure/PasswordService";
+    import Token from "../models/Token";
 
     export default {
         data () {return {
@@ -70,7 +71,11 @@
 
                 this[Actions.HOLD_SCATTER](Scatter.fromJson(scatter));
 
-	            this[Actions.SET_FULL_BALANCES](this.windowMessage.data.balances);
+                let balances = {};
+                Object.keys(this.windowMessage.data.balances).map(key => {
+	                balances[key] = this.windowMessage.data.balances[key].map(token => Token.fromJson(token));
+                });
+	            this[Actions.SET_FULL_BALANCES](balances);
 
                 const needsPIN = [
                     ApiActions.REQUEST_ARBITRARY_SIGNATURE,

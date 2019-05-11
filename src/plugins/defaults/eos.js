@@ -210,7 +210,6 @@ export default class EOS extends Plugin {
 	}
 
 	async changePermissions(account, keys){
-		console.log('keys', keys);
 		if(!keys) return;
 		return new Promise(async (resolve, reject) => {
 			const signProvider = payload => this.signerWithPopup(payload, account, reject);
@@ -253,8 +252,6 @@ export default class EOS extends Plugin {
 					auth,
 				}
 			}).filter(x => !!x);
-
-			console.log('perms', perms);
 
 			const hasOwner = (keys.hasOwnProperty('owner') && keys.owner.length) || account.authorities().map(x => x.authority).includes('owner');
 			const options = {authorization:[`${account.name}@${hasOwner?'owner':'active'}`]};
@@ -858,8 +855,6 @@ export default class EOS extends Plugin {
 			if(results.length !== transaction.actions.length){
 				console.error(`Invalid parsed actions, message array doesn't match actions length.`, transaction);
 			}
-
-			console.log('results', results, transaction);
 
 			if(!transaction.hasOwnProperty('max_net_usage_words')) transaction.max_net_usage_words = 0;
 			payload.buf = Buffer.concat([Buffer.from(network.chainId, 'hex'), eos.fc.toBuffer("transaction", transaction), Buffer.from(new Uint8Array(32))]);

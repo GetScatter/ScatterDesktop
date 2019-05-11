@@ -44,7 +44,6 @@ export default class WindowService {
     }
 
     static sendAndWait(toWindowId, type, data = {}){
-    	console.log('sending', data);
         return new Promise(resolve => {
             sendMessage(toWindowId, type, data, resolve);
         })

@@ -137,7 +137,7 @@
 								case 'txt': return await importExtensionBackup(data, password);
 							}
 						} catch(e){
-							console.log('e',e);
+							console.error('e',e);
 							unrestore();
 							return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
 						}

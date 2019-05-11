@@ -21,8 +21,6 @@ const provider = new TronWeb.providers.HttpProvider(DUMMY_NET);
 const tronWeb = new TronWeb(provider, provider, DUMMY_NET);
 const utils = tronWeb.utils;
 
-console.log('utils', utils);
-
 let cachedInstances = {};
 const getCachedInstance = network => {
     if(cachedInstances.hasOwnProperty(network.unique())) return cachedInstances[network.unique()];

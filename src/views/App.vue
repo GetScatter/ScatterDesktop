@@ -179,7 +179,6 @@
 
             },
 	        async removeSelected(){
-	        	console.log(this.perms);
 	        	if(this.perms.length === 1) return this.removeAll();
 
 		        await PermissionService.removePermission(this.selected);

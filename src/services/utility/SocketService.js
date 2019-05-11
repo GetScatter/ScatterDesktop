@@ -72,7 +72,12 @@ const socketHandler = (socket) => {
     });
 
     socket.on('disconnect', async request => {
+    	console.log('dc', request);
         delete openConnections[origin];
+    });
+
+    socket.on('error', async request => {
+    	console.log('error', request);
     });
 
     socket.on('pair', async request => {
@@ -147,6 +152,7 @@ export default class SocketService {
     }
 
     static async close(){
+    	console.log('closing socket');
         // Getting namespace
         if(!io) return;
         const socket = io.of(`/scatter`);

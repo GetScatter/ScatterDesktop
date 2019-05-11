@@ -292,7 +292,7 @@
 				const to = { account:this.recipient };
 				const amount = parseFloat(this.toSend.amount).toFixed(this.toSend.decimals);
 				const order = await ExchangeService.order(this.rawPair.service, this.token, this.pair.symbol, amount, from, to);
-				console.log('order', order);
+
 				if(!order) {
 					this.cantConnect();
 					this.sending = false;

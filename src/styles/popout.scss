@@ -5,8 +5,14 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  border:1px solid #dadada;
   overflow:hidden;
+
+  .popout-window {
+    border:1px solid #dadada;
+    border-top:0;
+    height:calc(100vh - 40px);
+  }
+
 
   > section {
     display: flex;
@@ -21,6 +27,7 @@
     flex:1;
     height:calc(100vh - 90px);
 
+    padding:30px;
     background:#fafafa;
 
     .main-panel {

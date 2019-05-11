@@ -197,7 +197,13 @@ class LowLevelWindowService {
 		const activeDisplay = electron.screen.getDisplayNearestPoint(mousePoint);
 		let {width:screenWidth, height:screenHeight} = activeDisplay.workAreaSize;
 		const leftBound = activeDisplay.bounds.x;
-		win.setPosition(screenWidth + leftBound - width - 2, screenHeight - height - 2);
+
+		let bounds = electron.screen.getPrimaryDisplay().bounds;
+		let x = bounds.x + (leftBound + ((bounds.width - width) / 2));
+		let y = bounds.y + ((bounds.height - height) / 2);
+
+		// win.setPosition(screenWidth + leftBound - width - 2, screenHeight - height - 2);
+		win.setPosition(x,y);
 
 		win.once('closed', async () => {
 			// This is a fix for MacOS systems which causes the

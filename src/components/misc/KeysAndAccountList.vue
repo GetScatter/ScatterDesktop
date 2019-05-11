@@ -9,7 +9,7 @@
 						<figure class="name">{{keypair.name}}</figure>
 						<figure class="key">{{keypair.enabledKey().key}}</figure>
 					</section>
-					<section class="actions">
+					<section class="actions" v-if="!asSelector">
 						<figure class="action icon-key"></figure>
 						<figure class="action icon-dot-3" @click="setActionsMenu(keypair)"></figure>
 
@@ -35,7 +35,7 @@
 							<figure class="balance">{{account.totalFiatBalance()}} {{displayCurrency}}</figure>
 							<figure class="quantity">in {{account.tokens().length}} tokens</figure>
 						</section>
-						<section class="actions">
+						<section class="actions" v-if="!asSelector">
 							<figure class="chevron icon-right-open-big"></figure>
 						</section>
 					</section>
@@ -65,6 +65,7 @@
 
 	export default {
 		components: {SearchAndFilter},
+		props:['asSelector', 'accounts'],
 		data(){return {
 			blockchainFilter:null,
 			terms:'',
@@ -73,7 +74,6 @@
 		}},
 		computed:{
 			...mapGetters([
-				'accounts',
 				'keypairs',
 				'displayCurrency',
 			]),
@@ -89,7 +89,14 @@
 				]
 			},
 			filteredKeypairs(){
-				return this.keypairs.filter(x => {
+				const keypairs = (() => {
+					if(!this.accounts) return this.keypairs;
+					const accountUniques = this.accounts.map(a => a.unique());
+					return this.keypairs.filter(x => {
+						return x.accounts(true).find(acc => accountUniques.includes(acc.unique()))
+					})
+				})();
+				return keypairs.filter(x => {
 					return !this.blockchainFilter || x.enabledKey().blockchain === this.blockchainFilter;
 				}).filter(x => {
 					return x.accounts().find(account => account.sendable().toLowerCase().indexOf(this.terms) > -1)
@@ -101,7 +108,14 @@
 		},
 		methods:{
 			filteredAccounts(keypair){
-				return keypair.accounts(true)
+				const accounts = (() => {
+					if(!this.accounts) return keypair.accounts(true);
+					const accountUniques = this.accounts.map(a => a.unique());
+					return keypair.accounts(true).filter(x => {
+						return accountUniques.includes(x.unique())
+					})
+				})();
+				return accounts
 					.filter(x => x.sendable().indexOf(this.terms) > -1)
 					.sort((a,b) => {
 						return b.totalFiatBalance() - a.totalFiatBalance();

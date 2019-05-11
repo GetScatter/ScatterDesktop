@@ -116,7 +116,7 @@
 		},
 		mounted(){
 			const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;
-			console.log('history', history);
+
 			if(!history){
 				this.account = this.accounts.filter(x => x.tokens().length)
 					.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];

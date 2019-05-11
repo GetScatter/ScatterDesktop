@@ -1,6 +1,6 @@
 <template>
 	<section class="select-account pop-over">
-		<KeysAndAccountList :accounts="filteredAccounts" v-on:account="returnResult" limited-info="1" />
+		<KeysAndAccountList :accounts="filteredAccounts" v-on:account="returnResult" as-selector="1" />
 	</section>
 </template>
 
@@ -22,8 +22,11 @@
 			...mapGetters([
 				'accounts',
 			]),
+			validAccounts(){
+				return this.popin.data.props.validAccounts;
+			},
 			filteredAccounts(){
-				return this.accounts.reduce((acc,x) => {
+				return (this.validAccounts || this.accounts).reduce((acc,x) => {
 					if(!acc.find(a => a.sendable() === x.sendable())) acc.push(x);
 					return acc;
 				}, []).filter(x => {
@@ -64,7 +67,7 @@
 	@import "../../../styles/variables";
 
 	.select-account {
-		min-width:800px;
+		//min-width:800px;
 	}
 	.keys-and-accounts-list {
 		overflow-y: auto;

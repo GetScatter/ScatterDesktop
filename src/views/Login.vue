@@ -159,7 +159,7 @@
 			password:'',
 		}},
 		created(){
-			console.log('f', ElectronHelpers.getDefaultPath());
+
 		},
 		computed:{
 			...mapState([

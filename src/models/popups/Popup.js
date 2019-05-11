@@ -28,6 +28,7 @@ export class Popup {
     dimensions(){
     	switch (this.data.type) {
 		    case ApiActions.GET_OR_REQUEST_IDENTITY:
+			    return {width:600, height:600};
 		    case ApiActions.REQUEST_TRANSFER:
 		    case ApiActions.GET_PUBLIC_KEY:
 		    case ApiActions.UPDATE_IDENTITY:
@@ -186,8 +187,8 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN_AND_ACCOUNT, {}, callback))
 	}
 
-	static selectAccount(callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {}, callback))
+	static selectAccount(callback, validAccounts = null){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {validAccounts}, callback))
 	}
 
 	static selectRecipient(callback){

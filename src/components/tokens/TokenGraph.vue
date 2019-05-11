@@ -134,7 +134,7 @@
 						this.hasValues = !!values.length;
 					})
 				} catch(e){
-					console.log('err', e);
+					console.error('err', e);
 				}
 			},
 
