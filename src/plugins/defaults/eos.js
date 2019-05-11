@@ -717,7 +717,7 @@ export default class EOS extends Plugin {
 				origin:payload.origin,
 				blockchain:'eos',
 				requiredFields:{},
-				type:Actions.REQUEST_SIGNATURE,
+				type:Actions.SIGN,
 				id:1,
 			}
 

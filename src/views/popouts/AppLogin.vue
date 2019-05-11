@@ -10,11 +10,18 @@
 						<img v-if="appData.img" :src="appData.img" />
 						<span v-else>No Image</span>
 					</figure>
-					<figure class="name"><b>{{appData.name}}</b> will see:</figure>
+					<figure class="name"><b>{{appData.name}}</b> <span v-if="allRequirementsMet">will see:</span></figure>
 				</section>
 
+				<!------------------------------------->
+				<!----- APP LOGIN REQUIREMENTS -------->
+				<!------------------------------------->
 				<section class="requirements">
-					<section class="requirement account">
+
+					<!------------------------------------->
+					<!-------- SELECT ACCOUNT ------------->
+					<!------------------------------------->
+					<section class="requirement account" v-if="validAccounts.length">
 						<section class="boxes">
 							<section class="box account-selector" @click="selectTokenAndAccount"> <!--  -->
 								<section>
@@ -25,9 +32,29 @@
 							</section>
 						</section>
 					</section>
-					<section class="requirement">
+
+
+					<!------------------------------------->
+					<!----------- NO ACCOUNTS ------------->
+					<!------------------------------------->
+					<section class="requirement no-accounts" v-if="!validAccounts.length">
+						<figure class="network-name" v-if="savedNetwork">{{savedNetwork.name}}</figure>
+						<figure class="text">
+							<b>You don't have accounts for this network</b>
+							<br>
+							You need to create an account before being able to use apps.
+						</figure>
+					</section>
+
+
+
+
+					<!------------------------------------->
+					<!----- IDENTITY REQUIREMENTS --------->
+					<!------------------------------------->
+					<section class="requirement personal" v-if="allRequirementsMet && identityRequirements.length">
 						<figure class="icon icon-eye"></figure>
-						<figure class="text">Your first name, last name, and email.</figure>
+						<figure class="text">Your {{identityRequirements}}.</figure>
 
 						<figure class="icon bubble icon-help"></figure>
 						<section class="bubble-explainer">
@@ -40,7 +67,7 @@
 
 			<section class="actions">
 				<Button big="1" text="Cancel" @click.native="returnResult(null)" />
-				<Button big="1" style="padding:0 40px;" blue="1" text="Allow" @click.native="login" />
+				<Button big="1" style="padding:0 20px;" :disabled="!allRequirementsMet" blue="1" text="Allow" @click.native="login" />
 			</section>
 
 		</section>
@@ -51,15 +78,13 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import PopOutHead from '../../components/popouts/PopOutHead';
-	import PopOutAction from '../../components/popouts/PopOutAction';
-	import SearchBar from '../../components/reusable/SearchBar';
-	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import Network from "../../models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
 	import RIDLService from "../../services/apis/RIDLService";
 	import PopupService from "../../services/utility/PopupService";
 	import {Popup} from "../../models/popups/Popup";
+	import {Blockchains} from "../../models/Blockchains";
 	require('../../styles/transfers.scss');
 
 	export default {
@@ -67,9 +92,6 @@
 		components:{
 			RequiredFields,
 			PopOutHead,
-			PopOutAction,
-			FullWidthRow,
-			SearchBar,
 		},
 		data () {return {
 			account:null,
@@ -77,29 +99,35 @@
 			selectedAccounts:[],
 			searchTerms:'',
 			selectedLocation:null,
-			clonedLocation:null,
 			selectedIdentity:null,
 			showingAll:false,
 			reputation:null,
 		}},
 		created(){
 
+			// TODO: Need to do this on the main process before even opening this popup
+			// TODO: since popups can't persist state to disk.
+			// if(!this.validAccounts.length && this.accountRequirements.length){
+			// 	if(this.network.blockchain !== Blockchains.EOSIO){
+			// 		// Creating an account automatically.
+			// 	}
+			// }
+
 			if(this.validAccounts.length){
 				this.account = this.validAccounts[0];
 			}
 
 
+			this.selectedIdentity = this.identities[0].clone();
+			this.selectedLocation = this.selectedIdentity.locations[0].clone();
 
-			setTimeout(async() => {
-				this.loadingReputation = true;
-				this.reputation = await RIDLService.checkApp(this.popup.data.props.payload.origin);
-				if(!this.reputation) this.reputation = await RIDLService.checkApp(this.popup.origin());
-				this.loadingReputation = false;
-			})
+			// setTimeout(async() => {
+			// 	this.loadingReputation = true;
+			// 	this.reputation = await RIDLService.checkApp(this.popup.data.props.payload.origin);
+			// 	if(!this.reputation) this.reputation = await RIDLService.checkApp(this.popup.origin());
+			// 	this.loadingReputation = false;
+			// })
 
-			this.selectedIdentity = this.identity.clone();
-			this.selectedLocation = this.selectedIdentity.locations[0];
-			this.clonedLocation = this.selectedIdentity.locations[0].clone();
 
 			if(this.locationFields.length || this.personalFields.length){
 				this.$emit('expanded');
@@ -143,13 +171,19 @@
 
 
 
+			network(){
+				return Network.fromJson(this.accountRequirements[0] || {})
+			},
+			savedNetwork(){
+				return this.networks.find(x => x.unique() === this.network.unique());
+			},
 
 
 
 			payload(){ return this.popup.payload(); },
 
 			isValidIdentity() {
-				return this.selectedIdentity.hasRequiredFields(this.fields, this.clonedLocation);
+				return this.selectedIdentity.hasRequiredFields(this.fields, this.selectedLocation);
 			},
 			fields() {
 				return IdentityRequiredFields.fromJson(this.payload.fields);
@@ -173,28 +207,15 @@
 			},
 
 
-			accountNetworks(){
-				return this.accountFields.reduce((acc, accountNetwork) => {
-					const accNet = acc.find(x => x.network.unique() === accountNetwork.unique());
-					if(!accNet){
-						acc.push({
-							count:1,
-							network:this.networks.find(x => x.unique() === accountNetwork.unique())
-						})
-					} else {
-						accNet.count++;
-					}
-					return acc;
-				}, [])
-			},
-
-
 			identityRequirements() {
 				return this.fields.personal.concat(this.fields.location).join(', ');
 			},
 			accountRequirements() {
 				return this.fields.accounts || [];
 			},
+			allRequirementsMet(){
+				return !!this.validAccounts.length;
+			}
 		},
 		methods: {
 			returnResult(result){
@@ -213,54 +234,14 @@
 			login(){
 				this.returnResult({
 					identity:this.selectedIdentity,
-					location:this.clonedLocation,
+					location:this.selectedLocation,
 					accounts:[this.account],
 					missingFields:this.missingFields
 				});
 			},
 
-
-
-
-
-
 			selectLocation(location){
-				this.selectedLocation = location;
-				this.clonedLocation = location.clone();
-			},
-			selectAccount(account){
-				if(account){
-					if(this.selectedAccounts.find(x => x.unique() === account.unique())){
-						return this.selectedAccounts = this.selectedAccounts
-							.filter(x => x.unique() !== account.unique());
-					}
-
-					this.selectedAccounts.push(account);
-				}
-
-				if(this.accountRequirements.length > this.selectedAccounts.length) return;
-
-				if(this.stillNeedsFields){
-					if(!this.expanded){
-						this.$emit('expanded', 300, true);
-					}
-				}
-
-				if(this.isValidIdentity) {
-
-					this.returnResult({
-						identity:this.selectedIdentity,
-						location:this.clonedLocation,
-						accounts:this.selectedAccounts,
-						missingFields:this.missingFields
-					});
-				}
-			},
-			selectedOfNetwork(network){
-				return this.selectedAccounts.filter(x => x.network().unique() === network.unique())
-			},
-			networkAccountsCount(networkUnique){
-				return this.accounts.filter(x => x.networkUnique === networkUnique).length;
+				this.selectedLocation = location.clone();
 			},
 
 		}
@@ -328,8 +309,6 @@
 					width:100%;
 				}
 
-				padding-bottom:20px;
-				border-bottom:1px solid $lightgrey;
 			}
 
 			.requirement {
@@ -376,6 +355,31 @@
 					flex:1;
 					font-size: $small;
 				}
+
+				&.personal {
+					margin-top:10px;
+					padding-top:20px;
+					border-top:1px solid $lightgrey;
+				}
+
+				&.no-accounts {
+					text-align:center;
+					width:350px;
+					display:flex;
+					justify-content: center;
+					align-items: center;
+					flex-direction: column;
+					border:1px solid $blue;
+					border-radius:$radius;
+					margin:20px auto 10px;
+					padding:20px;
+
+					.network-name {
+						font-size: $large;
+						font-weight: bold;
+						margin-bottom:5px;
+					}
+				}
 			}
 		}
 
@@ -384,109 +388,14 @@
 			position:absolute;
 			bottom:30px;
 			right:30px;
+			left:30px;
+			display:flex;
+			justify-content: space-between;
 		}
 	}
 
 
 
 
-
-
-
-
-
-
-
-	.required-networks {
-		display:flex;
-		flex:0 0 auto;
-		padding:0 30px;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		margin-bottom:10px;
-		margin-top:-10px;
-
-		.requirements {
-			font-size: 11px;
-			font-weight: bold;
-		}
-
-		.list {
-			margin-top:10px;
-			width:100%;
-			max-height:45px;
-			overflow: auto;
-			padding-right:10px;
-
-			.split-inputs {
-				width:100%;
-
-				&:not(:last-child){
-					margin-bottom:5px;
-				}
-
-				figure {
-					font-size: 13px;
-					font-weight: bold;
-				}
-
-				.bubble {
-					font-size: 11px;
-					background:#fff;
-					border:1px solid rgba(0,0,0,0.2);
-					padding:3px 10px;
-					border-radius:20px;
-					font-weight: bold;
-
-					&.red {
-						background:$red;
-						background-image: $red-gradient;
-						border:1px solid #c93c3b;
-						color:#fff;
-					}
-
-					&.blue {
-						background:$secondary;
-						background-image: $blue-grad;
-						border:1px solid $blue;
-						color:#fff;
-					}
-				}
-			}
-		}
-	}
-
-
-
-
-
-	.advanced-button {
-		font-size: 11px;
-		text-decoration: underline;
-		padding-right:30px;
-		cursor: pointer;
-
-		&:hover {
-			color: $blue;
-		}
-	}
-
-	.popout-list {
-		padding-top:0;
-
-		&.done {
-			opacity:0.3;
-
-			&:hover {
-				opacity:1;
-			}
-		}
-
-
-		.search-bar {
-			margin-left:-30px;
-		}
-	}
 
 </style>

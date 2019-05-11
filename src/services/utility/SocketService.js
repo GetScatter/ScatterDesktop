@@ -3,6 +3,8 @@ import AuthorizedApp from '../../models/AuthorizedApp';
 import * as Actions from '../../store/constants';
 const http = window.require('http');
 const https = window.require('https');
+const kill = window.require('kill-port');
+const WebSocket = window.require('ws');
 
 import {Popup} from '../../models/popups/Popup'
 import PopupService from './PopupService';
@@ -10,21 +12,9 @@ import PopupService from './PopupService';
 import {remote} from "../../util/ElectronHelpers";
 import StoreService from "./StoreService";
 
-const WebSocket = window.require('ws');
 
 remote.getGlobal('appShared').QuitWatcher = () => {
 	SocketService.broadcastEvent('dced', {});
-};
-
-
-/***
- * Gets certs that allow for `wss` local connections.
- * @returns {Promise<Response | never | void>}
- */
-const getCerts = async () => {
-	return fetch('https://certs.get-scatter.com?rand='+Math.round(Math.random()*100 + 1))
-		.then(res => res.json())
-		.catch(() => console.error('Could not fetch certs. Probably due to a proxy, vpn, or firewall.'));
 };
 
 
@@ -151,39 +141,55 @@ const socketHandler = (socket) => {
 };
 
 
-let ws, wss;
+
+/***
+ * Gets certs that allow for `wss` local connections.
+ * @returns {Promise<Response | never | void>}
+ */
+const getCerts = async () => {
+	return fetch('https://certs.get-scatter.com?rand='+Math.round(Math.random()*100 + 1))
+		.then(res => res.json())
+		.then(res => {
+			if(res.hasOwnProperty('key') && res.hasOwnProperty('cert')) return res;
+			PopupService.push(Popup.prompt("Couldn't fetch certificates", 'There was an issue trying to fetch the certificates which allow Scatter to run on SSL. This is usually caused by proxies, firewalls, and anti-viruses.'))
+			return null;
+		})
+		.catch(() => console.error('Could not fetch certs. Probably due to a proxy, vpn, or firewall.'));
+};
+
+let websockets = [];
 export default class SocketService {
 
 	static async initialize(){
 
-		// HTTP protocol (port 50005)
-		const httpServer = http.createServer();
-		ws = new WebSocket.Server({ server:httpServer });
-		httpServer.listen(50005);
+		// port:ssl
+		let ports = {
+			50005:false
+		};
 
-		// HTTPS protocol (port 50006)
+
 		const certs = await getCerts();
-		if(certs && certs.hasOwnProperty('key') && certs.hasOwnProperty('cert')){
-			const httpsServer = https.createServer(certs);
-			wss = new WebSocket.Server({ server:httpsServer });
-			httpsServer.listen(50006);
-		} else {
-			PopupService.push(Popup.prompt("Couldn't fetch certificates",
-				'There was an issue trying to fetch the certificates which allow Scatter to run on SSL. This is usually caused by proxies, firewalls, and anti-viruses.'))
-		}
+		if(certs) ports[50006] = true;
 
-		ws.on('connection', socket => socketHandler(socket));
-		if(wss) wss.on('connection', socket => socketHandler(socket));
+		await Promise.all(Object.keys(ports).map(async port => {
+			await kill(port, 'tcp');
+			const server = ports[port] ? https.createServer(certs) : http.createServer();
+			websockets.push(new WebSocket.Server({ server }));
+			server.listen(port);
+		}));
+
+		websockets.map(ws => {
+			ws.on('connection', socket => socketHandler(socket));
+		})
+
 		return true;
 	}
 
 	static async close(){
 		console.log('closing')
-		// Getting namespace
-		if(!ws && !wss) return;
-
-		ws.clients.map(ws => ws.terminate());
-		if(wss) wss.clients.map(ws => ws.terminate());
+		websockets.map(ws => {
+			ws.clients.map(ws => ws.terminate());
+		})
 
 		return true;
 	}

@@ -253,7 +253,7 @@ export default class ETH extends Plugin {
                 origin:payload.origin,
                 blockchain:Blockchains.ETH,
                 requiredFields:{},
-                type:Actions.REQUEST_SIGNATURE,
+                type:Actions.SIGN,
                 id:1,
             };
 

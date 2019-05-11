@@ -3,20 +3,18 @@
 
         <section v-if="windowMessage" class="popout">
 
-            <AppLogin v-if="popupType === apiActions.GET_OR_REQUEST_IDENTITY"
+            <AppLogin v-if="popupType === apiActions.LOGIN"
                       :popup="popup"
-                      v-on:expanded="expandOrContract" :expanded="expanded"
                       v-on:returned="returnResult" />
 
-            <Signature v-if="popupType === apiActions.REQUEST_SIGNATURE || popupType === apiActions.REQUEST_ARBITRARY_SIGNATURE"
+            <Signature v-if="popupType === apiActions.SIGN || popupType === apiActions.SIGN_ARBITRARY"
                       :popup="popup" :pinning="pinning"
-                      v-on:expanded="expandOrContract" :expanded="expanded"
                       v-on:returned="returnResult" />
 
             <GetPublicKey v-if="popupType === apiActions.GET_PUBLIC_KEY"
                           :popup="popup" v-on:returned="returnResult" />
 
-            <TransferRequest v-if="popupType === apiActions.REQUEST_TRANSFER"
+            <TransferRequest v-if="popupType === apiActions.TRANSFER"
                              :popup="popup" :pinning="pinning"
                              v-on:returned="returnResult" />
 
@@ -48,7 +46,6 @@
         data () {return {
             apiActions:ApiActions,
             windowMessage:null,
-	        expanded:false,
             pinning:false,
         }},
         components:{
@@ -78,9 +75,9 @@
 	            this[Actions.SET_FULL_BALANCES](balances);
 
                 const needsPIN = [
-                    ApiActions.REQUEST_ARBITRARY_SIGNATURE,
-                    ApiActions.REQUEST_SIGNATURE,
-                    ApiActions.REQUEST_TRANSFER
+                    ApiActions.SIGN_ARBITRARY,
+                    ApiActions.SIGN,
+                    ApiActions.TRANSFER
                 ];
 
                 setTimeout(async () => {
@@ -110,15 +107,6 @@
 				window.close();
 				if(!window.closed) window.destroy();
             },
-
-	        expandOrContract(deltaWidth = 300, forced = null, subtracted = null){
-            	if(forced !== null) this.expanded = forced;
-		        else this.expanded = !this.expanded;
-
-		        const {width, height} = this.popup.dimensions();
-		        const delta = (this.expanded ? deltaWidth : 0);
-		        WindowService.changeWindowSize(height, subtracted ? width-delta : width+delta);
-	        },
             ...mapActions([
                 Actions.HOLD_SCATTER,
                 Actions.SET_FULL_BALANCES

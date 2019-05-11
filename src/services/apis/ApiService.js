@@ -132,17 +132,25 @@ export default class ApiService {
 	/******************************************************************************/
 
 
-    static async [Actions.GET_OR_REQUEST_IDENTITY](request){
+    static async [Actions.LOGIN](request){
         return new Promise((resolve) => {
 	        const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
 	        if(Object.keys(request.payload).length !== 2) return badResult();
 	        if(!request.payload.hasOwnProperty('fields')) return badResult();
 	        if(typeof request.payload.fields !== 'object') return badResult();
 
-            const possibleId = PermissionService.identityFromPermissions(request.payload.origin);
-            if(possibleId) return resolve({id:request.id, result:possibleId});
+	        const {origin, fields} = request.payload;
+	        if(!fields.hasOwnProperty('personal')) fields.personal = [];
+	        if(!fields.hasOwnProperty('location')) fields.location = [];
 
-            const requiredNetworks = (request.payload.fields.hasOwnProperty('accounts') ? request.payload.fields.accounts : []).map(x => Network.fromJson(x)).map(x => x.unique());
+            const possibleId = PermissionService.identityFromPermissions(origin);
+            if(possibleId) {
+            	const samePersonal = fields.personal.every(key => possibleId.hasOwnProperty('personal') && possibleId.personal.hasOwnProperty(key));
+            	const sameLocation = fields.location.every(key => possibleId.hasOwnProperty('location') && possibleId.location.hasOwnProperty(key));
+            	if(samePersonal && sameLocation) return resolve({id:request.id, result:possibleId});
+            }
+
+            const requiredNetworks = (fields.hasOwnProperty('accounts') ? fields.accounts : []).map(x => Network.fromJson(x)).map(x => x.unique());
             const existingNetworkIds = StoreService.get().state.scatter.settings.networks.map(x => x.unique());
             if(!requiredNetworks.every(x => existingNetworkIds.includes(x))){
 	            return resolve({id:request.id, result:Error.noNetwork()});
@@ -156,9 +164,9 @@ export default class ApiService {
 	            const location = LocationInformation.fromJson(result.location);
 
                 const accounts = (result.accounts || []).map(x => Account.fromJson(x));
-                await PermissionService.addIdentityOriginPermission(identity, accounts, request.payload.fields, request.payload.origin);
+                await PermissionService.addIdentityOriginPermission(identity, accounts, fields, origin);
 
-                const returnableIdentity = identity.asOnlyRequiredFields(request.payload.fields, location);
+                const returnableIdentity = identity.asOnlyRequiredFields(fields, location);
                 returnableIdentity.accounts = accounts.map(x => x.asReturnable());
 
                 AccountService.incrementAccountLogins(accounts);
@@ -168,7 +176,7 @@ export default class ApiService {
         })
     }
 
-	static async [Actions.REQUEST_SIGNATURE](request){
+	static async [Actions.SIGN](request){
 		return new Promise(async resolve => {
 
 			const {payload} = request;
@@ -272,7 +280,7 @@ export default class ApiService {
 		});
 	}
 
-	static async [Actions.REQUEST_ARBITRARY_SIGNATURE](request, identityKey = null){
+	static async [Actions.SIGN_ARBITRARY](request, identityKey = null){
 		return new Promise(async resolve => {
 
 			const {payload} = request;
@@ -314,7 +322,7 @@ export default class ApiService {
 		});
 	}
 
-	static async [Actions.REQUEST_TRANSFER](request){
+	static async [Actions.TRANSFER](request){
 		return new Promise(resolve => {
 			let {to, network, amount, options} = request.payload;
 			if(!options) options = {};
@@ -489,7 +497,7 @@ export default class ApiService {
 		})
 	}
 
-	static async [Actions.FORGET_IDENTITY](request){
+	static async [Actions.LOGOUT](request){
 		await PermissionService.removeIdentityPermission(request.payload.origin);
 		return {id:request.id, result:true};
 	}
@@ -620,24 +628,6 @@ export default class ApiService {
 
             resolve({id:request.id, result:!!StoreService.get().state.scatter.keychain.accounts.find(x => x.networkUnique === network.unique())});
         })
-    }
-
-    static async [Actions.CREATE_TRANSACTION](request){
-        return new Promise(async resolve => {
-
-            const {payload} = request;
-            const {blockchain, actions, account, network} = payload;
-
-            const plugin = PluginRepository.plugin(blockchain);
-            const transaction = await plugin.createTransaction(actions, Account.fromJson(account), Network.fromJson(network));
-            const result = Object.assign(transaction, {
-                network,
-                blockchain,
-                requiredFields:[],
-            });
-
-            resolve({id:request.id, result});
-        });
     }
 
     static async [Actions.GET_VERSION](request){

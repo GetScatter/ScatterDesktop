@@ -193,7 +193,7 @@ export default class TRX extends Plugin {
                 origin:payload.origin,
                 blockchain:Blockchains.TRX,
                 requiredFields:{},
-                type:Actions.REQUEST_SIGNATURE,
+                type:Actions.SIGN,
                 id:1,
             }
 
