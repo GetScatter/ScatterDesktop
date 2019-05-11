@@ -1,78 +1,65 @@
 <template>
     <section>
         <PopOutHead v-on:closed="returnResult" :hide-close="hideCloseButton" :reputation="reputation" />
-        <section class="multi-pane">
+        <section class="multi-pane popout-window">
 
 
             <!-- MAIN PANEL -->
             <section class="main-panel">
-                <PopOutAction :origin="popup.origin()" :action="limitedMessages.actions" />
+                <PopOutAction :app="appData" :action="limitedMessages.actions" />
                 <figure class="has-more" v-if="limitedMessages.total > 1">{{locale(langKeys.POPOUTS.SIGNATURE.ActionsTotal,limitedMessages.total)}}</figure>
+
+
                 <section class="participants" :class="{'top-less':limitedMessages.total <= 1}" v-if="participantAccounts">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.AccountsInvolved)}}</label>
                     <section class="participant" v-for="p in participantAccounts">
-                        {{`${p.network().name} - ${p.sendable()}`}}
-                        <span v-if="resources[p.identifiable()]">
-                            <b>{{resourcesFor(p)}}</b>
-                        </span>
+                        {{p.network().name}} - <b>{{p.sendable()}}</b>
                     </section>
                 </section>
 
                 <section class="participants top-less" v-if="isArbitrarySignature">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.KeysInvolved)}}</label>
-                    <section class="participant">{{arbitraryKeypair.name}} -- {{payload.publicKey.substr(0,6)}}.....{{payload.publicKey.substr(payload.publicKey.length - 5)}}</section>
+                    <section class="participant">{{arbitraryKeypair.name}}</section>
                 </section>
 
 
-                <section class="fixed-actions">
 
-                    <section v-if="cannotSignArbitrary" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
-                        {{locale(langKeys.POPOUTS.SIGNATURE.ArbitraryDisabledTitle)}}
-                        <p>{{locale(langKeys.POPOUTS.SIGNATURE.ArbitraryDisabledDesc)}}</p>
-                    </section>
+
+                <section class="fixed-actions">
 
                     <section v-if="isDangerous" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
                         One of the actions included within this transaction is <b>dangerous</b>.
                     </section>
 
 
-                    <!-- ACCEPT TRANSACTION -->
-                    <Button :blue="!isDangerous && (reputation && reputation.decimal >= 0)" :red="isDangerous || (reputation && reputation.decimal < 0)" big="1" v-if="!pinning"
-                         :disabled="!isValidIdentity || cannotSignArbitrary"
-                         :text="locale(langKeys.GENERIC.Allow)"
-                         @click.native="accepted" />
+                    <section class="accept-deny">
+                        <!-- DENY TRANSACTION -->
+                        <Button :text="locale(langKeys.GENERIC.Deny)"
+                                big="1" v-if="!pinning"
+                                @click.native="returnResult(false)" />
 
-                    <!-- DENY TRANSACTION -->
-                    <Button :text="locale(langKeys.GENERIC.Deny)" v-if="!pinning"
-                         @click.native="returnResult(false)" />
-
-                    <section v-if="!isArbitrarySignature && !isDangerous">
-                        <br>
-                        <br>
-                        <label style="text-align:center;">{{locale(langKeys.POPOUTS.SIGNATURE.WhitelistDesc)}}</label>
-
-                        <Button :red="!whitelisted" :blue="whitelisted"
-                             :text="whitelisted
-                             	? locale(langKeys.POPOUTS.SIGNATURE.DisableWhitelistButton)
-								: locale(langKeys.POPOUTS.SIGNATURE.EnableWhitelistButton)"
-                             @click.native="whitelist" />
+                        <!-- ACCEPT TRANSACTION -->
+                        <Button :red="isDangerous || (reputation && reputation.decimal < 0)"
+                                big="1" blue="1" v-if="!pinning"
+                                :disabled="!isValidIdentity || cannotSignArbitrary"
+                                :text="locale(langKeys.GENERIC.Allow)"
+                                @click.native="accepted" />
                     </section>
                 </section>
             </section>
 
 
             <!--SIDE PANEL-->
-            <figure class="side-bar" :class="!expanded ? 'icon-right-open-big' : 'icon-left-open-big'" @click="$emit('expanded', 500, null, true)"></figure>
             <section class="side-panel" v-if="!expanded">
 
-                <section class="view-types">
-                    <Select :selected="viewType" short="1"
-                         :options="viewTypesArray"
-                         :parser="x => formatViewType(x)"
-                         v-on:selected="x => viewType = x"></Select>
-                </section>
+                <!--<section class="view-types">-->
+                    <!--<Select :selected="viewType" bordered="1"-->
+                         <!--:options="viewTypesArray"-->
+                         <!--:parser="x => formatViewType(x)"-->
+                         <!--v-on:selected="x => viewType = x"></Select>-->
+                <!--</section>-->
 
-                <section class="scroller">
+                <section class="messages-scroller">
 
                     <RequiredFields v-if="!isArbitrarySignature && (personalFields.length || locationFields.length)"
                                     :identity="identity" :fields="fields"
@@ -139,6 +126,12 @@
                             </section>
                         </section>
                     </section>
+                </section>
+
+                <section class="whitelist-bar" v-if="!isArbitrarySignature && !isDangerous">
+                    <figure class="text" v-if="!whitelisted">You can whitelist this so that you don't have to keep re-accepting this transaction.</figure>
+                    <figure class="text blue" v-if="whitelisted">Checkboxes that are checked can have their values changed without breaking the whitelist.</figure>
+                    <Switcher :state="whitelisted" @click.native="whitelist" />
                 </section>
 
             </section>
@@ -247,6 +240,12 @@
 				'accounts',
 				'networks',
 			]),
+
+
+			appData(){
+				return this.popup.data.props.appData;
+			},
+
             viewTypesArray(){
 			    const hasEos = !this.isArbitrarySignature && !!this.payload.participants.find(x => Account.fromJson(x).blockchain() === Blockchains.EOSIO);
 			    const arrMap = [VIEW_TYPES.HUMAN, VIEW_TYPES.JSON];
@@ -375,20 +374,24 @@
 			},
 
 			whitelist(){
-				this.hideCloseButton = true;
-				const finish = bool => {
-					this.whitelisted = bool;
-					this.hideCloseButton = false;
-					this.messages.map(message => {
-						if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
-					})
-				};
-
-				if(this.whitelisted) return finish(false);
-
-				PopupService.push(Popup.enableWhitelist(accepted => {
-					finish(accepted);
-				}));
+				this.whitelisted = !this.whitelisted;
+				this.messages.map(message => {
+					if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
+				})
+				// this.hideCloseButton = true;
+				// const finish = bool => {
+				// 	this.whitelisted = bool;
+				// 	this.hideCloseButton = false;
+				// 	this.messages.map(message => {
+				// 		if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
+				// 	})
+				// };
+                //
+				// if(this.whitelisted) return finish(false);
+                //
+				// PopupService.push(Popup.enableWhitelist(accepted => {
+				// 	finish(accepted);
+				// }));
             },
 
 
@@ -480,17 +483,6 @@
                 text-decoration: underline;
             }
         }
-    }
-
-    .scroller {
-        display:flex;
-        flex-direction: column;
-        flex:1;
-        overflow:auto;
-        margin-left:-30px;
-        margin-right:-30px;
-        margin-bottom:-40px;
-        padding:0 30px;
     }
 
     .view-types {
@@ -666,9 +658,8 @@
         margin:-20px -30px 0;
         border-top:1px solid rgba(0,0,0,0.04);
         padding:20px 30px;
-        background:rgba(0,0,0,0.02);
-        background:linear-gradient(-180deg, #f2f2f2 -10%, rgba(242, 242, 242, 0) 120%);
-        box-shadow:0 2px 4px rgba(0,0,0,0.04), 0 8px 16px rgba(0,0,0,0.02);
+        background:$blue-gradient;
+        color:$white;
 
         .title {
             span {

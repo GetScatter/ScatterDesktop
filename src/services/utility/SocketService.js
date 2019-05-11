@@ -14,15 +14,15 @@ import StoreService from "./StoreService";
 
 
 remote.getGlobal('appShared').QuitWatcher = () => {
+	console.log('dced')
 	SocketService.broadcastEvent('dced', {});
 };
 
 
 let openConnections = {};
 
-const emit = (socket, path, data) => {
-	socket.send('42/scatter,' + JSON.stringify([path, data]));
-}
+const emit = (socket, path, data) =>
+	socket.send('42/scatter,' + JSON.stringify([path, data]))
 
 let rekeyPromise;
 const getNewKey = socket => new Promise((resolve, reject) => {
@@ -30,8 +30,6 @@ const getNewKey = socket => new Promise((resolve, reject) => {
 	emit(socket, 'rekey');
 	return rekeyPromise;
 });
-
-function heartbeat() { this.isAlive = true; }
 
 const socketHandler = (socket) => {
 	let origin = null;
@@ -167,7 +165,6 @@ export default class SocketService {
 			50005:false
 		};
 
-
 		const certs = await getCerts();
 		if(certs) ports[50006] = true;
 
@@ -178,9 +175,7 @@ export default class SocketService {
 			server.listen(port);
 		}));
 
-		websockets.map(ws => {
-			ws.on('connection', socket => socketHandler(socket));
-		})
+		websockets.map(ws => ws.on('connection', socket => socketHandler(socket)));
 
 		return true;
 	}

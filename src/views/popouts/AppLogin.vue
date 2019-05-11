@@ -5,6 +5,10 @@
 		<section class="popout-window app-login">
 
 			<section>
+
+				<!------------------------------------->
+				<!------------ APP DETAILS ------------>
+				<!------------------------------------->
 				<section class="app-details">
 					<figure class="logo">
 						<img v-if="appData.img" :src="appData.img" />
@@ -53,7 +57,7 @@
 					<!----- IDENTITY REQUIREMENTS --------->
 					<!------------------------------------->
 					<section class="requirement personal" v-if="allRequirementsMet && identityRequirements.length">
-						<figure class="icon icon-eye"></figure>
+						<figure class="icon icon-user"></figure>
 						<figure class="text">Your {{identityRequirements}}.</figure>
 
 						<figure class="icon bubble icon-help"></figure>
@@ -251,50 +255,13 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../styles/variables";
 
-
-
-
 	.app-login {
 		display:flex;
 		justify-content: center;
 		align-items: center;
 
 		.app-details {
-			text-align:center;
-			display:flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
 			margin-top:-60px;
-
-			$logo:100px;
-			.logo {
-				display:flex;
-				align-items: center;
-				justify-content: center;
-				height:$logo;
-				width:$logo;
-				border-radius:$radius;
-				background: $lightergrey;
-				border:1px solid $lightgrey;
-				padding:5px;
-				margin-bottom:20px;
-
-				img {
-					height:100%;
-					width:100%;
-				}
-
-				span {
-					font-size: $small;
-					font-weight: bold;
-					color:$silver;
-				}
-			}
-
-			.name {
-				font-size: $large;
-			}
 		}
 
 		.requirements {
@@ -318,7 +285,7 @@
 				position: relative;
 
 				.icon {
-					padding-right:10px;
+					padding-right:5px;
 
 					&.bubble {
 						padding:3px 2px;

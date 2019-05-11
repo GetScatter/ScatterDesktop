@@ -44,7 +44,6 @@ const updateIdentity = async result => {
 		const scatter = StoreService.get().state.scatter.clone();
 		const oldIdentity = scatter.keychain.identities.find(x => x.id === identity.id);
 		oldIdentity.personal = identity.personal;
-
 		oldIdentity.locations = oldIdentity.locations.filter(x => x.id !== location.id);
 		oldIdentity.locations.unshift(location);
 
