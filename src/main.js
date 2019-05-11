@@ -26,6 +26,7 @@ import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
 import TransferRequest from './views/popouts/TransferRequest.vue'
+import SocketService from "./services/utility/SocketService";
 
 // f12 to open console from anywhere.
 document.addEventListener("keydown", e => {
@@ -74,7 +75,7 @@ class Main {
 		};
 
 		new VueInitializer(Routing.routes(), components, middleware, async (router, store) => {
-
+			// SocketService.initialize();
 		});
 
 		// window.onerror = log => {
