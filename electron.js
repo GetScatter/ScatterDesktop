@@ -206,13 +206,12 @@ class LowLevelSocketService {
 			socket.send("40/scatter");
 			socket.send(`42/scatter,["connected"]`);
 
+			// Just logging errors for debugging purposes (dev only)
+			if(isDev) socket.on('error', async request => console.log('error', request));
+
 			// Different clients send different message types for disconnect (ws vs socket.io)
 			socket.on('close',      () => delete openConnections[origin]);
 			socket.on('disconnect', () => delete openConnections[origin]);
-
-			socket.on('error', async request => {
-				console.log('error', request);
-			});
 
 			socket.on('message', msg => {
 				if(msg.indexOf('42/scatter') === -1) return false;
@@ -237,7 +236,7 @@ class LowLevelSocketService {
 				switch(type){
 					case 'pair':        return mainWindow.webContents.send('pair', request);
 					case 'rekeyed':     return rekeyPromise.resolve(request);
-					case 'api':         return mainWindow.webContents.send('api', request);;
+					case 'api':         return mainWindow.webContents.send('api', request);
 				}
 
 			});

@@ -3,7 +3,7 @@
 
         <section class="panel centered">
             <h1>Update Available!</h1>
-            <figure class="description"><b>Scatter Desktop</b> - <b class="blue">{{update.name}}</b> (v{{update.stringVersion}})</figure>
+            <figure class="description"><b>Scatter Desktop</b> - <b class="blue">{{update.name}}</b> (v{{update.version}})</figure>
             <br>
             <section class="markdown">
                 <VueMarkdown>{{update.body}}</VueMarkdown>

@@ -4,6 +4,7 @@ import PopupService from './PopupService';
 import {Popup} from '../../models/popups/Popup'
 import ElectronHelpers from '../../util/ElectronHelpers'
 import StoreService from "./StoreService";
+import {GET} from "../apis/BackendApiService";
 
 export default class UpdateService {
 
@@ -14,8 +15,7 @@ export default class UpdateService {
         const update = await this.needsUpdateNoPrompt();
 
         if(update){
-	        const {version, body, prerelease, name} = update;
-	        if(prerelease) return;
+	        const {version, body, name} = update;
 
 	        // Not setting last version anymore.
 	        // We want to always pop it up to annoy users
@@ -32,21 +32,15 @@ export default class UpdateService {
     }
 
     static async needsUpdateNoPrompt(useLastVersion = true){
-        const {version, stringVersion, body, prerelease, name} = await fetch('https://api.github.com/repos/GetScatter/ScatterDesktop/releases/latest').then(res => res.json()).then(x => ({
-	        name:x.name,
-            version:mathematicalVersion(x.tag_name),
-            stringVersion:x.tag_name,
-	        prerelease:x.prerelease,
-	        body:x.body,
-        }));
 
-        if(prerelease) return false;
+        // Always getting update from backend
+	    const {version, details, name} = await GET(`version`).catch(() => {});
 
         const scatter = StoreService.get().state.scatter.clone();
         let lastSuggested = scatter.meta.lastSuggestedVersion;
 
         if(mathematicalVersion(scatter.meta.version) < version && (!useLastVersion || (!lastSuggested || lastSuggested !== version)))
-            return {version, stringVersion, url:this.updateUrl(), prerelease, name, body};
+            return {version, url:this.updateUrl(), name, body:details};
 
         return false;
     }
