@@ -1,6 +1,6 @@
 <template>
-	<section class="select-account pop-over">
-		<KeysAndAccountList :accounts="validAccounts" v-on:account="returnResult" as-selector="1" />
+	<section class="select-keypair pop-over">
+		<KeysAndAccountList :keypairs-only="true" :blockchains="blockchains" v-on:keypair="returnResult" as-selector="1" />
 	</section>
 </template>
 
@@ -15,20 +15,19 @@
 		components: {KeysAndAccountList},
 		props:['popin'],
 		data(){return {
-			terms:'',
-			blockchainFilter:null,
+
 		}},
 		computed:{
 			...mapGetters([
 				'accounts',
 			]),
-			validAccounts(){
-				return this.popin.data.props.validAccounts;
+			blockchains(){
+				return this.popin.data.props.blockchains;
 			},
 		},
 		methods:{
-			returnResult(account){
-				this.popin.data.callback(account);
+			returnResult(keypair){
+				this.popin.data.callback(keypair);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 
@@ -43,7 +42,7 @@
 <style scoped lang="scss">
 	@import "../../../styles/variables";
 
-	.select-account {
+	.select-keypair {
 		//min-width:800px;
 	}
 	.keys-and-accounts-list {

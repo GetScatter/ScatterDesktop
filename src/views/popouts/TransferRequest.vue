@@ -1,6 +1,5 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult(null)" />
         <section class="multi-pane">
             <section class="main-panel">
 
@@ -80,8 +79,7 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import PopOutHead from '../../components/popouts/PopOutHead';
-	import PopOutAction from '../../components/popouts/PopOutAction';
+	import PopOutApp from '../../components/popouts/PopOutApp';
 	// import SearchBar from '../../components/reusable/SearchBar';
 	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import {IdentityRequiredFields} from "../../models/Identity";
@@ -98,8 +96,7 @@
 		props:['popup', 'expanded', 'pinning'],
 		components:{
 			RequiredFields,
-			PopOutHead,
-			PopOutAction,
+			PopOutApp,
 			FullWidthRow,
 			// SearchBar,
 		},

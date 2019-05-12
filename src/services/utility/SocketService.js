@@ -68,6 +68,9 @@ const socketHandler = (socket) => {
 		if(!request.plugin || request.plugin.length > 35) return emit(socket, 'api', {id:request.id, result:null});
 		request.plugin = request.plugin.replace(/\s/g, "");
 
+		if(request.plugin.trim().toLowerCase() === 'Scatter' || request.data.payload.origin.trim().toLowerCase() === 'Scatter')
+			return emit(socket, 'api', {id:request.id, result:null});
+
 		// 2 way authentication
 		const existingApp = StoreService.get().state.scatter.keychain.findApp(request.data.payload.origin);
 

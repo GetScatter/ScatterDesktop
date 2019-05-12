@@ -34,6 +34,7 @@
                             <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                             <UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />
                             <SelectAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
+                            <SelectKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_KEYPAIR" />
                             <SelectRecipient :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_RECIPIENT" />
                             <SelectBlockchain :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_BLOCKCHAIN" />
                             <SelectToken :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN" />
@@ -82,6 +83,7 @@
     import GenerateKeypair from "./popins/fullscreen/GenerateKeypair";
     import RemoveKeypair from "./popins/fullscreen/RemoveKeypair";
     import SelectAccount from "./popins/overlay/SelectAccount";
+    import SelectKeypair from "./popins/overlay/SelectKeypair";
     import Prompt from "./popins/overlay/Prompt";
     import SelectToken from "./popins/overlay/SelectToken";
     import SelectTokenAndAccount from "./popins/overlay/SelectTokenAndAccount";
@@ -104,6 +106,7 @@
 		    SelectBlockchain,
 		    SelectTokenAndAccount,
 		    SelectAccount,
+		    SelectKeypair,
 		    SelectToken,
 		    UpdateAvailable,
     		// EnterPIN,

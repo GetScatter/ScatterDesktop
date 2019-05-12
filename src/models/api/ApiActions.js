@@ -3,6 +3,7 @@ export const GET_PUBLIC_KEY =                   'getPublicKey';
 export const LINK_ACCOUNT =                     'linkAccount';
 export const HAS_ACCOUNT_FOR =                  'hasAccountFor';
 export const LOGIN =                            'getOrRequestIdentity';
+export const LOGIN_ALL =                        'getAllAccountsFor';
 export const IDENTITY_FROM_PERMISSIONS =        'identityFromPermissions';
 export const LOGOUT =                           'forgetIdentity';
 export const TRANSFER =                         'requestTransfer';

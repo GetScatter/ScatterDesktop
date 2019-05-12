@@ -1,21 +1,11 @@
 <template>
 	<section>
 
-		<PopOutHead v-on:closed="returnResult" />
 		<section class="popout-window app-login">
 
 			<section>
+				<PopOutApp :app="appData" suffix="will see:" />
 
-				<!------------------------------------->
-				<!------------ APP DETAILS ------------>
-				<!------------------------------------->
-				<section class="app-details">
-					<figure class="logo">
-						<img v-if="appData.img" :src="appData.img" />
-						<span v-else>No Image</span>
-					</figure>
-					<figure class="name"><b>{{appData.name}}</b> <span v-if="allRequirementsMet">will see:</span></figure>
-				</section>
 
 				<!------------------------------------->
 				<!----- APP LOGIN REQUIREMENTS -------->
@@ -25,15 +15,37 @@
 					<!------------------------------------->
 					<!-------- SELECT ACCOUNT ------------->
 					<!------------------------------------->
-					<section class="requirement account" v-if="validAccounts.length">
+					<section class="requirement account" v-if="!loginAll && validAccounts.length">
 						<section class="boxes">
-							<section class="box account-selector" @click="selectTokenAndAccount"> <!--  -->
+							<section class="box account-selector" @click="selectTokenAndAccount">
 								<section>
 									<figure class="name">{{account.sendable()}}</figure>
 									<figure class="network">{{account.network().name}}</figure>
 								</section>
 								<figure class="chevron icon-dot-3"></figure>
 							</section>
+						</section>
+					</section>
+
+					<!------------------------------------->
+					<!---- LOGGING IN WITH ALL ACCOUNTS --->
+					<!------------------------------------->
+					<section class="requirement all-accounts" v-else-if="loginAll && validAccounts.length">
+						<figure class="icon icon-network"></figure>
+						<section class="text">
+							<label>All accounts for:</label>
+							<section class="network-accounts-list">
+								<section class="network-accounts" v-for="(network,i) in requestedNetworks">
+									<span class="name">{{network.name}} ({{network.accounts(true).length}} accounts)</span>
+									<span v-if="i+1 < requestedNetworks.length">,</span>
+								</section>
+							</section>
+						</section>
+
+						<figure class="icon bubble icon-help"></figure>
+						<section class="bubble-explainer">
+							<b>{{appData.name}}</b> is requesting to view every account for a specified network.
+							This means that it will be able to request transaction signatures for any account that you have linked to any of the requested networks.
 						</section>
 					</section>
 
@@ -53,12 +65,17 @@
 
 
 
+
+
 					<!------------------------------------->
 					<!----- IDENTITY REQUIREMENTS --------->
 					<!------------------------------------->
 					<section class="requirement personal" v-if="allRequirementsMet && identityRequirements.length">
 						<figure class="icon icon-user"></figure>
-						<figure class="text">Your {{identityRequirements}}.</figure>
+						<figure class="text">
+							<label>Personal information:</label>
+							{{identityRequirements}}
+						</figure>
 
 						<figure class="icon bubble icon-help"></figure>
 						<section class="bubble-explainer">
@@ -81,7 +98,6 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import PopOutHead from '../../components/popouts/PopOutHead';
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import Network from "../../models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
@@ -89,13 +105,15 @@
 	import PopupService from "../../services/utility/PopupService";
 	import {Popup} from "../../models/popups/Popup";
 	import {Blockchains} from "../../models/Blockchains";
+	import * as ApiActions from '../../models/api/ApiActions';
+	import PopOutApp from "../../components/popouts/PopOutApp";
 	require('../../styles/transfers.scss');
 
 	export default {
 		props:['popup', 'expanded'],
 		components:{
+			PopOutApp,
 			RequiredFields,
-			PopOutHead,
 		},
 		data () {return {
 			account:null,
@@ -106,8 +124,13 @@
 			selectedIdentity:null,
 			showingAll:false,
 			reputation:null,
+
+			loginAll:false,
 		}},
 		created(){
+			console.log(this.popup);
+
+			this.loginAll = this.popup.data.type === ApiActions.LOGIN_ALL;
 
 			// TODO: Need to do this on the main process before even opening this popup
 			// TODO: since popups can't persist state to disk.
@@ -174,7 +197,12 @@
 			},
 
 
-
+			requestedNetworks(){
+				return this.accountRequirements.map(raw => {
+					const n = Network.fromJson(raw);
+					return this.networks.find(x => x.unique() === n.unique());
+				});
+			},
 			network(){
 				return Network.fromJson(this.accountRequirements[0] || {})
 			},
@@ -265,9 +293,10 @@
 		}
 
 		.requirements {
-			margin-top:10px;
 			min-width:400px;
 			text-align:left;
+			max-width:80%;
+			margin:10px auto;
 
 			.boxes {
 				width:100%;
@@ -284,8 +313,16 @@
 				align-items: center;
 				position: relative;
 
+				label {
+					font-size: $small;
+					padding-top:2px;
+				}
+
 				.icon {
 					padding-right:5px;
+					align-self: flex-start;
+					color:$silver;
+					margin-left:-8px;
 
 					&.bubble {
 						padding:3px 2px;
@@ -307,9 +344,9 @@
 				.bubble-explainer {
 					position:absolute;
 					right:-10px;
-					bottom:40px;
+					bottom:calc(100% - 10px);
 					width:380px;
-					font-size: $medium;
+					font-size: $small;
 					background:$white;
 					color:$black;
 					box-shadow:0 2px 4px $blue-shadow, 0 8px 24px $blue-shadow;
@@ -321,6 +358,35 @@
 				.text {
 					flex:1;
 					font-size: $small;
+				}
+
+				&.all-accounts {
+					margin-top:10px;
+					padding-top:20px;
+					border-top:1px solid $lightgrey;
+
+					.icon {
+						&:first-child {
+							color:$blue;
+						}
+					}
+
+					.network-accounts-list {
+						max-height:100px;
+						overflow-y:auto;
+					}
+
+					.network-accounts {
+						font-size: $small;
+						font-weight: bold;
+						display:inline-block;
+						margin-right:5px;
+
+						.name {
+							color:$blue;
+							text-decoration: underline;
+						}
+					}
 				}
 
 				&.personal {

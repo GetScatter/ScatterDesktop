@@ -1,10 +1,14 @@
 <template>
 	<section class="keys-and-accounts-list">
 		<SearchAndFilter :filters="filters" v-on:terms="x => terms = x" />
+
 		<section class="keys-list">
-			<section class="keypair" v-for="keypair in filteredKeypairs" :class="{'new':isNew(keypair)}">
+			<section class="keypair" v-for="keypair in filteredKeypairs" :class="{'new':isNew(keypair), 'selectable':keypairsOnly}" @click="$emit('keypair', keypair)">
 				<section class="keypair-info">
-					<figure class="blockchain" :class="`token-${keypair.enabledKey().blockchain}-${keypair.enabledKey().blockchain}`"></figure>
+					<figure class="blockchain" v-if="refreshingAccounts !== keypair.unique()" :class="`token-${keypair.enabledKey().blockchain}-${keypair.enabledKey().blockchain}`"></figure>
+					<figure class="blockchain" v-if="refreshingAccounts === keypair.unique()">
+						<i class="icon-spin4 animate-spin"></i>
+					</figure>
 					<section class="info">
 						<figure class="name">{{keypair.name}}</figure>
 						<figure class="key">{{keypair.enabledKey().key}}</figure>
@@ -14,36 +18,54 @@
 						<figure class="action icon-dot-3" @click="setActionsMenu(keypair)"></figure>
 
 						<section class="action-menu" :class="{'hidden':actionsMenu !== keypair.id}">
-							<figure class="item" @click="editKeypairName(keypair)">Edit Name</figure>
-							<figure class="item" @click="copyPublicKey(keypair)">Copy Public Key</figure>
-							<figure class="item" @click="removeKeypair(keypair)">Remove Key</figure>
-							<figure class="item" :class="{'disabled':refreshingAccounts}" @click="refreshAccountsFor(keypair)">Refresh Accounts</figure>
-							<figure class="item" v-if="!keypair.external" @click="convertKeypair(keypair)">Convert Keypair</figure>
+							<figure class="item" @click="editKeypairName(keypair)">
+								<i class="icon-pencil"></i> Edit Name
+							</figure>
+
+							<figure class="item" @click="copyPublicKey(keypair)">
+								<i class="icon-docs"></i> Copy Public Key
+							</figure>
+
+							<figure class="item" :class="{'disabled':refreshingAccounts}" @click="refreshAccountsFor(keypair)">
+								<i class="icon-arrows-ccw"></i> Refresh Accounts
+							</figure>
+
+							<figure class="item" v-if="!keypair.external" @click="convertKeypair(keypair)">
+								<i class="icon-flow-tree"></i> Convert
+							</figure>
+
+							<figure class="item" @click="removeKeypair(keypair)">
+								<i class="icon-trash"></i> Remove Key
+							</figure>
 						</section>
 					</section>
 				</section>
 
-				<figure class="accounts-label">Linked accounts</figure>
+				<section v-if="!keypairsOnly">
+					<figure class="accounts-label">Linked accounts</figure>
 
-				<section class="accounts-list" v-if="keypair.accounts().length">
-					<section class="account" v-for="account in filteredAccounts(keypair)" @click="$emit('account', account)">
-						<section class="details">
-							<figure class="name">{{account.sendable()}}</figure>
-							<figure class="network">{{account.network().name}}</figure>
+					<section class="accounts-list" v-if="keypair.accounts().length">
+						<section class="account" v-for="account in filteredAccounts(keypair)" @click="$emit('account', account)">
+							<section class="details">
+								<figure class="name">{{account.sendable()}}</figure>
+								<figure class="network">{{account.network().name}}</figure>
+							</section>
+							<section class="tokens" v-if="!asSelector">
+								<figure class="balance">{{account.totalFiatBalance()}} {{displayCurrency}}</figure>
+								<figure class="quantity">in {{account.tokens().length}} tokens</figure>
+							</section>
+							<section class="actions" v-if="!asSelector">
+								<figure class="chevron icon-right-open-big"></figure>
+							</section>
 						</section>
-						<section class="tokens">
-							<figure class="balance">{{account.totalFiatBalance()}} {{displayCurrency}}</figure>
-							<figure class="quantity">in {{account.tokens().length}} tokens</figure>
-						</section>
-						<section class="actions" v-if="!asSelector">
-							<figure class="chevron icon-right-open-big"></figure>
-						</section>
+					</section>
+
+					<section class="no-accounts" v-if="!keypair.accounts().length">
+						No linked accounts
 					</section>
 				</section>
 
-				<section class="no-accounts" v-if="!keypair.accounts().length">
-					No linked accounts
-				</section>
+
 			</section>
 		</section>
 
@@ -65,7 +87,7 @@
 
 	export default {
 		components: {SearchAndFilter},
-		props:['asSelector', 'accounts'],
+		props:['asSelector', 'accounts', 'keypairsOnly'],
 		data(){return {
 			blockchainFilter:null,
 			terms:'',
@@ -212,6 +234,10 @@
 					justify-content: center;
 					align-items: center;
 					margin-right:10px;
+
+					.icon-spin4 {
+						font-size: 22px;
+					}
 				}
 
 				.info {
@@ -252,8 +278,8 @@
 
 						.item {
 							cursor: pointer;
-							font-size: $medium;
-							padding:5px 15px;
+							font-size: $small;
+							padding:8px 15px;
 
 							&:hover {
 								background:rgba(0,0,0,0.02);
@@ -272,6 +298,20 @@
 
 						&:hover {
 							background:$lightergrey;
+						}
+					}
+				}
+			}
+
+			&.selectable {
+				cursor: pointer;
+
+				&:hover {
+					.keypair-info {
+						.info {
+							.name {
+								color:$blue;
+							}
 						}
 					}
 				}

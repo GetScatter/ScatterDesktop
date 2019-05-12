@@ -132,47 +132,73 @@ export default class ApiService {
 
 
     static async [Actions.LOGIN](request){
-        return new Promise((resolve) => {
-	        const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
-	        if(Object.keys(request.payload).length !== 2) return badResult();
-	        if(!request.payload.hasOwnProperty('fields')) return badResult();
-	        if(typeof request.payload.fields !== 'object') return badResult();
+        return this.loginHandler(request, false);
+    }
 
-	        const {origin, fields} = request.payload;
-	        if(!fields.hasOwnProperty('personal')) fields.personal = [];
-	        if(!fields.hasOwnProperty('location')) fields.location = [];
+    static async [Actions.LOGIN_ALL](request){
+        return this.loginHandler(request, true);
+    }
 
-            const possibleId = PermissionService.identityFromPermissions(origin);
-            if(possibleId) {
-            	const samePersonal = fields.personal.every(key => possibleId.hasOwnProperty('personal') && possibleId.personal.hasOwnProperty(key));
-            	const sameLocation = fields.location.every(key => possibleId.hasOwnProperty('location') && possibleId.location.hasOwnProperty(key));
-            	if(samePersonal && sameLocation) return resolve({id:request.id, result:possibleId});
-            }
+    static async loginHandler(request, loginAll){
+	    return new Promise((resolve) => {
+		    const badResult = (msg = 'Invalid format') => resolve({id:request.id, result:Error.malicious(msg)});
+		    if(Object.keys(request.payload).length !== 2) return badResult();
+		    if(!request.payload.hasOwnProperty('fields')) return badResult();
+		    if(typeof request.payload.fields !== 'object') return badResult();
 
-            const requiredNetworks = (fields.hasOwnProperty('accounts') ? fields.accounts : []).map(x => Network.fromJson(x)).map(x => x.unique());
-            const existingNetworkIds = StoreService.get().state.scatter.settings.networks.map(x => x.unique());
-            if(!requiredNetworks.every(x => existingNetworkIds.includes(x))){
-	            return resolve({id:request.id, result:Error.noNetwork()});
-            }
+		    const {origin, fields} = request.payload;
+		    // if(!fields.hasOwnProperty('personal')) fields.personal = [];
+		    // if(!fields.hasOwnProperty('location')) fields.location = [];
+		    // if(!fields.hasOwnProperty('accounts')) fields.accounts = [];
 
-            PopupService.push(Popup.popout(request, async ({result}) => {
-                if(!result) return resolve({id:request.id, result:Error.signatureError("identity_rejected", "User rejected the provision of an Identity")});
+		    // TODO: If we're going to remove permission pushing for refetching identity changes
+		    // todo: then we should add a broadcast even for identity changes to all dapps that
+		    // todo: have those identity requirements.
+		    // const possibleId = PermissionService.identityFromPermissions(origin);
+		    // if(possibleId) {
+			//     const samePersonal = fields.personal.every(key => possibleId.hasOwnProperty('personal') && possibleId.personal.hasOwnProperty(key));
+			//     const sameLocation = fields.location.every(key => possibleId.hasOwnProperty('location') && possibleId.location.hasOwnProperty(key));
+			//     if(samePersonal && sameLocation) return resolve({id:request.id, result:possibleId});
+		    // }
 
-                await updateIdentity(result);
-	            const identity = Identity.fromJson(result.identity);
-	            const location = LocationInformation.fromJson(result.location);
+		    const requiredNetworks = (fields.hasOwnProperty('accounts') ? fields.accounts : []).map(x => Network.fromJson(x)).map(x => x.unique());
 
-                const accounts = (result.accounts || []).map(x => Account.fromJson(x));
-                await PermissionService.addIdentityOriginPermission(identity, accounts, fields, origin);
+		    if(!loginAll && requiredNetworks.length > 1){
+			    return resolve({id:request.id, result:Error.signatureError("too_many_accounts", "To login more than one account you must use the `getAllAccounts()` API method.")});
+		    }
 
-                const returnableIdentity = identity.asOnlyRequiredFields(fields, location);
-                returnableIdentity.accounts = accounts.map(x => x.asReturnable());
 
-                AccountService.incrementAccountLogins(accounts);
+		    const existingNetworks = StoreService.get().state.scatter.settings.networks.filter(x => requiredNetworks.includes(x.unique()));
+		    if(existingNetworks.length !== requiredNetworks.length){
+			    return resolve({id:request.id, result:Error.noNetwork()});
+		    }
 
-                resolve({id:request.id, result:returnableIdentity});
-            }));
-        })
+		    PopupService.push(Popup.popout(request, async ({result}) => {
+			    if(!result) return resolve({id:request.id, result:Error.signatureError("identity_rejected", "User rejected the provision of an Identity")});
+
+			    await updateIdentity(result);
+			    const identity = Identity.fromJson(result.identity);
+			    const location = LocationInformation.fromJson(result.location);
+
+
+			    let accounts;
+			    if(loginAll){
+			    	accounts = existingNetworks.map(x => x.accounts(true)).reduce((acc, accounts) => {
+					    acc = acc.concat(accounts);
+					    return acc;
+				    }, []);
+			    }
+			    else accounts = (result.accounts || []).map(x => Account.fromJson(x));
+
+			    await PermissionService.addIdentityOriginPermission(identity, accounts, fields, origin);
+			    const returnableIdentity = identity.asOnlyRequiredFields(fields, location);
+			    returnableIdentity.accounts = accounts.map(x => x.asReturnable());
+
+			    if(!loginAll) AccountService.incrementAccountLogins(accounts);
+
+			    resolve({id:request.id, result:returnableIdentity});
+		    }));
+	    })
     }
 
 	static async [Actions.SIGN](request){

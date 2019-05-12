@@ -103,7 +103,7 @@ const createScatterInstance = () => {
 		webPreferences:{ nodeIntegration:true, webviewTag:true, }
 	});
 
-	mainWindow = createMainWindow(false, '#111111');
+	mainWindow = createMainWindow(false, '#fff');
 	mainWindow.loadURL(mainUrl(false));
 
 	// if main window is ready to show, then destroy the splash window and show up the main window
@@ -172,7 +172,7 @@ class LowLevelWindowService {
 
 	static getWindow(width = 800, height = 600){
 		return new Promise(resolve => {
-			const win = new BrowserWindow({ width, height, frame: false, radii: [5,5,5,5], icon:'assets/icon.png', show:false, webPreferences:{ nodeIntegration:true, } });
+			const win = new BrowserWindow({ backgroundColor:'#FFFFFF', width, height, frame: false, radii: [5,5,5,5], icon:'assets/icon.png', show:false, webPreferences:{ nodeIntegration:true, } });
 			win.loadURL(mainUrl(true));
 			win.once('ready-to-show', () => resolve(win));
 		})

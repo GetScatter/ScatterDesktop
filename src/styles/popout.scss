@@ -2,10 +2,10 @@
 
 .popout {
   position: relative;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   overflow:hidden;
+  height:calc(100vh - 40px);
 
   .popout-window {
     border:1px solid #dadada;
@@ -20,42 +20,7 @@
     flex:1;
   }
 
-  .app-details {
-    text-align:center;
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 
-    $logo:100px;
-    .logo {
-      display:flex;
-      align-items: center;
-      justify-content: center;
-      height:$logo;
-      width:$logo;
-      border-radius:$radius;
-      background: $lightergrey;
-      border:1px solid $lightgrey;
-      padding:5px;
-      margin-bottom:20px;
-
-      img {
-        height:100%;
-        width:100%;
-      }
-
-      span {
-        font-size: $small;
-        font-weight: bold;
-        color:$silver;
-      }
-    }
-
-    .name {
-      font-size: $large;
-    }
-  }
 
 
   .multi-pane {

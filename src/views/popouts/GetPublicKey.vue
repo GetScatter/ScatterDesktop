@@ -1,24 +1,14 @@
 <template>
-    <section>
-        <PopOutHead v-on:closed="returnResult" />
-        <section class="multi-pane">
-            <section class="main-panel">
-                <PopOutAction :origin="popup.origin()" action="public key" />
+    <section class="popout-window">
+        <PopOutApp :app="popup.data.props.appData" suffix="wants you to provide a public key" />
 
-                <section class="padded">
-                    <Button blue="1" :text="locale(langKeys.POPOUTS.GET_KEY.GenerateKeyButton)" @click.native="generateNewKey" />
-                    <br>
-                    <br>
-                </section>
+        <section class="get-public-key">
 
-                <SearchBar short="1" :placeholder="locale(langKeys.POPOUTS.GET_KEY.SearchPlaceholder)" v-on:terms="x => searchTerms = x" />
-
-                <section class="popout-list">
-                    <FullWidthRow :items="validKeys" popout="1" />
-                </section>
-            </section>
-
-
+            <Button blue="1" big="1" text="Select a Key" @click.native="selectKeypair" />
+            <figure class="or">
+                <figure class="text">or</figure>
+            </figure>
+            <Button blue="1" big="1" text="Generate a Key" @click.native="generateNewKey" />
         </section>
 
     </section>
@@ -26,8 +16,6 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import PopOutHead from '../../components/popouts/PopOutHead';
-	import PopOutAction from '../../components/popouts/PopOutAction';
 	import SearchBar from '../../components/reusable/SearchBar';
 	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import {IdentityRequiredFields} from "../../models/Identity";
@@ -36,13 +24,15 @@
 	import KeyPairService from "../../services/secure/KeyPairService";
 	import Keypair from "../../models/Keypair";
 	import IdGenerator from "../../util/IdGenerator";
+	import PopOutApp from "../../components/popouts/PopOutApp";
+	import PopupService from "../../services/utility/PopupService";
+	import {Popup} from "../../models/popups/Popup";
 
 	export default {
 		props:['popup', 'expanded'],
 		components:{
+			PopOutApp,
 			RequiredFields,
-			PopOutHead,
-			PopOutAction,
 			FullWidthRow,
 			SearchBar,
 		},
@@ -65,35 +55,16 @@
 			]),
 			payload(){ return this.popup.payload(); },
             blockchain(){ return this.payload.blockchain; },
-			validKeys() {
-
-				return this.keypairs
-                    .filter(keypair => keypair.publicKeys.some(x => x.blockchain === this.blockchain))
-                    .filter(keypair => keypair.name.toLowerCase().indexOf(this.searchTerms) > -1)
-                    .map(keypair => {
-                    	const publicKey = keypair.publicKeys.find(x => x.blockchain === this.blockchain).key;
-
-	                    return {
-		                    title:keypair.name,
-		                    description:publicKey,
-		                    actions:[{
-			                    name:this.locale(this.langKeys.GENERIC.Select),
-			                    handler:() => this.selectKeypair(keypair),
-			                    blue:1,
-			                    small:1,
-		                    }]
-	                    }
-                    })
-
-			},
 		},
 		methods: {
 			returnResult(result){
 				this.$emit('returned', result);
 			},
-			selectKeypair(keypair){
-                this.returnResult({keypair, isNew:false});
-            },
+			selectKeypair(){
+                PopupService.push(Popup.selectKeypair(keypair => {
+                    if(keypair) this.returnResult({keypair, isNew:false});
+                }, [this.blockchain]));
+			},
 			async generateNewKey(){
 				this.setWorkingScreen(true);
 				setTimeout(async () => {
@@ -112,24 +83,37 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../styles/variables";
 
-    .padded {
-        padding:0 30px;
+    .app-details {
+        padding:50px 50px 20px 50px;
     }
 
-    .popout-list {
-        padding-top:0;
+    .get-public-key {
+        text-align:center;
+        padding:50px;
 
-        &.done {
-            opacity:0.3;
+        .or {
+            position: relative;
+            margin:20px 0;
 
-            &:hover {
-                opacity:1;
+            .text {
+                font-size: $medium;
+                font-weight: bold;
+                padding:0 20px;
+                background:$white;
+                display:inline-block;
             }
-        }
 
-
-        .search-bar {
-            margin-left:-30px;
+            &:before {
+                content:'';
+                display:block;
+                background:$lightgrey;
+                height:1px;
+                position:absolute;
+                top:8px;
+                left:0;
+                right:0;
+                z-index:-1;
+            }
         }
     }
 

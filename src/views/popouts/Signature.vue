@@ -1,12 +1,11 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" :hide-close="hideCloseButton" :reputation="reputation" />
         <section class="multi-pane popout-window">
 
 
             <!-- MAIN PANEL -->
             <section class="main-panel">
-                <PopOutAction :app="appData" :action="limitedMessages.actions" />
+                <PopOutApp :app="appData" />
                 <figure class="has-more" v-if="limitedMessages.total > 1">{{locale(langKeys.POPOUTS.SIGNATURE.ActionsTotal,limitedMessages.total)}}</figure>
 
 
@@ -160,8 +159,6 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
 	import ReputationScore from '../../components/reusable/ReputationScore';
-	import PopOutHead from '../../components/popouts/PopOutHead';
-	import PopOutAction from '../../components/popouts/PopOutAction';
 	import SearchBar from '../../components/reusable/SearchBar';
 	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import JSONFormatter from 'json-formatter-js'
@@ -176,6 +173,7 @@
 	import KeyPairService from "../../services/secure/KeyPairService";
 	import ResourceService from "../../services/blockchain/ResourceService";
 	import RIDLService, {RIDL_WEB_HOST} from "../../services/apis/RIDLService";
+	import PopOutApp from "../../components/popouts/PopOutApp";
 
 	const VIEW_TYPES = {
 	    HUMAN:'human',
@@ -186,10 +184,9 @@
 	export default {
 		props:['popup', 'expanded', 'pinning'],
 		components:{
+			PopOutApp,
 			ReputationScore,
 			RequiredFields,
-			PopOutHead,
-			PopOutAction,
 			FullWidthRow,
 			SearchBar,
 		},
@@ -211,6 +208,7 @@
             showingRidlWarning:false,
 		}},
 		created(){
+			console.log(this.popup);
 			this.selectedIdentity = this.identity.clone();
 			this.selectedLocation = this.selectedIdentity.locations[0];
 			this.clonedLocation = this.selectedIdentity.locations[0].clone();
@@ -445,6 +443,10 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../styles/variables";
+
+    .app-details {
+        padding:60px 60px 30px;
+    }
 
     .ridl-popup {
         position: fixed;

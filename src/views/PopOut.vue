@@ -1,29 +1,32 @@
 <template>
     <section>
+        <PopOutHead v-on:closed="returnResult" />
 
-        <section v-if="windowMessage" class="popout">
+        <transition name="fade">
+            <section v-if="windowMessage" class="popout">
 
-            <AppLogin v-if="popupType === apiActions.LOGIN"
-                      :popup="popup"
-                      v-on:returned="returnResult" />
+                <AppLogin v-if="popupType === apiActions.LOGIN || popupType === apiActions.LOGIN_ALL"
+                          :popup="popup"
+                          v-on:returned="returnResult" />
 
-            <Signature v-if="popupType === apiActions.SIGN || popupType === apiActions.SIGN_ARBITRARY"
-                      :popup="popup" :pinning="pinning"
-                      v-on:returned="returnResult" />
+                <Signature v-if="popupType === apiActions.SIGN || popupType === apiActions.SIGN_ARBITRARY"
+                           :popup="popup" :pinning="pinning"
+                           v-on:returned="returnResult" />
 
-            <GetPublicKey v-if="popupType === apiActions.GET_PUBLIC_KEY"
-                          :popup="popup" v-on:returned="returnResult" />
+                <GetPublicKey v-if="popupType === apiActions.GET_PUBLIC_KEY"
+                              :popup="popup" v-on:returned="returnResult" />
 
-            <TransferRequest v-if="popupType === apiActions.TRANSFER"
-                             :popup="popup" :pinning="pinning"
-                             v-on:returned="returnResult" />
+                <TransferRequest v-if="popupType === apiActions.TRANSFER"
+                                 :popup="popup" :pinning="pinning"
+                                 v-on:returned="returnResult" />
 
-            <UpdateIdentity v-if="popupType === apiActions.UPDATE_IDENTITY"
-                             :popup="popup" v-on:returned="returnResult" />
+                <UpdateIdentity v-if="popupType === apiActions.UPDATE_IDENTITY"
+                                :popup="popup" v-on:returned="returnResult" />
 
-            <LinkApp :popup="popup" v-if="popupType === 'linkApp'" v-on:returned="returnResult" />
+                <LinkApp :popup="popup" v-if="popupType === 'linkApp'" v-on:returned="returnResult" />
 
-        </section>
+            </section>
+        </transition>
 
 
     </section>
@@ -31,6 +34,7 @@
 
 <script>
     import '../styles/popout.scss';
+    import PopOutHead from '../components/popouts/PopOutHead';
 
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
@@ -49,6 +53,7 @@
             pinning:false,
         }},
         components:{
+	        PopOutHead,
 	        GetPublicKey:() => import('./popouts/GetPublicKey'),
 	        TransferRequest:() => import('./popouts/TransferRequest'),
             AppLogin:() => import('./popouts/AppLogin'),

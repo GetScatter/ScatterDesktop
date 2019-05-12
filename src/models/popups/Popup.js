@@ -28,9 +28,9 @@ export class Popup {
     dimensions(){
     	switch (this.data.type) {
 		    case ApiActions.LOGIN:
+		    case ApiActions.GET_PUBLIC_KEY:
 			    return {width:600, height:600};
 		    case ApiActions.TRANSFER:
-		    case ApiActions.GET_PUBLIC_KEY:
 		    case ApiActions.UPDATE_IDENTITY:
 			    return {width:420, height:600};
 		    case ApiActions.SIGN:
@@ -191,6 +191,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {validAccounts}, callback))
 	}
 
+	static selectKeypair(callback, blockchains = BlockchainsArray.map(x => x.value)){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_KEYPAIR, {blockchains}, callback))
+	}
+
 	static selectRecipient(callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_RECIPIENT, {}, callback))
 	}
@@ -226,6 +230,7 @@ export const PopupTypes = {
 	TX_SUCCESS:'txSuccess',
 	SELECT_TOKEN_AND_ACCOUNT:'selectTokenAndAccount',
 	SELECT_ACCOUNT:'selectAccount',
+	SELECT_KEYPAIR:'selectKeypair',
 	SELECT_RECIPIENT:'selectRecipient',
 	SELECT_TOKEN:'selectToken',
 	SELECT_BLOCKCHAIN:'selectBlockchain',
@@ -266,6 +271,7 @@ export const isFullscreen = popup => {
         PopupTypes.TX_SUCCESS,
         PopupTypes.SELECT_TOKEN_AND_ACCOUNT,
         PopupTypes.SELECT_ACCOUNT,
+        PopupTypes.SELECT_KEYPAIR,
         PopupTypes.SELECT_RECIPIENT,
         PopupTypes.SELECT_TOKEN,
         PopupTypes.SELECT_BLOCKCHAIN,

@@ -1,9 +1,8 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" />
         <section class="multi-pane">
             <section class="main-panel">
-                <PopOutAction :origin="popup.origin()" action="update identity" />
+                <PopOutApp :app="popup.data.props.appData" />
 
                 <section class="changing" v-if="payload.name">
                     <figure class="field">Changing Identity Name</figure>
@@ -36,8 +35,7 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import PopOutHead from '../../components/popouts/PopOutHead';
-	import PopOutAction from '../../components/popouts/PopOutAction';
+	import PopOutApp from '../../components/popouts/PopOutApp';
 	import SearchBar from '../../components/reusable/SearchBar';
 	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import {IdentityRequiredFields} from "../../models/Identity";
@@ -48,8 +46,7 @@
 		props:['popup'],
 		components:{
 			RequiredFields,
-			PopOutHead,
-			PopOutAction,
+			PopOutApp,
 			FullWidthRow,
 			SearchBar,
 		},
