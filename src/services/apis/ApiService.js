@@ -279,7 +279,6 @@ export default class ApiService {
 			}
 
 			const sendableRequest = {};
-			sendableRequest.plugin = request.plugin;
 			sendableRequest.type = request.type;
 			sendableRequest.appkey = request.appkey;
 			sendableRequest.payload = {

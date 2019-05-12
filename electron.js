@@ -166,6 +166,133 @@ app.on('will-finish-launching', () => {
 
 
 
+
+
+
+const http = require('http');
+const https = require('https');
+// const { kill } = require('cross-port-killer');
+const WebSocket = require('ws');
+
+let rekeyPromise;
+const openConnections = {};
+let websockets = [];
+class LowLevelSocketService {
+
+	static async getNewKey(origin){
+		return new Promise((resolve, reject) => {
+			rekeyPromise = {resolve, reject};
+			this.emit(origin, 'rekey');
+			return rekeyPromise;
+		})
+	}
+
+	static async emit(origin, path, data){
+		const socket = openConnections[origin];
+		return this.emitSocket(socket, path, data);
+	}
+
+	static async emitSocket(socket, path, data){
+		if(!socket) return console.error('No socket found');
+		socket.send('42/scatter,' + JSON.stringify([path, data ? data : false]))
+	}
+
+	static async initialize(certs){
+
+		const socketHandler = socket => {
+			let origin = null;
+
+			socket.send("40");
+			socket.send("40/scatter");
+			socket.send(`42/scatter,["connected"]`);
+
+			// Different clients send different message types for disconnect (ws vs socket.io)
+			socket.on('close',      () => delete openConnections[origin]);
+			socket.on('disconnect', () => delete openConnections[origin]);
+
+			socket.on('error', async request => {
+				console.log('error', request);
+			});
+
+			socket.on('message', msg => {
+				if(msg.indexOf('42/scatter') === -1) return false;
+				const [type, request] = JSON.parse(msg.replace('42/scatter,', ''));
+
+				const killRequest = () => LowLevelSocketService.emitSocket(socket, 'api', {id:request.id, result:null});
+
+				if(!request.plugin || request.plugin.length > 100) return killRequest();
+				request.plugin = request.plugin.replace(/\s/g, "");
+
+				if(request.plugin.trim().toLowerCase() === 'Scatter') killRequest();
+				if(request.data.hasOwnProperty('payload') && request.data.payload.origin.trim().toLowerCase() === 'Scatter') killRequest();
+
+				let requestOrigin;
+				if(request.data.hasOwnProperty('payload')) requestOrigin = request.data.payload.origin;
+				else requestOrigin = request.data.origin;
+
+				if(!origin) origin = requestOrigin;
+				else if(origin && requestOrigin !== origin) return this.emitSocket(socket, 'api', {id:request.id, result:null});
+				if(!openConnections.hasOwnProperty(origin)) openConnections[origin] = socket;
+
+				switch(type){
+					case 'pair':        return mainWindow.webContents.send('pair', request);
+					case 'rekeyed':     return rekeyPromise.resolve(request);
+					case 'api':         return mainWindow.webContents.send('api', request);;
+				}
+
+			});
+		}
+
+		if(websockets.length) return websockets;
+
+		// port:ssl
+		let ports = { 50005:false };
+		if(certs) ports[50006] = true;
+
+		await Promise.all(Object.keys(ports).map(async port => {
+			// TODO: Can't find a good cross platform port killer,
+			// TODO: Might need to make one.
+			// await kill(port, 'tcp')
+			// 	.then(console.log)
+			// 	.catch(console.log);
+			const server = ports[port] ? https.createServer(certs) : http.createServer();
+			websockets.push(new WebSocket.Server({ server }));
+			server.listen(port);
+			return true;
+		}));
+
+		websockets.map(ws => ws.on('connection', socketHandler));
+		return websockets;
+	}
+
+	static async close(){
+		console.log('closing')
+		websockets.map(ws => {
+			if(typeof ws.clients.map === 'function') ws.clients.map(ws => ws.terminate());
+		})
+
+		return true;
+	}
+
+	static sendEvent(event, payload, origin){
+		return this.emit(origin, 'event', {event, payload});
+	}
+
+	static broadcastEvent(event, payload){
+		Object.keys(openConnections).map(origin => {
+			this.sendEvent(event, payload, origin);
+		});
+		return true;
+	}
+
+}
+
+
+
+
+
+
+
 const isMac = () => process.platform === 'darwin';
 let waitingPopup;
 class LowLevelWindowService {
@@ -257,7 +384,7 @@ const Transport = require('@ledgerhq/hw-transport-node-hid');
 
 const NodeMachineId = require('node-machine-id');
 
-global.appShared = { Transport, QuitWatcher:null, ApiWatcher:null, LowLevelWindowService, NotificationService, NodeMachineId, savingData:false };
+global.appShared = { Transport, QuitWatcher:null, ApiWatcher:null, LowLevelWindowService, LowLevelSocketService, NotificationService, NodeMachineId, savingData:false };
 
 
 

@@ -118,7 +118,8 @@
 			},
 			ridlContributions(){
 				if(!this.ridlCycle) return null;
-				return parseFloat(this.contributions[0] / this.contributions[1] * 170000).toFixed(4) + ' RIDL';
+				const num = parseFloat(this.contributions[0] / this.contributions[1] * 170000).toFixed(4);
+				return isNaN(num) ? '0.0000' : num + ' RIDL';
 			},
 			eosContributions(){
 				if(!this.ridlCycle) return null;

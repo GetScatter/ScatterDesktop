@@ -28,6 +28,7 @@ export class Popup {
     dimensions(){
     	switch (this.data.type) {
 		    case ApiActions.LOGIN:
+		    case ApiActions.LOGIN_ALL:
 		    case ApiActions.GET_PUBLIC_KEY:
 			    return {width:600, height:600};
 		    case ApiActions.TRANSFER:
