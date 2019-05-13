@@ -39,10 +39,10 @@
             </section>
 
 	        <section class="tail">
-		        <section class="terms">
-			        Use of Scatter is limited to our <u>Terms of Use</u>.<br>
-			        Please make sure to also read our <u>Privacy Policy</u>.
-		        </section>
+		        <!--<section class="terms">-->
+			        <!--Use of Scatter is limited to our <u>Terms of Use</u>.<br>-->
+			        <!--Please make sure to also read our <u>Privacy Policy</u>.-->
+		        <!--</section>-->
 				<section class="actions">
 					<section class="action" @click="destroy" v-if="!isNewScatter">
 						<Reset class="logo" />
@@ -52,7 +52,7 @@
 						<Restore class="logo" />
 						<figure class="text">Restore</figure>
 					</section>
-					<section class="action">
+					<section class="action" @click="goToSupport">
 						<Support class="logo" />
 						<figure class="text">Support</figure>
 					</section>
@@ -194,6 +194,9 @@
 				this.step++;
 			},
 
+			goToSupport(){
+				ElectronHelpers.openLinkInBrowser('https://support.get-scatter.com/');
+			},
 			importBackup(){
 				PopupService.push(Popup.importFullBackup({}, done => {
 
