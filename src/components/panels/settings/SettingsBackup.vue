@@ -50,7 +50,7 @@
         },
         methods: {
 	        openFilePathLink(){
-		        ElectronHelpers.openLinkInBrowser(this.scatter.settings.backupLocation);
+		        ElectronHelpers.openLinkInBrowser(this.scatter.settings.backupLocation, true);
 	        },
             async setBackupLocation(){
                 await BackupService.setBackupLocation();

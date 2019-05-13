@@ -66,8 +66,9 @@ export default class ElectronHelpers {
 	    PopupService().push(Popup.snackbar(localizedState(LANG_KEYS.SNACKBARS.CopiedToClipboard), 'check'))
     }
 
-    static openLinkInBrowser(link){
-        shell.openExternal(link);
+    static openLinkInBrowser(link, filepath = false){
+    	if(filepath) shell.openItem(link);
+        else shell.openExternal(link);
     }
 
     static bindContextMenu(){

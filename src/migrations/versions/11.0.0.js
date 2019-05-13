@@ -9,6 +9,8 @@ export const m11_0_0 = async scatter => {
 	const keypairs = scatter.keychain.keypairs;
 	scatter.keychain.keypairs = [];
 
+	scatter.onboarded = true;
+
 	keypairs.map(keypair => {
 		delete keypair.keyHash;
 
