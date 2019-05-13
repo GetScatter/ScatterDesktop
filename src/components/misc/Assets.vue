@@ -16,8 +16,8 @@
 							<figure class="fiat">{{formatNumber(account.balanceFor(selectedToken).fiatBalance(), true)}}</figure>
 						</section>
 
-						<section class="actions" v-if="!asSelector">
-							<Button text="Send" />
+						<section class="actions" v-if="!asSelector && !selectedToken.unusable">
+							<Button text="Send" @click.native="sendToken(selectedToken, account)" />
 						</section>
 
 						<section class="actions" v-if="asSelector">
@@ -83,6 +83,9 @@
 			selectToken(token){
 				this.selectedToken = this.selectedToken && this.selectedToken.uniqueWithChain() === token.uniqueWithChain() ? null : token;
 			},
+			sendToken(token, account){
+				this.$router.push({name:this.RouteNames.TRANSFER, query:{account:account.identifiable(), token:token.uniqueWithChain()}})
+			}
 		},
 		watch:{
 			['filteredBalances'](){

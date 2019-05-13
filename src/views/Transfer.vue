@@ -116,13 +116,17 @@
 		},
 		mounted(){
 			const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;
+			const accountAndToken = this.$route.query.account ? (() => {
+				const account = this.accounts.find(x => x.identifiable() === this.$route.query.account);
+				if(!account) return null;
+				return {
+					account,
+					token:account.tokens().find(x => x.uniqueWithChain() === this.$route.query.token)
+				}
+			})() : null;
 
-			if(!history){
-				this.account = this.accounts.filter(x => x.tokens().length)
-					.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];
-				this.setToken(this.sendableTokens[0]);
-			} else {
 
+			if(history){
 				this.account = history.from;
 				this.recipient = history.to;
 				this.memo = history.memo;
@@ -130,6 +134,15 @@
 				this.toSend = history.token.clone();
 				this.toSend.amount = history.amount;
 				this.changedAmount();
+			}
+			else if(accountAndToken){
+				this.account = accountAndToken.account;
+				this.setToken(accountAndToken.token);
+			}
+			else {
+				this.account = this.accounts.filter(x => x.tokens().length)
+					.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];
+				this.setToken(this.sendableTokens[0]);
 			}
 		},
 		methods:{
