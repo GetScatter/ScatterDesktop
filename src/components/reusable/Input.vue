@@ -130,8 +130,8 @@
 			padding:0 12px;
 			cursor: text;
 			resize: none;
-			background:rgba(0,0,0,0.005);
 			font-size: $small-font;
+			background:$white;
 
 			transition: all 0.15s ease;
 			transition-property: line-height, height, padding, border, background;

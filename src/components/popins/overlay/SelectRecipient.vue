@@ -84,7 +84,7 @@
 		}
 
 		.keys-and-accounts-list {
-			height: calc(100vh - 190px);
+			height: calc(100vh - 230px);
 			overflow-y:auto;
 		}
 

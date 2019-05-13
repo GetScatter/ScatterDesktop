@@ -206,11 +206,13 @@
 		height:calc(100% - 70px);
 		overflow-y:auto;
 		padding:30px;
+		background:$lightestgrey;
 
 		.keypair {
+			background:$white;
 			//padding-bottom:20px;
 			margin-bottom:20px;
-			border:10px solid $lightergrey;
+			border:1px solid $lightgrey;
 			padding:10px;
 			border-radius:$radius;
 
