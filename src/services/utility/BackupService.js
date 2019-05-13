@@ -59,7 +59,7 @@ export default class BackupService {
 
     static async setDefaultBackupLocation(){
         const defaultPath = ElectronHelpers.getDefaultPath();
-        const backupPath = `${defaultPath.split(':')[0]}:/scatter_backups`;
+        const backupPath = `${defaultPath}/scatter_backups`;
         if(!fs.existsSync(backupPath)) fs.mkdirSync(backupPath);
         return this.setBackupLocation(backupPath);
     }
