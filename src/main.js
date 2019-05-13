@@ -21,6 +21,7 @@ import Input from './components/reusable/Input.vue'
 import Select from './components/reusable/Select.vue'
 import SearchBar from './components/reusable/SearchBar.vue'
 import Slider from './components/reusable/Slider.vue'
+import PopInHead from './components/reusable/PopInHead.vue'
 import Switcher from './components/reusable/Switcher.vue'
 import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
@@ -54,6 +55,7 @@ class Main {
 			{tag:'SearchAndFilter', vue:SearchAndFilter},
 			{tag:'ActionBar', vue:ActionBar},
 			{tag:'view-base', vue:ViewBase},
+			{tag:'PopInHead', vue:PopInHead},
 		];
 
 		let fragments;

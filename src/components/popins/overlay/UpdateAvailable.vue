@@ -24,7 +24,6 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
     import ElectronHelpers from '../../../util/ElectronHelpers'
-    // import PopinHead from "./PopinHead";
     import VueMarkdown from 'vue-markdown'
 
     export default {

@@ -1,5 +1,6 @@
 <template>
 	<section class="select-keypair pop-over">
+		<PopInHead title="Select Public Key" v-on:close="returnResult" />
 		<KeysAndAccountList :keypairs-only="true" :blockchains="blockchains" v-on:keypair="returnResult" as-selector="1" />
 	</section>
 </template>
@@ -47,7 +48,7 @@
 	}
 	.keys-and-accounts-list {
 		overflow-y: auto;
-		height:calc(100vh - 120px);
+		height:calc(100vh - 160px);
 	}
 
 </style>

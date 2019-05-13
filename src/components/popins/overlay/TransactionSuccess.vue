@@ -1,19 +1,19 @@
 <template>
     <section class="pop-over">
+        <PopInHead title="Transaction Success" v-on:close="returnResult" />
+        <section class="success">
+            <section>
+                <img src="../../../assets/piggy_bank.png" />
+                <figure class="info">{{locale(langKeys.POPINS.OVERLAY.TRX_SUCCESS.Desc, explorer.name)}}</figure>
+                <figure class="link" style="cursor:pointer;" @click="open"><u>{{tx}}</u></figure>
 
-        <section>
-            <img src="../../../assets/piggy_bank.png" />
-            <figure class="info">{{locale(langKeys.POPINS.OVERLAY.TRX_SUCCESS.Desc, explorer.name)}}</figure>
-            <figure class="link" style="cursor:pointer;" @click="open"><u>{{tx}}</u></figure>
+                <br>
+                <br>
 
-            <br>
-            <br>
-
-            <Button :text="locale(langKeys.GENERIC.Okay)"
-                    @click.native="returnResult(true)" blue="1" />
+                <Button :text="locale(langKeys.GENERIC.Okay)"
+                        @click.native="returnResult(true)" blue="1" />
+            </section>
         </section>
-
-
     </section>
 </template>
 
@@ -63,7 +63,7 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../styles/variables";
 
-    .pop-over {
+    .success {
         display:flex;
         justify-content: center;
         align-items: center;

@@ -1,8 +1,11 @@
 <template>
-	<section class="select-token pop-over">
-		<section style="display:flex;" class="scroller">
-			<section v-for="category in categories" style="flex:1;">
-				<TokenList :key="category.title" :balances="category.tokens" hoverable="1" v-on:token="returnResult" />
+	<section class="pop-over">
+		<PopInHead title="Select Token" v-on:close="returnResult" />
+		<section class="select-token">
+			<section style="display:flex;" class="scroller">
+				<section v-for="category in categories" style="flex:1;">
+					<TokenList :key="category.title" :balances="category.tokens" hoverable="1" v-on:token="returnResult" />
+				</section>
 			</section>
 		</section>
 	</section>

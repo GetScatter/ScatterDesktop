@@ -1,5 +1,6 @@
 <template>
 	<section class="select-account pop-over">
+		<PopInHead title="Select Account" v-on:close="returnResult" />
 		<KeysAndAccountList :accounts="validAccounts" v-on:account="returnResult" as-selector="1" />
 	</section>
 </template>
@@ -48,7 +49,7 @@
 	}
 	.keys-and-accounts-list {
 		overflow-y: auto;
-		height:calc(100vh - 120px);
+		height:calc(100vh - 160px);
 	}
 
 </style>

@@ -1,22 +1,26 @@
 <template>
-	<section class="select-recipient pop-over">
-		<section class="head">
+	<section class="pop-over">
+		<PopInHead title="Select Recipient" v-on:close="returnResult" />
+		<section class="select-recipient">
+			<section class="head">
 
 
-			<section class="panel-switch">
-				<figure class="button" :class="{'active':state === STATES.CONTACTS}" @click="switchState(STATES.CONTACTS)">
-					Contacts
-				</figure>
-				<figure class="button" :class="{'active':state === STATES.ACCOUNTS}" @click="switchState(STATES.ACCOUNTS)">
-					Accounts
-				</figure>
+				<section class="panel-switch">
+					<figure class="button" :class="{'active':state === STATES.CONTACTS}" @click="switchState(STATES.CONTACTS)">
+						Contacts
+					</figure>
+					<figure class="button" :class="{'active':state === STATES.ACCOUNTS}" @click="switchState(STATES.ACCOUNTS)">
+						Accounts
+					</figure>
+				</section>
+			</section>
+			<section class="body">
+				<KeysAndAccountList v-on:account="accountSelected" v-if="state === STATES.ACCOUNTS" />
+				<Contacts v-on:recipient="returnResult" as-selector="1" v-if="state === STATES.CONTACTS" />
 			</section>
 		</section>
-		<section class="body">
-			<KeysAndAccountList v-on:account="accountSelected" v-if="state === STATES.ACCOUNTS" />
-			<Contacts v-on:recipient="returnResult" as-selector="1" v-if="state === STATES.CONTACTS" />
-		</section>
 	</section>
+
 </template>
 
 <script>
@@ -76,7 +80,7 @@
 		}
 
 		.body {
-			height:calc(100vh - 130px - 60px);
+			height:calc(100vh - 130px - 60px - 40px);
 		}
 
 		.keys-and-accounts-list {

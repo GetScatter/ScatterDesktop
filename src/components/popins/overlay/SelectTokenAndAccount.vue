@@ -1,5 +1,6 @@
 <template>
 	<section class="pop-over">
+		<PopInHead title="Select Token and Account" v-on:close="returnResult" />
 		<Assets as-selector="1" v-on:selected="returnResult" hide-unusable="1" />
 	</section>
 </template>
@@ -46,7 +47,7 @@
 	}
 
 	.assets {
-		height:calc(100vh - 140px);
+		height:calc(100vh - 180px);
 	}
 
 

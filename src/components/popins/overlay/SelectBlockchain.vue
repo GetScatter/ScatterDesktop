@@ -1,9 +1,12 @@
 <template>
-	<section class="select-blockchain pop-over">
-		<section class="import-types">
-			<section class="import-type" v-for="blockchain in blockchains" @click="returnResult(blockchain)">
-				<figure class="type-icon" :class="`token-${blockchain}-${blockchain}`"></figure>
-				<figure class="type-text">{{blockchainName(blockchain)}}</figure>
+	<section class="pop-over">
+		<PopInHead title="Select Blockchain" v-on:close="returnResult" />
+		<section class="select-blockchain">
+			<section class="import-types">
+				<section class="import-type" v-for="blockchain in blockchains" @click="returnResult(blockchain)">
+					<figure class="type-icon" :class="`token-${blockchain}-${blockchain}`"></figure>
+					<figure class="type-text">{{blockchainName(blockchain)}}</figure>
+				</section>
 			</section>
 		</section>
 	</section>
