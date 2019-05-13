@@ -4,7 +4,7 @@
 		<figure class="title">{{title}}</figure>
 		<figure class="description">{{description}}</figure>
 
-		<Input v-bind="inputField" centered="1" :text="text" v-on:changed="x => text = x" />
+		<Input v-if="inputField" v-bind="inputField" centered="1" :text="text" v-on:changed="x => text = x" />
 
 		<section class="actions">
 			<Button blue="1" text="Okay" @click.native="returnResult(inputField ? text : true)" />

@@ -24,11 +24,7 @@ remote.getGlobal('appShared').QuitWatcher = () => {
 
 
 
-const emit = (origin, path, data) =>
-	LowLevelSocketService.emit(origin, path, data);
-
-
-let rekeyPromise;
+const emit = (origin, path, data) => LowLevelSocketService.emit(origin, path, data);
 const getNewKey = origin => LowLevelSocketService.getNewKey(origin);
 
 const handleApiResponse = async request => {

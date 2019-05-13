@@ -59,6 +59,9 @@
                 <section class="key-val" v-if="isIdentity && selected.accounts.length">
                     <figure>{{locale(langKeys.PERMISSIONS.AccountsLabel)}}</figure>
                     <figure>{{selected.getAccounts().map(x => x.formatted()).join(', ')}}</figure>
+
+                    <br>
+                    <figure>{{selected.asIdentityRequirements().personal.concat(selected.asIdentityRequirements().location).join(', ')}}</figure>
                 </section>
 
                 <section class="key-val" v-if="selected.isIdentityRequirements">

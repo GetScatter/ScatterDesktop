@@ -17,6 +17,13 @@ html, body {
   background:$white;
 }
 
+hr {
+  border:0;
+  width:100%;
+  background:$lightgrey;
+  height:1px;
+}
+
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

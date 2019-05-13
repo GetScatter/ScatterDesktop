@@ -66,6 +66,7 @@ export const getters = {
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
+	blacklistActions:state =>  state.scatter.settings.blacklistActions,
 	blacklistTokens:state =>  state.scatter.settings.blacklistTokens,
 	balanceFilters:state =>   state.scatter.settings.balanceFilters,
 	displayCurrency:state =>   state.scatter.settings.displayCurrency,

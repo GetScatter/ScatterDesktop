@@ -39,6 +39,11 @@ export default class Settings {
 	    this.tokens = [];
 	    this.blacklistTokens = [];
 
+	    // {contract:[actions]}
+	    this.blacklistActions = {
+	    	'eos::eosio':['updateauth']
+	    };
+
 	    this.balanceFilters = {};
     }
 
@@ -63,5 +68,27 @@ export default class Settings {
 
     removeNetwork(network){
         this.networks = this.networks.filter(n => n.id !== network.id);
+    }
+
+    blacklistAction(blockchain, contract, action){
+    	if(!contract.length || !action.length) return;
+    	if(!this.blacklistActions.hasOwnProperty(`${blockchain}::${contract}`)){
+    		this.blacklistActions[`${blockchain}::${contract}`] = []
+	    }
+
+	    this.blacklistActions[`${blockchain}::${contract}`].push(action);
+    }
+
+    removeBlacklistedAction(blockchain, contract, action){
+    	if(!this.blacklistActions.hasOwnProperty(`${blockchain}::${contract}`)) return;
+    	if(!this.blacklistActions[`${blockchain}::${contract}`].includes(action)) return;
+    	if(this.blacklistActions[`${blockchain}::${contract}`].length === 1) return delete this.blacklistActions[`${blockchain}::${contract}`];
+	    this.blacklistActions[`${blockchain}::${contract}`] = this.blacklistActions[`${blockchain}::${contract}`].filter(x => x !== action);
+    }
+
+    isActionBlacklisted(actionTag){
+    	const [blockchain, contract, action] = actionTag.split('::');
+    	return this.blacklistActions.hasOwnProperty(`${blockchain}::${contract}`)
+		    && this.blacklistActions[`${blockchain}::${contract}`].includes(action);
     }
 }

@@ -21,7 +21,7 @@
 							<figure class="description">{{slide.description}}</figure>
 						</section>
 						<section>
-							<Button text="View App" :blue="1" />
+							<Button text="View App" :blue="1" @click.native="goToApp(slide)" />
 						</section>
 					</section>
 				</section>
@@ -77,6 +77,9 @@
 				interval = setInterval(() => {
 					this.slide(-1);
 				}, 5000);
+			},
+			goToApp(slide){
+				this.$router.push({name:this.RouteNames.APP, params:{applink:slide.applink}});
 			}
 		},
 		watch:{

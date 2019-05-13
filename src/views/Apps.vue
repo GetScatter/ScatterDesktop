@@ -48,6 +48,7 @@
 							<figure class="category">{{app.type}}</figure>
 						</section>
 						<section class="actions">
+							<Button @click.native="removeApp(app)" text="Remove" />
 							<Button @click.native="goToApp(app)" text="Manage" />
 							<Button v-if="canOpenApp(app.applink)" @click.native="openApp(app.applink)" text="Open" blue="1" />
 						</section>
@@ -68,6 +69,7 @@
 	import ObjectHelpers from "../util/ObjectHelpers";
 	import AppsService from "../services/apps/AppsService";
 	import Carousel from "../components/reusable/Carousel";
+	import PermissionService from "../services/apps/PermissionService";
 
 
 	const STATES = {
@@ -99,7 +101,7 @@
 					{name:'Explore', state:STATES.EXPLORE},
 				];
 				if(this.selectedCategory) tabs.splice(1, 0, { name:this.selectedCategory, state:this.selectedCategory });
-				if(this.apps.length) tabs.push({name:'My Apps', state:STATES.MINE});
+				if(this.permissions.filter(x => x.isIdentity).length) tabs.push({name:'My Apps', state:STATES.MINE});
 				return tabs;
 			},
 			categories(){
@@ -136,7 +138,7 @@
 				]
 			},
 			linkedApps(){
-				return this.apps.map(({origin:applink}) => {
+				return this.permissions.filter(x => x.isIdentity).map(({origin:applink}) => {
 					return this.getAppData(applink);
 				}).filter(app => {
 					return app.type === this.typeFilter || !this.typeFilter
@@ -185,6 +187,13 @@
 					if(!this.$refs.scroller) return;
 					this.$refs.scroller.scrollTop = 0;
 				})
+			},
+			async removeApp(app){
+				console.log(app);
+				await PermissionService.removeAllPermissionsFor(app.applink);
+				if(!this.permissions.filter(x => x.isIdentity).length){
+					this.state = STATES.EXPLORE;
+				}
 			}
 		},
 		created(){

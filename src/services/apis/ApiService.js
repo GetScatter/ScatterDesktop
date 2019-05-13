@@ -147,48 +147,49 @@ export default class ApiService {
 		    if(typeof request.payload.fields !== 'object') return badResult();
 
 		    const {origin, fields} = request.payload;
-		    // if(!fields.hasOwnProperty('personal')) fields.personal = [];
-		    // if(!fields.hasOwnProperty('location')) fields.location = [];
-		    // if(!fields.hasOwnProperty('accounts')) fields.accounts = [];
+		    if(!fields.hasOwnProperty('personal')) fields.personal = [];
+		    if(!fields.hasOwnProperty('location')) fields.location = [];
+		    if(!fields.hasOwnProperty('accounts')) fields.accounts = [];
 
-		    // TODO: If we're going to remove permission pushing for refetching identity changes
-		    // todo: then we should add a broadcast even for identity changes to all dapps that
-		    // todo: have those identity requirements.
-		    // const possibleId = PermissionService.identityFromPermissions(origin);
-		    // if(possibleId) {
-			//     const samePersonal = fields.personal.every(key => possibleId.hasOwnProperty('personal') && possibleId.personal.hasOwnProperty(key));
-			//     const sameLocation = fields.location.every(key => possibleId.hasOwnProperty('location') && possibleId.location.hasOwnProperty(key));
-			//     if(samePersonal && sameLocation) return resolve({id:request.id, result:possibleId});
-		    // }
+		    const requiredNetworks = fields.accounts.map(x => Network.fromJson(x)).map(x => x.unique()).reduce((acc,x) => { if(!acc.includes(x)) acc.push(x); return acc; }, []);
 
-		    const requiredNetworks = (fields.hasOwnProperty('accounts') ? fields.accounts : []).map(x => Network.fromJson(x)).map(x => x.unique());
-
+		    // Deprecating the ability to log in with multiple networks, citing bad UX
 		    if(!loginAll && requiredNetworks.length > 1){
 			    return resolve({id:request.id, result:Error.signatureError("too_many_accounts", "To login more than one account you must use the `getAllAccounts()` API method.")});
 		    }
-
 
 		    const existingNetworks = StoreService.get().state.scatter.settings.networks.filter(x => requiredNetworks.includes(x.unique()));
 		    if(existingNetworks.length !== requiredNetworks.length){
 			    return resolve({id:request.id, result:Error.noNetwork()});
 		    }
 
+		    const availableAccounts = existingNetworks.map(x => x.accounts(true)).reduce((acc, accounts) => {
+			    acc = acc.concat(accounts);
+			    return acc;
+		    }, []);
+
+		    const possibleId = PermissionService.identityFromPermissions(origin);
+		    if(possibleId) {
+			    const samePersonal = fields.personal.every(key => possibleId.hasOwnProperty('personal') && possibleId.personal.hasOwnProperty(key));
+			    const sameLocation = fields.location.every(key => possibleId.hasOwnProperty('location') && possibleId.location.hasOwnProperty(key));
+
+			    let sameAccounts = true;
+			    if(loginAll && availableAccounts.length !== possibleId.accounts.length) sameAccounts = false;
+			    else if (!loginAll && possibleId.accounts.length > 1) sameAccounts = false;
+
+			    if(samePersonal && sameLocation && sameAccounts) return resolve({id:request.id, result:possibleId});
+		    }
+
 		    PopupService.push(Popup.popout(request, async ({result}) => {
 			    if(!result) return resolve({id:request.id, result:Error.signatureError("identity_rejected", "User rejected the provision of an Identity")});
 
-			    await updateIdentity(result);
-			    const identity = Identity.fromJson(result.identity);
+			    // await updateIdentity(result);
+			    // const identity = Identity.fromJson(result.identity);
+			    const identity = StoreService.get().state.scatter.keychain.identities.find(x => x.id === result.identity.id);
 			    const location = LocationInformation.fromJson(result.location);
 
 
-			    let accounts;
-			    if(loginAll){
-			    	accounts = existingNetworks.map(x => x.accounts(true)).reduce((acc, accounts) => {
-					    acc = acc.concat(accounts);
-					    return acc;
-				    }, []);
-			    }
-			    else accounts = (result.accounts || []).map(x => Account.fromJson(x));
+			    const accounts = loginAll ? availableAccounts : (result.accounts || []).map(x => Account.fromJson(x));
 
 			    await PermissionService.addIdentityOriginPermission(identity, accounts, fields, origin);
 			    const returnableIdentity = identity.asOnlyRequiredFields(fields, location);
@@ -228,6 +229,13 @@ export default class ApiService {
 			}
 
 			if(!payload.messages) return resolve({id:request.id, result:Error.cantParseTransaction()});
+
+			const actions = payload.messages.map(x => `${blockchain}::${x.code}::${x.type}`);
+			const blacklisted = actions.filter(actionTag => StoreService.get().state.scatter.settings.isActionBlacklisted(actionTag));
+			if(blacklisted.length){
+				PopupService.push(Popup.prompt('Whoa nelly!', `An application tried to push a blacklisted action to your Scatter (${blacklisted.join(', ')}). Check your Firewall settings if this is a mistake.`))
+				return resolve({id:request.id, result:Error.malicious('firewalled')});
+			}
 
 
 			const availableAccounts = possibleId.accounts.map(x => x.formatted());

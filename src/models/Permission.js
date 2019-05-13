@@ -1,6 +1,7 @@
 import Hasher from '../util/Hasher';
 import IdGenerator from '../util/IdGenerator';
 import StoreService from "../services/utility/StoreService";
+import {IdentityRequiredFields} from "./Identity";
 
 export default class Permission {
 
@@ -71,5 +72,9 @@ export default class Permission {
             if(!mutableFields.includes(key)) return allFields[key];
             else return null;
         }).filter(x => x).sort().join(','));
+    }
+
+    asIdentityRequirements(){
+        return IdentityRequiredFields.fromPermission(this.identityRequirements);
     }
 }

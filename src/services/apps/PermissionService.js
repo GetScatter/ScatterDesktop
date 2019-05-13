@@ -25,14 +25,13 @@ export default class PermissionService {
         return null;
     }
 
-    static addIdentityOriginPermission(identity, accounts, identityRequirements, origin){
+    static async addIdentityOriginPermission(identity, accounts, identityRequirements, origin){
         identityRequirements = IdentityRequiredFields.fromJson(identityRequirements);
         identityRequirements = identityRequirements.forPermission();
 
+	    await this.removeIdentityPermission(origin);
         const scatter = StoreService.get().state.scatter.clone();
 
-        // Permission already exists
-        if(scatter.keychain.permissions.find(x => x.isIdentity && x.origin === origin && x.identity === identity.id)) return;
 
         const permission = Permission.fromAction(origin, identity, accounts, {
             identityRequirements,
@@ -43,11 +42,11 @@ export default class PermissionService {
         return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 
-    static removeIdentityPermission(origin){
+    static async removeIdentityPermission(origin){
         const scatter = StoreService.get().state.scatter.clone();
-        const idPermissions = scatter.keychain.permissions.find(x => x.isIdentity && x.origin === origin);
-        if(!idPermissions) return new Error('already_forgotten', "This identity does not have a permission for "+origin);
-        scatter.keychain.permissions = scatter.keychain.permissions.filter(x => x.id !== idPermissions.id);
+        // const idPermissions = scatter.keychain.permissions.find(x => x.isIdentity && x.origin === origin);
+        // if(!idPermissions) return true;
+        scatter.keychain.permissions = scatter.keychain.permissions.filter(x => !x.isIdentity || (x.isIdentity && x.origin !== origin));
         return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 

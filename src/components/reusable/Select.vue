@@ -8,7 +8,7 @@
 			</figure>
 			<figure class="chevron icon-down-open-big"></figure>
 		</section>
-		<section class="options" v-if="!noClick">
+		<section class="options" v-if="!noClick" :class="{'start-left':startLeft}">
 			<figure class="option" :class="{'hovered':hovered === index}" @click="select(item)" @mouseover="hovered = index" v-for="(item, index) in filteredOptions">
 				{{parse(item)}}
 				<div class="subtitle" v-if="subparser">{{subparser(item)}}</div>
@@ -22,7 +22,7 @@
 
 <script>
 	export default {
-		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'bordered', 'noClick', 'truncate'],
+		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'bordered', 'noClick', 'truncate', 'startLeft'],
 		data(){return {
 			open:false,
 			optionsTerms:'',
@@ -190,6 +190,10 @@
 
 			transition: all 0.1s ease;
 			transition-property: opacity, visibility, box-shadow;
+
+			&.start-left {
+				left:0;
+			}
 
 			.option {
 				cursor: pointer;
