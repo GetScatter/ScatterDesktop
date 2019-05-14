@@ -2,7 +2,7 @@
 	<section class="pop-over confirm">
 
 		<section class="details">
-			<Exchange class="icon" />
+			<img src="../../../assets/icon_exchange_big.png" class="icon" />
 			<label>Exchanging</label>
 
 			<section class="amounts">
@@ -10,10 +10,13 @@
 				<figure class="arrow bounce-right icon-right-small"></figure>
 				<figure class="amount">{{parseFloat(order.expected).toFixed(pair.decimals)}} {{symbols.to}}</figure>
 			</section>
-			<section class="accounts">
+			<section class="accounts" v-if="accounts.from !== accounts.to">
 				<figure class="account">{{accounts.from}}</figure>
 				<figure class="arrow bounce-right icon-right-small"></figure>
 				<figure class="account">{{accounts.to}}</figure>
+			</section>
+			<section class="accounts" v-else>
+				<figure class="account">{{accounts.from}}</figure>
 			</section>
 		</section>
 		<section class="tail">
@@ -26,11 +29,9 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import Exchange from '../../svgs/quick-actions/Exchange'
 
 	export default {
 		props:['popin'],
-		components:{Exchange},
 		data () {return {
 
 		}},

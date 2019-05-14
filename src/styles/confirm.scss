@@ -8,7 +8,7 @@
 
   .details {
     flex: 1;
-    padding: 45px 60px;
+    padding: 45px 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,13 +18,7 @@
     color: $white;
 
     .icon {
-      width: 80px;
-      height: 80px;
-
-      svg {
-        width: 80px;
-        height: 80px;
-      }
+      margin-bottom:30px;
     }
 
     label {

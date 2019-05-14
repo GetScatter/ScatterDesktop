@@ -2,7 +2,7 @@
 	<section class="pop-over confirm">
 
 		<section class="details">
-			<Send class="icon" />
+			<img src="../../../assets/icon_send_big.png" class="icon" />
 			<label>Transferring</label>
 
 			<figure class="amount">{{token.amount}} {{token.symbol}}</figure>
@@ -26,11 +26,9 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
-	import Send from '../../svgs/quick-actions/Send'
 
 	export default {
 		props:['popin'],
-		components:{Send},
 		data () {return {
 
 		}},
