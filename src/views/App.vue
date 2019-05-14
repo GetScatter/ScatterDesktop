@@ -155,7 +155,6 @@
         },
 	    mounted(){
 	    	this.state = this.applink;
-            this.setQuickActionsBack(true);
             this.selected = this.identityPermission;
 	    },
         methods:{

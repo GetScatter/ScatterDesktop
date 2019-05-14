@@ -12,7 +12,6 @@ import BalanceService from "../services/blockchain/BalanceService";
 Vue.use(Vuex);
 
 export const state = {
-	quickBack:false,
     dappLogos:{},
     dappData:{},
     workingScreen:null,

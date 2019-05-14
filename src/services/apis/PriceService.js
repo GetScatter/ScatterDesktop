@@ -40,7 +40,7 @@ export default class PriceService {
     static getAll(){
         return Promise.race([
             new Promise(resolve => setTimeout(() => resolve(false), 10000)),
-	        GET('prices?v2=true').catch(() => {
+	        GET(`prices?v2=true`).catch(() => {
             	PopupService.push(Popup.snackbar("Problem connecting to Prices API"));
             	return null;
             })

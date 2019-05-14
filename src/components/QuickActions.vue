@@ -18,7 +18,7 @@
 
 
 		<section class="left" v-if="quickBack">
-			<section class="quick-back" @click="goBack">
+			<section class="quick-back" @click="back">
 				<i class="icon-left-small"></i>
 			</section>
 		</section>
@@ -66,7 +66,6 @@
 				'balances',
 				'prices',
 				'history',
-				'quickBack',
 			]),
 			...mapGetters([
 				'keypairs',
@@ -93,6 +92,15 @@
 					RouteNames.IDENTITIES,
 					this.features.creditCards ? null : RouteNames.WALLET,
 				].filter(x => !!x).includes(this.$route.name);
+			},
+			quickBack(){
+				return [
+					RouteNames.ACCOUNT,
+					RouteNames.EXCHANGE,
+					RouteNames.TRANSFER,
+					RouteNames.RECEIVE,
+					RouteNames.APP,
+				].filter(x => !!x).includes(this.$route.name);
 			}
 		},
 		mounted(){
@@ -107,10 +115,6 @@
 				await PriceService.getAll();
 				this.loadingBalances = false;
 			},
-			goBack(){
-				this.setQuickActionsBack(false);
-				this.$router.back()
-			}
 		}
 
 	}

@@ -58,7 +58,7 @@ export default class VueInitializer {
 	            },
                 methods: {
 	                blockchainName,
-	                back(){ this.setQuickActionsBack(false); this.$router.back(); },
+	                back(){ this.$router.back(); },
 	                locale:(key, args) => localized(key, args, StoreService.get().getters.language),
 	                newKeypair(){ this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
 	                canOpenApp(applink){
@@ -82,7 +82,6 @@ export default class VueInitializer {
 	                openInBrowser(url){ ElectronHelpers.openLinkInBrowser(url); },
 	                setWorkingScreen(bool){ StoreService.get().dispatch(Actions.SET_WORKING_SCREEN, bool); },
 	                copyText(text){ ElectronHelpers.copy(text) },
-					setQuickActionsBack(bool){ this[Actions.SET_QUICK_BACK](bool); },
 	                publicKeyForKeypair(keypair){
 		                if(!keypair) return null;
 		                if(!keypair.hasOwnProperty('publicKeys')) return null;

@@ -81,7 +81,7 @@
 		            RouteNames.SETTINGS,
 		            RouteNames.PURCHASE,
                 ].includes(this.$route.name);
-            }
+            },
 
         },
         mounted(){
@@ -91,8 +91,10 @@
             ...mapActions([
                 Actions.SET_SCATTER
             ])
-
         },
+        watch:{
+
+        }
     }
 </script>
 

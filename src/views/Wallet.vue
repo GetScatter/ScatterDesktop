@@ -105,7 +105,6 @@
     		    PopupService.push(Popup.importKeypair({}, keypair => {}));
             },
             goToAccount(account){
-    			this.setQuickActionsBack(true);
     			this.$router.push({name:this.RouteNames.ACCOUNT, params:{unique:account.unique()}});
             },
             saveKeypair(keypair){

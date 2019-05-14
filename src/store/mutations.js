@@ -3,7 +3,6 @@ import Vue from 'vue';
 
 export const mutations = {
     [Mutations.SET_PRICE_DATA]:(state, x) => state.priceData = x,
-    [Mutations.SET_QUICK_BACK]:(state, x) => state.quickBack = x,
     [Mutations.HIDE_BACK_BTN]:(state, x) => state.hideBackButton = x,
     [Mutations.SET_WORKING_SCREEN]:(state, x) => state.workingScreen = x,
     [Mutations.SET_SEARCH_TERMS]:(state, terms) => state.searchTerms = terms,

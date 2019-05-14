@@ -68,8 +68,8 @@ const RouteViews = {
 
 const RoutePaths = {
 	[RouteNames.HOME]: '/',
-	[RouteNames.APP]: '/:applink',
-	[RouteNames.ACCOUNT]: '/:unique',
+	[RouteNames.APP]: '/app/:applink',
+	[RouteNames.ACCOUNT]: '/account/:unique',
 };
 
 export class Routing {

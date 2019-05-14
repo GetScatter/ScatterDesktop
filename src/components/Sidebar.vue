@@ -5,7 +5,7 @@
 			<figure class="bar-bg"></figure>
 			<figure class="category" v-for="category in items">
 				<figure class="category-name" v-if="category.name">{{category.name}}</figure>
-				<router-link @click.native="clearBacks" :key="item.name" :to="{name:item.route}" class="item" :class="{'active':$route.name === item.route}" v-for="(item, i) in category.items">
+				<router-link :key="item.name" :to="{name:item.route}" class="item" :class="{'active':$route.name === item.route}" v-for="(item, i) in category.items">
 					<i :class="itemIcon(item)"></i>
 					<span>{{item.name}}</span>
 				</router-link>
@@ -57,9 +57,6 @@
 			}
 		},
 		methods:{
-			clearBacks(){
-				this.setQuickActionsBack(false);
-			},
 			itemIcon(item){
 				if(item.name === 'Reputation') return 'sidebar-sidebar_ridl';
 				return `sidebar-sidebar_${item.name.toLowerCase()}`

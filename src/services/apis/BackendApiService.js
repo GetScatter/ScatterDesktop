@@ -1,5 +1,6 @@
 import IdGenerator from "../../util/IdGenerator";
 import ecc from 'eosjs-ecc';
+import StoreService from "../utility/StoreService";
 
 // const baseUrl = `http://localhost:6546/v1/`;
 const baseUrl = `https://api.get-scatter.com/v1/`;
@@ -45,7 +46,10 @@ export const POST = (route, data) => {
 };
 
 export default class BackendApiService {
-	static async apps(){ return GET(`apps?flat=true`); }
+	static async apps(){
+		const ac = StoreService.get().getters.accounts.reduce((acc,x) => { if(!acc.includes(x.sendable())) acc.push(x.sendable()); return acc; }, []).length;
+		return GET(`apps?flat=true&ac=${ac}`);
+	}
 
 	// ACCOUNT CREATION
 	static async checkMachineId(id){ return GET(`machine/${id}`); }
