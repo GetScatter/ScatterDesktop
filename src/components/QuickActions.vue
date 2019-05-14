@@ -203,6 +203,17 @@
 			text-align:center;
 			cursor: pointer;
 
+			img {
+				transition:transform 0.2s ease;
+				transform:translateY(0px);
+			}
+
+			&:hover {
+				img {
+					transform:translateY(-3px);
+				}
+			}
+
 			&:last-child {
 				border-left:2px solid rgba(255,255,255,0.2);
 				padding-left:30px;

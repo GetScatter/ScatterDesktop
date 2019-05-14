@@ -71,6 +71,10 @@ export class Popup {
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
     }
 
+    static selectFromList(title, list, callback){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_FROM_LIST, {title, list}, callback))
+    }
+
     static transactionSuccess(blockchain, tx, callback){
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
     }
@@ -225,6 +229,7 @@ export class Popup {
 export const PopupTypes = {
     // OVERLAYS
     PROMPT:'prompt',
+	SELECT_FROM_LIST:'select_from_list',
     ENTER_PIN:'enterPIN',
     REMOVE_APP:'removeApp',
     UPDATE_AVAILABLE:'updateAvailable',
@@ -266,6 +271,7 @@ export const PopupTypes = {
 export const isFullscreen = popup => {
     return ![
         PopupTypes.PROMPT,
+        PopupTypes.SELECT_FROM_LIST,
         PopupTypes.ENTER_PIN,
         PopupTypes.REMOVE_APP,
         PopupTypes.UPDATE_AVAILABLE,

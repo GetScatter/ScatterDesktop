@@ -1,62 +1,61 @@
 <template>
-	<section>
-		<back-bar v-on:back="returnResult(null)" />
-		<section class="panel-container limited">
+	<section class="pop-in">
+		<section>
 			<section class="head">
-				<figure class="icon icon-flow-tree"></figure>
+				<figure class="icon font icon-flow-tree" style="padding-top:7px;"></figure>
+				<figure class="subtitle">{{account.sendable()}}</figure>
 				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Title)}}</figure>
-				<p>{{account.sendable()}}</p>
-				<br>
-				<br>
 			</section>
 
-			<section v-if="!isHardware">
-
-				<section v-if="hasRecurring">
-					<FlatList small="1" style="max-width:500px; margin:0 auto;"
-					          icon="icon-cancel"
-					          :selected="hasRecurring.account"
-					          :items="[hasRecurring].map(x => ({
-					id:x.account,
-					title:x.proxy,
-				}))"
-					          v-on:action="unrevote" />
-				</section>
-
-				<section class="auto-vote">
-					<section class="switch" @click="autoVote = !autoVote">
-						<figure class="dot" :class="{'disabled':!autoVote}"></figure>
+			<section class="revoter" v-if="!isHardware">
+				<section class="split-inputs">
+					<section class="currently-voted" v-if="hasRecurring">
+						You are proxied to <span class="voting-for">{{hasRecurring.proxy}}</span>
+						<br>
+						<Button small="1" text="Remove Auto-Proxy" @click.native="unrevote" />
 					</section>
-					<section class="details">
-						<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyTitle)}}</figure>
-						<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyDesc)}}</p>
+
+					<section class="auto-vote split-inputs">
+						<Switcher :state="autoVote" @click.native="autoVote = !autoVote" />
+						<section class="details">
+							<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyTitle)}}</figure>
+							<p>{{locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.ReproxyDesc)}}</p>
+						</section>
 					</section>
 				</section>
-				<br>
 			</section>
 
-			<br>
-			<br>
-			<cin style="max-width:650px; width:100%; margin:0 auto;"
-			     big="1"
-			     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Label)"
-			     :placeholder="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Placeholder)"
-			     :text="selectedProxy"
-			     v-on:changed="x => selectedProxy = x" />
+			<section class="transfer">
+				<section class="boxes">
+					<section class="box nested account-selector" @click="selectProxy">
+						<section>
+							<figure class="name">{{selectedProxy || 'Select a known proxy'}}</figure>
+						</section>
+						<figure class="chevron icon-dot-3"></figure>
+					</section>
+				</section>
+			</section>
+
+			<figure class="or"><figure class="text">or</figure></figure>
+
+			<Input :placeholder="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Placeholder)"
+					:text="selectedProxy"
+					v-on:changed="x => selectedProxy = x" />
 
 			<section class="list" v-if="Object.keys(proxies).length">
-				<FlatList :label="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.KnownProxiesLabel)"
-				          selected-icon="icon-check"
-				          :selected="selectedProxy"
-				          :items="proxyList"
-				          v-on:selected="x => selectedProxy = x.id" />
+				<!--<section class="proxy" v-for="proxy in proxyList">-->
+					<!--{{proxy}}-->
+				<!--</section>-->
+				<!--<FlatList :label="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.KnownProxiesLabel)"-->
+				          <!--selected-icon="icon-check"-->
+				          <!--:selected="selectedProxy"-->
+				          <!--:items="proxyList"-->
+				          <!--v-on:selected="x => selectedProxy = x.id" />-->
 			</section>
 
 		</section>
-		<section class="action-bar short bottom centered">
-			<btn :text="locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Button)"
-			     blue="1" v-on:clicked="setProxy" />
-		</section>
+
+		<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:locale(langKeys.POPINS.FULLSCREEN.EOS.PROXY.Button), blue:true, click:() => setProxy()}]" />
 	</section>
 </template>
 
@@ -68,16 +67,12 @@
 	import {Popup} from "../../../models/popups/Popup";
 	import {Blockchains} from "../../../models/Blockchains";
 	import PluginRepository from "../../../plugins/PluginRepository";
-	import FlatList from '../../reusable/FlatList';
-	import ProxyService from "../../../services/blockchain/ProxyService";
 	import ObjectHelpers from "../../../util/ObjectHelpers";
 	import RecurringService from "../../../services/blockchain/RecurringService";
+	import {GET} from "../../../services/apis/BackendApiService";
 
 	export default {
 		props:['popin'],
-		components:{
-			FlatList
-		},
 		data () {return {
 			proxies:{},
 			selectedProxy:null,
@@ -88,7 +83,10 @@
 			if(this.isHardware) this.autoVote = false;
 			setTimeout(async () => {
 				if(PluginRepository.plugin(Blockchains.EOSIO).isEndorsedNetwork(this.account.network())){
-					this.proxies = await ProxyService.getProxyList();
+					this.proxies = await Promise.race([
+						new Promise((resolve) => setTimeout(() => resolve([]), 3000)),
+						GET(`proxies`).catch(() => [])
+					]);
 				}
 			});
 
@@ -145,6 +143,12 @@
 
 				this.returnResult(true)
 			},
+			selectProxy(){
+				PopupService.push(Popup.selectFromList('Select Proxy', this.proxyList, proxy => {
+					if(!proxy) return;
+					this.selectedProxy = proxy.id;
+				}))
+			},
 
 			...mapActions([
 				Actions.RELEASE_POPUP
@@ -156,24 +160,60 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../../styles/variables";
 
-	.panel-container {
-		overflow: auto;
-		height: calc(100vh - 240px);
+	.transfer {
+		height:auto;
+		text-align:left;
+
+		.box, .boxes {
+			width:100%;
+		}
 	}
 
-	.auto-vote {
+	.revoter {
 		max-width:600px;
-		margin:0 auto;
-		display:flex;
-		justify-content: center;
+		margin-bottom:40px;
 
-		.switch {
+		.currently-voted {
+			max-width:300px;
+			text-align:left;
+			padding-right:20px;
+			font-size: $medium;
 
+			.voting-for {
+				font-weight: bold;
+				color:$blue;
+			}
+
+			button {
+				margin-top:10px;
+			}
 		}
 
-		.details {
-			padding-left:20px;
+		.auto-vote {
+			margin:0 auto;
+			display:flex;
+			justify-content: center;
+			border:1px solid $blue;
+			border-radius:$radius;
+			padding:20px;
+
+			.details {
+				padding-left:20px;
+				text-align:left;
+
+				.title {
+					font-size: $small;
+					margin-bottom:5px;
+				}
+
+				p {
+					margin:0;
+					font-size: $tiny;
+				}
+			}
 		}
 	}
+
+
 
 </style>

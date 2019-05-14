@@ -7,7 +7,7 @@
                 <section class="fullscreen" v-if="isFullscreen(popIn)">
                     <EnterSecurityCode :popin="popIn" v-if="popIn.data.type === popupTypes.SECURITY_CODE" />
                     <ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />
-                    <!--<EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />-->
+                    <EosProxyVotes :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_PROXY_VOTES" />
                     <EosChangePermissions :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_CHANGE_PERMISSIONS" />
                     <EosModerateRam :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_RAM" />
                     <EosModerateCpuNet :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_MODERATE_CPU_NET" />
@@ -31,6 +31,7 @@
                             <!--<RemoveApp :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_APP" />-->
                             <!--<EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />-->
                             <Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
+                            <SelectFromList :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_FROM_LIST" />
                             <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
                             <UpdateAvailable :popin="popIn" v-if="popIn.data.type === popupTypes.UPDATE_AVAILABLE" />
                             <SelectAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_ACCOUNT" />
@@ -70,7 +71,7 @@
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
 
-    // import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
+    import EosProxyVotes from './popins/fullscreen/EosProxyVotes'
     import EosChangePermissions from './popins/fullscreen/EosChangePermissions'
     import EosModerateRam from './popins/fullscreen/EosModerateRam'
     import EosModerateCpuNet from './popins/fullscreen/EosModerateCpuNet'
@@ -98,9 +99,11 @@
     import SelectRecipient from "./popins/overlay/SelectRecipient";
     import SelectBlockchain from "./popins/overlay/SelectBlockchain";
     import EnterSecurityCode from "./popins/fullscreen/EnterSecurityCode";
+    import SelectFromList from "./popins/overlay/SelectFromList";
 
     export default {
     	components:{
+		    SelectFromList,
 		    EnterSecurityCode,
 		    SelectRecipient,
 		    SelectBlockchain,
@@ -120,7 +123,7 @@
 		    AddNewContact,
 		    ConfirmPassword,
 		    EosChangePermissions,
-		    // EosProxyVotes,
+		    EosProxyVotes,
 		    EosModerateRam,
 		    EosModerateCpuNet,
 		    EosCreateAccount,

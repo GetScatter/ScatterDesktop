@@ -76,7 +76,7 @@
 				clearInterval(interval);
 				interval = setInterval(() => {
 					this.slide(-1);
-				}, 5000);
+				}, 10000);
 			},
 			goToApp(slide){
 				this.$router.push({name:this.RouteNames.APP, params:{applink:slide.applink}});
@@ -183,8 +183,10 @@
 						background-size: 200px;
 						background-position: center;
 						z-index:1;
-						transform:rotateZ(20deg);
+						transform:rotateZ(20deg) scale(1.2);
 						opacity:0.1;
+
+						transition: 1s transform ease;
 					}
 
 					.image {
@@ -198,6 +200,7 @@
 						background-repeat: no-repeat;
 						margin:20px;
 						z-index:1;
+						transition: 1s transform ease;
 					}
 
 					&.full {
@@ -235,6 +238,17 @@
 						margin-top:2px;
 						font-size: $small;
 						color:$black;
+					}
+				}
+			}
+
+			&:hover {
+				.slide {
+					.image-container {
+						.bg {
+							transition: 8s transform ease;
+							transform:rotateZ(50deg) scale(0.5);
+						}
 					}
 				}
 			}

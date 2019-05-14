@@ -90,31 +90,6 @@
     .get-public-key {
         text-align:center;
         padding:50px;
-
-        .or {
-            position: relative;
-            margin:20px 0;
-
-            .text {
-                font-size: $medium;
-                font-weight: bold;
-                padding:0 20px;
-                background:$white;
-                display:inline-block;
-            }
-
-            &:before {
-                content:'';
-                display:block;
-                background:$lightgrey;
-                height:1px;
-                position:absolute;
-                top:8px;
-                left:0;
-                right:0;
-                z-index:-1;
-            }
-        }
     }
 
 </style>
