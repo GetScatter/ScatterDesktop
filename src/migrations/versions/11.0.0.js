@@ -6,19 +6,17 @@ import IdGenerator from "../../util/IdGenerator";
 
 export const m11_0_0 = async scatter => {
 
-	const keypairs = scatter.keychain.keypairs;
+	const keypairs = scatter.keychain.keypairs.map(x => x.clone());
 	scatter.keychain.keypairs = [];
-
 	scatter.onboarded = true;
 
 	keypairs.map(keypair => {
 		delete keypair.keyHash;
 
-		if(keypair.blockchains.length <= 1) return;
-
 		let first = true;
 		keypair.blockchains.map(blockchain => {
 			const accounts = scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique() && x.blockchain() === blockchain);
+			console.log(accounts, scatter.keychain.accounts, keypair, blockchain);
 			if(accounts.length){
 				const clone = keypair.clone();
 				if(!first) {
@@ -37,7 +35,6 @@ export const m11_0_0 = async scatter => {
 			first = false;
 		})
 
-		scatter.onboarded = true;
 	})
 
 
