@@ -176,13 +176,12 @@
 
 
             .details {
-                border-bottom:1px solid $lightgrey;
-                padding:30px;
+                padding:0 30px 0;
                 display:flex;
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
-                height:$panelheight;
+                height:$panelheight - 40px;
 
                 .blockchain {
                     font-size: 48px;
@@ -245,9 +244,9 @@
                         justify-content: center;
                         align-items: center;
                         border-radius:50%;
-                        width:45px;
-                        height:45px;
-                        border:4px solid $blue;
+                        width:32px;
+                        height:32px;
+                        border:2px solid $blue;
                         color:$blue;
                         font-size: 16px;
 
