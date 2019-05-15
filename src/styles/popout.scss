@@ -106,7 +106,14 @@
   .participants {
     padding:0 30px;
     text-align:center;
-    margin-top:20px;
+    margin-top:30px;
+
+    .more-participants {
+      font-size: $small;
+      margin-top:5px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
 
     label {
       display:block;
@@ -120,6 +127,10 @@
       background:$lightergrey;
       display:inline-block;
       padding:6px 10px;
+
+      &:not(:first-child){
+        margin-top:3px;
+      }
     }
   }
 

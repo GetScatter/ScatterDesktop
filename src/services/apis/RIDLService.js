@@ -361,7 +361,10 @@ export default class RIDLService {
 				accounts.map(account => {
 					contract.claim(account.name, {authorization:[`${account.name}@${account.authority}`]});
 				})
-			}).then(res => resolve(res)).catch(err => reject(err));
+			}).then(res => {
+				PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, res.transaction_id));
+				resolve(res);
+			}).catch(err => reject(err));
 		})
 	}
 

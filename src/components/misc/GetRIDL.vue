@@ -178,9 +178,11 @@
 				}, 1000);
 			},
 			async claim(){
+				this.setWorkingScreen(true);
 				const network = this.networks.find(x => x.chainId === PluginRepository.plugin(Blockchains.EOSIO).getEndorsedNetwork().chainId);
 				const accounts = this.claimableRidlAccounts.map(name => this.accounts.find(x => x.network().unique() === network.unique() && name === x.name));
-				const claimed = await RIDLService.claimRidlTokens(accounts);
+				const claimed = await RIDLService.claimRidlTokens(accounts).catch(() => null);
+				this.setWorkingScreen(false);
 				if(claimed) setTimeout(() => {
 					this.getRidlCycleData();
 				}, 1000);

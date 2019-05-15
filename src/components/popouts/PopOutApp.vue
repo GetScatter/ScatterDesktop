@@ -11,7 +11,7 @@
 		<figure class="logo scam" v-else>
 			<i class="icon-attention"></i>
 		</figure>
-		<section v-if="ridlEnabled">
+		<section v-if="ridlEnabled && app.applink !== 'Scatter'">
 			<figure class="reputation" v-if="appReputation === false"><i class="icon-spin4 animate-spin"></i> loading reputation</figure>
 			<section v-else>
 				<figure class="reputation" v-if="unknownReputation">Unknown Reputation</figure>

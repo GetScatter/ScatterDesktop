@@ -9,14 +9,20 @@
                 <figure class="has-more" v-if="limitedMessages.total > 1">{{locale(langKeys.POPOUTS.SIGNATURE.ActionsTotal,limitedMessages.total)}}</figure>
 
 
-                <section class="participants" :class="{'top-less':limitedMessages.total <= 1}" v-if="participantAccounts">
+                <section class="participants" v-if="participantAccounts">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.AccountsInvolved)}}</label>
-                    <section class="participant" v-for="p in participantAccounts">
-                        {{p.network().name}} - <b>{{p.sendable()}}</b>
+                    <section v-if="!participantsAsSelector">
+                        <section class="participant" v-for="p in participantAccounts.slice(0,2)">
+                            {{p.network().name}} - <b>{{p.sendable()}}</b>
+                        </section>
+                        <figure class="more-participants" v-if="participantAccounts.length > 2" @click="participantsAsSelector = true">
+                            +{{participantAccounts.length}} more accounts
+                        </figure>
                     </section>
+                    <Select v-else bordered="1" :options="participantAccounts" :parser="x => `${x.network().name} - ${x.sendable()}`" />
                 </section>
 
-                <section class="participants top-less" v-if="isArbitrarySignature">
+                <section class="participants" v-if="isArbitrarySignature">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.KeysInvolved)}}</label>
                     <section class="participant">{{arbitraryKeypair.name}}</section>
                 </section>
@@ -204,6 +210,8 @@
 
 			reputation:null,
             showingRidlWarning:false,
+
+            participantsAsSelector:false,
 		}},
 		created(){
 			console.log(this.popup);
@@ -506,13 +514,13 @@
 
     .has-more {
         text-align:center;
-        font-size:11px;
+        font-size:$small;
         font-weight: bold;
-        color:$dark-grey;
+        color:$silver;
         border-radius:4px;
-        border:1px solid $medium-grey;
+        border:1px solid $grey;
         display:table;
-        padding:3px 6px;
+        padding:5px 8px;
         margin:-25px auto 0;
     }
 
