@@ -115,9 +115,8 @@
 		justify-content: space-between;
 
 		.authority {
-			flex:0 0 auto;
-			width:calc(50% - 10px);
-			margin-bottom:20px;
+			flex:1;
+			margin:0 5px 20px;
 			display:inline-block;
 
 			label {
