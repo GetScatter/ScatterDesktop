@@ -63,6 +63,7 @@
 				this.$nextTick(() => {
 					if(!this.$refs.base) return;
 					this.slideWidth = this.$refs.base.clientWidth;
+					this.left = 0;
 				})
 			},
 			slide(delta){
