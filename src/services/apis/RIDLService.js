@@ -338,7 +338,9 @@ export default class RIDLService {
 			const provider = async payload => plugin.signerWithPopup(payload, account, reject);
 			const eos = Eos({httpEndpoint:network.fullhost(), chainId:network.chainId, signProvider:provider});
 
-			eos.transfer(account.name, 'scatterfunds', quantity, 'Donated to Scatter', {authorization:[`${account.name}@${account.authority}`]}).then(trx => {
+			eos.transfer(account.name, 'scatterfunds', quantity, 'Donated to Scatter', {authorization:[`${account.name}@${account.authority}`]})
+			.then(trx => {
+				PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, trx.transaction_id));
 				resolve(trx);
 			}).catch(error => {
 				console.error(error);

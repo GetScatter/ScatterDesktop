@@ -28,11 +28,6 @@
 
 
 
-			<div style="font-size: 11px; text-align:center; margin-bottom:20px; display:block;">
-				<div>Your total contributions for this cycle: <b>{{eosContributions}}</b></div>
-				You will get <b>{{ridlContributions}}</b> at <b>{{(new Date(ridlCycle.ends*1000)).toLocaleString()}}</b>
-			</div>
-
 			<section class="split-inputs">
 
 				<section>
@@ -55,9 +50,16 @@
 			</section>
 
 
-			<section style="text-align:right;">
-				<Button blue="1" big="1" @click.native="claim" text="Claim" v-if="claimableRidlAccounts.length" style="margin-top:5px;" />
-				<Button big="1" @click.native="donate" text="Donate to Scatter" />
+			<section class="split-inputs ridl-actions">
+				<section class="info">
+					<div>Your contributed: <b>{{eosContributions}}</b></div>
+					You can claim <b>{{ridlContributions}}</b> at <b>{{(new Date(ridlCycle.ends*1000)).toTimeString().split(' ')[0]}}</b>
+				</section>
+
+				<section style="text-align:right;">
+					<Button blue="1" big="1" @click.native="claim" text="Claim" v-if="claimableRidlAccounts.length" style="margin-top:5px;" />
+					<Button big="1" @click.native="donate" text="Donate" />
+				</section>
 			</section>
 
 
@@ -119,7 +121,7 @@
 			ridlContributions(){
 				if(!this.ridlCycle) return null;
 				const num = parseFloat(this.contributions[0] / this.contributions[1] * 170000).toFixed(4);
-				return isNaN(num) ? '0.0000' : num + ' RIDL';
+				return isNaN(num) ? '0.0000' : this.formatNumber(num, true) + ' RIDL';
 			},
 			eosContributions(){
 				if(!this.ridlCycle) return null;
@@ -167,7 +169,9 @@
 			},
 			async donate(){
 				if(parseFloat(this.buyRidlAmount.split(' ')[0]) < 1) return PopupService.push(Popup.snackbar('1.0000 EOS Minimum'));
-				const donated = await RIDLService.donateToScatter(this.account, this.buyRidlAmount);
+				this.setWorkingScreen(true);
+				const donated = await RIDLService.donateToScatter(this.account, this.buyRidlAmount).catch(() => null);
+				this.setWorkingScreen(false);
 				if(donated) setTimeout(() => {
 					this.getRidlCycleData();
 				}, 1000);
@@ -189,6 +193,15 @@
 
 <style scoped lang="scss">
 	@import "../../styles/variables";
+
+	.ridl-actions {
+		display:flex;
+		align-items: center;
+
+		.info {
+			font-size: $small;
+		}
+	}
 
 	.get-ridl {
 		height:calc(#{$fullheight} - 70px);
