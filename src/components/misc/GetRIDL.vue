@@ -215,9 +215,7 @@
 			text-align:center;
 			margin:0 auto;
 			line-height: $small;
-			margin-bottom:40px;
-			border-bottom:1px solid $lightgrey;
-			padding-bottom:30px;
+			padding-bottom:50px;
 
 			.icon {
 				font-size: 64px;
