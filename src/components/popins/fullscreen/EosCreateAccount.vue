@@ -41,7 +41,6 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import {Blockchains} from "../../../models/Blockchains";
-	import FullWidthRow from '../../reusable/FullWidthRow';
 	import PluginRepository from "../../../plugins/PluginRepository";
 	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
@@ -53,9 +52,6 @@
 
 	export default {
 		props:['popin'],
-		components:{
-			FullWidthRow,
-		},
 		data () {return {
 
 			accountName:'',

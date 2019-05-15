@@ -16,7 +16,7 @@
 
 	button {
 		cursor: pointer;
-		height:34px;
+		height:38px;
 		outline:0;
 		padding:0 15px;
 		font-weight: bold;

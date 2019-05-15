@@ -30,7 +30,6 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import PopOutApp from '../../components/popouts/PopOutApp';
 	import SearchBar from '../../components/reusable/SearchBar';
-	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import Network from "../../models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
@@ -40,7 +39,6 @@
 		components:{
 			RequiredFields,
 			PopOutApp,
-			FullWidthRow,
 			SearchBar,
 		},
 		data () {return {

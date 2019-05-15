@@ -14,7 +14,7 @@
 						<figure class="key">{{keypair.enabledKey().key}}</figure>
 					</section>
 					<section class="actions" v-if="!asSelector">
-						<figure class="action icon-key"></figure>
+						<figure class="action icon-key" @click="exportPrivateKey(keypair)"></figure>
 						<figure class="action icon-dot-3" @click="setActionsMenu(keypair)"></figure>
 
 						<section class="action-menu" :class="{'hidden':actionsMenu !== keypair.id}">
@@ -194,6 +194,12 @@
 				await AccountService.importAllAccounts(keypair);
 				this.refreshingAccounts = false;
 			},
+			exportPrivateKey(keypair){
+				PopupService.push(Popup.verifyPassword(verified => {
+					if(!verified) return;
+					PopupService.push(Popup.exportPrivateKey(keypair));
+				}))
+			}
 		}
 
 	}

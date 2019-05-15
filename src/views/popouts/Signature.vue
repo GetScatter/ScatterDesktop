@@ -160,7 +160,6 @@
     import * as Actions from '../../store/constants';
 	import ReputationScore from '../../components/reusable/ReputationScore';
 	import SearchBar from '../../components/reusable/SearchBar';
-	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import JSONFormatter from 'json-formatter-js'
 	import Hasher from "../../util/Hasher";
 	import Account from "../../models/Account";
@@ -187,7 +186,6 @@
 			PopOutApp,
 			ReputationScore,
 			RequiredFields,
-			FullWidthRow,
 			SearchBar,
 		},
 		data () {return {

@@ -220,6 +220,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_TRANSFER, {from, to, token, memo}, callback))
 	}
 
+	static exportPrivateKey(keypair, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EXPORT_PRIVATE_KEY, {keypair}, callback))
+	}
+
 	static setDisplayToken(callback = () => {}){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DISPLAY_TOKEN, {}, callback))
 	}
@@ -261,6 +265,7 @@ export const PopupTypes = {
 	ENABLE_WHITELIST:'enableWhitelist',
 	CONFIRM_EXCHANGE:'confirmExchange',
 	CONFIRM_TRANSFER:'confirmTransfer',
+	EXPORT_PRIVATE_KEY:'exportPrivateKey',
 	DISPLAY_TOKEN:'displayToken',
 	GENERATE_KEYPAIR:'generateKeypair',
 	IMPORT_KEYPAIR:'importKeypair',

@@ -23,6 +23,7 @@
                     <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
                     <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
                     <!--<DisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />-->
+                    <ExportPrivateKey :popin="popIn" v-if="popIn.data.type === popupTypes.EXPORT_PRIVATE_KEY" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg-holder">
@@ -100,9 +101,11 @@
     import SelectBlockchain from "./popins/overlay/SelectBlockchain";
     import EnterSecurityCode from "./popins/fullscreen/EnterSecurityCode";
     import SelectFromList from "./popins/overlay/SelectFromList";
+    import ExportPrivateKey from "./popins/fullscreen/ExportPrivateKey";
 
     export default {
     	components:{
+		    ExportPrivateKey,
 		    SelectFromList,
 		    EnterSecurityCode,
 		    SelectRecipient,
