@@ -6,6 +6,8 @@ import {Popup} from '../../models/popups/Popup';
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 import StoreService from "./StoreService";
+import {BlockchainsArray} from "../../models/Blockchains";
+import PluginRepository from "../../plugins/PluginRepository";
 
 export default class ContactService {
 
@@ -42,6 +44,14 @@ export default class ContactService {
 	    const scatter = StoreService.get().state.scatter.clone();
 	    scatter.contacts = scatter.contacts.filter(x => x.id !== contact.id);
 	    return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+    }
+
+    static validate(blockchain, contact){
+    	// You can add unsupported blockchains which we have no logic for,
+	    // so we will always default to true for those.
+    	if(!BlockchainsArray.map(x => x.value).includes(blockchain)) return true;
+
+    	return PluginRepository.plugin(blockchain).isValidRecipient(contact);
     }
 
 }

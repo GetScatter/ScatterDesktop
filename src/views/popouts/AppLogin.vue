@@ -123,9 +123,11 @@
 			selectedLocation:null,
 			selectedIdentity:null,
 			showingAll:false,
-			reputation:null,
 
 			loginAll:false,
+
+			loadingReputation:false,
+			reputation:null,
 		}},
 		created(){
 			console.log(this.popup);

@@ -8,7 +8,7 @@
 				       :text="contact.name"
 				       v-on:changed="x => contact.name = x" />
 
-				<Input style="flex:2; margin-bottom:0;" label="Account / Address"
+				<Input :error="recipientError" label="Account / Address"
 				       placeholder="..."
 				       :text="contact.recipient"
 				       v-on:changed="x => contact.recipient = x" />
@@ -28,6 +28,7 @@
 <script>
 	import {mapGetters} from 'vuex';
 	import Contact from "../../models/Contact";
+	import ContactService from "../../services/utility/ContactService";
 
 	export default {
 		props:['original', 'brandNew'],
@@ -46,6 +47,13 @@
 				if(this.brandNew) return true;
 				return !this.contacts.find(x => x.id === this.contact.id);
 			},
+			recipientError(){
+				if(this.contact.recipient.trim().length === 0) return null;
+				if(!ContactService.validate(this.contact.blockchain, this.contact.recipient)){
+					return `Are you sure this is correct?`
+				}
+				return null;
+			}
 		},
 		watch:{
 			['contact'](){

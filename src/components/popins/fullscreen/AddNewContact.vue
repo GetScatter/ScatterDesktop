@@ -1,6 +1,6 @@
 <template>
 	<section class="pop-in">
-		<section>
+		<section v-if="contact">
 			<section class="head">
 				<figure class="icon font icon-user-add"></figure>
 				<figure class="title">Add New Contact</figure>
@@ -25,7 +25,7 @@
 		components: {EditContact},
 		props:['popin'],
 		data () {return {
-			contact:Contact.placeholder(),
+			contact:null,
 		}},
 		computed:{
 			...mapState([
@@ -34,6 +34,14 @@
 			...mapGetters([
 
 			]),
+			blockchain(){
+				return this.popin.data.props.blockchain;
+			}
+		},
+		mounted(){
+			const contact = Contact.placeholder();
+			contact.blockchain = this.blockchain;
+			this.contact = contact;
 		},
 		methods:{
 			returnResult(){
@@ -41,7 +49,6 @@
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			async saveContact(){
-				this.contact.blockchain = this.popin.data.props.blockchain;
 				const added = await ContactService.addOrUpdate(this.contact);
 				if(added) this.returnResult();
 			},
