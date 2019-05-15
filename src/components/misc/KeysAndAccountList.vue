@@ -219,7 +219,7 @@
 			//padding-bottom:20px;
 			margin-bottom:20px;
 			border:1px solid $lightgrey;
-			padding:10px;
+			padding:10px 10px 0;
 			border-radius:$radius;
 
 			&.new {
@@ -340,19 +340,16 @@
 			}
 
 			.accounts-list {
-				margin-top:5px;
+				margin-top:10px;
 
 				.account {
 					display:flex;
 					align-items: center;
 					padding:15px;
-					border-radius:$radius;
-					border:1px solid $lightgrey;
+					border-top:1px solid $lightgrey;
 					cursor: pointer;
-
-					&:not(:last-child){
-						margin-bottom:10px;
-					}
+					margin-left: -10px;
+    				margin-right: -10px;
 
 					.details {
 						flex:1;
@@ -385,7 +382,7 @@
 					}
 
 					&:hover {
-						border:1px solid $blue;
+						background-color:lighten($blue, 45%);
 
 						.details {
 							.name {
