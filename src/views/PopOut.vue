@@ -45,6 +45,7 @@
     import {Popup} from "../models/popups/Popup";
     import PasswordService from "../services/secure/PasswordService";
     import Token from "../models/Token";
+    import RIDLService from "../services/apis/RIDLService";
 
     export default {
         data () {return {
@@ -101,6 +102,7 @@
                 'scatter',
             ]),
             popup(){ return Popup.fromJson(this.windowMessage.data.popup) },
+            appData(){ return this.windowMessage.data.popup.data.props.appData; },
             payload(){ return this.windowMessage.data.popup.data.props.payload },
             popupType(){ return this.windowMessage.data.popup.data.type },
         },
@@ -112,10 +114,19 @@
 				window.close();
 				if(!window.closed) window.destroy();
             },
+	        async checkAppReputation(){
+		        this[Actions.SET_APP_REP](await RIDLService.checkApp(this .appData.applink));
+	        },
             ...mapActions([
                 Actions.HOLD_SCATTER,
-                Actions.SET_FULL_BALANCES
+                Actions.SET_FULL_BALANCES,
+                Actions.SET_APP_REP,
             ])
+        },
+        watch:{
+        	['windowMessage'](){
+        		if(this.windowMessage) this.checkAppReputation();
+            }
         }
     }
 </script>

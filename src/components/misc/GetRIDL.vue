@@ -135,12 +135,13 @@
 				}, []);
 			}
 		},
-		created(){
+		mounted(){
 			this.getRidlCycleData();
 
 			if(this.mainnetAccounts.length){
 				this.account = this.mainnetAccounts[0];
 			}
+
 		},
 		methods:{
 			async getRidlCycleData(){

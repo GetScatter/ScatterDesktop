@@ -3,25 +3,83 @@
 	<!------------ APP DETAILS ------------>
 	<!------------------------------------->
 	<section class="app-details">
-		<figure class="logo">
+		<figure class="logo" v-if="!untrusted" :class="{'border':app.applink !== 'Scatter' && !app.img}">
 			<Scatter v-if="app.applink === 'Scatter'" />
 			<img v-else-if="app.img" :src="app.img" />
 			<span v-else>No Image</span>
 		</figure>
+		<figure class="logo scam" v-else>
+			<i class="icon-attention"></i>
+		</figure>
+		<section v-if="ridlEnabled">
+			<figure class="reputation" v-if="appReputation === false"><i class="icon-spin4 animate-spin"></i> loading reputation</figure>
+			<section v-else>
+				<figure class="reputation" v-if="unknownReputation">Unknown Reputation</figure>
+				<figure class="reputation trusted" v-if="trusted">Trustworthy</figure>
+				<figure class="reputation untrusted" v-if="untrusted">Scam</figure>
+			</section>
+		</section>
+
 		<figure class="name"><b>{{app.name}}</b> <span v-if="suffix">{{suffix}}</span></figure>
 	</section>
 </template>
 
 <script>
+	import {mapState, mapGetters} from 'vuex';
 	import Scatter from '../svgs/ScatterOutline'
+
 	export default {
 		components:{Scatter},
-		props:['app', 'suffix']
+		props:['app', 'suffix'],
+		computed:{
+			...mapState([
+				'appReputation'
+			]),
+			...mapGetters([
+				'ridlEnabled',
+			]),
+			unknownReputation(){
+				console.log(this.appReputation);
+				return this.appReputation === undefined;
+			},
+			trusted(){
+				return this.appReputation && parseFloat(this.appReputation.decimal) > 0
+			},
+			untrusted(){
+				return this.appReputation && parseFloat(this.appReputation.decimal) < 0
+			}
+		},
+		watch:{
+			['appReputation'](){
+				console.log(this.appReputation);
+			}
+		}
 	}
 </script>
 
 <style scoped lang="scss">
 	@import "../../styles/variables";
+
+	.reputation {
+		padding:5px 12px;
+		border-radius:40px;
+		font-size: $small;
+		margin-bottom:10px;
+		margin-top:-5px;
+		font-weight: bold;
+		background:$lightergrey;
+		color:$grey;
+
+		&.trusted {
+			background:$darkgreen;
+			color:$white;
+		}
+
+		&.untrusted {
+			background:$red;
+			color:$white;
+		}
+	}
 
 	.app-details {
 		text-align:center;
@@ -38,10 +96,13 @@
 			height:$logo;
 			width:$logo;
 			border-radius:$radius;
-			background: $lightergrey;
-			border:1px solid $lightgrey;
 			padding:5px;
 			margin-bottom:20px;
+
+			&.border {
+				background: $lightergrey;
+				border:1px solid $lightgrey;
+			}
 
 			img {
 				height:100%;
@@ -52,6 +113,15 @@
 				font-size: $small;
 				font-weight: bold;
 				color:$silver;
+			}
+
+			&.scam {
+				font-size: 48px;
+				border-radius:50%;
+				box-shadow:0 0 250px $red;
+				color:$red;
+				background: $lightergrey;
+				border:1px solid $lightgrey;
 			}
 		}
 

@@ -1,7 +1,7 @@
 <template>
 	<section class="sidebar-container">
 		<section class="placeholder"></section>
-		<section class="sidebar"> <!-- no-collapse -->
+		<section class="sidebar">
 			<figure class="bar-bg"></figure>
 			<figure class="category" v-for="category in items">
 				<figure class="category-name" v-if="category.name">{{category.name}}</figure>
@@ -68,7 +68,7 @@
 <style scoped lang="scss">
 	@import "../styles/variables";
 
-	$time:0.12s;
+	$time:0.2s;
 	$closed:64px;
 	$open:200px;
 
@@ -124,6 +124,7 @@
 				font-size: 24px;
 				transition:all $time ease;
 				transition-property: color;
+				color:$grey;
 			}
 
 			span {
@@ -163,16 +164,11 @@
 			transition-property: opacity;
 		}
 
-		&:not(.no-collapse){
-			&:hover {
-				transition: width $time ease, box-shadow 0.3s ease;
-				box-shadow:10px 0 30px rgba(0,0,0,0.15), 2px 0 10px $blue-shadow;
-				border-right:0;
-			}
-		}
-
-		&:hover, &.no-collapse {
+		&:hover {
 			width:$open;
+			transition: width $time ease, box-shadow 0.3s ease;
+			box-shadow:10px 0 30px rgba(0,0,0,0.15), 2px 0 10px $blue-shadow;
+			border-right:0;
 
 			.category-name {
 				opacity:1;

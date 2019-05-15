@@ -150,12 +150,7 @@
 			this.selectedIdentity = this.identities[0].clone();
 			this.selectedLocation = this.selectedIdentity.locations[0].clone();
 
-			// setTimeout(async() => {
-			// 	this.loadingReputation = true;
-			// 	this.reputation = await RIDLService.checkApp(this.popup.data.props.payload.origin);
-			// 	if(!this.reputation) this.reputation = await RIDLService.checkApp(this.popup.origin());
-			// 	this.loadingReputation = false;
-			// })
+
 
 
 			if(this.locationFields.length || this.personalFields.length){
@@ -165,7 +160,7 @@
 		computed: {
 			...mapState([
 				'scatter',
-				'balances'
+				'balances',
 			]),
 			...mapGetters([
 				'identity',
