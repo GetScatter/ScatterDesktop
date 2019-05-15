@@ -2,6 +2,11 @@
 	<section class="apps">
 		<PanelTabs :tabs="tabs" :state="this.selectedCategory ? this.selectedCategory : state" v-on:selected="setState" />
 
+		<section class="search-icon" :class="{'visible':exploreTerms.length}" v-if="state === STATES.EXPLORE">
+			<i class="icon-search"></i>
+			<input v-model="exploreTerms" />
+		</section>
+
 		<section class="scroller" ref="scroller" v-if="state === STATES.EXPLORE">
 			<figure class="blue-bg"></figure>
 			<section class="padder">
@@ -9,7 +14,25 @@
 					<Carousel :slides="featuredApps" />
 				</section>
 
-				<section class="categories">
+				<section class="categories" v-if="exploreTerms.length">
+					<section class="category singular">
+						<section class="info">
+							<figure class="name">{{terms}}</figure>
+						</section>
+
+						<section class="apps">
+							<router-link :to="{name:RouteNames.APP, params:{applink:app.applink}}" class="app" :key="app.applink" v-for="app in filteredApps">
+								<figure class="image" :class="{'no-image':!getAppData(app.applink).hasOwnProperty('img')}">
+									<img v-if="getAppData(app.applink).hasOwnProperty('img')" :src="getAppData(app.applink).img" />
+								</figure>
+								<figure class="name">{{app.name}}</figure>
+							</router-link>
+						</section>
+
+					</section>
+				</section>
+
+				<section class="categories" v-if="!exploreTerms.length">
 
 					<section class="category" :class="{'singular':selectedCategory}" v-for="category in categories" v-if="!selectedCategory || selectedCategory === category.type">
 						<section class="info" v-if="!selectedCategory">
@@ -84,6 +107,7 @@
 			STATES,
 			selectedCategory:null,
 			terms:'',
+			exploreTerms:'',
 			typeFilter:null,
 		}},
 		computed:{
@@ -120,7 +144,20 @@
 					return b.apps.length - a.apps.length
 				});
 			},
+			filteredApps(){
+				if(!this.dappData) return {};
+				return Object.keys(this.dappData).reduce((acc, key) => {
+					const item = this.dappData[key];
+					const found = prop => prop.toLowerCase().trim().indexOf(this.exploreTerms) > -1;
+					if(found(item.applink) || found(item.name) || found(item.description)) acc.push(item);
+					return acc;
+				}, []);
+			},
 			featuredApps(){
+				if(this.exploreTerms.length){
+					return this.filteredApps.slice(0,3);
+				}
+
 				if(!this.categories || !this.categories.length) return [];
 				if(!this.selectedCategory) return this.categories[0].apps.filter(app => {
 					return this.getAppData(app.applink).hasOwnProperty('img');
@@ -204,6 +241,45 @@
 	@import "../styles/variables";
 
 	.apps {
+		position: relative;
+
+		.search-icon {
+			position: absolute;
+			top:0;
+			right:60px;
+			color:$white;
+			font-size: 22px;
+			cursor: pointer;
+			border-radius:$radius;
+
+			input {
+				border-radius:0;
+				border:0;
+				border-bottom:2px solid rgba(255,255,255,0.4);
+				position:absolute;
+				top:-5px;
+				right:0;
+				padding:10px 0 15px 0;
+				color:$white;
+				width:0;
+				height:25px;
+				font-size: $large;
+				opacity:0;
+
+
+				transition:width 0.2s ease, padding 0.2s ease, opacity 0.5s ease;
+			}
+
+			&:hover, &.visible {
+				input {
+					width:200px;
+					padding:10px 30px 15px 0;
+					opacity:1;
+
+				}
+			}
+		}
+
 		.scroller {
 			position: relative;
 			height:calc(100vh - 220px);

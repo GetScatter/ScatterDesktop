@@ -1,3 +1,12 @@
+@keyframes slowbounce {
+  0%, 100% {
+    transform:translateY(0px);
+  }
+  50% {
+    transform:translateY(-4px);
+  }
+}
+
 
 @keyframes pulsate {
   0%, 100% { transform:scale(1); }

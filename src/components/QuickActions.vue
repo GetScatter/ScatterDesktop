@@ -210,7 +210,7 @@
 
 			&:hover {
 				img {
-					transform:translateY(-3px);
+					animation: slowbounce 1s ease infinite;
 				}
 			}
 
