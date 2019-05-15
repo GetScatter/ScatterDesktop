@@ -16,7 +16,7 @@
 			<section v-else>
 				<figure class="reputation" v-if="unknownReputation">Unknown Reputation</figure>
 				<figure class="reputation trusted" v-if="trusted">Trustworthy</figure>
-				<figure class="reputation untrusted" v-if="untrusted">Scam</figure>
+				<figure class="reputation untrusted" v-if="untrusted">Known Scam</figure>
 			</section>
 		</section>
 
@@ -118,10 +118,11 @@
 			&.scam {
 				font-size: 48px;
 				border-radius:50%;
-				box-shadow:0 0 250px $red;
 				color:$red;
 				background: $lightergrey;
 				border:1px solid $lightgrey;
+
+				animation: pulsate 0.5s ease infinite;
 			}
 		}
 
