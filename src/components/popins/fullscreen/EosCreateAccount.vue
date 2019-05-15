@@ -17,7 +17,7 @@
 				<section v-for="item in changeableKeys" class="key-entry">
 					<label>{{item.label}}</label>
 					<section class="split-inputs">
-						<Select v-if="validKeypairs.length" bordered="1" style="flex:0.5;"
+						<Select truncate="1" v-if="validKeypairs.length" bordered="1" style="flex:0.5; max-width:180px;"
 						        :options="validKeypairs"
 						        :selected="item.ref ? keypairFor(item.ref) ? keypairFor(item.ref).name : '' : ''"
 						        :parser="x => x.name"

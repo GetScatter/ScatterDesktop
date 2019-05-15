@@ -7,151 +7,129 @@
             <figure class="button" :class="{'active':state === STATES.BLACKLIST}" @click="state = STATES.BLACKLIST">{{locale(langKeys.SETTINGS.TOKENS.SWITCH.BLACKLIST)}}</figure>
             <figure class="button" :class="{'active':state === STATES.SETTINGS}" @click="state = STATES.SETTINGS">{{locale(langKeys.SETTINGS.TOKENS.SWITCH.SETTINGS)}}</figure>
         </section>
-        <br>
 
 
-        <!--------------------------->
-        <!------   ADD TOKEN   ------>
-        <!--------------------------->
-        <section v-if="state === STATES.ADD_TOKEN">
+        <section class="scroller">
+            <!--------------------------->
+            <!------   ADD TOKEN   ------>
+            <!--------------------------->
+            <section v-if="state === STATES.ADD_TOKEN">
 
-            <section class="disclaimer less-pad">
-                {{locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.Disclaimer)}}
-            </section>
+                <section class="split-inputs">
 
-            <section class="split-inputs">
-                <section style="flex:1; margin-left:0;">
-                    <label>{{locale(langKeys.GENERIC.Network)}}</label>
-                    <Select bordered="1"
-                            :selected="filteredNetworks.find(x => x.chainId === newToken.chainId)"
-                            :options="filteredNetworks"
-                            :parser="x => x.name"
-                            v-on:changed="x => newToken.chainId = x.chainId" />
+                    <section style="flex:1;">
+                        <label>{{locale(langKeys.GENERIC.Blockchain)}}</label>
+                        <Select bordered="1"
+                                :selected="{value:newToken.blockchain}"
+                                :options="blockchains"
+                                :parser="x => blockchainName(x.value)"
+                                v-on:selected="x => newToken.blockchain = x.value" />
+                    </section>
+
+                    <section style="flex:1;">
+                        <label>{{locale(langKeys.GENERIC.Network)}}</label>
+                        <Select bordered="1"
+                                :selected="filteredNetworks.find(x => x.chainId === newToken.chainId)"
+                                :options="filteredNetworks"
+                                :parser="x => x.name"
+                                v-on:selected="x => newToken.chainId = x.chainId" />
+                    </section>
                 </section>
-
-                <section style="flex:1; margin-bottom:0;">
-                    <Input style="margin-bottom:4px;" :placeholder="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder)"
-                           :label="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNameLabel)"
-                           :text="newToken.name" v-on:changed="x => newToken.name = x" />
-                </section>
-            </section>
-            <br>
-
-            <section class="split-inputs">
-                <section style="flex:1; margin-left:0;">
-                    <label>{{locale(langKeys.GENERIC.Blockchain)}}</label>
-                    <Select bordered="1"
-                            :selected="{value:newToken.blockchain}"
-                            :options="blockchains"
-                            :parser="x => blockchainName(x.value)"
-                            v-on:changed="x => newToken.blockchain = x.value" />
-                </section>
-
-                <Input style="flex:1; margin-bottom:4px;"
-                     v-if="newToken.needsContract()"
-                     :placeholder="contractPlaceholder"
-                     :label="locale(langKeys.GENERIC.Contract)"
-                     :text="newToken.contract"
-                     v-on:changed="x => newToken.contract = x" />
-            </section>
-            <br>
-            <section class="split-inputs">
-                <Input placeholder="XXX" :label="locale(langKeys.GENERIC.Symbol)" :text="newToken.symbol" v-on:changed="x => newToken.symbol = x" />
-                <Input placeholder="4" type="number" :label="locale(langKeys.GENERIC.Decimals)" :text="newToken.decimals" v-on:changed="x => newToken.decimals = x" />
-            </section>
-
-            <section class="split-inputs">
-                <Button style="max-width:100%;" :text="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.WhitelistTokenButton)" @click.native="addToken(false)" />
-                <Button style="max-width:100%;" red="1" :text="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.BlacklistTokenButton)" @click.native="addToken(true)" />
-            </section>
-        </section>
-
-
-
-
-        <!--------------------------->
-        <!------   SETTINGS   ------->
-        <!--------------------------->
-        <section v-if="state === STATES.SETTINGS">
-
-            <!--<section class="action-box top-pad">-->
-                <!--<label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayLabel)}}</label>-->
-                <!--<p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayDescription)}}</p>-->
-
-                <!--<br>-->
-                <!--<br>-->
-                <!--<section class="split-inputs">-->
-                    <!--<section class="switch" style="flex:0 0 auto;" @click="toggleMainnetsOnly">-->
-                        <!--<figure class="dot" :class="{'disabled':!mainnetTokensOnly}"></figure>-->
-                    <!--</section>-->
-                    <!--<section class="details" v-if="mainnetTokensOnly">-->
-                        <!--<figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton)}}</figure>-->
-                        <!--<p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksDesc)}}</p>-->
-                    <!--</section>-->
-                    <!--<section class="details" v-if="!mainnetTokensOnly">-->
-                        <!--<figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton)}}</figure>-->
-                        <!--<p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetDesc)}}</p>-->
-                    <!--</section>-->
-                <!--</section>-->
-            <!--</section>-->
-
-            <section class="action-box top-pad">
-                <label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.FilterSmallBalancesLabel)}}</label>
-                <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.FilterSmallBalancesDescription)}}</p>
-                <br>
                 <br>
 
-                <Input v-for="blockchain in blockchains"
-                     :key="blockchain.value"
-                     :placeholder="defaultDecimals(blockchain.value)"
-                     :label="blockchainName(blockchain.value)"
-                     :text="balanceFilters[blockchain.value]"
-                     v-on:changed="x => balanceFilters[blockchain.value] = x"
-                     type="number" />
-            </section>
-        </section>
+                <section class="split-inputs">
+                    <section style="flex:1; margin-bottom:0;">
+                        <Input style="margin-bottom:4px;" :placeholder="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNamePlaceholder)"
+                               :label="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.TokenNameLabel)"
+                               :text="newToken.name" v-on:changed="x => newToken.name = x" />
+                    </section>
 
-
-
-        <!---------------------------------------->
-        <!------   WHITELIST / BLACKLIST   ------->
-        <!---------------------------------------->
-        <section v-if="state === STATES.WHITELIST || state === STATES.BLACKLIST">
-
-            <Select bordered="1" style="flex:2;" :label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.TokenFilterLabel)"
-                 :selected="blockchain ? {value:blockchain} : null"
-                 :options="[null].concat(blockchains)"
-                 :parser="x => x ? blockchainName(x.value) : 'No Blockchain Filter'"
-                 v-on:changed="x => blockchain = x ? x.value : null" />
-
-            <SearchBar class="search"
-                       :placeholder="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.TokenSearchPlaceholder)"
-                       v-on:terms="x => searchTerms = x" />
-
-            <br>
-            <section v-if="state === STATES.WHITELIST">
-
-                <!--<FlatList style="padding:0;"-->
-                          <!--:label="locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.WHITELIST.CustomTokensLabel)"-->
-                          <!--:items="tokensList"-->
-                          <!--icon="icon-cancel"-->
-                          <!--v-if="tokensList.length"-->
-                          <!--:selected="selectedDisplayToken"-->
-                          <!--v-on:selected="selectDisplayToken"-->
-                          <!--v-on:action="removeToken" />-->
-            </section>
-
-            <section v-if="state === STATES.BLACKLIST">
-
-                <section class="disclaimer less-pad" v-if="!searchTerms.length">
-                    {{locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.BLACKLIST.Disclaimer)}}
-                    <p>{{locale(langKeys.SETTINGS.TOKENS.WHITE_BLACK.BLACKLIST.DisclaimerSubtitle)}}</p>
+                    <Input style="flex:1; margin-bottom:4px;"
+                           v-if="newToken.needsContract()"
+                           :placeholder="contractPlaceholder"
+                           :label="locale(langKeys.GENERIC.Contract)"
+                           :text="newToken.contract"
+                           v-on:changed="x => newToken.contract = x" />
+                </section>
+                <br>
+                <section class="split-inputs">
+                    <Input placeholder="XXX" :label="locale(langKeys.GENERIC.Symbol)" :text="newToken.symbol" v-on:changed="x => newToken.symbol = x" />
+                    <Input placeholder="4" type="number" :label="locale(langKeys.GENERIC.Decimals)" :text="newToken.decimals" v-on:changed="x => newToken.decimals = x" />
                 </section>
 
-                <!--<FlatList style="padding:0 0 20px 0;"-->
-                          <!--:items="blacklistTokensList"-->
-                          <!--icon="icon-cancel"-->
-                          <!--v-on:action="removeToken" />-->
+                <section class="split-inputs">
+                    <Button style="max-width:100%;" :text="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.WhitelistTokenButton)" @click.native="addToken(false)" />
+                    <Button style="max-width:100%;" red="1" :text="locale(langKeys.SETTINGS.TOKENS.ADD_TOKEN.BlacklistTokenButton)" @click.native="addToken(true)" />
+                </section>
+            </section>
+
+
+
+
+            <!--------------------------->
+            <!------   SETTINGS   ------->
+            <!--------------------------->
+            <section v-if="state === STATES.SETTINGS">
+
+                <section class="action-box top-pad">
+                    <label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayLabel)}}</label>
+                    <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayDescription)}}</p>
+
+                    <br>
+                    <br>
+                    <section class="split-inputs">
+                        <section class="details" v-if="mainnetTokensOnly">
+                            <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton)}}</figure>
+                            <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksDesc)}}</p>
+                        </section>
+                        <section class="details" v-if="!mainnetTokensOnly">
+                            <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton)}}</figure>
+                            <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetDesc)}}</p>
+                        </section>
+                        <Switcher style="flex:0 0 auto; margin-left:20px;" :state="mainnetTokensOnly" @click.native="toggleMainnetsOnly" />
+                    </section>
+                </section>
+
+                <section class="action-box top-pad">
+                    <label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.FilterSmallBalancesLabel)}}</label>
+                    <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.FilterSmallBalancesDescription)}}</p>
+                    <br>
+                    <br>
+
+                    <Input v-for="blockchain in blockchains"
+                           :key="blockchain.value"
+                           :placeholder="defaultDecimals(blockchain.value)"
+                           :label="blockchainName(blockchain.value)"
+                           :text="balanceFilters[blockchain.value]"
+                           v-on:changed="x => balanceFilters[blockchain.value] = x"
+                           type="number" />
+                </section>
+            </section>
+
+
+            <!---------------------------------------->
+            <!------   WHITELIST / BLACKLIST   ------->
+            <!---------------------------------------->
+            <section v-if="state === STATES.WHITELIST || state === STATES.BLACKLIST">
+
+                <section class="tokens" v-if="visibleTokens.length">
+                    <section class="badge-item hoverable" v-for="token in visibleTokens" @click="removeToken(token)">
+                        <figure class="badge" :class="[{'iconed':token.symbolClass(), 'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]">
+                            <span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
+                        </figure>
+                        <section class="details">
+                            <figure class="title"><span v-if="token.amount">{{formatNumber(token.amount, true)}}</span> {{token.symbol}}</figure>
+                        </section>
+                        <section class="actions">
+                            <Button text="Remove" />
+                        </section>
+                    </section>
+                </section>
+
+                <section class="no-tokens" v-else>
+                    No tokens
+                </section>
+
             </section>
         </section>
 
@@ -167,18 +145,6 @@
 	import SearchBar from '../../reusable/SearchBar';
 	import Token from "../../../models/Token";
 	import TokenService from "../../../services/utility/TokenService";
-	import PriceService from "../../../services/apis/PriceService";
-
-	const formatter = list => list.map(token => {
-		const fiatPrice = token.fiatPrice();
-		const description = `${blockchainName(token.blockchain)} ${fiatPrice ? ' - '+fiatPrice : ''}`;
-		return {
-			id:token.unique(),
-			sub:`${token.symbol} - ${token.contract}`,
-			title:`${token.name} (${token.network() ? token.network().name : ''})`,
-			description
-		};
-	});
 
 	const STATES = {
 		ADD_TOKEN:'addToken',
@@ -203,13 +169,12 @@
 			addingToken:false,
 
 			searchTerms:'',
-			currencies:[],
 
 			balanceFilters:{},
 		}},
 		mounted(){
 			this.newToken.chainId = PluginRepository.plugin(Blockchains.EOSIO).getEndorsedNetwork().chainId;
-			PriceService.getCurrencies().then(x => this.currencies = x);
+			// PriceService.getCurrencies().then(x => this.currencies = x);
 			this.balanceFilters = this.scatter.settings.balanceFilters;
 		},
 		computed:{
@@ -225,43 +190,17 @@
 				'displayToken',
 				'displayCurrency',
 			]),
-			selectedDisplayToken(){
-				if(!this.displayToken) return 'fiat_'+this.displayCurrency;
-				return this.displayToken;
-			},
+
+            visibleTokens(){
+			    return this.state === STATES.BLACKLIST ? this.blacklistTokens : this.tokens;
+            },
 
 
 			contractPlaceholder(){
 				return PluginRepository.plugin(this.newToken.blockchain).contractPlaceholder();
 			},
-			blacklistTokensList(){
-				if(!this.blockchain) return formatter(this.blacklistTokens);
-				return formatter(this.blacklistTokens
-					.filter(x => x.blockchain === this.blockchain))
-			},
-			currencyList(){
-				return this.currencies.map(ticker => ({
-					id:`fiat_${ticker}`,
-					title:ticker,
-				}));
-			},
 			terms(){
 				return this.searchTerms.trim().toLowerCase();
-			},
-			networkTokensList(){
-				const tokens = this.filterTokensByTerms(this.networkTokens).reduce((acc, t) => {
-					if(!acc.find(x => x.unique() === t.unique())) acc.push(t);
-					return acc;
-                }, []);
-				if(!this.blockchain) return formatter(tokens);
-				return formatter(tokens
-					.filter(x => x.blockchain === this.blockchain))
-			},
-			tokensList(){
-				const tokens = this.filterTokensByTerms(this.tokens);
-				if(!this.blockchain) return formatter(tokens);
-				return formatter(tokens
-					.filter(x => x.blockchain === this.blockchain))
 			},
             filteredNetworks(){
 				return this.networks.filter(x => x.blockchain === this.newToken.blockchain);
@@ -283,25 +222,24 @@
 				for(let i = 0; i < decimals; i++){ stringDecimals+=i === (decimals-1) ? '1' : '0'; }
 				return stringDecimals
 			},
-			selectDisplayToken(token){
-				const asFiat = token.id.startsWith('fiat_');
-				if(asFiat){
-					const scatter = this.scatter.clone();
-					scatter.settings.displayCurrency = token.title;
-					this[Actions.SET_SCATTER](scatter);
-				}
-
-				if(!token.id || asFiat) return TokenService.setDisplayToken(null);
-				TokenService.setDisplayToken(token.id);
-			},
+			// selectDisplayToken(token){
+			// 	const asFiat = token.id.startsWith('fiat_');
+			// 	if(asFiat){
+			// 		const scatter = this.scatter.clone();
+			// 		scatter.settings.displayCurrency = token.title;
+			// 		this[Actions.SET_SCATTER](scatter);
+			// 	}
+            //
+			// 	if(!token.id || asFiat) return TokenService.setDisplayToken(null);
+			// 	TokenService.setDisplayToken(token.id);
+			// },
 			async addToken(blacklist = false){
 				this.newToken.contract = this.newToken.contract.trim();
-				if(await TokenService.addToken(this.newToken, blacklist)){
+				if(await TokenService.addToken(this.newToken.clone(), blacklist)){
 					this.state = blacklist ? STATES.BLACKLIST : STATES.WHITELIST;
 				}
 			},
-			async removeToken(item){
-				const token = this.tokens.concat(this.networkTokens).concat(this.blacklistTokens).find(x => x.unique() === item.id);
+			async removeToken(token){
 				await TokenService.removeToken(token);
 			},
 			async toggleMainnetsOnly(){
@@ -333,6 +271,28 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../styles/variables";
+
+    .scroller {
+        padding:0;
+        margin:0;
+        height:calc(100vh - 230px);
+        padding-right:10px;
+        overflow-y:auto;
+    }
+
+    .no-tokens {
+        padding:40px;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 36px;
+        color:$lightergrey;
+        font-weight: bold;
+    }
+
+    .badge-item {
+        align-items: center;
+    }
 
     .fiat-currencies {
         .items {

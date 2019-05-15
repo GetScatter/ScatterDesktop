@@ -50,12 +50,8 @@ export default class TokenService {
 	    // Never removing system tokens.
 	    if(StoreService.get().getters.networkTokens.find(x => x.unique() === token.unique())) return true;
 
-	    PopupService.push(Popup.prompt('Removing Token', 'Are you sure?', async removed => {
-	        if(!removed) return false;
-
-		    filterOutToken(scatter, token);
-		    StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
-        }))
+	    filterOutToken(scatter, token);
+	    StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 
     static hasToken(token){

@@ -43,7 +43,7 @@ export default class Token {
     	const [blockchain, contract, symbol, chainId] = unique.split(':');
     	p.blockchain = blockchain;
     	p.contract = contract;
-    	p.symbol = symbol.toUpperCase();
+    	p.symbol = symbol ? symbol.toUpperCase() : 'INVALID_TOKEN';
     	p.chainId = chainId;
     	p.decimals = PluginRepository.plugin(blockchain).defaultDecimals();
     	return p;
