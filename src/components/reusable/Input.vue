@@ -96,7 +96,7 @@
 			position: absolute;
 			right:10px;
 			bottom:0;
-			top:8px;
+			top:0;
 			display:flex;
 			justify-content: center;
 			align-items: center;

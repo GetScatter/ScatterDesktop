@@ -189,7 +189,6 @@
 				})
 			},
 			async removeApp(app){
-				console.log(app);
 				await PermissionService.removeAllPermissionsFor(app.applink);
 				if(!this.permissions.filter(x => x.isIdentity).length){
 					this.state = STATES.EXPLORE;

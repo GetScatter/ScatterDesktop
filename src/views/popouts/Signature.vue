@@ -214,7 +214,6 @@
             participantsAsSelector:false,
 		}},
 		created(){
-			console.log(this.popup);
 			this.selectedIdentity = this.identity.clone();
 			this.selectedLocation = this.selectedIdentity.locations[0];
 			this.clonedLocation = this.selectedIdentity.locations[0].clone();
