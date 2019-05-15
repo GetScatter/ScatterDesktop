@@ -39,7 +39,6 @@
 				'ridlEnabled',
 			]),
 			unknownReputation(){
-				console.log(this.appReputation);
 				return this.appReputation === undefined;
 			},
 			trusted(){
@@ -49,11 +48,6 @@
 				return this.appReputation && parseFloat(this.appReputation.decimal) < 0
 			}
 		},
-		watch:{
-			['appReputation'](){
-				console.log(this.appReputation);
-			}
-		}
 	}
 </script>
 

@@ -130,7 +130,6 @@
 			reputation:null,
 		}},
 		created(){
-			console.log(this.popup);
 
 			this.loginAll = this.popup.data.type === ApiActions.LOGIN_ALL;
 
