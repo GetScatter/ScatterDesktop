@@ -18,7 +18,7 @@
                     <RemoveKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_KEYPAIR" />
                     <ImportKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_KEYPAIR" />
                     <GenerateKeypair :popin="popIn" v-if="popIn.data.type === popupTypes.GENERATE_KEYPAIR" />
-                    <!--<CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />-->
+                    <CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                     <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
                     <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
@@ -89,7 +89,7 @@
     import Prompt from "./popins/overlay/Prompt";
     import SelectToken from "./popins/overlay/SelectToken";
     import SelectTokenAndAccount from "./popins/overlay/SelectTokenAndAccount";
-    // import CheckHardware from "./popins/fullscreen/CheckHardware";
+    import CheckHardware from "./popins/fullscreen/CheckHardware";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
     import ImportBackup from "./popins/fullscreen/ImportBackup";
     import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
@@ -134,7 +134,7 @@
 		    RemoveKeypair,
 		    ImportKeypair,
 		    GenerateKeypair,
-		    // CheckHardware,
+		    CheckHardware,
 		    EnableWhitelist,
 		    ConfirmExchange,
 		    ConfirmTransfer,

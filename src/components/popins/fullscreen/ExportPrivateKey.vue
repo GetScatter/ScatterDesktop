@@ -5,6 +5,9 @@
 			<!-- SELECT EXPORT TYPE -->
 			<section v-if="state === STATES.SELECT">
 				<h1>{{locale(langKeys.GENERIC.Export)}} "{{keypair.name}}"</h1>
+				<section class="disclaimer">
+					<figure class="title">Make sure to keep your private keys safe, and never give them to anyone.</figure>
+				</section>
 
 				<section class="types">
 
@@ -32,8 +35,8 @@
 				<Input :text="privateKey ? privateKey : getPublicKey()" />
 
 				<section class="split-inputs" style="justify-content: flex-end;">
-					<Button red="1" big="1" :text="privateKey ? 'Hide' : 'Reveal'" @click.native="revealPrivateKey" />
-					<Button big="1" text="Copy" @click.native="copyPrivateKey" />
+					<Button red="1" :text="privateKey ? 'Hide' : 'Reveal'" @click.native="revealPrivateKey" />
+					<Button text="Copy" @click.native="copyPrivateKey" />
 				</section>
 			</section>
 
@@ -41,8 +44,8 @@
 			<section v-if="state === STATES.QR">
 				<section v-if="!screenshotting">
 					<h1>{{locale(langKeys.KEYPAIR.EXPORT.QR.Title)}}</h1>
-					<section class="disclaimer less-pad" style="margin:0 auto 10px; max-width:500px;">
-						Leave this field blank to use your current password, or enter something else to re-encrypt this QR code with that password.
+					<section class="disclaimer" style="margin:0 auto 10px; max-width:500px;">
+						<figure class="description">Leave this field blank to use your current password, or enter something else to re-encrypt this QR code with that password.</figure>
 					</section>
 					<section class="split-inputs" style="max-width:500px; margin:0 auto;">
 						<Input placeholder="Alternative Password" style="margin-bottom:0;"

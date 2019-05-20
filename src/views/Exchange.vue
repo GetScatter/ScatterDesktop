@@ -206,8 +206,8 @@
 			},
 			setToken(token){
 				PriceService.setPrices();
-				this.token = token.clone();
-				this.toSend = token.clone();
+				this.token = this.account.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain()).clone();
+				this.toSend = this.token.clone();
 				this.toSend.amount = 0;
 				this.fiat = 0;
 				this.rate = null;
@@ -306,37 +306,31 @@
 					from:this.token.symbol,
 					to:this.pair.symbol
 				}
-				PopupService.push(Popup.confirmExchange(accounts, symbols, order, this.pair, async accepted => {
-					if(!accepted) {
-						ExchangeService.cancelled(order.id);
-						this.sending = false;
-						return;
-					}
-					ExchangeService.accepted(order.id);
-					const sent = await TransferService[this.account.blockchain()]({
-						account:this.account,
-						recipient:order.account,
-						amount,
-						memo:order.memo,
-						token:this.token,
-						promptForSignature:false,
-						bypassHistory:true,
-					}).catch(() => false);
-					if(sent){
-						if(!TokenService.hasToken(this.rawPair.token)){
-							if(!!this.rawPair.token.contract && !!this.rawPair.token.contract.length) {
-								await TokenService.addToken(this.rawPair.token, false, false);
-							}
+
+				ExchangeService.accepted(order.id);
+				const sent = await TransferService[this.account.blockchain()]({
+					account:this.account,
+					recipient:order.account,
+					amount,
+					memo:order.memo,
+					token:this.token,
+					promptForSignature:false,
+					bypassHistory:true,
+				}).catch(() => false);
+				if(sent){
+					if(!TokenService.hasToken(this.rawPair.token)){
+						if(!!this.rawPair.token.contract && !!this.rawPair.token.contract.length) {
+							await TokenService.addToken(this.rawPair.token, false, false);
 						}
-						const history = new HistoricExchange(this.account, this.recipient, this.toSend, this.pair, order, TransferService.getTransferId(sent, this.token.blockchain));
-						this[Actions.DELTA_HISTORY](history);
-						setTimeout(() => {
-							ExchangeService.watch(history);
-							BalanceService.loadBalancesFor(this.account);
-						}, 1000);
 					}
-					this.sending = false;
-				}));
+					const history = new HistoricExchange(this.account, this.recipient, this.toSend, this.pair, order, TransferService.getTransferId(sent, this.token.blockchain));
+					this[Actions.DELTA_HISTORY](history);
+					setTimeout(() => {
+						ExchangeService.watch(history);
+						BalanceService.loadBalancesFor(this.account);
+					}, 1000);
+				}
+				this.sending = false;
 			},
 
 

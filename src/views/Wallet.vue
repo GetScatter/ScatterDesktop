@@ -99,7 +99,10 @@
 	    },
         methods:{
 	        generateKeypair(){
-	            PopupService.push(Popup.generateKeypair({}, keypair => {}));
+	            PopupService.push(Popup.generateKeypair({}, keypair => {
+	            	if(!keypair) return;
+	            	PopupService.push(Popup.exportPrivateKey(keypair));
+                }));
             },
             importKeypair(){
     		    PopupService.push(Popup.importKeypair({}, keypair => {}));

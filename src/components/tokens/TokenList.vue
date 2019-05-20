@@ -43,19 +43,21 @@
 			]),
 			...mapGetters([
 				'networkTokens',
+				'balanceFilters'
 			]),
 			sortedBalances(){
-				return this.balances.filter(token => {
-					if(!this.terms.length) return true;
-					if(this.terms === '-') return this.change(token) && !this.change(token).plus && token.fiatBalance(false);
-					if(this.terms === '+') return this.change(token) && this.change(token).plus && token.fiatBalance(false);
-					if(this.terms.indexOf('::') > -1) return `${token.contract.toLowerCase()}::${token.symbol.toLowerCase()}` === this.terms;
-					if(isNaN(this.terms)) return token.symbol.toLowerCase().indexOf(this.terms) > -1 || token.contract.toLowerCase().indexOf(this.terms) > -1;
-					return token.amount >= parseFloat(this.terms);
-				}).sort((a,b) => {
-					if(this.terms === '+' || this.terms === '-') return this.change(b, true) - this.change(a, true);
-					return Token.sorter(a,b);
-				})
+				return this.balances
+					.filter(token => {
+						if(!this.terms.length) return true;
+						if(this.terms === '-') return this.change(token) && !this.change(token).plus && token.fiatBalance(false);
+						if(this.terms === '+') return this.change(token) && this.change(token).plus && token.fiatBalance(false);
+						if(this.terms.indexOf('::') > -1) return `${token.contract.toLowerCase()}::${token.symbol.toLowerCase()}` === this.terms;
+						if(isNaN(this.terms)) return token.symbol.toLowerCase().indexOf(this.terms) > -1 || token.contract.toLowerCase().indexOf(this.terms) > -1;
+						return token.amount >= parseFloat(this.terms);
+					}).sort((a,b) => {
+						if(this.terms === '+' || this.terms === '-') return this.change(b, true) - this.change(a, true);
+						return Token.sorter(a,b);
+					})
 			}
 		},
 		methods:{

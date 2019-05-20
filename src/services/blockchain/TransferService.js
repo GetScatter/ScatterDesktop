@@ -34,7 +34,7 @@ export default class TransferService {
                 amount,
                 token,
                 memo,
-	            promptForSignature:params.hasOwnProperty('promptForSignature') ? params.promptForSignature : true
+	            // promptForSignature:params.hasOwnProperty('promptForSignature') ? params.promptForSignature : true
             }).catch(x => x);
 
 

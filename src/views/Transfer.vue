@@ -162,8 +162,8 @@
 			},
 			setToken(token){
 				PriceService.setPrices();
-				this.token = token.clone();
-				this.toSend = token.clone();
+				this.token = this.account.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain()).clone();
+				this.toSend = this.token.clone();
 				this.toSend.amount = 0;
 				this.fiat = 0;
 			},
@@ -177,22 +177,19 @@
 				const reset = () => this.sending = false;
 				if(!this.canSend) return;
 				this.sending = true;
-				PopupService.push(Popup.confirmTransfer(this.account.sendable(), this.recipient, this.toSend, this.memo, async accepted => {
-					if(!accepted) return reset();
-					if(!await PasswordService.verifyPIN()) return reset();
-					this.setWorkingScreen(true);
-					const sent = await TransferService[this.account.blockchain()]({
-						account:this.account,
-						recipient:this.recipient,
-						amount:this.toSend.amount,
-						memo:this.memo,
-						token:this.token,
-						promptForSignature:false,
-					}).catch(() => false);
-					reset();
-					this.setWorkingScreen(false);
-					if(sent) BalanceService.loadBalancesFor(this.account);
-				}))
+				if(!await PasswordService.verifyPIN()) return reset();
+				this.setWorkingScreen(true);
+				const sent = await TransferService[this.account.blockchain()]({
+					account:this.account,
+					recipient:this.recipient,
+					amount:this.toSend.amount,
+					memo:this.memo,
+					token:this.token,
+					promptForSignature:false,
+				}).catch(() => false);
+				reset();
+				this.setWorkingScreen(false);
+				if(sent) BalanceService.loadBalancesFor(this.account);
 			},
 		},
 	}

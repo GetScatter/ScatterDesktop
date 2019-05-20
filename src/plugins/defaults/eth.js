@@ -64,6 +64,12 @@ const EXPLORER = {
 	"block":"https://etherscan.io/block/{x}"
 };
 
+const strtodec = (amount,dec) => {
+	let stringf = "";
+	for(let i=0;i<dec;i++){ stringf = stringf+"0"; }
+	return amount+stringf;
+}
+
 export default class ETH extends Plugin {
 
     constructor(){ super(Blockchains.ETH, PluginTypes.BLOCKCHAIN_SUPPORT) }
@@ -203,17 +209,22 @@ export default class ETH extends Plugin {
 
             const [web3, engine] = getCachedInstance(account.network(), wallet);
 
-            if(isEth){
-	            const value = web3util.utils.toWei(amount.toString());
-	            web3.eth.sendTransaction({from:account.publicKey, to, value})
-		            .on('transactionHash', transactionHash => finished({transactionHash}))
-		            .on('error', error => finished({error}));
-            } else {
-	            const value = web3util.utils.toWei(amount.toString());
-	            const contract = new web3.eth.Contract(erc20abi, token.contract, {from:account.sendable()});
-	            contract.methods.transfer(to, value).send({gasLimit: 250000})
-		            .on('transactionHash', transactionHash => finished({transactionHash}))
-		            .on('error', error => finished({error}));
+            try {
+	            if(isEth){
+		            const value = web3util.utils.toWei(amount.toString());
+		            web3.eth.sendTransaction({from:account.publicKey, to, value})
+			            .on('transactionHash', transactionHash => finished({transactionHash}))
+			            .on('error', error => finished({error}));
+	            } else {
+
+		            const value = strtodec(amount.toString(), token.decimals);
+		            const contract = new web3.eth.Contract(erc20abi, token.contract, {from:account.sendable()});
+		            contract.methods.transfer(to, value).send({gasLimit: 250000})
+			            .on('transactionHash', transactionHash => finished({transactionHash}))
+			            .on('error', error => finished({error}));
+	            }
+            } catch(e){
+            	finished({error:e})
             }
 
         })
@@ -281,7 +292,9 @@ export default class ETH extends Plugin {
             if(!methodABI) throw Error.signatureError('no_abi_method', "No method signature on the abi you provided matched the data for this transaction");
 
 
-            params = web3util.eth.abi.decodeParameters(methodABI.inputs, transaction.data.replace(methodABI.signature, ''));
+            let trimmedData = transaction.data.replace(methodABI.signature, '');
+            if(trimmedData.indexOf('0x') !== 0) trimmedData = '0x'+trimmedData;
+            params = web3util.eth.abi.decodeParameters(methodABI.inputs, trimmedData); //.replace(methodABI.signature, '')
             params = Object.keys(params).reduce((acc, key) => {
                 if(methodABI.inputs.map(input => input.name).includes(key))
                     acc[key] = params[key];
@@ -297,8 +310,20 @@ export default class ETH extends Plugin {
             gasPrice:web3util.utils.fromWei(h2n(transaction.gasPrice)),
         });
 
+        const valueParam = data.hasOwnProperty('value') ? 'value' : data.hasOwnProperty('_value') ? '_value' : null;
+        if(valueParam){
+        	if(typeof data[valueParam] === "number" && data[valueParam] > 0){
+		        data[valueParam] = h2n(data[valueParam]);
+	        }
+	        if(typeof data[valueParam] === "object"){
+	        	const objParam = data[valueParam].hasOwnProperty('hex') ? 'hex' : data[valueParam].hasOwnProperty('_hex') ? '_hex' : null;
+	        	if(objParam) data[valueParam] = data[valueParam].toString();
+	        }
+        }
+
         if(transaction.hasOwnProperty('value') && transaction.value > 0)
-            data.value = h2n(transaction.value);
+            data.value = web3util.utils.fromWei(h2n(transaction.value)) + ' ETH';
+
 
         return [{
             data,

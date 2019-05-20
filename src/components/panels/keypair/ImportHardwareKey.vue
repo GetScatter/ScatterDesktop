@@ -46,6 +46,7 @@
 	import {Popup} from "../../../models/popups/Popup";
 	import HardwareService from "../../../services/secure/HardwareService";
 
+	let inputTimeout;
 	export default {
 		data(){return {
 			hardwareType:EXT_WALLET_TYPES.LEDGER,
@@ -94,11 +95,16 @@
 			},
 			async getKeys(){
 				this.gettingAvailableKeys = true;
-				this.availableKeys = [];
 
 				for(let i = 0; i < 3; i++){
-					const key = await KeyPairService.getHardwareKeyList(this.external, i);
-					if(key) this.availableKeys.push({ index:parseInt(this.external.addressIndex) + i, key })
+					const index = parseInt(this.external.addressIndex) + i;
+					const alreadyAdded = this.availableKeys.find(x => x.index === index);
+					if(!alreadyAdded){
+						const key = await KeyPairService.getHardwareKeyList(this.external, i);
+						if(key) this.availableKeys.push({ index, key });
+					}
+
+
 				}
 
 				this.gettingAvailableKeys = false;
@@ -110,6 +116,7 @@
 				keypair.external = this.external;
 				keypair.blockchains = [this.external.blockchain];
 
+				keypair.external.addressIndex = index;
 				keypair.external.publicKey = key;
 				keypair.publicKeys.push({blockchain:keypair.external.blockchain, key});
 
@@ -119,7 +126,6 @@
 				}
 
 				setTimeout(() => {
-					this.setWorkingScreen(false);
 					this.$emit('key', keypair);
 				}, 1);
 			}
@@ -128,7 +134,10 @@
 		watch:{
 			['external.addressIndex'](){
 				this.external.interface.setAddressIndex(parseInt(this.external.addressIndex));
-				this.getKeys()
+				clearTimeout(inputTimeout);
+				inputTimeout = setTimeout(() => {
+					this.getKeys()
+				}, 800);
 			}
 		}
 	}
@@ -150,7 +159,10 @@
 		.key-list {
 			display:flex;
 			flex-direction: column;
-			justify-content: center;
+
+			max-height:170px;
+			overflow-y: auto;
+			padding:0 10px 0 0;
 
 			.key-row {
 				display:flex;

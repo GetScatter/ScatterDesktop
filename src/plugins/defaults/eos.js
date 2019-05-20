@@ -727,7 +727,7 @@ export default class EOS extends Plugin {
 				let signatures = [];
 				for(let i = 0; i < accounts.length; i++){
 					let account = accounts[i];
-					signatures.push(await this.signer({data:payload.buf}, account.publicKey, true, false, account));
+					signatures.push(await this.signer(KeyPairService.isHardware(account.publicKey) ? payload : {data:payload.buf}, account.publicKey, true, false, account));
 
 					if(signatures.length !== i+1) return rejector({error:'Could not get signature'});
 				}

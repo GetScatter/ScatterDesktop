@@ -142,7 +142,7 @@ class LedgerAPI {
     /*************************************************/
 
 	[`getAddress`+Blockchains.EOSIO](delta = 0, boolChaincode = false){
-		const path = LEDGER_PATHS[this.blockchain](parseInt(this.addressIndex) + parseInt(delta));
+		const path = LEDGER_PATHS[this.blockchain]((parseInt(this.addressIndex) + parseInt(delta)).toString());
 		const paths = bippath.fromString(path).toPathArray();
 		let buffer = new Buffer(1 + paths.length * 4);
 		buffer[0] = paths.length;
@@ -265,6 +265,7 @@ class LedgerAPI {
 			    fc.types
 		    ).toString('hex'), "hex");
 	    } catch(e){
+	    	console.log('e', e);
 		    WindowService.flashWindow();
 		    PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
 		    return null;

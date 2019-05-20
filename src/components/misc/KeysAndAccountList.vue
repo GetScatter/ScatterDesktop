@@ -1,6 +1,6 @@
 <template>
 	<section class="keys-and-accounts-list">
-		<SearchAndFilter :filters="filters" v-on:terms="x => terms = x" />
+		<SearchAndFilter :filters="filters" :full-search="!filters.length" v-on:terms="x => terms = x" />
 
 		<section class="keys-list">
 			<section class="keypair" v-for="keypair in filteredKeypairs" :class="{'new':isNew(keypair), 'selectable':keypairsOnly}" @click="$emit('keypair', keypair)">
@@ -12,9 +12,11 @@
 					<section class="info">
 						<figure class="name">{{keypair.name}}</figure>
 						<figure class="key">{{keypair.enabledKey().key}}</figure>
+						<figure class="key" v-if="keypair.external"><b>{{keypair.external.type}}</b></figure>
 					</section>
 					<section class="actions" v-if="!asSelector">
-						<figure class="action icon-key" @click="exportPrivateKey(keypair)"></figure>
+						<figure class="action icon-key" v-if="!keypair.external" @click="exportPrivateKey(keypair)"></figure>
+						<figure class="action hardware icon-microchip" v-if="keypair.external"></figure>
 						<figure class="action icon-dot-3" @click="setActionsMenu(keypair)"></figure>
 
 						<section class="action-menu" :class="{'hidden':actionsMenu !== keypair.id}">
@@ -50,7 +52,7 @@
 								<figure class="name">{{account.sendable()}}</figure>
 								<figure class="network">{{account.network().name}}</figure>
 							</section>
-							<section class="tokens" v-if="!asSelector">
+							<section class="tokens" v-if="account.tokens().length">
 								<figure class="balance">{{account.totalFiatBalance()}} {{displayCurrency}}</figure>
 								<figure class="quantity">in {{account.tokens().length}} tokens</figure>
 							</section>
@@ -100,7 +102,16 @@
 				'displayCurrency',
 			]),
 
+			blockchains(){
+				if(!this.accounts) return BlockchainsArray.map(x => x.value);
+				return this.accounts.reduce((acc,x) => {
+					if(!acc.includes(x.blockchain)) acc.push(x.blockchain);
+					return acc;
+				}, [])
+			},
 			filters(){
+				if(this.blockchains.length <= 1) return [];
+
 				return [
 					{
 						selected:this.blockchainFilter,
@@ -242,6 +253,7 @@
 					justify-content: center;
 					align-items: center;
 					margin-right:10px;
+					position: relative;
 
 					.icon-spin4 {
 						font-size: 22px;
@@ -261,6 +273,10 @@
 						font-size: $small;
 						font-weight: bold;
 						color:$silver;
+
+						b {
+							color:$blue;
+						}
 					}
 				}
 
@@ -306,6 +322,10 @@
 
 						&:hover {
 							background:$lightergrey;
+						}
+
+						&.hardware {
+							cursor: not-allowed;
 						}
 					}
 				}

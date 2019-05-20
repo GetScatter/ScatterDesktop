@@ -132,22 +132,22 @@ export default class Token {
 	}
 
 	accounts(){
-    	const state = StoreService.get().state;
-		if(!state.balances) return [];
-		return Object.keys(state.balances).reduce((acc,accountUnique) => {
-			if(state.balances[accountUnique].find(token => token.uniqueWithChain() === this.uniqueWithChain())){
-				if(!acc.find(x => x.identifiable() === accountUnique)){
-					acc.push(state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique));
-				}
-			}
+		return StoreService.get().getters.accounts.filter(x => x.network().chainId === this.chainId).reduce((acc,x) => {
+			if(!acc.find(y => y.sendable() === x.sendable())) acc.push(x);
 			return acc;
 		}, []);
-    	/*
-    	if(!StoreService.get().state.balances) return [];
-	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return [];
-	    if(!StoreService.get().state.balances[this.identifiable()]) return [];
-	    return StoreService.get().state.balances[this.identifiable()];
-    	 */
+
+		// Problem with doing this is that if the balance checks fail then accounts never show up.
+		// const state = StoreService.get().state;
+		// if(!state.balances) return [];
+		// return Object.keys(state.balances).reduce((acc,accountUnique) => {
+		// 	if(state.balances[accountUnique].find(token => token.uniqueWithChain() === this.uniqueWithChain())){
+		// 		if(!acc.find(x => x.identifiable() === accountUnique)){
+		// 			acc.push(state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique));
+		// 		}
+		// 	}
+		// 	return acc;
+		// }, []);
 	}
 
 	static sorter(a,b){

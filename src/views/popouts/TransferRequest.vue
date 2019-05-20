@@ -1,77 +1,61 @@
 <template>
-    <section>
-        <section class="multi-pane">
-            <section class="main-panel">
+    <section class="popout-window transfer">
+        <PopOutApp :app="popup.data.props.appData" suffix="is requesting a transfer" />
 
-                <section v-if="!account">
-                    <section class="participants">
-                        <section class="participant">{{network.name}}</section>
-                    </section>
-                    <br>
-                    <section class="padded">
-                        <section class="transfer-details">
-                            <span class="blue">{{popup.origin()}}</span>
-                            <span>{{locale(langKeys.POPOUTS.TRANSFER.SendingTo, token.symbol)}}</span>
-                            <span class="bold" :class="{'small':to.length > 12}">{{to}}</span>
+        <section v-if="!account">
+
+
+            <section class="padded">
+                <Input :disabled="amount > 0"
+                     :red="inputError"
+                     big="1"
+                     centered="1"
+                     :text="amount > 0 ? amount : customAmount"
+                     v-on:changed="x => customAmount = x"
+                     :placeholder="parseFloat(1).toFixed(decimals)" />
+
+                <section class="boxes">
+                    <section class="box nested account-selector" @click="selectTokenAndAccount">
+                        <section>
+                            <figure class="name">Select Account</figure>
+                            <figure class="network">{{network.name}}</figure>
                         </section>
-                    </section>
-
-
-                    <br>
-
-                    <section class="padded">
-                        <cin :disabled="amount > 0"
-                             :red="inputError"
-                             big="1"
-                             centered="1"
-                             :text="amount > 0 ? amount : customAmount"
-                             v-on:changed="x => customAmount = x"
-                             :placeholder="parseFloat(1).toFixed(decimals)" />
-                    </section>
-
-                    <!--<SearchBar style="flex:1;" short="1"-->
-							   <!--:placeholder="locale(langKeys.POPOUTS.TRANSFER.SearchPlaceholder)"-->
-							   <!--v-on:terms="x => searchTerms = x" />-->
-
-                    <section class="popout-list">
-                        <FullWidthRow :items="validAccounts" popout="1" />
+                        <figure class="chevron icon-dot-3"></figure>
                     </section>
                 </section>
-
-                <section class="padded" v-else>
-                    <br>
-                    <br>
-                    <section class="transfer-details">
-                        <div v-if="amount > 0">{{parseFloat(amount).toFixed(decimals)}} {{token.symbol}}</div>
-                        <div v-else>{{customAmount}} {{token.symbol}}</div>
-                        <span :class="{'small':to.length > 12}">{{to}}</span>
-
-                    </section>
-                    <section class="memo" v-if="memo && memo.length">
-                        <section class="info-line">
-                            <span>{{locale(langKeys.GENERIC.Memo)}}</span>
-                        </section>
-                        <span>{{memo}}</span>
-                    </section>
-
-
-
-                    <section class="info-line">
-                        <span>From</span>
-                    </section>
-
-                    <FullWidthRow :items="selectedAccounts" popout="1" />
-
-                    <section class="fixed-actions" v-if="!pinning">
-                        <Button blue="1" :text="locale(langKeys.GENERIC.Confirm)" @click.native="returnResult(true)" />
-                        <Button :text="locale(langKeys.GENERIC.Deny)" @click.native="returnResult(null)" />
-                    </section>
-                </section>
-
-
             </section>
 
 
+        </section>
+
+        <section class="padded" v-else>
+            <br>
+            <br>
+            <section class="transfer-details">
+                <div v-if="amount > 0">{{parseFloat(amount).toFixed(decimals)}} {{token.symbol}}</div>
+                <div v-else>{{customAmount}} {{token.symbol}}</div>
+                <span :class="{'small':to.length > 12}">{{to}}</span>
+
+            </section>
+            <section class="memo" v-if="memo && memo.length">
+                <section class="info-line">
+                    <span>{{locale(langKeys.GENERIC.Memo)}}</span>
+                </section>
+                <span>{{memo}}</span>
+            </section>
+
+
+
+            <section class="info-line">
+                <span>From</span>
+            </section>
+
+            <!--<FullWidthRow :items="selectedAccounts" popout="1" />-->
+
+            <section class="fixed-actions" v-if="!pinning">
+                <Button blue="1" :text="locale(langKeys.GENERIC.Confirm)" @click.native="returnResult(true)" />
+                <Button :text="locale(langKeys.GENERIC.Deny)" @click.native="returnResult(null)" />
+            </section>
         </section>
 
     </section>
@@ -91,6 +75,8 @@
 	import Token from "../../models/Token";
 	import {Blockchains} from "../../models/Blockchains";
 	import TokenService from "../../services/utility/TokenService";
+	import PopupService from "../../services/utility/PopupService";
+	import {Popup} from "../../models/popups/Popup";
 
 	export default {
 		props:['popup', 'expanded', 'pinning'],
@@ -148,7 +134,6 @@
 
 						return acc;
 					}, [])
-                    .map(x => this.formatAccount(x, true))
 			},
             selectedAccounts(){
                 return [this.account]
@@ -172,6 +157,12 @@
 					account:this.account,
 					amount
 				});
+			},
+			selectTokenAndAccount(){
+				PopupService.push(Popup.selectAccount(account => {
+					if(!account) return;
+					this.account = account;
+				}, this.validAccounts))
 			},
 			selectAccount(account){
 				this.inputError = false;
@@ -206,6 +197,23 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../styles/variables";
+
+    .app-details {
+        padding:50px 50px 20px 50px;
+    }
+
+    .boxes {
+        width:100%;
+
+        .box {
+            width:100%;
+        }
+
+    }
+
+
+
+
 
     .memo {
         text-align:center;

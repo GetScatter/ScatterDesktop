@@ -16,7 +16,6 @@ export const m11_0_0 = async scatter => {
 		let first = true;
 		keypair.blockchains.map(blockchain => {
 			const accounts = scatter.keychain.accounts.filter(x => x.keypairUnique === keypair.unique() && x.blockchain() === blockchain);
-			console.log(accounts, scatter.keychain.accounts, keypair, blockchain);
 			if(accounts.length){
 				const clone = keypair.clone();
 				if(!first) {

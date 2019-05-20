@@ -164,7 +164,7 @@
 				.image-container {
 					position: absolute;
 					top:0;
-					bottom:70px;
+					bottom:80px;
 					left:0;
 					right:0;
 					z-index:1;

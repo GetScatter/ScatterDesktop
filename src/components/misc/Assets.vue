@@ -7,13 +7,17 @@
 
 			<SearchAndFilter full-search="1" v-if="needsAccountSearchBar" v-on:terms="x => terms = x" />
 			<section class="accounts" :class="{'with-search':needsAccountSearchBar}" v-if="selectedToken">
-				<section class="account" v-if="account.balanceFor(selectedToken)" v-for="account in filteredAccounts">
+				<section class="account" v-for="account in filteredAccounts">
 					<figure class="name">{{account.sendable()}}</figure>
 					<figure class="network">{{account.network().name}}</figure>
 					<section class="details">
-						<section>
+						<section v-if="account.balanceFor(selectedToken)">
 							<figure class="balance">{{formatNumber(account.balanceFor(selectedToken).amount, true)}} {{selectedToken.symbol}}</figure>
 							<figure class="fiat">{{formatNumber(account.balanceFor(selectedToken).fiatBalance(), true)}}</figure>
+						</section>
+						<section v-else>
+							<figure class="balance">{{formatNumber(parseFloat(0).toFixed(selectedToken.decimals), true)}} {{selectedToken.symbol}}</figure>
+							<figure class="fiat">0.0000 {{displayCurrency}}</figure>
 						</section>
 
 						<section class="actions" v-if="!asSelector && !selectedToken.unusable">
@@ -54,11 +58,14 @@
 				'balances',
 			]),
 			...mapGetters([
-				'totalBalances'
+				'totalBalances',
+				'balanceFilters',
+				'displayCurrency'
 			]),
 			allBalances(){
 				return Object.keys(this.totalBalances.totals).map(key => this.totalBalances.totals[key])
 					.filter(x => this.hideUnusable ? !x.unusable : true)
+					.filter(token => this.balanceFilters[token.blockchain] && parseFloat(this.balanceFilters[token.blockchain]) < parseFloat(token.amount))
 			},
 			filteredAccounts(){
 				return this.selectedToken.accounts()
@@ -67,10 +74,16 @@
 						return x.sendable().toLowerCase().indexOf(this.terms) > -1
 					})
 					.sort((a,b) => {
-						const bBal = b.balanceFor(this.selectedToken);
-						const aBal = a.balanceFor(this.selectedToken);
-						return bBal ? bBal.amount : 0 - aBal ? aBal.amount : 0;
+						const bBal = b.balanceFor(this.selectedToken) ? b.balanceFor(this.selectedToken).amount : 0;
+						const aBal = a.balanceFor(this.selectedToken) ? a.balanceFor(this.selectedToken).amount : 0;
+						return bBal - aBal;
 					});
+					// .sort((a,b) => {
+					// 	return b.balanceFor(this.selectedToken) || 0 - a.balanceFor(this.selectedToken) || 0;
+					// 	const bBal = b.balanceFor(this.selectedToken);
+					// 	const aBal = a.balanceFor(this.selectedToken);
+					// 	return bBal ? bBal.amount : 0 - aBal ? aBal.amount : 0;
+					// });
 			},
 			needsAccountSearchBar(){
 				return this.selectedToken && this.selectedToken.accounts().length >= 5
