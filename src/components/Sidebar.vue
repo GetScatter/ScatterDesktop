@@ -107,7 +107,7 @@
 
 		.item {
 			cursor: pointer;
-			padding:16px 20px;
+			padding:12px 20px;
 			display:flex;
 			align-items: center;
 			color: $silver;

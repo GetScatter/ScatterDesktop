@@ -199,7 +199,7 @@
 			flex-direction: column;
 			justify-content: center;
 			padding:0 20px;
-			font-size: $small;
+			font-size: $medium;
 			text-align:center;
 			cursor: pointer;
 
