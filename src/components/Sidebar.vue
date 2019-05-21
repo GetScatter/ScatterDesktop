@@ -38,7 +38,7 @@
 							{name:'Apps', route:RouteNames.HOME},
 							{name:'Wallet', route:RouteNames.WALLET},
 							this.accounts.length ? {name:'Assets', route:RouteNames.ASSETS} : null,
-							this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
+							// this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
 							this.accounts.length ? {name:'Reputation', route:RouteNames.RIDL} : null,
 							{name:'Identities', route:RouteNames.IDENTITIES},
 							this.features.creditCards ? {name:'Purchase', route:RouteNames.PURCHASE} : null,
@@ -69,7 +69,7 @@
 	@import "../styles/variables";
 
 	$time:0.2s;
-	$closed:64px;
+	$closed:200px;
 	$open:200px;
 
 	.sidebar-container {
@@ -95,9 +95,6 @@
 		bottom:0;
 		background:$white;
 		z-index:10000;
-		box-shadow:0 0 0 transparent, 0 0 0 transparent;
-
-		transition: width $time ease, box-shadow 1.1s ease;
 
 		.bar-bg {
 			width:$closed;
@@ -110,12 +107,10 @@
 
 		.item {
 			cursor: pointer;
-			height:50px;
-			width:100%;
-			padding:0 20px;
+			padding:16px 20px;
 			display:flex;
 			align-items: center;
-			color: $lightgrey;
+			color: $silver;
 			transition:all $time ease;
 			transition-property: background;
 
@@ -129,25 +124,21 @@
 
 			span {
 				margin-left:5px;
-				opacity:0;
+				opacity:1;
 				transition:all $time ease;
 				transition-property: margin-left, opacity, color;
-				font-size: $medium;
-			}
-
-			&:hover {
-				background:rgba(0,0,0,0.02);
+				font-size: $large;
 			}
 
 			&:hover, &.active {
+				background:lighten($blue, 45%);
 
 				i {
 					color:$blue;
 				}
 
 				span {
-					font-weight: bold;
-					color:$black;
+					color:black;
 				}
 			}
 		}
@@ -159,16 +150,13 @@
 			padding:0 20px;
 			margin-top:40px;
 			margin-bottom:10px;
-			opacity:0;
-			transition:all $time ease;
-			transition-property: opacity;
 		}
 
 		&:hover {
 			width:$open;
-			transition: width $time ease, box-shadow 0.3s ease;
-			box-shadow:10px 0 30px rgba(0,0,0,0.15), 2px 0 10px $blue-shadow;
-			border-right:0;
+			// transition: width $time ease, box-shadow 0.3s ease;
+			// box-shadow:10px 0 30px rgba(0,0,0,0.15), 2px 0 10px $blue-shadow;
+			// border-right:0;
 
 			.category-name {
 				opacity:1;
@@ -178,7 +166,6 @@
 				color:$silver;
 
 				span {
-					margin-left:0;
 					opacity:1;
 				}
 			}
