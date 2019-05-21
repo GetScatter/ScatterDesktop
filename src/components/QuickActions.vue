@@ -206,6 +206,8 @@
 			img {
 				transition:transform 0.2s ease;
 				transform:translateY(0px);
+			    width: 44px;
+    			margin: 0 auto;
 			}
 
 			&:hover {
