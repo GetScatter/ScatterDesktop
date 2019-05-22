@@ -1,5 +1,5 @@
 <template>
-	<section class="sidebar-container" :class="{'locked':sidebarLocked}">
+	<section class="sidebar-container" :class="{'locked':!sidebarLocked}">
 		<section class="placeholder"></section>
 		<section class="sidebar">
 			<figure class="bar-bg"></figure>
@@ -63,8 +63,7 @@
 			}
 		},
 		mounted(){
-			console.log(window.localStorage);
-			this[Actions.SET_SIDEBAR](!!window.localStorage.getItem('sidebar'));
+			this[Actions.SET_SIDEBAR](window.localStorage.getItem('sidebar') === 'true');
 		},
 		methods:{
 			itemIcon(item){

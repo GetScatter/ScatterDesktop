@@ -1,6 +1,6 @@
 <template>
 	<section class="quick-actions" :class="{'short':isShort}">
-		<section class="left" v-if="!quickBack && accounts.length">
+		<section class="left" v-if="!hideMainBalance && !quickBack && accounts.length">
 			<section class="fiat">
 				<span class="balance">{{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}</span>
 				<Refresh class="refresh" :class="{'spin':loadingBalances}" @click.native="refreshTokens" />
@@ -10,7 +10,7 @@
 				<span class="balance">{{formatNumber(totalTokenBalance.amount, true)}} {{totalTokenBalance.symbol}}</span>
 			</section>
 		</section>
-		<section class="left" v-if="!quickBack && !accounts.length">
+		<section class="left" v-if="!hideMainBalance && !quickBack && !accounts.length">
 			<section class="fiat">
 				<span class="balance" style="opacity:0.2;">No accounts</span>
 			</section>
@@ -73,6 +73,7 @@
 				'totalBalances',
 				'displayToken',
 				'displayCurrency',
+				'hideMainBalance',
 			]),
 			totalBalance(){
 				const totals = this.totalBalances.totals;
@@ -143,8 +144,9 @@
 
 		.left { flex:1; }
 		.right {
-			flex:0 0 auto;
 			display:flex;
+			justify-content: flex-end;
+			flex:1;
 		}
 
 		.quick-back {

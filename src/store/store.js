@@ -64,7 +64,8 @@ export const getters = {
     apps:state =>           state.scatter.keychain.apps || [],
 
     // Settings
-    ridlEnabled:state =>        state.scatter.settings.firewall.enabled,
+	hideMainBalance:state => state.scatter.settings.hideMainBalance,
+    ridlEnabled:state =>    state.scatter.settings.firewall.enabled,
     version:state =>        state.scatter.meta.version,
     networks:state =>       state.scatter.settings.networks || [],
     language:state =>       Locale.fromJson(state.language.json),

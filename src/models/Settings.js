@@ -45,6 +45,7 @@ export default class Settings {
 	    };
 
 	    this.balanceFilters = {};
+	    this.hideMainBalance = false;
     }
 
     static placeholder(){ return new Settings(); }

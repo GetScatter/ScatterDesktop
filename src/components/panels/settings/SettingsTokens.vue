@@ -72,6 +72,15 @@
             <section v-if="state === STATES.SETTINGS">
 
                 <section class="action-box top-pad">
+                    <label>Hide Primary Balance</label>
+                    <p>Allows you to hide your balance in the quick-actions bar.</p>
+
+                    <br>
+                    <br>
+                    <Switcher :state="hideMainBalance" @click.native="toggleHiddenBalance" />
+                </section>
+
+                <section class="action-box top-pad">
                     <label>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayLabel)}}</label>
                     <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayDescription)}}</p>
 
@@ -189,6 +198,7 @@
 				'mainnetTokensOnly',
 				'displayToken',
 				'displayCurrency',
+                'hideMainBalance',
 			]),
 
             visibleTokens(){
@@ -204,7 +214,7 @@
 			},
             filteredNetworks(){
 				return this.networks.filter(x => x.blockchain === this.newToken.blockchain);
-            }
+            },
 		},
 		methods:{
 			filterTokensByTerms(tokensList){
@@ -241,6 +251,11 @@
 			},
 			async removeToken(token){
 				await TokenService.removeToken(token);
+			},
+			toggleHiddenBalance(){
+				const scatter = this.scatter.clone();
+				scatter.settings.hideMainBalance = !scatter.settings.hideMainBalance;
+				this[Actions.SET_SCATTER](scatter);
 			},
 			async toggleMainnetsOnly(){
 				const scatter = this.scatter.clone();
