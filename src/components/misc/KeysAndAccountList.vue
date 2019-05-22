@@ -139,7 +139,19 @@
 				})
 			},
 		},
+		mounted(){
+			window.addEventListener('click', this.handleClick)
+		},
+		destroyed(){
+			window.removeEventListener('click', this.handleClick)
+		},
 		methods:{
+			handleClick(e){
+				const paths = e.path.map(x => x.className)
+				if(this.actionsMenu && !paths.includes('action-menu') && !paths.includes('action icon-dot-3')){
+					this.actionsMenu = null;
+				}
+			},
 			filteredAccounts(keypair){
 				const accounts = (() => {
 					if(!this.accounts) return keypair.accounts(true);
@@ -158,7 +170,9 @@
 				return keypair.createdAt && keypair.createdAt > (+new Date() - (1000 * 30));
 			},
 			setActionsMenu(keypair){
-				this.actionsMenu = this.actionsMenu === keypair.id ? null : keypair.id;
+				setTimeout(() => {
+					this.actionsMenu = this.actionsMenu === keypair.id ? null : keypair.id;
+				}, 20);
 			},
 			copyPublicKey(keypair){
 				this.actionsMenu = null;
@@ -191,6 +205,7 @@
 							return PopupService.push(Popup.snackbar("A keypair with that name already exists"));
 						}
 						KeyPairService.updateKeyPair(clone);
+						this.actionsMenu = null;
 					},
 					false,
 					{
