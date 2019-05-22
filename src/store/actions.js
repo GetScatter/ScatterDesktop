@@ -17,6 +17,7 @@ import {ipcAsync} from "../util/ElectronHelpers";
 import Process from "../models/Process";
 
 export const actions = {
+    [Actions.SET_SIDEBAR]:({commit}, x) => commit(Actions.SET_SIDEBAR, x),
     [Actions.SET_APP_REP]:({commit}, x) => commit(Actions.SET_APP_REP, x),
     [Actions.SET_ACTION_REP]:({commit}, x) => commit(Actions.SET_ACTION_REP, x),
     [Actions.SET_PRICE_DATA]:({commit}, x) => commit(Actions.SET_PRICE_DATA, x),

@@ -40,6 +40,8 @@ export const state = {
 
 	appReputation:false,
 	actionReputations:{},
+
+	sidebarLocked:false,
 };
 
 export const getters = {

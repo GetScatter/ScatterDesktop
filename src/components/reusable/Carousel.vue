@@ -31,6 +31,7 @@
 </template>
 
 <script>
+	import {mapState} from 'vuex';
 
 	let interval;
 	export default {
@@ -51,6 +52,9 @@
 			window.removeEventListener('resize', this.calcBaseWidth);
 		},
 		computed:{
+			...mapState([
+				'sidebarLocked'
+			]),
 			maxLeft(){
 				return -((this.slides.length-1) * this.slideWidth);
 			},
@@ -86,6 +90,11 @@
 		watch:{
 			['window'](){
 				this.calcBaseWidth();
+			},
+			['sidebarLocked'](){
+				setTimeout(() => {
+					this.calcBaseWidth();
+				}, 200 /* Matches transition time of sidebar */);
 			}
 		}
 

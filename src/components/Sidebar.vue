@@ -1,5 +1,5 @@
 <template>
-	<section class="sidebar-container">
+	<section class="sidebar-container" :class="{'locked':sidebarLocked}">
 		<section class="placeholder"></section>
 		<section class="sidebar">
 			<figure class="bar-bg"></figure>
@@ -10,12 +10,17 @@
 					<span>{{item.name}}</span>
 				</router-link>
 			</figure>
+
+			<figure class="lock-sidebar" @click="toggleSidebar">
+				<i class="icon-lock"></i>
+			</figure>
 		</section>
 	</section>
 </template>
 
 <script>
-	import {mapGetters, mapState} from 'vuex';
+	import {mapGetters, mapState, mapActions} from 'vuex';
+	import * as Actions from '../store/constants'
 	import {RouteNames} from "../vue/Routing";
 
 	export default {
@@ -25,6 +30,7 @@
 		computed:{
 			...mapState([
 				'history',
+				'sidebarLocked'
 			]),
 			...mapGetters([
 				'accounts',
@@ -38,7 +44,7 @@
 							{name:'Apps', route:RouteNames.HOME},
 							{name:'Wallet', route:RouteNames.WALLET},
 							this.accounts.length ? {name:'Assets', route:RouteNames.ASSETS} : null,
-							this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
+							// this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
 							this.accounts.length ? {name:'Reputation', route:RouteNames.RIDL} : null,
 							{name:'Identities', route:RouteNames.IDENTITIES},
 							this.features.creditCards ? {name:'Purchase', route:RouteNames.PURCHASE} : null,
@@ -56,11 +62,22 @@
 				]
 			}
 		},
+		mounted(){
+			console.log(window.localStorage);
+			this[Actions.SET_SIDEBAR](!!window.localStorage.getItem('sidebar'));
+		},
 		methods:{
 			itemIcon(item){
 				if(item.name === 'Reputation') return 'sidebar-sidebar_ridl';
 				return `sidebar-sidebar_${item.name.toLowerCase()}`
-			}
+			},
+			toggleSidebar(){
+				this[Actions.SET_SIDEBAR](!this.sidebarLocked);
+				window.localStorage.setItem('sidebar', this.sidebarLocked);
+			},
+			...mapActions([
+				Actions.SET_SIDEBAR
+			])
 		}
 	}
 </script>
@@ -74,116 +91,167 @@
 
 	.sidebar-container {
 		-webkit-user-select: none !important;
+		width:$closed;
+		transition:width $time ease; // Matches carousel timeout
+
 		.placeholder {
 			width:$closed;
 			height:$fullheight;
 		}
-	}
 
-	.sidebar {
-		flex:0 0 auto;
-		width:$closed;
-		border-right:1px solid $lightgrey;
-		border-bottom:1px solid $lightgrey;
-		border-left:1px solid $lightgrey;
-		padding:20px 0;
-		overflow-x:hidden;
-		white-space: nowrap;
-		position:fixed;
-		left:0;
-		top:40px;
-		bottom:0;
-		background:$white;
-		z-index:10000;
-		box-shadow:0 0 0 transparent, 0 0 0 transparent;
 
-		transition: width $time ease, box-shadow 1.1s ease;
 
-		.bar-bg {
+		.sidebar {
+			flex:0 0 auto;
 			width:$closed;
-			position:absolute;
+			border-right:1px solid $lightgrey;
+			border-bottom:1px solid $lightgrey;
+			border-left:1px solid $lightgrey;
+			padding:20px 0;
+			overflow-x:hidden;
+			white-space: nowrap;
+			position:fixed;
 			left:0;
-			top:0;
+			top:40px;
 			bottom:0;
-			z-index:-1;
-		}
+			background:$white;
+			z-index:10000;
+			box-shadow:0 0 0 transparent, 0 0 0 transparent;
 
-		.item {
-			cursor: pointer;
-			height:50px;
-			width:100%;
-			padding:0 20px;
-			display:flex;
-			align-items: center;
-			color: $lightgrey;
-			transition:all $time ease;
-			transition-property: background;
+			transition: width $time ease, box-shadow 1.1s ease;
 
-			i {
-				padding-right:18px;
-				font-size: 24px;
-				transition:all $time ease;
-				transition-property: color;
+			.bar-bg {
+				width:$closed;
+				position:absolute;
+				left:0;
+				top:0;
+				bottom:0;
+				z-index:-1;
+			}
+
+			.lock-sidebar {
+				position:absolute;
+				bottom:10px;
+				left:10px;
+				right:10px;
+				padding:10px;
 				color:$grey;
-			}
+				cursor: pointer;
 
-			span {
-				margin-left:5px;
-				opacity:0;
-				transition:all $time ease;
-				transition-property: margin-left, opacity, color;
-				font-size: $medium;
-			}
+				transition:all 0.2s ease;
+				transition-property: background, color;
 
-			&:hover {
-				background:rgba(0,0,0,0.02);
-			}
-
-			&:hover, &.active {
-
-				i {
-					color:$blue;
+				&:hover {
+					background:rgba(0,0,0,0.03);
+					color:$silver;
 				}
-
-				span {
-					font-weight: bold;
-					color:$black;
-				}
-			}
-		}
-
-		.category-name {
-			font-size: $small;
-			font-weight: bold;
-			text-transform: uppercase;
-			padding:0 20px;
-			margin-top:40px;
-			margin-bottom:10px;
-			opacity:0;
-			transition:all $time ease;
-			transition-property: opacity;
-		}
-
-		&:hover {
-			width:$open;
-			transition: width $time ease, box-shadow 0.3s ease;
-			box-shadow:10px 0 30px rgba(0,0,0,0.15), 2px 0 10px $blue-shadow;
-			border-right:0;
-
-			.category-name {
-				opacity:1;
 			}
 
 			.item {
-				color:$silver;
+				cursor: pointer;
+				padding:12px 20px;
+				display:flex;
+				align-items: center;
+				color: $lightgrey;
+				transition:all $time ease;
+				transition-property: background;
+
+				i {
+					padding-right:18px;
+					font-size: 24px;
+					transition:all $time ease;
+					transition-property: color;
+					color:$grey;
+				}
 
 				span {
-					margin-left:0;
+					margin-left:5px;
+					opacity:0;
+					transition:all $time ease;
+					transition-property: margin-left, opacity, color;
+					font-size: $medium;
+				}
+
+				&:hover {
+					background:rgba(0,0,0,0.02);
+				}
+
+				&:hover, &.active {
+
+					i {
+						color:$blue;
+					}
+
+					span {
+						font-weight: bold;
+						color:$black;
+					}
+				}
+			}
+
+			.category-name {
+				font-size: $small;
+				font-weight: bold;
+				text-transform: uppercase;
+				padding:0 20px;
+				margin-top:40px;
+				margin-bottom:10px;
+				opacity:0;
+				transition:all $time ease;
+				transition-property: opacity;
+			}
+
+
+		}
+
+		&:not(.locked){
+			.sidebar {
+				&:hover {
+					width:$open;
+					transition: width $time ease, box-shadow 0.3s ease;
+					box-shadow:10px 0 30px rgba(0,0,0,0.15), 2px 0 10px $blue-shadow;
+					border-right:0;
+
+					.category-name {
+						opacity:1;
+					}
+
+					.item {
+						color:$silver;
+
+						span {
+							margin-left:0;
+							opacity:1;
+						}
+					}
+				}
+			}
+		}
+
+		&.locked {
+			width:$open;
+
+			.sidebar {
+				width:$open;
+				transition: width $time ease, box-shadow 0.3s ease;
+
+				.category-name {
 					opacity:1;
+				}
+
+				.item {
+					color:$silver;
+
+					span {
+						margin-left:0;
+						opacity:1;
+					}
 				}
 			}
 		}
 	}
+
+
 
 
 </style>

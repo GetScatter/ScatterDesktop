@@ -89,7 +89,7 @@ const createScatterInstance = () => {
 	app.setAsDefaultProtocolClient('scatter');
 
 	const createMainWindow = (show, backgroundColor) => new BrowserWindow({
-		width: 900,
+		width: 1024,
 		height: 800,
 		frame: false,
 		radii: [5,5,5,5],
@@ -126,8 +126,9 @@ const createScatterInstance = () => {
 app.on('ready', createScatterInstance);
 app.on('activate', activateInstance);
 app.on('window-all-closed', () => quit())
-app.on('second-instance', () => {
-	if (process.platform === 'win32') callDeepLink(argv.slice(1));
+app.on('second-instance', argv => {
+	console.log(argv);
+	// if (process.platform === 'win32') callDeepLink(argv.slice(1));
 	if (mainWindow) activateInstance();
 })
 

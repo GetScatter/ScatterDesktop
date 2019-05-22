@@ -199,13 +199,15 @@
 			flex-direction: column;
 			justify-content: center;
 			padding:0 20px;
-			font-size: $small;
+			font-size: $medium;
 			text-align:center;
 			cursor: pointer;
 
 			img {
 				transition:transform 0.2s ease;
 				transform:translateY(0px);
+				width: 44px;
+				margin: 0 auto 4px;
 			}
 
 			&:hover {
