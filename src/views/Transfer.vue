@@ -104,6 +104,7 @@
 			...mapGetters([
 				'accounts',
 				'displayCurrency',
+				'contacts',
 			]),
 			sendableTokens(){
 				return this.account.tokens().filter(x => !x.unusable).sort((a,b) => {
@@ -121,9 +122,11 @@
 				if(!account) return null;
 				return {
 					account,
-					token:account.tokens().find(x => x.uniqueWithChain() === this.$route.query.token)
+					token:this.$route.query.token ? account.tokens().find(x => x.uniqueWithChain() === this.$route.query.token) : null
 				}
 			})() : null;
+
+			const recipient = this.$route.query.recipient;
 
 
 			if(history){
@@ -137,7 +140,17 @@
 			}
 			else if(accountAndToken){
 				this.account = accountAndToken.account;
-				this.setToken(accountAndToken.token);
+				if(accountAndToken.token) this.setToken(accountAndToken.token);
+				else this.setToken(this.sendableTokens[0]);
+			}
+			else if (recipient){
+				const contact = this.contacts.find(x => x.id === recipient);
+				this.recipient = contact.recipient;
+				this.account = this.accounts.filter(x => contact.blockchain ? x.blockchain() === contact.blockchain : true)
+					.filter(x => x.tokens().length)
+					.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];
+				this.setToken(this.sendableTokens[0]);
+
 			}
 			else {
 				this.account = this.accounts.filter(x => x.tokens().length)

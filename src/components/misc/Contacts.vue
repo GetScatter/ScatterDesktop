@@ -107,7 +107,9 @@
 			async removeContact(contact){
 				await ContactService.remove(contact);
 			},
-			sendContact(contact){},
+			sendContact(contact){
+				this.$router.push({name:this.RouteNames.TRANSFER, query:{recipient:contact.id}})
+			},
 
 			blockchainIcon(blockchain){
 				if(BlockchainsArray.map(x => x.value).includes(blockchain)){
