@@ -126,9 +126,8 @@ const createScatterInstance = () => {
 app.on('ready', createScatterInstance);
 app.on('activate', activateInstance);
 app.on('window-all-closed', () => quit())
-app.on('second-instance', argv => {
-	// TODO: Fix deep linking for electron 5
-	// if (process.platform === 'win32') callDeepLink(argv.slice(1));
+app.on('second-instance', (event, argv) => {
+	if (process.platform === 'win32' || process.platform === 'linux') callDeepLink(argv.slice(1));
 	if (mainWindow) activateInstance();
 })
 

@@ -130,16 +130,7 @@
 			reputation:null,
 		}},
 		created(){
-
 			this.loginAll = this.popup.data.type === ApiActions.LOGIN_ALL;
-
-			// TODO: Need to do this on the main process before even opening this popup
-			// TODO: since popups can't persist state to disk.
-			// if(!this.validAccounts.length && this.accountRequirements.length){
-			// 	if(this.network.blockchain !== Blockchains.EOSIO){
-			// 		// Creating an account automatically.
-			// 	}
-			// }
 
 			if(this.validAccounts.length){
 				this.account = this.validAccounts[0];
