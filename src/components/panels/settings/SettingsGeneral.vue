@@ -97,7 +97,7 @@
         },
         methods: {
         	openFilePathLink(){
-        	    ElectronHelpers.openLinkInBrowser(this.dataPath);
+        	    ElectronHelpers.openLinkInBrowser(this.dataPath, true);
             },
 	        openUpdateLink(){
 		        ElectronHelpers.openLinkInBrowser(UpdateService.updateUrl());

@@ -68,7 +68,11 @@ export default class ElectronHelpers {
 
     static openLinkInBrowser(link, filepath = false){
     	if(filepath) shell.openItem(link);
-        else shell.openExternal(link);
+        else {
+            if(link.indexOf('https://') === 0 || link.indexOf('http://') === 0) {
+	            shell.openExternal(link);
+            }
+	    }
     }
 
     static bindContextMenu(){

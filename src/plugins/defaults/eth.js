@@ -22,7 +22,6 @@ import HardwareService from "../../services/secure/HardwareService";
 import TokenService from "../../services/utility/TokenService";
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
-import nacl from 'tweetnacl'
 import StoreService from "../../services/utility/StoreService";
 const erc20abi = require('../../data/abis/erc20');
 
@@ -239,12 +238,6 @@ export default class ETH extends Plugin {
 
         const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
         if(!basePrivateKey) return;
-
-
-        if(loom){
-	        const sigMsg = nacl.sign(transaction, basePrivateKey);
-	        return sigMsg.slice(0, nacl.sign.signatureLength);
-        }
 
         const tx = new EthTx(transaction);
 	    const privateKey = ethUtil.addHexPrefix(basePrivateKey);

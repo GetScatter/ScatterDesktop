@@ -100,7 +100,10 @@ const createScatterInstance = () => {
 		titleBarStyle:'hiddenInset',
 		backgroundColor,
 		show,
-		webPreferences:{ nodeIntegration:true, webviewTag:true, }
+		webPreferences:{
+			nodeIntegration:true,
+			webviewTag:true,
+		}
 	});
 
 	mainWindow = createMainWindow(false, '#fff');
@@ -141,6 +144,13 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 	}
 })
 
+app.on('web-contents-created', (event, contents) => {
+	contents.on('will-navigate', (event, navigationUrl) => {
+		// Never navigate away from localhost.
+		event.preventDefault()
+	})
+})
+
 const callDeepLink = url => {
 	if(global.appShared.ApiWatcher !== null)
 		global.appShared.ApiWatcher(url);
@@ -171,7 +181,6 @@ app.on('will-finish-launching', () => {
 
 const http = require('http');
 const https = require('https');
-// const { kill } = require('cross-port-killer');
 const WebSocket = require('ws');
 
 let rekeyPromise;
@@ -298,7 +307,15 @@ class LowLevelWindowService {
 
 	static getWindow(width = 800, height = 600){
 		return new Promise(resolve => {
-			const win = new BrowserWindow({ backgroundColor:'#FFFFFF', width, height, frame: false, radii: [5,5,5,5], icon:'assets/icon.png', show:false, webPreferences:{ nodeIntegration:true, } });
+			const win = new BrowserWindow({
+				backgroundColor:'#FFFFFF',
+				width, height,
+				frame: false, radii: [5,5,5,5],
+				icon:'assets/icon.png',
+				show:false,
+				webPreferences:{
+					nodeIntegration:true,
+				} });
 			win.loadURL(mainUrl(true));
 			win.once('ready-to-show', () => resolve(win));
 		})
