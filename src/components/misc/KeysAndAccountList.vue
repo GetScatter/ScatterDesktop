@@ -64,6 +64,8 @@
 
 					<section class="no-accounts" v-if="!keypair.accounts().length">
 						No linked accounts
+
+						<Button text="Create Account" @click.native="createEosAccount(keypair)" />
 					</section>
 				</section>
 
@@ -151,6 +153,11 @@
 				if(this.actionsMenu && !paths.includes('action-menu') && !paths.includes('action icon-dot-3')){
 					this.actionsMenu = null;
 				}
+			},
+			createEosAccount(keypair){
+				PopupService.push(Popup.eosCreateAccount(keypair, done => {
+
+				}))
 			},
 			filteredAccounts(keypair){
 				const accounts = (() => {
@@ -375,6 +382,10 @@
 				font-size: $large;
 				color:$silver;
 				padding-bottom:10px;
+
+				display:flex;
+				justify-content: space-between;
+				align-items: center;
 			}
 
 			.accounts-list {

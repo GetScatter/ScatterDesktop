@@ -116,7 +116,7 @@
 
         .spinner {
             font-size: 36px;
-            color:$secondary;
+            color:$blue;
         }
     }
 

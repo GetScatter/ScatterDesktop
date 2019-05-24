@@ -12,12 +12,15 @@
 			<br>
 			<br>
 
-			<section class="import-types">
-				<section class="import-type" v-for="blockchain in Blockchains" @click="generate(blockchain)">
-					<figure class="type-icon" :class="`token-${blockchain}-${blockchain}`"></figure>
-					<figure class="type-text">{{blockchainName(blockchain)}}</figure>
+			<section class="type-selector">
+				<section class="types">
+					<section class="type" v-for="blockchain in Blockchains" @click="generate(blockchain)">
+						<figure class="type-icon" :class="`token-${blockchain}-${blockchain}`"></figure>
+						<figure class="type-text">{{blockchainName(blockchain)}}</figure>
+					</section>
 				</section>
 			</section>
+
 
 		</section>
 
@@ -88,38 +91,7 @@
 
 		.select-type {
 
-			.import-types {
-				display:flex;
-			}
 
-			.import-type {
-				width:160px;
-				border-radius:$radius;
-				display: flex;
-				flex-direction: column;
-				margin:0 20px;
-				cursor: pointer;
-				border:1px solid $lightgrey;
-				padding:30px 0;
-
-				.type-icon {
-					font-size: 64px;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-				}
-
-				.type-text {
-					margin-top:20px;
-					font-size: $large;
-					font-weight: bold;
-				}
-
-				&:hover {
-					background:$blue;
-					color:$white;
-				}
-			}
 		}
 
 	}

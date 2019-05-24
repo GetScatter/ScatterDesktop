@@ -103,7 +103,7 @@
 			align-items: center;
 			font-size:20px;
 			z-index:2;
-			color:$secondary;
+			color:$blue;
 			opacity:1;
 
 			&.labeled {

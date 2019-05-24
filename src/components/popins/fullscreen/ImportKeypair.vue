@@ -15,10 +15,12 @@
 				<br>
 				<br>
 
-				<section class="import-types">
-					<section class="import-type" v-for="type in importTypes" @click="type.onClick()">
-						<figure class="type-icon" :class="type.icon"></figure>
-						<figure class="type-text">{{type.text}}</figure>
+				<section class="type-selector">
+					<section class="types">
+						<section class="type" v-for="type in importTypes" @click="type.onClick()">
+							<figure class="type-icon" :class="type.icon"></figure>
+							<figure class="type-text">{{type.text}}</figure>
+						</section>
 					</section>
 				</section>
 
@@ -34,9 +36,9 @@
 
 
 			<!-- SELECT BLOCKCHAIN (optionally required) -->
-			<section class="select-type" v-if="state === STATES.SELECT_BLOCKCHAIN">
-				<section class="import-types">
-					<section class="import-type" v-for="blockchain in blockchains" @click="selectBlockchain(blockchain)">
+			<section class="select-type type-selector" v-if="state === STATES.SELECT_BLOCKCHAIN">
+				<section class="types">
+					<section class="type" v-for="blockchain in blockchains" @click="selectBlockchain(blockchain)">
 						<figure class="type-icon" :class="`token-${blockchain}-${blockchain}`"></figure>
 						<figure class="type-text">{{blockchainName(blockchain)}}</figure>
 					</section>

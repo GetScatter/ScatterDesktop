@@ -73,7 +73,7 @@
 		border: 1px solid rgba(0, 0, 0, 0.1);
 		padding:4px;
 		.bar {
-			background:$secondary;
+			background:$blue;
 			height:4px;
 			border-radius:20px;
 			transition: all 0.5s ease;

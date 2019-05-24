@@ -366,39 +366,65 @@ label {
   padding:40px;
 }
 
-.import-types {
-  display:flex;
 
-  .import-type {
-    width:160px;
-    border-radius:$radius;
-    display: flex;
-    flex-direction: column;
-    margin:0 20px;
-    cursor: pointer;
-    border:1px solid $lightgrey;
-    padding:30px 0;
+.type-selector {
+  .types {
+    display:flex;
 
-    .type-icon {
-      font-size: 64px;
+    .type {
+      width:160px;
+      border-radius:$radius;
       display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+      flex-direction: column;
+      margin:0 20px;
+      cursor: pointer;
+      border:1px solid $lightgrey;
+      padding:30px 0;
 
-    .type-text {
-      margin-top:20px;
-      font-size: $large;
-      font-weight: bold;
-    }
+      .type-icon {
+        font-size: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-    &:hover {
-      background:$blue;
-      color:$white;
+        svg {
+          width:64px;
+        }
+
+        img {
+          width:64px;
+        }
+      }
+
+      .type-text {
+        margin-top:20px;
+        font-size: $large;
+        font-weight: bold;
+      }
+
+      &:hover {
+        background:$blue;
+        color:$white;
+      }
+
+      &.disabled {
+        background:$lightestgrey;
+        color:$lightgrey;
+        cursor: not-allowed;
+
+        .type-icon {
+          color:$silver;
+
+          svg {
+            fill:$lightgrey;
+          }
+        }
+      }
     }
   }
-}
 
+
+}
 
 .key-val {
 

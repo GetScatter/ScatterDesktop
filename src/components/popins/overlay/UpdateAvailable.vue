@@ -81,7 +81,7 @@
             cursor: pointer;
 
             &:hover {
-                color:$secondary;
+                color:$blue;
             }
         }
     }

@@ -43,12 +43,12 @@
 
         margin-top:10px;
 
-        background:$secondary;
+        background:$blue;
 
         color:white;
         padding:10px 0;
         border-radius:40px;
-        border:1px solid $secondary;
+        border:1px solid $blue;
         text-align:left;
 
         .icon {
