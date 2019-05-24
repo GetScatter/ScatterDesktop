@@ -1,8 +1,5 @@
 <template>
 	<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-		<!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
-		<title>topbar_refresh</title>
-		<desc>Created with Sketch.</desc>
 		<defs>
 			<linearGradient x1="62.0370201%" y1="18.2329605%" x2="48.1242264%" y2="76.5283559%" id="linearGradient-1">
 				<stop stop-color="#57C5FE" offset="0%"></stop>

@@ -1,8 +1,5 @@
 <template>
 	<svg width="88px" height="88px" viewBox="0 0 88 88" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-		<!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
-		<title>welcome_scatter</title>
-		<desc>Created with Sketch.</desc>
 		<g id="welcome_scatter" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
 			<g id="Group" stroke="#00A8FF">
 				<g id="Icon">

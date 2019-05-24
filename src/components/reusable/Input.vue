@@ -25,7 +25,7 @@
 		          :type="type || 'text'"
 		          v-model="input"></textarea>
 
-		<figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'labeled':label}" @click="emitDynamicButton">
+		<figure class="dynamic-button" v-if="dynamicButton" v-tooltip="dynamicTooltip" :class="{'labeled':label, 'hide':hideDynamicButton}" @click="emitDynamicButton">
 			<i v-if="!loaderOnDynamic" :class="`${dynamicButton}`"></i>
 			<i class="icon-spin4 animate-spin" v-if="loaderOnDynamic"></i>
 		</figure>
@@ -63,6 +63,7 @@
 			'text',
 			'disabled',
 			'copy',
+			'hideDynamicButton',
 			'dynamicButton',
 			'dynamicTooltip',
 			'big',
@@ -103,13 +104,14 @@
 			font-size:20px;
 			z-index:2;
 			color:$secondary;
+			opacity:1;
 
 			&.labeled {
 				bottom:-20px;
 			}
 
 			transition: all 0.2s ease;
-			transition-property: color;
+			transition-property: color, opacity, right;
 
 			&:hover {
 				color:$blue;
@@ -117,6 +119,13 @@
 		}
 		.dynamic-button + .copy {
 			right:30px;
+		}
+
+		.dynamic-button {
+			&.hide {
+				opacity:0;
+				right:0;
+			}
 		}
 
 		$small-font:14px;

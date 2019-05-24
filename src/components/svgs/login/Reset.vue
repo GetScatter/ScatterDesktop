@@ -1,8 +1,5 @@
 <template>
 	<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-		<!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
-		<title>reset</title>
-		<desc>Created with Sketch.</desc>
 		<g id="reset" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 			<g id="Group" transform="translate(5.000000, 3.000000)" stroke="#00A8FF">
 				<circle id="Oval" opacity="0.302176339" cx="7" cy="8" r="1.5"></circle>

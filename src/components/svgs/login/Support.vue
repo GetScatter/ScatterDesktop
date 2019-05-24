@@ -1,8 +1,5 @@
 <template>
 	<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-		<!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
-		<title>support</title>
-		<desc>Created with Sketch.</desc>
 		<g id="support" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
 			<g id="Group-11" transform="translate(4.000000, 4.000000)" stroke="#00A8FF">
 				<circle id="Oval" cx="12" cy="12" r="12"></circle>

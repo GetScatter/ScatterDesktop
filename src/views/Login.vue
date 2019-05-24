@@ -33,7 +33,7 @@
 		                   type="password" :disabled="isLockedOut"
 		                   :loader-on-dynamic="working"
 		                   :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="x => password = x"
-		                   :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'" />
+		                   :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'" :hide-dynamic-button="!password.length" />
 
 	            </section>
             </section>
@@ -263,7 +263,7 @@
 		    height:$fullheight;
 
 		    .head {
-			    padding:100px 0 0;
+			    padding:120px 0 0;
 			    flex:1;
 		    }
 
@@ -296,6 +296,9 @@
 			    .action {
 				    cursor: pointer;
 
+				    transition: all 0.1s ease;
+				    transition-property: transform;
+
 				    .icon {
 
 				    }
@@ -306,6 +309,10 @@
 					    color:$blue;
 				    }
 
+				    &:hover {
+					    transform:scale(1.4);
+				    }
+
 			    }
 		    }
 	    }
@@ -313,7 +320,7 @@
 
 
 	    .welcome-password {
-		    width:350px;
+		    width:450px;
 	    }
     }
 
@@ -324,7 +331,7 @@
 	    flex-direction: column;
 
         .logo {
-            font-size: 64px;
+            font-size: 128px;
             font-family: 'Grand Hotel', sans-serif;
             color: $blue;
         }
