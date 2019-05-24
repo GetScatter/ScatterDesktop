@@ -10,7 +10,6 @@ import StoreService from "../utility/StoreService";
 export default class TransferService {
 
     static async [Blockchains.BTC](params){
-	    params.amount = params.amount * 100000000;
         return this.baseTransfer(params);
     }
 

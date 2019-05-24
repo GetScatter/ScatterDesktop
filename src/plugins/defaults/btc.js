@@ -102,7 +102,10 @@ export default class BTC extends Plugin {
 			const token = this.defaultToken().clone();
 			token.amount = parseInt(res[account.publicKey].final_balance) / 100000000;
 			return token;
-		}).catch(() => this.defaultToken());
+		}).catch(() => {
+			PopupService.push(Popup.snackbar(`There was a problem loading balances for ${account.publicKey}`));
+			this.defaultToken()
+		});
 	}
 
 	async balancesFor(account){
@@ -121,6 +124,7 @@ export default class BTC extends Plugin {
 	}
 
 	async transfer({account, to, amount, promptForSignature = true}){
+		amount = amount * 100000000;
 
 		try {
 			return new Promise(async (resolve, reject) => {
@@ -131,7 +135,9 @@ export default class BTC extends Plugin {
 				txb.addOutput(to, amount);
 
 				// Calculating unspent inputs
-				const utxos = await explorer.getUnspentOutputs(account.publicKey).then(x => x.unspent_outputs).catch(() => []);
+				const utxos = await explorer.getUnspentOutputs(account.publicKey).then(x => x.unspent_outputs).catch(() => null);
+				if(!utxos) return resolve({error:`There was a problem loading UTXOs for ${account.publicKey}`});
+
 				let inputs = 0;
 				for (let utx of utxos) {
 					txb.addInput(utx.tx_hash_big_endian, utx.tx_output_n);
@@ -159,7 +165,6 @@ export default class BTC extends Plugin {
 
 				if(!signed) return;
 
-				// return resolve({error:'Just testing'})
 				await pushtx.usingNetwork(SELECTED_CHAIN).pushtx(signed).then(res => {
 					if(res.indexOf('Transaction Submitted') > -1){
 						resolve({txid:bitcoin.Transaction.fromHex(signed).getId()});

@@ -53,8 +53,12 @@ const proof = RUNNING_TESTS ? null : new proover();
 
 export const ipcAsync = (key, data) => {
     return new Promise(resolve => {
-        ipcRenderer.removeAllListeners(key);
-	    ipcRenderer.once(key, (event, arg) => resolve(arg));
+		const listener = (event, arg) => {
+			resolve(arg);
+			ipcRenderer.removeListener(key, listener);
+		}
+
+	    ipcRenderer.once(key, listener);
 	    ipcRenderer.send(key, {data:signable(data ? data : key), sig:proof.sign(key)})
     })
 }
