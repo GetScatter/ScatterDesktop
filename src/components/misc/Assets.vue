@@ -63,9 +63,10 @@
 				'displayCurrency'
 			]),
 			allBalances(){
+				console.log('this.totalBalances.totals', this.totalBalances.totals);
 				return Object.keys(this.totalBalances.totals).map(key => this.totalBalances.totals[key])
 					.filter(x => this.hideUnusable ? !x.unusable : true)
-					.filter(token => this.balanceFilters[token.blockchain] && parseFloat(this.balanceFilters[token.blockchain]) < parseFloat(token.amount))
+					.filter(token => !this.balanceFilters.hasOwnProperty(token.blockchain) || (this.balanceFilters[token.blockchain] && parseFloat(this.balanceFilters[token.blockchain]) < parseFloat(token.amount)))
 			},
 			filteredAccounts(){
 				return this.selectedToken.accounts()

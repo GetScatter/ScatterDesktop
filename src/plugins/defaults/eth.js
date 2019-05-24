@@ -112,15 +112,9 @@ export default class ETH extends Plugin {
     privateToPublic(privateKey){ return ethUtil.addHexPrefix(ethUtil.privateToAddress(toBuffer(privateKey)).toString('hex')); }
     validPrivateKey(privateKey){ return privateKey.length === 64 && ethUtil.isValidPrivate(toBuffer(privateKey)); }
     validPublicKey(publicKey){   return ethUtil.isValidAddress(publicKey); }
-    randomPrivateKey(){
-        return new Promise((resolve, reject) => {
-            const byteArray = Array.from({length:32}).map(i => Math.round(IdGenerator.rand() * 255));
-            const privateKey = new Buffer(byteArray);
-            resolve(privateKey.toString('hex'));
-        })
-    }
+
     bufferToHexPrivate(buffer){
-        return new Buffer(buffer).toString('hex')
+        return Buffer.from(buffer).toString('hex')
     }
     hexPrivateToBuffer(privateKey){
         return Buffer.from(privateKey, 'hex');
@@ -232,9 +226,6 @@ export default class ETH extends Plugin {
     async signer(transaction, publicKey, arbitrary = false, isHash = false, account = null){
 	    if(account && KeyPairService.isHardware(publicKey))
 		    return await HardwareService.sign(account, transaction);
-
-	    const loom = transaction.hasOwnProperty('loom') && !!transaction.loom;
-	    if(transaction.hasOwnProperty('transaction')) transaction = transaction.transaction;
 
         const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
         if(!basePrivateKey) return;

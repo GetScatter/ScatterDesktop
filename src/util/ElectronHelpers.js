@@ -49,7 +49,7 @@ class proover {
     }
 }
 
-const proof = new proover();
+const proof = RUNNING_TESTS ? null : new proover();
 
 export const ipcAsync = (key, data) => {
     return new Promise(resolve => {

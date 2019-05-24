@@ -249,7 +249,9 @@
 			border-radius:$radius;
 
 			&.new {
-				border:10px solid $blue;
+				border:1px solid $lighterblue;
+				border-top:5px solid $lighterblue;
+				box-shadow:0 10px 20px $blue-shadow, 0 2px 5px $blue-shadow;
 			}
 
 			.keypair-info {
@@ -372,6 +374,7 @@
 				margin-top:5px;
 				font-size: $large;
 				color:$silver;
+				padding-bottom:10px;
 			}
 
 			.accounts-list {
@@ -385,6 +388,11 @@
 					cursor: pointer;
 					margin-left: -10px;
     				margin-right: -10px;
+
+					&:last-child {
+						border-bottom-left-radius:$radius;
+						border-bottom-right-radius:$radius;
+					}
 
 					.details {
 						flex:1;

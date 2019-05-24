@@ -9,6 +9,11 @@ import StoreService from "../utility/StoreService";
 
 export default class TransferService {
 
+    static async [Blockchains.BTC](params){
+	    params.amount = params.amount * 100000000;
+        return this.baseTransfer(params);
+    }
+
     static async [Blockchains.ETH](params){
         return this.baseTransfer(params);
     }
@@ -34,9 +39,7 @@ export default class TransferService {
                 amount,
                 token,
                 memo,
-	            // promptForSignature:params.hasOwnProperty('promptForSignature') ? params.promptForSignature : true
             }).catch(x => x);
-
 
         if(transfer !== null) {
             if (transfer.hasOwnProperty('error')) {
@@ -65,6 +68,7 @@ export default class TransferService {
 		    case Blockchains.EOSIO: return transfer.transaction_id;
 		    case Blockchains.TRX: return transfer.txID;
 		    case Blockchains.ETH: return transfer.transactionHash;
+		    case Blockchains.BTC: return transfer.txid;
 	    }
 	    return null;
     }

@@ -2,7 +2,8 @@
 export const Blockchains = {
     EOSIO:'eos',
     ETH:'eth',
-    TRX:'trx'
+    TRX:'trx',
+    BTC:'btc',
 };
 
 export const BlockchainsArray =
@@ -14,6 +15,7 @@ export const blockchainName = x => {
         case Blockchains.EOSIO: return 'EOSIO';
         case Blockchains.ETH: return 'Ethereum';
         case Blockchains.TRX: return 'Tron';
+        case Blockchains.BTC: return 'Bitcoin';
         default: return 'Other';
     }
 }

@@ -98,9 +98,9 @@ export default class StorageService {
         historyStorage().clear();
 	    translationStorage().clear();
 	    StoreService.get().commit(Actions.SET_SCATTER, null);
-	    StoreService.get().commit(Actions.SET_SEED, '');
         window.localStorage.removeItem('scatter');
         ipcFaF('key', null);
+        console.log('hi')
         return true;
     }
 

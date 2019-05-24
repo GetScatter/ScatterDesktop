@@ -58,7 +58,9 @@ export default class BalanceService {
 		const tokens = {};
 		tokens['totals'] = {};
 
-		Object.keys(StoreService.get().state.balances).map(async accountUnique => {
+		const balances = StoreService.get().state.balances;
+
+		Object.keys(balances).map(async accountUnique => {
 			const account = StoreService.get().state.scatter.keychain.accounts.find(x => x.identifiable() === accountUnique);
 			if(!account) return;
 
@@ -71,8 +73,8 @@ export default class BalanceService {
 				tokens[account.networkUnique] = {};
 			}
 
-			if(!StoreService.get().state.balances[accountUnique]) return;
-			StoreService.get().state.balances[accountUnique].map(token => {
+			if(!balances.hasOwnProperty(accountUnique) || !balances[accountUnique]) return;
+			balances[accountUnique].map(token => {
 				if(!tokens[account.networkUnique].hasOwnProperty(token.uniqueWithChain())) {
 					tokens[account.networkUnique][token.uniqueWithChain()] = token.clone();
 					tokens['totals'][token.uniqueWithChain()] = token.clone();

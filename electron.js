@@ -147,7 +147,8 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 app.on('web-contents-created', (event, contents) => {
 	contents.on('will-navigate', (event, navigationUrl) => {
 		// Never navigate away from localhost.
-		event.preventDefault()
+		console.log('mainUrl', mainUrl(false));
+		if(navigationUrl.indexOf(mainUrl(false)) !== 0) event.preventDefault()
 	})
 })
 

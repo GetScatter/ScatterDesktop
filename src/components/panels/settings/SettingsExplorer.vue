@@ -46,6 +46,7 @@
             }
         },
         mounted(){
+
         	this.setExplorers();
         },
         methods: {

@@ -1,21 +1,40 @@
-import PopOut from '../views/PopOut';
-import Login from '../views/Login';
-import Apps from '../views/Apps';
-import App from '../views/App';
-import Assets from '../views/Assets';
-import Wallet from '../views/Wallet';
-import Account from '../views/Account';
-import Items from '../views/Items';
-import Transfer from '../views/Transfer';
-import Exchange from '../views/Exchange';
-import Receive from '../views/Receive';
-import Networks from '../views/Networks';
-import Contacts from '../views/Contacts';
-import Identities from '../views/Identities';
-import Histories from '../views/Histories';
-import Settings from '../views/Settings';
-import RIDL from '../views/RIDL';
-import Purchase from '../views/Purchase';
+// import PopOut from '../views/PopOut';
+// import Login from '../views/Login';
+// import Apps from '../views/Apps';
+// import App from '../views/App';
+// import Assets from '../views/Assets';
+// import Wallet from '../views/Wallet';
+// import Account from '../views/Account';
+// import Items from '../views/Items';
+// import Transfer from '../views/Transfer';
+// import Exchange from '../views/Exchange';
+// import Receive from '../views/Receive';
+// import Networks from '../views/Networks';
+// import Contacts from '../views/Contacts';
+// import Identities from '../views/Identities';
+// import Histories from '../views/Histories';
+// import Settings from '../views/Settings';
+// import RIDL from '../views/RIDL';
+// import Purchase from '../views/Purchase';
+
+const PopOut  = () => import('../views/PopOut');
+const Login = () => import('../views/Login');
+const Apps = () => import('../views/Apps');
+const App = () => import('../views/App');
+const Assets = () => import('../views/Assets');
+const Wallet = () => import('../views/Wallet');
+const Account = () => import('../views/Account');
+const Items = () => import('../views/Items');
+const Transfer = () => import('../views/Transfer');
+const Exchange = () => import('../views/Exchange');
+const Receive = () => import('../views/Receive');
+const Networks = () => import('../views/Networks');
+const Contacts = () => import('../views/Contacts');
+const Identities = () => import('../views/Identities');
+const Histories = () => import('../views/Histories');
+const Settings = () => import('../views/Settings');
+const RIDL = () => import('../views/RIDL');
+const Purchase = () => import('../views/Purchase');
 
 
 

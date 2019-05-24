@@ -41,7 +41,7 @@ export default class KeyPairService {
             try {
                 const plugin = PluginRepository.plugin(blockchainKV.value);
                 if(plugin.validPrivateKey(keypair.privateKey)){
-                    keypair.privateKey = plugin.hexPrivateToBuffer(keypair.privateKey);
+	                keypair.privateKey = plugin.hexPrivateToBuffer(keypair.privateKey);
                     buffered = true;
                 }
             } catch(e){}
@@ -66,7 +66,9 @@ export default class KeyPairService {
                         let p = keypair.privateKey;
                         if(typeof p !== 'string') p = plugin.bufferToHexPrivate(p);
                         keypair.publicKeys.push({blockchain, key:plugin.privateToPublic(p, keypair.fork)});
-                    } catch(e){}
+                    } catch(e){
+                        console.log('err', e);
+                    }
                 });
 
                 resolve(true);

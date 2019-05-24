@@ -70,9 +70,10 @@ export default class Account {
     }
 
     tokens(){
-	    if(!StoreService.get().state.balances) return [];
-	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return [];
-	    if(!StoreService.get().state.balances[this.identifiable()]) return [];
+    	let base = [this.network().systemToken()];
+	    if(!StoreService.get().state.balances) return base;
+	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return base;
+	    if(!StoreService.get().state.balances[this.identifiable()]) return base;
 	    return StoreService.get().state.balances[this.identifiable()];
     }
 
