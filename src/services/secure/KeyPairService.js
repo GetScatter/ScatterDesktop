@@ -22,8 +22,7 @@ export default class KeyPairService {
         BlockchainsArray.map(blockchainKV => {
             try {
                 const plugin = PluginRepository.plugin(blockchainKV.value);
-                if(plugin.validPrivateKey(privateKey))
-                    blockchains.push(blockchainKV.value);
+                if(plugin.validPrivateKey(privateKey)) blockchains.push(blockchainKV.value);
             } catch(e){}
         });
         return blockchains;

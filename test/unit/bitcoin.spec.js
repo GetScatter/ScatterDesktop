@@ -13,15 +13,15 @@ describe('Bitcoin', () => {
 
 	it('should set scatter', done => {
 		new Promise(async() => {
-			const bufkey = await Crypto.generatePrivateKey();
-			assert(btc.validPrivateKey(bufkey), "Invalid private key");
-
-			const wif = btc.bufferToHexPrivate(bufkey);
-			assert(btc.validPrivateKey(wif), "Invalid wif key")
-
-			const address = btc.privateToPublic(bufkey);
-			assert(btc.validPublicKey(address), "Invalid Bitcoin address");
-			console.log(address);
+			// const bufkey = await Crypto.generatePrivateKey();
+			// assert(btc.validPrivateKey(bufkey), "Invalid private key");
+			//
+			// const wif = btc.bufferToHexPrivate(bufkey);
+			// assert(btc.validPrivateKey(wif), "Invalid wif key")
+			//
+			// const address = btc.privateToPublic(bufkey);
+			// assert(btc.validPublicKey(address), "Invalid Bitcoin address");
+			// console.log(address);
 			//
 			// const balance = await btc.balancesFor({publicKey:address});
 			// console.log(balance);

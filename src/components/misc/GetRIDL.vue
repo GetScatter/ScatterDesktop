@@ -69,6 +69,10 @@
 
 
 		</section>
+
+		<section class="disclaimer" v-else-if="!account">
+			You don't have any EOS Mainnet accounts.
+		</section>
 	</section>
 </template>
 
@@ -196,6 +200,14 @@
 
 <style scoped lang="scss">
 	@import "../../styles/variables";
+
+	.disclaimer {
+		max-width:300px;
+		margin:0 auto;
+		font-size: 28px;
+		color:$lightgrey;
+		text-align:center;
+	}
 
 	.ridl-actions {
 		display:flex;

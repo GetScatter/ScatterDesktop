@@ -180,9 +180,9 @@
 				const blockchains = KeyPairService.getImportedKeyBlockchains(key);
 				if(blockchains.length === 1){
 					this.selectBlockchain(blockchains[0]);
+					keypair.setName();
 				} else {
 					this.blockchains = blockchains;
-					keypair.setName();
 					this.state = STATES.SELECT_BLOCKCHAIN;
 					this.setWorkingScreen(false);
 				}

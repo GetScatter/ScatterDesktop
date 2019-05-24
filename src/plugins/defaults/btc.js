@@ -15,7 +15,7 @@ import PopupService from "../../services/utility/PopupService";
 import {Popup} from "../../models/popups/Popup";
 
 
-const SELECTED_CHAIN = 3;
+const SELECTED_CHAIN = 0;
 const SELECTED_NETWORK = SELECTED_CHAIN === 0 ? bitcoin.networks.bitcoin : bitcoin.networks.testnet;
 
 // TODO: This should be in our API so that we can switch it out as
@@ -167,10 +167,6 @@ export default class BTC extends Plugin {
 					console.error(error);
 					resolve({error})
 				});
-
-
-
-
 			})
 		} catch(e){
 			console.error(e);
@@ -225,9 +221,7 @@ export default class BTC extends Plugin {
 				// } else signature = await this.signer(payload.transaction, account.publicKey, true);
 
 				const signature = await this.signer(payload.unsigned, account.publicKey, true);
-
 				if(!signature) return rejector({error:'Could not get signature'});
-
 				resolve(signature);
 			}, true));
 		})
