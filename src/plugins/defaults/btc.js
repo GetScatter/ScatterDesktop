@@ -13,6 +13,7 @@ import StoreService from "../../services/utility/StoreService";
 import * as Actions from "../../models/api/ApiActions";
 import PopupService from "../../services/utility/PopupService";
 import {Popup} from "../../models/popups/Popup";
+import {GET} from "../../services/apis/BackendApiService";
 
 
 const SELECTED_CHAIN = 0;
@@ -119,37 +120,38 @@ export default class BTC extends Plugin {
 		);
 	}
 
-
 	async transfer({account, to, amount, promptForSignature = true}){
 
 		try {
-			if(account.publicKey === to) return {error:'Do not send to yourself.'};
-
 			return new Promise(async (resolve, reject) => {
-
-				const sending = amount; // the amount we wish to send
 				const txb = new bitcoin.TransactionBuilder(SELECTED_NETWORK);
 				txb.setVersion(1);
 
-				const utxos = await explorer.getUnspentOutputs(account.publicKey).then(x => x.unspent_outputs).catch(() => []);
+				// The amount you are sending to the recipient.
+				txb.addOutput(to, amount);
 
-				let input = 0;
+				// Calculating unspent inputs
+				const utxos = await explorer.getUnspentOutputs(account.publicKey).then(x => x.unspent_outputs).catch(() => []);
+				let inputs = 0;
 				for (let utx of utxos) {
 					txb.addInput(utx.tx_hash_big_endian, utx.tx_output_n);
-					input += utx.value;
-					if (input >= sending) break;
+					inputs += utx.value;
+					if (inputs >= amount) break;
 				}
 
-				let bestFee = await fetch(`https://bitcoinfees.earn.com/api/v1/fees/recommended`).then(x => x.json()).then(x => x.fastestFee).catch(() => null);
-				if(!bestFee) return resolve({error:`Couldn't get fee`});
-				if(SELECTED_CHAIN === 3) bestFee = bestFee*2;
 
-				const change = input - (sending + bestFee);
-				if(change < 0) return resolve({error:`Insufficient BTC: ${input}`})
-				txb.addOutput(to, sending);
+				// Calculating the fee
+				let bestFee = await GET(`fees`).then(x => x.btc).catch(() => null);
+				if(!bestFee) return resolve({error:`Couldn't get fee`});
+				// Sats * bytes
+				const fee = (txb.buildIncomplete().toHex().length * bestFee);
+
+				// Returning unspent to sender.
+				const change = inputs - (amount + fee);
+				if(change < 0) return resolve({error:`Insufficient BTC: ${inputs}. (Possibly related to utxos, contact support)`});
 				if (change) txb.addOutput(account.publicKey, change);
 
-				const payload = { transaction:{from:account.publicKey, to, amount}, unsigned:txb.buildIncomplete().toHex(),
+				const payload = { transaction:{from:account.publicKey, to, amount:amount / 100000000, fee:fee / 100000000}, unsigned:txb.buildIncomplete().toHex(),
 					blockchain:Blockchains.BTC, network:account.network(), requiredFields:{}, abi:null };
 				const signed = promptForSignature
 					? await this.signerWithPopup(payload, account, x => resolve(x), null)
@@ -157,6 +159,7 @@ export default class BTC extends Plugin {
 
 				if(!signed) return;
 
+				// return resolve({error:'Just testing'})
 				await pushtx.usingNetwork(SELECTED_CHAIN).pushtx(signed).then(res => {
 					if(res.indexOf('Transaction Submitted') > -1){
 						resolve({txid:bitcoin.Transaction.fromHex(signed).getId()});
