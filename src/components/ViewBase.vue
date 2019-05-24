@@ -21,11 +21,9 @@
             </section>
         </section>
 
-        <transition name="fade" mode="out-in">
-            <section class="working-screen" v-if="workingScreen">
-                <figure class="spinner icon-spin4 animate-spin"></figure>
-            </section>
-        </transition>
+        <section class="working-screen" v-if="workingScreen">
+            <figure class="spinner icon-spin4 animate-spin"></figure>
+        </section>
 
     </section>
 </template>
@@ -62,7 +60,7 @@
                 'unlocked',
             ]),
             onboarded(){
-                return this.unlocked && this.scatter.onboarded
+                return this.unlocked && this.scatter.onboarded && this.route !== RouteNames.LOGIN
             },
             isPopout(){
                 return this.$route.name === 'popout';

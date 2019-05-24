@@ -2,10 +2,20 @@
     <section class="login">
 
 
-        <section class="entry" v-if="state === STATES.NEW_OR_LOGIN">
+
+        <section class="entry" v-if="state === STATES.NEW_OR_LOGIN" :class="{'success':success}">
+	        <figure class="login-bg"></figure>
+	        <section class="meteors">
+		        <section class="rotator">
+			        <figure class="shooting_star" v-for="i in new Array(20).keys()"></figure>
+		        </section>
+	        </section>
 
             <section class="head">
-	            <figure class="logo">Scatter</figure>
+	            <section class="details">
+		            <figure class="logo">Scatter</figure>
+		            <figure class="version">meteoric</figure>
+	            </section>
             </section>
 
 	        <!-------------------------->
@@ -15,7 +25,7 @@
 	            <section v-if="isNewScatter">
 		            <LoginButton
 				            @click.native="state = STATES.CREATE_NEW"
-				            blue="1"
+				            primary="1"
 				            title="I'm new to blockchain"
 				            description="We'll set you up with a new blockchain account" />
 		            <LoginButton
@@ -28,12 +38,12 @@
 	            <!---- EXISTING SCATTER ---->
 	            <!-------------------------->
 	            <section v-if="!isNewScatter">
-		            <Input class="welcome-password" :focus="true" big="1"
+		            <Input class="welcome-password" :focus="true" big="1" for-login="1"
 		                   placeholder="Enter your password"
 		                   type="password" :disabled="isLockedOut"
-		                   :loader-on-dynamic="working"
+		                   :loader-on-dynamic="opening && !success"
 		                   :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="x => password = x"
-		                   :dynamic-button="isLockedOut ? '' : 'icon-right-open-big'" :hide-dynamic-button="!password.length" />
+		                   :dynamic-button="success ? 'icon-check' : isLockedOut ? '' : 'icon-right-open-big'" :hide-dynamic-button="!password.length" />
 
 	            </section>
             </section>
@@ -111,6 +121,7 @@
 	import {Popup} from "../models/popups/Popup";
 	import StoreService from "../services/utility/StoreService";
 
+	import SpaceBackground from '../components/backgrounds/SpaceBackground';
 	import Reset from '../components/svgs/login/Reset';
 	import Restore from '../components/svgs/login/Restore';
 	import Support from '../components/svgs/login/Support';
@@ -138,6 +149,7 @@
 
 	export default {
 		components:{
+			SpaceBackground,
 			Welcome,
 			SelectBackupLocation,
 			ActionBar,
@@ -157,6 +169,9 @@
 			step:1,
 
 			password:'',
+
+			opening:false,
+			success:false,
 		}},
 		created(){
 
@@ -216,19 +231,22 @@
 						this.lockedOutTime = lockout.stamp + lockoutTime;
 						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.LockedOut), "attention-circled"));
 					}
-					if(this.working) return;
-					StoreService.setWorking(true);
+					if(this.opening) return;
+					this.opening = true;
 				}
 				setTimeout(async () => {
 					await this[Actions.SET_SEED](this.password);
 					await this[Actions.LOAD_SCATTER](usingLocalStorage);
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
-						this.$router.push({name:this.RouteNames.HOME});
-						StoreService.setWorking(false);
+						this.success = true;
+						setTimeout(() => {
+							this.$router.push({name:this.RouteNames.HOME});
+							// Transition time
+						}, 1000);
 					} else {
 						if(!usingLocalStorage) return this.unlock(true);
-						StoreService.setWorking(false);
+						this.opening = false;
 						PopupService.push(Popup.snackbarBadPassword());
 						setLockout();
 					}
@@ -255,24 +273,110 @@
         justify-content: center;
         align-items: center;
         height:$fullheight;
+	    position: relative;
+
+	    .login-bg {
+		    position:absolute;
+		    top:0;
+		    bottom:0;
+		    left:0;
+		    right:0;
+		    background-size:cover;
+		    background-position: center;
+		    background-image:url(../assets/login_bg.png);
+
+		    animation: fadein 0.5s ease forwards;
+	    }
+
+	    .meteors {
+		    position:absolute;
+		    top:0;
+		    bottom:0;
+		    left:0;
+		    right:0;
+		    display:flex;
+		    justify-content: center;
+		    align-items: center;
+		    overflow: hidden;
+
+		    .rotator {
+			    position:absolute;
+			    top:0;
+			    bottom:0;
+			    left:0;
+			    right:0;
+			    transform: rotateZ(145deg);
+		    }
+	    }
 
 	    .entry {
 		    display:flex;
 		    flex-direction: column;
-		    justify-content: space-between;
+		    justify-content: center;
+		    align-items: center;
 		    height:$fullheight;
+		    width:100%;
+		    position: relative;
+		    z-index:1;
+		    overflow:hidden;
+		    opacity:1;
+
+		    transition: all 0.5s ease;
+		    transition-property: opacity;
+		    transition-delay: 0.5s;
+
+		    &.success {
+			    opacity:0;
+		    }
 
 		    .head {
-			    padding:120px 0 0;
+			    display:flex;
+			    align-items: flex-end;
 			    flex:1;
+
+			    .details {
+				    text-align: center;
+
+				    .logo {
+					    font-size: 82px;
+					    line-height: 82px;
+					    font-family: 'Grand Hotel', sans-serif;
+					    color: $white;
+					    transform:translateY(-1000px);
+					    animation: inFromTop 0.5s ease forwards;
+					    animation-delay: 0.6s;
+				    }
+
+				    .version {
+					    font-size: 11px;
+					    font-weight: bold;
+					    color:$white;
+					    text-transform: uppercase;
+					    letter-spacing: 20px;
+					    margin-right:-20px;
+					    opacity:0.9;
+					    text-shadow:0 0 2px $black;
+					    transform:translateY(-1000px);
+					    animation: inFromTop 0.5s ease forwards;
+					    animation-delay: 0.4s;
+				    }
+			    }
 		    }
 
 		    .body {
-			    flex:1;
+			    padding:50px 0;
+			    opacity:0;
+			    animation: fadein 0.5s ease forwards;
+			    animation-delay: 0.2s;
 		    }
 
 		    .tail {
+			    display:flex;
+			    align-items: flex-start;
 			    flex:1;
+			    animation: inFromBottom 0.4s ease forwards;
+			    animation-delay: 0.6s;
+			    transform:translateY(1000px);
 		    }
 
 		    .terms {
@@ -281,32 +385,38 @@
 			    font-size: $small;
 
 			    u {
-				    color:$blue;
+				    color:$white;
 				    text-decoration: underline;
 			    }
 		    }
 
 		    .actions {
-			    max-width:180px;
 			    margin:0 auto;
-			    padding:40px 0;
 			    display:flex;
 			    justify-content: space-between;
 
 			    .action {
 				    cursor: pointer;
+				    padding:0 40px;
+				    text-align:center;
 
 				    transition: all 0.1s ease;
 				    transition-property: transform;
 
 				    .icon {
 
+
+				    }
+
+				    svg {
+					    fill:$white;
+					    stroke:$white;
 				    }
 
 				    .text {
 						font-size: $medium;
 					    font-weight: bold;
-					    color:$blue;
+					    color:$white;
 				    }
 
 				    &:hover {
@@ -325,17 +435,6 @@
     }
 
 
-    .entry {
-        text-align:center;
-	    display:flex;
-	    flex-direction: column;
-
-        .logo {
-            font-size: 128px;
-            font-family: 'Grand Hotel', sans-serif;
-            color: $blue;
-        }
-    }
 
 	.onboard {
 		width:100%;

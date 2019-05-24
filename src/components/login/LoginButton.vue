@@ -1,5 +1,5 @@
 <template>
-	<section class="button" :class="{'blue':blue}">
+	<section class="button" :class="{'primary':primary}">
 		<figure class="title">{{title}}</figure>
 		<figure class="description">{{description}}</figure>
 	</section>
@@ -7,7 +7,7 @@
 
 <script>
 	export default {
-		props:['blue', 'title', 'description']
+		props:['primary', 'title', 'description']
 	}
 </script>
 
@@ -34,13 +34,13 @@
 			font-size: $small;
 		}
 
-		&.blue {
-			color: $white;
-			background: $blue;
+		&.primary {
+			color: $blue;
+			background: $white;
 		}
 
-		&:not(.blue){
-			color: $blue;
+		&:not(.primary){
+			color: $white;
 			background:transparent;
 			border:1px solid $lightgrey;
 		}

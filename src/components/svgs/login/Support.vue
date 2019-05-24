@@ -1,7 +1,7 @@
 <template>
 	<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 		<g id="support" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-			<g id="Group-11" transform="translate(4.000000, 4.000000)" stroke="#00A8FF">
+			<g id="Group-11" transform="translate(4.000000, 4.000000)" stroke="#fff">
 				<circle id="Oval" cx="12" cy="12" r="12"></circle>
 				<circle id="Oval-Copy" cx="12" cy="12" r="5"></circle>
 				<g id="Group-8" opacity="0.275297619">

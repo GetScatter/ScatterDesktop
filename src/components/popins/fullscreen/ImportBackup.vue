@@ -11,7 +11,7 @@
 			<br>
 
 			<section style="display:flex; justify-content: center;">
-				<LoginButton @click.native="importBackup" blue="1" title="Select a backup file" description="These will end with .json or .txt" />
+				<LoginButton @click.native="importBackup" primary="1" title="Select a backup file" description="These will end with .json or .txt" />
 			</section>
 
 			<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" />

@@ -1,5 +1,5 @@
 <template>
-	<section class="input" :class="{'big':big, 'medium':medium, 'small':small, 'important':red, 'centered':centered, 'white':white}">
+	<section class="input" :class="{'for-login white':forLogin, 'big':big, 'medium':medium, 'small':small, 'important':red, 'centered':centered, 'white':white}">
 
 		<label v-if="error || label" :class="{'error':error}">
 			<span>{{error ? error : label}}</span>
@@ -55,6 +55,7 @@
 			}
 		},
 		props:[
+			'forLogin',
 			'placeholder',
 			'label',
 			'error',
@@ -301,7 +302,7 @@
 
 			input, textarea {
 				color:#fff;
-				border:1px solid rgba(255,255,255,0.5);
+				border:1px solid rgba(255,255,255,0.9);
 
 				&::-webkit-input-placeholder {
 					color:#fff;
@@ -317,9 +318,12 @@
 				}
 
 				&:focus {
-					border:1px solid rgba(0,0,0,0.22);
-					background:rgba(0,0,0,0.20);
+					background:rgba(0,0,0,0.04);
 				}
+			}
+
+			.dynamic-button {
+				color:$white;
 			}
 		}
 
@@ -334,6 +338,13 @@
 
 			input {
 				text-align: center;
+			}
+		}
+
+		&.for-login {
+			input {
+				background:transparent;
+
 			}
 		}
 
