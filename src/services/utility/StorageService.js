@@ -100,7 +100,6 @@ export default class StorageService {
 	    StoreService.get().commit(Actions.SET_SCATTER, null);
         window.localStorage.removeItem('scatter');
         ipcFaF('key', null);
-        console.log('hi')
         return true;
     }
 

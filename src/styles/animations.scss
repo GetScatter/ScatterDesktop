@@ -34,11 +34,13 @@
 
 @keyframes inFromTop {
   0% { transform:translateY(-1000px);}
+  70% { transform:translateY(10px);}
   100% { transform:translateY(0);}
 }
 
 @keyframes inFromBottom {
   0% { transform:translateY(1000px);}
+  70% { transform:translateY(-10px);}
   100% { transform:translateY(0);}
 }
 
@@ -77,7 +79,7 @@
 
 
 
-$shooting-time: 15s;
+$shooting-time: 25s;
 
 .meteors {
 
@@ -90,9 +92,6 @@ $shooting-time: 15s;
     background: linear-gradient(-45deg, $white, rgba(0, 0, 255, 0));
     border-radius: 999px;
     filter: drop-shadow(0 0 6px $white);
-    animation:
-            tail $shooting-time ease-in-out infinite,
-            shooting $shooting-time ease-in-out infinite;
 
 
     &::before {
@@ -113,13 +112,18 @@ $shooting-time: 15s;
       transform: translateX(50%) rotateZ(-45deg);
     }
 
-    @for $i from 1 through 20 {
+    @for $i from 1 through 50 {
       &:nth-child(#{$i}) {
-        $delay: random(9999) + 0ms;
+        $delay: random(9999) + 100ms;
         top: calc(20% - #{random(1920) - 800px});
         left: calc(#{random(1) + 0px});
         animation-delay: $delay;
         opacity: random(50) / 100 + 0.1;
+
+        $rand:#{random(80)+25};
+        animation:
+                tail #{$rand}s ease-in-out infinite,
+                shooting #{$rand}s ease-in-out infinite;
 
         &::before,
         &::after {
@@ -136,6 +140,10 @@ $shooting-time: 15s;
 
     30% {
       width: 200px;
+    }
+
+    70% {
+      width: 500px;
     }
 
     100% {
@@ -163,17 +171,7 @@ $shooting-time: 15s;
     }
 
     100% {
-      transform: translateX(2500px);
-    }
-  }
-
-  @keyframes sky {
-    0% {
-      transform: rotate(45deg);
-    }
-
-    100% {
-      transform: rotate(45 + 360deg);
+      transform: translateX(8000px);
     }
   }
 

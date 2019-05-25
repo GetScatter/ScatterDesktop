@@ -72,7 +72,7 @@
 
 					<section v-if="state === STATES.EXCHANGE">
 						<section class="send-memo" v-if="canUseExchange">
-							<u>send</u> <b class="large">{{minimumPrice}} {{systemSymbol}}</b> <u>to</u> <b class="large">createbridge</b>
+							<u>send</u> <b class="large">{{minimumPrice}} {{systemSymbol}}</b> <u>to</u> <b class="large">makeaccounts</b>
 							<br>
 							<br>
 							<br>
@@ -224,8 +224,6 @@
 			},
 
 			findExchangeAccount(){
-				console.log('finding exchange account.')
-
 				const accountName = this.accountName;
 				const network = this.network.clone();
 				const keypair = this.keypair;
@@ -245,10 +243,9 @@
 							"30 minutes have passed since you sent money from your exchange. It looks like an account still hasn't been created. You should check the status of the transaction in the exchange."
 						))
 					}
-					console.log('checking')
+
 					const plugin = PluginRepository.plugin(Blockchains.EOSIO);
 					const account = await plugin.accountData(null, network, accountName);
-					console.log('account', account);
 
 					if(account && account.hasOwnProperty('account_name') && account.account_name === accountName){
 						await AccountService.importAllAccounts(this.keypair);

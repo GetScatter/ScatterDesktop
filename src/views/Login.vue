@@ -7,7 +7,7 @@
 	        <figure class="login-bg"></figure>
 	        <section class="meteors">
 		        <section class="rotator">
-			        <figure class="shooting_star" v-for="i in new Array(20).keys()"></figure>
+			        <figure class="shooting_star" v-for="i in new Array(50).keys()"></figure>
 		        </section>
 	        </section>
 
@@ -351,7 +351,7 @@
 					    color: $white;
 					    transform:translateY(-1000px);
 					    animation: inFromTop 0.8s ease forwards;
-					    animation-delay: 0.3s;
+					    animation-delay: 0.4s;
 				    }
 
 				    .version {
@@ -365,7 +365,7 @@
 					    text-shadow:0 0 2px $black;
 					    transform:translateY(-1000px);
 					    animation: inFromTop 0.5s ease forwards;
-					    animation-delay: 0.4s;
+					    animation-delay: 0.2s;
 				    }
 			    }
 		    }
