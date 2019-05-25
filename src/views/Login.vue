@@ -347,7 +347,7 @@
 					    font-size: 82px;
 					    line-height: 82px;
 					    font-family: 'Grand Hotel', sans-serif;
-					    text-shadow:0 1px 2px rgba(0,0,0,0.2), 0 3px 7px rgba(0,0,0,0.2);
+					    text-shadow:0 0 90px rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.2), 0 3px 7px rgba(0,0,0,0.2);
 					    color: $white;
 					    transform:translateY(-1000px);
 					    animation: inFromTop 0.8s ease forwards;
