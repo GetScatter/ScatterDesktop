@@ -5,7 +5,7 @@
 		<section v-if="slides.length > 1" @click="slide(1)" class="go-left icon-left-open-big"></section>
 
 
-		<section class="slider-container">
+		<section class="slider-container" v-if="slides.length">
 			<section class="slider" :style="{'left':left+'px'}">
 
 				<section class="slide" v-for="(slide,i) in slides" :style="{'left':i*slideWidth+'px', 'width':slideWidth+'px'}">
@@ -22,6 +22,31 @@
 						</section>
 						<section>
 							<Button text="View App" :blue="1" @click.native="goToApp(slide)" />
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+
+		<section class="slider-container" v-else>
+			<section class="slider dummy">
+
+				<section class="slide" :style="{'left':0, 'width':slideWidth+'px'}">
+
+					<section class="image-container">
+						<figure class="bg"></figure>
+						<figure class="image">
+							<i class="icon-spin4 animate-spin"></i>
+						</figure>
+					</section>
+
+					<section class="info">
+						<section>
+							<figure class="name animated-gradient"></figure>
+							<figure class="description animated-gradient"></figure>
+						</section>
+						<section>
+							<Button :blue="1" />
 						</section>
 					</section>
 				</section>
@@ -258,6 +283,35 @@
 						.bg {
 							transition: 8s transform ease;
 							transform:rotateZ(50deg) scale(0.5);
+						}
+					}
+				}
+			}
+
+			&.dummy {
+				.slide {
+					.image-container {
+						background-color:$lightergrey;
+
+
+
+						.image {
+							display:flex;
+							justify-content: center;
+							align-items: center;
+							font-size: 48px;
+							color:$lightgrey;
+						}
+					}
+
+					.info {
+						.name {
+							padding:5px 50px;
+							border-radius:$radius;
+						}
+						.description {
+							padding:10px 150px;
+							border-radius:$radius;
 						}
 					}
 				}

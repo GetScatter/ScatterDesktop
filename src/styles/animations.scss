@@ -52,6 +52,27 @@
 
 
 
+.animated-gradient {
+  background: repeating-linear-gradient(to right, $lightergrey 0%, #f8fbfc 50%, $lightergrey 100%);
+  width: 100%;
+  background-size: 200% auto;
+  background-position: 0 100%;
+  animation: gradient 2s infinite;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+
+  &.blue {
+    background: repeating-linear-gradient(to right, $blue 0%, $lightblue 50%, $blue 100%);
+  }
+}
+
+@keyframes gradient {
+  0%   { background-position: 0 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+
 
 
 

@@ -10,47 +10,64 @@
 		<section class="scroller" ref="scroller" v-if="state === STATES.EXPLORE">
 			<figure class="blue-bg"></figure>
 			<section class="padder">
-				<section class="featured" v-if="featuredApps.length > 1">
-					<Carousel :slides="featuredApps" />
+				<section class="featured">
+					<Carousel :slides="featuredApps" /> <!-- featuredApps -->
 				</section>
 
-				<section class="categories" v-if="exploreTerms.length">
-					<section class="category singular">
-						<section class="info">
-							<figure class="name">{{terms}}</figure>
-						</section>
-
-						<section class="apps">
-							<router-link :to="{name:RouteNames.APP, params:{applink:app.applink}}" class="app" :key="app.applink" v-for="app in filteredApps">
-								<figure class="image" :class="{'no-image':!getAppData(app.applink).hasOwnProperty('img')}">
-									<img v-if="getAppData(app.applink).hasOwnProperty('img')" :src="getAppData(app.applink).img" />
+				<section v-if="!categories.length">
+					<section class="categories">
+						<section class="category">
+							<section class="apps">
+								<figure class="app" v-for="i in new Array(5).keys()">
+									<figure class="image no-image animated-gradient"></figure>
+									<figure class="name"></figure>
 								</figure>
-								<figure class="name">{{app.name}}</figure>
-							</router-link>
+							</section>
 						</section>
-
 					</section>
 				</section>
 
-				<section class="categories" v-if="!exploreTerms.length">
+				<section v-else>
+					<section class="categories" v-if="exploreTerms.length">
+						<section class="category singular">
+							<section class="info">
+								<figure class="name">{{terms}}</figure>
+							</section>
 
-					<section class="category" :class="{'singular':selectedCategory}" v-for="category in categories" v-if="!selectedCategory || selectedCategory === category.type">
-						<section class="info" v-if="!selectedCategory">
-							<figure class="name">{{category.type}}</figure>
-							<figure class="view-all" v-if="category.apps.length > 4" @click="selectCategory(category)">View all {{category.apps.length}} apps <i class="icon-right-open-big"></i></figure>
+							<section class="apps">
+								<router-link :to="{name:RouteNames.APP, params:{applink:app.applink}}" class="app" :key="app.applink" v-for="app in filteredApps">
+									<figure class="image" :class="{'no-image':!getAppData(app.applink).hasOwnProperty('img')}">
+										<img v-if="getAppData(app.applink).hasOwnProperty('img')" :src="getAppData(app.applink).img" />
+									</figure>
+									<figure class="name">{{app.name}}</figure>
+								</router-link>
+							</section>
+
 						</section>
+					</section>
 
-						<section class="apps">
-							<router-link :to="{name:RouteNames.APP, params:{applink:app.applink}}" class="app" :key="app.applink" v-for="app in selectedCategory ? category.apps : category.apps.slice(0,10)">
-								<figure class="image" :class="{'no-image':!getAppData(app.applink).hasOwnProperty('img')}">
-									<img v-if="getAppData(app.applink).hasOwnProperty('img')" :src="getAppData(app.applink).img" />
-								</figure>
-								<figure class="name">{{app.name}}</figure>
-							</router-link>
+					<section class="categories" v-if="!exploreTerms.length">
+
+						<section class="category" :class="{'singular':selectedCategory}" v-for="category in categories" v-if="!selectedCategory || selectedCategory === category.type">
+							<section class="info" v-if="!selectedCategory">
+								<figure class="name">{{category.type}}</figure>
+								<figure class="view-all" v-if="category.apps.length > 4" @click="selectCategory(category)">View all {{category.apps.length}} apps <i class="icon-right-open-big"></i></figure>
+							</section>
+
+							<section class="apps">
+								<router-link :to="{name:RouteNames.APP, params:{applink:app.applink}}" class="app" :key="app.applink" v-for="app in selectedCategory ? category.apps : category.apps.slice(0,10)">
+									<figure class="image" :class="{'no-image':!getAppData(app.applink).hasOwnProperty('img')}">
+										<img v-if="getAppData(app.applink).hasOwnProperty('img')" :src="getAppData(app.applink).img" />
+									</figure>
+									<figure class="name">{{app.name}}</figure>
+								</router-link>
+							</section>
+
 						</section>
-
 					</section>
 				</section>
+
+
 			</section>
 		</section>
 
@@ -345,7 +362,7 @@
 
 						.app {
 							display:inline-block;
-							width:calc(20% - 15px);
+							width:calc(20% - 16px);
 							max-width:200px;
 
 							.image {
