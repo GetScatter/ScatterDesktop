@@ -7,7 +7,7 @@
 	        <figure class="login-bg"></figure>
 	        <section class="meteors">
 		        <section class="rotator">
-			        <figure class="shooting_star" v-for="i in new Array(50).keys()"></figure>
+			        <figure class="shooting_star" v-for="i in new Array(20).keys()"></figure>
 		        </section>
 	        </section>
 
