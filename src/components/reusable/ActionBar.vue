@@ -26,8 +26,9 @@
 		z-index:2;
 		height:70px;
 		//box-shadow:0 -2px 30px $blue-shadow;
-		border-top:1px solid $lightgrey;
+		border:1px solid $lightgrey;
 		background:$white;
+
 
 		display:flex;
 		align-items: center;

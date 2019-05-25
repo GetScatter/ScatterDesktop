@@ -1,5 +1,5 @@
 <template>
-	<section class="pop-in import-backup center-panel">
+	<section class="pop-in import-backup">
 		<section>
 			<!--<h1>{{locale(langKeys.LOGIN.RESTORE.Title)}}</h1>-->
 			<!--<p class="limited-p">{{locale(langKeys.LOGIN.RESTORE.SubTitle)}}</p>-->

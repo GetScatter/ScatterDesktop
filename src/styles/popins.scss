@@ -28,6 +28,8 @@
     height:$fullheight;
     text-align:center;
     width:100%;
+    border-left:1px solid $lightgrey;
+    border-right:1px solid $lightgrey;
 
     .icon {
       width:120px;

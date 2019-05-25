@@ -29,7 +29,7 @@
 				<section class="boxes">
 					<section class="box nested account-selector" @click="selectProxy">
 						<section>
-							<figure class="name">{{selectedProxy || 'Select a known proxy'}}</figure>
+							<figure class="name">Select a known proxy</figure>
 						</section>
 						<figure class="chevron icon-dot-3"></figure>
 					</section>
@@ -70,6 +70,7 @@
 	import ObjectHelpers from "../../../util/ObjectHelpers";
 	import RecurringService from "../../../services/blockchain/RecurringService";
 	import {GET} from "../../../services/apis/BackendApiService";
+	require('../../../styles/transfers.scss')
 
 	export default {
 		props:['popin'],
