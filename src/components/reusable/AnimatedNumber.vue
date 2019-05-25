@@ -22,7 +22,7 @@
 						let change = (parseFloat(this.number) - parseFloat(this.displayNumber)) / 10;
 						this.displayNumber = parseFloat(parseFloat(this.displayNumber) + change).toFixed(this.decimals);
 					}
-				}, 5);
+				}, 10);
 			}
 
 		}

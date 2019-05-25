@@ -139,6 +139,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_CREATE_ACCOUNT, { account }, callback))
 	}
 
+	static eosLinkAccount(keypair, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_LINK_ACCOUNT, { keypair }, callback))
+	}
+
 	static addCustomNetwork(blockchain, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ADD_CUSTOM_NETWORK, {blockchain}, callback))
 	}
@@ -244,6 +248,7 @@ export const PopupTypes = {
 	SELECT_RECIPIENT:'selectRecipient',
 	SELECT_TOKEN:'selectToken',
 	SELECT_BLOCKCHAIN:'selectBlockchain',
+	EOS_LINK_ACCOUNT:'eosLinkAccount',
 
     // FULLSCREEN
 	SECURITY_CODE:'securityCode',
@@ -289,6 +294,7 @@ export const isFullscreen = popup => {
         PopupTypes.SELECT_BLOCKCHAIN,
         PopupTypes.CONFIRM_TRANSFER,
         PopupTypes.CONFIRM_EXCHANGE,
+        PopupTypes.EOS_LINK_ACCOUNT,
     ].includes(popup.data.type);
 
 

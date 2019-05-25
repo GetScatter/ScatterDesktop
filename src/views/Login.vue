@@ -335,10 +335,6 @@
 		    transition-property: opacity;
 		    transition-delay: 0.5s;
 
-		    &.success {
-			    opacity:0;
-		    }
-
 		    .head {
 			    display:flex;
 			    align-items: flex-end;
@@ -354,8 +350,8 @@
 					    text-shadow:0 1px 2px rgba(0,0,0,0.2), 0 3px 7px rgba(0,0,0,0.2);
 					    color: $white;
 					    transform:translateY(-1000px);
-					    animation: inFromTop 0.5s ease forwards;
-					    animation-delay: 0.6s;
+					    animation: inFromTop 0.8s ease forwards;
+					    animation-delay: 0.3s;
 				    }
 
 				    .version {
@@ -385,9 +381,13 @@
 			    display:flex;
 			    align-items: flex-start;
 			    flex:1;
-			    animation: inFromBottom 0.4s ease forwards;
+			    animation: inFromBottom 0.6s ease forwards;
 			    animation-delay: 0.6s;
 			    transform:translateY(1000px);
+		    }
+
+		    &.success {
+			    opacity:0;
 		    }
 
 		    .terms {

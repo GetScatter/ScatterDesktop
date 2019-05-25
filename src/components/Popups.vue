@@ -43,6 +43,7 @@
                             <SelectTokenAndAccount :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_TOKEN_AND_ACCOUNT" />
                             <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
                             <ConfirmExchange :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_EXCHANGE" />
+                            <EosLinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_LINK_ACCOUNT" />
                         </section>
                     </figure>
                 </section>
@@ -102,9 +103,11 @@
     import EnterSecurityCode from "./popins/fullscreen/EnterSecurityCode";
     import SelectFromList from "./popins/overlay/SelectFromList";
     import ExportPrivateKey from "./popins/fullscreen/ExportPrivateKey";
+    import EosLinkAccount from "./popins/overlay/EosLinkAccount";
 
     export default {
     	components:{
+		    EosLinkAccount,
 		    ExportPrivateKey,
 		    SelectFromList,
 		    EnterSecurityCode,

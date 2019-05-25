@@ -6,9 +6,9 @@
 
 		<Input v-if="inputField" v-bind="inputField" centered="1" :text="text" v-on:changed="x => text = x" />
 
-		<section class="actions">
-			<Button blue="1" text="Okay" @click.native="returnResult(inputField ? text : true)" />
+		<section class="actions" :class="{'between':acceptDeny}">
 			<Button red="1" v-if="acceptDeny" text="Deny" @click.native="returnResult(false)" />
+			<Button blue="1" text="Okay" @click.native="returnResult(inputField ? text : true)" />
 		</section>
 
 	</section>
@@ -76,6 +76,10 @@
 			display:flex;
 			justify-content: flex-end;
 			width:100%;
+
+			&.between {
+				justify-content: space-between;
+			}
 		}
 	}
 

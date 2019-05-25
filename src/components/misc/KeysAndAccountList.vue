@@ -39,6 +39,10 @@
 							<figure class="item" @click="removeKeypair(keypair)">
 								<i class="icon-trash"></i> Remove Key
 							</figure>
+
+							<figure class="item" v-if="holdingCtrl && keypair.enabledKey().blockchain === Blockchains.EOSIO" @click="linkAccount(keypair)">
+								<i class="icon-user"></i> Link Account
+							</figure>
 						</section>
 					</section>
 				</section>
@@ -80,7 +84,7 @@
 	import {mapGetters} from 'vuex';
 	import PluginRepository from "../../plugins/PluginRepository";
 	import SearchAndFilter from "../reusable/SearchAndFilter";
-	import {blockchainName, BlockchainsArray} from '../../models/Blockchains'
+	import {blockchainName, BlockchainsArray, Blockchains} from '../../models/Blockchains'
 	import ElectronHelpers from "../../util/ElectronHelpers";
 	import PopupService from "../../services/utility/PopupService";
 	import {Popup} from "../../models/popups/Popup";
@@ -97,6 +101,8 @@
 			terms:'',
 			actionsMenu:null,
 			refreshingAccounts:null,
+			holdingCtrl:false,
+			Blockchains,
 		}},
 		computed:{
 			...mapGetters([
@@ -142,10 +148,14 @@
 			},
 		},
 		mounted(){
-			window.addEventListener('click', this.handleClick)
+			window.addEventListener('click', this.handleClick);
+			window.addEventListener("keydown", this.handleKeyDown);
+			window.addEventListener("keyup", this.handleKeyUp);
 		},
 		destroyed(){
 			window.removeEventListener('click', this.handleClick)
+			window.removeEventListener("keydown", this.handleKeyDown);
+			window.removeEventListener("keyup", this.handleKeyUp);
 		},
 		methods:{
 			handleClick(e){
@@ -153,6 +163,15 @@
 				if(this.actionsMenu && !paths.includes('action-menu') && !paths.includes('action icon-dot-3')){
 					this.actionsMenu = null;
 				}
+			},
+			handleKeyDown(e){
+				if(e.which === 17) this.holdingCtrl = true;
+			},
+			handleKeyUp(e){
+				if(e.which === 17) this.holdingCtrl = false;
+			},
+			linkAccount(keypair){
+				PopupService.push(Popup.eosLinkAccount(keypair))
 			},
 			createEosAccount(keypair){
 				PopupService.push(Popup.eosCreateAccount(keypair, done => {
@@ -246,6 +265,7 @@
 		overflow-y:auto;
 		padding:30px;
 		background:$lightestgrey;
+		padding-bottom:60px;
 
 		.keypair {
 			background:$white;
