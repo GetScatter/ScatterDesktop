@@ -8,9 +8,9 @@
 		</section>
 
 		<section class="scroller" ref="scroller" v-if="state === STATES.EXPLORE">
-			<figure class="blue-bg"></figure>
+			<figure class="blue-bg" v-if="!exploreTerms.length"></figure>
 			<section class="padder">
-				<section class="featured">
+				<section class="featured" v-if="!exploreTerms.length">
 					<Carousel :slides="featuredApps" /> <!-- featuredApps -->
 				</section>
 
@@ -165,13 +165,13 @@
 				if(!this.dappData) return {};
 				return Object.keys(this.dappData).reduce((acc, key) => {
 					const item = this.dappData[key];
-					const found = prop => prop.toLowerCase().trim().indexOf(this.exploreTerms) > -1;
+					const found = prop => prop.toLowerCase().trim().indexOf(this.exploreTerms.toLowerCase().trim()) > -1;
 					if(found(item.applink) || found(item.name) || found(item.description)) acc.push(item);
 					return acc;
 				}, []);
 			},
 			featuredApps(){
-				if(this.exploreTerms.length){
+				if(this.exploreTerms.trim().length){
 					return this.filteredApps.slice(0,3);
 				}
 
