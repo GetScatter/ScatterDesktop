@@ -9,7 +9,7 @@
 		<br>
 
 		<section style="display:flex; justify-content: center;">
-			<LoginButton @click.native="setBackupLocation" primary="1" title="Select a Folder" description="Don't use external drives." />
+			<LoginButton @click.native="setBackupLocation" on-white="1" primary="1" title="Select a Folder" description="Don't use external drives." />
 		</section>
 
 		<ActionBar :buttons-left="[{text:'Back', click:() => $emit('back')}]" />

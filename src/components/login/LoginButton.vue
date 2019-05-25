@@ -1,5 +1,5 @@
 <template>
-	<section class="button" :class="{'primary':primary}">
+	<section class="button" :class="{'primary':primary, 'on-white':onWhite}">
 		<figure class="title">{{title}}</figure>
 		<figure class="description">{{description}}</figure>
 	</section>
@@ -7,7 +7,7 @@
 
 <script>
 	export default {
-		props:['primary', 'title', 'description']
+		props:['primary', 'title', 'description', 'onWhite']
 	}
 </script>
 
@@ -47,6 +47,19 @@
 
 		&:not(:first-child){
 			margin-top:10px;
+		}
+
+		&.on-white {
+			&.primary {
+				color: $white;
+				background: $blue;
+			}
+
+			&:not(.primary){
+				color: $blue;
+				background:transparent;
+				border:1px solid $lightgrey;
+			}
 		}
 	}
 </style>
