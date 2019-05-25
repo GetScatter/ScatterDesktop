@@ -4,7 +4,9 @@
 
 
         <section class="entry" v-if="state === STATES.NEW_OR_LOGIN" :class="{'success':success}">
-	        <figure class="login-bg"></figure>
+	        <figure class="login-bg">
+		        <img src="../assets/login_bg.png" />
+	        </figure>
 	        <section class="meteors">
 		        <section class="rotator">
 			        <figure class="shooting_star" v-for="i in new Array(20).keys()"></figure>
@@ -288,12 +290,18 @@
 		    bottom:0;
 		    left:0;
 		    right:0;
-		    background-size:cover;
-		    background-position: center;
-		    background-image:url(../assets/login_bg.png);
-		    border-bottom:1px solid $darkerblue;
+		    overflow: hidden;
 		    border-left:1px solid $darkerblue;
 		    border-right:1px solid $darkerblue;
+		    display:flex;
+		    align-items: center;
+		    justify-content: center;
+
+		    img {
+			    display:block;
+			    width:1920px;
+			    height:100%;
+		    }
 
 		    animation: fadein 0.5s ease forwards;
 	    }
