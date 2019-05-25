@@ -32,17 +32,23 @@
 				<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:'Create Account', blue:true, click:() => createAccount()}]" />
 			</section>
 
-			<!------------------------------------>
-			<!------- SELECT CREATION TYPE ------->
-			<!------------------------------------>
 			<section v-else>
-				<br>
-				<br>
+
+
+				<!------------------------------------>
+				<!------- SELECT CREATION TYPE ------->
+				<!------------------------------------>
 				<section class="type-selector" v-if="state === STATES.SELECT_TYPE">
+					<br>
+					<br>
 					<section class="types">
+						<!--<section class="type" v-if="availableAccounts.length" @click="state = STATES.ACCOUNT">-->
+							<!--<figure class="type-icon icon-user"></figure>-->
+							<!--<figure class="type-text">From another account</figure>-->
+						<!--</section>-->
 						<section class="type" @click="state = STATES.EXCHANGE">
 							<figure class="type-icon icon-globe"></figure>
-							<figure class="type-text">Send Funds</figure>
+							<figure class="type-text">From an exchange</figure>
 						</section>
 						<section class="type disabled">
 							<figure class="type-icon"><CreditCard /></figure>
@@ -51,30 +57,36 @@
 					</section>
 				</section>
 
+
 				<!------------------------------------>
-				<!------- USING EXCHANGE ------->
+				<!------- TYPE SELECTED -------------->
 				<!------------------------------------>
-				<section class="using-exchange" v-if="state === STATES.EXCHANGE">
-					<i v-if="!accountName.length && !accountNameError">Start typing in a name to see if it is available.</i>
-					<Input big="1" :error="accountNameError" :placeholder="locale(langKeys.GENERIC.AccountName)" :text="accountName" v-on:changed="x => accountName = x" />
+				<section class="type-selected" v-if="state !== STATES.SELECT_TYPE">
+					<i style="margin-bottom:11px; display:block;" v-if="!accountName.trim().length && !accountNameError">Start typing in a name to see if it is available.</i>
+					<Input big="1" centered="1" :error="accountNameError" :placeholder="locale(langKeys.GENERIC.AccountName)" :text="accountName" v-on:changed="x => accountName = x" />
 
-					<section class="send-memo" v-if="accountName.length === 12 && !accountNameError">
-						<u>send</u> <b class="large">{{minimumPrice}} {{systemSymbol}}</b> <u>to</u> <b class="large">createbridge</b>
-						<br>
-						<br>
-						<br>
 
-						<b class="red">Make sure you include this memo when you send it or your funds will be lost!</b>
-						<figure class="memo">
-							<b>{{exchangeMemo}}</b>
-							<b class="copy icon-docs" @click="copyExchangeMemo">Copy</b>
-						</figure>
+					<!------------------------------------>
+					<!------- USING EXCHANGE ------------->
+					<!------------------------------------>
 
-						<i><u>DO NOT</u> send large amounts of {{systemSymbol}} to createbridge. Only send the required {{minimumPrice}} {{systemSymbol}} to create the account. Once your new <u>{{accountName}}</u> account is created, you can send <u>that</u> account {{systemSymbol}}.</i>
+					<section v-if="state === STATES.EXCHANGE">
+						<section class="send-memo" v-if="canUseExchange">
+							<u>send</u> <b class="large">{{minimumPrice}} {{systemSymbol}}</b> <u>to</u> <b class="large">createbridge</b>
+							<br>
+							<br>
+							<br>
+
+							<b class="red">Make sure you include this memo when you send it or your funds will be lost!</b>
+							<figure class="memo">
+								<b>{{exchangeMemo}}</b>
+								<b class="copy icon-docs" @click="copyExchangeMemo">Copy</b>
+							</figure>
+						</section>
 					</section>
 				</section>
 
-				<ActionBar :buttons-left="noAccountButtons" />
+				<ActionBar :buttons-left="noAccountButtonsLeft" :buttons-right="noAccountButtonsRight" />
 			</section>
 
 		</section>
@@ -99,10 +111,12 @@
 	import Exchange from '../../svgs/quick-actions/Exchange'
 	import CreditCard from '../../svgs/CreditCard'
 	import ElectronHelpers from "../../../util/ElectronHelpers";
+	import Process from "../../../models/Process";
 
 
 	const STATES = {
 		SELECT_TYPE:'selectType',
+		ACCOUNT:'account',
 		EXCHANGE:'exchange',
 		CREDIT_CARD:'creditCard',
 	}
@@ -115,7 +129,7 @@
 		data () {return {
 
 			accountName:'',
-			accountNameError:' ',
+			accountNameError:'',
 			eosToUse:'1.0000',
 			resourceError:null,
 			ramPrice:null,
@@ -146,9 +160,16 @@
 			validKeypairs(){
 				return this.keypairs.filter(x => x.blockchains.includes(Blockchains.EOSIO))
 			},
-			noAccountButtons(){
+			canUseExchange(){
+				return this.accountName.length === 12 && !this.accountNameError
+			},
+			noAccountButtonsLeft(){
 				if(this.state === STATES.SELECT_TYPE) return [{text:'Cancel', click:() => this.returnResult(false)}];
 				return [{text:'Back', click:() => this.state = STATES.SELECT_TYPE}];
+			},
+			noAccountButtonsRight(){
+				if(this.state === STATES.EXCHANGE && this.canUseExchange) return [{text:'Click after transfer', blue:true, click:() => this.findExchangeAccount()}];
+				return [];
 			},
 			changeableKeys(){
 				return [{
@@ -166,6 +187,9 @@
 			keypair(){
 				return this.popin.data.props.account instanceof Keypair ? this.popin.data.props.account : null;
 			},
+			availableAccounts(){
+				return this.accounts.filter(x => x.network().chainId === this.network.chainId);
+			},
 			network(){
 				const endorsed = PluginRepository.plugin(Blockchains.EOSIO).getEndorsedNetwork();
 				return this.account ? this.account.network() : this.networks.find(x => x.chainId === endorsed.chainId) || endorsed;
@@ -174,7 +198,7 @@
 				return this.network.systemToken().decimals;
 			},
 			minimumPrice(){
-				return (parseFloat(this.ramPrice ? this.ramPrice : '1.0000') + 1.2).toFixed(this.decimals);
+				return (parseFloat(this.ramPrice ? this.ramPrice : '1.0000') + 0.5).toFixed(this.decimals);
 			},
 			totalPrice(){
 				return (parseFloat(this.ramPrice ? this.ramPrice : 0) + parseFloat(this.eosToUse ? this.eosToUse : 0)).toFixed(this.decimals);
@@ -197,6 +221,51 @@
 			},
 			copyExchangeMemo(){
 				ElectronHelpers.copy(this.exchangeMemo);
+			},
+
+			findExchangeAccount(){
+				console.log('finding exchange account.')
+
+				const accountName = this.accountName;
+				const network = this.network.clone();
+				const keypair = this.keypair;
+				let timeout = 0;
+
+				PopupService.push(Popup.prompt(
+					"Looking for account",
+					"Scatter will continuously look for the account being created for the next 30 minutes. Once it is found it will automatically be added to your Scatter."
+				));
+
+				const findUntilFoundOrTimedOut = async () => {
+					timeout++;
+					if(timeout >= 60){
+						// 30 minutes have passed
+						PopupService.push(Popup.prompt(
+							"Exchange account creation error.",
+							"30 minutes have passed since you sent money from your exchange. It looks like an account still hasn't been created. You should check the status of the transaction in the exchange."
+						))
+					}
+					console.log('checking')
+					const plugin = PluginRepository.plugin(Blockchains.EOSIO);
+					const account = await plugin.accountData(null, network, accountName);
+					console.log('account', account);
+
+					if(account && account.hasOwnProperty('account_name') && account.account_name === accountName){
+						await AccountService.importAllAccounts(this.keypair);
+						PopupService.push(Popup.prompt(
+							"Account found!",
+							"Scatter found the account you created using an exchange. You can now see it in your wallet."
+						));
+						return true;
+					}
+
+					setTimeout(() => {
+						findUntilFoundOrTimedOut();
+					}, 1000 * 30);
+				}
+
+				findUntilFoundOrTimedOut();
+				this.returnResult(true);
 			},
 
 			async getRamPrice(){
@@ -256,6 +325,7 @@
 				clearTimeout(accountTimeout);
 				accountTimeout = setTimeout(async () => {
 					this.accountName = this.accountName.trim().toLowerCase();
+					if(!this.accountName.length) return this.accountNameError = '';
 					if(this.accountName.length !== 12) return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameLengthError) + ` - ${this.accountName.length}/12`;
 					if(this.accountName.split('').filter(x => isNaN(x)).find(x => x.toUpperCase() === x))
 						return this.accountNameError = this.locale(this.langKeys.CREATE_EOS.AccountNameFormattingError);
@@ -301,7 +371,7 @@
 		}
 	}
 
-	.using-exchange {
+	.type-selected {
 		min-width:500px;
 	}
 

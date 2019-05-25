@@ -24,6 +24,7 @@ import Slider from './components/reusable/Slider.vue'
 import PopInHead from './components/reusable/PopInHead.vue'
 import Switcher from './components/reusable/Switcher.vue'
 import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
+import AnimatedNumber from './components/reusable/AnimatedNumber.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
 import LinkApp from './views/popouts/LinkApp.vue'
 import TransferRequest from './views/popouts/TransferRequest.vue'
@@ -56,6 +57,7 @@ class Main {
 			{tag:'ActionBar', vue:ActionBar},
 			{tag:'view-base', vue:ViewBase},
 			{tag:'PopInHead', vue:PopInHead},
+			{tag:'AnimatedNumber', vue:AnimatedNumber},
 		];
 
 		let fragments;

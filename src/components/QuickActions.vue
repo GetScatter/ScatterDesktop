@@ -2,7 +2,7 @@
 	<section class="quick-actions" :class="{'short':isShort}">
 		<section class="left" v-if="!hideMainBalance && !quickBack && accounts.length">
 			<section class="fiat">
-				<span class="balance">{{totalBalance.symbol}}{{formatNumber(totalBalance.amount, true)}}</span>
+				<span class="balance">{{totalBalance.symbol}}<AnimatedNumber :number="totalBalance.amount" /></span>
 				<Refresh class="refresh" :class="{'spin':loadingBalances}" @click.native="refreshTokens" />
 			</section>
 			<section class="token" v-if="displayToken">
@@ -49,9 +49,11 @@
 	import PriceService from "../services/apis/PriceService";
 	import BalanceService from "../services/blockchain/BalanceService";
 	import {RouteNames} from "../vue/Routing";
+	import AnimatedNumber from "./reusable/AnimatedNumber";
 
 	export default {
 		components:{
+			AnimatedNumber,
 			Send,
 			Refresh,
 			Exchange,

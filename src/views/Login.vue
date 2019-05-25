@@ -40,10 +40,10 @@
 	            <section v-if="!isNewScatter">
 		            <Input class="welcome-password" :focus="true" big="1" for-login="1"
 		                   placeholder="Enter your password"
-		                   type="password" :disabled="isLockedOut"
+		                   type="password" :disabled="opening || isLockedOut"
 		                   :loader-on-dynamic="opening && !success"
 		                   :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="x => password = x"
-		                   :dynamic-button="success ? 'icon-check' : isLockedOut ? '' : 'icon-right-open-big'" :hide-dynamic-button="!password.length" />
+		                   :dynamic-button="badPassword ? 'icon-cancel' : success ? 'icon-check' : isLockedOut ? '' : 'icon-right-open-big'" :hide-dynamic-button="!password.length" />
 
 	            </section>
             </section>
@@ -172,6 +172,7 @@
 
 			opening:false,
 			success:false,
+			badPassword:false,
 		}},
 		created(){
 
@@ -247,6 +248,7 @@
 					} else {
 						if(!usingLocalStorage) return this.unlock(true);
 						this.opening = false;
+						this.badPassword = true;
 						PopupService.push(Popup.snackbarBadPassword());
 						setLockout();
 					}
@@ -261,6 +263,11 @@
 				Actions.SET_SEED,
 				Actions.LOAD_SCATTER
 			])
+		},
+		watch:{
+			['password'](){
+				this.badPassword = false;
+			}
 		}
 	}
 </script>
@@ -284,6 +291,9 @@
 		    background-size:cover;
 		    background-position: center;
 		    background-image:url(../assets/login_bg.png);
+		    border-bottom:1px solid $darkerblue;
+		    border-left:1px solid $darkerblue;
+		    border-right:1px solid $darkerblue;
 
 		    animation: fadein 0.5s ease forwards;
 	    }
