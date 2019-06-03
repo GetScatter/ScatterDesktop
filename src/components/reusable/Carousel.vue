@@ -176,8 +176,8 @@
 			overflow:hidden;
 			height:300px;
 			width:100%;
-			border-radius:20px;
-			box-shadow:0 12px 24px $blue-shadow;
+			border-radius:$radius;
+			box-shadow:$complex-shadow;
 		}
 
 		.slider {
