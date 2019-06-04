@@ -28,6 +28,21 @@
 					</section>
 
 					<!------------------------------------->
+					<!-------- SELECT AUTHORITY ------------->
+					<!------------------------------------->
+					<section class="dangerous-authority" v-if="account.authority === 'owner'">
+						You are signing in with your Owner permission. This is dangerous.
+					</section>
+					<section class="authorities" v-if="account && account.authorities(false).length > 1">
+						<Select bordered="1"
+						        :options="account.authorities(false)"
+						        :parser="x => x.authority"
+						        :iconparser="x => x.authority === 'owner' ? {class:'icon-attention red'} : ''"
+						        :selected="account"
+						        v-on:selected="x => account = x" />
+					</section>
+
+					<!------------------------------------->
 					<!---- LOGGING IN WITH ALL ACCOUNTS --->
 					<!------------------------------------->
 					<section class="requirement all-accounts" v-else-if="loginAll && validAccounts.length">
@@ -284,6 +299,23 @@
 			text-align:left;
 			max-width:80%;
 			margin:10px auto;
+
+			.authorities {
+				.select {
+					margin-top:-7px;
+				}
+			}
+
+			.dangerous-authority {
+				background:$red;
+				border:1px solid $darkred;
+				color:$white;
+				font-size: $small;
+				margin-bottom:10px;
+				margin-top:-7px;
+				padding:10px;
+				border-radius:$radius;
+			}
 
 			.boxes {
 				width:100%;

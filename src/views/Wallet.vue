@@ -158,7 +158,7 @@
             position:absolute;
             bottom:0;
             left:0;
-            right:0;
+            right:1px;
             border-top:1px solid $lightgrey;
             height:70px;
             background:$white;

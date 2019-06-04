@@ -22,7 +22,7 @@
 						<section class="box-container">
 							<label>Receiver</label>
 							<section class="box nested">
-								<section class="padded recipient-selector">
+								<section class="padded recipient-selector" @click="selectRecipient">
 									<figure class="name">Contacts</figure>
 									<figure class="chevron icon-dot-3"></figure>
 								</section>
@@ -197,6 +197,12 @@
 					this.recipient = this.account.sendable();
 				}))
 			},
+			selectRecipient(){
+				PopupService.push(Popup.selectRecipient(recipient => {
+					if(!recipient) return;
+					this.recipient = recipient;
+				}));
+			},
 			selectToken(){
 				if(!this.pairs.length) return;
 				PopupService.push(Popup.selectToken(this.pairs, token => {
@@ -290,7 +296,7 @@
 				this.sending = true;
 				const from = { account:this.account.sendable() };
 				const to = { account:this.recipient };
-				const amount = parseFloat(this.toSend.amount).toFixed(this.toSend.decimals);
+				const amount = this.toSend.amount;
 				const order = await ExchangeService.order(this.rawPair.service, this.token, this.pair.symbol, amount, from, to);
 
 				if(!order) {

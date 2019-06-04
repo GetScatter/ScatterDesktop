@@ -122,15 +122,19 @@
             <section v-if="state === STATES.WHITELIST || state === STATES.BLACKLIST">
 
                 <section class="tokens" v-if="visibleTokens.length">
-                    <section class="badge-item hoverable" v-for="token in visibleTokens" @click="removeToken(token)">
+                    <section class="badge-item hoverable" v-for="token in visibleTokens">
                         <figure class="badge" :class="[{'iconed':token.symbolClass(), 'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]">
                             <span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
                         </figure>
                         <section class="details">
                             <figure class="title"><span v-if="token.amount">{{formatNumber(token.amount, true)}}</span> {{token.symbol}}</figure>
+                            <figure class="row long">
+                                <figure class="secondary">{{token.network().name}} ({{blockchainName(token.blockchain)}})</figure>
+                                <figure class="primary">{{token.contract}}</figure>
+                            </figure>
                         </section>
                         <section class="actions">
-                            <Button text="Remove" />
+                            <Button text="Remove" @click.native="removeToken(token)" />
                         </section>
                     </section>
                 </section>

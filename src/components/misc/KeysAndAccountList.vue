@@ -69,7 +69,7 @@
 					<section class="no-accounts" v-if="!keypair.accounts().length">
 						No linked accounts
 
-						<Button text="Create Account" @click.native="createEosAccount(keypair)" />
+						<Button v-if="canCreateAccounts(keypair)" text="Create Account" @click.native="createEosAccount(keypair)" />
 					</section>
 				</section>
 
@@ -170,6 +170,9 @@
 			handleKeyUp(e){
 				if(e.which === 17) this.holdingCtrl = false;
 			},
+			canCreateAccounts(keypair){
+				return PluginRepository.plugin(keypair.enabledKey().blockchain).accountsAreImported()
+			},
 			linkAccount(keypair){
 				PopupService.push(Popup.eosLinkAccount(keypair))
 			},
@@ -179,14 +182,7 @@
 				}))
 			},
 			filteredAccounts(keypair){
-				const accounts = (() => {
-					if(!this.accounts) return keypair.accounts(true);
-					const accountUniques = this.accounts.map(a => a.unique());
-					return keypair.accounts(true).filter(x => {
-						return accountUniques.includes(x.unique())
-					})
-				})();
-				return accounts
+				return keypair.accounts(true)
 					.filter(x => x.sendable().indexOf(this.terms) > -1)
 					.sort((a,b) => {
 						return b.totalFiatBalance() - a.totalFiatBalance();

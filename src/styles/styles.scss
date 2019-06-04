@@ -303,6 +303,10 @@ label {
       justify-content: space-between;
       margin-top: 8px;
 
+      &.long {
+        flex-direction: column;
+      }
+
       .primary {
         font-size: $small;
         font-weight: bold;

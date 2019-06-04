@@ -38,10 +38,10 @@ export default class Account {
         return this.keypair().publicKeys.find(x => x.key === this.publicKey).blockchain;
     }
 
-    authorities(){
+    authorities(thisKeyOnly = true){
 	    if(!this.authority.length) return [];
 	    return StoreService.get().getters.accounts
-            .filter(x => x.identifiable() === this.identifiable() && x.keypairUnique === this.keypairUnique)
+            .filter(x => x.identifiable() === this.identifiable() && (!thisKeyOnly || x.keypairUnique === this.keypairUnique))
             .sort((a,b) => a.authority.localeCompare(b.authority));
     }
 

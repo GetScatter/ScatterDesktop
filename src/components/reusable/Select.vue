@@ -12,6 +12,7 @@
 			<figure class="option" :class="{'hovered':hovered === index}" @click="select(item)" @mouseover="hovered = index" v-for="(item, index) in filteredOptions">
 				{{parse(item)}}
 				<div class="subtitle" v-if="subparser">{{subparser(item)}}</div>
+				<i class="item-icon" v-bind="iconparser(item)" v-if="iconparser"></i>
 			</figure>
 			<figure class="option" v-if="!filteredOptions.length">
 				No results
@@ -22,7 +23,7 @@
 
 <script>
 	export default {
-		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'bordered', 'noClick', 'truncate', 'startLeft'],
+		props:['selected', 'placeholder', 'disabled', 'options', 'parser', 'subparser', 'iconparser', 'bordered', 'noClick', 'truncate', 'startLeft'],
 		data(){return {
 			open:false,
 			optionsTerms:'',
@@ -201,6 +202,20 @@
 				color:$silver;
 				font-size: $medium;
 				font-weight: bold;
+				position: relative;
+
+				.item-icon {
+					position:absolute;
+					right:10px;
+					top:0;
+					bottom:0;
+					display:flex;
+					align-items: center;
+
+					&.red {
+						color:$red;
+					}
+				}
 
 				&.hovered {
 					background:rgba(0,0,0,0.02);

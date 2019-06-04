@@ -174,7 +174,13 @@
 			},
 			setToken(token){
 				PriceService.setPrices();
-				this.token = this.account.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain()).clone();
+				this.token = (() => {
+					const t = this.account.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain());
+					if(t) return t.clone();
+					const clone = token.clone();
+					clone.amount = 0;
+					return clone;
+				})();
 				this.toSend = this.token.clone();
 				this.toSend.amount = 0;
 				this.fiat = 0;
@@ -201,7 +207,9 @@
 				}).catch(() => false);
 				reset();
 				this.setWorkingScreen(false);
-				if(sent) BalanceService.loadBalancesFor(this.account);
+				if(sent) setTimeout(() => {
+					BalanceService.loadBalancesFor(this.account);
+				}, 500);
 			},
 		},
 	}

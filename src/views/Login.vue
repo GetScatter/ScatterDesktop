@@ -15,7 +15,7 @@
 
             <section class="head">
 	            <section class="details">
-		            <figure class="logo">Scatter</figure>
+		            <figure class="logo scatter-logologo"></figure>
 		            <figure class="version">meteoric</figure>
 	            </section>
             </section>

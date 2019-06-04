@@ -253,7 +253,8 @@ export default class EOS extends Plugin {
 				}
 			}).filter(x => !!x);
 
-			const hasOwner = (keys.hasOwnProperty('owner') && keys.owner.length) || account.authorities().map(x => x.authority).includes('owner');
+			console.log('keys', keys);
+			const hasOwner = (keys.hasOwnProperty('owner') && keys.owner && keys.owner.length) || account.authorities().map(x => x.authority).includes('owner');
 			const options = {authorization:[`${account.name}@${hasOwner?'owner':'active'}`]};
 			return eos.transaction(tr => perms.map(perm => tr.updateauth(perm, options)))
 				.catch(res => {
@@ -263,7 +264,7 @@ export default class EOS extends Plugin {
 				.then(async res => {
 					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, res.transaction_id));
 
-					const authorities = Object.keys(keys).filter(x => keys[x].length);
+					const authorities = Object.keys(keys).filter(x => keys[x] && keys[x].length);
 					const accounts = StoreService.get().getters.accounts.filter(x => x.identifiable() === account.identifiable() && authorities.includes(x.authority));
 					await AccountService.removeAccounts(accounts);
 
