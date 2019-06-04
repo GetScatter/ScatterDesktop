@@ -366,7 +366,7 @@
 							max-width:200px;
 
 							.image {
-								border-radius:20px;
+								border-radius:$radius;
 								overflow:hidden;
 								position: relative;
 
@@ -438,7 +438,7 @@
 						flex:0 0 auto;
 						height:90px;
 						width:90px;
-						border-radius:20px;
+						border-radius:$radius;
 						overflow:hidden;
 						cursor: pointer;
 
