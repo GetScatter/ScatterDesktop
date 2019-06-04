@@ -163,11 +163,20 @@
 				right:0;
 				top:0;
 				bottom:0;
-				line-height:24px;
 				color:$blue;
 				font-size: 14px;
 
 				transition: transform 0.2s ease;
+			}
+		}
+
+
+		&.disabled {
+			opacity:0.3;
+			cursor: not-allowed;
+
+			.selected {
+				cursor: not-allowed;
 			}
 		}
 
@@ -243,7 +252,7 @@
 
 				&.bordered {
 					.chevron {
-						transform:rotateZ(180deg) translateY(4px);
+						transform:rotateZ(180deg) translateY(0);
 					}
 				}
 			}
@@ -256,7 +265,7 @@
 
 			.selected {
 				.chevron {
-					top:6px;
+					top:2px;
 					right:10px;
 				}
 			}
