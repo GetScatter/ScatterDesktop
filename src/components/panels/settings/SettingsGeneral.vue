@@ -17,7 +17,7 @@
 
         <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.LANGUAGE.Label)}}</label>
-            <Select bordered="1" :options="names"
+            <Select bordered="1" :options="names" :disabled="true"
                     :selected="selectedLanguage"
                     :parser="x => x"
                     v-on:changed="selectLanguage" />

@@ -3,12 +3,15 @@ import Explorer from "../../models/Explorer";
 import {blockchainName, Blockchains, BlockchainsArray} from "../../models/Blockchains";
 import KeyPairService from "../../services/secure/KeyPairService";
 import IdGenerator from "../../util/IdGenerator";
+import {LANG} from "../../localization/locales";
 
 export const m11_0_0 = async scatter => {
 
 	const keypairs = scatter.keychain.keypairs.map(x => x.clone());
 	scatter.keychain.keypairs = [];
 	scatter.onboarded = true;
+
+	scatter.settings.language = LANG.ENGLISH;
 
 	keypairs.map(keypair => {
 		delete keypair.keyHash;

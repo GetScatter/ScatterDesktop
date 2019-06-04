@@ -181,8 +181,15 @@
 			}
 		},
 		mounted(){
-			this.account = this.accounts.filter(x => x.tokens().length)
-				.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];
+			if(this.$route.query.account){
+				this.account = this.accounts.find(x => x.identifiable() === this.$route.query.account);
+			}
+
+			if(!this.account){
+				this.account = this.accounts.filter(x => x.tokens().length)
+					.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0];
+			}
+
 			this.recipient = this.account.sendable();
 			this.setToken(this.sendableTokens[0]);
 		},

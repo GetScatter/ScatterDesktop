@@ -24,15 +24,15 @@
 		</section>
 
 		<section class="right" v-if="accounts.length">
-			<section class="action" @click="$router.push({name:RouteNames.TRANSFER})">
+			<section class="action" @click="quickAction(RouteNames.TRANSFER)">
 				<Send />
 				<span>Send</span>
 			</section>
-			<section class="action" @click="$router.push({name:RouteNames.RECEIVE})">
+			<section class="action" @click="quickAction(RouteNames.RECEIVE)">
 				<Receive />
 				<span>Receive</span>
 			</section>
-			<section class="action" @click="$router.push({name:RouteNames.EXCHANGE})">
+			<section class="action" @click="quickAction(RouteNames.EXCHANGE)">
 				<Exchange />
 				<span>Exchange</span>
 			</section>
@@ -104,6 +104,10 @@
 					RouteNames.RECEIVE,
 					RouteNames.APP,
 				].filter(x => !!x).includes(this.$route.name);
+			},
+			onAccount(){
+				if(this.$route.name !== RouteNames.ACCOUNT) return;
+				return this.accounts.find(x => x.unique() === this.$route.params.unique);
 			}
 		},
 		mounted(){
@@ -117,6 +121,13 @@
 				await BalanceService.loadAllBalances(true);
 				await PriceService.getAll();
 				this.loadingBalances = false;
+			},
+			quickAction(route){
+				if(this.onAccount){
+					return this.$router.push({name:route, query:{account:this.onAccount.identifiable()}})
+				}
+
+				this.$router.push({name:route});
 			},
 		}
 

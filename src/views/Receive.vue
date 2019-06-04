@@ -65,7 +65,13 @@
 			])
 		},
 		mounted(){
-			this.selectedAccount(this.accounts.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0]);
+			if(this.$route.query.account){
+				this.selectedAccount(this.accounts.find(x => x.identifiable() === this.$route.query.account));
+			}
+
+			if(!this.account){
+				this.selectedAccount(this.accounts.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())[0]);
+			}
 		},
 		methods:{
 			selectAccount(){
