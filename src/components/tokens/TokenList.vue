@@ -3,46 +3,30 @@
 		<SearchAndFilter full-search="1" v-on:terms="x => terms = x" />
 		<section class="tokens">
 			<section class="single-asset" :class="{'hoverable':hoverable, 'active':selected && selected.uniqueWithChain() === token.uniqueWithChain()}" v-for="token in sortedBalances" @click="selectToken(token)">
-				<section class="token-symbol">
-					<div class="symbol" :class="[{'iconed':token.symbolClass(), 'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]"></div>
-					<figure class="title">{{token.symbol}}</figure>
+				<section class="row">
+					<section class="token-symbol">
+						<div class="symbol" :class="[{'iconed':token.symbolClass(), 'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]"></div>
+						<figure class="title">{{token.symbol}}</figure>
+					</section>
+					<section class="token-value" v-if="token.amount">
+						<figure class="value">{{formatNumber(token.amount, true)}}</figure>
+						<figure class="fiat" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{fiatSymbol(displayCurrency)}}{{formatNumber(token.fiatBalance(false), true)}} </figure>
+					</section>
 				</section>
-				<section class="token-value">
-					<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{formatNumber(token.fiatBalance(), true)}} </figure>
-				</section>
-				<section class="token-conversion staked" v-if="token.unusable">
-					<figure class="locked icon-lock">{{token.unusable}}</figure>
-				</section>
-				<section class="token-conversion" v-if="token.fiatPrice()">
-					<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{formatNumber(token.baseTokenPrice(), true)}}</figure>
-					<figure class="secondary">{{formatNumber(token.fiatPrice(), true)}}</figure>
-				</section>
-				<section class="token-change">
-					<figure class="change-value" :class="{'red':!change(token).plus}" v-if="!token.unusable">{{change(token).perc}}</figure>
+				<section class="row">
+					<section class="token-conversion staked" v-if="token.unusable">
+						<figure class="locked icon-lock">{{token.unusable}}</figure>
+					</section>
+					<section class="token-conversion">
+						<figure class="secondary" v-if="token.baseTokenPrice() && parseFloat(token.baseTokenPrice())">{{formatNumber(token.baseTokenPrice(), true)}}</figure>
+						<figure class="secondary" v-if="token.fiatPrice() && parseFloat(token.fiatPrice())">{{formatNumber(token.fiatPrice(), true)}}</figure>
+					</section>
+					<section class="token-change" v-if="change(token).perc">
+						<figure class="change-value" :class="{'red':!change(token).plus}" v-if="!token.unusable">{{change(token).perc}}</figure>
+					</section>
 				</section>
 			</section>
 		</section>
-		<!-- <section class="tokens">
-			<section class="badge-item" :class="{'hoverable':hoverable, 'active':selected && selected.uniqueWithChain() === token.uniqueWithChain()}" v-for="token in sortedBalances" @click="selectToken(token)">
-				<figure class="badge" :class="[{'iconed':token.symbolClass(), 'small':token && token.symbol.length >= 4, 'unusable':!!token.unusable}, token.symbolClass()]">
-					<span v-if="!token.symbolClass()">{{token.truncatedSymbol()}}</span>
-					<div class="locked icon-lock" v-if="token.unusable"></div>
-				</figure>
-				<section class="details">
-					<figure class="title"><span v-if="token.amount">{{formatNumber(token.amount, true)}}</span> {{token.symbol}}</figure>
-					<section class="row">
-						<figure class="red" v-if="token.unusable">{{token.unusable}}</figure>
-						<figure class="primary" v-if="!token.unusable"><b :class="{'red':!change(token).plus}">{{change(token).perc}}</b></figure>
-						<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{formatNumber(token.fiatBalance(), true)}} </figure>
-					</section>
-					<section class="row" v-if="token.fiatPrice()">
-						<figure class="secondary" v-if="token.fiatBalance() && parseFloat(token.fiatBalance())">{{formatNumber(token.baseTokenPrice(), true)}}</figure>
-						<figure class="secondary">{{formatNumber(token.fiatPrice(), true)}}</figure>
-					</section>
-				</section>
-
-			</section>
-		</section> -->
 	</section>
 </template>
 
@@ -64,7 +48,8 @@
 			]),
 			...mapGetters([
 				'networkTokens',
-				'balanceFilters'
+				'balanceFilters',
+				'displayCurrency',
 			]),
 			sortedBalances(){
 				return this.balances
@@ -126,7 +111,6 @@
 			padding:20px;
 			overflow-y:auto;
 			height:calc(100% - 70px);
-			//height:calc(100vh - 470px);
 
 			.single-asset {
 				border-radius:$radius;
@@ -134,17 +118,24 @@
 				border:1px solid $lightgrey;
 				margin-bottom:10px;
 				height:110px;
-				display:grid;
-				grid-template-columns: 50% 50%;
-  				grid-template-rows: auto 44px;
+				display:flex;
+				flex-direction: column;
+				justify-content: space-between;
   				transition: all 0.12s ease-in-out;
+				padding:20px 10px;
+
+				.row {
+					display:flex;
+					justify-content: space-between;
+				}
 
 				.token-symbol {
-					align-self:center;
+					align-self:flex-start;
 					line-height:34px;
 					font-size:21px;
 					font-weight:bold;
 					padding-left:15px;
+					flex:1;
 
 					.symbol {
 						float:left;
@@ -160,11 +151,20 @@
 
 				.token-value {
 					align-self:center;
-					font-size:$large;
-					line-height:34px;
 					font-weight:bold;
 					padding-right:15px;
 					text-align:right;
+					flex:1;
+
+					.value {
+						font-size:$larger;
+					}
+
+					.fiat {
+						color:$blue;
+						font-size: $small;
+
+					}
 				}
 
 				.token-conversion {
@@ -204,6 +204,14 @@
 
 					.token-symbol, .token-value, .token-conversion, .token-change {
 						color:white;
+
+						.value {
+							color:$white;
+						}
+
+						.fiat {
+							color:rgba(255,255,255,0.7);
+						}
 
 					}
 				}

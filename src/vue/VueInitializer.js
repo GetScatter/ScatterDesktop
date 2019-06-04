@@ -16,6 +16,7 @@ import StoreService from "../services/utility/StoreService";
 import AppsService from "../services/apps/AppsService";
 import {dateId} from "../util/DateHelpers";
 import features from '../features';
+import PriceService from "../services/apis/PriceService";
 
 Vue.config.productionTip = false
 
@@ -65,6 +66,7 @@ export default class VueInitializer {
 		                const data = AppsService.getAppData(applink);
 		                return data.url.length;
 	                },
+	                fiatSymbol:PriceService.fiatSymbol,
 	                getTokensTotaled(){
 	                	if(!this.priceData || !this.priceData.hasOwnProperty('yesterday')) return [];
 		                let totaled = [];
@@ -96,9 +98,9 @@ export default class VueInitializer {
                             return whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimal ? `.${decimal}` : '').toString();
                         }
                         if(commaOnly) return toComma(num);
-                        return num > 999999999 ? toComma((num/1000000000).toFixed(1)) + ' B' :
-                            num > 999999 ? toComma((num/1000000).toFixed(1)) + ' M' :
-                                num > 999 ? toComma((num/1000).toFixed(1)) + ' K' : num
+                        return (num > 999999999 ? toComma((num/1000000000).toFixed(1)) + ' B' :
+	                        num > 999999 ? toComma((num/1000000).toFixed(1)) + ' M' :
+		                        num > 999 ? toComma((num/1000).toFixed(1)) + ' K' : num)
                     },
 	                formatTime(milliseconds){
 	                    const formatTimeNumber = n => {
