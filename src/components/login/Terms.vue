@@ -1,5 +1,5 @@
 <template>
-    <section class="center-panel">
+    <section class="center-panel terms">
 
         <Terms />
         <br>

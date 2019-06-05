@@ -1,7 +1,7 @@
 <template>
 	<section class="select-account pop-over">
 		<PopInHead title="Select Account" v-on:close="returnResult" />
-		<KeysAndAccountList :accounts="validAccounts" v-on:account="returnResult" as-selector="1" />
+		<KeysAndAccountList :accounts="validAccounts" v-on:account="returnResult" as-selector="1" no-balances="1" />
 	</section>
 </template>
 

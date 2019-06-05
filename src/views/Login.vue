@@ -242,10 +242,27 @@
 					await this[Actions.LOAD_SCATTER](usingLocalStorage);
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						resetLockout();
-						this.success = true;
 						setTimeout(() => {
-							this.$router.push({name:this.RouteNames.HOME});
-							// Transition time
+							if(!this.scatter.onboarded){
+								PopupService.push(Popup.showTerms(async accepted => {
+									if(!accepted){
+										await this[Actions.SET_SEED](null);
+										await this[Actions.LOAD_SCATTER](false);
+										this.opening = false;
+										return;
+									}
+
+									const clone = this.scatter.clone();
+									clone.onboarded = true;
+									await this[Actions.SET_SCATTER](clone);
+
+									this.success = true;
+									this.$router.push({name:this.RouteNames.HOME});
+								}))
+							} else {
+								this.success = true;
+								this.$router.push({name:this.RouteNames.HOME});
+							}
 						}, 1000);
 					} else {
 						if(!usingLocalStorage) return this.unlock(true);
@@ -263,7 +280,8 @@
 
 			...mapActions([
 				Actions.SET_SEED,
-				Actions.LOAD_SCATTER
+				Actions.LOAD_SCATTER,
+				Actions.SET_SCATTER,
 			])
 		},
 		watch:{

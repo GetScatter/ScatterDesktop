@@ -23,6 +23,7 @@
                     <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
                     <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
                     <ExportPrivateKey :popin="popIn" v-if="popIn.data.type === popupTypes.EXPORT_PRIVATE_KEY" />
+                    <Terms :popin="popIn" v-if="popIn.data.type === popupTypes.SHOW_TERMS" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg-holder">
@@ -105,9 +106,11 @@
     import ExportPrivateKey from "./popins/fullscreen/ExportPrivateKey";
     import EosLinkAccount from "./popins/overlay/EosLinkAccount";
     import SelectDisplayToken from "./popins/overlay/SelectDisplayToken";
+    import Terms from "./popins/fullscreen/Terms";
 
     export default {
     	components:{
+		    Terms,
 		    SelectDisplayToken,
 		    EosLinkAccount,
 		    ExportPrivateKey,

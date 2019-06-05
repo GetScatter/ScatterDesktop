@@ -111,6 +111,10 @@ export class Popup {
     /*********   FULLSCREEN POPINS ***********/
     /*****************************************/
 
+	static showTerms(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SHOW_TERMS, {}, callback))
+	}
+
 	static enterSecurityCode(subtitle, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SECURITY_CODE, {subtitle}, callback))
 	}
@@ -252,6 +256,7 @@ export const PopupTypes = {
 	DISPLAY_TOKEN:'displayToken',
 
     // FULLSCREEN
+	SHOW_TERMS:'showTerms',
 	SECURITY_CODE:'securityCode',
     VERIFY_PASSWORD:'verifyPassword',
     EOS_CHANGE_PERMISSIONS:'eosChangePermissions',

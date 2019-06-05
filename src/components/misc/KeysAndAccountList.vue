@@ -56,7 +56,7 @@
 								<figure class="name">{{account.sendable()}}</figure>
 								<figure class="network">{{account.network().name}}</figure>
 							</section>
-							<section class="tokens" v-if="account.tokens().length">
+							<section class="tokens" v-if="!noBalances && account.tokens().length">
 								<figure class="balance">{{account.totalFiatBalance()}} {{displayCurrency}}</figure>
 								<figure class="quantity">in {{account.tokens().length}} tokens</figure>
 							</section>
@@ -95,7 +95,7 @@
 
 	export default {
 		components: {SearchAndFilter},
-		props:['asSelector', 'accounts', 'keypairsOnly'],
+		props:['asSelector', 'accounts', 'keypairsOnly', 'noBalances'],
 		data(){return {
 			blockchainFilter:null,
 			terms:'',
