@@ -1,3 +1,5 @@
+const LowLevelSocketService = require("./src/services/main_process/LowLevelSocketService");
+
 const electron = require('electron');
 const {app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
 const path = require("path");
@@ -5,6 +7,7 @@ const url = require("url");
 
 
 const isDev = process.mainModule.filename.indexOf('app.asar') === -1;
+const socketService = new LowLevelSocketService(isDev);
 
 let icon = isDev
 	? 'static/icons/icon.png'
@@ -109,21 +112,20 @@ const createScatterInstance = () => {
 	mainWindow = createMainWindow(false, '#fff');
 	mainWindow.loadURL(mainUrl(false));
 
-	// if main window is ready to show, then destroy the splash window and show up the main window
 	mainWindow.once('ready-to-show', () => {
 		mainWindow.show(); 
   		mainWindow.focus(); 
 	});
 
 	// mainWindow.openDevTools();
-	// mainWindow.loadURL(mainUrl(false));
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => quit());
 
 	setupTray();
 	setupMenu();
 
-	LowLevelWindowService.onMainWindowReady();
+	socketService.loadWindow(mainWindow);
+	LowLevelWindowService.queuePopup();
 };
 
 app.on('ready', createScatterInstance);
@@ -157,14 +159,7 @@ const callDeepLink = url => {
 		global.appShared.ApiWatcher(url);
 }
 
-const singleInstanceLock = app.requestSingleInstanceLock();
-if(!singleInstanceLock) quit();
-// const shouldQuit = app.makeSingleInstance(argv => {
-// 	if (process.platform === 'win32') callDeepLink(argv.slice(1));
-// 	if (mainWindow) activateInstance();
-// })
-//
-// if (shouldQuit) quit();
+if(!app.requestSingleInstanceLock()) quit();
 
 app.on('will-finish-launching', () => {
 	app.on('open-url', (e, url) => {
@@ -178,123 +173,6 @@ app.on('will-finish-launching', () => {
 
 
 
-
-
-const http = require('http');
-const https = require('https');
-const WebSocket = require('ws');
-
-let rekeyPromise;
-const openConnections = {};
-let websockets = [];
-class LowLevelSocketService {
-
-	static async getNewKey(origin){
-		return new Promise((resolve, reject) => {
-			rekeyPromise = {resolve, reject};
-			this.emit(origin, 'rekey');
-			return rekeyPromise;
-		})
-	}
-
-	static async emit(origin, path, data){
-		const socket = openConnections[origin];
-		return this.emitSocket(socket, path, data);
-	}
-
-	static async emitSocket(socket, path, data){
-		if(!socket) return console.error('No socket found');
-		socket.send('42/scatter,' + JSON.stringify([path, data ? data : false]))
-	}
-
-	static async initialize(certs){
-
-		const socketHandler = socket => {
-			let origin = null;
-
-			socket.send("40");
-			socket.send("40/scatter");
-			socket.send(`42/scatter,["connected"]`);
-
-			// Just logging errors for debugging purposes (dev only)
-			if(isDev) socket.on('error', async request => console.log('error', request));
-
-			// Different clients send different message types for disconnect (ws vs socket.io)
-			socket.on('close',      () => delete openConnections[origin]);
-			socket.on('disconnect', () => delete openConnections[origin]);
-
-			socket.on('message', msg => {
-				if(msg.indexOf('42/scatter') === -1) return false;
-				const [type, request] = JSON.parse(msg.replace('42/scatter,', ''));
-
-				const killRequest = () => LowLevelSocketService.emitSocket(socket, 'api', {id:request.id, result:null});
-
-				if(!request.plugin || request.plugin.length > 100) return killRequest();
-				request.plugin = request.plugin.replace(/\s/g, "");
-
-				if(request.plugin.trim().toLowerCase() === 'Scatter') killRequest();
-				if(request.data.hasOwnProperty('payload') && request.data.payload.origin.trim().toLowerCase() === 'Scatter') killRequest();
-
-				let requestOrigin;
-				if(request.data.hasOwnProperty('payload')) requestOrigin = request.data.payload.origin;
-				else requestOrigin = request.data.origin;
-
-				if(!origin) origin = requestOrigin;
-				else if(origin && requestOrigin !== origin) return this.emitSocket(socket, 'api', {id:request.id, result:null});
-				if(!openConnections.hasOwnProperty(origin)) openConnections[origin] = socket;
-
-				switch(type){
-					case 'pair':        return mainWindow.webContents.send('pair', request);
-					case 'rekeyed':     return rekeyPromise.resolve(request);
-					case 'api':         return mainWindow.webContents.send('api', request);
-				}
-
-			});
-		}
-
-		if(websockets.length) return websockets;
-
-		// port:ssl
-		let ports = { 50005:false };
-		if(certs) ports[50006] = true;
-
-		await Promise.all(Object.keys(ports).map(async port => {
-			// TODO: Can't find a good cross platform port killer,
-			// TODO: Might need to make one.
-			// await kill(port, 'tcp')
-			// 	.then(console.log)
-			// 	.catch(console.log);
-			const server = ports[port] ? https.createServer(certs) : http.createServer();
-			websockets.push(new WebSocket.Server({ server }));
-			server.listen(port);
-			return true;
-		}));
-
-		websockets.map(ws => ws.on('connection', socketHandler));
-		return websockets;
-	}
-
-	static async close(){
-		console.log('closing')
-		websockets.map(ws => {
-			if(typeof ws.clients.map === 'function') ws.clients.map(ws => ws.terminate());
-		})
-
-		return true;
-	}
-
-	static sendEvent(event, payload, origin){
-		return this.emit(origin, 'event', {event, payload});
-	}
-
-	static broadcastEvent(event, payload){
-		Object.keys(openConnections).map(origin => {
-			this.sendEvent(event, payload, origin);
-		});
-		return true;
-	}
-
-}
 
 
 
@@ -322,8 +200,10 @@ class LowLevelWindowService {
 		})
 	}
 
-	static async onMainWindowReady(){
-		waitingPopup = await this.getWindow(1,1);
+	static async queuePopup(){
+		setTimeout(async () => {
+			waitingPopup = await this.getWindow(1,1);
+		}, 100);
 	}
 
 	static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600, dontHide = false){
@@ -333,7 +213,6 @@ class LowLevelWindowService {
 		else waitingPopup = null;
 
 		win.setSize(width, height);
-
 
 		// Getting the screen to display the popup based on
 		// where the user is at the time ( for dual monitors )
@@ -345,8 +224,6 @@ class LowLevelWindowService {
 		let bounds = electron.screen.getPrimaryDisplay().bounds;
 		let x = bounds.x + (leftBound + ((bounds.width - width) / 2));
 		let y = bounds.y + ((bounds.height - height) / 2);
-
-		// win.setPosition(screenWidth + leftBound - width - 2, screenHeight - height - 2);
 		win.setPosition(x,y);
 
 		win.once('closed', async () => {
@@ -376,7 +253,7 @@ class LowLevelWindowService {
 			app.dock.show();
 		}
 
-		waitingPopup = await this.getWindow(1, 1);
+		this.queuePopup();
 
 		return win;
 	}
@@ -401,7 +278,16 @@ const Transport = require('@ledgerhq/hw-transport-node-hid');
 
 const NodeMachineId = require('node-machine-id');
 
-global.appShared = { Transport, QuitWatcher:null, ApiWatcher:null, LowLevelWindowService, LowLevelSocketService, NotificationService, NodeMachineId, savingData:false };
+global.appShared = {
+	Transport,
+	QuitWatcher:null,
+	ApiWatcher:null,
+	LowLevelWindowService,
+	LowLevelSocketService:socketService,
+	NotificationService,
+	NodeMachineId,
+	savingData:false
+};
 
 
 

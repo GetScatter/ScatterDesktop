@@ -1,12 +1,6 @@
 import ApiService from '../apis/ApiService';
 import AuthorizedApp from '../../models/AuthorizedApp';
 import * as Actions from '../../store/constants';
-// const http = window.require('http');
-// const https = window.require('https');
-// const kill = window.require('kill-port');
-// const WebSocket = window.require('ws');
-
-
 import {Popup} from '../../models/popups/Popup'
 import PopupService from './PopupService';
 
@@ -99,7 +93,7 @@ const handlePairedResponse = async request => {
  * Gets certs that allow for `wss` local connections.
  * @returns {Promise<Response | never | void>}
  */
-const getCerts = async () => {
+export const getCerts = async () => {
 	return fetch('https://certs.get-scatter.com?rand='+Math.round(Math.random()*100 + 1))
 		.then(res => res.json())
 		.then(res => {

@@ -1,13 +1,15 @@
 <template>
 	<section class="quick-actions" :class="{'short':isShort}">
 		<section class="left" v-if="!hideMainBalance && !quickBack && accounts.length">
-			<section class="fiat">
-				<span class="balance">{{totalBalance.symbol}}<AnimatedNumber :number="totalBalance.amount" /></span>
-				<Refresh class="refresh" :class="{'spin':loadingBalances}" @click.native="refreshTokens" />
-			</section>
-			<section class="token" v-if="displayToken">
-				<i class="symbol token-eos-eos"></i>
-				<span class="balance">{{formatNumber(totalTokenBalance.amount, true)}} {{totalTokenBalance.symbol}}</span>
+			<section class="balances">
+				<section class="fiat">
+					<span class="balance" @click="selectDisplays">{{totalBalance.symbol}}<AnimatedNumber :number="totalBalance.amount" /></span>
+					<Refresh class="refresh" :class="{'spin':loadingBalances}" @click.native="refreshTokens" />
+				</section>
+				<section class="token" @click="selectDisplays" v-if="displayToken">
+					<i class="symbol" :class="displayTokenClass()"></i>
+					<span class="balance">{{formatNumber(totalTokenBalance.amount, true)}} {{totalTokenBalance.symbol}}</span>
+				</section>
 			</section>
 		</section>
 		<section class="left" v-if="!hideMainBalance && !quickBack && !accounts.length">
@@ -50,6 +52,8 @@
 	import BalanceService from "../services/blockchain/BalanceService";
 	import {RouteNames} from "../vue/Routing";
 	import AnimatedNumber from "./reusable/AnimatedNumber";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
 
 	export default {
 		components:{
@@ -76,6 +80,7 @@
 				'displayToken',
 				'displayCurrency',
 				'hideMainBalance',
+				'networkTokens',
 			]),
 			totalBalance(){
 				const totals = this.totalBalances.totals;
@@ -129,6 +134,14 @@
 
 				this.$router.push({name:route});
 			},
+			selectDisplays(){
+				PopupService.push(Popup.setDisplayToken(done => {
+
+				}));
+			},
+			displayTokenClass(){
+				return this.networkTokens.find(x => x.uniqueWithChain() === this.displayToken).symbolClass()
+			}
 		}
 
 	}
@@ -193,10 +206,14 @@
 			}
 		}
 
+		.balances {
+			cursor: pointer;
+		}
+
 		.token {
 			display:flex;
 			align-items: center;
-			margin-top:5px;
+			margin-top:2px;
 
 			.balance {
 				font-size: $small;
@@ -204,7 +221,8 @@
 			}
 			.symbol {
 				cursor: pointer;
-				font-size: 24px;
+				font-size: 18px;
+				margin-left:-3px;
 			}
 		}
 

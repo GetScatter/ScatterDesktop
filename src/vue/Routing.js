@@ -1,3 +1,4 @@
+// TODO: These should be uncommented for releases
 import PopOut from '../views/PopOut';
 import Login from '../views/Login';
 import Apps from '../views/Apps';
@@ -17,6 +18,7 @@ import Settings from '../views/Settings';
 import RIDL from '../views/RIDL';
 import Purchase from '../views/Purchase';
 
+// TODO: These should be commented out for testing.
 // const PopOut  = () => import('../views/PopOut');
 // const Login = () => import('../views/Login');
 // const Apps = () => import('../views/Apps');

@@ -28,7 +28,7 @@
 		&.blue {
 			background:$blue;
 			color:$white;
-			border:0;
+			border:1px solid $darkblue;
 		}
 
 		&.red {

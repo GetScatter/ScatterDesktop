@@ -231,10 +231,13 @@ export default class ApiService {
 
 			if(!payload.messages) return resolve({id:request.id, result:Error.cantParseTransaction()});
 
-			const actions = payload.messages.map(x => `${blockchain}::${x.code}::${x.type}`);
-			const blacklisted = actions.filter(actionTag => StoreService.get().state.scatter.settings.isActionBlacklisted(actionTag));
+			// CHECKING FOR BLACKLISTED ACTIONS
+			const blacklisted = payload.messages.map(x => `${blockchain}::${x.code}::${x.type}`).filter(actionTag => StoreService.get().state.scatter.settings.isActionBlacklisted(actionTag));
 			if(blacklisted.length){
-				PopupService.push(Popup.prompt('Whoa nelly!', `An application tried to push a blacklisted action to your Scatter (${blacklisted.join(', ')}). Check your Firewall settings if this is a mistake.`))
+				const names = blacklisted.reduce((acc,x) => { if(!acc.hasOwnProperty(x)) acc[x] = 0; acc[x]++; return acc; }, {});
+				const parsed = Object.keys(names).reduce((acc, name) => { acc.push(`${name.replace(`${blockchain}::`, '')} (${names[name]})`); return acc; }, []).join(', ');
+				PopupService.push(Popup.prompt('Whoa nelly!', `An application tried to push a blacklisted action to your Scatter [ ${parsed} ]. Check your Firewall settings if this is a mistake.`))
+				WindowService.flashWindow();
 				return resolve({id:request.id, result:Error.malicious('firewalled')});
 			}
 

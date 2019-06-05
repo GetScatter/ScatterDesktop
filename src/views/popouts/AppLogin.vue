@@ -30,10 +30,10 @@
 					<!------------------------------------->
 					<!-------- SELECT AUTHORITY ------------->
 					<!------------------------------------->
-					<section class="dangerous-authority" v-if="account.authority === 'owner'">
+					<section class="dangerous-authority" v-if="!loginAll && account.authority === 'owner'">
 						You are signing in with your Owner permission. This is dangerous.
 					</section>
-					<section class="authorities" v-if="account && account.authorities(false).length > 1">
+					<section class="authorities" v-if="!loginAll && account && account.authorities(false).length > 1">
 						<Select bordered="1"
 						        :options="account.authorities(false)"
 						        :parser="x => x.authority"

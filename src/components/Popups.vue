@@ -22,7 +22,6 @@
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                     <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
                     <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
-                    <!--<DisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />-->
                     <ExportPrivateKey :popin="popIn" v-if="popIn.data.type === popupTypes.EXPORT_PRIVATE_KEY" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
@@ -44,6 +43,7 @@
                             <ConfirmTransfer :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_TRANSFER" />
                             <ConfirmExchange :popin="popIn" v-if="popIn.data.type === popupTypes.CONFIRM_EXCHANGE" />
                             <EosLinkAccount :popin="popIn" v-if="popIn.data.type === popupTypes.EOS_LINK_ACCOUNT" />
+                            <SelectDisplayToken :popin="popIn" v-if="popIn.data.type === popupTypes.DISPLAY_TOKEN" />
                         </section>
                     </figure>
                 </section>
@@ -104,9 +104,11 @@
     import SelectFromList from "./popins/overlay/SelectFromList";
     import ExportPrivateKey from "./popins/fullscreen/ExportPrivateKey";
     import EosLinkAccount from "./popins/overlay/EosLinkAccount";
+    import SelectDisplayToken from "./popins/overlay/SelectDisplayToken";
 
     export default {
     	components:{
+		    SelectDisplayToken,
 		    EosLinkAccount,
 		    ExportPrivateKey,
 		    SelectFromList,

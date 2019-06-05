@@ -41,7 +41,8 @@ export default class Settings {
 
 	    // {contract:[actions]}
 	    this.blacklistActions = {
-	    	'eos::eosio':['updateauth']
+	    	'eos::eosio':['updateauth'],
+	    	'eos::eosio.msig':['approve'],
 	    };
 
 	    this.balanceFilters = {};

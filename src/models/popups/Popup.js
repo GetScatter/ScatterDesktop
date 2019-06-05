@@ -249,6 +249,7 @@ export const PopupTypes = {
 	SELECT_TOKEN:'selectToken',
 	SELECT_BLOCKCHAIN:'selectBlockchain',
 	EOS_LINK_ACCOUNT:'eosLinkAccount',
+	DISPLAY_TOKEN:'displayToken',
 
     // FULLSCREEN
 	SECURITY_CODE:'securityCode',
@@ -271,7 +272,6 @@ export const PopupTypes = {
 	CONFIRM_EXCHANGE:'confirmExchange',
 	CONFIRM_TRANSFER:'confirmTransfer',
 	EXPORT_PRIVATE_KEY:'exportPrivateKey',
-	DISPLAY_TOKEN:'displayToken',
 	GENERATE_KEYPAIR:'generateKeypair',
 	IMPORT_KEYPAIR:'importKeypair',
 	IMPORT_FULL_BACKUP:'importFullBackup',
@@ -295,6 +295,7 @@ export const isFullscreen = popup => {
         PopupTypes.CONFIRM_TRANSFER,
         PopupTypes.CONFIRM_EXCHANGE,
         PopupTypes.EOS_LINK_ACCOUNT,
+        PopupTypes.DISPLAY_TOKEN,
     ].includes(popup.data.type);
 
 
