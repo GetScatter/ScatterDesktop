@@ -4,7 +4,7 @@
 		<section class="popout-window app-login">
 
 			<section>
-				<PopOutApp :app="appData" suffix="will see:" />
+				<PopOutApp :app="appData" :suffix="account ? 'will see:' : ''" />
 
 
 				<!------------------------------------->
@@ -30,7 +30,7 @@
 					<!------------------------------------->
 					<!-------- SELECT AUTHORITY ------------->
 					<!------------------------------------->
-					<section class="dangerous-authority" v-if="!loginAll && account.authority === 'owner'">
+					<section class="dangerous-authority" v-if="!loginAll && account && account.authority === 'owner'">
 						You are signing in with your Owner permission. This is dangerous.
 					</section>
 					<section class="authorities" v-if="!loginAll && account && account.authorities(false).length > 1">
