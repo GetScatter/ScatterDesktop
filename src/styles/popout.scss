@@ -7,6 +7,10 @@
   overflow:hidden;
   height:calc(100vh - 40px);
 
+  &.login {
+    height:100vh;
+  }
+
   .popout-window {
     border:1px solid #dadada;
     border-top:0;

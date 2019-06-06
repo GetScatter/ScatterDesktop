@@ -39,7 +39,8 @@
 						</figure>
 						<section class="card">
 							<section class="avatar">
-								<img src="../assets/id_card_avatar.png" />
+								<img v-if="!avatar" src="../assets/id_card_avatar.png" />
+								<figure class="image" v-else :style="`background-image:url('${avatar}')`"></figure>
 								<figure class="upload icon-plus" @click="uploadAvatar"></figure>
 							</section>
 							<section class="personal">
@@ -114,12 +115,12 @@
 <script>
 	import {mapGetters, mapActions, mapState} from 'vuex';
 	import * as Actions from '../store/constants'
-	import {LocationInformation} from "../models/Identity";
 	import IdGenerator from "../util/IdGenerator";
-	import {Popup} from "../models/popups/Popup";
-	import PopupService from "../services/utility/PopupService";
 	import Identity from "../models/Identity";
-	import {Countries} from '../data/Countries'
+	import * as FileService from '../services/utility/FileService';
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
+	const fs = window.require('fs');
 
 	let saveTimeout;
 	export default {
@@ -135,7 +136,8 @@
 			]),
 			...mapGetters([
 				'identities',
-				'locations'
+				'locations',
+				'avatars'
 			]),
 			labelStyles(){
 				return {
@@ -155,6 +157,10 @@
 			},
 			selectedLocation(){
 				return this.locations.find(x => x.id === this.identity.location);
+			},
+			avatar(){
+				if(!this.identity) return;
+				return this.avatars[this.identity.id];
 			}
 		},
 		mounted(){
@@ -180,17 +186,34 @@
 				scatter.keychain.removeIdentity(identity);
 				this[Actions.SET_SCATTER](scatter);
 			},
-			uploadAvatar(){
-				//const image =
+			async uploadAvatar(){
+				//TODO: I'm not sure this is the best way to go about this.
+				/***
+				 * It's possible that this could inflate the saved json and backups significantly.
+				 * It might be best to have it as images, but that wouldn't persist for backups.
+				 * Need to give this a think.
+				 */
+
+
+
+				let filepath = await FileService.getFileLocation(['jpg', 'png', 'jpeg']);
+				if(!filepath || !filepath.length) return;
+				filepath = filepath[0];
+				let ext = filepath.split('.');
+				ext = ext[ext.length-1];
+
+				const base64 = fs.readFileSync(filepath, { encoding: 'base64' });
+				if(!base64) return PopupService.push(Popup.snackbar("Error converting image file."));
+
+				const scatter = this.scatter.clone();
+				scatter.keychain.avatars[this.identity.id] = `data:image/${ext};base64, ${base64}`;
+				this[Actions.SET_SCATTER](scatter);
 			},
 			save(){
 				const original = this.identities.find(x => x.id === this.identity.id);
 				if(original && JSON.stringify(original) === JSON.stringify(this.identity)) return;
 				if(!this.isValidName) return;
 				if(this.nameExists) return;
-				const scatter = this.scatter.clone();
-				scatter.keychain.updateOrPushIdentity(this.identity);
-				this[Actions.SET_SCATTER](scatter);
 			},
 
 			...mapActions([
@@ -269,6 +292,17 @@
 					align-items: center;
 					justify-content: center;
 					flex-direction: column;
+					position: relative;
+
+					.image {
+						width:100px;
+						height:100px;
+						border-radius:50%;
+						overflow: hidden;
+						display:block;
+
+						background-size: cover;
+					}
 
 					.upload {
 						cursor: pointer;

@@ -37,6 +37,7 @@ export default class PopupService {
         const scatter = StoreService.get().state.scatter.clone();
         scatter.keychain.keypairs.map(keypair => delete keypair.privateKey);
         scatter.keychain.identities.map(identity => delete identity.privateKey);
+        delete scatter.keychain.avatars;
         scatter.recurring = Recurring.placeholder();
         scatter.contacts = [];
 

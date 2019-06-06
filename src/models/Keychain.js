@@ -15,6 +15,7 @@ export default class Keychain {
         this.permissions = [];
         this.cards = [];
         this.apps = [];
+        this.avatars = {};
 
         this.lastUsedIdentity = null;
     }
@@ -61,6 +62,7 @@ export default class Keychain {
     removeIdentity(identity){
         this.identities = this.identities.filter(id => id.id !== identity.id);
         this.permissions = this.permissions.filter(perm => perm.identity !== identity.id);
+        delete this.avatars[identity.id];
     }
 
     updateOrPushLocation(location){

@@ -3,7 +3,7 @@
         <PopOutHead v-on:closed="returnResult" v-if="windowMessage && (popupType !== apiActions.LOGIN && popupType !== apiActions.LOGIN_ALL)" />
 
         <transition name="fade">
-            <section v-if="windowMessage" class="popout">
+            <section v-if="windowMessage" class="popout" :class="{'login':popupType === apiActions.LOGIN || popupType === apiActions.LOGIN_ALL}">
 
                 <AppLogin v-if="popupType === apiActions.LOGIN || popupType === apiActions.LOGIN_ALL"
                           :popup="popup"

@@ -57,6 +57,7 @@ export const getters = {
     // Keychain centric
     identity:state =>       state.scatter.keychain.identities[0],
     identities:state =>     state.scatter.keychain.identities || [],
+	avatars:state =>        state.scatter.keychain.avatars || {},
 	locations:state =>      state.scatter.keychain.locations || [],
     keypairs:state =>       state.scatter.keychain.keypairs || [],
     cards:state =>          state.scatter.keychain.cards || [],

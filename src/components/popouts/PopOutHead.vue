@@ -4,7 +4,10 @@
 			<figure class="logo">Scatter</figure>
 		</section>
 		<section class="actions">
-			<Select v-if="idSelector && identities.length > 1" :options="identities" :parser="x => x.name" :selected="identity" v-on:selected="x => $emit('identity', x)" />
+			<section class="id-selector" v-if="idSelector && identities.length > 1">
+				<i class="icon-user"></i>
+				<Select :options="identities" :parser="x => x.name" :selected="identity" v-on:selected="x => $emit('identity', x)" />
+			</section>
 			<figure v-if="!hideClose" class="close icon-cancel" @click="$emit('closed')"></figure>
 		</section>
 	</section>
@@ -61,26 +64,41 @@
 			justify-content: center;
 			align-items: center;
 
-			.select {
-				width:180px;
-				height:24px;
-				padding:0;
+			.id-selector {
+				position: relative;
 
-				.selected {
-					background:$darkblue;
-					border:1px solid $darkerblue;
-					line-height:21px;
+				> i {
+					color:rgba(255,255,255,0.5);
+					font-size: 12px;
+					position:absolute;
+					left:4px;
+					top:6px;
+					z-index:9999999;
+				}
 
-					.text {
-						color:$white;
-					}
+				.select {
+					width:200px;
+					height:24px;
+					padding:0;
 
-					.chevron {
-						color:$white;
-						right:5px;
+					.selected {
+						background:$darkblue;
+						border:1px solid $darkerblue;
+						line-height:21px;
+						padding-left:22px;
+
+						.text {
+							color:$white;
+						}
+
+						.chevron {
+							color:$white;
+							right:5px;
+						}
 					}
 				}
 			}
+
 
 			.close {
 				cursor: pointer;

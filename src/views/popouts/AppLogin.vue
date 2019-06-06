@@ -2,7 +2,7 @@
 	<section>
 		<PopOutHead v-on:closed="returnResult" id-selector="1" v-on:identity="selectIdentity" :identity="selectedIdentity" />
 
-		<section class="popout-window app-login">
+		<section class="app-login">
 
 			<section>
 				<PopOutApp :app="appData" :suffix="account ? 'will see:' : ''" />
@@ -288,6 +288,9 @@
 		display:flex;
 		justify-content: center;
 		align-items: center;
+		border:1px solid #dadada;
+		border-top:0;
+		height:calc(100vh - 40px);
 
 		.app-details {
 			margin-top:-60px;
