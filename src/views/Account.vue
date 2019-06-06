@@ -9,7 +9,7 @@
                 <!--------------------------->
                 <section class="details">
                     <figure class="blockchain" :class="`token-${account.blockchain()}-${account.blockchain()}`"></figure>
-                    <figure class="name">{{account.sendable()}}</figure>
+                    <figure class="name selectable">{{account.sendable()}}</figure>
                     <figure class="network">{{account.network().name}}</figure>
                     <figure class="permissions">
                         <figure class="permission" @click="copyAuthKey(acc)"

@@ -1,6 +1,6 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" />
+        <PopOutHead v-on:closed="returnResult" v-if="windowMessage && (popupType !== apiActions.LOGIN && popupType !== apiActions.LOGIN_ALL)" />
 
         <transition name="fade">
             <section v-if="windowMessage" class="popout">

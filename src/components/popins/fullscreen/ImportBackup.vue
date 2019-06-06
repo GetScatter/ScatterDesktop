@@ -22,7 +22,6 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from "../../../store/constants";
-	import {getFileLocation} from "../../../services/utility/BackupService";
 	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import Mnemonic from "../../../util/Mnemonic";
@@ -35,6 +34,7 @@
 	import LoginButton from "../../login/LoginButton";
 	import AES from 'aes-oop';
 	import Crypto from "../../../util/Crypto";
+	import {getFileLocation} from "../../../services/utility/FileService";
 	const fs = window.require('fs');
 
 	export default {
@@ -57,7 +57,7 @@
 				}
 				if(this.restoringBackup) return;
 				this.restoringBackup = true;
-				const possibleFile = getFileLocation();
+				const possibleFile = getFileLocation(['json', 'txt']);
 				if(!possibleFile) return unrestore();
 				const file = possibleFile[0];
 				if(!file) return unrestore();

@@ -26,8 +26,7 @@ import Switcher from './components/reusable/Switcher.vue'
 import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import AnimatedNumber from './components/reusable/AnimatedNumber.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
-import LinkApp from './views/popouts/LinkApp.vue'
-import TransferRequest from './views/popouts/TransferRequest.vue'
+import PopOutHead from './components/popouts/PopOutHead.vue'
 import SocketService from "./services/utility/SocketService";
 
 // f12 to open console from anywhere.
@@ -62,8 +61,7 @@ class Main {
 
 		let fragments;
 		if(hash === 'popout') fragments = [
-			{tag:'link-app', vue:LinkApp},
-			{tag:'transfer-request', vue:TransferRequest},
+			{tag:'PopOutHead', vue:PopOutHead},
 		]
 		else fragments = [
 			// {tag:'slider', vue:SliderComponent},

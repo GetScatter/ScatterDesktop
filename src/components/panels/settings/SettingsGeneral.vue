@@ -4,6 +4,8 @@
         <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.GENERAL.VersionLabel)}}</label>
             <b>Scatter Desktop v{{version}}</b>
+            <br>
+            <br>
 
             <Button :class="{'wiggle':needsUpdate}"
                  :disabled="!needsUpdate"
@@ -17,6 +19,11 @@
 
         <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.LANGUAGE.Label)}}</label>
+
+            <p>
+                Sorry, this is temporarily unavailable as we reformat all of the translations.
+            </p>
+
             <Select bordered="1" :options="names" :disabled="true"
                     :selected="selectedLanguage"
                     :parser="x => x"

@@ -4,6 +4,7 @@ import {blockchainName, Blockchains, BlockchainsArray} from "../../models/Blockc
 import KeyPairService from "../../services/secure/KeyPairService";
 import IdGenerator from "../../util/IdGenerator";
 import {LANG} from "../../localization/locales";
+import {LocationInformation} from "../../models/Identity";
 
 export const m11_0_0 = async scatter => {
 
@@ -35,9 +36,8 @@ export const m11_0_0 = async scatter => {
 			}
 
 			first = false;
-		})
-
-	})
+		});
+	});
 
 
     return true;

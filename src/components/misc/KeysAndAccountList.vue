@@ -11,11 +11,11 @@
 					</figure>
 					<section class="info">
 						<figure class="name">{{keypair.name}}</figure>
-						<figure class="key">{{keypair.enabledKey().key}}</figure>
+						<figure class="key selectable">{{keypair.enabledKey().key}}</figure>
 						<figure class="key" v-if="keypair.external"><b>{{keypair.external.type}}</b></figure>
 					</section>
 					<section class="actions" v-if="!asSelector">
-						<figure class="action icon-key" v-if="!keypair.external" @click="exportPrivateKey(keypair)"></figure>
+						<figure class="action icon-key" v-tooltip="'Export Key'" v-if="!keypair.external" @click="exportPrivateKey(keypair)"></figure>
 						<figure class="action hardware icon-microchip" v-if="keypair.external"></figure>
 						<figure class="action icon-dot-3" @click="setActionsMenu(keypair)"></figure>
 

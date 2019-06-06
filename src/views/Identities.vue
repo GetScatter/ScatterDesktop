@@ -1,95 +1,113 @@
 <template>
-	<section class="identities">
+	<section>
+		<section class="blockchain-list-container" v-if="identity">
 
-		<section class="identity" v-if="clone">
-			<section class="scroller">
-				<section class="personal greyback">
 
-					<section class="split-inputs">
-						<Input :error="nameError"
-						       :label="locale(langKeys.IDENTITY.NameLabel)"
-						       :placeholder="locale(langKeys.IDENTITY.NamePlaceholder)"
-						       :text="clone.name" v-on:changed="x => clone.name = x" />
 
-						<Input :label="locale(langKeys.IDENTITY.PERSONAL.NameLabel)"
-						       :placeholder="locale(langKeys.IDENTITY.PERSONAL.NamePlaceholder)"
-						       :text="fullname" v-on:changed="x => fullname = x" />
-					</section>
-
-					<section class="split-inputs">
-						<Input :label="locale(langKeys.IDENTITY.PERSONAL.DateOfBirthLabel)"
-						       type="date" placeholder="MM/DD/YYYY" style="flex:0.4"
-						       :text="clone.personal.birthdate"
-						       v-on:changed="x => clone.personal.birthdate = x" />
-
-						<Input :label="locale(langKeys.IDENTITY.PERSONAL.EmailLabel)" placeholder="support@get-scatter.com"
-						       style="flex:1"
-						       :text="clone.personal.email"
-						       v-on:changed="x => clone.personal.email = x" />
+			<!-------------------------->
+			<!------ BLOCKCHAINS ------->
+			<!-------------------------->
+			<section class="blockchains">
+				<section class="head with-button">
+					<figure>Identities</figure>
+					<Button small="1" text="Add" @click.native="addIdentity" />
+				</section>
+				<section class="scroller">
+					<section class="blockchain-list">
+						<section class="badge-item hoverable" :class="{'active':identity.id === id.id}" v-for="id in identities" @click="selectIdentity(id)">
+							<figure class="badge iconed small icon-user"></figure>
+							<section class="details">
+								<figure class="title">{{id.name}}</figure>
+							</section>
+						</section>
 					</section>
 				</section>
+			</section>
 
-				<section class="locations">
-					<section class="location-list">
-						<section class="head">
-							{{locale(langKeys.IDENTITY.LOCATION.SelectorLabel)}}
-							<Button text="Add Location" small="1" @click.native="addLocation" />
-						</section>
+			<!-------------------------->
+			<!------- NETWORKS --------->
+			<!-------------------------->
+			<section class="list-container">
+				<section class="head with-button">
+					<figure></figure>
+					<Button small="1" text="Remove" @click.native="removeIdentity" v-if="identities.length > 1" />
+				</section>
+				<section class="scroller identity">
+					<section class="id-card">
+						<figure class="bg">
+							<img src="../assets/login_bg.png" />
+						</figure>
+						<section class="card">
+							<section class="avatar">
+								<img src="../assets/id_card_avatar.png" />
+								<figure class="upload icon-plus" @click="uploadAvatar"></figure>
+							</section>
+							<section class="personal">
+								<figure class="bg">
+									<img src="../assets/id_card_bg.png" />
+								</figure>
+								<section class="inputs">
+									<Input :label-styles="labelStyles" :label="locale(langKeys.IDENTITY.PERSONAL.NameLabel)"
+									       :placeholder="locale(langKeys.IDENTITY.PERSONAL.NamePlaceholder)"
+									       :text="fullname" v-on:changed="x => fullname = x" />
 
-						<section class="list" v-if="selectedLocation">
-							<section class="badge-item hoverable" :class="{'active':selectedLocation.id === location.id}" v-for="location in clone.locations" @click="selectedLocation = location">
-								<section class="details">
-									<figure class="title">{{location.name}}</figure>
+									<Input :label-styles="labelStyles" small="1" :label="locale(langKeys.IDENTITY.PERSONAL.EmailLabel)" placeholder="support@get-scatter.com"
+									       style="flex:1"
+									       :text="identity.personal.email"
+									       v-on:changed="x => identity.personal.email = x" />
 
-									<Button @click.native="removeLocation(location)"
-									        v-if="selectedLocation.id !== location.id && clone.locations.length > 1"
-									        icon="icon-trash" small="1" />
-
-									<Button v-if="selectedLocation.id === location.id" blue="1" icon="icon-pencil" small="1" />
+									<Input :label-styles="labelStyles" small="1" :label="locale(langKeys.IDENTITY.PERSONAL.DateOfBirthLabel)"
+									       type="date" placeholder="MM/DD/YYYY" style="flex:0.4; margin-top:15px;"
+									       :text="identity.personal.birthdate"
+									       v-on:changed="x => identity.personal.birthdate = x" />
 								</section>
 							</section>
 						</section>
 					</section>
 
-					<section class="selected-location" v-if="selectedLocation">
-						<Input :label="locale(langKeys.IDENTITY.LOCATION.NameLabel)"
-						       :placeholder="locale(langKeys.IDENTITY.LOCATION.NamePlaceholder)"
-						       :text="selectedLocation.name"
-						       v-on:changed="x => selectedLocation.name = x" />
+					<section class="id-details limit-800">
+						<figure class="section-title">{{locale(langKeys.IDENTITY.NameLabel)}}</figure>
+						<Input :error="nameError" big="1"
+						       :placeholder="locale(langKeys.IDENTITY.NamePlaceholder)"
+						       :text="identity.name" v-on:changed="x => identity.name = x" />
 
-						<section>
-							<label>{{locale(langKeys.IDENTITY.LOCATION.CountryLabel)}}</label>
-							<Select bordered="1" :label="locale(langKeys.IDENTITY.LOCATION.CountryLabel)"
-							        :selected="selectedLocation.country" style="flex:3;"
-							        :options="[null].concat(countries)"
-							        :parser="x => x ? x.name : locale(langKeys.IDENTITY.LOCATION.CountryItemNone)"
-							        v-on:selected="x => selectedLocation.country = x" />
+						<br>
+						<br>
+
+						<figure class="section-title">Location</figure>
+						<Select bordered="1"
+						        :options="[null].concat(locations)"
+						        :parser="x => x ? x.name : 'None selected'"
+						        :selected="selectedLocation" v-on:selected="x => identity.location = x ? x.id : null" />
+
+						<br>
+						<br>
+						<br>
+						<br>
+
+						<figure class="section-title">Security Keys</figure>
+						<section class="split-inputs">
+							<section style="flex:1;">
+								<Input style="margin:0;" :text="identity.publicKey" disabled="1" copy="1" />
+							</section>
+							<section>
+								<Button text="Change" />
+							</section>
 						</section>
 
 						<br>
-						<Input label="Address" :text="selectedLocation.address" v-on:changed="x => selectedLocation.address = x" />
-
-						<section class="split-inputs">
-							<Input :label="locale(langKeys.IDENTITY.LOCATION.CityLabel)"
-							       :placeholder="locale(langKeys.IDENTITY.LOCATION.CityPlaceholder)"
-							       :text="selectedLocation.city"
-							       v-on:changed="x => selectedLocation.city = x" />
-							<Input :label="locale(langKeys.IDENTITY.LOCATION.StateLabel)"
-							       :placeholder="locale(langKeys.IDENTITY.LOCATION.StatePlaceholder)"
-							       :text="selectedLocation.state"
-							       v-on:changed="x => selectedLocation.state = x" />
-						</section>
-
-						<Input :label="locale(langKeys.IDENTITY.LOCATION.PhoneLabel)"
-						       placeholder="5555555555"
-						       :text="selectedLocation.phone"
-						       v-on:changed="x => selectedLocation.phone = x" />
+						<br>
+						<br>
+						<br>
 
 					</section>
 				</section>
 			</section>
-		</section>
 
+
+
+
+		</section>
 	</section>
 </template>
 
@@ -106,59 +124,72 @@
 	let saveTimeout;
 	export default {
 		data(){return {
-			selectedLocation:null,
-			clone:null,
+
+			identity:null,
 			fullname:'',
-			countries:Countries,
+			// countries:Countries,
 		}},
 		computed:{
 			...mapState([
 				'scatter',
 			]),
 			...mapGetters([
-				'identities'
+				'identities',
+				'locations'
 			]),
+			labelStyles(){
+				return {
+					style:'color:#444; margin-bottom:0;'
+				}
+			},
 			isValidName(){
-				return this.clone && Identity.nameIsValid(this.clone.name);
+				return this.identity && Identity.nameIsValid(this.identity.name);
 			},
 			nameExists(){
-				return this.identities.find(x => x.id !== this.clone.id && x.name.toLowerCase() === this.clone.name.toLowerCase())
+				return this.identities.find(x => x.id !== this.identity.id && x.name.toLowerCase() === this.identity.name.toLowerCase())
 			},
 			nameError(){
 				if(!this.isValidName) return `This name is invalid.`;
 				if(this.nameExists) return `This name exists.`;
 				return false;
 			},
-			isValidLocationName(){
-				return this.selectedLocation && this.selectedLocation.name.length;
-			},
+			selectedLocation(){
+				return this.locations.find(x => x.id === this.identity.location);
+			}
 		},
 		mounted(){
 			this.selectIdentity(this.identities[0])
 		},
 		methods:{
 			selectIdentity(identity){
-				this.clone = identity.clone();
-				this.fullname = [this.clone.personal.firstname, this.clone.personal.lastname].filter(x => x && x.length).join(' ');
-				this.selectedLocation = this.clone.locations[0];
+				this.identity = identity.clone();
+				this.fullname = [this.identity.personal.firstname, this.identity.personal.lastname].filter(x => x && x.length).join(' ');
 			},
-			addLocation(){
-				const location = LocationInformation.placeholder();
-				location.name = `Location - ${IdGenerator.text(10)}`;
-				this.clone.locations.push(location);
-				this.selectedLocation = location;
+			addIdentity(){
+				const scatter = this.scatter.clone();
+				const identity = Identity.placeholder();
+				identity.name = `New_Identity-${IdGenerator.text(4)}`;
+				scatter.keychain.updateOrPushIdentity(identity);
+				this[Actions.SET_SCATTER](scatter);
+				this.selectIdentity(identity);
 			},
-			removeLocation(location){
-				this.clone.locations = this.clone.locations.filter(x => x.id !== location.id);
+			removeIdentity(){
+				const identity = this.identity.clone();
+				this.identity = this.identities.filter(x => x.id !== identity.id)[0];
+				const scatter = this.scatter.clone();
+				scatter.keychain.removeIdentity(identity);
+				this[Actions.SET_SCATTER](scatter);
+			},
+			uploadAvatar(){
+				//const image =
 			},
 			save(){
-				const original = this.identities.find(x => x.id === this.clone.id);
-				if(original && JSON.stringify(original) === JSON.stringify(this.clone)) return;
+				const original = this.identities.find(x => x.id === this.identity.id);
+				if(original && JSON.stringify(original) === JSON.stringify(this.identity)) return;
 				if(!this.isValidName) return;
 				if(this.nameExists) return;
-				if(!this.isValidLocationName) return;
 				const scatter = this.scatter.clone();
-				scatter.keychain.updateOrPushIdentity(this.clone);
+				scatter.keychain.updateOrPushIdentity(this.identity);
 				this[Actions.SET_SCATTER](scatter);
 			},
 
@@ -169,15 +200,15 @@
 		watch:{
 			['fullname'](){
 				if(!this.fullname.trim().length){
-					this.clone.personal.firstname = '';
-					this.clone.personal.lastname = '';
+					this.identity.personal.firstname = '';
+					this.identity.personal.lastname = '';
 					return false;
 				}
 				const names = this.fullname.trim().split(' ');
-				this.clone.personal.firstname = names.slice(0, names.length > 1 ? names.length-1 : 1).join(' ').trim();
-				this.clone.personal.lastname = names.length > 1 ? names[names.length-1].trim() : '';
+				this.identity.personal.firstname = names.slice(0, names.length > 1 ? names.length-1 : 1).join(' ').trim();
+				this.identity.personal.lastname = names.length > 1 ? names[names.length-1].trim() : '';
 			},
-			clone:{
+			identity:{
 				handler(){
 					clearTimeout(saveTimeout);
 					saveTimeout = setTimeout(() => {
@@ -194,68 +225,109 @@
 <style scoped lang="scss">
 	@import "../styles/variables";
 
-	.identities {
+	.identity {
+		padding:0;
+		height: calc(100vh - 40px - 60px);
 
-		.scroller {
-			flex:1;
-			height:calc(100vh - 40px - 135px);
-			overflow:auto;
+		.id-card {
+			padding:45px;
+			position: relative;
+			overflow:hidden;
 
-		}
+			.bg {
+				position:absolute;
+				top:0;
+				bottom:0;
+				left:0;
+				right:0;
+				z-index:0;
 
-		.personal {
-
-			.split-inputs {
-				&:last-child {
-					.input {
-						margin-bottom:0;
-					}
+				img {
+					width:100%;
+					height:150%;
 				}
 			}
-		}
 
-		.locations {
-			display:flex;
-			height:calc(100% - 234px);
+			.card {
+				position: relative;
+				z-index:1;
+				background:$white;
+				width:100%;
+				border-radius:10px;
+				box-shadow:0 2px 10px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.2);
+				display:flex;
+				overflow: hidden;
+				max-width:600px;
+				margin:0 auto;
 
-			.location-list {
-				flex:1;
-				border-right:1px solid $lightgrey;
 
-				.head {
-					flex:1;
+				.avatar {
+					flex:0.4;
+					border-right:1px solid $lightgrey;
+					padding:30px;
 					display:flex;
 					align-items: center;
-					padding:0 20px;
-					font-size: $medium;
-					font-weight: bold;
-					height:60px;
-					border-bottom:1px solid $lightgrey;
-					justify-content: space-between;
+					justify-content: center;
+					flex-direction: column;
+
+					.upload {
+						cursor: pointer;
+						margin-top:30px;
+						width:45px;
+						height:45px;
+						border-radius:50%;
+						background:$blue;
+						color:$white;
+						font-size: 24px;
+						display:flex;
+						justify-content: center;
+						align-items: center;
+						transition: transform 0.2s ease;
+
+						&:hover {
+							transform:scale(1.1);
+						}
+
+						&:active {
+							transform:scale(0.9);
+						}
+					}
 				}
 
-				.list {
-					padding:20px;
-					height:calc(100% - 60px);
-					overflow-y:auto;
+				.personal {
+					flex:1;
+					padding:30px;
+					position: relative;
+					overflow: hidden;
 
-					.badge-item {
-						.details {
-							display:flex;
-							flex-direction: row;
-							justify-content: space-between;
-							align-items: center;
+					.bg {
+						position:absolute;
+						top:0;
+						bottom:0;
+						left:0;
+						right:0;
+						z-index:0;
+
+						img {
+							width:100%;
+							height:100%;
+						}
+					}
+
+					.inputs {
+						label {
+							margin:0 !important;
+							color:$black !important;
 						}
 					}
 				}
 			}
-
-			.selected-location {
-				flex:1.5;
-				padding:30px;
-				height:100%;
-				overflow-y:auto;
-			}
 		}
+
+		.id-details {
+			padding:45px;
+		}
+
 	}
+
 </style>

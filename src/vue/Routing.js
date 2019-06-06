@@ -13,6 +13,7 @@ import Receive from '../views/Receive';
 import Networks from '../views/Networks';
 import Contacts from '../views/Contacts';
 import Identities from '../views/Identities';
+import Locations from '../views/Locations';
 import Histories from '../views/Histories';
 import Settings from '../views/Settings';
 import RIDL from '../views/RIDL';
@@ -33,6 +34,7 @@ import Purchase from '../views/Purchase';
 // const Networks = () => import('../views/Networks');
 // const Contacts = () => import('../views/Contacts');
 // const Identities = () => import('../views/Identities');
+// const Locations = () => import('../views/Locations');
 // const Histories = () => import('../views/Histories');
 // const Settings = () => import('../views/Settings');
 // const RIDL = () => import('../views/RIDL');
@@ -54,6 +56,7 @@ export const RouteNames = {
 	EXCHANGE:'exchange',
 	CONTACTS:'contacts',
 	IDENTITIES:'identities',
+	LOCATIONS:'locations',
 	HISTORIES:'histories',
 	RIDL:'ridl',
 	SETTINGS:'settings',
@@ -76,6 +79,7 @@ const RouteViews = {
 	[RouteNames.EXCHANGE]:Exchange,
 	[RouteNames.CONTACTS]:Contacts,
 	[RouteNames.IDENTITIES]:Identities,
+	[RouteNames.LOCATIONS]:Locations,
 	[RouteNames.HISTORIES]:Histories,
 	[RouteNames.RIDL]:RIDL,
 	[RouteNames.SETTINGS]:Settings,

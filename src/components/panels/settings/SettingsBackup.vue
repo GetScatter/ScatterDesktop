@@ -32,6 +32,8 @@
     import {BACKUP_STRATEGIES} from '../../../models/Settings';
     import BackupService from '../../../services/utility/BackupService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
+    import PopupService from "../../../services/utility/PopupService";
+    import {Popup} from "../../../models/popups/Popup";
 
     export default {
         data () {return {
@@ -56,7 +58,10 @@
                 await BackupService.setBackupLocation();
             },
             async createBackup(){
-                await BackupService.createBackup();
+                if(await BackupService.createBackup()){
+                	PopupService.push(Popup.snackbar("Backup created"))
+                }
+
             },
             ...mapActions([
                 Actions.SET_SCATTER

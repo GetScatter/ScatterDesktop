@@ -97,7 +97,6 @@
 					RouteNames.RECEIVE,
 					RouteNames.EXCHANGE,
 					RouteNames.ACCOUNT,
-					RouteNames.IDENTITIES,
 					this.features.creditCards ? null : RouteNames.WALLET,
 				].filter(x => !!x).includes(this.$route.name);
 			},

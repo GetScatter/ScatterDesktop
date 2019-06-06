@@ -1,7 +1,7 @@
 <template>
 	<section class="input" :class="{'for-login white':forLogin, 'big':big, 'medium':medium, 'small':small, 'important':red, 'centered':centered, 'white':white}">
 
-		<label v-if="error || label" :class="{'error':error}">
+		<label v-bind="labelStyles" v-if="error || label" :class="{'error':error}">
 			<span>{{error ? error : label}}</span>
 			<span v-if="rightText" @click="$emit('right')">{{rightText}}</span>
 		</label>
@@ -30,7 +30,7 @@
 			<i class="icon-spin4 animate-spin" v-if="loaderOnDynamic"></i>
 		</figure>
 		<figure class="copy" v-if="copy" :class="{'labeled':label}">
-			<i class="icon-docs" v-tooltip="'Copy'" @click="copyText"></i>
+			<i class="icon-docs" @click="copyText"></i>
 		</figure>
 	</section>
 </template>
@@ -58,6 +58,7 @@
 			'forLogin',
 			'placeholder',
 			'label',
+			'labelStyles',
 			'error',
 			'type',
 			'maxlength',

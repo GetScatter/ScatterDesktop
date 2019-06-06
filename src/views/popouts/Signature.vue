@@ -46,7 +46,7 @@
                         <!-- ACCEPT TRANSACTION -->
                         <Button :red="isDangerous || (reputation && reputation.decimal < 0)"
                                 big="1" blue="1" v-if="!pinning"
-                                :disabled="!isValidIdentity || cannotSignArbitrary"
+                                :disabled="cannotSignArbitrary"
                                 :text="locale(langKeys.GENERIC.Allow)"
                                 @click.native="accepted" />
                     </section>
@@ -215,8 +215,8 @@
 		}},
 		created(){
 			this.selectedIdentity = this.identity.clone();
-			this.selectedLocation = this.selectedIdentity.locations[0];
-			this.clonedLocation = this.selectedIdentity.locations[0].clone();
+			this.selectedLocation = this.selectedIdentity.getLocation() || this.locations[0];
+			this.clonedLocation = this.selectedLocation.clone();
 
 			this.participantAccounts.map(async acc => {
 				if(ResourceService.usesResources(acc)){
@@ -242,6 +242,7 @@
 				'identities',
 				'accounts',
 				'networks',
+                'locations',
 			]),
 
 

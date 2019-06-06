@@ -3,7 +3,10 @@
 		<section class="details">
 			<figure class="logo">Scatter</figure>
 		</section>
-		<figure v-if="!hideClose" class="close icon-cancel" @click="$emit('closed')"></figure>
+		<section class="actions">
+			<Select v-if="idSelector && identities.length > 1" :options="identities" :parser="x => x.name" :selected="identity" v-on:selected="x => $emit('identity', x)" />
+			<figure v-if="!hideClose" class="close icon-cancel" @click="$emit('closed')"></figure>
+		</section>
 	</section>
 </template>
 
@@ -12,14 +15,19 @@
 	import ReputationScore from '../../components/reusable/ReputationScore';
 
 	export default {
-		props:['hideClose'],
+		props:['hideClose', 'idSelector', 'identity'],
 		components:{
 			ReputationScore
 		},
+		computed:{
+			...mapGetters([
+				'identities',
+			])
+		}
 	}
 </script>
 
-<style scoped lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss">
 	@import "../../styles/variables";
 
 	.pop-out-head {
@@ -28,6 +36,7 @@
 		height:40px;
 		width:100%;
 		display:flex;
+		justify-content: space-between;
 		align-items: center;
 		padding:0 0 0 10px;
 		border:1px solid $darkerblue;
@@ -45,20 +54,50 @@
 			}
 		}
 
-		.close {
+		.actions {
 			-webkit-app-region: no-drag;
-			cursor: pointer;
-			text-align:right;
-			line-height:90px;
-			height:90px;
-			padding:0 10px;
-			font-size: 18px;
-			color:rgba(255,255,255,0.4);
+			display:flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
 
-			&:hover {
-				color:$white;
+			.select {
+				width:180px;
+				height:24px;
+				padding:0;
+
+				.selected {
+					background:$darkblue;
+					border:1px solid $darkerblue;
+					line-height:21px;
+
+					.text {
+						color:$white;
+					}
+
+					.chevron {
+						color:$white;
+						right:5px;
+					}
+				}
+			}
+
+			.close {
+				cursor: pointer;
+				text-align:right;
+				padding:0 10px;
+				font-size: 18px;
+				color:rgba(255,255,255,0.4);
+				line-height:90px;
+				height:90px;
+
+				&:hover {
+					color:$white;
+				}
 			}
 		}
+
+
 	}
 
 </style>

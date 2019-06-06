@@ -13,6 +13,11 @@
     font-weight: bold;
     height:60px;
     border-bottom:1px solid $lightgrey;
+
+    &.with-button {
+      display:flex;
+      justify-content: space-between;
+    }
   }
 
   .tail {

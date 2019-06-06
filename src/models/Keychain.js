@@ -1,4 +1,4 @@
-import Identity from './Identity';
+import Identity, {LocationInformation} from './Identity';
 import Permission from './Permission';
 import Keypair from './Keypair';
 import Account from './Account';
@@ -11,9 +11,12 @@ export default class Keychain {
         this.keypairs = [];
         this.accounts = [];
         this.identities = [];
+        this.locations = [];
         this.permissions = [];
         this.cards = [];
         this.apps = [];
+
+        this.lastUsedIdentity = null;
     }
 
     static placeholder(){ return new Keychain(); }
@@ -22,6 +25,7 @@ export default class Keychain {
         if(json.hasOwnProperty('keypairs')) p.keypairs = json.keypairs.map(x => Keypair.fromJson(x));
         if(json.hasOwnProperty('accounts')) p.accounts = json.accounts.map(x => Account.fromJson(x));
         if(json.hasOwnProperty('identities')) p.identities = json.identities.map(x => Identity.fromJson(x));
+        if(json.hasOwnProperty('locations')) p.locations = json.locations.map(x => LocationInformation.fromJson(x));
         if(json.hasOwnProperty('permissions')) p.permissions = json.permissions.map(x => Permission.fromJson(x));
         if(json.hasOwnProperty('cards')) p.cards = json.cards.map(x => CreditCard.fromJson(x));
         if(json.hasOwnProperty('apps')) p.apps = json.apps.map(x => AuthorizedApp.fromJson(x));
@@ -57,6 +61,21 @@ export default class Keychain {
     removeIdentity(identity){
         this.identities = this.identities.filter(id => id.id !== identity.id);
         this.permissions = this.permissions.filter(perm => perm.identity !== identity.id);
+    }
+
+    updateOrPushLocation(location){
+        this.locations.find(id => id.id === location.id)
+            ? this.locations = this.locations.map(id => id.id === location.id ? location : id)
+            : this.locations.unshift(location);
+    }
+
+    removeLocation(location){
+        this.locations = this.locations.filter(x => x.id !== location.id);
+        this.identities.map(identity => {
+            if(identity.location === location.id){
+                identity.location = null;
+            }
+        })
     }
 
     getKeyPairByName(name){

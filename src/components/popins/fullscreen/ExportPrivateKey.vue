@@ -31,11 +31,8 @@
 			<!-- EXPORT AS TEXT KEY -->
 			<section class="export-text" v-if="state === STATES.KEY">
 				<h1>{{locale(langKeys.KEYPAIR.EXPORT.KEY.Title)}}</h1>
-				<br><br>
-				<Input :text="privateKey ? privateKey : getPublicKey()" />
-
-				<section class="split-inputs" style="justify-content: flex-end;">
-					<Button red="1" :text="privateKey ? 'Hide' : 'Reveal'" @click.native="revealPrivateKey" />
+				<section class="split-inputs">
+					<Input style="flex:1; margin-bottom:0;" :text="privateKey" />
 					<Button text="Copy" @click.native="copyPrivateKey" />
 				</section>
 			</section>
@@ -134,10 +131,17 @@
 			}
 		},
 
+		mounted(){
+			this.init();
+		},
+
 		methods:{
 			returnResult(){
 				this.popin.data.callback(this.network);
 				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			async init(){
+				this.privateKey = await this.getPrivateKey();
 			},
 			getPublicKey(){
 				return this.keypair.enabledKey().key;
@@ -151,10 +155,6 @@
 				const pub = this.getPublicKey();
 				const copy = `${this.blockchainName(this.keypair.enabledKey().blockchain)} - ${this.keypair.name}\r\nPublic: ${pub}\r\nPrivate: ${prv}`;
 				ElectronHelpers.copy(copy);
-			},
-			async revealPrivateKey(){
-				if(this.privateKey) return this.privateKey = null;
-				this.privateKey = await this.getPrivateKey();
 			},
 			async createQR(){
 				this.qr = await QRService.createQR(this.keypair.privateKey, this.pass);

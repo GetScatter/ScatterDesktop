@@ -105,7 +105,7 @@
 
 		input {
 			position: absolute;
-			top:-9000px;
+			top:-100px;
 			width:0;
 			height:0;
 			opacity:0;

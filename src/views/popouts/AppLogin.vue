@@ -1,5 +1,6 @@
 <template>
 	<section>
+		<PopOutHead v-on:closed="returnResult" id-selector="1" v-on:identity="selectIdentity" :identity="selectedIdentity" />
 
 		<section class="popout-window app-login">
 
@@ -147,20 +148,12 @@
 		created(){
 			this.loginAll = this.popup.data.type === ApiActions.LOGIN_ALL;
 
-			if(this.validAccounts.length){
-				this.account = this.validAccounts[0];
-			}
+			if(this.validAccounts.length) this.account = this.validAccounts[0];
 
-
-			this.selectedIdentity = this.identities[0].clone();
-			this.selectedLocation = this.selectedIdentity.locations[0].clone();
-
-
-
-
-			if(this.locationFields.length || this.personalFields.length){
-				this.$emit('expanded');
-			}
+			console.log('this.scatter.keychain', this.scatter.keychain);
+			this.selectIdentity(this.identities.sort((a,b) => {
+				return b.id === this.scatter.keychain.lastUsedIdentity ? 1 : a.id === this.scatter.keychain.lastUsedIdentity ? -1 : 0;
+			})[0]);
 		},
 		computed: {
 			...mapState([
@@ -171,7 +164,8 @@
 				'identity',
 				'identities',
 				'accounts',
-				'networks'
+				'networks',
+				'locations'
 			]),
 
 			appData(){
@@ -274,8 +268,13 @@
 				});
 			},
 
-			selectLocation(location){
-				this.selectedLocation = location.clone();
+			selectIdentity(identity){
+				this.selectedIdentity = identity.clone();
+				if(identity.getLocation()){
+					this.selectedLocation = identity.getLocation().clone();
+				} else {
+					this.selectedLocation = this.locations[0].clone();
+				}
 			},
 
 		}
@@ -372,6 +371,7 @@
 					padding:20px;
 					border-radius:$radius;
 					display:none;
+					z-index:999999;
 				}
 
 				.text {

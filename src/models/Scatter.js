@@ -6,7 +6,7 @@ import Hasher from '../util/Hasher'
 import IdGenerator from '../util/IdGenerator'
 import Recurring from "./Recurring";
 import PluginRepository from "../plugins/PluginRepository";
-import Identity from "./Identity";
+import Identity, {LocationInformation} from "./Identity";
 import Contact from "./Contact";
 import Keypair from "./Keypair";
 
@@ -39,7 +39,11 @@ export default class Scatter {
 	    await firstIdentity.initialize(scatter.hash);
 
 	    firstIdentity.name = 'MyFirstIdentity';
+	    scatter.keychain.locations = [LocationInformation.fromJson({name:'Home'})];
+	    firstIdentity.location = scatter.keychain.locations[0];
+
 	    scatter.keychain.updateOrPushIdentity(firstIdentity);
+
 	    return scatter;
     }
     static placeholder(){ return new Scatter(); }

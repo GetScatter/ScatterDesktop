@@ -37,21 +37,21 @@ remote.getGlobal('appShared').ApiWatcher = (deepLink) => {
 };
 
 
-const updateIdentity = async result => {
-	const identity = Identity.fromJson(result.identity);
-	const location = LocationInformation.fromJson(result.location);
-	if(result.missingFields){
-		const scatter = StoreService.get().state.scatter.clone();
-		const oldIdentity = scatter.keychain.identities.find(x => x.id === identity.id);
-		oldIdentity.personal = identity.personal;
-		oldIdentity.locations = oldIdentity.locations.filter(x => x.id !== location.id);
-		oldIdentity.locations.unshift(location);
-
-		scatter.keychain.updateOrPushIdentity(oldIdentity);
-		await StoreService.get().dispatch(StoreActions.SET_SCATTER, scatter);
-	}
-	return true;
-}
+// const updateIdentity = async result => {
+// 	const identity = Identity.fromJson(result.identity);
+// 	const location = LocationInformation.fromJson(result.location);
+// 	if(result.missingFields){
+// 		const scatter = StoreService.get().state.scatter.clone();
+// 		const oldIdentity = scatter.keychain.identities.find(x => x.id === identity.id);
+// 		oldIdentity.personal = identity.personal;
+// 		oldIdentity.locations = oldIdentity.locations.filter(x => x.id !== location.id);
+// 		oldIdentity.locations.unshift(location);
+//
+// 		scatter.keychain.updateOrPushIdentity(oldIdentity);
+// 		await StoreService.get().dispatch(StoreActions.SET_SCATTER, scatter);
+// 	}
+// 	return true;
+// }
 
 export default class ApiService {
 
@@ -187,9 +187,9 @@ export default class ApiService {
 			    // await updateIdentity(result);
 			    // const identity = Identity.fromJson(result.identity);
 			    const identity = StoreService.get().state.scatter.keychain.identities.find(x => x.id === result.identity.id);
+			    await identity.setAsLastUsed();
+
 			    const location = LocationInformation.fromJson(result.location);
-
-
 			    const accounts = loginAll ? availableAccounts : (result.accounts || []).map(x => Account.fromJson(x));
 
 			    await PermissionService.addIdentityOriginPermission(identity, accounts, fields, origin);
@@ -277,17 +277,14 @@ export default class ApiService {
 			const existingApp = StoreService.get().state.scatter.keychain.findApp(origin);
 
 			const hasHardwareKeys = participants.some(x => KeyPairService.isHardware(x.publicKey));
-			const needToSelectLocation = requiredFields.hasOwnProperty('location') && requiredFields.location.length && identity.locations.length > 1;
 			if(existingApp
 				&& !hasHardwareKeys
-				&& (!needToSelectLocation
-					|| needToSelectLocation && identity.locations.length === 1)
 				&& PermissionService.isWhitelistedTransaction(origin, identity, participants, payload.messages, requiredFields)){
 
 				if(StoreService.get().state.scatter.settings.showNotifications)
 					NotificationService.pushNotification('Signed Transaction', `${origin} - ${participants.map(x => x.sendable()).join(',')}`);
 
-				return await signAndReturn(identity.locations[0]);
+				return await signAndReturn(identity.getLocation());
 			}
 
 			const sendableRequest = {};
@@ -305,7 +302,7 @@ export default class ApiService {
 			PopupService.push(Popup.popout(sendableRequest, async ({result}) => {
 				if(!result) return resolve({id:request.id, result:Error.signatureError("signature_rejected", "User rejected the signature request")});
 
-				await updateIdentity(result);
+				// await updateIdentity(result);
 				fillIdentity();
 
 				if(result.needResources) await Promise.all(result.needResources.map(async account => await ResourceService.addResources(account)));
