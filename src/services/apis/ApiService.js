@@ -497,6 +497,16 @@ export default class ApiService {
 		return {id:request.id, result};
 	}
 
+
+	static async [Actions.GET_AVATAR](request){
+		const {payload} = request;
+		const {origin} = payload;
+		const possibleId = PermissionService.identityFromPermissions(origin, false);
+		if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
+
+		return {id:request.id, result:StoreService.get().state.scatter.keychain.avatars[possibleId.id]};
+	}
+
 	static async [Actions.AUTHENTICATE](request){
 		return new Promise(async resolve => {
 			const identity = PermissionService.identityFromPermissions(request.payload.origin);

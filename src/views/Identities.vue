@@ -7,7 +7,7 @@
 			<!-------------------------->
 			<!------ BLOCKCHAINS ------->
 			<!-------------------------->
-			<section class="blockchains">
+			<section class="blockchains" v-if="identities.length > 1">
 				<section class="head with-button">
 					<figure>Identities</figure>
 					<Button small="1" text="Add" @click.native="addIdentity" />
@@ -31,6 +31,7 @@
 				<section class="head with-button">
 					<figure></figure>
 					<Button small="1" text="Remove" @click.native="removeIdentity" v-if="identities.length > 1" />
+					<Button small="1" text="Add new Identity" @click.native="addIdentity" v-if="identities.length === 1" />
 				</section>
 				<section class="scroller identity">
 					<section class="id-card">
@@ -180,11 +181,18 @@
 				this.selectIdentity(identity);
 			},
 			removeIdentity(){
-				const identity = this.identity.clone();
-				this.identity = this.identities.filter(x => x.id !== identity.id)[0];
-				const scatter = this.scatter.clone();
-				scatter.keychain.removeIdentity(identity);
-				this[Actions.SET_SCATTER](scatter);
+				PopupService.push(Popup.prompt(
+					'Removing Identity',
+					`Are you sure you want to remove ${this.identity.name}`,
+					accepted => {
+						if(!accepted) return;
+						const identity = this.identity.clone();
+						this.identity = this.identities.filter(x => x.id !== identity.id)[0];
+						const scatter = this.scatter.clone();
+						scatter.keychain.removeIdentity(identity);
+						this[Actions.SET_SCATTER](scatter);
+					}, true
+				))
 			},
 			async uploadAvatar(){
 				//TODO: I'm not sure this is the best way to go about this.
@@ -205,9 +213,32 @@
 				const base64 = fs.readFileSync(filepath, { encoding: 'base64' });
 				if(!base64) return PopupService.push(Popup.snackbar("Error converting image file."));
 
-				const scatter = this.scatter.clone();
-				scatter.keychain.avatars[this.identity.id] = `data:image/${ext};base64, ${base64}`;
-				this[Actions.SET_SCATTER](scatter);
+				// Resizing to 350x350 MAX (ratio preserved)
+				// -------------------------------------------
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+				const image = new Image();
+
+				image.onload = e => {
+					const calculateAspectRatioFit = () => {
+						const ratio = Math.min(350 / image.width, 350 / image.height);
+						return { width: Math.round(image.width*ratio), height: Math.round(image.height*ratio) };
+					}
+
+					canvas.height = calculateAspectRatioFit().height;
+					canvas.width = calculateAspectRatioFit().width;
+
+					ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, calculateAspectRatioFit().width, calculateAspectRatioFit().height);
+					const resized = new Image();
+					resized.src = canvas.toDataURL(`image/${ext}`);
+
+					const scatter = this.scatter.clone();
+					scatter.keychain.avatars[this.identity.id] = resized.src;
+					this[Actions.SET_SCATTER](scatter);
+				};
+
+				image.src = `data:image/${ext};base64, ${base64}`;
+				// -------------------------------------------
 			},
 			save(){
 				const original = this.identities.find(x => x.id === this.identity.id);
