@@ -44,7 +44,9 @@ const handleApiResponse = async request => {
 	if(existingApp.nextNonce.length && !existingApp.checkNonce(request.data.nonce)) await removeAppPermissions();
 	else await updateNonce();
 
-	emit(existingApp.origin, 'api', await ApiService.handler(Object.assign(request.data, {plugin:request.plugin})));
+	ApiService.handler(Object.assign(request.data, {plugin:request.plugin})).then(result => {
+		emit(existingApp.origin, 'api', result);
+	})
 };
 
 const handlePairedResponse = async request => {

@@ -253,7 +253,6 @@ export default class EOS extends Plugin {
 				}
 			}).filter(x => !!x);
 
-			console.log('keys', keys);
 			const hasOwner = (keys.hasOwnProperty('owner') && keys.owner && keys.owner.length) || account.authorities().map(x => x.authority).includes('owner');
 			const options = {authorization:[`${account.name}@${hasOwner?'owner':'active'}`]};
 			return eos.transaction(tr => perms.map(perm => tr.updateauth(perm, options)))
@@ -800,7 +799,7 @@ export default class EOS extends Plugin {
 		await Promise.all(contracts.map(async contractAccount => {
 			const cachedABI = await StorageService.getCachedABI(contractAccount, network.chainId);
 
-			if(cachedABI === 'object' && cachedABI.timestamp > +new Date((await eos.getAccount(contractAccount)).last_code_update))
+			if(typeof cachedABI === 'object' && cachedABI.timestamp > +new Date((await eos.getAccount(contractAccount)).last_code_update))
 				abis[contractAccount] = eos.fc.abiCache.abi(contractAccount, cachedABI.abi);
 
 			else {

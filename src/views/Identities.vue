@@ -221,7 +221,7 @@
 
 				image.onload = e => {
 					const calculateAspectRatioFit = () => {
-						const ratio = Math.min(350 / image.width, 350 / image.height);
+						const ratio = Math.min(250 / image.width, 250 / image.height);
 						return { width: Math.round(image.width*ratio), height: Math.round(image.height*ratio) };
 					}
 
