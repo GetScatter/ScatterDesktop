@@ -202,8 +202,6 @@
 				 * Need to give this a think.
 				 */
 
-
-
 				let filepath = await FileService.getFileLocation(['jpg', 'png', 'jpeg']);
 				if(!filepath || !filepath.length) return;
 				filepath = filepath[0];

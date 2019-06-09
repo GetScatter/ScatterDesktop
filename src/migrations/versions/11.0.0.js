@@ -39,6 +39,12 @@ export const m11_0_0 = async scatter => {
 		});
 	});
 
+	scatter.keychain.identities.map(identity => {
+		const location = identity.locations.length ? identity.locations[0] : LocationInformation.fromJson({name:`Location for ${identity.name}`});
+		scatter.keychain.locations.push(location);
+		identity.location = location.id;
+		delete identity.locations;
+	});
 
     return true;
 };

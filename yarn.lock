@@ -6034,11 +6034,6 @@ match-at@^0.1.0:
   resolved "https://registry.yarnpkg.com/match-at/-/match-at-0.1.1.tgz#25d040d291777704d5e6556bbb79230ec2de0540"
   integrity sha512-h4Yd392z9mST+dzc+yjuybOGFNOZjmXIPKWjxBd1Bb23r4SmDOsk2NYCU2BMUBGbSpZqwVsZYNq26QS3xfaT3Q==
 
-max-listeners-exceeded-warning@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/max-listeners-exceeded-warning/-/max-listeners-exceeded-warning-0.0.1.tgz#3115afeb2204f0843f612dccd64834428561efbd"
-  integrity sha512-jlOu6gPTPIerw1oqbO1YgS5q0PdlXxb3ObUh0U7l5+bOQp8zabGwP9/J9v9FKtx82p1iKx1bFJjGboADh7G5cw==
-
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
