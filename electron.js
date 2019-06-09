@@ -1,13 +1,10 @@
-const LowLevelSocketService = require("./src/services/main_process/LowLevelSocketService");
-
 const electron = require('electron');
-const {app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
+const {remote, app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
 const path = require("path");
 const url = require("url");
 
 
 const isDev = process.mainModule.filename.indexOf('app.asar') === -1;
-const socketService = new LowLevelSocketService(isDev);
 
 let icon = isDev
 	? 'static/icons/icon.png'
@@ -124,7 +121,6 @@ const createScatterInstance = () => {
 	setupTray();
 	setupMenu();
 
-	socketService.loadWindow(mainWindow);
 	LowLevelWindowService.queuePopup();
 };
 
@@ -278,12 +274,196 @@ const Transport = require('@ledgerhq/hw-transport-node-hid');
 
 const NodeMachineId = require('node-machine-id');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const http = require('http');
+const https = require('https');
+const WebSocket = require('ws');
+const net = require('net');
+
+
+class LowLevelSocketService {
+
+	constructor(){
+		this.rekeyPromise = null;
+		this.openConnections = {};
+		this.websockets = [];
+		this.ports = {};
+	}
+
+	async getNewKey(origin){
+		return new Promise((resolve, reject) => {
+			this.rekeyPromise = {resolve, reject};
+			this.emit(origin, 'rekey');
+			return this.rekeyPromise;
+		})
+	}
+
+	async emit(origin, path, data){
+		const socket = this.openConnections[origin];
+		return this.emitSocket(socket, path, data);
+	}
+
+	async emitSocket(socket, path, data){
+		if(!socket) return console.error('No socket found');
+		socket.send('42/scatter,' + JSON.stringify([path, data ? data : false]))
+	}
+
+	async initialize(_certs){
+
+		const socketHandler = socket => {
+			let origin = null;
+
+			socket.send("40");
+			socket.send("40/scatter");
+			socket.send(`42/scatter,["connected"]`);
+
+			// Just logging errors for debugging purposes (dev only)
+			if(isDev) socket.on('error', async request => console.log('error', request));
+
+			// Different clients send different message types for disconnect (ws vs socket.io)
+			socket.on('close',      () => delete this.openConnections[origin]);
+			socket.on('disconnect', () => delete this.openConnections[origin]);
+
+			socket.on('message', msg => {
+				if(msg.indexOf('42/scatter') === -1) return false;
+				const [type, request] = JSON.parse(msg.replace('42/scatter,', ''));
+
+				const killRequest = () => this.emitSocket(socket, 'api', {id:request.id, result:null});
+
+				if(!request.plugin || request.plugin.length > 100) return killRequest();
+				request.plugin = request.plugin.replace(/\s/g, "");
+
+				if(request.plugin.trim().toLowerCase() === 'Scatter') killRequest();
+				if(request.data.hasOwnProperty('payload') && request.data.payload.origin.trim().toLowerCase() === 'Scatter') killRequest();
+
+				let requestOrigin;
+				if(request.data.hasOwnProperty('payload')) requestOrigin = request.data.payload.origin;
+				else requestOrigin = request.data.origin;
+
+				if(!origin) origin = requestOrigin;
+				else if(origin && requestOrigin !== origin) return this.emitSocket(socket, 'api', {id:request.id, result:null});
+				if(!this.openConnections.hasOwnProperty(origin)) this.openConnections[origin] = socket;
+
+				switch(type){
+					case 'pair':        return mainWindow.webContents.send('pair', request);
+					case 'rekeyed':     return this.rekeyPromise.resolve(request);
+					case 'api':         return mainWindow.webContents.send('api', request);
+				}
+
+			});
+		}
+
+		if(this.websockets.length) return this.websockets;
+
+		await this.findOpenPorts();
+
+		const requestHandler = (_, res) => {
+			res.setHeader('Access-Control-Allow-Origin', '*');
+			res.setHeader('Access-Control-Request-Method', '*');
+			res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+			res.setHeader('Access-Control-Allow-Headers', '*');
+			res.setHeader('Content-Type', 'application/json');
+			res.end('scatter');
+		}
+		await Promise.all(Object.keys(this.ports).map(async port => {
+			const server = this.ports[port] ? https.createServer(_certs, requestHandler) : http.createServer(requestHandler);
+			this.websockets.push(new WebSocket.Server({ server }));
+			server.listen(port);
+
+			return true;
+		}));
+
+		this.websockets.map(ws => ws.on('connection', socketHandler));
+		return this.websockets;
+	}
+
+	async close(){
+		this.websockets.map(ws => {
+			if(typeof ws.clients.map === 'function') ws.clients.map(ws => ws.terminate());
+		})
+
+		return true;
+	}
+
+	sendEvent(event, payload, origin){
+		return this.emit(origin, 'event', {event, payload});
+	}
+
+	broadcastEvent(event, payload){
+		Object.keys(this.openConnections).map(origin => {
+			this.sendEvent(event, payload, origin);
+		});
+		return true;
+	}
+
+	async findOpenPorts(){
+		const isPortAvailable = (port = 0) => {
+			return new Promise(async resolve => {
+				const server = net.createServer();
+
+				server.once('error', err => resolve(err.code !== 'EADDRINUSE'));
+
+				server.once('listening', () => {
+					server.close();
+					resolve(true);
+				});
+
+				server.listen(port);
+			})
+		}
+
+		const findPort = async (delta=0) => {
+			let port = 50005+delta;
+			while(!await isPortAvailable(port)) port+=1500;
+			return port;
+		};
+
+		const http = await findPort();
+		const https = await findPort(1);
+		this.ports = {[http]:false, [https]:true};
+		return true;
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 global.appShared = {
 	Transport,
 	QuitWatcher:null,
 	ApiWatcher:null,
 	LowLevelWindowService,
-	LowLevelSocketService:socketService,
+	LowLevelSocketService:new LowLevelSocketService(),
 	NotificationService,
 	NodeMachineId,
 	savingData:false
