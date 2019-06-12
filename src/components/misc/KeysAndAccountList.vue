@@ -2,13 +2,11 @@
 	<section class="keys-and-accounts-list">
 		<SearchAndFilter :filters="filters" :full-search="!filters.length" v-on:terms="x => terms = x" />
 
-		<section class="keys-list">
+		<section class="keys-list" v-if="keypairs.length">
 			<section class="keypair" v-for="keypair in filteredKeypairs" :class="{'new':isNew(keypair), 'selectable':keypairsOnly}" @click="$emit('keypair', keypair)">
 				<section class="keypair-info">
 					<figure class="blockchain" v-if="refreshingAccounts !== keypair.unique()" :class="`token-${keypair.enabledKey().blockchain}-${keypair.enabledKey().blockchain}`"></figure>
-					<figure class="blockchain" v-if="refreshingAccounts === keypair.unique()">
-						<i class="icon-spin4 animate-spin"></i>
-					</figure>
+					<figure class="blockchain" v-if="refreshingAccounts === keypair.unique()"><i class="icon-spin4 animate-spin"></i></figure>
 					<section class="info">
 						<figure class="name">{{keypair.name}}</figure>
 						<figure class="key selectable">{{keypair.enabledKey().key}}</figure>
@@ -17,7 +15,7 @@
 					<section class="actions" v-if="!asSelector">
 						<figure class="action icon-key" v-tooltip="'Export Key'" v-if="!keypair.external" @click="exportPrivateKey(keypair)"></figure>
 						<figure class="action hardware icon-microchip" v-if="keypair.external"></figure>
-						<figure class="action icon-dot-3" @click="setActionsMenu(keypair)"></figure>
+						<figure class="action icon-dot-3" v-tooltip="'Actions'" @click="setActionsMenu(keypair)"></figure>
 
 						<section class="action-menu" :class="{'hidden':actionsMenu !== keypair.id}">
 							<figure class="item" @click="editKeypairName(keypair)">
@@ -33,7 +31,7 @@
 							</figure>
 
 							<figure class="item" v-if="!keypair.external" @click="convertKeypair(keypair)">
-								<i class="icon-flow-tree"></i> Convert
+								<i class="icon-flow-tree"></i> Convert Blockchain
 							</figure>
 
 							<figure class="item" @click="removeKeypair(keypair)">
@@ -48,28 +46,32 @@
 				</section>
 
 				<section v-if="!keypairsOnly">
-					<figure class="accounts-label">Linked accounts</figure>
-
-					<section class="accounts-list" v-if="keypair.accounts().length">
-						<section class="account" v-for="account in filteredAccounts(keypair)" @click="$emit('account', account)">
-							<section class="details">
-								<figure class="name">{{account.sendable()}}</figure>
-								<figure class="network">{{account.network().name}}</figure>
-							</section>
-							<section class="tokens" v-if="!noBalances && account.tokens().length">
-								<figure class="balance">{{account.totalFiatBalance()}} {{displayCurrency}}</figure>
-								<figure class="quantity">in {{account.tokens().length}} tokens</figure>
-							</section>
-							<section class="actions" v-if="!asSelector">
-								<figure class="chevron icon-right-open-big"></figure>
+					<section v-if="keypair.accounts().length">
+						<figure class="accounts-label">Linked accounts</figure>
+						<section class="accounts-list">
+							<section class="account" v-for="account in filteredAccounts(keypair)" @click="$emit('account', account)">
+								<section class="details">
+									<figure class="name">{{account.sendable()}}</figure>
+									<figure class="network">{{account.network().name}}</figure>
+								</section>
+								<section class="tokens" v-if="!noBalances && account.tokens().length">
+									<figure class="balance">{{account.totalFiatBalance()}} {{displayCurrency}}</figure>
+									<figure class="quantity">in {{account.tokens().length}} tokens</figure>
+								</section>
+								<section class="actions" v-if="!asSelector">
+									<figure class="chevron icon-right-open-big"></figure>
+								</section>
 							</section>
 						</section>
 					</section>
 
-					<section class="no-accounts" v-if="!keypair.accounts().length">
-						No linked accounts
+					<section class="no-accounts" v-else>
+						<section>
+							You don't have any accounts linked to this key.
+							<p>{{blockchainName(keypair.enabledKey().blockchain)}} blockchains require that you pay a small fee to create accounts.</p>
+						</section>
 
-						<Button v-if="canCreateAccounts(keypair)" text="Create Account" @click.native="createEosAccount(keypair)" />
+						<Button v-if="canCreateAccounts(keypair)" text="Create one now!" @click.native="createEosAccount(keypair)" />
 					</section>
 				</section>
 
@@ -142,6 +144,9 @@
 				}).filter(x => {
 					return x.accounts().find(account => account.sendable().toLowerCase().indexOf(this.terms) > -1)
 						|| x.enabledKey().key.toLowerCase().indexOf(this.terms) > -1
+				}).filter(x => {
+					if(this.asSelector) return !!x.accounts().length;
+					else return true;
 				}).sort((a,b) => {
 					return b.accounts().length - a.accounts().length;
 				})
@@ -285,6 +290,7 @@
 				.blockchain {
 					font-size: 36px;
 					background:$blue;
+					border:1px solid $darkblue;
 					color:$white;
 					border-radius:$radius;
 					height:50px;
@@ -296,7 +302,9 @@
 					position: relative;
 
 					.icon-spin4 {
-						font-size: 22px;
+						font-size: 28px;
+						padding-top:2px;
+						transform-origin: center;
 					}
 				}
 
@@ -327,6 +335,7 @@
 
 					.action-menu {
 						position:absolute;
+						z-index:2;
 						top:40px;
 						right:10px;
 						border-radius:$radius;
@@ -396,12 +405,21 @@
 			.no-accounts {
 				margin-top:5px;
 				font-size: $large;
-				color:$silver;
-				padding-bottom:10px;
 
 				display:flex;
 				justify-content: space-between;
 				align-items: center;
+
+				padding:10px 10px 10px 20px;
+				background:$blue;
+				color:$white;
+				margin-bottom:10px;
+				border-radius:$radius;
+				border:1px solid $darkblue;
+
+				p {
+					margin:0;
+				}
 			}
 
 			.accounts-list {

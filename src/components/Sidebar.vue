@@ -41,10 +41,10 @@
 					{
 						name:null,
 						items:[
-							{name:'Apps', route:RouteNames.HOME},
+							this.accounts.length ? {name:'Apps', route:RouteNames.HOME} : null,
 							{name:'Wallet', route:RouteNames.WALLET},
 							this.accounts.length ? {name:'Assets', route:RouteNames.ASSETS} : null,
-							// this.accounts.length ? {name:'Items', route:RouteNames.ITEMS} : null,
+							// this.accounts.length ? {name:'Marketplace', route:RouteNames.ITEMS} : null,
 							{name:'Identities', route:RouteNames.IDENTITIES},
 							{name:'Locations', route:RouteNames.LOCATIONS},
 							this.accounts.length ? {name:'Reputation', route:RouteNames.RIDL} : null,
@@ -69,6 +69,7 @@
 		methods:{
 			itemIcon(item){
 				if(item.name === 'Reputation') return 'sidebar-sidebar_ridl';
+				if(item.name === 'Marketplace') return 'sidebar-sidebar_items';
 				return `sidebar-sidebar_${item.name.toLowerCase()}`
 			},
 			toggleSidebar(){

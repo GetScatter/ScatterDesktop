@@ -10,7 +10,6 @@
         </section>
 
         <webview v-if="state === STATES.RIDL" class="webview" src="https://ridl.network/" />
-        <!--<webview v-if="state === STATES.TOKENS" class="webview" src="https://ridl.get-scatter.com/" />-->
         <section class="get-ridl" v-if="state === STATES.TOKENS">
             <GetRIDL />
         </section>

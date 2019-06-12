@@ -1,13 +1,14 @@
 <template>
-	<button :disabled="disabled" :class="{'blue':blue, 'red':red, 'big':big, 'small':small, 'icon':icon && !text}" @click="click ? click() : ()=>{}">
+	<button :disabled="disabled || loading" :class="{'blue':blue, 'red':red, 'big':big, 'small':small, 'icon':icon && !text}" @click="click && !loading ? click() : ()=>{}">
 		<span v-if="icon" class="icon" :class="icon"></span>
+		<span v-if="loading" class="loading icon-spin4 animate-spin"></span>
 		<span v-if="text">{{text}}</span>
 	</button>
 </template>
 
 <script>
 	export default {
-		props:['text','click', 'blue', 'red', 'disabled', 'big', 'icon', 'small']
+		props:['text','click', 'blue', 'red', 'disabled', 'big', 'icon', 'small', 'loading']
 	}
 </script>
 
@@ -51,11 +52,14 @@
 			padding:0 8px;
 		}
 
+		.loading {
+			margin-right:10px;
+			display:inline-block;
+		}
+
 		&:disabled {
-			background:$lightgrey;
-			color:$grey;
+			opacity:0.6;
 			cursor: not-allowed;
-			border:0;
 		}
 	}
 </style>

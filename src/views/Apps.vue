@@ -110,6 +110,7 @@
 	import AppsService from "../services/apps/AppsService";
 	import Carousel from "../components/reusable/Carousel";
 	import PermissionService from "../services/apps/PermissionService";
+	import {RouteNames} from "../vue/Routing";
 
 
 	const STATES = {
@@ -136,6 +137,7 @@
 			...mapGetters([
 				'permissions',
 				'apps',
+				'accounts',
 			]),
 			tabs(){
 				let tabs = [
@@ -206,6 +208,9 @@
 		},
 		methods:{
 			async init(){
+				if(!this.accounts.length){
+					return this.$router.push({name:this.RouteNames.WALLET});
+				}
 				if(this.$route.query.hasOwnProperty('state')){
 					this.state = this.$route.query.state;
 					if(this.state === STATES.MINE && !this.linkedApps.length){

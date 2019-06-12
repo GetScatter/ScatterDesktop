@@ -20,10 +20,10 @@
 						<section class="split-inputs">
 							<Select truncate="1" v-if="validKeypairs.length" bordered="1" style="flex:0.5; max-width:180px;"
 							        :options="validKeypairs"
-							        :selected="item.ref ? keypairFor(item.ref) ? keypairFor(item.ref).name : '' : ''"
+							        :selected="keys[item.ref] ? keypairFor(keys[item.ref]) ? keypairFor(keys[item.ref]).name : '' : ''"
 							        :parser="x => x.name"
-							        v-on:selected="x => item.ref = publicKeyForKeypair(x)" />
-							<Input style="margin-bottom:0; flex:1;" placeholder="EOS..." :text="item.ref" v-on:changed="x => item.ref = x" />
+							        v-on:selected="x => selectKey(x, item)" />
+							<Input style="margin-bottom:0; flex:1;" placeholder="EOS..." :text="keys[item.ref]" v-on:changed="x => keys[item.ref] = x" />
 						</section>
 					</section>
 
@@ -42,17 +42,19 @@
 					<br>
 					<br>
 					<section class="types">
-						<!--<section class="type" v-if="availableAccounts.length" @click="state = STATES.ACCOUNT">-->
-							<!--<figure class="type-icon icon-user"></figure>-->
-							<!--<figure class="type-text">From another account</figure>-->
-						<!--</section>-->
 						<section class="type" @click="state = STATES.EXCHANGE">
 							<figure class="type-icon icon-globe"></figure>
-							<figure class="type-text">From an exchange</figure>
+							<figure class="type-text">Exchange</figure>
+							<figure class="type-desc">
+								You can send funds from an exchange or another wallet to create your account.
+							</figure>
 						</section>
 						<section class="type disabled">
 							<figure class="type-icon"><CreditCard /></figure>
 							<figure class="type-text">Credit Card</figure>
+							<figure class="type-desc">
+								This option is currently disabled while we work on regulatory compliance.
+							</figure>
 						</section>
 					</section>
 				</section>
@@ -136,15 +138,17 @@
 
 			transactionId:'',
 
-			ownerKey:'',
-			activeKey:'',
+			keys:{
+				owner:'',
+				active:'',
+			},
 
 			state:STATES.SELECT_TYPE,
 			STATES,
 		}},
 
 		mounted(){
-			if(this.account) this.ownerKey = this.activeKey = this.account.publicKey;
+			if(this.account) this.keys.owner = this.keys.active = this.account.publicKey;
 			this.getRamPrice();
 		},
 
@@ -168,16 +172,16 @@
 				return [{text:'Back', click:() => this.state = STATES.SELECT_TYPE}];
 			},
 			noAccountButtonsRight(){
-				if(this.state === STATES.EXCHANGE && this.canUseExchange) return [{text:'Click after transfer', blue:true, click:() => this.findExchangeAccount()}];
+				if(this.state === STATES.EXCHANGE && this.canUseExchange) return [{text:'Click after Transfer', blue:true, click:() => this.findExchangeAccount()}];
 				return [];
 			},
 			changeableKeys(){
 				return [{
 					label:'Owner/Master Key',
-					ref:this.ownerKey,
+					ref:'owner',
 				}, {
 					label:'Active/Daily Key',
-					ref:this.activeKey,
+					ref:'active',
 				}]
 			},
 
@@ -215,6 +219,11 @@
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
 				this[Actions.RELEASE_POPUP](this.popin);
+			},
+			selectKey(key, item){
+				//x => item.ref = publicKeyForKeypair(x)
+				console.log(key, item);
+				this.keys[item.ref] = this.publicKeyForKeypair(key);
 			},
 			keypairFor(publicKey){
 				return this.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
@@ -274,8 +283,8 @@
 			finishedAccountCreation(tx){
 				setTimeout(async () => {
 					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, tx));
-					const owner = this.keypairs.find(x => x.publicKeys.find(y => y.key === this.ownerKey));
-					const active = this.keypairs.find(x => x.publicKeys.find(y => y.key === this.activeKey));
+					const owner = this.keypairs.find(x => x.publicKeys.find(y => y.key === this.keys.owner));
+					const active = this.keypairs.find(x => x.publicKeys.find(y => y.key === this.keys.active));
 
 					if(owner && (!active || active.id !== owner.id)) await AccountService.importAllAccounts(owner, false, [Blockchains.EOSIO], [this.account.network()]);
 					if(active) await AccountService.importAllAccounts(active, false, [Blockchains.EOSIO], [this.account.network()]);
@@ -306,8 +315,8 @@
 				plugin.createAccount(
 					this.account,
 					this.accountName,
-					this.ownerKey,
-					this.activeKey,
+					this.keys.owner,
+					this.keys.active,
 					this.eosToUse
 				)
 					.then(tx => this.finishedAccountCreation(tx))

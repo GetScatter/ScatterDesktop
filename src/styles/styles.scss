@@ -419,6 +419,7 @@ label {
       border-radius:$radius;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       margin:0 20px;
       cursor: pointer;
       border:1px solid $lightgrey;
@@ -442,6 +443,13 @@ label {
       .type-text {
         margin-top:20px;
         font-size: $large;
+        font-weight: bold;
+        padding:0 20px;
+      }
+
+      .type-desc {
+        margin-top:10px;
+        font-size: $tiny;
         font-weight: bold;
         padding:0 20px;
       }

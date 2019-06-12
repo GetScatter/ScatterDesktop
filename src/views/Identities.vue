@@ -73,6 +73,60 @@
 						       :placeholder="locale(langKeys.IDENTITY.NamePlaceholder)"
 						       :text="identity.name" v-on:changed="x => identity.name = x" />
 
+
+
+
+
+
+						<!-------------------------------------------->
+						<!-------------------------------------------->
+						<!----------------    RIDL      -------------->
+						<!-------------------------------------------->
+						<!-------------------------------------------->
+
+						<section v-if="!isUsingIdentity">
+							<section class="ridl-actions" v-if="identityIsAvailable && isValidName">
+								<figure class="icon icon-check"></figure>
+								<figure class="text">This RIDL Identity name is available</figure>
+								<Button :loading="loadingRidlData" small="1" text="Register as RIDL Identity" @click.native="registerForRIDL"  />
+							</section>
+
+							<section class="ridl-actions" v-if="identityNotAvailable">
+								<figure class="icon icon-cancel red"></figure>
+								<figure class="text">
+									This RIDL Identity name is already taken
+									<p>If you are sure you own this identity, check that the authentication key on this identity matches the one on the registered RIDL identity.</p>
+								</figure>
+							</section>
+
+							<section class="ridl-actions" v-if="identityIsUsable">
+								<figure class="icon icon-check"></figure>
+								<figure class="text">You own this RIDL Identity name</figure>
+								<Button :loading="loadingRidlData" small="1" text="Use RIDL Identity" @click.native="useRidlIdentity"  />
+							</section>
+
+							<section class="ridl-actions" v-if="identityIsClaimable">
+								<figure class="icon icon-check"></figure>
+								<figure class="text">You own this RIDL Identity name, but haven't claimed it yet.</figure>
+								<Button :loading="loadingRidlData" small="1" text="Claim RIDL Identity" @click.native="registerForRIDL"  />
+							</section>
+
+							<br>
+							<br>
+						</section>
+
+						<section v-if="isUsingIdentity">
+							<section class="ridl-actions">
+								<figure class="icon icon-user"></figure>
+								<figure class="text">This Identity is registered with RIDL</figure>
+								<Button red="1" :loading="loadingRidlData" small="1" text="Stop using RIDL Identity" @click.native="stopUsingRidlIdentity"  />
+							</section>
+
+							<br>
+							<br>
+						</section>
+
+
 						<br>
 						<br>
 
@@ -87,13 +141,13 @@
 						<br>
 						<br>
 
-						<figure class="section-title">Security Keys</figure>
+						<figure class="section-title">Authentication Key</figure>
 						<section class="split-inputs">
 							<section style="flex:1;">
 								<Input style="margin:0;" :text="identity.publicKey" disabled="1" copy="1" />
 							</section>
 							<section>
-								<Button text="Change" />
+								<Button text="Change" @click.native="changeSecurityKey" />
 							</section>
 						</section>
 
@@ -121,6 +175,7 @@
 	import * as FileService from '../services/utility/FileService';
 	import PopupService from "../services/utility/PopupService";
 	import {Popup} from "../models/popups/Popup";
+	import RIDLService from "../services/apis/RIDLService";
 	const fs = window.require('fs');
 
 	let saveTimeout;
@@ -130,6 +185,9 @@
 			identity:null,
 			fullname:'',
 			// countries:Countries,
+
+			availableIdentity:false,
+			loadingRidlData:false,
 		}},
 		computed:{
 			...mapState([
@@ -138,7 +196,8 @@
 			...mapGetters([
 				'identities',
 				'locations',
-				'avatars'
+				'avatars',
+				'accounts'
 			]),
 			labelStyles(){
 				return {
@@ -162,10 +221,45 @@
 			avatar(){
 				if(!this.identity) return;
 				return this.avatars[this.identity.id];
-			}
+			},
+
+
+
+
+
+
+
+
+			/**************************************/
+			/**************  RIDL  ****************/
+			/**************************************/
+			ridlAccount(){
+				return this.accounts.find(x => x.networkUnique === RIDLService.networkUnique());
+			},
+			identityIsAvailable(){
+				return !this.availableIdentity;
+			},
+			identityNotAvailable(){
+				return this.availableIdentity && this.availableIdentity.key !== this.identity.publicKey;
+			},
+			identityIsClaimable(){
+				if(!this.availableIdentity) return false;
+				return this.availableIdentity.key === this.identity.publicKey && this.availableIdentity.account === 'ridlridlridl';
+			},
+			identityIsUsable(){
+				return this.availableIdentity
+					&& this.ridlAccount
+					&& this.availableIdentity.key === this.identity.publicKey
+					&& this.availableIdentity.account === this.ridlAccount.name;
+			},
+			isUsingIdentity(){
+				if(!this.availableIdentity) return false;
+				return this.availableIdentity.id === this.identity.ridl
+			},
 		},
 		mounted(){
-			this.selectIdentity(this.identities[0])
+			this.selectIdentity(this.identities[0]);
+			if(!this.ridlAccount) RIDLService.init();
 		},
 		methods:{
 			selectIdentity(identity){
@@ -238,11 +332,91 @@
 				image.src = `data:image/${ext};base64, ${base64}`;
 				// -------------------------------------------
 			},
+			changeSecurityKey(){
+				PopupService.push(Popup.verifyPassword(verified => {
+					if(!verified) return;
+					PopupService.push(Popup.changeIdentityKey(this.identity, changed => {
+						if(changed) this.selectIdentity(this.identities.find(x => x.id === this.identity.id));
+					}));
+				}))
+			},
+
+
+
+
+
+
+			/**************************************/
+			/**************  RIDL  ****************/
+			/**************************************/
+			async registerForRIDL(){
+				if(this.loadingRidlData) return;
+
+				const name = this.identity.name;
+				const identity = await RIDLService.identityNameIsAvailable(name);
+
+				let account;
+				account = await RIDLService.getAccount();
+				if(!account){
+					account = await RIDLService.createAccount();
+					if(!account) return console.error("Could not create account.");
+				}
+
+				this.loadingRidlData = true;
+
+				if(identity){
+					const claimed = await RIDLService.claim(this.identity.name, this.identity.publicKey).catch(() => null);
+					this.loadingRidlData = false;
+					// TODO: ERROR HANDLING
+					if(!claimed) {
+						return console.error("Could not claim identity.");
+					}
+
+					this.identity.ridl = this.availableIdentity.id;
+				}
+
+				else {
+					const identified = await RIDLService.identify(name, this.identity.publicKey).catch(() => null);
+					this.loadingRidlData = false;
+					// TODO: ERROR HANDLING
+					if(!identified) {
+						return console.error("Could not identify identity.");
+					}
+
+					this.identity.ridl = identified.id;
+					this.availableIdentity = identified;
+				}
+			},
+			async useRidlIdentity(){
+				if(this.loadingRidlData) return;
+				this.identity.ridl = this.availableIdentity.id;
+			},
+			async stopUsingRidlIdentity(){
+				this.identity.ridl = -1;
+			},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			save(){
 				const original = this.identities.find(x => x.id === this.identity.id);
 				if(original && JSON.stringify(original) === JSON.stringify(this.identity)) return;
 				if(!this.isValidName) return;
 				if(this.nameExists) return;
+
+				const scatter = this.scatter.clone();
+				scatter.keychain.updateOrPushIdentity(this.identity);
+				this[Actions.SET_SCATTER](scatter);
 			},
 
 			...mapActions([
@@ -268,6 +442,13 @@
 					}, 500);
 				},
 				deep:true,
+			},
+			async ['identity.name'](){
+				this.availableIdentity = null;
+				if(!this.isValidName) return;
+				this.loadingRidlData = true;
+				this.availableIdentity = await RIDLService.identityNameIsAvailable(this.identity.name);
+				this.loadingRidlData = false;
 			},
 
 		}
@@ -389,6 +570,42 @@
 
 		.id-details {
 			padding:45px;
+
+			.ridl-actions {
+				display:flex;
+				justify-content: space-between;
+				align-items: center;
+
+				.icon {
+					width:24px;
+					height:24px;
+					font-size: 14px;
+					border-radius:50%;
+					border:1px solid $blue;
+					color:$blue;
+					margin-right:10px;
+					display:flex;
+					justify-content: center;
+					align-items: center;
+
+					&.red {
+						background:$red;
+						color:$white;
+						border:0;
+					}
+				}
+
+				.text {
+					font-size: $medium;
+					font-weight: bold;
+					flex:1;
+
+					p {
+						margin:0;
+						color:$silver;
+					}
+				}
+			}
 		}
 
 	}

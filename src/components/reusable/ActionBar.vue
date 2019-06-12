@@ -42,6 +42,12 @@
 		.right {
 			flex:1;
 			text-align:right;
+
+			button {
+				&:not(:first-child){
+					margin-left:5px;
+				}
+			}
 		}
 	}
 

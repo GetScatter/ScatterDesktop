@@ -263,6 +263,9 @@
 			border-radius:$radius;
 			padding:6px 0;
 
+			display:flex;
+			justify-content: center;
+
 			.selected {
 				.chevron {
 					top:2px;

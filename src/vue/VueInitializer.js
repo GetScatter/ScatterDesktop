@@ -87,7 +87,7 @@ export default class VueInitializer {
 	                publicKeyForKeypair(keypair){
 		                if(!keypair) return null;
 		                if(!keypair.hasOwnProperty('publicKeys')) return null;
-		                return keypair.publicKeys.find(key => key.blockchain === Blockchains.EOSIO).key;
+		                return keypair.enabledKey().key;
 	                },
 
 

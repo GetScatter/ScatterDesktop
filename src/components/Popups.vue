@@ -24,6 +24,7 @@
                     <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
                     <ExportPrivateKey :popin="popIn" v-if="popIn.data.type === popupTypes.EXPORT_PRIVATE_KEY" />
                     <Terms :popin="popIn" v-if="popIn.data.type === popupTypes.SHOW_TERMS" />
+                    <ChangeIdentityKey :popin="popIn" v-if="popIn.data.type === popupTypes.CHANGE_IDENTITY_KEY" />
                 </section>
                 <section class="overlay" :class="{'wide':isWide(popIn)}" v-else>
                     <figure class="bg-holder">
@@ -107,9 +108,11 @@
     import EosLinkAccount from "./popins/overlay/EosLinkAccount";
     import SelectDisplayToken from "./popins/overlay/SelectDisplayToken";
     import Terms from "./popins/fullscreen/Terms";
+    import ChangeIdentityKey from "./popins/fullscreen/ChangeIdentityKey";
 
     export default {
     	components:{
+		    ChangeIdentityKey,
 		    Terms,
 		    SelectDisplayToken,
 		    EosLinkAccount,

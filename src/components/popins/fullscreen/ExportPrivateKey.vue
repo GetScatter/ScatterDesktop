@@ -4,9 +4,10 @@
 
 			<!-- SELECT EXPORT TYPE -->
 			<section v-if="state === STATES.SELECT">
-				<h1>{{locale(langKeys.GENERIC.Export)}} "{{keypair.name}}"</h1>
+				<h1>Exporting Private Key</h1>
 				<section class="disclaimer">
-					<figure class="title">Make sure to keep your private keys safe, and never give them to anyone.</figure>
+					<figure class="title">Keep your private keys safe!</figure>
+					<figure class="description">Always export your private keys and make sure you have a backup of them. You will not be able to recover your tokens if you lose it.</figure>
 				</section>
 
 				<section class="types">
@@ -111,7 +112,7 @@
 
 			buttonsLeft(){
 				if(this.state === STATES.SELECT){
-					return [{text:'Cancel', click:() => this.returnResult(null)}];
+					return [{text:'Back', click:() => this.returnResult(null)}];
 				} else {
 					return [{text:'Back', click:() => this.state = STATES.SELECT}];
 				}

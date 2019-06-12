@@ -3,10 +3,19 @@
         <PanelTabs v-if="features.creditCards" :tabs="tabs" :state="state" v-on:selected="x => state = x" />
         <section class="wallet" :class="{'no-panels':!features.creditCards}">
 
-
-
             <section class="scroller">
-                <KeysAndAccountList v-on:account="goToAccount" v-if="state === STATES.KEYS" />
+                <KeysAndAccountList v-on:account="goToAccount" v-if="state === STATES.KEYS && keypairs.length" />
+
+                <section class="keys-and-accounts-list" v-if="state === STATES.KEYS && !keypairs.length">
+                    <section class="no-keypairs">
+                        <section class="container">
+                            <figure class="title">You don't have any Keys</figure>
+                            <figure class="description">Click one of the buttons below to import a key you already have, or generate a brand new one.</figure>
+                        </section>
+                    </section>
+                </section>
+
+
                 <CreditCardsList v-if="features.creditCards && state === STATES.CARDS" />
             </section>
 
@@ -128,6 +137,7 @@
         position: relative;
         height:calc(100vh - 220px);
         padding-bottom:50px;
+        border-right:1px solid $lightgrey;
 
         .scroller {
 
@@ -145,6 +155,41 @@
                 .keys-and-accounts-list {
                     height:calc(100vh - 250px);
                 }
+            }
+        }
+
+
+
+
+        .no-keypairs {
+            height:100%;
+            overflow-y:auto;
+            padding:30px;
+            background:$lightestgrey;
+            padding-bottom:60px;
+
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+
+            .container {
+                max-width:400px;
+                margin:0 auto;
+                text-align:center;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .description {
+                margin-top:10px;
+                font-size: $medium;
+            }
+
+            .ctas {
+                margin-top:20px;
             }
         }
 

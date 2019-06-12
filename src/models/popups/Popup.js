@@ -123,6 +123,10 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VERIFY_PASSWORD, {returnOnly}, callback))
 	}
 
+	static changeIdentityKey(identity, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHANGE_IDENTITY_KEY, {identity}, callback))
+	}
+
 	static eosChangePermissions(account, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_CHANGE_PERMISSIONS, {account}, callback))
 	}
@@ -258,6 +262,7 @@ export const PopupTypes = {
     // FULLSCREEN
 	SHOW_TERMS:'showTerms',
 	SECURITY_CODE:'securityCode',
+    CHANGE_IDENTITY_KEY:'changeIdentityKey',
     VERIFY_PASSWORD:'verifyPassword',
     EOS_CHANGE_PERMISSIONS:'eosChangePermissions',
 	EOS_PROXY_VOTES:'eosProxyVotes',

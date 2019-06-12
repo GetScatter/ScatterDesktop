@@ -71,7 +71,7 @@ export default class PasswordService {
     static async verifyPassword(password = null, forceLocal = false){
         return new Promise(async resolve => {
 
-            const testPassword = async (setToState, seed, mnemonic = false) => {
+            const testPassword = async (setToState, seed) => {
 	            try {
 		            let scatter = forceLocal ? StorageService.getLocalScatter() : StorageService.getScatter();
 		            scatter = AES.decrypt(scatter, seed);
@@ -82,7 +82,7 @@ export default class PasswordService {
 		            scatter = Scatter.fromJson(scatter);
 		            scatter.decrypt(seed);
 		            if(setToState) await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
-		            resolve(mnemonic ? mnemonic : true);
+		            resolve(true);
 	            } catch(e) {
 		            resolve(false);
 	            }
