@@ -39,10 +39,13 @@
 							<img src="../assets/login_bg.png" />
 						</figure>
 						<section class="card">
-							<section class="avatar">
+							<section class="avatar" :class="{'has-image':scatter.keychain.avatars[identity.id]}">
 								<img v-if="!avatar" src="../assets/id_card_avatar.png" />
 								<figure class="image" v-else :style="`background-image:url('${avatar}')`"></figure>
-								<figure class="upload icon-plus" @click="uploadAvatar"></figure>
+								<figure class="upload">
+									<figure v-tooltip="'Remove'" v-if="scatter.keychain.avatars[identity.id]" class="icon icon-cancel" @click="removeAvatar"></figure>
+									<figure v-tooltip="scatter.keychain.avatars[identity.id] ? 'Change' : 'Add an Image'" class="icon icon-plus" @click="uploadAvatar"></figure>
+								</figure>
 							</section>
 							<section class="personal">
 								<figure class="bg">
@@ -320,6 +323,11 @@
 					}, true
 				))
 			},
+			async removeAvatar(){
+				const scatter = this.scatter.clone();
+				delete scatter.keychain.avatars[this.identity.id];
+				this[Actions.SET_SCATTER](scatter);
+			},
 			async uploadAvatar(){
 				//TODO: I'm not sure this is the best way to go about this.
 				/***
@@ -345,7 +353,7 @@
 
 				image.onload = e => {
 					const calculateAspectRatioFit = () => {
-						const ratio = Math.min(250 / image.width, 250 / image.height);
+						const ratio = Math.min(350 / image.width, 350 / image.height);
 						return { width: Math.round(image.width*ratio), height: Math.round(image.height*ratio) };
 					}
 
@@ -543,10 +551,10 @@
 				width:100%;
 				border-radius:10px;
 				box-shadow:0 2px 10px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.2);
-				display:flex;
 				overflow: hidden;
 				max-width:600px;
 				margin:0 auto;
+				display:flex;
 
 
 				.avatar {
@@ -560,35 +568,78 @@
 					position: relative;
 
 					.image {
-						width:100px;
-						height:100px;
-						border-radius:50%;
+						position:absolute;
+						top:0;
+						bottom:0;
+						left:0;
+						right:0;
 						overflow: hidden;
 						display:block;
+						z-index:-1;
 
 						background-size: cover;
+						background-position: center;
+
+						&:after {
+							content:'';
+							display:block;
+							position: absolute;
+							top:0;
+							bottom:0;
+							left:0;
+							right:0;
+							background:rgba(0,0,0,0);
+							transition:background 0.3s ease;
+						}
 					}
 
 					.upload {
-						cursor: pointer;
-						margin-top:30px;
-						width:45px;
-						height:45px;
-						border-radius:50%;
-						background:$blue;
-						color:$white;
-						font-size: 24px;
-						display:flex;
-						justify-content: center;
-						align-items: center;
-						transition: transform 0.2s ease;
 
-						&:hover {
-							transform:scale(1.1);
+						color:$white;
+						display:flex;
+						align-items: center;
+						justify-content: center;
+
+
+						.icon {
+							margin:10px 5px;
+							position: relative;
+							z-index:1;
+							cursor: pointer;
+							width:45px;
+							height:45px;
+							line-height:45px;
+							border-radius:50%;
+							background:$blue;
+							color:$white;
+							font-size: 24px;
+							text-align:center;
+							opacity:1;
+							transition:opacity 0.2s ease;
 						}
 
-						&:active {
-							transform:scale(0.9);
+
+					}
+
+					&.has-image {
+						.upload {
+							.icon {
+								opacity:0;
+							}
+						}
+
+						&:hover {
+							.image {
+								&:after {
+									background:rgba(0,0,0,0.6);
+								}
+							}
+
+							.upload {
+								.icon {
+									opacity:1;
+								}
+							}
 						}
 					}
 				}
