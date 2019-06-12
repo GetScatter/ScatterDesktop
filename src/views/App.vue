@@ -145,7 +145,7 @@
 	        isIdentity(){ return this.selected.isIdentity; },
 	        isAction(){ return this.selected.isContractAction; },
 	        permissionsList(){
-		        return this.identityPermission ? [this.identityPermission] : [].concat(this.contractPermissions).map(permission => ({
+		        return ((this.identityPermission ? [this.identityPermission] : []).concat(this.contractPermissions)).map(permission => ({
 			        id:permission ? permission.id : null,
 			        title:this.permissionTitle(permission),
 			        description:this.permissionDescription(permission),

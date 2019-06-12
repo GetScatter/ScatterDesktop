@@ -35,7 +35,7 @@
 						<section class="box account-selector" style="width:100%;" @click="selectAccount">
 							<section>
 								<figure class="name">{{account.sendable()}}</figure>
-								<figure class="network">{{account.network().name}}</figure>
+								<figure class="network">{{account.balanceFor(account.network().systemToken()).amount}} EOS</figure>
 							</section>
 							<figure class="chevron icon-dot-3"></figure>
 						</section>
