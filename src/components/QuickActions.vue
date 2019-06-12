@@ -200,7 +200,7 @@
 
 			.refresh {
 				cursor: pointer;
-				font-size: 24px;
+				font-size: 22px;
 				margin-left:10px;
 			}
 		}
@@ -232,6 +232,7 @@
 			justify-content: center;
 			padding:0 20px;
 			font-size: $medium;
+			font-weight:bold;
 			text-align:center;
 			cursor: pointer;
 

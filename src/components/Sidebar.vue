@@ -100,8 +100,6 @@
 			height:$fullheight;
 		}
 
-
-
 		.sidebar {
 			flex:0 0 auto;
 			width:$closed;
@@ -113,7 +111,7 @@
 			white-space: nowrap;
 			position:fixed;
 			left:0;
-			top:40px;
+			top:34px;
 			bottom:0;
 			background:$white;
 			z-index:10000;
@@ -150,7 +148,9 @@
 
 			.item {
 				cursor: pointer;
-				padding:12px 20px;
+				padding:12px;
+				margin:0 12px;
+				border-radius:$radius;
 				display:flex;
 				align-items: center;
 				color: $lightgrey;
@@ -179,13 +179,15 @@
 
 				&:hover, &.active {
 
+					background:$lightestgrey;
+
 					i {
 						color:$blue;
 					}
 
 					span {
 						font-weight: bold;
-						color:$black;
+						color:$blue;
 					}
 				}
 			}
