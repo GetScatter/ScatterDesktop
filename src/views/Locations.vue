@@ -7,7 +7,7 @@
 			<!-------------------------->
 			<!------ BLOCKCHAINS ------->
 			<!-------------------------->
-			<section class="blockchains">
+			<section class="blockchains" v-if="locations.length > 1">
 				<section class="head with-button">
 					<figure>Locations</figure>
 					<Button small="1" text="Add" @click.native="addLocation" />
@@ -31,6 +31,7 @@
 				<section class="head with-button">
 					<figure></figure>
 					<Button small="1" text="Remove" v-if="location && locations.length > 1" @click.native="removeLocation" />
+					<Button small="1" text="Add new Location" @click.native="addLocation" v-if="locations.length === 1" />
 				</section>
 				<section class="scroller location" v-if="location">
 					<section class="limit-800">
@@ -133,11 +134,11 @@
 				this.location = location.clone();
 			},
 			removeLocation(){
+				const location = this.location.clone();
+				this.selectLocation(this.locations.find(x => x.id !== location.id));
 				const scatter = this.scatter.clone();
-				scatter.keychain.removeLocation(this.location);
+				scatter.keychain.removeLocation(location);
 				this[Actions.SET_SCATTER](scatter);
-				this.selectLocation(this.locations[0]);
-
 			},
 			save(){
 				const original = this.locations.find(x => x.id === this.location.id);

@@ -165,12 +165,13 @@
 						<br>
 
 						<figure class="section-title">Authentication Key</figure>
+						<p>Make sure you save a copy of this authentication key, you will need it to regain access to certain applications that require it.</p>
 						<section class="split-inputs">
 							<section style="flex:1;">
 								<Input style="margin:0;" :text="identity.publicKey" disabled="1" copy="1" />
 							</section>
 							<section>
-								<Button text="Change" @click.native="changeSecurityKey" />
+								<Button text="Change / View" @click.native="changeSecurityKey" />
 							</section>
 						</section>
 
