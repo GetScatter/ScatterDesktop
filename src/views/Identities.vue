@@ -91,12 +91,21 @@
 								<Button :loading="loadingRidlData" small="1" text="Register as RIDL Identity" @click.native="registerForRIDL"  />
 							</section>
 
-							<section class="ridl-actions" v-if="identityNotAvailable">
+							<section class="ridl-actions" v-if="identityNotAvailable && !identityIsOnWrongKey">
 								<figure class="icon icon-cancel red"></figure>
 								<figure class="text">
 									This RIDL Identity name is already taken
-									<p>If you are sure you own this identity, check that the authentication key on this identity matches the one on the registered RIDL identity.</p>
+									<p>Someone else has already claimed and registered this RIDL Identity name.</p>
 								</figure>
+							</section>
+
+							<section class="ridl-actions" v-if="identityNotAvailable && identityIsOnWrongKey">
+								<figure class="icon icon-cancel red"></figure>
+								<figure class="text">
+									You own this RIDL Identity, but the authentication key doesn't match.
+									<p>You can either change the authentication key you are using for this identity, or update the authentication key to the one you are using now.</p>
+								</figure>
+								<Button :loading="loadingRidlData" small="1" text="Update Authentication Key" @click.native="updateRidlKey"  />
 							</section>
 
 							<section class="ridl-actions" v-if="identityIsUsable">
@@ -109,6 +118,17 @@
 								<figure class="icon icon-check"></figure>
 								<figure class="text">You own this RIDL Identity name, but haven't claimed it yet.</figure>
 								<Button :loading="loadingRidlData" small="1" text="Claim RIDL Identity" @click.native="registerForRIDL"  />
+							</section>
+
+							<section class="ridl-actions" v-if="identityIsOnWrongAccount">
+								<figure class="icon icon-cancel red"></figure>
+								<figure class="text">
+									This RIDL Identity is linked to an account you don't have imported in your Scatter.
+									<p>
+										The blockchain account associated with this RIDL Identity is not currently imported into your Scatter.
+									</p>
+								</figure>
+								<!--<Button :loading="loadingRidlData" small="1" text="Update RIDL Identity's Account" @click.native="updateRidlAccount"  />-->
 							</section>
 
 							<br>
@@ -252,6 +272,18 @@
 					&& this.availableIdentity.key === this.identity.publicKey
 					&& this.availableIdentity.account === this.ridlAccount.name;
 			},
+			identityIsOnWrongAccount(){
+				return this.availableIdentity
+					&& this.ridlAccount
+					&& this.availableIdentity.key === this.identity.publicKey
+					&& this.availableIdentity.account !== this.ridlAccount.name;
+			},
+			identityIsOnWrongKey(){
+				return this.availableIdentity
+					&& this.ridlAccount
+					&& this.availableIdentity.key !== this.identity.publicKey
+					&& this.availableIdentity.account === this.ridlAccount.name;
+			},
 			isUsingIdentity(){
 				if(!this.availableIdentity) return false;
 				return this.availableIdentity.id === this.identity.ridl
@@ -336,7 +368,10 @@
 				PopupService.push(Popup.verifyPassword(verified => {
 					if(!verified) return;
 					PopupService.push(Popup.changeIdentityKey(this.identity, changed => {
-						if(changed) this.selectIdentity(this.identities.find(x => x.id === this.identity.id));
+						if(changed) {
+							this.selectIdentity(this.identities.find(x => x.id === this.identity.id));
+							this.identity.ridl = -1;
+						}
 					}));
 				}))
 			},
@@ -349,6 +384,26 @@
 			/**************************************/
 			/**************  RIDL  ****************/
 			/**************************************/
+			async updateRidlKey(){
+				if(this.loadingRidlData) return;
+				this.loadingRidlData = true;
+				if(await RIDLService.changeKey(this.identity.name, this.identity.publicKey)){
+					setTimeout(async () => {
+						this.availableIdentity = await RIDLService.identityNameIsAvailable(this.identity.name);
+						this.useRidlIdentity(true);
+						this.loadingRidlData = false;
+					}, 1000);
+				} else {
+					this.loadingRidlData = false;
+				}
+			},
+			async updateRidlAccount(){
+				if(this.loadingRidlData) return;
+				this.loadingRidlData = true;
+				const result = await RIDLService.changeAccount(this.identity.name, this.ridlAccount.name);
+				console.log(result);
+				this.loadingRidlData = false;
+			},
 			async registerForRIDL(){
 				if(this.loadingRidlData) return;
 
@@ -387,8 +442,8 @@
 					this.availableIdentity = identified;
 				}
 			},
-			async useRidlIdentity(){
-				if(this.loadingRidlData) return;
+			async useRidlIdentity(force = false){
+				if(!force && this.loadingRidlData) return;
 				this.identity.ridl = this.availableIdentity.id;
 			},
 			async stopUsingRidlIdentity(){
@@ -599,6 +654,7 @@
 					font-size: $medium;
 					font-weight: bold;
 					flex:1;
+					padding-right:20px;
 
 					p {
 						margin:0;

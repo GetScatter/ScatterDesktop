@@ -72,6 +72,7 @@ export default class RIDLService {
 	}
 
 	static networkUnique(){
+		if(!network) return;
 		return network.unique();
 	}
 
@@ -208,6 +209,18 @@ export default class RIDLService {
     	return new Promise(async (resolve, reject) => {
     		await this.setSignatureProvider(reject);
 		    const identified = await ridl.identity.payAndIdentify(username, publicKey).then(() => true).catch(() => false);
+		    setTimeout(async () => {
+		    	const identity = await ridl.identity.get(username);
+		    	if(!identity) return resolve(false);
+		    	resolve(identity);
+		    }, 1000);
+	    })
+	}
+
+	static async changeAccount(username, newAccountName){
+    	return new Promise(async (resolve, reject) => {
+    		await this.setSignatureProvider(reject);
+		    const identified = await ridl.identity.changeacc(username, newAccountName).then(() => true).catch(() => false);
 		    setTimeout(async () => {
 		    	const identity = await ridl.identity.get(username);
 		    	if(!identity) return resolve(false);
