@@ -270,7 +270,7 @@
 			top:0;
 			right:60px;
 			color:$white;
-			font-size: 22px;
+			font-size: $large;
 			cursor: pointer;
 			border-radius:$radius;
 
@@ -345,7 +345,7 @@
 						margin-bottom:15px;
 
 						.name {
-							font-size: 22px;
+							font-size: $large;
 						}
 
 						.view-all {

@@ -134,12 +134,11 @@ input {
 
 
 .section-title {
-  color:$black;
-  font-size: 18px;
-  font-weight: bold;
-  padding-bottom:10px;
-  border-bottom:2px solid $blue;
+  color:$grey;
   margin-bottom:20px;
+  font-size: $large;
+  font-weight:bold;
+  color: #141616;
 }
 
 .split-inputs {
