@@ -275,7 +275,7 @@ const Locale = {
 	[KEYPAIR.ACCOUNTS.EOSDangerousPermissionsSubtitle]:() =>
 		`Consider changing one to another key by clicking the "Change Permissions" button below.`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.ChangePermissionsButton]:() => `Change Permissions`,
+	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.ChangePermissionsButton]:() => `Change Account Keys`,
 	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.ProxyVotesButton]:() => `Proxy Votes`,
 	[KEYPAIR.ACCOUNTS.ACTIONS.EOS.UnlinkAccountButton]:() => `Unlink Account`,
 	/////////////////////////////////////////////////////////////////////////////////////////////////

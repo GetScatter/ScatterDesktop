@@ -5,7 +5,7 @@
             <section v-for="blockchain in blockchainsArray">
                 <label>{{blockchainName(blockchain.value)}}</label>
 
-                <sel :options="availableExplorers.hasOwnProperty(blockchain.value) ? availableExplorers[blockchain.value] : defaultExplorers[blockchain.value]"
+                <Select bordered="1" :options="availableExplorers.hasOwnProperty(blockchain.value) ? availableExplorers[blockchain.value] : defaultExplorers[blockchain.value]"
                      :selected="explorers[blockchain.value]"
                      :parser="x => x.name"
                      v-on:changed="x => changedExplorer(blockchain.value, x)" />
@@ -20,7 +20,7 @@
     import * as Actions from '../../../store/constants';
     import {Blockchains, BlockchainsArray, blockchainName} from '../../../models/Blockchains';
     import PluginRepository from '../../../plugins/PluginRepository'
-    import ExplorerService from "../../../services/ExplorerService";
+    import ExplorerService from "../../../services/blockchain/ExplorerService";
 
 
 
@@ -46,6 +46,7 @@
             }
         },
         mounted(){
+
         	this.setExplorers();
         },
         methods: {

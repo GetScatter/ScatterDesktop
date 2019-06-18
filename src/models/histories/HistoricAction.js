@@ -13,10 +13,6 @@ export default class HistoricAction extends History {
 
 	clone(){ return HistoricAction.fromJson(JSON.parse(JSON.stringify(this))) }
 	static placeholder(){ return new HistoricAction(); }
-	static fromJson(json){
-		let p = Object.assign(this.placeholder(), json);
-		// p.account = Account.fromJson(json.account);
-		return p;
-	}
+	static fromJson(json){ return Object.assign(this.placeholder(), json); }
 
 }

@@ -4,11 +4,13 @@
         <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.GENERAL.VersionLabel)}}</label>
             <b>Scatter Desktop v{{version}}</b>
+            <br>
+            <br>
 
-            <btn :class="{'wiggle':needsUpdate}"
+            <Button :class="{'wiggle':needsUpdate}"
                  :disabled="!needsUpdate"
                  :red="needsUpdate"
-                 v-on:clicked="openUpdateLink"
+                 @click.native="openUpdateLink"
                  :text="needsUpdate
                      ? locale(langKeys.SETTINGS.GENERAL.UpdateAvailable)
                      : locale(langKeys.SETTINGS.GENERAL.NoUpdateAvailable)"
@@ -16,12 +18,23 @@
         </section>
 
         <section class="action-box top-pad">
+            <label>{{locale(langKeys.SETTINGS.LANGUAGE.Label)}}</label>
+
+            <p>
+                Sorry, this is temporarily unavailable as we reformat all of the translations.
+            </p>
+
+            <Select bordered="1" :options="names" :disabled="true"
+                    :selected="selectedLanguage"
+                    :parser="x => x"
+                    v-on:changed="selectLanguage" />
+        </section>
+
+        <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.GENERAL.WhitelistNotificationsLabel)}}</label>
             <p>{{locale(langKeys.SETTINGS.GENERAL.WhitelistNotificationsDescription)}}</p>
 
-            <section class="switch bottomed" @click="toggleNotifications">
-                <figure class="dot" :class="{'disabled':!showNotifications}"></figure>
-            </section>
+            <Switcher :state="showNotifications" @click.native="toggleNotifications" />
         </section>
 
         <section class="action-box top-pad">
@@ -30,16 +43,16 @@
 
             <br>
             <br>
-            <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty"
+            <Input style="margin-bottom:0;" dynamic-button="icon-folder-open-empty"
                  disabled="1" :text="dataPath"
-                 v-on:dynamic="openFilePathLink"></cin>
+                 v-on:dynamic="openFilePathLink"/>
         </section>
 
         <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.GENERAL.DeveloperConsoleLabel)}}</label>
             <p>{{locale(langKeys.SETTINGS.GENERAL.DeveloperConsoleDescription)}}</p>
-            <btn @click.native="openConsole"
-                 :text="locale(langKeys.SETTINGS.GENERAL.DeveloperConsoleButton)"></btn>
+            <Button @click.native="openConsole"
+                 :text="locale(langKeys.SETTINGS.GENERAL.DeveloperConsoleButton)"/>
         </section>
 
     </section>
@@ -49,9 +62,11 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
 
-    import UpdateService from '../../../services/UpdateService';
-    import WindowService from '../../../services/WindowService';
+    import UpdateService from '../../../services/utility/UpdateService';
+    import WindowService from '../../../services/utility/WindowService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
+    import {LANG} from '../../../localization/locales';
+    import LanguageService from "../../../services/utility/LanguageService";
 
     import {remote} from '../../../util/ElectronHelpers';
     const app = remote.app;
@@ -59,6 +74,8 @@
     export default {
         data () {return {
             needsUpdate:null,
+	        languages:LANG,
+	        names:['English'],
         }},
         computed:{
             ...mapState([
@@ -67,19 +84,27 @@
             ...mapGetters([
                 'showNotifications',
                 'version',
+	            'networks',
+	            'language',
             ]),
             dataPath(){
             	return app.getPath('userData');
-            }
+            },
+	        selectedLanguage(){
+		        return this.scatter.settings.language
+	        }
         },
         mounted(){
             UpdateService.needsUpdateNoPrompt(false).then(needsUpdate => {
                 this.needsUpdate = !!needsUpdate;
             })
+	        LanguageService.getLanguageNames().then(names => {
+		        if(names) this.names = names;
+	        })
         },
         methods: {
         	openFilePathLink(){
-        	    ElectronHelpers.openLinkInBrowser(this.dataPath);
+        	    ElectronHelpers.openLinkInBrowser(this.dataPath, true);
             },
 	        openUpdateLink(){
 		        ElectronHelpers.openLinkInBrowser(UpdateService.updateUrl());
@@ -90,8 +115,18 @@
                 scatter.settings.showNotifications = !scatter.settings.showNotifications;
                 this[Actions.SET_SCATTER](scatter);
             },
+	        selectLanguage(language){
+		        const scatter = this.scatter.clone();
+		        scatter.settings.language = language;
+		        LanguageService.getLanguage(language).then(res => {
+			        res.raw = JSON.stringify(res);
+			        this[Actions.SET_LANGUAGE](res);
+			        this[Actions.SET_SCATTER](scatter);
+		        })
+	        },
             ...mapActions([
-                Actions.SET_SCATTER
+                Actions.SET_SCATTER,
+	            Actions.SET_LANGUAGE,
             ])
         },
     }

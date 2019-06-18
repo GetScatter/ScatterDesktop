@@ -39,8 +39,8 @@
 			</section>
 
 			<section class="action-bar short bottom centered">
-				<btn :text="locale(langKeys.GENERIC.Back)" v-on:clicked="returnResult(false)" />
-				<btn :text="locale(langKeys.GENERIC.Enable)" blue="1" v-on:clicked="returnResult(true)" />
+				<Button :text="locale(langKeys.GENERIC.Back)" @click.native="returnResult(false)" />
+				<Button :text="locale(langKeys.GENERIC.Enable)" blue="1" @click.native="returnResult(true)" />
 			</section>
 		</section>
 	</section>
@@ -50,9 +50,6 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import '../../../styles/popins.scss';
-	import PasswordService from "../../../services/PasswordService";
-	import PopupService from "../../../services/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
 
 	export default {
 		props:['popin'],

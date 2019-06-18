@@ -1,8 +1,7 @@
-import WindowService from '../../services/WindowService'
-import {store} from '../../store/store';
+import WindowService from '../../services/utility/WindowService'
 import bippath from 'bip32-path';
 import {Blockchains} from '../Blockchains';
-import PopupService from '../../services/PopupService';
+import PopupService from '../../services/utility/PopupService';
 import {Popup} from '../popups/Popup';
 
 const fcbuffer = require('fcbuffer');
@@ -13,6 +12,7 @@ import ecc from 'eosjs-ecc';
 const EthTx = require('ethereumjs-tx')
 import Eth from "@ledgerhq/hw-app-eth";
 import {EXT_WALLET_TYPES} from "./ExternalWallet";
+import StoreService from "../../services/utility/StoreService";
 
 const throwErr = () => PopupService.push(Popup.prompt(
     'No Hardware Available',
@@ -25,8 +25,8 @@ export const LEDGER_PATHS = {
 }
 
 const getTransport = () => {
-    if(!store.state.hardware.hasOwnProperty(EXT_WALLET_TYPES.LEDGER)) return null;
-    return store.state.hardware[EXT_WALLET_TYPES.LEDGER];
+    if(!StoreService.get().state.hardware.hasOwnProperty(EXT_WALLET_TYPES.LEDGER)) return null;
+    return StoreService.get().state.hardware[EXT_WALLET_TYPES.LEDGER];
 }
 
 export default class LedgerWallet {
@@ -47,6 +47,7 @@ export default class LedgerWallet {
     open(){
         this.api = new LedgerAPI(this.blockchain);
 	    this.getPublicKey = this.api.getPublicKey;
+	    this.getAddress = this.api.getAddress;
 	    this.sign = this.api.signTransaction;
 	    this.canConnect = this.api.getAppConfiguration;
 	    this.setAddressIndex = this.api.setAddressIndex;
@@ -55,6 +56,7 @@ export default class LedgerWallet {
     close(){
         this.api = null;
 	    delete this.getPublicKey;
+	    delete this.getAddress;
 	    delete this.sign;
 	    delete this.canConnect;
 	    delete this.setAddressIndex;
@@ -92,7 +94,7 @@ class LedgerAPI {
         try {
 	        getTransport().decorateAppAPIMethods(
 		        this,
-		        [ "getPublicKey", "signTransaction", "getAppConfiguration" ],
+		        [ "getAddress", "getPublicKey", "signTransaction", "getAppConfiguration" ],
 		        scrambleKey
 	        );
         } catch(e){}
@@ -103,6 +105,13 @@ class LedgerAPI {
         const prefix = this.api ? this.api : this;
         prefix.addressIndex = index;
     }
+
+	async getAddress(delta = 0){
+	    if(!getTransport()) return;
+        const prefix = this.api ? this.api : this;
+        return prefix[`getAddress`+this.blockchain](delta);
+    }
+
 
 	async getPublicKey(){
 	    if(!getTransport()) return;
@@ -123,6 +132,46 @@ class LedgerAPI {
     }
 
 
+
+
+
+
+
+    /*************************************************/
+    /*                 GET ADDRESS                   */
+    /*************************************************/
+
+	[`getAddress`+Blockchains.EOSIO](delta = 0, boolChaincode = false){
+		const path = LEDGER_PATHS[this.blockchain]((parseInt(this.addressIndex) + parseInt(delta)).toString());
+		const paths = bippath.fromString(path).toPathArray();
+		let buffer = new Buffer(1 + paths.length * 4);
+		buffer[0] = paths.length;
+		paths.forEach((element, index) => buffer.writeUInt32BE(element, 1 + 4 * index));
+		return getTransport().send(0xD4, 0x02, 0x00, 0x00, buffer).then((response) => {
+			let result = {};
+			let publicKeyLength = response[0];
+			let addressLength = response[1 + publicKeyLength];
+			result.publicKey = response.slice(1, 1 + publicKeyLength).toString("hex");
+			result.address = response.slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength).toString("ascii");
+			if (boolChaincode) {
+				result.chainCode = response.slice(1 + publicKeyLength + 1 + addressLength, 1 + publicKeyLength + 1 + addressLength + 32).toString("hex");
+			}
+			return result.address;
+		});
+	}
+
+	[`getAddress`+Blockchains.ETH](delta = 0){
+		return new Promise(async (resolve, reject) => {
+			const path = LEDGER_PATHS[this.blockchain](parseInt(this.addressIndex) + parseInt(delta));
+			const eth = new Eth(getTransport());
+			eth.getAddress(path, false)
+				.then(response => {
+					resolve(response.address);
+				}).catch(err => {
+				reject(err);
+			});
+		})
+	}
 
 
 
@@ -216,6 +265,7 @@ class LedgerAPI {
 			    fc.types
 		    ).toString('hex'), "hex");
 	    } catch(e){
+	    	console.log('e', e);
 		    WindowService.flashWindow();
 		    PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
 		    return null;

@@ -1,7 +1,7 @@
 import PluginRepository from '../plugins/PluginRepository';
-import {store} from '../store/store'
 import {Blockchains} from "./Blockchains";
 import Token from "./Token";
+import StoreService from "../services/utility/StoreService";
 
 export default class Account {
     constructor(){
@@ -26,11 +26,11 @@ export default class Account {
     }
 
     network(){
-        return store.state.scatter.settings.networks.find(x => x.unique() === this.networkUnique);
+        return StoreService.get().state.scatter.settings.networks.find(x => x.unique() === this.networkUnique);
     }
 
     keypair(){
-        return store.state.scatter.keychain.keypairs.find(x => x.unique() === this.keypairUnique);
+        return StoreService.get().state.scatter.keychain.keypairs.find(x => x.unique() === this.keypairUnique);
     }
 
     blockchain(){
@@ -38,11 +38,15 @@ export default class Account {
         return this.keypair().publicKeys.find(x => x.key === this.publicKey).blockchain;
     }
 
-    authorities(){
+    authorities(thisKeyOnly = true){
 	    if(!this.authority.length) return [];
-	    return store.getters.accounts
-            .filter(x => x.identifiable() === this.identifiable() && x.keypairUnique === this.keypairUnique)
+	    return StoreService.get().getters.accounts
+            .filter(x => x.identifiable() === this.identifiable() && (!thisKeyOnly || x.keypairUnique === this.keypairUnique))
             .sort((a,b) => a.authority.localeCompare(b.authority));
+    }
+
+    hasDangerousAuthority(){
+    	return this.authorities().find(x => x.authority === 'owner');
     }
 
     static placeholder(){ return new Account(); }
@@ -59,30 +63,29 @@ export default class Account {
     }
 
     tokenCount(systemToken = null){
-	    if(!store.state.balances) return 0;
-	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
-	    if(!store.state.balances[this.identifiable()]) return 0;
-	    return store.state.balances[this.identifiable()].filter(x => !systemToken ? true : x.identifiable() !== systemToken.identifiable()).length;
+	    if(!StoreService.get().state.balances) return 0;
+	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return 0;
+	    if(!StoreService.get().state.balances[this.identifiable()]) return 0;
+	    return StoreService.get().state.balances[this.identifiable()].filter(x => !systemToken ? true : x.identifiable() !== systemToken.identifiable()).length;
     }
 
     tokens(){
-	    if(!store.state.balances) return [];
-	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return [];
-	    if(!store.state.balances[this.identifiable()]) return [];
-	    return store.state.balances[this.identifiable()];
+    	let base = [this.network().systemToken()];
+	    if(!StoreService.get().state.balances) return base;
+	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return base;
+	    if(!StoreService.get().state.balances[this.identifiable()]) return base;
+	    return StoreService.get().state.balances[this.identifiable()];
     }
 
-    tokenBalance(token){
-    	const balance = this.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain());
-    	if(!balance) return 0;
-    	return balance.amount;
+    balanceFor(token){
+    	return this.tokens().find(x => x.uniqueWithChain() === token.uniqueWithChain());
     }
 
     systemBalance(withSymbol = false){
-	    if(!store.state.balances) return 0;
-	    if(!store.state.balances.hasOwnProperty(this.identifiable())) return 0;
-	    if(!store.state.balances[this.identifiable()]) return 0;
-	    const systemBalance = store.state.balances[this.identifiable()].find(x =>  Token.fromJson(x).identifiable() === this.network().systemToken().identifiable());
+	    if(!StoreService.get().state.balances) return 0;
+	    if(!StoreService.get().state.balances.hasOwnProperty(this.identifiable())) return 0;
+	    if(!StoreService.get().state.balances[this.identifiable()]) return 0;
+	    const systemBalance = StoreService.get().state.balances[this.identifiable()].find(x =>  Token.fromJson(x).identifiable() === this.network().systemToken().identifiable());
 	    if(!systemBalance) return 0;
 	    return `${systemBalance.amount} ${withSymbol ? systemBalance.symbol : ''}`;
     }
@@ -91,6 +94,6 @@ export default class Account {
 	    return this.tokens().reduce((acc, x) => {
 	    	acc += x.fiatBalance(false) ? parseFloat(x.fiatBalance(false)) : 0;
 		    return acc;
-	    }, 0)
+	    }, 0).toFixed(2)
     }
 }

@@ -1,25 +1,27 @@
 import * as Actions from './constants'
-import StorageService from '../services/StorageService';
-import SocketService from '../services/SocketService';
-import PasswordService from '../services/PasswordService';
-import BackupService from '../services/BackupService';
+import StorageService from '../services/utility/StorageService';
+import SocketService from '../services/utility/SocketService';
+import PasswordService from '../services/secure/PasswordService';
+import BackupService from '../services/utility/BackupService';
 import PluginRepository from '../plugins/PluginRepository';
 import Hasher from '../util/Hasher'
 import IdGenerator from '../util/IdGenerator'
-import Mnemonic from '../util/Mnemonic'
-import {store} from '../store/store';
 
-import Identity from '../models/Identity';
 import Scatter from '../models/Scatter';
 
 import AES from 'aes-oop';
-import PopupService from "../services/PopupService";
+import PopupService from "../services/utility/PopupService";
 import {Popup} from '../models/popups/Popup'
 import {RUNNING_TESTS} from "../util/TestingHelper";
 import {ipcAsync} from "../util/ElectronHelpers";
 import Process from "../models/Process";
 
 export const actions = {
+    [Actions.SET_SIDEBAR]:({commit}, x) => commit(Actions.SET_SIDEBAR, x),
+    [Actions.SET_APP_REP]:({commit}, x) => commit(Actions.SET_APP_REP, x),
+    [Actions.SET_ACTION_REP]:({commit}, x) => commit(Actions.SET_ACTION_REP, x),
+    [Actions.SET_PRICE_DATA]:({commit}, x) => commit(Actions.SET_PRICE_DATA, x),
+    [Actions.SET_QUICK_BACK]:({commit}, x) => commit(Actions.SET_QUICK_BACK, x),
     [Actions.HIDE_BACK_BTN]:({commit}, x) => commit(Actions.HIDE_BACK_BTN, x),
     [Actions.ADD_RESOURCES]:({commit}, x) => commit(Actions.ADD_RESOURCES, x),
     [Actions.SET_RESOURCES]:({commit}, x) => commit(Actions.SET_RESOURCES, x),
@@ -62,15 +64,13 @@ export const actions = {
     [Actions.CREATE_SCATTER]:({state, commit, dispatch}, password) => {
         return new Promise(async (resolve, reject) => {
             const scatter = await Scatter.create();
-
-            await SocketService.initialize();
+            scatter.meta.acceptedTerms = true;
 
             await StorageService.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 
             dispatch(Actions.SET_SEED, password).then(mnemonic => {
-                dispatch(Actions.SET_SCATTER, scatter).then(_scatter => {
-
-                    PopupService.push(Popup.mnemonic(mnemonic));
+                dispatch(Actions.SET_SCATTER, scatter).then(async _scatter => {
+	                await BackupService.setDefaultBackupLocation();
                     resolve();
                 })
             })
@@ -79,19 +79,19 @@ export const actions = {
 
     [Actions.SET_SCATTER]:async ({commit, state}, scatter) => {
         return new Promise(async resolve => {
-	        const process = Process.savingData();
+	        // const process = Process.savingData();
 
             const seed = await ipcAsync('seed');
             const savable = AES.encrypt(scatter.savable(seed), seed);
             StorageService.setLocalScatter(savable);
-	        process.updateProgress(50);
+	        // process.updateProgress(50);
             StorageService.setScatter(savable).then(() => {
 	            BackupService.createAutoBackup()
             });
 
             commit(Actions.SET_SCATTER, scatter);
             resolve(scatter);
-	        process.updateProgress(100);
+	        // process.updateProgress(100);
         })
     },
 

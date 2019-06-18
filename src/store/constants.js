@@ -37,3 +37,11 @@ export const LOAD_HISTORY =	    'loadHistory';
 
 export const SET_LANGUAGE =	    'setLanguage';
 export const LOAD_LANGUAGE =	'loadLanguage';
+
+export const SET_QUICK_BACK =	'setQuickBack';
+export const SET_PRICE_DATA =	'setPriceData';
+
+export const SET_APP_REP =	    'setAppRep';
+export const SET_ACTION_REP =	'setActionRep';
+
+export const SET_SIDEBAR =	    'setSidebarLock';

@@ -4,6 +4,7 @@ import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 
 import {remote} from '../../util/ElectronHelpers';
+import {BlockchainsArray} from "../Blockchains";
 const NotificationService = () => remote ? remote.getGlobal('appShared').NotificationService : null;
 
 export const PopupDisplayTypes = {
@@ -26,12 +27,14 @@ export class Popup {
 
     dimensions(){
     	switch (this.data.type) {
-		    case ApiActions.GET_OR_REQUEST_IDENTITY:
-		    case ApiActions.REQUEST_TRANSFER:
+		    case ApiActions.LOGIN:
+		    case ApiActions.LOGIN_ALL:
 		    case ApiActions.GET_PUBLIC_KEY:
+		    case ApiActions.TRANSFER:
+			    return {width:600, height:600};
 		    case ApiActions.UPDATE_IDENTITY:
 			    return {width:420, height:600};
-		    case ApiActions.REQUEST_SIGNATURE:
+		    case ApiActions.SIGN:
 			    return {width:920, height:600};
 		    case 'linkApp':
 			    return {width:420, height:500};
@@ -63,15 +66,14 @@ export class Popup {
 
 
 
-    static prompt(title, description, callback, acceptDeny = false){
-        let params = { title, description, acceptDeny };
+    static prompt(title, description, callback, acceptDeny = false, inputField = false){
+        let params = { title, description, acceptDeny, inputField };
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.PROMPT, params, callback))
     }
 
-	static selector(title, items, callback){
-		let params = { title, items };
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECTOR, params, callback))
-	}
+    static selectFromList(title, list, callback){
+        return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_FROM_LIST, {title, list}, callback))
+    }
 
     static transactionSuccess(blockchain, tx, callback){
         return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.TX_SUCCESS, {blockchain, tx}, callback))
@@ -109,8 +111,20 @@ export class Popup {
     /*********   FULLSCREEN POPINS ***********/
     /*****************************************/
 
+	static showTerms(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SHOW_TERMS, {}, callback))
+	}
+
+	static enterSecurityCode(subtitle, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SECURITY_CODE, {subtitle}, callback))
+	}
+
 	static verifyPassword(callback, returnOnly = false){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.VERIFY_PASSWORD, {returnOnly}, callback))
+	}
+
+	static changeIdentityKey(identity, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CHANGE_IDENTITY_KEY, {identity}, callback))
 	}
 
 	static eosChangePermissions(account, callback){
@@ -129,14 +143,20 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_MODERATE_CPU_NET, {account}, callback))
 	}
 
-	static eosCreateAccount(activePublicKey, ownerPublicKey, activeId, ownerId, showKeys = false, callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_CREATE_ACCOUNT, {
-			activePublicKey,
-			ownerPublicKey,
-			activeId,
-			ownerId,
-			showKeys
-		}, callback))
+	static eosCreateAccount(account, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_CREATE_ACCOUNT, { account }, callback))
+	}
+
+	static eosLinkAccount(keypair, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EOS_LINK_ACCOUNT, { keypair }, callback))
+	}
+
+	static addCustomNetwork(blockchain, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ADD_CUSTOM_NETWORK, {blockchain}, callback))
+	}
+
+	static addNewContact(blockchain, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ADD_NEW_CONTACT, {blockchain}, callback))
 	}
 
 	static unlinkAccount(account, callback){
@@ -151,16 +171,24 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_KEYPAIR, {keypair}, callback))
 	}
 
-	static mnemonic(mnemonic){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.MNEMONIC, {mnemonic}, () => {}))
-	}
-
 	static removeLocation(identity, location, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.REMOVE_LOCATION, {identity, location}, callback))
 	}
 
 	static destroyScatter(callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.DESTROY_SCATTER, {}, callback))
+	}
+
+	static importFullBackup(options, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.IMPORT_FULL_BACKUP, {options}, callback))
+	}
+
+	static importKeypair(options, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.IMPORT_KEYPAIR, {options}, callback))
+	}
+
+	static generateKeypair(options, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.GENERATE_KEYPAIR, {options}, callback))
 	}
 
 	static checkHardwareWalletScreen(){
@@ -172,30 +200,40 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.ENABLE_WHITELIST, {}, callback))
 	}
 
-	static selectAccount(callback, accountsOnly = false, account = null, blockchain = null, hideWatch = false){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {accountsOnly, account, blockchain, hideWatch}, callback))
+	static selectTokenAndAccount(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN_AND_ACCOUNT, {}, callback))
 	}
 
-	static confirmExchange(accounts, symbols, order, callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order}, callback))
+	static selectAccount(callback, validAccounts = null){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_ACCOUNT, {validAccounts}, callback))
+	}
+
+	static selectKeypair(callback, blockchains = BlockchainsArray.map(x => x.value)){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_KEYPAIR, {blockchains}, callback))
+	}
+
+	static selectRecipient(callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_RECIPIENT, {}, callback))
+	}
+
+	static selectToken(tokens, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_TOKEN, {tokens}, callback))
+	}
+
+	static selectBlockchain(callback, blockchains = BlockchainsArray.map(x => x.value)){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_BLOCKCHAIN, {blockchains}, callback))
+	}
+
+	static confirmExchange(accounts, symbols, order, pair, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_EXCHANGE, {accounts, symbols, order, pair}, callback))
 	}
 
 	static confirmTransfer(from, to, token, memo, callback){
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.CONFIRM_TRANSFER, {from, to, token, memo}, callback))
 	}
 
-				// {history, token, account}
-	static exchange(params, callback = () => {}){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EXCHANGE, params, callback))
-	}
-
-				// {history, token, account}
-	static stabilize(params, callback = () => {}){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.STABILIZE, params, callback))
-	}
-
-	static history(filter, callback = () => {}){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.HISTORY, {filter}, callback))
+	static exportPrivateKey(keypair, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EXPORT_PRIVATE_KEY, {keypair}, callback))
 	}
 
 	static setDisplayToken(callback = () => {}){
@@ -207,18 +245,32 @@ export class Popup {
 export const PopupTypes = {
     // OVERLAYS
     PROMPT:'prompt',
-	SELECTOR:'selector',
+	SELECT_FROM_LIST:'select_from_list',
     ENTER_PIN:'enterPIN',
     REMOVE_APP:'removeApp',
     UPDATE_AVAILABLE:'updateAvailable',
+	TX_SUCCESS:'txSuccess',
+	SELECT_TOKEN_AND_ACCOUNT:'selectTokenAndAccount',
+	SELECT_ACCOUNT:'selectAccount',
+	SELECT_KEYPAIR:'selectKeypair',
+	SELECT_RECIPIENT:'selectRecipient',
+	SELECT_TOKEN:'selectToken',
+	SELECT_BLOCKCHAIN:'selectBlockchain',
+	EOS_LINK_ACCOUNT:'eosLinkAccount',
+	DISPLAY_TOKEN:'displayToken',
 
     // FULLSCREEN
+	SHOW_TERMS:'showTerms',
+	SECURITY_CODE:'securityCode',
+    CHANGE_IDENTITY_KEY:'changeIdentityKey',
     VERIFY_PASSWORD:'verifyPassword',
     EOS_CHANGE_PERMISSIONS:'eosChangePermissions',
 	EOS_PROXY_VOTES:'eosProxyVotes',
 	EOS_MODERATE_RAM:'eosModerateRam',
 	EOS_MODERATE_CPU_NET:'eosModerateCpuNet',
 	EOS_CREATE_ACCOUNT:'eosCreateAccount',
+	ADD_CUSTOM_NETWORK:'addCustomNetwork',
+	ADD_NEW_CONTACT:'addNewContact',
 	UNLINK_ACCOUNT:'unlinkAccount',
 	UNLINK_BLOCKCHAIN:'unlinkBlockchain',
 	REMOVE_KEYPAIR:'removeKeypair',
@@ -227,39 +279,32 @@ export const PopupTypes = {
 	DESTROY_SCATTER:'destroyScatter',
 	CHECK_HARDWARE:'checkHardware',
 	ENABLE_WHITELIST:'enableWhitelist',
-	SELECT_ACCOUNT:'selectAccount',
 	CONFIRM_EXCHANGE:'confirmExchange',
 	CONFIRM_TRANSFER:'confirmTransfer',
-	EXCHANGE:'exchange',
-	STABILIZE:'stabilize',
-	HISTORY:'history',
-	DISPLAY_TOKEN:'displayToken',
+	EXPORT_PRIVATE_KEY:'exportPrivateKey',
+	GENERATE_KEYPAIR:'generateKeypair',
+	IMPORT_KEYPAIR:'importKeypair',
+	IMPORT_FULL_BACKUP:'importFullBackup',
 
-    TX_SUCCESS:'txSuccess',
 };
 
 export const isFullscreen = popup => {
-    return [
-        PopupTypes.VERIFY_PASSWORD,
-        PopupTypes.EOS_CHANGE_PERMISSIONS,
-        PopupTypes.EOS_PROXY_VOTES,
-        PopupTypes.UNLINK_ACCOUNT,
-        PopupTypes.UNLINK_BLOCKCHAIN,
-        PopupTypes.REMOVE_KEYPAIR,
-        PopupTypes.EOS_MODERATE_RAM,
-        PopupTypes.EOS_MODERATE_CPU_NET,
-        PopupTypes.EOS_CREATE_ACCOUNT,
-        PopupTypes.MNEMONIC,
-        PopupTypes.REMOVE_LOCATION,
-        PopupTypes.DESTROY_SCATTER,
-        PopupTypes.CHECK_HARDWARE,
-        PopupTypes.ENABLE_WHITELIST,
+    return ![
+        PopupTypes.PROMPT,
+        PopupTypes.SELECT_FROM_LIST,
+        PopupTypes.ENTER_PIN,
+        PopupTypes.REMOVE_APP,
+        PopupTypes.UPDATE_AVAILABLE,
+        PopupTypes.TX_SUCCESS,
+        PopupTypes.SELECT_TOKEN_AND_ACCOUNT,
         PopupTypes.SELECT_ACCOUNT,
-        PopupTypes.CONFIRM_EXCHANGE,
+        PopupTypes.SELECT_KEYPAIR,
+        PopupTypes.SELECT_RECIPIENT,
+        PopupTypes.SELECT_TOKEN,
+        PopupTypes.SELECT_BLOCKCHAIN,
         PopupTypes.CONFIRM_TRANSFER,
-        PopupTypes.EXCHANGE,
-        PopupTypes.STABILIZE,
-        PopupTypes.HISTORY,
+        PopupTypes.CONFIRM_EXCHANGE,
+        PopupTypes.EOS_LINK_ACCOUNT,
         PopupTypes.DISPLAY_TOKEN,
     ].includes(popup.data.type);
 

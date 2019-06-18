@@ -1,21 +1,19 @@
 <template>
-    <section>
+    <section class="pop-over">
+        <PopInHead title="Transaction Success" v-on:close="returnResult" />
+        <section class="success">
+            <section>
+                <img src="../../../assets/piggy_bank.png" />
+                <figure class="info">{{locale(langKeys.POPINS.OVERLAY.TRX_SUCCESS.Desc, explorer.name)}}</figure>
+                <figure class="link" style="cursor:pointer;" @click="open"><u>{{tx}}</u></figure>
 
-        <PopinHead :popin="popin" :name="locale(langKeys.POPINS.OVERLAY.TRX_SUCCESS.Title)" />
-        <section class="panel centered">
-            <br>
-            <img src="../../../assets/piggy_bank.png" />
-            <br>
-            <label>{{locale(langKeys.POPINS.OVERLAY.TRX_SUCCESS.Desc, explorer.name)}}</label>
-            <figure class="description" style="cursor:pointer;" @click="open"><u>{{tx}}</u></figure>
+                <br>
+                <br>
 
-            <br>
-            <br>
-            <btn :text="locale(langKeys.GENERIC.Okay)"
-                 v-on:clicked="returnResult(true)" />
+                <Button :text="locale(langKeys.GENERIC.Okay)"
+                        @click.native="returnResult(true)" blue="1" />
+            </section>
         </section>
-
-
     </section>
 </template>
 
@@ -24,10 +22,8 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
     import ElectronHelpers from '../../../util/ElectronHelpers'
-    import PopinHead from "./PopinHead";
 
     export default {
-	    components: {PopinHead},
 	    props:['popin'],
         data(){ return {
 
@@ -67,13 +63,22 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../../styles/variables";
 
-    .description {
-        color:$primary;
+    .success {
+        display:flex;
+        justify-content: center;
+        align-items: center;
         text-align:center;
-        font-size: 9px;
+        padding:30px;
+        max-width:380px;
 
-        &:hover {
-            color:$secondary;
+        .info {
+            font-size: $small;
+            color:$silver;
+            margin-bottom:5px;
+        }
+
+        .link {
+            font-size: $tiny;
         }
     }
 

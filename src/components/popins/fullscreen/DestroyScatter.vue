@@ -1,23 +1,15 @@
 <template>
-	<section>
-		<back-bar v-on:back="returnResult(null)" />
-		<section class="full-panel center-fold inner with-action limited">
-			<section class="head">
-				<figure class="icon icon-attention"></figure>
-				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Title)}}</figure>
-				<br>
-				<section class="disclaimer less-pad red" style="margin-bottom:10px;">
-					{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Disclaimer)}}
-				</section>
-				<p>
-					{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Desc)}}
-				</p>
+	<section class="pop-in">
+		<section class="head">
+			<figure class="icon font icon-attention"></figure>
+			<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Title)}}</figure>
+			<section class="disclaimer">
+				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Disclaimer)}}</figure>
+				<figure class="description">{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Desc)}}</figure>
 			</section>
+		</section>
 
-		</section>
-		<section class="action-bar short bottom centered">
-			<btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" v-on:clicked="destroy" />
-		</section>
+		<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:'Destroy Scatter', blue:true, click:() => destroy()}]" />
 	</section>
 </template>
 
@@ -25,8 +17,9 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import '../../../styles/popins.scss';
-	import SocketService from "../../../services/SocketService";
-	import StorageService from "../../../services/StorageService";
+	import SocketService from "../../../services/utility/SocketService";
+	import StorageService from "../../../services/utility/StorageService";
+	import ElectronHelpers from "../../../util/ElectronHelpers";
 
 	export default {
 		props:['popin'],
@@ -55,7 +48,7 @@
 
 				setTimeout(async () => {
 					await StorageService.removeScatter();
-					location.reload();
+					ElectronHelpers.reload()
 				}, 500);
 			},
 

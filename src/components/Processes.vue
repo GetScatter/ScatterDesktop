@@ -1,7 +1,7 @@
 <template>
     <section class="processes">
         <transition-group name="slide-right" mode="out-in">
-            <section :key="process.id" class="process" v-for="process in processes">
+            <section :key="process.id" class="process" v-for="process in processes.filter(x => x.display)">
                 <figure class="kill icon-cancel" @click="process.kill()"></figure>
                 <figure class="title">
                     <span key="title">{{process.title}}</span>
@@ -56,7 +56,7 @@
             background:#fff;
             padding:10px;
             border-radius:2px;
-            border:1px solid $primary;
+            border:1px solid $blue;
             margin-top:2px;
             position: relative;
 
@@ -79,7 +79,7 @@
             .title {
                 font-size: 11px;
                 margin-bottom:5px;
-                color: $primary;
+                color: $blue;
                 font-weight: bold;
             }
 

@@ -3,21 +3,23 @@ import * as Actions from '../../models/api/ApiActions';
 import * as PluginTypes from '../PluginTypes';
 import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
-
-import KeyPairService from '../../services/KeyPairService';
-import {store} from '../../store/store';
-
-import PopupService from '../../services/PopupService'
+import KeyPairService from '../../services/secure/KeyPairService';
+import PopupService from '../../services/utility/PopupService'
 import {Popup} from '../../models/popups/Popup'
-
 import TronWeb from 'tronweb';
-import * as utils from 'tronweb/src/utils/crypto';
+//import * as utils from 'tronweb/src/utils/crypto';
 const ethUtil = require('ethereumjs-util');
 const toBuffer = key => ethUtil.toBuffer(ethUtil.addHexPrefix(key));
 import Token from "../../models/Token";
-import HardwareService from "../../services/HardwareService";
+import HardwareService from "../../services/secure/HardwareService";
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
+import StoreService from "../../services/utility/StoreService";
+
+const DUMMY_NET = 'https://api.shasta.trongrid.io'
+const provider = new TronWeb.providers.HttpProvider(DUMMY_NET);
+const tronWeb = new TronWeb(provider, provider, DUMMY_NET);
+const utils = tronWeb.utils;
 
 let cachedInstances = {};
 const getCachedInstance = network => {
@@ -49,6 +51,14 @@ export default class TRX extends Plugin {
 	contractPlaceholder(){ return '0x.....'; }
 	recipientLabel(){ return localizedState(LANG_KEYS.GENERIC.Address); }
 
+	checkNetwork(network){
+		return Promise.race([
+			new Promise(resolve => setTimeout(() => resolve(null), 2000)),
+			//TODO:
+			new Promise(resolve => setTimeout(() => resolve(true), 10)),
+		])
+	}
+
     getEndorsedNetwork(){
         return new Network('Tron Mainnet', 'https', 'api.trongrid.io', 443, Blockchains.TRX, '1');
     }
@@ -66,13 +76,13 @@ export default class TRX extends Plugin {
 	hasAccountActions(){ return false; }
 
     accountsAreImported(){ return false; }
-    isValidRecipient(address){ return utils.isAddressValid(address); }
+    isValidRecipient(address){ return utils.crypto.isAddressValid(address); }
     privateToPublic(privateKey){
         if(typeof privateKey === 'string') privateKey = this.hexPrivateToBuffer(privateKey);
-        return utils.getBase58CheckAddress(utils.getAddressFromPriKey(privateKey));
+        return utils.crypto.getBase58CheckAddress(utils.crypto.getAddressFromPriKey(privateKey));
     }
     validPrivateKey(privateKey){ return privateKey.length === 64 && ethUtil.isValidPrivate(toBuffer(privateKey)); }
-    validPublicKey(address){ return utils.isAddressValid(address); }
+    validPublicKey(address){ return utils.crypto.isAddressValid(address); }
     bufferToHexPrivate(buffer){ return new Buffer(buffer).toString('hex') }
     hexPrivateToBuffer(privateKey){ return Buffer.from(privateKey, 'hex'); }
 
@@ -174,7 +184,7 @@ export default class TRX extends Plugin {
     async signerWithPopup(payload, account, rejector){
         return new Promise(async resolve => {
             payload.messages = await this.requestParser(payload);
-            payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+            payload.identityKey = StoreService.get().state.scatter.keychain.identities[0].publicKey;
             payload.participants = [account];
             payload.network = account.network();
             payload.origin = 'Scatter';
@@ -183,7 +193,7 @@ export default class TRX extends Plugin {
                 origin:payload.origin,
                 blockchain:Blockchains.TRX,
                 requiredFields:{},
-                type:Actions.REQUEST_SIGNATURE,
+                type:Actions.SIGN,
                 id:1,
             }
 

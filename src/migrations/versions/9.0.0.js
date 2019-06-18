@@ -1,6 +1,5 @@
 import PluginRepository from '../../plugins/PluginRepository';
 import {Blockchains} from '../../models/Blockchains'
-import {store} from '../../store/store'
 import Crypto from '../../util/Crypto';
 import {BlockchainsArray} from '../../models/Blockchains';
 import {ipcAsync} from "../../util/ElectronHelpers";

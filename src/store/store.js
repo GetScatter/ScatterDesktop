@@ -7,12 +7,11 @@ import {actions} from './actions';
 import {PopupDisplayTypes} from '../models/popups/Popup'
 import PluginRepository from '../plugins/PluginRepository'
 import Locale from "../models/Locale";
-import PriceService from "../services/PriceService";
-import BalanceService from "../services/BalanceService";
+import BalanceService from "../services/blockchain/BalanceService";
 
 Vue.use(Vuex);
 
-const state = {
+export const state = {
     dappLogos:{},
     dappData:{},
     workingScreen:null,
@@ -36,9 +35,16 @@ const state = {
 
 	history:[],
 	language:{},
+
+	priceData:{},
+
+	appReputation:false,
+	actionReputations:{},
+
+	sidebarLocked:false,
 };
 
-const getters = {
+export const getters = {
     // App State
     unlocked:state =>       state.scatter !== null
                                 && typeof state.scatter !== 'string'
@@ -51,18 +57,24 @@ const getters = {
     // Keychain centric
     identity:state =>       state.scatter.keychain.identities[0],
     identities:state =>     state.scatter.keychain.identities || [],
+	avatars:state =>        state.scatter.keychain.avatars || {},
+	locations:state =>      state.scatter.keychain.locations || [],
     keypairs:state =>       state.scatter.keychain.keypairs || [],
+    cards:state =>          state.scatter.keychain.cards || [],
     accounts:state =>       state.scatter.keychain.accounts || [],
     permissions:state =>    state.scatter.keychain.permissions || [],
     apps:state =>           state.scatter.keychain.apps || [],
 
     // Settings
+	hideMainBalance:state => state.scatter.settings.hideMainBalance,
+    ridlEnabled:state =>    state.scatter.settings.firewall.enabled,
     version:state =>        state.scatter.meta.version,
     networks:state =>       state.scatter.settings.networks || [],
     language:state =>       Locale.fromJson(state.language.json),
     autoBackup:state =>     state.scatter.settings.autoBackup || null,
     backupLocation:state => state.scatter.settings.backupLocation || null,
     explorers:state =>      state.scatter.settings.explorers || PluginRepository.defaultExplorers(),
+	blacklistActions:state =>  state.scatter.settings.blacklistActions,
 	blacklistTokens:state =>  state.scatter.settings.blacklistTokens,
 	balanceFilters:state =>   state.scatter.settings.balanceFilters,
 	displayCurrency:state =>   state.scatter.settings.displayCurrency,

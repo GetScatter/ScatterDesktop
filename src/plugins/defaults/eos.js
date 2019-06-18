@@ -3,27 +3,25 @@ import * as PluginTypes from '../PluginTypes';
 import {Blockchains} from '../../models/Blockchains'
 import Network from '../../models/Network'
 import Account from '../../models/Account'
-import KeyPairService from '../../services/KeyPairService'
+import KeyPairService from '../../services/secure/KeyPairService'
 import {localized, localizedState} from '../../localization/locales'
 import LANG_KEYS from '../../localization/keys'
 import Eos from 'eosjs'
 let {ecc} = Eos.modules;
 import ObjectHelpers from '../../util/ObjectHelpers'
 import {Popup} from '../../models/popups/Popup'
-import PopupService from '../../services/PopupService'
-import ResourceService from '../../services/ResourceService'
-import StorageService from '../../services/StorageService'
+import PopupService from '../../services/utility/PopupService'
+import StorageService from '../../services/utility/StorageService'
 import * as Actions from '../../models/api/ApiActions';
-import {store} from '../../store/store'
 import * as StoreActions from '../../store/constants'
 import { Api, JsonRpc, RpcError, JsSignatureProvider } from 'eosjs2';
 import * as numeric from "eosjs2/dist/eosjs-numeric";
 import Token from "../../models/Token";
 import AccountAction from "../../models/AccountAction";
-import AccountService from "../../services/AccountService";
-import RecurringService from "../../services/RecurringService";
-import HardwareService from "../../services/HardwareService";
+import AccountService from "../../services/blockchain/AccountService";
+import HardwareService from "../../services/secure/HardwareService";
 import HistoricAction from "../../models/histories/HistoricAction";
+import StoreService from "../../services/utility/StoreService";
 
 
 const blockchainApiURL = 'https://api.light.xeos.me/api';
@@ -170,6 +168,13 @@ export default class EOS extends Plugin {
 	contractPlaceholder(){ return 'eosio.token'; }
 	recipientLabel(){ return localizedState(LANG_KEYS.GENERIC.AccountName); }
 
+	checkNetwork(network){
+		return Promise.race([
+			new Promise(resolve => setTimeout(() => resolve(null), 2000)),
+			fetch(`${network.fullhost()}/v1/chain/get_info`).then(() => true).catch(() => false),
+		])
+	}
+
 	getEndorsedNetwork(){
 		return new Network('EOS Mainnet', 'https', 'nodes.get-scatter.com', 443, Blockchains.EOSIO, mainnetChainId)
 	}
@@ -197,7 +202,7 @@ export default class EOS extends Plugin {
 				.catch(res => reject(popupError(res)))
 				.then(res => {
 					const history = new HistoricAction(account, 'proxy', res.transaction_id);
-					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					StoreService.get().dispatch(StoreActions.DELTA_HISTORY, history);
 					resolve(res);
 				})
 		})
@@ -213,7 +218,7 @@ export default class EOS extends Plugin {
 
 
 			const perms = Object.keys(keys).map(permission => {
-				if(!keys[permission].length) return;
+				if(!keys[permission] || !keys[permission].length) return;
 
 				const keyOrAccount = keys[permission];
 				let auth = {
@@ -248,7 +253,7 @@ export default class EOS extends Plugin {
 				}
 			}).filter(x => !!x);
 
-			const hasOwner = (keys.hasOwnProperty('owner') && keys.owner.length) || account.authorities().map(x => x.authority).includes('owner');
+			const hasOwner = (keys.hasOwnProperty('owner') && keys.owner && keys.owner.length) || account.authorities().map(x => x.authority).includes('owner');
 			const options = {authorization:[`${account.name}@${hasOwner?'owner':'active'}`]};
 			return eos.transaction(tr => perms.map(perm => tr.updateauth(perm, options)))
 				.catch(res => {
@@ -258,10 +263,8 @@ export default class EOS extends Plugin {
 				.then(async res => {
 					PopupService.push(Popup.transactionSuccess(Blockchains.EOSIO, res.transaction_id));
 
-					const keypairs = [account.keypair()];
-
-					const authorities = Object.keys(keys).filter(x => keys[x].length);
-					const accounts = store.getters.accounts.filter(x => x.identifiable() === account.identifiable() && authorities.includes(x.authority));
+					const authorities = Object.keys(keys).filter(x => keys[x] && keys[x].length);
+					const accounts = StoreService.get().getters.accounts.filter(x => x.identifiable() === account.identifiable() && authorities.includes(x.authority));
 					await AccountService.removeAccounts(accounts);
 
 					const addAccount = async (keypair, authority) => {
@@ -272,12 +275,12 @@ export default class EOS extends Plugin {
 						return AccountService.addAccount(acc);
 					};
 
-					const activeKeypair = store.state.scatter.keychain.getKeyPairByPublicKey(keys.active);
-					const ownerKeypair = store.state.scatter.keychain.getKeyPairByPublicKey(keys.owner);
+					const activeKeypair = StoreService.get().state.scatter.keychain.getKeyPairByPublicKey(keys.active);
+					const ownerKeypair = StoreService.get().state.scatter.keychain.getKeyPairByPublicKey(keys.owner);
 					if(activeKeypair) await addAccount(activeKeypair, 'active');
 					if(ownerKeypair) await addAccount(ownerKeypair, 'owner');
 					const history = new HistoricAction(account, 'permissions', res.transaction_id);
-					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					StoreService.get().dispatch(StoreActions.DELTA_HISTORY, history);
 					resolve(true)
 				});
 		})
@@ -285,29 +288,32 @@ export default class EOS extends Plugin {
 	}
 
 	accountActions(account){
-		const accounts = store.state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable() && x.keypairUnique === account.keypairUnique);
+		const accounts = StoreService.get().state.scatter.keychain.accounts.filter(x => x.identifiable() === account.identifiable() && x.keypairUnique === account.keypairUnique);
 
 		const {EOS} = LANG_KEYS.KEYPAIR.ACCOUNTS.ACTIONS;
 
 
 		let availableActions = [
-			new AccountAction(localizedState(EOS.UnlinkAccountButton, null), '', () => {
-				PopupService.push(Popup.unlinkAccount(account, () => {}));
-			})
+			new AccountAction(localizedState(EOS.UnlinkAccountButton, null), 'Unlink', 'icon-trash', () => new Promise(resolve => {
+				PopupService.push(Popup.unlinkAccount(account, removed => resolve(removed)));
+			}))
 		];
 
 		const nonWatchActions = [
-			new AccountAction(localizedState(EOS.ProxyVotesButton, null), '', () => {
-				PopupService.push(Popup.eosProxyVotes(account, () => {}));
-			}),
-			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), '', () => {
+			new AccountAction(localizedState(EOS.ChangePermissionsButton, null), 'Change', 'icon-key', () => new Promise(resolve => {
 				PopupService.push(Popup.verifyPassword(verified => {
-					if(!verified) return;
+					if(!verified) return resolve(false);
 					PopupService.push(Popup.eosChangePermissions(account, async permissions => {
-						await this.changePermissions(account, permissions);
+						resolve(await this.changePermissions(account, permissions));
 					}));
 				}));
-			})
+			}), true),
+			new AccountAction(localizedState(EOS.ProxyVotesButton, null), 'Proxy', 'icon-heart-1', () => new Promise(resolve => {
+				PopupService.push(Popup.eosProxyVotes(account, () => resolve(true)));
+			})),
+			new AccountAction('Create Account', 'Create', 'icon-user-add', () => new Promise(resolve => {
+				PopupService.push(Popup.eosCreateAccount(account, () => resolve(true)));
+			})),
 		];
 
 		// Adding owner only actions.
@@ -326,7 +332,7 @@ export default class EOS extends Plugin {
 				.catch(res => reject(popupError(res)))
 				.then(res => {
 					const history = new HistoricAction(account, 'refund', res.transaction_id);
-					store.dispatch(StoreActions.DELTA_HISTORY, history);
+					StoreService.get().dispatch(StoreActions.DELTA_HISTORY, history);
 					resolve(res)
 				});
 		})
@@ -405,7 +411,6 @@ export default class EOS extends Plugin {
 		return resources.find(x => x.name === 'CPU').available < 6000;
 	}
 
-	// TODO: make into slider
 	async addResources(account){
 		const signProvider = payload => this.signer(payload, account.publicKey);
 		const network = account.network();
@@ -448,8 +453,6 @@ export default class EOS extends Plugin {
 		}
 	}
 
-	randomPrivateKey(){ return ecc.randomKey(); }
-
 	bufferToHexPrivate(buffer){
 		return ecc.PrivateKey.fromBuffer(new Buffer(buffer)).toString()
 	}
@@ -483,12 +486,43 @@ export default class EOS extends Plugin {
 
 	hasUntouchableTokens(){ return true; }
 	async untouchableBalance(account){
-		const accData = await this.accountData(account).catch(() => null);
-		if(!accData || !accData.hasOwnProperty('self_delegated_bandwidth') || !accData.self_delegated_bandwidth) return null;
-		const token = account.network().systemToken().clone();
-		token.amount = parseFloat(parseFloat(accData.self_delegated_bandwidth.cpu_weight.split(' ')[0]) + parseFloat(accData.self_delegated_bandwidth.net_weight.split(' ')[0])).toFixed(token.decimals);
-		token.unusable = 'CPU / NET';
-		return token;
+		const getCpuAndNet = async () => {
+			const accData = await this.accountData(account).catch(() => null);
+			if(!accData || !accData.hasOwnProperty('self_delegated_bandwidth') || !accData.self_delegated_bandwidth) return null;
+			const token = account.network().systemToken().clone();
+			token.amount = parseFloat(parseFloat(accData.self_delegated_bandwidth.cpu_weight.split(' ')[0]) + parseFloat(accData.self_delegated_bandwidth.net_weight.split(' ')[0])).toFixed(token.decimals);
+			token.unusable = 'CPU / NET';
+			return token;
+		}
+
+		const getRex = async () => {
+			if(account.network().chainId !== mainnetChainId) return null;
+			return fetch(`${account.network().fullhost()}/v1/chain/get_table_rows`, {
+				method:"POST",
+				body:JSON.stringify({
+					code: "eosio",
+					index_position: 1,
+					json: true,
+					limit: 1,
+					lower_bound: account.name,
+					scope: "eosio",
+					table: "rexbal",
+				})
+			}).then(x => x.json()).then(result => {
+				if(!result) return null;
+				const rex = result.rows[0];
+				if(rex.owner !== account.name) return null;
+				const token = account.network().systemToken().clone();
+				token.symbol = 'REX';
+				token.amount = parseFloat(rex.rex_balance.split(' ')[0]).toFixed(4);
+				token.unusable = 'REX';
+				return token;
+			}).catch(() => null)
+		}
+
+		const cpunet = await getCpuAndNet();
+		const rex = await getRex();
+		return [cpunet, rex].filter(x => !!x);
 	}
 
 	async balanceFor(account, token){
@@ -513,7 +547,7 @@ export default class EOS extends Plugin {
 		if(!fallback && this.isEndorsedNetwork(account.network())){
 			const balances = await EosTokenAccountAPI.getAllTokens(account);
 			if(!balances) return this.balanceFor(account, tokens, true);
-			const blacklist = store.getters.blacklistTokens.filter(x => x.blockchain === Blockchains.EOSIO).map(x => x.unique());
+			const blacklist = StoreService.get().getters.blacklistTokens.filter(x => x.blockchain === Blockchains.EOSIO).map(x => x.unique());
 			return balances.filter(x => !blacklist.includes(x.unique()));
 		}
 
@@ -635,6 +669,8 @@ export default class EOS extends Plugin {
 	}
 
 	async transfer({account, to, amount, token, memo, promptForSignature = true}){
+		if(!this.isValidRecipient(to)) return {error:'Invalid recipient account name'};
+
 		amount = parseFloat(amount).toFixed(token.decimals);
 		const {contract, symbol} = token;
 		return new Promise(async (resolve, reject) => {
@@ -670,7 +706,7 @@ export default class EOS extends Plugin {
 
 			payload.messages = await this.requestParser(payload, Network.fromJson(accounts[0].network()));
 			if(!payload.messages) return rejector({error:'Error re-parsing transaction buffer'});
-			payload.identityKey = store.state.scatter.keychain.identities[0].publicKey;
+			payload.identityKey = StoreService.get().state.scatter.keychain.identities[0].publicKey;
 			payload.participants = accounts;
 			payload.network = accounts[0].network();
 			payload.origin = 'Scatter';
@@ -679,7 +715,7 @@ export default class EOS extends Plugin {
 				origin:payload.origin,
 				blockchain:'eos',
 				requiredFields:{},
-				type:Actions.REQUEST_SIGNATURE,
+				type:Actions.SIGN,
 				id:1,
 			}
 
@@ -689,10 +725,9 @@ export default class EOS extends Plugin {
 				let signatures = [];
 				for(let i = 0; i < accounts.length; i++){
 					let account = accounts[i];
-					signatures.push(await this.signer({data:payload.buf}, account.publicKey, true, false, account));
+					signatures.push(await this.signer(KeyPairService.isHardware(account.publicKey) ? payload : {data:payload.buf}, account.publicKey, true, false, account));
 
 					if(signatures.length !== i+1) return rejector({error:'Could not get signature'});
-					// if(result.needResources) await ResourceService.addResources(account);
 				}
 
 				signatures = signatures.reduce((acc,x) => {
@@ -764,7 +799,7 @@ export default class EOS extends Plugin {
 		await Promise.all(contracts.map(async contractAccount => {
 			const cachedABI = await StorageService.getCachedABI(contractAccount, network.chainId);
 
-			if(cachedABI === 'object' && cachedABI.timestamp > +new Date((await eos.getAccount(contractAccount)).last_code_update))
+			if(typeof cachedABI === 'object' && cachedABI.timestamp > +new Date((await eos.getAccount(contractAccount)).last_code_update))
 				abis[contractAccount] = eos.fc.abiCache.abi(contractAccount, cachedABI.abi);
 
 			else {
@@ -814,6 +849,10 @@ export default class EOS extends Plugin {
 					ricardian
 				};
 			}));
+
+			if(results.length !== transaction.actions.length){
+				console.error(`Invalid parsed actions, message array doesn't match actions length.`, transaction);
+			}
 
 			if(!transaction.hasOwnProperty('max_net_usage_words')) transaction.max_net_usage_words = 0;
 			payload.buf = Buffer.concat([Buffer.from(network.chainId, 'hex'), eos.fc.toBuffer("transaction", transaction), Buffer.from(new Uint8Array(32))]);
@@ -879,6 +918,7 @@ export default class EOS extends Plugin {
 
 		payload.transaction.parsed = Object.assign({}, parsed);
 		payload.transaction.parsed.actions = await api.serializeActions(parsed.actions);
+		delete payload.transaction.abis;
 
 		return parsed.actions;
 	}
