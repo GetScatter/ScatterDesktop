@@ -186,7 +186,6 @@
 					}
 
 					span {
-						font-weight: bold;
 						color:$blue;
 					}
 				}
