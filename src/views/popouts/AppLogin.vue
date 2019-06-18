@@ -67,9 +67,22 @@
 
 
 					<!------------------------------------->
+					<!----------- NO DATA REQUIRED -------->
+					<!------------------------------------->
+					<section class="requirement personal" v-if="onlyIdentityLogin">
+						<figure class="icon icon-check"></figure>
+						<figure class="text">
+							<b>This application isn't requesting any information or accounts.</b>
+							<br>
+							The only information this application will receive is basic Identity information like your username.
+						</figure>
+					</section>
+
+
+					<!------------------------------------->
 					<!----------- NO ACCOUNTS ------------->
 					<!------------------------------------->
-					<section class="requirement no-accounts" v-if="!validAccounts.length">
+					<section class="requirement no-accounts" v-if="requestedNetworks.length && !validAccounts.length">
 						<figure class="network-name" v-if="savedNetwork">{{savedNetwork.name}}</figure>
 						<figure class="text">
 							<b>You don't have accounts for this network</b>
@@ -150,7 +163,6 @@
 
 			if(this.validAccounts.length) this.account = this.validAccounts[0];
 
-			console.log('this.scatter.keychain', this.scatter.keychain);
 			this.selectIdentity(this.identities.sort((a,b) => {
 				return b.id === this.scatter.keychain.lastUsedIdentity ? 1 : a.id === this.scatter.keychain.lastUsedIdentity ? -1 : 0;
 			})[0]);
@@ -242,7 +254,12 @@
 				return this.fields.accounts || [];
 			},
 			allRequirementsMet(){
-				return !!this.validAccounts.length;
+				return !this.accountRequirements.length || !!this.validAccounts.length;
+			},
+			onlyIdentityLogin(){
+				return !this.fields.personal.length
+					&& !this.fields.location.length
+					&& !this.fields.accounts.length
 			}
 		},
 		methods: {
@@ -263,7 +280,7 @@
 				this.returnResult({
 					identity:this.selectedIdentity,
 					location:this.selectedLocation,
-					accounts:[this.account],
+					accounts:this.account ? [this.account] : [],
 					missingFields:this.missingFields
 				});
 			},
@@ -273,7 +290,7 @@
 				if(identity.getLocation()){
 					this.selectedLocation = identity.getLocation().clone();
 				} else {
-					this.selectedLocation = this.locations[0].clone();
+					if(this.locations.length) this.selectedLocation = this.locations[0].clone();
 				}
 			},
 

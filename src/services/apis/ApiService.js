@@ -195,12 +195,13 @@ export default class ApiService {
 
 			    const location = LocationInformation.fromJson(result.location);
 			    const accounts = loginAll ? availableAccounts : (result.accounts || []).map(x => Account.fromJson(x));
+			    console.log('accounts', accounts);
 
 			    await PermissionService.addIdentityOriginPermission(identity, accounts, fields, origin);
 			    const returnableIdentity = identity.asOnlyRequiredFields(fields, location);
 			    returnableIdentity.accounts = accounts.map(x => x.asReturnable());
 
-			    if(!loginAll) AccountService.incrementAccountLogins(accounts);
+			    if(!loginAll && accounts.length) AccountService.incrementAccountLogins(accounts);
 
 			    resolve({id:request.id, result:returnableIdentity});
 		    }));
@@ -506,7 +507,7 @@ export default class ApiService {
 		const {payload} = request;
 		const {origin} = payload;
 		const possibleId = PermissionService.identityFromPermissions(origin, false);
-		if(!possibleId) return resolve({id:request.id, result:Error.identityMissing()});
+		if(!possibleId) return {id:request.id, result:Error.identityMissing()};
 
 		return {id:request.id, result:StoreService.get().state.scatter.keychain.avatars[possibleId.id]};
 	}

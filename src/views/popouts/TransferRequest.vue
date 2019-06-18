@@ -50,6 +50,16 @@
                 <span>From</span>
             </section>
 
+            <section class="boxes">
+                <section class="box nested account-selector" @click="selectTokenAndAccount">
+                    <section>
+                        <figure class="name">{{account.sendable()}}</figure>
+                        <figure class="network">{{network.name}}</figure>
+                    </section>
+                    <figure class="chevron icon-dot-3"></figure>
+                </section>
+            </section>
+
             <!--<FullWidthRow :items="selectedAccounts" popout="1" />-->
 
             <section class="fixed-actions" v-if="!pinning">

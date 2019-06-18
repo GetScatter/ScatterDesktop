@@ -217,7 +217,9 @@ export default class Identity {
         if(requiredFields.location.length){
             identity.location = {};
             if(!location) location = this.defaultLocation();
-            requiredFields.location.map(field => identity.location[field] = location[field]);
+            if(location) {
+	            requiredFields.location.map(field => identity.location[field] = location[field]);
+            }
         }
 
         return identity;
