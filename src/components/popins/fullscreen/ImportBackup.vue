@@ -35,6 +35,7 @@
 	import AES from 'aes-oop';
 	import Crypto from "../../../util/Crypto";
 	import {getFileLocation} from "../../../services/utility/FileService";
+	import ElectronHelpers from "../../../util/ElectronHelpers";
 	const fs = window.require('fs');
 
 	export default {
@@ -77,7 +78,7 @@
 						await this[Actions.SET_SEED](password);
 						await this[Actions.SET_SCATTER](Scatter.fromJson(decrypted));
 						ipcFaF('key', null);
-						location.reload();
+						ElectronHelpers.reload()
 					} else {
 						unrestore();
 						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
@@ -116,7 +117,7 @@
 							return AccountService.importAllAccounts(keypair);
 						}));
 						ipcFaF('key', null);
-						location.reload();
+						ElectronHelpers.reload()
 					} else {
 						unrestore();
 						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));

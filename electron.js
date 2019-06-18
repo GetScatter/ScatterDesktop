@@ -466,7 +466,8 @@ global.appShared = {
 	LowLevelSocketService:new LowLevelSocketService(),
 	NotificationService,
 	NodeMachineId,
-	savingData:false
+	savingData:false,
+	reloader:() => mainWindow.reload()
 };
 
 

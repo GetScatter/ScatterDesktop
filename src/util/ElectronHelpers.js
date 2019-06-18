@@ -10,10 +10,10 @@ if(!electron) electron = MOCK_ELECTRON;
 export const remote = electron.remote;
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
+const {reloader} = remote.getGlobal('appShared');
 
 import {localizedState} from "../localization/locales";
 import LANG_KEYS from "../localization/keys";
-import IdGenerator from "./IdGenerator";
 
 let popupService;
 const PopupService = () => {
@@ -64,6 +64,10 @@ export const ipcAsync = (key, data) => {
 }
 
 export default class ElectronHelpers {
+
+	static reload(){
+		reloader();
+	}
 
     static copy(txt){
         clipboard.writeText(txt);

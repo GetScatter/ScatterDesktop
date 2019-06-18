@@ -19,6 +19,7 @@
 	import '../../../styles/popins.scss';
 	import SocketService from "../../../services/utility/SocketService";
 	import StorageService from "../../../services/utility/StorageService";
+	import ElectronHelpers from "../../../util/ElectronHelpers";
 
 	export default {
 		props:['popin'],
@@ -47,7 +48,7 @@
 
 				setTimeout(async () => {
 					await StorageService.removeScatter();
-					location.reload();
+					ElectronHelpers.reload()
 				}, 500);
 			},
 

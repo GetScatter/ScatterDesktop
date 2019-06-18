@@ -152,6 +152,10 @@ export default class ApiService {
 		    if(!fields.hasOwnProperty('location')) fields.location = [];
 		    if(!fields.hasOwnProperty('accounts')) fields.accounts = [];
 
+		    fields.personal = fields.personal.filter(x => !!x);
+		    fields.location = fields.location.filter(x => !!x);
+		    fields.accounts = fields.accounts.filter(x => !!x);
+
 		    const requiredNetworks = fields.accounts.map(x => Network.fromJson(x)).map(x => x.unique()).reduce((acc,x) => { if(!acc.includes(x)) acc.push(x); return acc; }, []);
 
 		    // Deprecating the ability to log in with multiple networks, citing bad UX
