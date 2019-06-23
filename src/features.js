@@ -1,6 +1,6 @@
-const isDev = !process.mainModule;
-
 export default {
 	creditCards:false,
-    enforceStrongPasswords:!isDev,
+
+	// TODO: These should always be true when building
+    enforceStrongPasswords:true,
 }
