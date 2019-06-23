@@ -284,8 +284,9 @@
 					}
 
 					.network {
+						font-size: $tiny;
 						color:$silver;
-						margin-top:3px;
+						margin-top:10px;
 					}
 				}
 

@@ -36,7 +36,9 @@ export default class NetworkService {
         scatter.settings.updateOrPushNetwork(network);
         await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
         await AccountService.importAllAccountsForNetwork(network);
-        BalanceService.loadAllBalances(true);
+        setTimeout(() => {
+	        BalanceService.loadAllBalances(true);
+        }, 100);
 	    PluginRepository.bustCaches();
         return true;
     }
