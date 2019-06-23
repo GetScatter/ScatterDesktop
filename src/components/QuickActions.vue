@@ -83,8 +83,7 @@
 				'networkTokens',
 			]),
 			totalBalance(){
-				const totals = this.totalBalances.totals;
-				return PriceService.getTotal(totals);
+				return PriceService.getTotal(this.totalBalances.totals);
 			},
 			totalTokenBalance(){
 				const totals = this.totalBalances.totals;
