@@ -68,7 +68,8 @@
 					<section class="no-accounts" v-else>
 						<section>
 							You don't have any accounts linked to this key.
-							<p>{{blockchainName(keypair.enabledKey().blockchain)}} blockchains require that you pay a small fee to create accounts.</p>
+							<p v-if="canCreateAccounts(keypair)">{{blockchainName(keypair.enabledKey().blockchain)}} blockchains require that you pay a small fee to create accounts.</p>
+							<p v-else>Make sure that you have a network for the {{blockchainName(keypair.enabledKey().blockchain)}} blockchain enabled.</p>
 						</section>
 
 						<Button v-if="canCreateAccounts(keypair)" text="Create one now!" @click.native="createEosAccount(keypair)" />
@@ -97,7 +98,7 @@
 
 	export default {
 		components: {SearchAndFilter},
-		props:['asSelector', 'accounts', 'keypairsOnly', 'noBalances'],
+		props:['asSelector', 'accounts', 'keypairsOnly', 'noBalances', 'startingChain'],
 		data(){return {
 			blockchainFilter:null,
 			terms:'',
@@ -110,6 +111,7 @@
 			...mapGetters([
 				'keypairs',
 				'displayCurrency',
+				'networks'
 			]),
 
 			blockchains(){
@@ -153,6 +155,7 @@
 			},
 		},
 		mounted(){
+			if(this.startingChain) this.blockchainFilter = this.startingChain;
 			window.addEventListener('click', this.handleClick);
 			window.addEventListener("keydown", this.handleKeyDown);
 			window.addEventListener("keyup", this.handleKeyUp);
@@ -210,15 +213,19 @@
 				PopupService.push(Popup.removeKeypair(keypair, removed => {}));
 			},
 			convertKeypair(keypair){
+				const blockchains = this.networks.reduce((acc, x) => {
+					if(!acc.hasOwnProperty(x.blockchain)) acc.push(x.blockchain);
+					return acc;
+				}, []).filter(x => x !== keypair.blockchains[0]);
 				PopupService.push(Popup.selectBlockchain(async blockchain => {
 					if(!blockchain) return;
 					const clone = KeyPairService.convertKey(keypair, blockchain);
 					await KeyPairService.saveKeyPair(clone);
-					const accounts = await AccountService.importAllAccounts(clone);
+					const accounts = await AccountService.importAllAccounts(clone, false, [blockchain]);
 					for(let i = 0; i < accounts.length; i++){
 						await BalanceService.loadBalancesFor(accounts[i]);
 					}
-				}, BlockchainsArray.map(x => x.value).filter(x => x !== keypair.blockchains[0])));
+				}, blockchains));
 			},
 			editKeypairName(keypair){
 				PopupService.push(Popup.prompt(

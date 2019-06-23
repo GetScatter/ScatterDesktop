@@ -205,7 +205,7 @@
 				}))
 			},
 			selectRecipient(){
-				PopupService.push(Popup.selectRecipient(recipient => {
+				PopupService.push(Popup.selectRecipient(this.account ? this.account.blockchain() : null, recipient => {
 					if(!recipient) return;
 					this.recipient = recipient;
 				}));

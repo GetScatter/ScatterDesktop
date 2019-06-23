@@ -50,29 +50,35 @@ export default class KeyPairService {
     /***
      * Tries to make a keypair in place from a private key
      * @param keypair
-     * @returns {Promise.<void>}
      */
     static async makePublicKeys(keypair){
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                if(keypair.isEncrypted()) return;
-                keypair.publicKeys = [];
+	    keypair.publicKeys = [];
 
-                BlockchainsArray.map(blockchainKV => {
-                    try {
-                        const blockchain = blockchainKV.value;
-                        const plugin = PluginRepository.plugin(blockchain);
-                        let p = keypair.privateKey;
-                        if(typeof p !== 'string') p = plugin.bufferToHexPrivate(p);
-                        keypair.publicKeys.push({blockchain, key:plugin.privateToPublic(p, keypair.fork)});
-                    } catch(e){
-                        console.log('err', e);
-                    }
-                });
+	    return Promise.all(BlockchainsArray.map(blockchainKV => {
+		    return this.addPublicKey(keypair, blockchainKV.value);
+	    }));
+    }
 
-                resolve(true);
-            },100)
-        })
+    static async addPublicKey(keypair, blockchain, allowDecryption = false){
+        if(keypair.publicKeys.find(x => x.blockchain === blockchain)) return true;
+
+	    if(keypair.isEncrypted() && !allowDecryption) return false;
+	    else if(keypair.isEncrypted() && allowDecryption){
+	        const seed = await ipcAsync('seed');
+	        keypair.decrypt(seed);
+        }
+
+	    try {
+		    const plugin = PluginRepository.plugin(blockchain);
+		    let p = keypair.privateKey;
+		    if(typeof p !== 'string') p = plugin.bufferToHexPrivate(p);
+		    keypair.publicKeys.push({blockchain, key:plugin.privateToPublic(p, keypair.fork)});
+	    } catch(e){
+		    console.log('err', e);
+		    return false;
+	    }
+
+	    return true;
     }
 
     static async generateKeyPair(keypair){

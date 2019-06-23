@@ -15,7 +15,7 @@
 				</section>
 			</section>
 			<section class="body">
-				<KeysAndAccountList v-on:account="accountSelected" v-if="state === STATES.ACCOUNTS" />
+				<KeysAndAccountList v-on:account="accountSelected" v-if="state === STATES.ACCOUNTS" :starting-chain="blockchain" />
 				<Contacts v-on:recipient="returnResult" as-selector="1" v-if="state === STATES.CONTACTS" />
 			</section>
 		</section>
@@ -45,6 +45,9 @@
 			...mapGetters([
 				'accounts',
 			]),
+			blockchain(){
+				return this.popin.data.props.blockchain;
+			}
 		},
 		methods:{
 			returnResult(recipient){

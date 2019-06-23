@@ -39,6 +39,7 @@ export default class AccountService {
             await Promise.all(blockchains.map(async blockchain => {
                 const plugin = PluginRepository.plugin(blockchain);
                 const filteredNetworks = networks.filter(x => x.blockchain === blockchain);
+                console.log('filteredNetworks', filteredNetworks);
                 if(isNewKeypair && plugin.accountsAreImported()) return true;
                 return AccountService.accountsFrom(plugin, filteredNetworks, accounts, keypair, process, progressPerBlockchain);
             }));
@@ -111,6 +112,7 @@ export default class AccountService {
                 networks.map(network => {
 	                if(process) process.setSubTitle(localizedState(LANG_KEYS.PROCESSES.ImportingAccountsFromNetwork, [1,network.name]));
                     const key = keypair.publicKeys.find(x => x.blockchain === network.blockchain);
+                    console.log('key', key, keypair, network);
                     if(key){
                         accounts.push(Account.fromJson({
                             keypairUnique:keypair.unique(),

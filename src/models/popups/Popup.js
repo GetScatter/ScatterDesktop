@@ -212,8 +212,8 @@ export class Popup {
 		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_KEYPAIR, {blockchains}, callback))
 	}
 
-	static selectRecipient(callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_RECIPIENT, {}, callback))
+	static selectRecipient(blockchain = null, callback){
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.SELECT_RECIPIENT, {blockchain}, callback))
 	}
 
 	static selectToken(tokens, callback){

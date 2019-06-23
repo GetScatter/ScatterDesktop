@@ -14,8 +14,10 @@ export const m11_0_0 = async scatter => {
 
 	scatter.settings.language = LANG.ENGLISH;
 
-	keypairs.map(keypair => {
+	await Promise.all(keypairs.map(async keypair => {
 		delete keypair.keyHash;
+
+		await KeyPairService.addPublicKey(keypair, Blockchains.BTC, true);
 
 		let first = true;
 		keypair.blockchains.map(blockchain => {
@@ -37,7 +39,9 @@ export const m11_0_0 = async scatter => {
 
 			first = false;
 		});
-	});
+
+		return true;
+	}))
 
 	scatter.keychain.identities.map(identity => {
 		const location = identity.locations.length ? identity.locations[0] : LocationInformation.fromJson({name:`Location for ${identity.name}`});
@@ -45,6 +49,11 @@ export const m11_0_0 = async scatter => {
 		identity.location = location.id;
 		delete identity.locations;
 	});
+
+	const btcNetwork = PluginRepository.plugin(Blockchains.BTC).getEndorsedNetwork();
+	if(!scatter.settings.networks.find(x => x.unique() === btcNetwork.unique())){
+		scatter.settings.networks.push(btcNetwork);
+	}
 
     return true;
 };

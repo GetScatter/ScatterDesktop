@@ -178,7 +178,7 @@ export default class TRX extends Plugin {
 
         if(typeof privateKey !== 'string') privateKey = this.bufferToHexPrivate(privateKey);
 
-        return utils.signTransaction(privateKey, payload.transaction.transaction);
+        return utils.crypto.signTransaction(privateKey, payload.transaction.transaction);
     }
 
     async signerWithPopup(payload, account, rejector){
