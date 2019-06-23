@@ -85,6 +85,7 @@ export default class Keychain {
     }
 
     getKeyPairByPublicKey(publicKey){
+        if(!publicKey) return;
         return this.keypairs.find(key => key.publicKeys.find(x => x.key.toLowerCase() === publicKey.toLowerCase()))
     }
 
