@@ -410,7 +410,6 @@
 				if(this.loadingRidlData) return;
 				this.loadingRidlData = true;
 				const result = await RIDLService.changeAccount(this.identity.name, this.ridlAccount.name);
-				console.log(result);
 				this.loadingRidlData = false;
 			},
 			async registerForRIDL(){

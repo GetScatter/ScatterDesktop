@@ -221,8 +221,6 @@
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
 			selectKey(key, item){
-				//x => item.ref = publicKeyForKeypair(x)
-				console.log(key, item);
 				this.keys[item.ref] = this.publicKeyForKeypair(key);
 			},
 			keypairFor(publicKey){

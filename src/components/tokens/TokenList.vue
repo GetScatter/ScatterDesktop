@@ -113,6 +113,7 @@
 			height:calc(100% - 70px);
 
 			.single-asset {
+				cursor: pointer;
 				border-radius:$radius;
 				background:transparent;
 				border:1px solid $lightgrey;
