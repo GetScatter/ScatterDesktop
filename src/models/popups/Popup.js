@@ -233,7 +233,7 @@ export class Popup {
 	}
 
 	static exportPrivateKey(keypair, callback){
-		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EXPORT_PRIVATE_KEY, {keypair}, callback))
+		return new Popup(PopupDisplayTypes.POP_IN, new PopupData(PopupTypes.EXPORT_PRIVATE_KEY, {keypair:keypair.clone()}, callback))
 	}
 
 	static setDisplayToken(callback = () => {}){

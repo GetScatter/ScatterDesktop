@@ -76,11 +76,14 @@ const safeSetScatter = async (scatter, resolver) => {
 	});
 };
 
+const isPopup = location.hash.indexOf('popout') > -1;
+
 export default class StorageService {
 
     constructor(){}
 
     static async setScatter(scatter){
+    	if(isPopup) return;
 	    return new Promise(async resolve => {
 		    clearSaveTimeouts();
 		    saveResolvers.push(resolve);
@@ -93,6 +96,7 @@ export default class StorageService {
     }
 
     static removeScatter(){
+	    if(isPopup) return;
         scatterStorage().clear();
         abiStorage().clear();
         historyStorage().clear();

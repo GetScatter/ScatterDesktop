@@ -257,7 +257,7 @@
 			exportPrivateKey(keypair){
 				PopupService.push(Popup.verifyPassword(verified => {
 					if(!verified) return;
-					PopupService.push(Popup.exportPrivateKey(keypair));
+					PopupService.push(Popup.exportPrivateKey(keypair.clone()));
 				}))
 			}
 		}
