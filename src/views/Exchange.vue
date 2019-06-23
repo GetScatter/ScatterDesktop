@@ -118,7 +118,7 @@
 </template>
 
 <script>
-	import {mapGetters, mapActions} from 'vuex';
+	import {mapGetters, mapActions, mapState} from 'vuex';
 	import PopupService from "../services/utility/PopupService";
 	import {Popup} from "../models/popups/Popup";
 	import BalanceService from "../services/blockchain/BalanceService";
@@ -152,6 +152,9 @@
 
 		}},
 		computed:{
+			...mapState([
+				'history',
+			]),
 			...mapGetters([
 				'accounts',
 				'displayCurrency'
@@ -181,6 +184,21 @@
 			}
 		},
 		mounted(){
+			const history = this.$route.query.history ? this.history.find(x => x.id === this.$route.query.history) : null;
+			if(history){
+				setTimeout(async () => {
+					this.account = history.from;
+					this.recipient = history.to;
+					this.setToken(history.fromToken);
+					await this.getPairs();
+					if(this.rawPairs.length){
+						const pair = this.rawPairs.find(x => x.token.uniqueWithChain() === history.toToken.uniqueWithChain());
+						if(pair) this.setPair(pair.token);
+					}
+				})
+				return;
+			}
+
 			if(this.$route.query.account){
 				this.account = this.accounts.find(x => x.identifiable() === this.$route.query.account);
 			}

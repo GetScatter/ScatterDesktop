@@ -16,10 +16,8 @@ import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 import StoreService from "../../services/utility/StoreService";
 
-const DUMMY_NET = 'https://api.shasta.trongrid.io'
-const provider = new TronWeb.providers.HttpProvider(DUMMY_NET);
-const tronWeb = new TronWeb(provider, provider, DUMMY_NET);
-const utils = tronWeb.utils;
+let utils;
+// const utils = tronWeb.utils;
 
 let cachedInstances = {};
 const getCachedInstance = network => {
@@ -42,6 +40,13 @@ const EXPLORER = {
 export default class TRX extends Plugin {
 
     constructor(){ super(Blockchains.TRX, PluginTypes.BLOCKCHAIN_SUPPORT) }
+
+    init(){
+	    const DUMMY_NET = 'https://api.shasta.trongrid.io'
+	    const provider = new TronWeb.providers.HttpProvider(DUMMY_NET);
+	    const tronWeb = new TronWeb(provider, provider, DUMMY_NET);
+	    utils = tronWeb.utils;
+    }
 
 	bustCache(){ cachedInstances = {}; }
     defaultExplorer(){ return EXPLORER; }

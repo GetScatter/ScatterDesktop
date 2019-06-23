@@ -145,7 +145,6 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 app.on('web-contents-created', (event, contents) => {
 	contents.on('will-navigate', (event, navigationUrl) => {
 		// Never navigate away from localhost.
-		console.log('mainUrl', mainUrl(false));
 		if(navigationUrl.indexOf(mainUrl(false)) !== 0) event.preventDefault()
 	})
 })
@@ -192,18 +191,18 @@ class LowLevelWindowService {
 					nodeIntegration:true,
 				} });
 			win.loadURL(mainUrl(true));
-			win.once('ready-to-show', () => resolve(win));
+			resolve(win)
+			// win.once('ready-to-show', () => resolve(win));
 		})
 	}
 
 	static async queuePopup(){
 		setTimeout(async () => {
-			waitingPopup = await this.getWindow(1,1);
+			waitingPopup = await this.getWindow(800,600);
 		}, 100);
 	}
 
 	static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600, dontHide = false){
-
 		let win = waitingPopup;
 		if(!win) win = await this.getWindow();
 		else waitingPopup = null;
@@ -237,6 +236,8 @@ class LowLevelWindowService {
 
 		onReady(win);
 
+		this.queuePopup();
+
 		win.show();
 		win.setAlwaysOnTop(true, "floating");
 		win.focus();
@@ -248,8 +249,6 @@ class LowLevelWindowService {
 			win.setFullScreenable(false);
 			app.dock.show();
 		}
-
-		this.queuePopup();
 
 		return win;
 	}

@@ -35,6 +35,8 @@
 
 	.pop-out-head {
 		-webkit-app-region: drag;
+		position: relative;
+		z-index: 2;
 		flex:0 0 auto;
 		height:40px;
 		width:100%;

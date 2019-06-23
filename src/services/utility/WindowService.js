@@ -28,9 +28,7 @@ const sendMessage = (windowId, type, data, resolver = null) => {
     const message = new WindowMessage(type, data, remote.getCurrentWindow().id, resolver);
     if(resolver) addPending(message);
 
-    remote.BrowserWindow.fromId(windowId)
-        .webContents
-        .send(type, message);
+    remote.BrowserWindow.fromId(windowId).webContents.send(type, message);
 };
 
 export default class WindowService {

@@ -9,6 +9,8 @@ import StoreService from "./StoreService";
 import SocketService from "./SocketService";
 import AppsService from "../apps/AppsService";
 import UpdateService from "./UpdateService";
+import PluginRepository from "../../plugins/PluginRepository";
+import {Blockchains} from "../../models/Blockchains";
 
 let initialized = false;
 
@@ -17,6 +19,7 @@ export default class SingletonService {
 	static async init(){
 		if(initialized) return true;
 		initialized = true;
+		PluginRepository.plugin(Blockchains.TRX).init();
 		SocketService.initialize();
 		UpdateService.needsUpdate();
 		AppsService.getApps();

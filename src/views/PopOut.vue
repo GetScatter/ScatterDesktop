@@ -1,9 +1,9 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" v-if="windowMessage && (popupType !== apiActions.LOGIN && popupType !== apiActions.LOGIN_ALL)" />
+        <section v-if="windowMessage">
+            <PopOutHead v-on:closed="returnResult" v-if="(popupType !== apiActions.LOGIN && popupType !== apiActions.LOGIN_ALL)" />
 
-        <transition name="fade">
-            <section v-if="windowMessage" class="popout" :class="{'login':popupType === apiActions.LOGIN || popupType === apiActions.LOGIN_ALL}">
+            <section class="popout" :class="{'login':popupType === apiActions.LOGIN || popupType === apiActions.LOGIN_ALL}">
 
                 <AppLogin v-if="popupType === apiActions.LOGIN || popupType === apiActions.LOGIN_ALL"
                           :popup="popup"
@@ -26,9 +26,12 @@
                 <LinkApp :popup="popup" v-if="popupType === 'linkApp'" v-on:returned="returnResult" />
 
             </section>
-        </transition>
 
+        </section>
 
+        <section class="dummy-bg" :class="{'hide':windowMessage}">
+            <figure>Scatter</figure>
+        </section>
     </section>
 </template>
 
@@ -62,7 +65,7 @@
             LinkApp:() => import('./popouts/LinkApp'),
             UpdateIdentity:() => import('./popouts/UpdateIdentity'),
         },
-        mounted(){
+        created(){
             WindowService.watch('popup', windowMessage => {
                 this.windowMessage = windowMessage;
 
@@ -134,6 +137,30 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../styles/variables";
 
+    .dummy-bg {
+        figure {
+            position:fixed;
+            top:0;
+            left:0;
+            right:0;
+            z-index:-2;
+            height:40px;
+            width:100%;
+            display:flex;
+            align-items: center;
+            padding:0 0 0 10px;
+            border:1px solid $darkerblue;
+            border-bottom:0;
+            background:$blue;
+            font-family: 'Grand Hotel', sans-serif;
+            font-size: 24px;
+            color: $white;
+
+            &.hide {
+                display:none;
+            }
+        }
+    }
 
 
 </style>
