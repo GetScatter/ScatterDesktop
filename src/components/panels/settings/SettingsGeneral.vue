@@ -27,7 +27,7 @@
             <Select bordered="1" :options="names" :disabled="true"
                     :selected="selectedLanguage"
                     :parser="x => x"
-                    v-on:changed="selectLanguage" />
+                    v-on:selected="selectLanguage" />
         </section>
 
         <section class="action-box top-pad">

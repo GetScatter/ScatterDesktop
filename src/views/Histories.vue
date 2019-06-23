@@ -24,6 +24,9 @@
 							</figure>
 							<figure class="date">{{new Date(item.timestamp).toLocaleString()}}</figure>
 						</section>
+						<section class="row" v-if="item.memo.length">
+							<figure class="memo">{{item.memo}}</figure>
+						</section>
 					</section>
 
 					<section class="participants">
@@ -238,6 +241,7 @@
 
 				.details {
 					flex:1;
+					padding-right:20px;
 
 					.title {
 						font-size: $medium;
@@ -260,14 +264,14 @@
 
 						.date {
 						}
-					}
 
-					.memo {
-						font-size: $tiny;
-						border-radius:$radius;
-						display:inline-block;
-						margin-top:5px;
-
+						.memo {
+							margin-top:10px;
+							font-size: $tiny;
+							padding:5px;
+							border:1px solid $lightgrey;
+							border-radius:$radius;
+						}
 					}
 				}
 

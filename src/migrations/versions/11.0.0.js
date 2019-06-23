@@ -55,5 +55,7 @@ export const m11_0_0 = async scatter => {
 		scatter.settings.networks.push(btcNetwork);
 	}
 
+	scatter.settings.explorers[Blockchains.BTC] = Explorer.fromRaw(PluginRepository.plugin(Blockchains.BTC).defaultExplorer());
+
     return true;
 };
