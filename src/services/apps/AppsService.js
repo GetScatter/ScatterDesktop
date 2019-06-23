@@ -47,6 +47,7 @@ export default class AppsService {
 	 * @returns {Promise<boolean>}
 	 */
 	static async getApps(){
+		if(!StoreService.get()) return;
 		const noDapps = !Object.keys(StoreService.get().state.dappData).length;
 		const dataIsStale = lastPullTime === 0 || (lastPullTime + (1000*60*60*6)) < +new Date();
 		if(noDapps || dataIsStale) {

@@ -38,6 +38,7 @@
     import Sidebar from './Sidebar';
     import QuickActions from './QuickActions';
     import MenuBar from './MenuBar';
+    import SingletonService from "../services/utility/SingletonService";
 
     export default {
     	components:{
@@ -49,6 +50,7 @@
         },
         data(){ return {
             routeNames:RouteNames,
+	        initialized:false,
         }},
         computed:{
             ...mapState([
@@ -93,7 +95,13 @@
             ])
         },
         watch:{
-
+            ['unlocked'](){
+            	if(this.initialized) return;
+            	if(this.unlocked){
+            		this.initialized = true;
+            		SingletonService.init();
+                }
+            }
         }
     }
 </script>

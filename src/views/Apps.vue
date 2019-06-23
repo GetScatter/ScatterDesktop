@@ -104,7 +104,6 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../store/constants';
-	import SingletonService from "../services/utility/SingletonService";
 	import PanelTabs from "../components/reusable/PanelTabs";
 	import ObjectHelpers from "../util/ObjectHelpers";
 	import AppsService from "../services/apps/AppsService";
@@ -222,8 +221,6 @@
 					this.selectedCategory = this.$route.query.category;
 				}
 
-				await SingletonService.init();
-				await AppsService.getApps();
 			},
 			goToApp(app){
 				this.$router.push({name:this.RouteNames.APP, params:{applink:app.applink}})

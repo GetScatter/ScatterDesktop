@@ -28,6 +28,7 @@ import AnimatedNumber from './components/reusable/AnimatedNumber.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
 import PopOutHead from './components/popouts/PopOutHead.vue'
 import SocketService from "./services/utility/SocketService";
+import SingletonService from "./services/utility/SingletonService";
 
 // f12 to open console from anywhere.
 document.addEventListener("keydown", e => {
@@ -63,10 +64,12 @@ class Main {
 		if(hash === 'popout') fragments = [
 			{tag:'PopOutHead', vue:PopOutHead},
 		]
-		else fragments = [
-			// {tag:'slider', vue:SliderComponent},
-			{tag:'qr-reader', vue:QrcodeReader},
-		]
+		else {
+			fragments = [
+				// {tag:'slider', vue:SliderComponent},
+				{tag:'qr-reader', vue:QrcodeReader},
+			]
+		}
 
 		const components = shared.concat(fragments);
 		const middleware = (to, next, store) => {
