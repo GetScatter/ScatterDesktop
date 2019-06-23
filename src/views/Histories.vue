@@ -8,10 +8,6 @@
 
 				<!-- TRANSFER OR EXCHANGE -->
 				<section class="event" v-if="item.type === 'transfer' || item.type === 'exchange'">
-					<figure class="icon">
-						<Transfer v-if="item.type === 'transfer'" />
-						<Exchange v-if="item.type === 'exchange'" />
-					</figure>
 
 					<section class="details">
 						<figure class="title" v-if="item.type === 'transfer'">
@@ -32,46 +28,38 @@
 
 					<section class="participants">
 						<section class="accounts">
-							<figure class="account">{{item.from.sendable()}}</figure>
-							<figure class="arrow icon-right-small"></figure>
-							<figure class="account">{{item.to}}</figure>
+							<figure class="account blue">{{item.from.sendable()}}</figure>
+							<figure class="account" v-if="item.from.sendable() !== item.to">{{item.to}}</figure>
 						</section>
 						<figure class="network">{{item.from.network().name}}</figure>
 					</section>
 
 					<section class="actions">
-						<Button text="Redo" @click.native="redo(item)" />
+						<Button text="View" @click.native="view(item)" />
+						<Button text="Redo" blue="1" @click.native="redo(item)" />
 					</section>
 				</section>
 
 
 
 				<section class="event" v-if="item.type === 'action'">
-					<figure class="icon">
-						<Transfer />
-					</figure>
 
 					<section class="details">
-						<figure class="title">Sent 0.2 EOS</figure>
+						<figure class="title">{{item.action}}</figure>
 						<section class="row">
-							<figure class="status">
-								<i class="icon-check"></i> Completed
-							</figure>
-							<figure class="date">{{new Date().toLocaleString()}}</figure>
+							<figure class="date">{{new Date(item.timestamp).toLocaleString()}}</figure>
 						</section>
 					</section>
 
 					<section class="participants">
 						<section class="accounts">
-							<figure class="account">accountfrom</figure>
-							<figure class="arrow icon-right-small"></figure>
-							<figure class="account">accountto</figure>
+							<figure class="account blue">{{item.account.sendable()}}</figure>
 						</section>
-						<figure class="network">EOS Mainnet</figure>
+						<figure class="network">{{item.account.network().name}}</figure>
 					</section>
 
 					<section class="actions">
-						<Button text="Redo" @click.native="redo(item)" />
+						<Button text="View" @click.native="view(item)" />
 					</section>
 				</section>
 				
@@ -113,6 +101,7 @@
 			]),
 			...mapGetters([
 				'accounts',
+				'explorers',
 			]),
 			filteredTokenHistories(){
 				return this.history
@@ -186,6 +175,10 @@
 				}
 				this.loadingStatus = false;
 			},
+			view(item){
+				const explorer = this.explorers[item.token.blockchain].parsed();
+				ElectronHelpers.openLinkInBrowser(explorer.transaction(item.txid));
+			},
 			redo(item){
 				if(item.type === HISTORY_TYPES.Exchange){
 					this.$router.push({name:this.RouteNames.EXCHANGE, query:{history:item.id}});
@@ -228,6 +221,7 @@
 
 		.events {
 			height:calc(#{$fullheight} - 70px);
+			overflow-y:scroll;
 			padding:10px 40px;
 
 			.event {
@@ -281,16 +275,12 @@
 					flex:1;
 					font-size: $small;
 
-					.accounts {
-						display:flex;
-					}
-
 					.account {
-						color:$blue;
-					}
-					.arrow {
-						padding:0 2px;
-						color:$blue;
+						font-weight: bold;
+
+						&.blue {
+							color:$blue;
+						}
 					}
 
 					.network {
@@ -300,7 +290,9 @@
 				}
 
 				.actions {
-
+					padding-left:20px;
+					flex:0.5;
+					text-align:right;
 				}
 
 

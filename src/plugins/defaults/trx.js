@@ -15,6 +15,7 @@ import HardwareService from "../../services/secure/HardwareService";
 import {localizedState} from "../../localization/locales";
 import LANG_KEYS from "../../localization/keys";
 import StoreService from "../../services/utility/StoreService";
+import TokenService from "../../services/utility/TokenService";
 
 let utils;
 // const utils = tronWeb.utils;
@@ -137,6 +138,7 @@ export default class TRX extends Plugin {
 
 
     async transfer({account, to, amount, token, promptForSignature = true}){
+	    amount = TokenService.formatAmount(amount, token);
 	    const {symbol} = token;
 	    return new Promise(async (resolve, reject) => {
 		    const tron = getCachedInstance(account.network());

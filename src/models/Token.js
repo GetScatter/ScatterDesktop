@@ -132,7 +132,7 @@ export default class Token {
 	}
 
 	accounts(){
-		return StoreService.get().getters.accounts.filter(x => x.network().chainId === this.chainId).reduce((acc,x) => {
+		return StoreService.get().getters.accounts.filter(x => x.blockchain() === this.blockchain && x.network().chainId === this.chainId).reduce((acc,x) => {
 			if(!acc.find(y => y.sendable() === x.sendable())) acc.push(x);
 			return acc;
 		}, []);

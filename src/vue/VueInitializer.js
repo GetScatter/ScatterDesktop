@@ -93,6 +93,7 @@ export default class VueInitializer {
 
                     formatNumber(num, commaOnly = false){
 	                	if(!num) return 0;
+	                    num = parseFloat(num.toString());
                         const toComma = x => {
                             const [whole, decimal] = x.toString().split('.');
                             return whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (decimal ? `.${decimal}` : '').toString();

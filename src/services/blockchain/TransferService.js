@@ -18,7 +18,6 @@ export default class TransferService {
     }
 
     static async [Blockchains.TRX](params){
-        params.amount = TokenService.formatAmount(params.amount, params.token);
         return this.baseTransfer(params);
     }
 
