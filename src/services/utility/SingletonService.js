@@ -27,7 +27,7 @@ export default class SingletonService {
 		StoreService.get().dispatch(Actions.LOAD_LANGUAGE);
 		RIDLService.init().then(() => {
 			RIDLService.checkAccounts();
-		})
+		});
 
 		PermissionService.removeDanglingPermissions();
 		AccountService.fixOrphanedAccounts();

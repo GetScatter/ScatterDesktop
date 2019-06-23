@@ -119,15 +119,14 @@
 	import SelectBackupLocation from "../components/login/SelectBackupLocation";
 	import Welcome from "../components/login/Welcome";
 	import PopupService from "../services/utility/PopupService";
-	import UpdateService from "../services/utility/UpdateService";
 	import {Popup} from "../models/popups/Popup";
-	import StoreService from "../services/utility/StoreService";
 
 	import SpaceBackground from '../components/backgrounds/SpaceBackground';
 	import Reset from '../components/svgs/login/Reset';
 	import Restore from '../components/svgs/login/Restore';
 	import Support from '../components/svgs/login/Support';
 	import ElectronHelpers from "../util/ElectronHelpers";
+	import BackupService from "../services/utility/BackupService";
 
 	const STATES = {
 		NEW_OR_LOGIN:'newOrLogin',
@@ -255,6 +254,10 @@
 									const clone = this.scatter.clone();
 									clone.onboarded = true;
 									await this[Actions.SET_SCATTER](clone);
+
+									if(!this.scatter.settings.backupLocation.length){
+										await BackupService.setDefaultBackupLocation();
+									}
 
 									this.success = true;
 									this.$router.push({name:this.RouteNames.HOME});

@@ -48,6 +48,7 @@
             ])
         },
         mounted(){
+        	console.log(this.scatter.settings);
             BackupService.setBackupStrategy(BACKUP_STRATEGIES.AUTOMATIC);
         },
         methods: {

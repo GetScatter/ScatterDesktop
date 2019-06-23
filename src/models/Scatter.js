@@ -21,7 +21,6 @@ export default class Scatter {
 
         this.recurring = Recurring.placeholder();
 
-        this.toured = false;
         this.onboarded = false;
 
         this.pin = null;

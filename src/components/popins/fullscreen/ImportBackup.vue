@@ -73,7 +73,6 @@
 					if(typeof decrypted === 'object' && decrypted.hasOwnProperty('keychain')){
 						decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
 						decrypted.settings.backupLocation = '';
-						decrypted.toured = true;
 						StorageService.setSalt(salt);
 						await this[Actions.SET_SEED](password);
 						await this[Actions.SET_SCATTER](Scatter.fromJson(decrypted));
@@ -109,7 +108,6 @@
 							}));
 						const scatter = await Scatter.create();
 						scatter.keychain.keypairs = keypairs;
-						scatter.toured = true;
 						StorageService.setSalt(salt);
 						await this[Actions.SET_SEED](password);
 						await this[Actions.SET_SCATTER](scatter);

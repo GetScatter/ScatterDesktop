@@ -10,7 +10,6 @@ export const m11_0_0 = async scatter => {
 
 	const keypairs = scatter.keychain.keypairs.map(x => x.clone());
 	scatter.keychain.keypairs = [];
-	scatter.onboarded = true;
 
 	scatter.settings.language = LANG.ENGLISH;
 
