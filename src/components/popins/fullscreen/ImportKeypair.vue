@@ -192,6 +192,11 @@
 			async selectBlockchain(blockchain){
 				this.keypair.blockchains = [blockchain];
 				await KeyPairService.makePublicKeys(this.keypair);
+				if(!this.keypair.publicKeys.find(x => x.blockchain === blockchain)) {
+					this.error = 'Invalid Private Key';
+					this.setWorkingScreen(false);
+					return;
+				}
 				this.keypair.setName();
 				this.finishImporting(this.keypair);
 			},
