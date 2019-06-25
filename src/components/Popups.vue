@@ -31,7 +31,7 @@
                         <section class="pop-in-over">
                             <figure class="bg" @click="clickedFader"></figure>
                             <!--<RemoveApp :popin="popIn" v-if="popIn.data.type === popupTypes.REMOVE_APP" />-->
-                            <!--<EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />-->
+                            <EnterPIN :popin="popIn" v-if="popIn.data.type === popupTypes.ENTER_PIN" />
                             <Prompt :popin="popIn" v-if="popIn.data.type === popupTypes.PROMPT" />
                             <SelectFromList :popin="popIn" v-if="popIn.data.type === popupTypes.SELECT_FROM_LIST" />
                             <TransactionSuccess :popin="popIn" v-if="popIn.data.type === popupTypes.TX_SUCCESS" />
@@ -71,7 +71,6 @@
     import * as Actions from '../store/constants';
     import {PopupDisplayTypes, PopupTypes, isFullscreen} from '../models/popups/Popup'
 
-    // import EnterPIN from './popins/overlay/EnterPIN.vue'
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
 
@@ -109,9 +108,11 @@
     import SelectDisplayToken from "./popins/overlay/SelectDisplayToken";
     import Terms from "./popins/fullscreen/Terms";
     import ChangeIdentityKey from "./popins/fullscreen/ChangeIdentityKey";
+    import EnterPIN from "./popins/overlay/EnterPIN";
 
     export default {
     	components:{
+		    EnterPIN,
 		    ChangeIdentityKey,
 		    Terms,
 		    SelectDisplayToken,
@@ -126,7 +127,6 @@
 		    SelectKeypair,
 		    SelectToken,
 		    UpdateAvailable,
-    		// EnterPIN,
 		    Snackbar,
 		    TransactionSuccess,
 		    Prompt,
