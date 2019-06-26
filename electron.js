@@ -337,6 +337,7 @@ class LowLevelSocketService {
 			socket.on('disconnect', () => delete this.openConnections[origin]);
 
 			socket.on('message', msg => {
+				console.log('message', msg);
 				if(msg.indexOf('42/scatter') === -1) return false;
 				const [type, request] = JSON.parse(msg.replace('42/scatter,', ''));
 
@@ -368,6 +369,7 @@ class LowLevelSocketService {
 		if(this.websockets.length) return this.websockets;
 
 		await this.findOpenPorts();
+		mainWindow.webContents.send('ports', this.ports);
 
 		const requestHandler = (_, res) => {
 			res.setHeader('Access-Control-Allow-Origin', '*');

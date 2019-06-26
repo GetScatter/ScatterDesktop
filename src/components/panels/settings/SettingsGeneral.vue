@@ -38,6 +38,20 @@
         </section>
 
         <section class="action-box top-pad">
+            <label>Local socket ports</label>
+            <p>There are the ports open on your local machine that other local applications can use to contact Scatter.</p>
+
+            <br>
+            <section v-if="ports && Object.keys(ports).length">
+                <section class="port" v-for="(ssl, port) in ports">
+                    {{port}}
+                    <figure class="ssl" v-if="ssl">SSL</figure>
+                </section>
+            </section>
+            <section v-else>There are no open ports!</section>
+        </section>
+
+        <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.GENERAL.DataPathLabel)}}</label>
             <p>{{locale(langKeys.SETTINGS.GENERAL.DataPathDescription)}}</p>
 
@@ -79,7 +93,8 @@
         }},
         computed:{
             ...mapState([
-                'scatter'
+                'scatter',
+                'ports',
             ]),
             ...mapGetters([
                 'showNotifications',
@@ -141,5 +156,26 @@
       height:1px;
       background:rgba(0,0,0,0.1);
       margin-top:30px;
+    }
+
+    .port {
+        display:flex;
+        font-weight: bold;
+
+        &:not(:last-child){
+            margin-bottom:5px;
+        }
+
+        .ssl {
+            font-size: $tiny;
+            padding:2px 6px;
+            background:$blue;
+            color:$white;
+            border-radius:$radius;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            margin-left:10px;
+        }
     }
 </style>

@@ -113,6 +113,7 @@ export default class SocketService {
 		const certs = await getCerts();
 		ipcRenderer.on('api', (event, request) => handleApiResponse(request));
 		ipcRenderer.on('pair', (event, request) => handlePairedResponse(request));
+		ipcRenderer.on('ports', (event, ports) => StoreService.get().dispatch(Actions.SET_PORTS, ports));
 		return LowLevelSocketService.initialize(certs);
 	}
 

@@ -2,6 +2,7 @@ import * as Mutations from './constants'
 import Vue from 'vue';
 
 export const mutations = {
+    [Mutations.SET_PORTS]:(state, x) => state.ports = x,
     [Mutations.SET_SIDEBAR]:(state, x) => state.sidebarLocked = x,
     [Mutations.SET_APP_REP]:(state, x) => state.appReputation = x,
     [Mutations.SET_ACTION_REP]:(state, {app, rep}) => Vue.set(state.actionReputations, app, rep),

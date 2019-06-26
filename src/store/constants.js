@@ -6,6 +6,7 @@ export const HIDE_BACK_BTN =  'hideBackButton';
 
 export const SET_SEARCH_TERMS = 'setSearchTerms';
 
+export const SET_PORTS =        'setPorts';
 export const SET_SEED =         'setSeed';
 export const SET_MNEMONIC =     'setMnemonic';
 
