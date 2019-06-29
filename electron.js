@@ -337,7 +337,6 @@ class LowLevelSocketService {
 			socket.on('disconnect', () => delete this.openConnections[origin]);
 
 			socket.on('message', msg => {
-				console.log('message', msg);
 				if(msg.indexOf('42/scatter') === -1) return false;
 				const [type, request] = JSON.parse(msg.replace('42/scatter,', ''));
 
@@ -488,3 +487,28 @@ ipcMain.on('seed', (event, arg) => {
 	event.sender.send('seed', seed);
 });
 
+
+
+
+
+// -------------------------------------------------------------
+// CATCH ALL EXCEPTIONS AND CONSOLES
+// We're throwing all exceptions and console up to the renderer console so they can be visible in running builds.
+// -------------------------------------------------------------
+process.on('uncaughtException', (err) => {
+	mainWindow.webContents.send('error', {message:err.message, file:err.fileName, line:err.lineNumber});
+	console.error('There was an uncaught error', err)
+	// process.exit(1) //mandatory (as per the Node docs)
+});
+
+const log = console.log;
+console.log = (...params) => {
+	mainWindow.webContents.send('console', params);
+	log(...params);
+}
+
+const logerr = console.error;
+console.error = (...params) => {
+	mainWindow.webContents.send('console', params);
+	logerr(...params);
+}

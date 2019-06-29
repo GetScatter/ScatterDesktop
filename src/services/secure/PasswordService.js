@@ -25,7 +25,7 @@ export default class PasswordService {
 	    const specs = p.split('').filter(x => special.includes(x)).length;
 	    points += specs < 5 ? specs : (5 * 2) + (specs-5);
 	    points += p.length;
-	    const good = 60;
+	    const good = 30;
 	    const percentage = points / good > 1 ? 1 : points / good;
 	    return (percentage*100).toString();
     }

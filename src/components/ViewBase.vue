@@ -96,6 +96,7 @@
         },
         watch:{
             ['unlocked'](){
+            	if(this.$route.fullPath.indexOf('popout') > -1) return;
             	if(this.initialized) return;
             	if(this.unlocked){
             		this.initialized = true;
@@ -116,7 +117,7 @@
         left:0;
         right:0;
         bottom:0;
-        z-index:1000000;
+        z-index:10000;
         display:flex;
         justify-content: center;
         align-items: center;

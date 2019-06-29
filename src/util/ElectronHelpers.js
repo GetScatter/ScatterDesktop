@@ -63,6 +63,9 @@ export const ipcAsync = (key, data) => {
     })
 }
 
+ipcRenderer.on('error', (e, x) => console.log(x));
+ipcRenderer.on('console', (e, x) => console.log('Main process console: ', x));
+
 export default class ElectronHelpers {
 
 	static reload(){

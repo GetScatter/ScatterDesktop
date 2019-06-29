@@ -265,7 +265,7 @@ class LedgerAPI {
 			    fc.types
 		    ).toString('hex'), "hex");
 	    } catch(e){
-	    	console.log('e', e);
+	    	console.error('e', e);
 		    WindowService.flashWindow();
 		    PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
 		    return null;

@@ -10,7 +10,7 @@
 
 		<input class="center" type="password" v-model="password" placeholder="choose a password" />
 		<section class="password-strength">
-			<figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 100}"></figure>
+			<figure class="bar" :style="{'width':passwordStrength + '%'}" :class="{'red':passwordStrength < 50, 'green':passwordStrength < 100 && passwordStrength >= 50}"></figure>
 		</section>
 		<input class="center" type="password" v-model="confirmation" placeholder="one more time" />
 
@@ -80,6 +80,9 @@
 			transition-property: width, background;
 			&.red {
 				background:$red;
+			}
+			&.green {
+				background:$green;
 			}
 		}
 	}
