@@ -219,7 +219,7 @@ class LowLevelWindowService {
 		let bounds = electron.screen.getPrimaryDisplay().bounds;
 		let x = bounds.x + (leftBound + ((bounds.width - width) / 2));
 		let y = bounds.y + ((bounds.height - height) / 2);
-		win.setPosition(x,y);
+		win.setPosition(Math.round(x),Math.round(y));
 
 		win.once('closed', async () => {
 			// This is a fix for MacOS systems which causes the
