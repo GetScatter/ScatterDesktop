@@ -18,10 +18,10 @@ remote.getGlobal('appShared').QuitWatcher = () => {
 
 
 
-const emit = (origin, path, data) => LowLevelSocketService.emit(origin, path, data);
-const getNewKey = origin => LowLevelSocketService.getNewKey(origin);
+const emit = (origin, id, path, data) => LowLevelSocketService.emit(origin, id, path, data);
+const getNewKey = (origin, id) => LowLevelSocketService.getNewKey(origin, id);
 
-const handleApiResponse = async request => {
+const handleApiResponse = async (request, id) => {
 
 	// 2 way authentication
 	const existingApp = StoreService.get().state.scatter.keychain.findApp(request.data.payload.origin);
@@ -45,11 +45,11 @@ const handleApiResponse = async request => {
 	else await updateNonce();
 
 	ApiService.handler(Object.assign(request.data, {plugin:request.plugin})).then(result => {
-		emit(existingApp.origin, 'api', result);
+		emit(existingApp.origin, id, 'api', result);
 	})
 };
 
-const handlePairedResponse = async request => {
+const handlePairedResponse = async (request, id) => {
 	const scatter = StoreService.get().state.scatter;
 	const existingApp = scatter.keychain.findApp(request.data.origin);
 	const linkApp = {
@@ -58,27 +58,27 @@ const handlePairedResponse = async request => {
 	};
 
 	if(request.data.passthrough)
-		return emit(request.data.origin, 'paired', existingApp && existingApp.checkKey(request.data.appkey));
+		return emit(request.data.origin, id, 'paired', existingApp && existingApp.checkKey(request.data.appkey));
 
 	const addAuthorizedApp = async (newKey = null) => {
 		const authedApp = new AuthorizedApp(request.data.origin, newKey ? newKey : request.data.appkey);
 		const clone = scatter.clone();
 		clone.keychain.updateOrPushApp(authedApp);
 		await StoreService.get().dispatch(Actions.SET_SCATTER, clone);
-		emit(request.data.origin, 'paired', true);
+		emit(request.data.origin, id, 'paired', true);
 	};
 
 	const repair = async () => {
-		const newKey = await getNewKey(request.data.origin);
-		if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return emit(request.data.origin, 'paired', false);
+		const newKey = await getNewKey(request.data.origin, id);
+		if(newKey.data.origin !== request.data.origin || newKey.data.appkey.indexOf('appkey:') === -1) return emit(request.data.origin, id, 'paired', false);
 		return addAuthorizedApp(newKey.data.appkey)
 	}
 
 	if(existingApp){
-		if(existingApp.checkKey(request.data.appkey)) return emit(request.data.origin, 'paired', true);
+		if(existingApp.checkKey(request.data.appkey)) return emit(request.data.origin, id, 'paired', true);
 		else PopupService.push(Popup.popout(linkApp, async ({result}) => {
 			if(result) return repair();
-			else emit(request.data.origin, 'paired', false);
+			else emit(request.data.origin, id, 'paired', false);
 		}));
 	}
 	else return repair();
@@ -111,8 +111,8 @@ export default class SocketService {
 
 	static async initialize(){
 		const certs = await getCerts();
-		ipcRenderer.on('api', (event, request) => handleApiResponse(request));
-		ipcRenderer.on('pair', (event, request) => handlePairedResponse(request));
+		ipcRenderer.on('api', (event, {request, id}) => handleApiResponse(request, id));
+		ipcRenderer.on('pair', (event, {request, id}) => handlePairedResponse(request, id));
 		ipcRenderer.on('ports', (event, ports) => StoreService.get().dispatch(Actions.SET_PORTS, ports));
 		return LowLevelSocketService.initialize(certs);
 	}

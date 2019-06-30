@@ -302,16 +302,16 @@ class LowLevelSocketService {
 		this.ports = {};
 	}
 
-	async getNewKey(origin){
+	async getNewKey(origin, id){
 		return new Promise((resolve, reject) => {
 			this.rekeyPromise = {resolve, reject};
-			this.emit(origin, 'rekey');
+			this.emit(origin, id, 'rekey');
 			return this.rekeyPromise;
 		})
 	}
 
-	async emit(origin, path, data){
-		const socket = this.openConnections[origin];
+	async emit(origin, id, path, data){
+		const socket = this.openConnections[origin+id];
 		return this.emitSocket(socket, path, data);
 	}
 
@@ -329,12 +329,14 @@ class LowLevelSocketService {
 			socket.send("40/scatter");
 			socket.send(`42/scatter,["connected"]`);
 
+			const id = Math.round(Math.random() * 999999999).toString();
+
 			// Just logging errors for debugging purposes (dev only)
 			if(isDev) socket.on('error', async request => console.log('error', request));
 
 			// Different clients send different message types for disconnect (ws vs socket.io)
-			socket.on('close',      () => delete this.openConnections[origin]);
-			socket.on('disconnect', () => delete this.openConnections[origin]);
+			socket.on('close',      () => delete this.openConnections[origin+id]);
+			socket.on('disconnect', () => delete this.openConnections[origin+id]);
 
 			socket.on('message', msg => {
 				if(msg.indexOf('42/scatter') === -1) return false;
@@ -354,12 +356,12 @@ class LowLevelSocketService {
 
 				if(!origin) origin = requestOrigin;
 				else if(origin && requestOrigin !== origin) return this.emitSocket(socket, 'api', {id:request.id, result:null});
-				if(!this.openConnections.hasOwnProperty(origin)) this.openConnections[origin] = socket;
+				if(!this.openConnections.hasOwnProperty(origin+id)) this.openConnections[origin+id] = socket;
 
 				switch(type){
-					case 'pair':        return mainWindow.webContents.send('pair', request);
+					case 'pair':        return mainWindow.webContents.send('pair', {request, id});
 					case 'rekeyed':     return this.rekeyPromise.resolve(request);
-					case 'api':         return mainWindow.webContents.send('api', request);
+					case 'api':         return mainWindow.webContents.send('api', {request, id});
 				}
 
 			});
@@ -399,13 +401,13 @@ class LowLevelSocketService {
 	}
 
 	sendEvent(event, payload, origin){
-		return this.emit(origin, 'event', {event, payload});
+		const sockets = Object.keys(this.openConnections).filter(x => x.indexOf(origin) === 0).map(x => this.openConnections[x]);
+		sockets.map(x => this.emitSocket(x, 'event', {event, payload}));
+		return true;
 	}
 
 	broadcastEvent(event, payload){
-		Object.keys(this.openConnections).map(origin => {
-			this.sendEvent(event, payload, origin);
-		});
+		Object.keys(this.openConnections).map(origin => this.sendEvent(event, payload, origin));
 		return true;
 	}
 
