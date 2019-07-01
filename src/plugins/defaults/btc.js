@@ -185,17 +185,27 @@ export default class BTC extends Plugin {
 	}
 
 	async signer(transaction, publicKey, arbitrary = false, isHash = false, account = null){
-		// TODO: No hardware support yet.
-		// if(account && KeyPairService.isHardware(publicKey))
-		// 	return await HardwareService.sign(account, transaction);
+		try {
+			// TODO: No hardware support yet.
+			// if(account && KeyPairService.isHardware(publicKey))
+			// 	return await HardwareService.sign(account, transaction);
 
-		const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
-		if(!basePrivateKey) return;
+			const basePrivateKey = await KeyPairService.publicToPrivate(publicKey);
+			if(!basePrivateKey) return;
 
-		const key = bitcoin.ECPair.fromPrivateKey(Buffer.from(basePrivateKey), {network:SELECTED_NETWORK});
-		const txb = bitcoin.TransactionBuilder.fromTransaction(bitcoin.Transaction.fromHex(transaction), SELECTED_NETWORK)
-		txb.sign(0, key);
-		return txb.build().toHex();
+			const key = bitcoin.ECPair.fromPrivateKey(Buffer.from(basePrivateKey), {network:SELECTED_NETWORK});
+			const txb = bitcoin.TransactionBuilder.fromTransaction(bitcoin.Transaction.fromHex(transaction), SELECTED_NETWORK)
+
+			if(Object.keys(txb.__PREV_TX_SET).length > 1){
+				Object.keys(txb.__PREV_TX_SET).map((x,i) => {
+					txb.sign(i, key);
+				})
+			} else txb.sign(0, key);
+			return txb.build().toHex();
+		} catch(e){
+			console.error(e);
+			return null;
+		}
 	}
 
 	async signerWithPopup(payload, account, rejector, token = null){

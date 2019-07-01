@@ -24,7 +24,7 @@
 							</figure>
 							<figure class="date">{{new Date(item.timestamp).toLocaleString()}}</figure>
 						</section>
-						<section class="row" v-if="item.memo.length">
+						<section class="row" v-if="item.memo && item.memo.length">
 							<figure class="memo">{{item.memo}}</figure>
 						</section>
 					</section>
@@ -34,7 +34,8 @@
 							<figure class="account blue">{{item.from.sendable()}}</figure>
 							<figure class="account" v-if="item.from.sendable() !== item.to">{{item.to}}</figure>
 						</section>
-						<figure class="network">{{item.from.network().name}}</figure>
+						<figure class="network" v-if="item.from.network()">{{item.from.network().name}}</figure>
+						<figure class="network" v-else>Network disabled ({{item.from.networkUnique}})</figure>
 					</section>
 
 					<section class="actions">
