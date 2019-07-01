@@ -826,6 +826,8 @@ export default class EOS extends Plugin {
 			const contracts = ObjectHelpers.distinct(transaction.actions.map(action => action.account));
 			const abis = await this.getAbis(contracts, network, eos);
 
+			let rebuiltTransaction = JSON.parse(JSON.stringify(transaction));
+
 			const results = await Promise.all(transaction.actions.map(async (action, index) => {
 				const contractAccountName = action.account;
 
@@ -836,6 +838,7 @@ export default class EOS extends Plugin {
 				typeName = typeName.type;
 
 				const data = abi.fromBuffer(typeName, action.data);
+				rebuiltTransaction.actions[index].data = data;
 				const actionAbi = abi.abi.actions.find(fcAction => fcAction.name === action.name);
 				let ricardian = actionAbi ? actionAbi.ricardian_contract : null;
 				eos.fc.abiCache.abi(contractAccountName, abi.abi);
@@ -858,7 +861,7 @@ export default class EOS extends Plugin {
 			}
 
 			if(!transaction.hasOwnProperty('max_net_usage_words')) transaction.max_net_usage_words = 0;
-			payload.buf = Buffer.concat([Buffer.from(network.chainId, 'hex'), eos.fc.toBuffer("transaction", transaction), Buffer.from(new Uint8Array(32))]);
+			payload.buf = Buffer.concat([Buffer.from(network.chainId, 'hex'), eos.fc.toBuffer('transaction', rebuiltTransaction), Buffer.from(new Uint8Array(32))]);
 
 			return results;
 		} catch(e){

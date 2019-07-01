@@ -123,15 +123,13 @@
         },
         methods:{
 	        async lazyLoadResources(){
+	        	if(!this.account) return;
 		        const processKey = `resources:${this.account.unique()}`;
 		        if(Process.isProcessRunning(processKey)) return;
-		        const accounts = [this.account]
-		        if(accounts.length){
-			        let process = Process.loadResources(processKey, false);
-			        const resources = await ResourceService.getResourcesFor(this.account);
-			        this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:resources});
-			        process.updateProgress(100);
-		        }
+		        let process = Process.loadResources(processKey, false);
+		        const resources = await ResourceService.getResourcesFor(this.account);
+		        this[Actions.ADD_RESOURCES]({acc:this.account.identifiable(), res:resources});
+		        process.updateProgress(100);
 	        },
 	        async lazyLoadBalances(){
 		        BalanceService.loadBalancesFor(this.account);
