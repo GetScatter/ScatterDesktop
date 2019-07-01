@@ -192,6 +192,7 @@
 				this.selectedAccounts.map(acc => {
 					neededNetworks.splice(neededNetworks.indexOf(acc.network().unique()), 1);
 				});
+
 				return this.accounts
 					.filter(x => neededNetworks.includes(x.networkUnique))
 					.sort((a,b) => b.authority === 'active' ? 1 : 0)

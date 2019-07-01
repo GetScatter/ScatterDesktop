@@ -191,6 +191,7 @@
 			},
 			filteredAccounts(keypair){
 				return keypair.accounts(true)
+					.filter(x => this.accounts ? this.accounts.find(y => y.unique() === x.unique()) : true)
 					.filter(x => x.sendable().indexOf(this.terms) > -1)
 					.sort((a,b) => {
 						return b.totalFiatBalance() - a.totalFiatBalance();
