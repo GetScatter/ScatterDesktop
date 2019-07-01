@@ -68,7 +68,33 @@ export default class AppsService {
 			url:'',
 		};
 
-		const found = StoreService.get().state.dappData[origin];
+		const dappData = StoreService.get().state.dappData;
+		let found = dappData[origin];
+
+		if(!found){
+			(() => {
+				// Checking subdomains
+				if(origin.split('.').length < 2) return;
+				console.log('origin', origin);
+				const [subdomain, domain, suffix] = origin.split('.');
+				Object.keys(dappData).map(applink => {
+					const dapp = dappData[applink];
+					if(!dapp.hasOwnProperty('subdomains') || !dapp.subdomains.length) return;
+					// Checking wildcards
+					console.log('wild', dapp.subdomains, subdomain, domain, suffix)
+					if(dapp.subdomains.find(x => x === '*')){
+						if(`*.${applink}` === `*.${domain}.${suffix}`) return found = dapp;
+					}
+					// Checking hardcoded domains
+					else {
+						dapp.subdomains.map(sub => {
+							if(`${sub}.${applink}` === origin) return found = dapp;
+						})
+					}
+				})
+			})();
+		}
+
 		if(!found) return emptyResult;
 
 		const maxDescriptionLength = 70;
