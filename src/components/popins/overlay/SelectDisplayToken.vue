@@ -4,13 +4,13 @@
 		<section class="display-token">
 			<label>Select a fiat currency</label>
 			<section class="button-list">
-				<Button v-for="(price, currency) in currencies" :text="currency" :blue="currency === displayCurrency" @click.native="setCurrency(currency)" />
+				<Button :key="currency" v-for="(price, currency) in currencies" :text="currency" :blue="currency === displayCurrency" @click.native="setCurrency(currency)" />
 			</section>
 		</section>
 		<section class="display-token">
 			<label>Select a blockchain token</label>
 			<section class="button-list">
-				<Button v-for="token in networkTokensList" :text="token.symbol" :blue="token.uniqueWithChain() === displayToken" @click.native="setToken(token)" />
+				<Button :key="token.uniqueWithChain()" v-for="token in networkTokensList" :text="token.symbol" :blue="token.uniqueWithChain() === displayToken" @click.native="setToken(token)" />
 			</section>
 		</section>
 	</section>

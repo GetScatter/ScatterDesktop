@@ -75,13 +75,12 @@ export default class AppsService {
 			(() => {
 				// Checking subdomains
 				if(origin.split('.').length < 2) return;
-				console.log('origin', origin);
 				const [subdomain, domain, suffix] = origin.split('.');
 				Object.keys(dappData).map(applink => {
+					if(origin.indexOf(applink) === -1) return;
 					const dapp = dappData[applink];
 					if(!dapp.hasOwnProperty('subdomains') || !dapp.subdomains.length) return;
 					// Checking wildcards
-					console.log('wild', dapp.subdomains, subdomain, domain, suffix)
 					if(dapp.subdomains.find(x => x === '*')){
 						if(`*.${applink}` === `*.${domain}.${suffix}`) return found = dapp;
 					}

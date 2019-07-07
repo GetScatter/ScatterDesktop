@@ -176,7 +176,11 @@
 				if(e.which === 17) this.holdingCtrl = true;
 			},
 			handleKeyUp(e){
-				if(e.which === 17) this.holdingCtrl = false;
+				if(e.which === 17) {
+					setTimeout(() => {
+						this.holdingCtrl = false;
+					}, 5000);
+				}
 			},
 			canCreateAccounts(keypair){
 				return PluginRepository.plugin(keypair.enabledKey().blockchain).accountsAreImported()
