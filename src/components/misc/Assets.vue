@@ -13,7 +13,7 @@
 					<section class="details">
 						<section v-if="account.balanceFor(selectedToken)">
 							<figure class="balance">{{formatNumber(account.balanceFor(selectedToken).amount, true)}} {{selectedToken.symbol}}</figure>
-							<figure class="fiat">{{formatNumber(account.balanceFor(selectedToken).fiatBalance(), true)}}</figure>
+							<figure class="fiat">{{fiatSymbol(displayCurrency)}}{{formatNumber(account.balanceFor(selectedToken).fiatBalance(), true)}}</figure>
 						</section>
 						<section v-else>
 							<figure class="balance">{{formatNumber(parseFloat(0).toFixed(selectedToken.decimals), true)}} {{selectedToken.symbol}}</figure>
@@ -21,11 +21,11 @@
 						</section>
 
 						<section class="actions" v-if="!asSelector && !selectedToken.unusable">
-							<Button text="Send" @click.native="sendToken(selectedToken, account)" />
+							<Button text="Send" big="1" @click.native="sendToken(selectedToken, account)" />
 						</section>
 
 						<section class="actions" v-if="asSelector">
-							<Button text="Select" blue="1" @click.native="$emit('selected', {token:selectedToken, account})" />
+							<Button text="Select" big="1" @click.native="$emit('selected', {token:selectedToken, account})" />
 						</section>
 					</section>
 				</section>
@@ -118,7 +118,6 @@
 
 		.token-list {
 			flex:1;
-			border-right:1px solid $lightgrey;
 
 			.tokens {
 				height:calc(100vh - 220px);
@@ -127,6 +126,7 @@
 
 		.graph-and-accounts {
 			flex:1;
+			background:$blue;
 
 			.no-accounts {
 				height:calc(100% - 180px);
@@ -152,23 +152,22 @@
 				.account {
 					display:flex;
 					flex-direction: column;
-					padding-bottom:20px;
-					margin-bottom:20px;
-
-					&:not(:last-child){
-						border-bottom:1px solid $lightgrey;
-					}
+					margin-bottom:$padding-small;
+					padding: $padding-small;
+					background: rgba(255,255,255,0.06);
+					border-radius: $radius-big;
+					border-bottom:1px solid rgba(0,0,0,0.12);
 
 					.name {
 						font-size: $large;
 						font-weight: bold;
-						color:$blue;
+						color:white;
 						margin-bottom:2px;
 					}
 
 					.network {
-						font-size: $tiny;
-						color:$grey;
+						font-size: $small;
+						color:rgba(255,255,255,.6);
 						margin-bottom:6px;
 					}
 
@@ -183,10 +182,12 @@
 							font-size: $medium;
 							font-weight: bold;
 							margin-bottom:2px;
+							color:white;
 						}
 
 						.fiat {
-							font-size: $small;
+							font-size: $medium;
+							color:white;
 						}
 					}
 

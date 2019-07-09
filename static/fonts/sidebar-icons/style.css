@@ -33,6 +33,9 @@
 .sidebar-sidebar_ridl:before {
   content: "\e90c";
 }
+.sidebar-sidebar_dashboard:before {
+  content: "\e900";
+}
 .sidebar-sidebar_apps:before {
   content: "\e900";
 }

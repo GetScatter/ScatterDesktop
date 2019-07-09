@@ -120,10 +120,10 @@
 									y2: 0
 								}).elem('stop', {
 									offset: 0,
-									'stop-color': 'rgba(0, 168, 255, 0)'
+									'stop-color': 'rgba(255,255,255, 0)'
 								}).parent().elem('stop', {
 									offset: 0.5,
-									'stop-color': 'rgba(0, 168, 255, 1)'
+									'stop-color': 'rgba(255, 255, 255, 1)'
 								});
 							});
 						} else {
@@ -156,8 +156,8 @@
 	.no-graph {
 		width:100%;
 		height:180px;
-		background:$lightergrey;
-		color:$silver;
+		background:$blue;
+		color:rgba(255,255,255,0.32);
 		display:flex;
 		justify-content: center;
 		align-items: center;
@@ -169,6 +169,7 @@
 		height:180px;
 		width:100%;
 		position: relative;
+		background:$blue;
 
 		.tip {
 			position:absolute;

@@ -19,7 +19,7 @@
 	.panel-tabs {
 		width:100%;
 		display:flex;
-		margin-top:-40px;
+		margin-top:-35px;
 		padding:0 40px;
 		margin-bottom:19px;
 

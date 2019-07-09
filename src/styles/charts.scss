@@ -6,10 +6,8 @@
   height:180px;
 }
 
-
 .ct-label {
-  color: #6b6d7a;
-  text-shadow:0 1px 1px rgba(0,0,0,0.3);
+  color: #ffffff;
   font-weight: bold;
 
   &.ct-vertical {
@@ -48,8 +46,8 @@
 
 .ct-series-a {
   .ct-line {
-    stroke:$blue;
-    stroke-width: 2px;
+    stroke:rgba(255,255,255,0.9);
+    stroke-width: 3.5px;
     stroke-linecap: round;
   }
 

@@ -8,7 +8,6 @@
 		</section>
 
 		<section class="scroller" ref="scroller" v-if="state === STATES.EXPLORE">
-			<figure class="blue-bg" v-if="!exploreTerms.length"></figure>
 			<section class="padder">
 				<section class="featured" v-if="!exploreTerms.length">
 					<Carousel :slides="featuredApps" /> <!-- featuredApps -->
@@ -303,6 +302,7 @@
 			position: relative;
 			height:calc(100vh - 220px);
 			overflow-y:scroll;
+			overflow-x:hidden;
 
 			&.with-search {
 				height:calc(100vh - 290px);
@@ -319,7 +319,7 @@
 			}
 
 			.padder {
-				padding:0 40px;
+				padding:$padding-med $padding-med 0;
 				position: relative;
 				z-index:2;
 			}

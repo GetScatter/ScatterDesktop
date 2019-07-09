@@ -96,6 +96,7 @@
 					RouteNames.RECEIVE,
 					RouteNames.EXCHANGE,
 					RouteNames.ACCOUNT,
+					RouteNames.DASHBOARD,
 					this.features.creditCards ? null : RouteNames.WALLET,
 				].filter(x => !!x).includes(this.$route.name);
 			},
@@ -174,15 +175,20 @@
 		}
 
 		.quick-back {
-			font-size: 48px;
-			line-height:0;
+			font-size: 24px;
+			width:34px;
+			height:34px;
+			border:2px solid white;
+			line-height:24px;
+			text-align:center;
+			display:block;
+			border-radius:22px;
 			cursor: pointer;
-			display:inline-block;
 
 			i {
 				&:before {
 					padding:0;
-					margin:0;
+					margin:3px 0 0 0;
 				}
 			}
 

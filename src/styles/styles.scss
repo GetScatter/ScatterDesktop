@@ -1,5 +1,24 @@
 @import "./variables";
 
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar:horizontal {
+    height: 8px;
+}
+ 
+::-webkit-scrollbar-track {
+    background:rgba(0,0,0,0.06);
+    border-radius: 10px;
+    padding:2px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background:rgba(0,0,0,0.24);
+}
+
 div, figure, section, nav, article, input, textarea {
   padding:0; margin:0; box-sizing: border-box;
   font-family: 'Helvetica','Segoe UI','Roboto', sans-serif;
