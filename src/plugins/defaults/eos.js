@@ -860,7 +860,7 @@ export default class EOS extends Plugin {
 				console.error(`Invalid parsed actions, message array doesn't match actions length.`, transaction);
 			}
 
-			if(!transaction.hasOwnProperty('max_net_usage_words')) transaction.max_net_usage_words = 0;
+			if(!rebuiltTransaction.hasOwnProperty('max_net_usage_words')) rebuiltTransaction.max_net_usage_words = 0;
 			payload.buf = Buffer.concat([Buffer.from(network.chainId, 'hex'), eos.fc.toBuffer('transaction', rebuiltTransaction), Buffer.from(new Uint8Array(32))]);
 
 			return results;

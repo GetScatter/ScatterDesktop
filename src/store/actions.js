@@ -80,19 +80,12 @@ export const actions = {
 
     [Actions.SET_SCATTER]:async ({commit, state}, scatter) => {
         return new Promise(async resolve => {
-	        // const process = Process.savingData();
-
             const seed = await ipcAsync('seed');
             const savable = AES.encrypt(scatter.savable(seed), seed);
             StorageService.setLocalScatter(savable);
-	        // process.updateProgress(50);
-            StorageService.setScatter(savable).then(() => {
-	            BackupService.createAutoBackup()
-            });
-
+            StorageService.setScatter(savable).then(() => BackupService.createAutoBackup());
             commit(Actions.SET_SCATTER, scatter);
             resolve(scatter);
-	        // process.updateProgress(100);
         })
     },
 
