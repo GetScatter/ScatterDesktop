@@ -15,6 +15,11 @@
   50% { transform:scale(1.2); }
 }
 
+@keyframes zoom {
+  0% { transform:scale(1); }
+  100% { transform:scale(1.1); }
+}
+
 .spin, .animate-spin { animation: spin 0.65s linear infinite; }
 @keyframes spin {
   0% { transform:rotateZ(0deg); }

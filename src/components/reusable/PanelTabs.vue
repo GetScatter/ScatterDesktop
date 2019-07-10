@@ -19,22 +19,22 @@
 	.panel-tabs {
 		width:100%;
 		display:flex;
-		margin-top:-35px;
+		margin-top:-48px;
 		padding:0 40px;
-		margin-bottom:19px;
+		line-height:44px;
 
 		.tab-name {
 			cursor: pointer;
 			font-size: $large;
-			padding-right:20px;
+		    margin-right: 20px;
 			font-weight: bold;
 			color:rgba(255,255,255,0.5);
 			transition:all 0.1s ease;
-			transition-property: color;
+			border-bottom: 1px solid rgba(0,0,0,0.12);
 
 			&:hover, &.active {
 				color: $mid-light-blue;
-				text-shadow:0 1px 2px rgba(0,0,0,0.1);
+			    border-bottom: 4px solid white;
 			}
 		}
 	}

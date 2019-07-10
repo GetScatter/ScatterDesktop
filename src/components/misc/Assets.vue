@@ -134,9 +134,9 @@
 				justify-content: center;
 				align-items: center;
 
-				font-size: 24px;
+				font-size: $medium;
 				font-weight: bold;
-				color: $lightgrey;
+				color: rgba(255,255,255,0.24);
 			}
 
 			.accounts {

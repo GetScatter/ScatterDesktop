@@ -164,20 +164,20 @@
 
 				.asset-details {
 					display: grid;
-					grid-template-columns:60px auto auto;
+					grid-template-columns:72px auto auto;
 
 					.token-icon {
-						width:60px;
+						width:72px;
 						text-align:center;
 						align-self:center;
 					}
 
 					.token-symbol {
-						line-height: 34px;
+						line-height: 44px;
 					    font-size: 16px;
-					    width: 34px;
-					    height: 34px;
-					    border-radius: 20px;
+					    width: 44px;
+					    height: 44px;
+					    border-radius: 22px;
 					    background: $grey;
 					    margin: 0 auto;
 				        position: relative;
@@ -558,15 +558,12 @@
 						
 
 						.symbol {
-							width: 26px;
-						    height: 26px;
-						    border-radius: 13px;
-						    top: 4px;
-						    left: 4px;
+							width: 44px;
+						    height: 44px;
+						    border-radius: 22px;
 						    text-align: center;
-						    position:absolute;
-					        font-size: 24px;
-    						line-height: 28px;
+					        font-size: 32px;
+    						line-height: 44px;
     						color:white;
 						}
 

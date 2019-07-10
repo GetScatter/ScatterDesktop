@@ -173,7 +173,7 @@
             min-width:380px;
             max-width:30%;
             width:100%;
-            padding:0 0 $padding-med $padding-med;
+            padding:$padding-med 0 $padding-med $padding-med;
             height:calc(#{$quickheightnobuffer});
 
             .wrapper {
