@@ -6,17 +6,18 @@ import VueQrcodeReader from 'vue-qrcode-reader'
 
 import VueRouter from 'vue-router'
 import {RouteNames, Routing} from './Routing';
-import * as Actions from '../store/constants'
-import {blockchainName, Blockchains} from '../models/Blockchains'
-import {SETTINGS_OPTIONS} from '../models/Settings'
 import ElectronHelpers from '../util/ElectronHelpers'
-import {localized} from '../localization/locales'
-import LANG_KEYS from '../localization/keys'
-import StoreService from "../services/utility/StoreService";
-import AppsService from "../services/apps/AppsService";
-import {dateId} from "../util/DateHelpers";
 import features from '../features';
-import PriceService from "../services/apis/PriceService";
+
+import * as Actions from 'scatter-core/store/constants'
+import {blockchainName, Blockchains} from 'scatter-core/models/Blockchains'
+import {SETTINGS_OPTIONS} from 'scatter-core/models/Settings'
+import {localized} from 'scatter-core/localization/locales'
+import LANG_KEYS from 'scatter-core/localization/keys'
+import StoreService from "scatter-core/services/utility/StoreService";
+import AppsService from "scatter-core/services/apps/AppsService";
+import {dateId} from "scatter-core/util/DateHelpers";
+import PriceService from "scatter-core/services/apis/PriceService";
 
 Vue.config.productionTip = false
 
@@ -32,7 +33,6 @@ export default class VueInitializer {
                 components,
                 middleware = () => {},
                 routerCallback = () => {}){
-	    StoreService.init();
 
         this.setupVuePlugins();
         this.registerComponents(components);

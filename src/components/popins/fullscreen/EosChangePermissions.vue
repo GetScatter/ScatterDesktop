@@ -46,13 +46,10 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import PasswordService from "../../../services/secure/PasswordService";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
-	import {Blockchains} from "../../../models/Blockchains";
-	import PluginRepository from "../../../plugins/PluginRepository";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import {Blockchains} from "scatter-core/models/Blockchains";
 
 	export default {
 		props:['popin'],

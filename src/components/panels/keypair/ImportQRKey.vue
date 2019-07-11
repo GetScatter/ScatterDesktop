@@ -12,12 +12,11 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import KeyPairService from "../../../services/secure/KeyPairService";
-	import Keypair from "../../../models/Keypair";
-	import AccountService from "../../../services/blockchain/AccountService";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
-	import QRService from "../../../services/secure/QRService";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import Keypair from "scatter-core/models/Keypair";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import QRService from "scatter-core/services/secure/QRService";
 
 	export default {
 		props:['returnOnly'],

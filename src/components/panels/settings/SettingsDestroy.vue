@@ -20,12 +20,10 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../../store/constants';
+    import * as Actions from 'scatter-core/store/constants';
 
-    import SocketService from '../../../services/utility/SocketService';
-    import StorageService from '../../../services/utility/StorageService';
-    import PopupService from '../../../services/utility/PopupService';
-    import {Popup} from '../../../models/popups/Popup'
+    import PopupService from 'scatter-core/services/utility/PopupService';
+    import {Popup} from 'scatter-core/models/popups/Popup'
 
     export default {
         data () {return {

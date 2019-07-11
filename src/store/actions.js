@@ -1,20 +1,20 @@
-import * as Actions from './constants'
-import StorageService from '../services/utility/StorageService';
-import SocketService from '../services/utility/SocketService';
-import PasswordService from '../services/secure/PasswordService';
-import BackupService from '../services/utility/BackupService';
-import PluginRepository from '../plugins/PluginRepository';
-import Hasher from '../util/Hasher'
-import IdGenerator from '../util/IdGenerator'
+import * as Actions from 'scatter-core/store/constants'
+import StorageService from 'scatter-core/services/utility/StorageService';
+import SocketService from 'scatter-core/services/utility/SocketService';
+import PasswordService from 'scatter-core/services/secure/PasswordService';
+import BackupService from 'scatter-core/services/utility/BackupService';
+import PluginRepository from 'scatter-core/plugins/PluginRepository';
+import Hasher from 'scatter-core/util/Hasher'
+import IdGenerator from 'scatter-core/util/IdGenerator'
 
-import Scatter from '../models/Scatter';
+import Scatter from 'scatter-core/models/Scatter';
 
 import AES from 'aes-oop';
-import PopupService from "../services/utility/PopupService";
-import {Popup} from '../models/popups/Popup'
-import {RUNNING_TESTS} from "../util/TestingHelper";
-import {ipcAsync} from "../util/ElectronHelpers";
-import Process from "../models/Process";
+import PopupService from "scatter-core/services/utility/PopupService";
+import {Popup} from 'scatter-core/models/popups/Popup'
+import {RUNNING_TESTS} from "scatter-core/util/TestingHelper";
+import Seeder from "scatter-core/services/secure/Seeder";
+import Process from "scatter-core/models/Process";
 
 export const actions = {
     [Actions.SET_PORTS]:({commit}, x) => commit(Actions.SET_PORTS, x),
@@ -52,7 +52,7 @@ export const actions = {
             const scatter = state.scatter.clone();
 
             if(!RUNNING_TESTS){
-	            await require('../migrations/migrator').default(scatter);
+	            await require('scatter-core/migrations/migrator').default(scatter, require('../migrations/version'));
             }
 
             scatter.meta.regenerateVersion();
@@ -80,7 +80,7 @@ export const actions = {
 
     [Actions.SET_SCATTER]:async ({commit, state}, scatter) => {
         return new Promise(async resolve => {
-            const seed = await ipcAsync('seed');
+            const seed = await Seeder.getSeed();
             const savable = AES.encrypt(scatter.savable(seed), seed);
             StorageService.setLocalScatter(savable);
             StorageService.setScatter(savable).then(() => BackupService.createAutoBackup());

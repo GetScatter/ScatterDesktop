@@ -99,9 +99,9 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import Token from "../../models/Token";
-	import PluginRepository from '../../plugins/PluginRepository'
-	import Network from "../../models/Network";
+	import Token from "scatter-core/models/Token";
+	import PluginRepository from 'scatter-core/plugins/PluginRepository'
+	import Network from "scatter-core/models/Network";
 
 	const STATES = {
 		NETWORK:'network',

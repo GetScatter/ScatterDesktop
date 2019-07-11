@@ -18,9 +18,9 @@
 
 <script>
 	import {mapState,mapGetters, mapActions} from 'vuex';
-	import * as Actions from '../../../store/constants';
-	import PriceService from "../../../services/apis/PriceService";
-	import TokenService from "../../../services/utility/TokenService";
+	import * as Actions from 'scatter-core/store/constants';
+	import PriceService from "scatter-core/services/apis/PriceService";
+	import TokenService from "scatter-core/services/utility/TokenService";
 
 	export default {
 		props:['popin'],

@@ -18,7 +18,7 @@
 
 <script>
 	import LoginButton from "./LoginButton";
-	import BackupService from "../../services/utility/BackupService";
+	import BackupService from "scatter-core/services/utility/BackupService";
 	export default {
 		components: {LoginButton},
 		methods:{

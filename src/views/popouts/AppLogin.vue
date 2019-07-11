@@ -127,14 +127,14 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import {IdentityRequiredFields} from "../../models/Identity";
-	import Network from "../../models/Network";
+	import {IdentityRequiredFields} from "scatter-core/models/Identity";
+	import Network from "scatter-core/models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import RIDLService from "../../services/apis/RIDLService";
-	import PopupService from "../../services/utility/PopupService";
-	import {Popup} from "../../models/popups/Popup";
-	import {Blockchains} from "../../models/Blockchains";
-	import * as ApiActions from '../../models/api/ApiActions';
+	import RIDLService from "scatter-core/services/apis/RIDLService";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import * as ApiActions from 'scatter-core/models/api/ApiActions';
 	import PopOutApp from "../../components/popouts/PopOutApp";
 	require('../../styles/transfers.scss');
 
@@ -204,8 +204,6 @@
 					}, [])
 					.sort((a,b) => b.logins - a.logins)
 			},
-
-
 			requestedNetworks(){
 				return this.accountRequirements.map(raw => {
 					const n = Network.fromJson(raw);
@@ -218,20 +216,12 @@
 			savedNetwork(){
 				return this.networks.find(x => x.unique() === this.network.unique());
 			},
-
-
-
 			payload(){ return this.popup.payload(); },
-
 			isValidIdentity() {
 				return this.selectedIdentity.hasRequiredFields(this.fields, this.selectedLocation);
 			},
 			fields() {
 				return IdentityRequiredFields.fromJson(this.payload.fields);
-			},
-
-			accountFields(){
-				return this.fields.accounts.map(rawNetwork => Network.fromJson(rawNetwork));
 			},
 			personalFields(){
 				return this.fields.personal;
@@ -243,11 +233,6 @@
 				if(!this.personalFields.length && !this.locationFields.length) return false;
 				return !this.identity.hasRequiredFields(this.fields);
 			},
-			stillNeedsFields(){
-				return this.accountRequirements.length === this.selectedAccounts.length && this.missingFields
-			},
-
-
 			identityRequirements() {
 				return this.fields.personal.concat(this.fields.location).join(', ');
 			},

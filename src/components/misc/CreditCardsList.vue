@@ -6,8 +6,7 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import PluginRepository from "../../plugins/PluginRepository";
-	import CreditCard from "../../models/CreditCard";
+	import CreditCard from "scatter-core/models/CreditCard";
 	import CreditCardIcon from '../../components/svgs/CreditCard';
 	import Card from './Card';
 

@@ -30,8 +30,8 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import PopOutApp from '../../components/popouts/PopOutApp';
 	import SearchBar from '../../components/reusable/SearchBar';
-	import {IdentityRequiredFields} from "../../models/Identity";
-	import Network from "../../models/Network";
+	import {IdentityRequiredFields} from "scatter-core/models/Identity";
+	import Network from "scatter-core/models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
 
 	export default {

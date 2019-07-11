@@ -13,8 +13,8 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
-	import {blockchainName, BlockchainsArray} from "../../../models/Blockchains";
+	import * as Actions from 'scatter-core/store/constants';
+	import {blockchainName, BlockchainsArray} from "scatter-core/models/Blockchains";
 	import TokenList from "../../tokens/TokenList";
 
 	export default {

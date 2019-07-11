@@ -38,13 +38,13 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import ExternalWallet, {EXT_WALLET_TYPES, EXT_WALLET_TYPES_ARR} from '../../../models/hardware/ExternalWallet';
-	import {Blockchains, BlockchainsArray} from "../../../models/Blockchains";
-	import Keypair from "../../../models/Keypair";
-	import KeyPairService from "../../../services/secure/KeyPairService";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
-	import HardwareService from "../../../services/secure/HardwareService";
+	import ExternalWallet, {EXT_WALLET_TYPES, EXT_WALLET_TYPES_ARR} from 'scatter-core/models/hardware/ExternalWallet';
+	import {Blockchains, BlockchainsArray} from "scatter-core/models/Blockchains";
+	import Keypair from "scatter-core/models/Keypair";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import HardwareService from "scatter-core/services/secure/HardwareService";
 
 	let inputTimeout;
 	export default {

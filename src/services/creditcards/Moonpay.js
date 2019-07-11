@@ -1,6 +1,6 @@
-import StoreService from "../utility/StoreService";
-import PopupService from "../utility/PopupService";
-import {Popup} from "../../models/popups/Popup";
+import StoreService from "scatter-core/services/utility/StoreService";
+import PopupService from "scatter-core/services/utility/PopupService";
+import {Popup} from "scatter-core/models/popups/Popup";
 
 const API_PUB_KEY = 'pk_test_uQlwYQs3jLbrl53VWKv1xW1XZ7eHsr65';
 

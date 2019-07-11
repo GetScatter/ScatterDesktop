@@ -70,12 +70,12 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../store/constants';
+    import * as Actions from 'scatter-core/store/constants';
     import PanelTabs from "../components/reusable/PanelTabs";
-    import ResourceService from "../services/blockchain/ResourceService";
-    import Process from "../models/Process";
-    import BalanceService from "../services/blockchain/BalanceService";
-    import PluginRepository from '../plugins/PluginRepository'
+    import ResourceService from "scatter-core/services/blockchain/ResourceService";
+    import Process from "scatter-core/models/Process";
+    import BalanceService from "scatter-core/services/blockchain/BalanceService";
+    import PluginRepository from 'scatter-core/plugins/PluginRepository'
     import ElectronHelpers from "../util/ElectronHelpers";
     import TokenGraph from "../components/tokens/TokenGraph";
     import TokenList from "../components/tokens/TokenList";

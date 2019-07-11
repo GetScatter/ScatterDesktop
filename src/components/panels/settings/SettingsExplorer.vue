@@ -17,10 +17,10 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../../store/constants';
-    import {Blockchains, BlockchainsArray, blockchainName} from '../../../models/Blockchains';
-    import PluginRepository from '../../../plugins/PluginRepository'
-    import ExplorerService from "../../../services/blockchain/ExplorerService";
+    import * as Actions from 'scatter-core/store/constants';
+    import {Blockchains, BlockchainsArray, blockchainName} from 'scatter-core/models/Blockchains';
+    import PluginRepository from 'scatter-core/plugins/PluginRepository'
+    import ExplorerService from "scatter-core/services/blockchain/ExplorerService";
 
 
 

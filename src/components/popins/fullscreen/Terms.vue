@@ -6,7 +6,7 @@
 
 <script>
 	import {mapActions} from 'vuex';
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import Terms from "../../login/Terms";
 
 	export default {

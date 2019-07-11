@@ -18,13 +18,13 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import KeyPairService from "../../../services/secure/KeyPairService";
-	import {Blockchains} from "../../../models/Blockchains";
-	import RIDLService from "../../../services/apis/RIDLService";
-	import Keypair from "../../../models/Keypair";
-	import PluginRepository from "../../../plugins/PluginRepository";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import RIDLService from "scatter-core/services/apis/RIDLService";
+	import Keypair from "scatter-core/models/Keypair";
+	import PluginRepository from "scatter-core/plugins/PluginRepository";
 
 	export default {
 		props:['popin'],

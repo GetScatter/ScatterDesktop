@@ -271,8 +271,6 @@ class NotificationService {
 require("babel-polyfill")
 const Transport = require('@ledgerhq/hw-transport-node-hid');
 
-const NodeMachineId = require('node-machine-id');
-
 
 
 
@@ -467,7 +465,6 @@ global.appShared = {
 	LowLevelWindowService,
 	LowLevelSocketService:new LowLevelSocketService(),
 	NotificationService,
-	NodeMachineId,
 	savingData:false,
 	reloader:() => mainWindow.reload()
 };

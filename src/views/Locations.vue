@@ -89,13 +89,9 @@
 
 <script>
 	import {mapGetters, mapActions, mapState} from 'vuex';
-	import * as Actions from '../store/constants'
-	import {LocationInformation} from "../models/Identity";
-	import IdGenerator from "../util/IdGenerator";
-	import {Popup} from "../models/popups/Popup";
-	import PopupService from "../services/utility/PopupService";
-	import Identity from "../models/Identity";
-	import {Countries} from '../data/Countries'
+	import * as Actions from 'scatter-core/store/constants'
+	import {LocationInformation} from "scatter-core/models/Identity";
+	import Countries from 'scatter-core/data/Countries'
 
 	let saveTimeout;
 	export default {

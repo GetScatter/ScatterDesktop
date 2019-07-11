@@ -151,13 +151,13 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 
-	import PluginRepository from '../../../plugins/PluginRepository';
-	import {BlockchainsArray, Blockchains, blockchainName} from '../../../models/Blockchains';
+	import PluginRepository from 'scatter-core/plugins/PluginRepository';
+	import {BlockchainsArray, Blockchains, blockchainName} from 'scatter-core/models/Blockchains';
 	import SearchBar from '../../reusable/SearchBar';
-	import Token from "../../../models/Token";
-	import TokenService from "../../../services/utility/TokenService";
+	import Token from "scatter-core/models/Token";
+	import TokenService from "scatter-core/services/utility/TokenService";
 
 	const STATES = {
 		ADD_TOKEN:'addToken',

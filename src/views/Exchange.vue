@@ -119,16 +119,16 @@
 
 <script>
 	import {mapGetters, mapActions, mapState} from 'vuex';
-	import PopupService from "../services/utility/PopupService";
-	import {Popup} from "../models/popups/Popup";
-	import BalanceService from "../services/blockchain/BalanceService";
-	import PriceService from "../services/apis/PriceService";
-	import Token from "../models/Token";
-	import ExchangeService from "../services/apis/ExchangeService";
-	import TokenService from "../services/utility/TokenService";
-	import * as Actions from "../store/constants";
-	import TransferService from "../services/blockchain/TransferService";
-	import HistoricExchange from "../models/histories/HistoricExchange";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import BalanceService from "scatter-core/services/blockchain/BalanceService";
+	import PriceService from "scatter-core/services/apis/PriceService";
+	import Token from "scatter-core/models/Token";
+	import ExchangeService from "scatter-core/services/apis/ExchangeService";
+	import TokenService from "scatter-core/services/utility/TokenService";
+	import * as Actions from "scatter-core/store/constants";
+	import TransferService from "scatter-core/services/blockchain/TransferService";
+	import HistoricExchange from "scatter-core/models/histories/HistoricExchange";
 	require('../styles/transfers.scss');
 
 	export default {
@@ -368,33 +368,6 @@
 			...mapActions([
 				Actions.DELTA_HISTORY
 			])
-
-
-
-
-
-
-			// async send(){
-			// 	const reset = () => this.sending = false;
-			// 	if(!this.canSend) return;
-			// 	this.sending = true;
-			// 	PopupService.push(Popup.confirmTransfer(this.account.sendable(), this.recipient, this.toSend, this.memo, async accepted => {
-			// 		if(!accepted) return reset();
-			// 		if(!await PasswordService.verifyPIN()) return reset();
-			// 		this.setWorkingScreen(true);
-			// 		const sent = await TransferService[this.account.blockchain()]({
-			// 			account:this.account,
-			// 			recipient:this.recipient,
-			// 			amount:this.token.amount,
-			// 			memo:this.memo,
-			// 			token:this.token,
-			// 			promptForSignature:false,
-			// 		}).catch(() => false);
-			// 		reset();
-			// 		this.setWorkingScreen(false);
-			// 		if(sent) BalanceService.loadBalancesFor(this.account);
-			// 	}))
-			// },
 		},
 		watch:{
 			['token.symbol'](){

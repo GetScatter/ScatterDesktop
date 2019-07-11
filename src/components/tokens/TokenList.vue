@@ -32,9 +32,9 @@
 
 <script>
 	import {mapState, mapGetters, mapActions} from 'vuex';
-	import * as Actions from '../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import SearchAndFilter from "../reusable/SearchAndFilter";
-	import Token from "../../models/Token";
+	import Token from "scatter-core/models/Token";
 
 	export default {
 		components: {SearchAndFilter},

@@ -25,11 +25,11 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import PasswordService from "../../../services/secure/PasswordService";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
+	import PasswordService from "scatter-core/services/secure/PasswordService";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
 	import Lock from '../../svgs/Lock'
 
 	export default {

@@ -19,9 +19,8 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import AccountService from "../../../services/blockchain/AccountService";
 
 	export default {
 		props:['popin'],

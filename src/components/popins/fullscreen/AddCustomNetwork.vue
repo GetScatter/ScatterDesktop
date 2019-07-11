@@ -15,11 +15,11 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
 	import EditNetwork from "../../misc/EditNetwork";
-	import Network from '../../../models/Network'
-	import NetworkService from "../../../services/blockchain/NetworkService";
+	import Network from 'scatter-core/models/Network'
+	import NetworkService from "scatter-core/services/blockchain/NetworkService";
 
 	export default {
 		components: {EditNetwork},

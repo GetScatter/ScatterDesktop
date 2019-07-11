@@ -163,21 +163,21 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../store/constants';
+    import * as Actions from 'scatter-core/store/constants';
 	import ReputationScore from '../../components/reusable/ReputationScore';
 	import SearchBar from '../../components/reusable/SearchBar';
 	import JSONFormatter from 'json-formatter-js'
-	import Hasher from "../../util/Hasher";
-	import Account from "../../models/Account";
-	import PopupService from "../../services/utility/PopupService";
-	import {Popup} from "../../models/popups/Popup";
-	import PermissionService from "../../services/apps/PermissionService";
-	import {Blockchains} from "../../models/Blockchains";
-	import {IdentityRequiredFields} from "../../models/Identity";
+	import Hasher from "scatter-core/util/Hasher";
+	import Account from "scatter-core/models/Account";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import PermissionService from "scatter-core/services/apps/PermissionService";
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import {IdentityRequiredFields} from "scatter-core/models/Identity";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import KeyPairService from "../../services/secure/KeyPairService";
-	import ResourceService from "../../services/blockchain/ResourceService";
-	import RIDLService, {RIDL_WEB_HOST} from "../../services/apis/RIDLService";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import ResourceService from "scatter-core/services/blockchain/ResourceService";
+	import RIDLService, {RIDL_WEB_HOST} from "scatter-core/services/apis/RIDLService";
 	import PopOutApp from "../../components/popouts/PopOutApp";
 
 	const VIEW_TYPES = {

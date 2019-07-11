@@ -60,8 +60,6 @@
                 </section>
             </section>
 
-            <!--<FullWidthRow :items="selectedAccounts" popout="1" />-->
-
             <section class="fixed-actions" v-if="!pinning">
                 <Button blue="1" :text="locale(langKeys.GENERIC.Confirm)" @click.native="returnResult(true)" />
                 <Button :text="locale(langKeys.GENERIC.Deny)" @click.native="returnResult(null)" />
@@ -75,25 +73,23 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import PopOutApp from '../../components/popouts/PopOutApp';
 	// import SearchBar from '../../components/reusable/SearchBar';
-	import FullWidthRow from '../../components/reusable/FullWidthRow';
-	import {IdentityRequiredFields} from "../../models/Identity";
-	import Network from "../../models/Network";
+	import {IdentityRequiredFields} from "scatter-core/models/Identity";
+	import Network from "scatter-core/models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import KeyPairService from "../../services/secure/KeyPairService";
-	import Keypair from "../../models/Keypair";
-	import IdGenerator from "../../util/IdGenerator";
-	import Token from "../../models/Token";
-	import {Blockchains} from "../../models/Blockchains";
-	import TokenService from "../../services/utility/TokenService";
-	import PopupService from "../../services/utility/PopupService";
-	import {Popup} from "../../models/popups/Popup";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import Keypair from "scatter-core/models/Keypair";
+	import IdGenerator from "scatter-core/util/IdGenerator";
+	import Token from "scatter-core/models/Token";
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import TokenService from "scatter-core/services/utility/TokenService";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
 
 	export default {
 		props:['popup', 'expanded', 'pinning'],
 		components:{
 			RequiredFields,
 			PopOutApp,
-			FullWidthRow,
 			// SearchBar,
 		},
 		data () {return {

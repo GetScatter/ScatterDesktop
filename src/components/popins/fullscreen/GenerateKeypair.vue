@@ -33,12 +33,11 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
-	import KeyPairService from "../../../services/secure/KeyPairService";
-	import Keypair from "../../../models/Keypair";
-	import {BlockchainsArray} from '../../../models/Blockchains'
-	import IdGenerator from "../../../util/IdGenerator";
-	import AccountService from "../../../services/blockchain/AccountService";
+	import * as Actions from 'scatter-core/store/constants';
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import Keypair from "scatter-core/models/Keypair";
+	import {BlockchainsArray} from 'scatter-core/models/Blockchains'
+	import AccountService from "scatter-core/services/blockchain/AccountService";
 	import Key from '../../svgs/Key'
 
 	export default {

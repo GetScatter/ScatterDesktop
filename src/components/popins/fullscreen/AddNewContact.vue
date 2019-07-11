@@ -15,11 +15,11 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
 	import EditContact from "../../misc/EditContact";
-	import Contact from "../../../models/Contact";
-	import ContactService from "../../../services/utility/ContactService";
+	import Contact from "scatter-core/models/Contact";
+	import ContactService from "scatter-core/services/utility/ContactService";
 
 	export default {
 		components: {EditContact},

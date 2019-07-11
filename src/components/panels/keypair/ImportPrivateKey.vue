@@ -22,9 +22,6 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import KeyPairService from "../../../services/secure/KeyPairService";
-	import Keypair from "../../../models/Keypair";
-	import AccountService from "../../../services/blockchain/AccountService";
 	import Key from '../../svgs/Key'
 
 	export default {

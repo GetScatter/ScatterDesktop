@@ -21,21 +21,20 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from "../../../store/constants";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
-	import Mnemonic from "../../../util/Mnemonic";
-	import StorageService from "../../../services/utility/StorageService";
-	import Scatter from "../../../models/Scatter";
-	import Keypair from "../../../models/Keypair";
-	import KeyPairService from "../../../services/secure/KeyPairService";
-	import AccountService from "../../../services/blockchain/AccountService";
-	import {ipcFaF} from "../../../util/ElectronHelpers";
+	import * as Actions from "scatter-core/store/constants";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import Mnemonic from "scatter-core/util/Mnemonic";
+	import StorageService from "scatter-core/services/utility/StorageService";
+	import Scatter from "scatter-core/models/Scatter";
+	import Keypair from "scatter-core/models/Keypair";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import AccountService from "scatter-core/services/blockchain/AccountService";
 	import LoginButton from "../../login/LoginButton";
 	import AES from 'aes-oop';
-	import Crypto from "../../../util/Crypto";
-	import {getFileLocation} from "../../../services/utility/FileService";
-	import ElectronHelpers from "../../../util/ElectronHelpers";
+	import Crypto from "scatter-core/util/Crypto";
+	import {getFileLocation} from "../../../services/FileService";
+	import ElectronHelpers, {ipcFaF} from "../../../util/ElectronHelpers";
 	const fs = window.require('fs');
 
 	export default {

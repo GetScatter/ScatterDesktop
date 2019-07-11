@@ -7,10 +7,9 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import KeysAndAccountList from "../../misc/KeysAndAccountList";
-	import SearchAndFilter from "../../reusable/SearchAndFilter";
-	import {BlockchainsArray, blockchainName} from '../../../models/Blockchains';
+	import {BlockchainsArray, blockchainName} from 'scatter-core/models/Blockchains';
 
 	export default {
 		components: {KeysAndAccountList},

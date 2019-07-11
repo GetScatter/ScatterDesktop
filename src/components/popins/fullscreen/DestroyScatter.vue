@@ -15,10 +15,10 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import SocketService from "../../../services/utility/SocketService";
-	import StorageService from "../../../services/utility/StorageService";
+	import SocketService from "scatter-core/services/utility/SocketService";
+	import StorageService from "scatter-core/services/utility/StorageService";
 	import ElectronHelpers from "../../../util/ElectronHelpers";
 
 	export default {

@@ -101,19 +101,17 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
-	import {Blockchains} from "../../../models/Blockchains";
-	import PluginRepository from "../../../plugins/PluginRepository";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
-	import AccountService from "../../../services/blockchain/AccountService";
-	import EosAccountService from "../../../services/blockchain/EosAccountService";
-	import Account from "../../../models/Account";
-	import Keypair from "../../../models/Keypair";
+	import * as Actions from 'scatter-core/store/constants';
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import PluginRepository from "scatter-core/plugins/PluginRepository";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import AccountService from "scatter-core/services/blockchain/AccountService";
+	import Account from "scatter-core/models/Account";
+	import Keypair from "scatter-core/models/Keypair";
 	import Exchange from '../../svgs/quick-actions/Exchange'
 	import CreditCard from '../../svgs/CreditCard'
 	import ElectronHelpers from "../../../util/ElectronHelpers";
-	import Process from "../../../models/Process";
 
 
 	const STATES = {

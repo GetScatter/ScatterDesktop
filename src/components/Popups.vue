@@ -68,8 +68,8 @@
 <script>
     import {RouteNames} from '../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../store/constants';
-    import {PopupDisplayTypes, PopupTypes, isFullscreen} from '../models/popups/Popup'
+    import * as Actions from 'scatter-core/store/constants';
+    import {PopupDisplayTypes, PopupTypes, isFullscreen} from 'scatter-core/models/popups/Popup'
 
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'

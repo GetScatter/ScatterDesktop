@@ -20,7 +20,7 @@
 
 <script>
 	import {mapGetters, mapState, mapActions} from 'vuex';
-	import * as Actions from '../store/constants'
+	import * as Actions from 'scatter-core/store/constants'
 	import {RouteNames} from "../vue/Routing";
 
 	export default {

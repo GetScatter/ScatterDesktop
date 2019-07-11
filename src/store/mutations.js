@@ -1,4 +1,4 @@
-import * as Mutations from './constants'
+import * as Mutations from 'scatter-core/store/constants'
 import Vue from 'vue';
 
 export const mutations = {

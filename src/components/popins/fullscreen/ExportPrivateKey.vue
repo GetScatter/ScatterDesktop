@@ -75,13 +75,14 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import Crypto from "../../../util/Crypto";
+	import Crypto from "scatter-core/util/Crypto";
 	import ElectronHelpers, {ipcAsync, remote} from "../../../util/ElectronHelpers";
-	import QRService from "../../../services/secure/QRService";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
+	import QRService from "scatter-core/services/secure/QRService";
+	import Seeder from "scatter-core/services/secure/Seeder";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
 
 	const STATES = {
 		SELECT:'select',
@@ -148,7 +149,7 @@
 				return this.keypair.enabledKey().key;
 			},
 			async getPrivateKey(){
-				this.keypair.decrypt(await ipcAsync('seed'));
+				this.keypair.decrypt(await Seeder.getSeed());
 				return Crypto.bufferToPrivateKey(this.keypair.privateKey, this.keypair.enabledKey().blockchain);
 			},
 			async copyPrivateKey(){

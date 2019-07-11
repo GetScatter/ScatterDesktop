@@ -58,13 +58,13 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import ImportPrivateKey from '../../panels/keypair/ImportPrivateKey';
 	import ImportHardwareKey from '../../panels/keypair/ImportHardwareKey';
-	import KeyPairService from "../../../services/secure/KeyPairService";
-	import Keypair from "../../../models/Keypair";
-	import AccountService from "../../../services/blockchain/AccountService";
-	import BalanceService from "../../../services/blockchain/BalanceService";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import Keypair from "scatter-core/models/Keypair";
+	import AccountService from "scatter-core/services/blockchain/AccountService";
+	import BalanceService from "scatter-core/services/blockchain/BalanceService";
 	import ImportQRKey from "../../panels/keypair/ImportQRKey";
 	import Key from '../../../components/svgs/Key'
 

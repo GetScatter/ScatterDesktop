@@ -27,13 +27,13 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../../store/constants';
+    import * as Actions from 'scatter-core/store/constants';
 
-    import {BACKUP_STRATEGIES} from '../../../models/Settings';
-    import BackupService from '../../../services/utility/BackupService';
+    import {BACKUP_STRATEGIES} from 'scatter-core/models/Settings';
+    import BackupService from 'scatter-core/services/utility/BackupService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
-    import PopupService from "../../../services/utility/PopupService";
-    import {Popup} from "../../../models/popups/Popup";
+    import PopupService from "scatter-core/services/utility/PopupService";
+    import {Popup} from "scatter-core/models/popups/Popup";
 
     export default {
         data () {return {

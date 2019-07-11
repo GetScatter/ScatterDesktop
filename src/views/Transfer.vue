@@ -76,13 +76,13 @@
 
 <script>
 	import {mapGetters, mapState} from 'vuex';
-	import PopupService from "../services/utility/PopupService";
-	import {Popup} from "../models/popups/Popup";
-	import Token from "../models/Token";
-	import BalanceService from "../services/blockchain/BalanceService";
-	import TransferService from "../services/blockchain/TransferService";
-	import PasswordService from "../services/secure/PasswordService";
-	import PriceService from "../services/apis/PriceService";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import Token from "scatter-core/models/Token";
+	import BalanceService from "scatter-core/services/blockchain/BalanceService";
+	import TransferService from "scatter-core/services/blockchain/TransferService";
+	import PasswordService from "scatter-core/services/secure/PasswordService";
+	import PriceService from "scatter-core/services/apis/PriceService";
 	require('../styles/transfers.scss');
 
 	export default {

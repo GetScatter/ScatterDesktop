@@ -20,15 +20,15 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
-	import Account from "../../../models/Account";
-	import AccountService from "../../../services/blockchain/AccountService";
-	import BalanceService from "../../../services/blockchain/BalanceService";
-	import ResourceService from "../../../services/blockchain/ResourceService";
-	import {Blockchains} from "../../../models/Blockchains";
-	import PluginRepository from "../../../plugins/PluginRepository";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
+	import * as Actions from 'scatter-core/store/constants';
+	import Account from "scatter-core/models/Account";
+	import AccountService from "scatter-core/services/blockchain/AccountService";
+	import BalanceService from "scatter-core/services/blockchain/BalanceService";
+	import ResourceService from "scatter-core/services/blockchain/ResourceService";
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import PluginRepository from "scatter-core/plugins/PluginRepository";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
 
 	export default {
 		props:['popin'],

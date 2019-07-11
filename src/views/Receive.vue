@@ -46,10 +46,10 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import PopupService from "../services/utility/PopupService";
-	import {Popup} from "../models/popups/Popup";
-	import QRService from "../services/secure/QRService";
-	import {Blockchains} from "../models/Blockchains";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import QRService from "scatter-core/services/secure/QRService";
+	import {Blockchains} from "scatter-core/models/Blockchains";
 	import ElectronHelpers from "../util/ElectronHelpers";
 	require('../styles/transfers.scss');
 

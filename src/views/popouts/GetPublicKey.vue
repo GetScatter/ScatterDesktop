@@ -17,15 +17,15 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import SearchBar from '../../components/reusable/SearchBar';
-	import {IdentityRequiredFields} from "../../models/Identity";
-	import Network from "../../models/Network";
+	import {IdentityRequiredFields} from "scatter-core/models/Identity";
+	import Network from "scatter-core/models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import KeyPairService from "../../services/secure/KeyPairService";
-	import Keypair from "../../models/Keypair";
-	import IdGenerator from "../../util/IdGenerator";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import Keypair from "scatter-core/models/Keypair";
+	import IdGenerator from "scatter-core/util/IdGenerator";
 	import PopOutApp from "../../components/popouts/PopOutApp";
-	import PopupService from "../../services/utility/PopupService";
-	import {Popup} from "../../models/popups/Popup";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
 
 	export default {
 		props:['popup', 'expanded'],

@@ -16,7 +16,6 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import {IdentityRequiredFields} from "../../models/Identity";
 
 	export default {
 		props:['fields', 'identity', 'selectedIdentity', 'selectedLocation', 'clonedLocation'],

@@ -38,10 +38,10 @@
 
 <script>
 	import {mapActions} from 'vuex';
-	import * as Actions from '../../../store/constants'
+	import * as Actions from 'scatter-core/store/constants'
 	import '../../../styles/popins.scss';
-	import KeyPairService from "../../../services/secure/KeyPairService";
-	import BalanceService from "../../../services/blockchain/BalanceService";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import BalanceService from "scatter-core/services/blockchain/BalanceService";
 
 	export default {
 		props:['popin'],

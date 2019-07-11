@@ -16,10 +16,10 @@
 
 <script>
 	import {mapState, mapGetters, mapActions} from 'vuex';
-	import * as Actions from '../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import Chartist from 'chartist';
-	import PriceService from "../../services/apis/PriceService";
-	import {dateId, utcToLocal} from "../../util/DateHelpers";
+	import PriceService from "scatter-core/services/apis/PriceService";
+	import {dateId, utcToLocal} from "scatter-core/util/DateHelpers";
 	require("../../styles/charts.scss");
 
 	export default {

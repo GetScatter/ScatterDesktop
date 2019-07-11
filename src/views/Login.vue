@@ -109,7 +109,7 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 
 	import ProgressBubbles from "../components/reusable/ProgressBubbles";
 	import ActionBar from "../components/reusable/ActionBar";
@@ -118,15 +118,15 @@
 	import SetPassword from '../components/login/SetPassword'
 	import SelectBackupLocation from "../components/login/SelectBackupLocation";
 	import Welcome from "../components/login/Welcome";
-	import PopupService from "../services/utility/PopupService";
-	import {Popup} from "../models/popups/Popup";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
 
 	import SpaceBackground from '../components/backgrounds/SpaceBackground';
 	import Reset from '../components/svgs/login/Reset';
 	import Restore from '../components/svgs/login/Restore';
 	import Support from '../components/svgs/login/Support';
 	import ElectronHelpers from "../util/ElectronHelpers";
-	import BackupService from "../services/utility/BackupService";
+	import BackupService from "scatter-core/services/utility/BackupService";
 
 	const STATES = {
 		NEW_OR_LOGIN:'newOrLogin',

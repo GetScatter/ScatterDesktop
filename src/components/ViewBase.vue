@@ -30,15 +30,16 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../store/constants';
     import {RouteNames, Routing} from '../vue/Routing'
 
-    import Processes from './Processes';
-    import Popups from './Popups';
-    import Sidebar from './Sidebar';
-    import QuickActions from './QuickActions';
-    import MenuBar from './MenuBar';
-    import SingletonService from "../services/utility/SingletonService";
+    import Processes            from './Processes';
+    import Popups               from './Popups';
+    import Sidebar              from './Sidebar';
+    import QuickActions         from './QuickActions';
+    import MenuBar              from './MenuBar';
+
+    import * as Actions         from 'scatter-core/store/constants';
+    import SingletonService     from "scatter-core/services/utility/SingletonService";
 
     export default {
     	components:{

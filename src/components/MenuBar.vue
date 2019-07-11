@@ -31,7 +31,7 @@
 <script>
 
 	import {remote} from '../util/ElectronHelpers';
-	import SocketService from "../services/utility/SocketService";
+	import SocketService from "scatter-core/services/utility/SocketService";
 
 	export default {
 		data(){return {

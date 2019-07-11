@@ -61,13 +61,13 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import {Blockchains} from "../../../models/Blockchains";
-	import PluginRepository from "../../../plugins/PluginRepository";
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
-	import HistoricAction from "../../../models/histories/HistoricAction";
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import PluginRepository from "scatter-core/plugins/PluginRepository";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import HistoricAction from "scatter-core/models/histories/HistoricAction";
 
 	const STATES = {
 		BUY:'buy',

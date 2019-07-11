@@ -193,13 +193,13 @@
 
 <script>
 	import {mapGetters, mapActions, mapState} from 'vuex';
-	import * as Actions from '../store/constants'
-	import IdGenerator from "../util/IdGenerator";
-	import Identity from "../models/Identity";
-	import * as FileService from '../services/utility/FileService';
-	import PopupService from "../services/utility/PopupService";
-	import {Popup} from "../models/popups/Popup";
-	import RIDLService from "../services/apis/RIDLService";
+	import * as Actions from 'scatter-core/store/constants'
+	import IdGenerator from "scatter-core/util/IdGenerator";
+	import Identity from "scatter-core/models/Identity";
+	import * as FileService from '../services/FileService';
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import RIDLService from "scatter-core/services/apis/RIDLService";
 	const fs = window.require('fs');
 
 	let saveTimeout;

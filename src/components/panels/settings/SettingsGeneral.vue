@@ -74,13 +74,13 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../../store/constants';
+    import * as Actions from 'scatter-core/store/constants';
 
-    import UpdateService from '../../../services/utility/UpdateService';
-    import WindowService from '../../../services/utility/WindowService';
+    import UpdateService from 'scatter-core/services/utility/UpdateService';
+    import WindowService from '../../../services/WindowService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
-    import {LANG} from '../../../localization/locales';
-    import LanguageService from "../../../services/utility/LanguageService";
+    import {LANG} from 'scatter-core/localization/locales';
+    import LanguageService from "scatter-core/services/utility/LanguageService";
 
     import {remote} from '../../../util/ElectronHelpers';
     const app = remote.app;

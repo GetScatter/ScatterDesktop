@@ -40,15 +40,15 @@
     import PopOutHead from '../components/popouts/PopOutHead';
 
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../store/constants';
-    import Scatter from '../models/Scatter';
+    import * as Actions from 'scatter-core/store/constants';
+    import Scatter from 'scatter-core/models/Scatter';
     import {remote} from '../util/ElectronHelpers';
-    import WindowService from '../services/utility/WindowService'
-    import * as ApiActions from '../models/api/ApiActions';
-    import {Popup} from "../models/popups/Popup";
-    import PasswordService from "../services/secure/PasswordService";
-    import Token from "../models/Token";
-    import RIDLService from "../services/apis/RIDLService";
+    import WindowService from '../services/WindowService'
+    import * as ApiActions from 'scatter-core/models/api/ApiActions';
+    import {Popup} from "scatter-core/models/popups/Popup";
+    import PasswordService from "scatter-core/services/secure/PasswordService";
+    import Token from "scatter-core/models/Token";
+    import RIDLService from "scatter-core/services/apis/RIDLService";
 
     export default {
         data () {return {

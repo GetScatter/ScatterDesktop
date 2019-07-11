@@ -78,12 +78,11 @@
 
 <script>
 	import {mapState, mapGetters} from 'vuex';
-	import RIDLService from "../../services/apis/RIDLService";
-	import {Blockchains} from "../../models/Blockchains";
-	import {Popup} from "../../models/popups/Popup";
-	import PluginRepository from "../../plugins/PluginRepository";
-	import PopupService from "../../services/utility/PopupService";
-	import Account from "../../models/Account";
+	import RIDLService from "scatter-core/services/apis/RIDLService";
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import PluginRepository from "scatter-core/plugins/PluginRepository";
+	import PopupService from "scatter-core/services/utility/PopupService";
 	import ElectronHelpers from "../../util/ElectronHelpers";
 	require('../../styles/transfers.scss');
 

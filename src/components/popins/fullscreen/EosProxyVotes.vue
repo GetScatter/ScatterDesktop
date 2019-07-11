@@ -61,15 +61,15 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from '../../../store/constants';
+	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import PopupService from "../../../services/utility/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
-	import {Blockchains} from "../../../models/Blockchains";
-	import PluginRepository from "../../../plugins/PluginRepository";
-	import ObjectHelpers from "../../../util/ObjectHelpers";
-	import RecurringService from "../../../services/blockchain/RecurringService";
-	import {GET} from "../../../services/apis/BackendApiService";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import {Blockchains} from "scatter-core/models/Blockchains";
+	import PluginRepository from "scatter-core/plugins/PluginRepository";
+	import ObjectHelpers from "scatter-core/util/ObjectHelpers";
+	import RecurringService from "scatter-core/services/blockchain/RecurringService";
+	import {GET} from "scatter-core/services/apis/BackendApiService";
 	require('../../../styles/transfers.scss')
 
 	export default {

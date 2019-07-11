@@ -84,11 +84,11 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../store/constants';
-    import CreditCard from "../models/CreditCard";
+    import * as Actions from 'scatter-core/store/constants';
+    import CreditCard from "scatter-core/models/CreditCard";
     import Card from "../components/misc/Card";
-    import PopupService from "../services/utility/PopupService";
-    import {Popup} from "../models/popups/Popup";
+    import PopupService from "scatter-core/services/utility/PopupService";
+    import {Popup} from "scatter-core/models/popups/Popup";
     import PurchasingService from "../services/creditcards/PurchasingService";
     require('../styles/transfers.scss');
 

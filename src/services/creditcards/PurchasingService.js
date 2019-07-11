@@ -1,6 +1,6 @@
 import Moonpay from "./Moonpay";
-import PopupService from "../utility/PopupService";
-import {Popup} from "../../models/popups/Popup";
+import PopupService from "scatter-core/services/utility/PopupService";
+import {Popup} from "scatter-core/models/popups/Popup";
 
 let availableServices = [];
 

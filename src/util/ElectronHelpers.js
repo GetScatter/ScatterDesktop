@@ -1,23 +1,17 @@
-import {MOCK_ELECTRON, RUNNING_TESTS} from "./TestingHelper";
-
-import {Popup} from "../models/popups/Popup";
-
-
-let electron;
-electron = RUNNING_TESTS ? null : window.require('electron');
-if(!electron) electron = MOCK_ELECTRON;
+import {Popup} from "scatter-core/models/popups/Popup";
+let electron = window.require('electron');
 
 export const remote = electron.remote;
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
 const {reloader} = remote.getGlobal('appShared');
 
-import {localizedState} from "../localization/locales";
-import LANG_KEYS from "../localization/keys";
+import {localizedState} from "scatter-core/localization/locales";
+import LANG_KEYS from "scatter-core/localization/keys";
 
 let popupService;
 const PopupService = () => {
-    if(!popupService) popupService = require("../services/utility/PopupService").default;
+    if(!popupService) popupService = require("scatter-core/services/utility/PopupService").default;
     return popupService;
 }
 
@@ -34,7 +28,10 @@ const generateKey = () => {
     return [privKey, pubKey];
 }
 
-export const ipcFaF = (key, data) => ipcRenderer.send(key, data);
+export const ipcFaF = (key, data) => {
+	console.log('faf', key, data);
+	return ipcRenderer.send(key, data);
+}
 class proover {
     constructor(){ this.regen(); }
 
@@ -49,9 +46,10 @@ class proover {
     }
 }
 
-const proof = RUNNING_TESTS ? null : new proover();
+const proof = new proover();
 
 export const ipcAsync = (key, data) => {
+	console.log(key, data);
     return new Promise(resolve => {
 		const listener = (event, arg) => {
 			resolve(arg);
@@ -67,6 +65,14 @@ ipcRenderer.on('error', (e, x) => console.log(x));
 ipcRenderer.on('console', (e, x) => console.log('Main process console: ', x));
 
 export default class ElectronHelpers {
+
+	static getVersion(){
+		return remote.app.getVersion();
+	}
+
+	static pushNotificationMethod(){
+		return remote ? remote.getGlobal('appShared').NotificationService.pushNotification : () => {};
+	}
 
 	static reload(){
 		reloader();

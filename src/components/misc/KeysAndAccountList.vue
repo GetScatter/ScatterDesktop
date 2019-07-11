@@ -85,16 +85,15 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import PluginRepository from "../../plugins/PluginRepository";
+	import PluginRepository from "scatter-core/plugins/PluginRepository";
 	import SearchAndFilter from "../reusable/SearchAndFilter";
-	import {blockchainName, BlockchainsArray, Blockchains} from '../../models/Blockchains'
+	import {blockchainName, BlockchainsArray, Blockchains} from 'scatter-core/models/Blockchains'
 	import ElectronHelpers from "../../util/ElectronHelpers";
-	import PopupService from "../../services/utility/PopupService";
-	import {Popup} from "../../models/popups/Popup";
-	import AccountService from "../../services/blockchain/AccountService";
-	import KeyPairService from "../../services/secure/KeyPairService";
-	import IdGenerator from "../../util/IdGenerator";
-	import BalanceService from "../../services/blockchain/BalanceService";
+	import PopupService from "scatter-core/services/utility/PopupService";
+	import {Popup} from "scatter-core/models/popups/Popup";
+	import AccountService from "scatter-core/services/blockchain/AccountService";
+	import KeyPairService from "scatter-core/services/secure/KeyPairService";
+	import BalanceService from "scatter-core/services/blockchain/BalanceService";
 
 	export default {
 		components: {SearchAndFilter},
