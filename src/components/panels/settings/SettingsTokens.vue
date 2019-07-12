@@ -87,15 +87,15 @@
                     <br>
                     <br>
                     <section class="split-inputs">
-                        <section class="details" v-if="mainnetTokensOnly">
+                        <section class="details" v-if="scatter.settings.showMainnetsOnly">
                             <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksButton)}}</figure>
                             <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayAllNetworksDesc)}}</p>
                         </section>
-                        <section class="details" v-if="!mainnetTokensOnly">
+                        <section class="details" v-if="!scatter.settings.showMainnetsOnly">
                             <figure class="title">{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetButton)}}</figure>
                             <p>{{locale(langKeys.SETTINGS.TOKENS.SETTINGS.MainBalanceDisplayMainnetDesc)}}</p>
                         </section>
-                        <Switcher style="flex:0 0 auto; margin-left:20px;" :state="mainnetTokensOnly" @click.native="toggleMainnetsOnly" />
+                        <Switcher style="flex:0 0 auto; margin-left:20px;" :state="scatter.settings.showMainnetsOnly" @click.native="toggleMainnetsOnly" />
                     </section>
                 </section>
 
@@ -197,9 +197,7 @@
 			...mapGetters([
 				'tokens',
 				'networks',
-				'networkTokens',
 				'blacklistTokens',
-				'mainnetTokensOnly',
 				'displayToken',
 				'displayCurrency',
                 'hideMainBalance',

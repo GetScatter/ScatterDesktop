@@ -29,7 +29,6 @@ const generateKey = () => {
 }
 
 export const ipcFaF = (key, data) => {
-	console.log('faf', key, data);
 	return ipcRenderer.send(key, data);
 }
 class proover {
@@ -49,7 +48,6 @@ class proover {
 const proof = new proover();
 
 export const ipcAsync = (key, data) => {
-	console.log(key, data);
     return new Promise(resolve => {
 		const listener = (event, arg) => {
 			resolve(arg);

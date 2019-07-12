@@ -47,7 +47,6 @@
 
 			]),
 			...mapGetters([
-				'networkTokens',
 				'balanceFilters',
 				'displayCurrency',
 			]),

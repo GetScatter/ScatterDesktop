@@ -80,7 +80,6 @@
 				'displayToken',
 				'displayCurrency',
 				'hideMainBalance',
-				'networkTokens',
 			]),
 			totalBalance(){
 				return PriceService.getTotal(this.totalBalances.totals);
@@ -138,7 +137,7 @@
 				}));
 			},
 			displayTokenClass(){
-				return this.networkTokens.find(x => x.uniqueWithChain() === this.displayToken).symbolClass()
+				return this.scatter.networkTokens().find(x => x.uniqueWithChain() === this.displayToken).symbolClass()
 			}
 		}
 

@@ -81,31 +81,14 @@ export const getters = {
 	displayCurrency:state =>   state.scatter.settings.displayCurrency,
 	displayToken:state =>   state.scatter.settings.displayToken,
 	tokens:state =>         state.scatter.settings.tokens,
-    allTokens:(state, getters) =>      getters.networkTokens.concat(getters.tokens),
-    mainnetTokensOnly:state =>      state.scatter.settings.showMainnetsOnly,
-	networkTokens:state =>  state.scatter.settings.networks.map(x => {
-		const token = x.systemToken();
-		token.chainId = x.chainId;
-		return token;
-	}).reduce((acc, token) => {
-		const exists = acc.find(x => x.unique() === token.unique() && x.chainId === token.chainId);
-		if(!exists) acc.push(token);
-		return acc;
-	}, []),
 
     // Popups
     popIns:state =>         state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN) || [],
     nextPopIn:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.POP_IN)[0] || null,
     snackbars:state =>      state.popups.filter(x => x.displayType === PopupDisplayTypes.SNACKBAR) || [],
 
-    showNotifications:state => state.scatter.settings.showNotifications,
-
     totalBalances:(state, getters) => {
     	return BalanceService.totalBalances(false);
-    },
-
-    fullTotalBalances:(state, getters) => {
-	    return BalanceService.totalBalances(true);
     },
 };
 

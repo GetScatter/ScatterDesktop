@@ -45,7 +45,6 @@
 				'scatter'
 			]),
 			...mapGetters([
-				'identity',
 				'identities',
 				'accounts',
 				'networks',

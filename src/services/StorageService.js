@@ -33,7 +33,7 @@ import HistoricAction from "scatter-core/models/histories/HistoricAction";
 import StoreService from "scatter-core/services/utility/StoreService";
 import Seeder from "scatter-core/services/secure/Seeder";
 import ElectronHelpers from "../util/ElectronHelpers";
-import {saveFile} from "../services/FileService";
+import * as FileService from "../services/FileService";
 const dataPath = remote.app.getPath('userData');
 const fs = window.require('fs');
 
@@ -84,12 +84,12 @@ export default class StorageService {
 
 	constructor(){}
 
-	static async getDefaultPath(){
+	static getDefaultPath(){
 		return ElectronHelpers.getDefaultPath()
 	};
 
-	static async saveFile(...params){
-		return saveFile(...params);
+	static saveFile(...params){
+		return FileService.saveFile(...params);
 	};
 
 	static async setScatter(scatter){

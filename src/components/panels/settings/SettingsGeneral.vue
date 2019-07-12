@@ -97,11 +97,13 @@
                 'ports',
             ]),
             ...mapGetters([
-                'showNotifications',
                 'version',
 	            'networks',
 	            'language',
             ]),
+            showNotifications(){
+                return this.scatter.settings.showNotifications;
+            },
             dataPath(){
             	return app.getPath('userData');
             },

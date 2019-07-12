@@ -32,15 +32,15 @@
 		},
 		computed:{
 			...mapState([
+				'scatter',
 				'prices',
 			]),
 			...mapGetters([
 				'displayToken',
 				'displayCurrency',
-				'networkTokens',
 			]),
 			networkTokensList(){
-				return this.networkTokens.filter(token => {
+				return this.scatter.networkTokens().filter(token => {
 					return this.prices.hasOwnProperty(token.uniqueWithChain())
 				}).reduce((acc, t) => {
 					if(!acc.find(x => x.unique() === t.unique())) acc.push(t);

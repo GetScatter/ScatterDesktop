@@ -39,7 +39,6 @@
                 'scatter',
             ]),
             ...mapGetters([
-            	'identity',
                 'keypairs'
             ])
         },
