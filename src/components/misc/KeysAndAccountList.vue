@@ -295,23 +295,42 @@
 			}
 
 			.keypair-info {
-				display:flex;
 				align-items: center;
 				margin-bottom:10px;
+    			position: relative;
 
 				.blockchain {
 					font-size: 36px;
 					background:$blue;
-					border:1px solid $darkblue;
 					color:$white;
-					border-radius:$radius;
+					border-radius:24px;
 					height:50px;
 					width:50px;
 					display:flex;
 					justify-content: center;
 					align-items: center;
-					margin-right:10px;
-					position: relative;
+				    margin: 1rem auto;
+				    position: relative;
+
+				    &.token-eos-eos {
+
+				    }
+
+				    &.token-trx-trx {
+						background:linear-gradient(60deg, #304352 0%, lighten(#304352, 10%) 100%);
+					}
+
+					&.token-eos-eos {
+						background:linear-gradient(60deg, $blue 0%, lighten($blue, 10%) 100%);
+					}
+
+					&.token-eth-eth {
+						background:linear-gradient(60deg, #F15F79 0%, lighten(#F15F79, 10%) 100%);
+					}
+
+					&.token-btc-btc {
+						background:linear-gradient(60deg, #757519 0%, lighten(#757519, 10%) 100%);
+					}
 
 					.icon-spin4 {
 						font-size: 28px;
@@ -321,7 +340,7 @@
 				}
 
 				.info {
-					flex:1;
+				    text-align: center;
 
 					.name {
 						font-size: $large;
@@ -343,7 +362,10 @@
 				.actions {
 					display:flex;
 					padding-right:10px;
-					position: relative;
+				    position: absolute;
+				    right: 0rem;
+				    top: 0;
+				    text-align: left;
 
 					.action-menu {
 						position:absolute;
