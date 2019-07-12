@@ -7,6 +7,7 @@
 
 			<SearchAndFilter full-search="1" v-if="needsAccountSearchBar" v-on:terms="x => terms = x" />
 			<section class="accounts" :class="{'with-search':needsAccountSearchBar}" v-if="selectedToken">
+				<section class="box-title">Accounts</section>
 				<section class="account" v-for="account in filteredAccounts">
 					<figure class="name">{{account.sendable()}}</figure>
 					<figure class="network">{{account.network().name}}</figure>
@@ -140,10 +141,12 @@
 			}
 
 			.accounts {
-				padding:30px;
+				margin:$padding-med;
 				overflow:auto;
 
-				height:calc(100% - 180px);
+				height:calc(100% - 245px);
+				background:white;
+				border-radius: $radius-big;
 
 				&.with-search {
 					height:calc(100% - 180px - 70px);
@@ -152,22 +155,23 @@
 				.account {
 					display:flex;
 					flex-direction: column;
-					margin-bottom:$padding-small;
 					padding: $padding-small;
 					background: rgba(255,255,255,0.06);
-					border-radius: $radius-big;
 					border-bottom:1px solid rgba(0,0,0,0.12);
+
+					&:last-child {
+						border-bottom:0;
+					}
 
 					.name {
 						font-size: $large;
 						font-weight: bold;
-						color:white;
 						margin-bottom:2px;
 					}
 
 					.network {
 						font-size: $small;
-						color:rgba(255,255,255,.6);
+						color:rgba(0,0,0,.6);
 						margin-bottom:6px;
 					}
 
@@ -182,12 +186,10 @@
 							font-size: $medium;
 							font-weight: bold;
 							margin-bottom:2px;
-							color:white;
 						}
 
 						.fiat {
 							font-size: $medium;
-							color:white;
 						}
 					}
 

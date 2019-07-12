@@ -429,11 +429,14 @@
 			}
 
 			.accounts-label {
-				margin-top:20px;
 				font-size: $tiny;
-				text-transform: uppercase;
-				color:$blue;
-				font-weight: bold;
+				font-weight:bold;
+				opacity: 0.44;
+				color: #141616;
+				background: rgba(53,97,120,0.06);
+				padding: 8px 10px;
+				margin: 20px -10px -10px;
+				text-transform:uppercase;
 			}
 
 			.no-accounts {

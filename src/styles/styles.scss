@@ -530,4 +530,14 @@ label {
   }
 }
 
+.box-title {
+    font-size: $tiny;
+    font-weight:bold;
+    opacity: 0.44;
+    color: #141616;
+    background: rgba(53,97,120,0.06);
+    padding: 8px 10px;
+    text-transform:uppercase;
+}
+
 
