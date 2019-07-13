@@ -218,9 +218,9 @@
 			},
 			convertKeypair(keypair){
 				const blockchains = this.networks.reduce((acc, x) => {
-					if(!acc.hasOwnProperty(x.blockchain)) acc.push(x.blockchain);
+					if(!acc.includes(x.blockchain)) acc.push(x.blockchain);
 					return acc;
-				}, []).filter(x => x !== keypair.blockchains[0]);
+				}, []).filter(x => x !== keypair.enabledKey().blockchain);
 				PopupService.push(Popup.selectBlockchain(async blockchain => {
 					if(!blockchain) return;
 					const clone = KeyPairService.convertKey(keypair, blockchain);

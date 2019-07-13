@@ -12,7 +12,7 @@
     "build": "concurrently \"npm run copybuildfiles\" \"node build/build.js\"",
     "copybuildfiles": "copyfiles splash.html dist",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "postinstall:remove": "electron-rebuild --force",
+    "postinstall": "electron-rebuild --force",
     "release-linux": "electron-builder --linux",
     "release-mac": "electron-builder --mac",
     "release-win": "electron-builder --win",
@@ -95,6 +95,11 @@
     "webpack-cli": "^3.3.5",
     "webpack-dev-server": "^3.7.2",
     "webpack-merge": "^4.1.4"
+  },
+  "resolutions": {
+    "**/lodash": "^4.13.1",
+    "**/mixin-deep": "^2.0.1",
+    "**/set-value": "^3.0.1"
   },
   "browserslist": [
     "> 1%",
