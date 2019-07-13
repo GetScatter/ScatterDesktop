@@ -3,55 +3,57 @@
 
         <section class="account" v-if="account">
             <section class="manage">
+                <div class="wrapper">
 
-                <!--------------------------->
-                <!-------- DETAILS ---------->
-                <!--------------------------->
-                <section class="details">
-                    <figure class="blockchain" :class="`token-${account.blockchain()}-${account.blockchain()}`"></figure>
-                    <figure class="name selectable">{{account.sendable()}}</figure>
-                    <figure class="network">{{account.network().name}}</figure>
-                    <figure class="permissions">
-                        <figure class="permission" @click="copyAuthKey(acc)"
-                                :class="{'red':acc.authority === 'owner'}"
-                                v-for="acc in account.authorities()">
-                            {{acc.authority}}
-                        </figure>
-                    </figure>
-                </section>
-
-
-                <!--------------------------->
-                <!-------- RESOURCES -------->
-                <!--------------------------->
-                <section class="resources" v-if="usesResources">
-                    <section class="loading" v-if="!accountResources">
-                        <figure class="spinner icon-spin4 animate-spin"></figure>
-                    </section>
-                    <section class="resource" v-for="resource in accountResources">
-                        <figure class="icon" :class="{
-                        'icon-check':resource.percentage <= 50,
-                        'icon-attention red':resource.percentage > 50
-                    }"></figure>
-                        <figure class="type">{{resource.name}}</figure>
-                        <figure class="percentage">{{resource.text ? resource.text : parseFloat(resource.percentage).toFixed(2) + '%'}}</figure>
-                        <figure class="action"> <!--  v-if="resource.actionable" -->
-                            <Button small="1" :disabled="!resource.actionable" @click.native="moderateResource(resource)" :text="resource.actionText" />
+                    <!--------------------------->
+                    <!-------- DETAILS ---------->
+                    <!--------------------------->
+                    <section class="details">
+                        <figure class="blockchain" :class="`token-${account.blockchain()}-${account.blockchain()}`"></figure>
+                        <figure class="name selectable">{{account.sendable()}}</figure>
+                        <figure class="network">{{account.network().name}}</figure>
+                        <figure class="permissions">
+                            <figure class="permission" @click="copyAuthKey(acc)"
+                                    :class="{'red':acc.authority === 'owner'}"
+                                    v-for="acc in account.authorities()">
+                                {{acc.authority}}
+                            </figure>
                         </figure>
                     </section>
-                </section>
 
 
-                <!--------------------------->
-                <!-------- ACTIONS ---------->
-                <!--------------------------->
-                <section class="actions" v-if="accountActions">
-                    <section class="action" :key="action.id" v-for="action in accountActions">
-                        <figure class="icon" :class="`${action.icon} ${action.isDangerous ? ' red' : ''}`"></figure>
-                        <figure class="name">{{action.title}}</figure>
-                        <Button :red="action.isDangerous" :text="action.buttonText" @click.native="commitAction(action)" />
+                    <!--------------------------->
+                    <!-------- RESOURCES -------->
+                    <!--------------------------->
+                    <section class="resources" v-if="usesResources">
+                        <section class="loading" v-if="!accountResources">
+                            <figure class="spinner icon-spin4 animate-spin"></figure>
+                        </section>
+                        <section class="resource" v-for="resource in accountResources">
+                            <figure class="icon" :class="{
+                            'icon-check':resource.percentage <= 50,
+                            'icon-attention red':resource.percentage > 50
+                        }"></figure>
+                            <figure class="type">{{resource.name}}</figure>
+                            <figure class="percentage">{{resource.text ? resource.text : parseFloat(resource.percentage).toFixed(2) + '%'}}</figure>
+                            <figure class="action"> <!--  v-if="resource.actionable" -->
+                                <Button small="1" :disabled="!resource.actionable" @click.native="moderateResource(resource)" :text="resource.actionText" />
+                            </figure>
+                        </section>
                     </section>
-                </section>
+
+
+                    <!--------------------------->
+                    <!-------- ACTIONS ---------->
+                    <!--------------------------->
+                    <section class="actions" v-if="accountActions">
+                        <section class="action" :key="action.id" v-for="action in accountActions">
+                            <figure class="icon" :class="`${action.icon} ${action.isDangerous ? ' red' : ''}`"></figure>
+                            <figure class="name">{{action.title}}</figure>
+                            <Button small="1" :red="action.isDangerous" :text="action.buttonText" @click.native="commitAction(action)" />
+                        </section>
+                    </section>
+                </div>
             </section>
 
 
@@ -153,51 +155,60 @@
     .account {
         height:$quickheightnobuffer;
         display:flex;
+        background:$blue;
 
         .manage {
             min-width:380px;
             max-width:30%;
             width:100%;
-            border-right:1px solid $lightgrey;
+            padding:$padding-med 0 $padding-med $padding-med;
+            height:calc(#{$quickheightnobuffer});
 
+            .wrapper {
+                background:white;
+                border-radius:$radius-big;
+                height:100%;
 
-            .details {
-                padding:0 30px 0;
-                display:flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-                height:$panelheight - 40px;
-
-                .blockchain {
-                    font-size: 48px;
-                }
-
-                .name {
-                    font-size: 18px;
-                    font-weight: bold;
-                }
-
-                .network {
-                    font-size: $small;
-                    margin-top:5px;
-                }
-
-                .permissions {
+                .details {
+                    padding:0 30px 0;
                     display:flex;
-                    margin-top:15px;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    height:$panelheight - 40px;
 
-                    .permission {
-                        cursor: pointer;
-                        font-size: $tiny;
-                        padding:3px 8px;
-                        border-radius:50px;
-                        background:$blue;
-                        color:$white;
-                        margin:0 3px;
+                    .blockchain {
+                        font-size: 48px;
+                    }
 
-                        &.red {
-                            background:$red;
+                    .name {
+                        font-size: $large;
+                        font-weight: bold;
+                        text-align:center;
+                        max-width:80%;
+                    }
+
+                    .network {
+                        font-size: $small;
+                        margin-top:5px;
+                    }
+
+                    .permissions {
+                        display:flex;
+                        margin-top:15px;
+
+                        .permission {
+                            cursor: pointer;
+                            font-size: $tiny;
+                            padding:3px 8px;
+                            border-radius:50px;
+                            background:$blue;
+                            color:$white;
+                            margin:0 3px;
+
+                            &.red {
+                                background:$red;
+                            }
                         }
                     }
                 }
@@ -306,6 +317,7 @@
 
             .token-list {
                 height:calc(#{$quickheightnobuffer} - #{$panelheight});
+                padding: $padding-med;
             }
         }
 

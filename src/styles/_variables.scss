@@ -7,7 +7,7 @@ $fullheight:calc(100vh - #{$menuheight});
 $quickheight:calc(100vh - #{$menuheight} - #{$quickactionsheight - #{$quickactionsbuffer}});
 $quickheightnobuffer:calc(100vh - #{$menuheight} - #{$quickactionsheight});
 $radius:4px;
-
+$radius-big:6px;
 
 // Font-sizes
 $larger:16px;
@@ -38,18 +38,17 @@ $darkred: #cb0606;
 $black:#333;
 
 // Gradients
-$blue-gradient:linear-gradient(170deg, #007fd7 0%,#00a8ff 100%);
+$blue-gradient:linear-gradient(180deg, #007fd7 0%,$blue 100%);
 $blue-gradient-completer:linear-gradient(135deg, #0095ed 0%,#00a8ff 100%);;
 
 // Shadows
 $blue-shadow:rgba(7,155,232,0.23);
 $complex-shadow:0 10px 12px 0 rgba(8,79,129,0.10), 0 2px 2px 0 rgba(10,69,100,0.06);
 
-
-
-
-
-
+// Standardized Padding
+$padding-small:1rem;
+$padding-med:2rem;
+$padding-big:4rem;
 
 
 // DEPRECATED

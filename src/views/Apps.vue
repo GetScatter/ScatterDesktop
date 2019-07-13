@@ -8,7 +8,6 @@
 		</section>
 
 		<section class="scroller" ref="scroller" v-if="state === STATES.EXPLORE">
-			<figure class="blue-bg" v-if="!exploreTerms.length"></figure>
 			<section class="padder">
 				<section class="featured" v-if="!exploreTerms.length">
 					<Carousel :slides="featuredApps" /> <!-- featuredApps -->
@@ -239,36 +238,38 @@
 
 		.search-icon {
 			position: absolute;
-			top:0;
-			right:60px;
+			top:-2px;
+			right:2rem;
 			color:$white;
-			font-size: $large;
+			font-size: 22px;
 			cursor: pointer;
 			border-radius:$radius;
 
+			.icon-search {
+			    top: -3px;
+				margin-right: 4px;
+				position: relative;
+			}
+
 			input {
-				border-radius:0;
+				border-radius:$radius;
 				border:0;
-				border-bottom:2px solid rgba(255,255,255,0.4);
+				background:rgba(0,0,0,0);
 				position:absolute;
-				top:-5px;
+				top:-12px;
 				right:0;
-				padding:10px 0 15px 0;
+				padding:1rem;
 				color:$white;
-				width:0;
 				height:25px;
 				font-size: $large;
-				opacity:0;
+				width:240px;
 
-
-				transition:width 0.2s ease, padding 0.2s ease, opacity 0.5s ease;
+				transition:padding 0.2s ease, opacity 0.5s ease;
 			}
 
 			&:hover, &.visible {
 				input {
-					width:200px;
-					padding:10px 30px 15px 0;
-					opacity:1;
+					background:rgba(0,0,0,0.18);
 
 				}
 			}
@@ -278,6 +279,7 @@
 			position: relative;
 			height:calc(100vh - 220px);
 			overflow-y:scroll;
+			overflow-x:hidden;
 
 			&.with-search {
 				height:calc(100vh - 290px);
@@ -294,7 +296,7 @@
 			}
 
 			.padder {
-				padding:0 40px;
+				padding:$padding-med $padding-med 0;
 				position: relative;
 				z-index:2;
 			}

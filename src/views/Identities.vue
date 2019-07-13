@@ -10,7 +10,7 @@
 			<section class="blockchains" v-if="identities.length > 1">
 				<section class="head with-button">
 					<figure>Identities</figure>
-					<Button small="1" text="Add" @click.native="addIdentity" />
+					<Button text="Add" @click.native="addIdentity" />
 				</section>
 				<section class="scroller">
 					<section class="blockchain-list">
@@ -30,8 +30,8 @@
 			<section class="list-container">
 				<section class="head with-button">
 					<figure></figure>
-					<Button small="1" text="Remove" @click.native="removeIdentity" v-if="identities.length > 1" />
-					<Button small="1" text="Add new Identity" @click.native="addIdentity" v-if="identities.length === 1" />
+					<Button text="Remove" @click.native="removeIdentity" v-if="identities.length > 1" />
+					<Button text="Add new Identity" @click.native="addIdentity" v-if="identities.length === 1" />
 				</section>
 				<section class="scroller identity">
 					<section class="id-card">

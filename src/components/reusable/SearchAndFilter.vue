@@ -1,5 +1,5 @@
 <template>
-	<section class="search-and-filter" :class="{'full':fullSearch}">
+	<section class="search-and-filter" :class="{'full':fullSearch,'blue':blue}">
 
 		<figure class="search-bar">
 			<input placeholder="Search" v-model="terms" />
@@ -14,7 +14,7 @@
 
 <script>
 	export default {
-		props:['filters', 'fullSearch'],
+		props:['filters', 'fullSearch', 'blue',],
 		data(){return {
 			terms:'',
 		}},
@@ -37,9 +37,9 @@
 	.search-and-filter {
 		display:flex;
 		align-items: center;
-		padding:0 40px;
-		border-bottom:1px solid $lightgrey;
+		padding:0 $padding-small;
 		height:70px;
+		border-bottom:1px solid $lightgrey;
 
 		.search-bar {
 			flex:1;
@@ -50,6 +50,22 @@
 				height:36px;
 				text-align:center;
 			}
+		}
+
+		&.blue .search-bar input {
+			border-color:#67CBFF;
+			color:white;
+			opacity:.49;
+
+			&::-webkit-input-placeholder {
+				color:white; /* fuck you, electron */
+			}
+		}
+
+		&.blue .search-barinput:hover,
+		&.blue .search-barinput:focus {
+			border-color:white;
+			opacity:1;
 		}
 
 		.filters {
@@ -67,6 +83,7 @@
 
 		&.full {
 			width:100%;
+
 			.search-bar {
 				margin:0;
 			}

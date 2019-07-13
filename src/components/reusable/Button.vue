@@ -17,9 +17,8 @@
 
 	button {
 		cursor: pointer;
-		height:38px;
 		outline:0;
-		padding:0 15px;
+		padding:6px 12px;
 		font-weight: bold;
 		border-radius:$radius;
 		background:$light-blue;
@@ -39,12 +38,12 @@
 		}
 
 		&.big {
-			height:55px;
+			padding:6px 18px;
 			font-size: $large;
 		}
 
 		&.small {
-			height:28px;
+			padding:4px 6px;
 			font-size: $small;
 		}
 

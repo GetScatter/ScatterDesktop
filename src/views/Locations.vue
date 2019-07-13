@@ -10,7 +10,7 @@
 			<section class="blockchains" v-if="locations.length > 1">
 				<section class="head with-button">
 					<figure>Locations</figure>
-					<Button small="1" text="Add" @click.native="addLocation" />
+					<Button text="Add" @click.native="addLocation" />
 				</section>
 				<section class="scroller">
 					<section class="blockchain-list">
@@ -30,8 +30,8 @@
 			<section class="list-container">
 				<section class="head with-button">
 					<figure></figure>
-					<Button small="1" text="Remove" v-if="location && locations.length > 1" @click.native="removeLocation" />
-					<Button small="1" text="Add new Location" @click.native="addLocation" v-if="locations.length === 1" />
+					<Button text="Remove" v-if="location && locations.length > 1" @click.native="removeLocation" />
+					<Button text="Add new Location" @click.native="addLocation" v-if="locations.length === 1" />
 				</section>
 				<section class="scroller location" v-if="location">
 					<section class="limit-800">

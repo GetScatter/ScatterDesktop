@@ -95,6 +95,7 @@
 					RouteNames.RECEIVE,
 					RouteNames.EXCHANGE,
 					RouteNames.ACCOUNT,
+					RouteNames.HOME,
 					this.features.creditCards ? null : RouteNames.WALLET,
 				].filter(x => !!x).includes(this.$route.name);
 			},
@@ -150,16 +151,15 @@
 	.quick-actions {
 		height:$quickactionsheight;
 		border-right:1px solid $darkerblue;
+		background:$blue;
+		border-top:1px solid rgba(255,255,255,0.12);
+		border-bottom:1px solid rgba(255,255,255,0.12);
 
 		&:not(.short){
 			height:calc(#{$quickactionsheight} + #{$quickactionsbuffer});
 		}
 
 		width:100%;
-		background:$blue;
-		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#007fd7+0,00a8ff+100 */
-		background: #007fd7; /* Old browsers */
-		background: $blue-gradient;
 		padding:40px;
 
 		display:flex;
@@ -173,15 +173,21 @@
 		}
 
 		.quick-back {
-			font-size: 48px;
-			line-height:0;
+			font-size: 24px;
+			width:34px;
+			height:34px;
+			border:2px solid white;
+			line-height:24px;
+			text-align:center;
+			display:block;
+			border-radius:22px;
 			cursor: pointer;
-			display:inline-block;
+			margin-top:10px;
 
 			i {
 				&:before {
 					padding:0;
-					margin:0;
+					margin:3px 0 0 0;
 				}
 			}
 
@@ -233,6 +239,8 @@
 			font-weight:bold;
 			text-align:center;
 			cursor: pointer;
+			margin-top:-7px;
+			color:rgba(255,255,255,0.8);
 
 			img {
 				transition:transform 0.2s ease;
@@ -242,13 +250,11 @@
 			}
 
 			&:hover {
-				img {
-					animation: slowbounce 1s ease infinite;
-				}
+				color:rgba(255,255,255,1);
 			}
 
 			&:last-child {
-				border-left:2px solid rgba(255,255,255,0.2);
+				border-left:1px solid rgba(255,255,255,0.12);
 				padding-left:30px;
 				margin-left:10px;
 				padding-right:0;

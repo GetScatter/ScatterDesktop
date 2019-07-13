@@ -41,7 +41,8 @@
 					{
 						name:null,
 						items:[
-							this.accounts.length ? {name:'Apps', route:RouteNames.HOME} : null,
+							{name:'Dashboard', route:RouteNames.HOME},
+							this.accounts.length ? {name:'Apps', route:RouteNames.APPS} : null,
 							{name:'Wallet', route:RouteNames.WALLET},
 							this.accounts.length ? {name:'Assets', route:RouteNames.ASSETS} : null,
 							// this.accounts.length ? {name:'Marketplace', route:RouteNames.ITEMS} : null,

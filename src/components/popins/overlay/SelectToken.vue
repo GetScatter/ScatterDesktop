@@ -72,11 +72,27 @@
 			min-width:600px;
 			height:calc(100vh - 40px - 100px);
 			overflow-y: hidden;
+
+			.token-list {
+				height:100%;
+				width:100%;
+				padding:0rem;
+				border-radius:0;
+				border-right:1px solid $lightgrey;
+				    background: white;
+
+				.search-and-filter.full {
+					border-radius:0;
+					background:blue !important;
+				}
+
+				.search-and-filter {
+					border-radius:0;
+					background:blue;
+				}
+			}
 		}
-		.token-list {
-			height:100%;
-			width:100%;
-		}
+
 	}
 
 </style>

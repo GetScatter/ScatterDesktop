@@ -157,9 +157,6 @@
             }
         }
 
-
-
-
         .no-keypairs {
             height:100%;
             overflow-y:auto;

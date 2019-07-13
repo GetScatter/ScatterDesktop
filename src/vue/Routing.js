@@ -3,6 +3,7 @@ import PopOut from '../views/PopOut';
 import Login from '../views/Login';
 import Apps from '../views/Apps';
 import App from '../views/App';
+import Dashboard from '../views/Dashboard';
 import Assets from '../views/Assets';
 import Wallet from '../views/Wallet';
 import Account from '../views/Account';
@@ -46,6 +47,7 @@ export const RouteNames = {
 	POP_OUT:'popout',
 
 	LOGIN:'login',
+	APPS:'apps',
 	HOME:'home',
 	WALLET:'wallet',
 	ITEMS:'items',
@@ -69,7 +71,8 @@ export const RouteNames = {
 
 const RouteViews = {
 	[RouteNames.LOGIN]:Login,
-	[RouteNames.HOME]:Apps,
+	[RouteNames.APPS]:Apps,
+	[RouteNames.HOME]:Dashboard,
 	[RouteNames.WALLET]:Wallet,
 	[RouteNames.ITEMS]:Items,
 	[RouteNames.NETWORKS]:Networks,

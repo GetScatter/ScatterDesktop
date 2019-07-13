@@ -77,8 +77,7 @@ class Main {
 		const components = shared.concat(fragments);
 		const middleware = (to, next, store) => {
 			if(hash === 'popout') return next();
-			if(Routing.isRestricted(to.name))
-				store.getters.unlocked ? next() : next({name:RouteNames.LOGIN});
+			if(Routing.isRestricted(to.name)) store.getters.unlocked ? next() : next({name:RouteNames.LOGIN});
 			else next();
 		};
 
@@ -95,24 +94,14 @@ class Main {
 				pushNotification:ElectronHelpers.pushNotificationMethod(),
 			},
 			WindowService.openPopOut,
+			// TODO:
 			null,
 			SocketService
 		)
 
 		new VueInitializer(Routing.routes(), components, middleware, async (router, _store) => {
 
-			// SocketService.initialize();
 		});
-
-		// window.onerror = log => {
-		// 	// alert(log);
-		// 	console.log('err logged', log);
-		// };
-
-
-		// window.eval = global.eval = () => {
-		//     // throw new Error(`Sorry, this app does not support window.eval().`)
-		// }
 	}
 
 }
