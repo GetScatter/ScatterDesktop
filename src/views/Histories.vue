@@ -191,23 +191,6 @@
 					this.$router.push({name:this.RouteNames.TRANSFER, query:{history:item.id}});
 				}
 			},
-			clearHistory(){
-				PopupService.push(Popup.prompt(
-					this.locale(this.langKeys.HISTORY.ClearingHistory),
-					this.locale(this.langKeys.HISTORY.ClearingHistoryText),
-					accepted => {
-						if(accepted) this[Actions.DELTA_HISTORY](null)
-					}
-				))
-			},
-			openInExplorer(item){
-				const explorer = this.explorers[item.token.blockchain].parsed();
-				ElectronHelpers.openLinkInBrowser(explorer.transaction(item.txid));
-			},
-			openKeypair(id){
-				this.$router.push({name:this.RouteNames.KEYPAIR, params:{id}});
-				this.back();
-			},
 			...mapActions([
 				Actions.DELTA_HISTORY,
 				Actions.UPDATE_HISTORY,

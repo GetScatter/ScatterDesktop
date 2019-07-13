@@ -3,7 +3,6 @@
 </template>
 
 <script>
-
 	import Contacts from "../components/misc/Contacts";
 	export default {
 		components: {Contacts}

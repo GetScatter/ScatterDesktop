@@ -147,29 +147,10 @@
 				return tabs;
 			},
 			categories(){
-				if(!this.dappData) return {};
-				return Object.keys(this.dappData).reduce((acc, key) => {
-					const item = this.dappData[key];
-					if(!acc.find(x => x.type === item.type)) acc.push({type:item.type, apps:[]});
-					acc.find(x => x.type === item.type).apps.push(item);
-					return acc;
-				}, []).map(cat => {
-					ObjectHelpers.shuffle(cat.apps);
-					if(this.selectedCategory) return cat;
-					cat.apps = cat.apps.filter(({applink}) => this.getAppData(applink).hasOwnProperty('img'));
-					return cat;
-				}).sort((a,b) => {
-					return b.apps.length - a.apps.length
-				});
+				return AppsService.appsByCategory(this.selectedCategory);
 			},
 			filteredApps(){
-				if(!this.dappData) return {};
-				return Object.keys(this.dappData).reduce((acc, key) => {
-					const item = this.dappData[key];
-					const found = prop => prop.toLowerCase().trim().indexOf(this.exploreTerms.toLowerCase().trim()) > -1;
-					if(found(item.applink) || found(item.name) || found(item.description)) acc.push(item);
-					return acc;
-				}, []);
+				return AppsService.appsByTerm(this.exploreTerms);
 			},
 			featuredApps(){
 				if(this.exploreTerms.trim().length){
@@ -186,20 +167,14 @@
 				return [
 					{
 						selected:this.typeFilter,
-						options:[null].concat(this.categories.map(x => x.type)),
+						options:[null].concat(AppsService.categories(this.selectedCategory)),
 						parser:x => x === null ? 'All Categories' : x,
 						onSelect:x => this.typeFilter = x,
 					}
 				]
 			},
 			linkedApps(){
-				return this.permissions.filter(x => x.isIdentity).map(({origin:applink}) => {
-					return this.getAppData(applink);
-				}).filter(app => {
-					return app.type === this.typeFilter || !this.typeFilter
-				}).filter(app => {
-					return app.name.toLowerCase().indexOf(this.terms) > -1
-				});
+				return AppsService.linkedApps(this.terms, this.typeFilter);
 			}
 		},
 		mounted(){

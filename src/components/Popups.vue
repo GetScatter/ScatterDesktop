@@ -21,7 +21,6 @@
                     <CheckHardware :popin="popIn" v-if="popIn.data.type === popupTypes.CHECK_HARDWARE" />
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                     <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
-                    <EnableWhitelist :popin="popIn" v-if="popIn.data.type === popupTypes.ENABLE_WHITELIST" />
                     <ExportPrivateKey :popin="popIn" v-if="popIn.data.type === popupTypes.EXPORT_PRIVATE_KEY" />
                     <Terms :popin="popIn" v-if="popIn.data.type === popupTypes.SHOW_TERMS" />
                     <ChangeIdentityKey :popin="popIn" v-if="popIn.data.type === popupTypes.CHANGE_IDENTITY_KEY" />
@@ -94,7 +93,6 @@
     import CheckHardware from "./popins/fullscreen/CheckHardware";
     import DestroyScatter from "./popins/fullscreen/DestroyScatter";
     import ImportBackup from "./popins/fullscreen/ImportBackup";
-    import EnableWhitelist from "./popins/fullscreen/EnableWhitelist";
     import ConfirmExchange from "./popins/overlay/ConfirmExchange";
     import ConfirmTransfer from "./popins/overlay/ConfirmTransfer";
     // import DisplayToken from "./popins/fullscreen/DisplayToken";
@@ -146,7 +144,6 @@
 		    ImportKeypair,
 		    GenerateKeypair,
 		    CheckHardware,
-		    EnableWhitelist,
 		    ConfirmExchange,
 		    ConfirmTransfer,
 		    // DisplayToken,

@@ -382,20 +382,6 @@
 				this.messages.map(message => {
 					if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
 				})
-				// this.hideCloseButton = true;
-				// const finish = bool => {
-				// 	this.whitelisted = bool;
-				// 	this.hideCloseButton = false;
-				// 	this.messages.map(message => {
-				// 		if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
-				// 	})
-				// };
-                //
-				// if(this.whitelisted) return finish(false);
-                //
-				// PopupService.push(Popup.enableWhitelist(accepted => {
-				// 	finish(accepted);
-				// }));
             },
 
 

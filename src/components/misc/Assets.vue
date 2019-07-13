@@ -78,12 +78,6 @@
 						const aBal = a.balanceFor(this.selectedToken) ? a.balanceFor(this.selectedToken).amount : 0;
 						return bBal - aBal;
 					});
-					// .sort((a,b) => {
-					// 	return b.balanceFor(this.selectedToken) || 0 - a.balanceFor(this.selectedToken) || 0;
-					// 	const bBal = b.balanceFor(this.selectedToken);
-					// 	const aBal = a.balanceFor(this.selectedToken);
-					// 	return bBal ? bBal.amount : 0 - aBal ? aBal.amount : 0;
-					// });
 			},
 			needsAccountSearchBar(){
 				return this.selectedToken && this.selectedToken.accounts().length >= 5
