@@ -1,4 +1,4 @@
-import {RUNNING_TESTS, TestStore} from "scatter-core/util/TestingHelper";
+import {RUNNING_TESTS} from "scatter-core/util/TestingHelper";
 import * as Actions from 'scatter-core/store/constants';
 const Store = window.require('electron-store');
 
@@ -11,9 +11,7 @@ const SCATTER_INTERMED_NAME = 'scatter_intermed';
 const stores = {};
 const getStore = name => {
 	if(!stores.hasOwnProperty(name))
-		stores[name] = RUNNING_TESTS
-			? new TestStore(name)
-			: new Store({name});
+		stores[name] = new Store({name});
 
 	return stores[name];
 };
