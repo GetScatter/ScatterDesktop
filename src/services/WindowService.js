@@ -8,6 +8,7 @@ import WindowMessage from 'scatter-core/models/popups/WindowMessage';
 import StoreService from "scatter-core/services/utility/StoreService";
 import AppsService from "scatter-core/services/apps/AppsService";
 import Recurring from 'scatter-core/models/Recurring'
+import Scatter from "scatter-core/models/Scatter";
 
 let pendingMessages = [];
 const getPending = msg => pendingMessages.find(x => x.id === msg.id);
@@ -102,9 +103,4 @@ export default class WindowService {
 			popup.internal
 		);
 	}
-
-	// static async openPopOut(onReady = () => {}, onClosed = () => {}, width = 800, height = 600, dontHide = false){
-	// 	return LowLevelWindowService.openPopOut(onReady, onClosed, width, height, dontHide);
-	// }
-
 }
