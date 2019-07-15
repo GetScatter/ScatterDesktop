@@ -45,10 +45,7 @@
 			async init(){
 				if(this.priceData && this.priceData.hasOwnProperty('prices')) await this.setupGraph();
 				else this.loading = true;
-				const prices = await PriceService.getCurrencyPrices();
-				const yesterday = await PriceService.getTimeline(dateId(1));
-				const today = await PriceService.getTimeline();
-				this[Actions.SET_PRICE_DATA]({prices, yesterday, today});
+				await PriceService.loadPriceTimelineData();
 				this.loading = false;
 				this.setupGraph();
 			},

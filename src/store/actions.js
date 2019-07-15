@@ -1,20 +1,13 @@
 import * as Actions from 'scatter-core/store/constants'
 import StorageService from 'scatter-core/services/utility/StorageService';
-import SocketService from 'scatter-core/services/utility/SocketService';
 import PasswordService from 'scatter-core/services/secure/PasswordService';
 import BackupService from 'scatter-core/services/utility/BackupService';
-import PluginRepository from 'scatter-core/plugins/PluginRepository';
 import Hasher from 'scatter-core/util/Hasher'
 import IdGenerator from 'scatter-core/util/IdGenerator'
-
 import Scatter from 'scatter-core/models/Scatter';
-
 import AES from 'aes-oop';
-import PopupService from "scatter-core/services/utility/PopupService";
-import {Popup} from 'scatter-core/models/popups/Popup'
 import {RUNNING_TESTS} from "scatter-core/util/TestingHelper";
 import Seeder from "scatter-core/services/secure/Seeder";
-import Process from "scatter-core/models/Process";
 
 export const actions = {
     [Actions.SET_PORTS]:({commit}, x) => commit(Actions.SET_PORTS, x),

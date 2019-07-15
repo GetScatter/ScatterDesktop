@@ -82,11 +82,10 @@
 				'hideMainBalance',
 			]),
 			totalBalance(){
-				return PriceService.getTotal(this.totalBalances.totals);
+				return PriceService.getTotal(BalanceService.totalBalances(false).totals);
 			},
 			totalTokenBalance(){
-				const totals = this.totalBalances.totals;
-				return PriceService.getTotal(totals, null, false, this.displayToken);
+				return PriceService.getTotal(BalanceService.totalBalances(false).totals, null, false, this.displayToken);
 			},
 			isShort(){
 				return [
