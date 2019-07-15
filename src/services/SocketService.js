@@ -1,8 +1,4 @@
-import ApiService from 'scatter-core/services/apis/ApiService';
-import AuthorizedApp from 'scatter-core/models/AuthorizedApp';
 import * as Actions from 'scatter-core/store/constants';
-import {Popup} from 'scatter-core/models/popups/Popup'
-import PopupService from 'scatter-core/services/utility/PopupService';
 
 import {ipcRenderer, remote} from "../util/ElectronHelpers";
 import StoreService from "scatter-core/services/utility/StoreService";
@@ -14,8 +10,6 @@ remote.getGlobal('appShared').QuitWatcher = () => {
 	console.log('dced')
 	SocketService.broadcastEvent('dced', {});
 };
-
-
 
 let websockets = [];
 export default class SocketService {
