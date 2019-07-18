@@ -33,9 +33,11 @@
 	import LoginButton from "../../login/LoginButton";
 	import AES from 'aes-oop';
 	import Crypto from "scatter-core/util/Crypto";
-	import {getFileLocation} from "../../../services/FileService";
-	import ElectronHelpers, {ipcFaF} from "../../../util/ElectronHelpers";
-	const fs = window.require('fs');
+	import {isWeb} from "../../../util/WebOrWrapper";
+	const {getFileLocation} = isWeb ? require('../../../services/web/FileService') : require('../../../services/electron/FileService');
+	const ipcFaF = isWeb ? require('../../../util/WebHelpers').ipcFaF : require('../../../util/ElectronHelpers').ipcFaF;
+	const reload = isWeb ? require('../../../util/WebHelpers').default.reload : require('../../../util/ElectronHelpers').default.reload;
+	// const fs = window.require('fs');
 
 	export default {
 		components: {LoginButton},
@@ -76,7 +78,7 @@
 						await this[Actions.SET_SEED](password);
 						await this[Actions.SET_SCATTER](Scatter.fromJson(decrypted));
 						ipcFaF('key', null);
-						ElectronHelpers.reload()
+						reload()
 					} else {
 						unrestore();
 						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
@@ -114,33 +116,35 @@
 							return AccountService.importAllAccounts(keypair);
 						}));
 						ipcFaF('key', null);
-						ElectronHelpers.reload()
+						reload()
 					} else {
 						unrestore();
 						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
 					}
 				};
-				fs.readFile(file, 'utf-8', (err, data) => {
-					const fileExtension = file.split('.')[file.split('.').length-1];
-					if(err) {
-						unrestore();
-						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.CantReadBackup)));
-					}
-					PopupService.push(Popup.verifyPassword(async password => {
-						if(!password || !password.length) return unrestore();
-						this.setWorkingScreen(true);
-						try {
-							switch(fileExtension){
-								case 'json': return await importDesktopBackup(data, password);
-								case 'txt': return await importExtensionBackup(data, password);
-							}
-						} catch(e){
-							console.error('e',e);
-							unrestore();
-							return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
-						}
-					}, true))
-				});
+
+				// TODO: Fix for both web and desktop
+				// fs.readFile(file, 'utf-8', (err, data) => {
+				// 	const fileExtension = file.split('.')[file.split('.').length-1];
+				// 	if(err) {
+				// 		unrestore();
+				// 		return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.CantReadBackup)));
+				// 	}
+				// 	PopupService.push(Popup.verifyPassword(async password => {
+				// 		if(!password || !password.length) return unrestore();
+				// 		this.setWorkingScreen(true);
+				// 		try {
+				// 			switch(fileExtension){
+				// 				case 'json': return await importDesktopBackup(data, password);
+				// 				case 'txt': return await importExtensionBackup(data, password);
+				// 			}
+				// 		} catch(e){
+				// 			console.error('e',e);
+				// 			unrestore();
+				// 			return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
+				// 		}
+				// 	}, true))
+				// });
 			},
 
 			...mapActions([

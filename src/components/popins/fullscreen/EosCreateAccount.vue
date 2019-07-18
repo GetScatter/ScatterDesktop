@@ -111,7 +111,6 @@
 	import Keypair from "scatter-core/models/Keypair";
 	import Exchange from '../../svgs/quick-actions/Exchange'
 	import CreditCard from '../../svgs/CreditCard'
-	import ElectronHelpers from "../../../util/ElectronHelpers";
 
 
 	const STATES = {
@@ -225,7 +224,7 @@
 				return this.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey));
 			},
 			copyExchangeMemo(){
-				ElectronHelpers.copy(this.exchangeMemo);
+				this.copyText(this.exchangeMemo);
 			},
 
 			findExchangeAccount(){

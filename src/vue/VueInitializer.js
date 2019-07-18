@@ -2,11 +2,12 @@ import Vue from 'vue'
 import {mapState, mapActions} from 'vuex';
 import VTooltip from 'v-tooltip'
 import VueQrcodeReader from 'vue-qrcode-reader'
+import {isWeb} from "../util/WebOrWrapper";
 
 
 import VueRouter from 'vue-router'
 import {RouteNames, Routing} from './Routing';
-import ElectronHelpers from '../util/ElectronHelpers'
+const Helpers = isWeb ? require('../util/WebHelpers').default : require('../util/ElectronHelpers').default;
 import features from '../features';
 
 import * as Actions from 'scatter-core/store/constants'
@@ -81,9 +82,11 @@ export default class VueInitializer {
 		                const data = AppsService.getAppData(applink);
 		                if(data.url.length) this.openInBrowser(data.url);
 	                },
-	                openInBrowser(url){ ElectronHelpers.openLinkInBrowser(url); },
+	                openInBrowser(url){
+		                Helpers.openLinkInBrowser(url);
+                    },
 	                setWorkingScreen(bool){ StoreService.get().dispatch(Actions.SET_WORKING_SCREEN, bool); },
-	                copyText(text){ ElectronHelpers.copy(text) },
+	                copyText(text){ Helpers.copy(text) },
 	                publicKeyForKeypair(keypair){
 		                if(!keypair) return null;
 		                if(!keypair.hasOwnProperty('publicKeys')) return null;

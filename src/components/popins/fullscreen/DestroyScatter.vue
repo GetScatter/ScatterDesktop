@@ -19,7 +19,8 @@
 	import '../../../styles/popins.scss';
 	import SocketService from "scatter-core/services/utility/SocketService";
 	import StorageService from "scatter-core/services/utility/StorageService";
-	import ElectronHelpers from "../../../util/ElectronHelpers";
+	import {isWeb} from "../../../util/WebOrWrapper";
+	const Helpers = isWeb ? require('../../../util/WebHelpers').default : require('../../../util/ElectronHelpers').default;
 
 	export default {
 		props:['popin'],
@@ -48,7 +49,7 @@
 
 				setTimeout(async () => {
 					await StorageService.removeScatter();
-					ElectronHelpers.reload()
+					Helpers.reload()
 				}, 500);
 			},
 

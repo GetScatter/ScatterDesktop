@@ -1,4 +1,4 @@
-import {ipcRenderer, remote} from '../util/ElectronHelpers';
+import {ipcRenderer, remote} from '../../util/ElectronHelpers';
 const path = window.require("path");
 const url = window.require("url");
 

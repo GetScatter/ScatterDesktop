@@ -196,11 +196,11 @@
 	import * as Actions from 'scatter-core/store/constants'
 	import IdGenerator from "scatter-core/util/IdGenerator";
 	import Identity from "scatter-core/models/Identity";
-	import * as FileService from '../services/FileService';
+	import {isWeb} from "../util/WebOrWrapper";
+	const {getFileLocation, uploadAvatar} = isWeb ? require('../services/web/FileService') : require('../services/electron/FileService');
 	import PopupService from "scatter-core/services/utility/PopupService";
 	import {Popup} from "scatter-core/models/popups/Popup";
 	import RIDLService from "scatter-core/services/apis/RIDLService";
-	const fs = window.require('fs');
 
 	let saveTimeout;
 	export default {
@@ -330,48 +330,7 @@
 				this[Actions.SET_SCATTER](scatter);
 			},
 			async uploadAvatar(){
-				//TODO: I'm not sure this is the best way to go about this.
-				/***
-				 * It's possible that this could inflate the saved json and backups significantly.
-				 * It might be best to have it as images, but that wouldn't persist for backups.
-				 * Need to give this a think.
-				 */
-
-				let filepath = await FileService.getFileLocation(['jpg', 'png', 'jpeg']);
-				if(!filepath || !filepath.length) return;
-				filepath = filepath[0];
-				let ext = filepath.split('.');
-				ext = ext[ext.length-1];
-
-				const base64 = fs.readFileSync(filepath, { encoding: 'base64' });
-				if(!base64) return PopupService.push(Popup.snackbar("Error converting image file."));
-
-				// Resizing to 350x350 MAX (ratio preserved)
-				// -------------------------------------------
-				const canvas = document.createElement("canvas");
-				const ctx = canvas.getContext("2d");
-				const image = new Image();
-
-				image.onload = e => {
-					const calculateAspectRatioFit = () => {
-						const ratio = Math.min(350 / image.width, 350 / image.height);
-						return { width: Math.round(image.width*ratio), height: Math.round(image.height*ratio) };
-					}
-
-					canvas.height = calculateAspectRatioFit().height;
-					canvas.width = calculateAspectRatioFit().width;
-
-					ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, calculateAspectRatioFit().width, calculateAspectRatioFit().height);
-					const resized = new Image();
-					resized.src = canvas.toDataURL(`image/${ext}`);
-
-					const scatter = this.scatter.clone();
-					scatter.keychain.avatars[this.identity.id] = resized.src;
-					this[Actions.SET_SCATTER](scatter);
-				};
-
-				image.src = `data:image/${ext};base64, ${base64}`;
-				// -------------------------------------------
+				return uploadAvatar();
 			},
 			changeSecurityKey(){
 				PopupService.push(Popup.verifyPassword(verified => {

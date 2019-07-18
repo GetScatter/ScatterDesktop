@@ -21,7 +21,6 @@
     import {RouteNames} from '../../../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from 'scatter-core/store/constants';
-    import ElectronHelpers from '../../../util/ElectronHelpers'
 
     export default {
 	    props:['popin'],
@@ -51,7 +50,7 @@
                 this[Actions.RELEASE_POPUP](this.popin);
             },
             open(){
-                ElectronHelpers.openLinkInBrowser(this.explorer.transaction(this.tx));
+                this.openInBrowser(this.explorer.transaction(this.tx));
             },
             ...mapActions([
                 Actions.RELEASE_POPUP

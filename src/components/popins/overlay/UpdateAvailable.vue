@@ -23,7 +23,6 @@
     import {RouteNames} from '../../../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from 'scatter-core/store/constants';
-    import ElectronHelpers from '../../../util/ElectronHelpers'
     import VueMarkdown from 'vue-markdown'
 
     export default {
@@ -49,7 +48,7 @@
                 this[Actions.RELEASE_POPUP](this.popin);
             },
             open(){
-                ElectronHelpers.openLinkInBrowser(this.update.url);
+                this.openInBrowser(this.update.url);
                 this.returnResult(true);
             },
             ...mapActions([

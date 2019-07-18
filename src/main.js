@@ -4,16 +4,14 @@ import './styles/popins.scss'
 import './styles/confirm.scss'
 import './styles/blockchain-lists.scss'
 
-// MUST BE LOADED FIRST
-import ElectronHelpers, {ipcAsync, ipcFaF} from './util/ElectronHelpers';
-
-import ScatterCore from 'scatter-core';
+import {isWeb} from "./util/WebOrWrapper";
+const Helpers = isWeb ? require('./util/WebHelpers').default : require('./util/ElectronHelpers').default;
 
 import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
 import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
-ElectronHelpers.bindContextMenu();
+
 
 import MenuBar from './components/MenuBar.vue'
 import ViewBase from './components/ViewBase.vue'
@@ -28,10 +26,7 @@ import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import AnimatedNumber from './components/reusable/AnimatedNumber.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
 import PopOutHead from './components/popouts/PopOutHead.vue'
-import WindowService from './services/WindowService';
-import SocketService from "./services/SocketService";
-import StorageService from "./services/StorageService";
-import {store} from "./store/store";
+import WindowService from 'scatter-core/services/utility/WindowService';
 
 // f12 to open console from anywhere.
 document.addEventListener("keydown", e => {
@@ -81,23 +76,7 @@ class Main {
 			else next();
 		};
 
-		ScatterCore.initialize(
-			store,
-			StorageService,
-			{
-				get:() => ipcAsync('seed'),
-				set:(seed) => ipcFaF('seeding', seed),
-				clear:() => ipcFaF('key', null),
-			},
-			{
-				getVersion:ElectronHelpers.getVersion,
-				pushNotification:ElectronHelpers.pushNotificationMethod(),
-			},
-			WindowService.openPopOut,
-			// TODO:
-			ElectronHelpers.getLedgerTransport(),
-			SocketService
-		)
+		Helpers.initializeCore();
 
 		new VueInitializer(Routing.routes(), components, middleware, async (router, _store) => {
 

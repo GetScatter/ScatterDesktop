@@ -31,7 +31,6 @@
 
     import {BACKUP_STRATEGIES} from 'scatter-core/models/Settings';
     import BackupService from 'scatter-core/services/utility/BackupService';
-    import ElectronHelpers from '../../../util/ElectronHelpers';
     import PopupService from "scatter-core/services/utility/PopupService";
     import {Popup} from "scatter-core/models/popups/Popup";
 
@@ -52,7 +51,7 @@
         },
         methods: {
 	        openFilePathLink(){
-		        ElectronHelpers.openLinkInBrowser(this.scatter.settings.backupLocation, true);
+		        this.openInBrowser(this.scatter.settings.backupLocation, true);
 	        },
             async setBackupLocation(){
                 await BackupService.setBackupLocation();

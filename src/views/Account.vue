@@ -78,7 +78,6 @@
     import Process from "scatter-core/models/Process";
     import BalanceService from "scatter-core/services/blockchain/BalanceService";
     import PluginRepository from 'scatter-core/plugins/PluginRepository'
-    import ElectronHelpers from "../util/ElectronHelpers";
     import TokenGraph from "../components/tokens/TokenGraph";
     import TokenList from "../components/tokens/TokenList";
 
@@ -131,7 +130,7 @@
 		        }
 	        },
 	        copyAuthKey(account){
-	            ElectronHelpers.copy(account.publicKey);
+	            this.copyText(account.publicKey);
             },
             async commitAction(action){
 	            const result = await action.onclick();

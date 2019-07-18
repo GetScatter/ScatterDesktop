@@ -125,7 +125,6 @@
 	import Reset from '../components/svgs/login/Reset';
 	import Restore from '../components/svgs/login/Restore';
 	import Support from '../components/svgs/login/Support';
-	import ElectronHelpers from "../util/ElectronHelpers";
 	import BackupService from "scatter-core/services/utility/BackupService";
 
 	const STATES = {
@@ -212,7 +211,7 @@
 			},
 
 			goToSupport(){
-				ElectronHelpers.openLinkInBrowser('https://support.get-scatter.com/');
+				this.openInBrowser('https://support.get-scatter.com/');
 			},
 			importBackup(){
 				PopupService.push(Popup.importFullBackup({}, done => {

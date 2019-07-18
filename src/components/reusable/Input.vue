@@ -36,8 +36,6 @@
 </template>
 
 <script>
-	import ElectronHelpers from '../../util/ElectronHelpers'
-
 	export default {
 		data(){ return { input:this.text }},
 		methods: {
@@ -45,7 +43,6 @@
 			emit(){ this.$emit('changed', this.input) },
 			blur(){ this.$emit('blur') },
 			emitDynamicButton(){ this.$emit('dynamic') },
-			copyText(){ ElectronHelpers.copy(this.text); }
 		},
 		created(){
 			if(this.focus) {

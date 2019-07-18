@@ -85,7 +85,6 @@
 	import ExchangeService from "scatter-core/services/apis/ExchangeService";
 	import PopupService from "scatter-core/services/utility/PopupService";
 	import {Popup} from "scatter-core/models/popups/Popup";
-	import ElectronHelpers from "../util/ElectronHelpers";
 
 	export default {
 		components: {
@@ -181,7 +180,7 @@
 			},
 			view(item){
 				const explorer = this.explorers[item.token.blockchain].parsed();
-				ElectronHelpers.openLinkInBrowser(explorer.transaction(item.txid));
+				this.openInBrowser(explorer.transaction(item.txid));
 			},
 			redo(item){
 				if(item.type === HISTORY_TYPES.Exchange){

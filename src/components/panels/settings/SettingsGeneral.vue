@@ -51,7 +51,7 @@
             <section v-else>There are no open ports!</section>
         </section>
 
-        <section class="action-box top-pad">
+        <section class="action-box top-pad" v-if="dataPath">
             <label>{{locale(langKeys.SETTINGS.GENERAL.DataPathLabel)}}</label>
             <p>{{locale(langKeys.SETTINGS.GENERAL.DataPathDescription)}}</p>
 
@@ -77,13 +77,12 @@
     import * as Actions from 'scatter-core/store/constants';
 
     import UpdateService from 'scatter-core/services/utility/UpdateService';
-    import WindowService from '../../../services/WindowService';
-    import ElectronHelpers from '../../../util/ElectronHelpers';
+    import WindowService from 'scatter-core/services/utility/WindowService';
     import {LANG} from 'scatter-core/localization/locales';
     import LanguageService from "scatter-core/services/utility/LanguageService";
 
-    import {remote} from '../../../util/ElectronHelpers';
-    const app = remote.app;
+    import {isWeb} from "../../../util/WebOrWrapper";
+    const app = isWeb ? null : require('../../../util/ElectronHelpers').remote.app;
 
     export default {
         data () {return {
@@ -105,7 +104,7 @@
                 return this.scatter.settings.showNotifications;
             },
             dataPath(){
-            	return app.getPath('userData');
+            	return isWeb ? null : app.getPath('userData');
             },
 	        selectedLanguage(){
 		        return this.scatter.settings.language
@@ -121,10 +120,10 @@
         },
         methods: {
         	openFilePathLink(){
-        	    ElectronHelpers.openLinkInBrowser(this.dataPath, true);
+        	    this.openInBrowser(this.dataPath, true);
             },
 	        openUpdateLink(){
-		        ElectronHelpers.openLinkInBrowser(UpdateService.updateUrl());
+		        this.openInBrowser(UpdateService.updateUrl());
 	        },
 	        openConsole(){ WindowService.openTools(); },
             async toggleNotifications(){

@@ -4,14 +4,14 @@
 		<section class="actions" v-if="!isMacOS">
 
 			<!-- MINIMIZE -->
-			<section class="action" @click="minimize">
+			<section class="action" v-if="!isBrowser" @click="minimize">
 				<section class="action-inner">
 					<figure class="line"></figure>
 				</section>
 			</section>
 
 			<!-- EXPAND / CONTRACT -->
-			<section class="action" @click="maximize">
+			<section class="action" v-if="!isBrowser" @click="maximize">
 				<section class="action-inner">
 					<figure class="sqr"></figure>
 				</section>
@@ -30,7 +30,8 @@
 
 <script>
 
-	import {remote} from '../util/ElectronHelpers';
+	import {isWeb} from "../util/WebOrWrapper";
+	const {remote} = isWeb ? {} : require('../util/ElectronHelpers');
 	import SocketService from "scatter-core/services/utility/SocketService";
 
 	export default {
@@ -45,20 +46,23 @@
 		methods:{
 			quit(){
 				SocketService.broadcastEvent('dced', {});
-				setTimeout(() => remote.app.quit(), 1);
+				setTimeout(() => isWeb ? window.close() : remote.app.quit(), 1);
 			},
 			minimize(){
+				if(isWeb) return;
 				remote.BrowserWindow.getFocusedWindow().hide();
 			},
 			maximize(){
+				if(isWeb) return;
 				const win = remote.BrowserWindow.getFocusedWindow();
 				win.isMaximized() ? win.unmaximize() : win.maximize();
 			},
 		},
 		computed:{
-			isWindows(){ return remote.process.platform === 'win32'; },
-			isMacOS(){ return remote.process.platform === 'darwin'; },
-			isLinux(){ return !this.isWindows && !this.isMacOS; }
+			isWindows(){ return isWeb ? false : remote.process.platform === 'win32'; },
+			isMacOS(){ return isWeb ? false : remote.process.platform === 'darwin'; },
+			isLinux(){ return isWeb ? false : !this.isWindows && !this.isMacOS; },
+			isBrowser(){ return isWeb; }
 		}
 	}
 </script>

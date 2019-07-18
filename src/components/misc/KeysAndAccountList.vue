@@ -88,7 +88,6 @@
 	import PluginRepository from "scatter-core/plugins/PluginRepository";
 	import SearchAndFilter from "../reusable/SearchAndFilter";
 	import {blockchainName, BlockchainsArray, Blockchains} from 'scatter-core/models/Blockchains'
-	import ElectronHelpers from "../../util/ElectronHelpers";
 	import PopupService from "scatter-core/services/utility/PopupService";
 	import {Popup} from "scatter-core/models/popups/Popup";
 	import AccountService from "scatter-core/services/blockchain/AccountService";
@@ -208,7 +207,7 @@
 			},
 			copyPublicKey(keypair){
 				this.actionsMenu = null;
-				ElectronHelpers.copy(keypair.enabledKey().key);
+				this.copyText(keypair.enabledKey().key);
 			},
 			removeKeypair(keypair){
 				this.actionsMenu = null;

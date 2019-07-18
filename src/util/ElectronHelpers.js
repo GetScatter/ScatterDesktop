@@ -8,6 +8,11 @@ const {reloader, Transport} = remote.getGlobal('appShared');
 
 import {localizedState} from "scatter-core/localization/locales";
 import LANG_KEYS from "scatter-core/localization/keys";
+import ScatterCore from "scatter-core";
+import StorageService from "../services/electron/StorageService";
+import {store} from "../store/store";
+import WindowService from "../services/electron/WindowService";
+import SocketService from "../services/electron/SocketService";
 
 let popupService;
 const PopupService = () => {
@@ -63,6 +68,27 @@ ipcRenderer.on('error', (e, x) => console.log(x));
 ipcRenderer.on('console', (e, x) => console.log('Main process console: ', x));
 
 export default class ElectronHelpers {
+
+	static initializeCore(){
+		ElectronHelpers.bindContextMenu();
+		ScatterCore.initialize(
+			store,
+			StorageService,
+			{
+				get:() => ipcAsync('seed'),
+				set:(seed) => ipcFaF('seeding', seed),
+				clear:() => ipcFaF('key', null),
+			},
+			{
+				getVersion:ElectronHelpers.getVersion,
+				pushNotification:ElectronHelpers.pushNotificationMethod(),
+			},
+			WindowService.openPopOut,
+			// TODO:
+			ElectronHelpers.getLedgerTransport(),
+			SocketService
+		)
+	}
 
 	static getLedgerTransport(){
 		return Transport.default

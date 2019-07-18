@@ -39,11 +39,12 @@
     import '../styles/popout.scss';
     import PopOutHead from '../components/popouts/PopOutHead';
 
+    import {isWeb} from "../util/WebOrWrapper";
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from 'scatter-core/store/constants';
     import Scatter from 'scatter-core/models/Scatter';
-    import {remote} from '../util/ElectronHelpers';
-    import WindowService from '../services/WindowService'
+    const {remote} = isWeb ? {} : require('../util/ElectronHelpers');
+    const WindowService = isWeb ? null : require('../services/electron/WindowService')
     import * as ApiActions from 'scatter-core/models/api/ApiActions';
     import {Popup} from "scatter-core/models/popups/Popup";
     import PasswordService from "scatter-core/services/secure/PasswordService";
@@ -66,39 +67,42 @@
             UpdateIdentity:() => import('./popouts/UpdateIdentity'),
         },
         created(){
-            WindowService.watch('popup', windowMessage => {
-                this.windowMessage = windowMessage;
+        	const setWindowMessage = wm => {
+		        this.windowMessage = wm;
 
-                const scatter = this.windowMessage.data.scatter;
+		        const scatter = this.windowMessage.data.scatter;
 
-                // Hardware wallets cause slowdowns to initialize
-                // which makes popups slow down too.
-                scatter.keychain.keypairs.map(x => x.external = null);
+		        // Hardware wallets cause slowdowns to initialize
+		        // which makes popups slow down too.
+		        scatter.keychain.keypairs.map(x => x.external = null);
 
-                this[Actions.HOLD_SCATTER](Scatter.fromJson(scatter));
+		        this[Actions.HOLD_SCATTER](Scatter.fromJson(scatter));
 
-                let balances = {};
-                Object.keys(this.windowMessage.data.balances).map(key => {
-	                balances[key] = this.windowMessage.data.balances[key].map(token => Token.fromJson(token));
-                });
-	            this[Actions.SET_FULL_BALANCES](balances);
+		        let balances = {};
+		        Object.keys(this.windowMessage.data.balances).map(key => {
+			        balances[key] = this.windowMessage.data.balances[key].map(token => Token.fromJson(token));
+		        });
+		        this[Actions.SET_FULL_BALANCES](balances);
 
-                const needsPIN = [
-                    ApiActions.SIGN_ARBITRARY,
-                    ApiActions.SIGN,
-                    ApiActions.TRANSFER
-                ];
+		        const needsPIN = [
+			        ApiActions.SIGN_ARBITRARY,
+			        ApiActions.SIGN,
+			        ApiActions.TRANSFER
+		        ];
 
-                setTimeout(async () => {
-	                if(this.scatter.pinForAll && needsPIN.includes(this.popup.data.type)){
-	                	this.pinning = true;
-		                if(! await PasswordService.verifyPIN()){
-		                	this.returnResult(null);
-                        }
-		                this.pinning = false;
-	                }
-                })
-            });
+		        setTimeout(async () => {
+			        if(this.scatter.pinForAll && needsPIN.includes(this.popup.data.type)){
+				        this.pinning = true;
+				        if(! await PasswordService.verifyPIN()){
+					        this.returnResult(null);
+				        }
+				        this.pinning = false;
+			        }
+		        })
+            }
+
+            if(isWeb) setWindowMessage(window.getData());
+            else WindowService.watch('popup', wm => setWindowMessage(wm));
         },
         computed:{
             ...mapState([
@@ -111,11 +115,19 @@
         },
         methods: {
             async returnResult(result){
-				await WindowService.sendResult(this.windowMessage, result);
+            	let w;
 
-				const window = remote.getCurrentWindow();
-				window.close();
-				if(!window.closed) window.destroy();
+            	if(isWeb){
+            		w = window;
+		            w.respond(result);
+		            w.close();
+                } else {
+		            await WindowService.sendResult(this.windowMessage, result);
+		            w = remote.getCurrentWindow();
+		            w.close();
+                }
+
+				if(!w.closed) w.destroy();
             },
 	        async checkAppReputation(){
 		        this[Actions.SET_APP_REP](await RIDLService.checkApp(this .appData.applink));

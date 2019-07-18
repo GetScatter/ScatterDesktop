@@ -22,7 +22,7 @@ const translationStorage = () => getStore(TRANSLATION_NAME);
 const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
 
-import {ipcAsync, ipcFaF, remote} from '../util/ElectronHelpers';
+import {ipcAsync, ipcFaF, remote} from '../../util/ElectronHelpers';
 import {AES} from "aes-oop";
 import {HISTORY_TYPES} from "scatter-core/models/histories/History";
 import HistoricTransfer from "scatter-core/models/histories/HistoricTransfer";
@@ -30,9 +30,8 @@ import HistoricExchange from "scatter-core/models/histories/HistoricExchange";
 import HistoricAction from "scatter-core/models/histories/HistoricAction";
 import StoreService from "scatter-core/services/utility/StoreService";
 import Seeder from "scatter-core/services/secure/Seeder";
-import ElectronHelpers from "../util/ElectronHelpers";
-import * as FileService from "../services/FileService";
-const dataPath = remote.app.getPath('userData');
+import ElectronHelpers from "../../util/ElectronHelpers";
+import * as FileService from "./FileService";
 const fs = window.require('fs');
 
 const setSavingData = (bool) => remote.getGlobal('appShared').savingData = bool;
@@ -55,7 +54,7 @@ const safeSetScatter = async (scatter, resolver) => {
 		return resolver(true);
 	}
 
-	const path = name => `${dataPath}/${name}.json`;
+	const path = name => `${remote.app.getPath('userData')}/${name}.json`;
 	const retry = () => saveTimeouts.push(
 		setTimeout(() => safeSetScatter(scatter, resolver), 50)
 	);

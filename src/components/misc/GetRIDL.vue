@@ -83,7 +83,6 @@
 	import {Popup} from "scatter-core/models/popups/Popup";
 	import PluginRepository from "scatter-core/plugins/PluginRepository";
 	import PopupService from "scatter-core/services/utility/PopupService";
-	import ElectronHelpers from "../../util/ElectronHelpers";
 	require('../../styles/transfers.scss');
 
 	// TODO: Automatic claiming
@@ -191,7 +190,7 @@
 				}, 1000);
 			},
 			openTerms(){
-				ElectronHelpers.openLinkInBrowser('https://ridl.get-scatter.com/#/terms');
+				this.openInBrowser('https://ridl.get-scatter.com/#/terms');
 			}
 		}
 	}

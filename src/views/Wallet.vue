@@ -57,7 +57,6 @@
     import {Blockchains, blockchainName, BlockchainsArray} from "scatter-core/models/Blockchains";
     import PopupService from "scatter-core/services/utility/PopupService";
     import {Popup} from "scatter-core/models/popups/Popup";
-    import ElectronHelpers from "../util/ElectronHelpers";
     import KeysAndAccountList from "../components/misc/KeysAndAccountList";
     import KeyPairService from "scatter-core/services/secure/KeyPairService";
     import CreditCardsList from "../components/misc/CreditCardsList";

@@ -795,11 +795,6 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/jest@^23.3.1":
-  version "23.3.14"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.14.tgz#37daaf78069e7948520474c87b80092ea912520a"
-  integrity sha512-Q5hTcfdudEL2yOmluA1zaSyPbzWPmJ3XfSWeP3RyoYvS9hnje1ZyagrZOuQ6+1nQC1Gw+7gap3pLNL3xL6UBug==
-
 "@types/minimatch@*":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
@@ -3792,6 +3787,11 @@ dev-null@^0.1.1:
   resolved "https://registry.yarnpkg.com/dev-null/-/dev-null-0.1.1.tgz#5a205ce3c2b2ef77b6238d6ba179eb74c6a0e818"
   integrity sha1-WiBc48Ky73e2I41roXnrdMag6Bg=
 
+device-uuid@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/device-uuid/-/device-uuid-1.0.4.tgz#f6973e58f19b92a237aeca7b16a395ae7195a883"
+  integrity sha1-9pc+WPGbkqI3rsp7FqOVrnGVqIM=
+
 diff@3.5.0, diff@^3.1.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
@@ -4205,7 +4205,7 @@ eosjs-api@7.0.4:
     camel-case "^3.0.0"
     isomorphic-fetch "^2.2.1"
 
-eosjs-ecc@4.0.4, eosjs-ecc@^4.0.1, eosjs-ecc@^4.0.2, eosjs-ecc@^4.0.4:
+eosjs-ecc@4.0.4, eosjs-ecc@^4.0.2, eosjs-ecc@^4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/eosjs-ecc/-/eosjs-ecc-4.0.4.tgz#431450f30a6f73088ff5d7ba1ebdfe967a5ca4ab"
   integrity sha512-9wAYefts4TidHOu+eN9nAisZdWpUzlUimZrB63oP7+/s4xRNJEn2Vvep2ICRODpxpidbshM1L7WaSYW9oiV5gA==
@@ -4219,17 +4219,7 @@ eosjs-ecc@4.0.4, eosjs-ecc@^4.0.1, eosjs-ecc@^4.0.2, eosjs-ecc@^4.0.4:
     ecurve "^1.0.5"
     randombytes "^2.0.5"
 
-"eosjs2@npm:eosjs@20.0.0-beta2":
-  version "20.0.0-beta2"
-  resolved "https://registry.yarnpkg.com/eosjs/-/eosjs-20.0.0-beta2.tgz#026255a13fefeb4d46a98b0c55de7b972de661c0"
-  integrity sha512-CtlM3Cy8Fh3sKik5h8of66Tj1zALlU48xQJB25HJ1DLUm58f9z2jPCZ0hfkOcCXMsRIxZu01NpPufN08qZjFnQ==
-  dependencies:
-    "@types/jest" "^23.3.1"
-    babel-polyfill "^6.26.0"
-    eosjs-ecc "^4.0.1"
-    text-encoding "^0.6.4"
-
-eosjs@^16.0.0, eosjs@^16.0.9:
+eosjs@^16.0.0:
   version "16.0.9"
   resolved "https://registry.yarnpkg.com/eosjs/-/eosjs-16.0.9.tgz#ee3790f2f038079e71981f20354be8d1d98de873"
   integrity sha512-aYgzbgH2RhnmYVzEmK4AD6UIboJI54PGYQUesv2i8rCqYhWij+xQx7PtALJ481cxZnQgmFn8s2KMkgG07P5/Ug==
@@ -4240,6 +4230,15 @@ eosjs@^16.0.0, eosjs@^16.0.9:
     eosjs-api "7.0.4"
     eosjs-ecc "4.0.4"
     fcbuffer "2.2.2"
+
+eosjs@^20.0.0:
+  version "20.0.0"
+  resolved "https://registry.yarnpkg.com/eosjs/-/eosjs-20.0.0.tgz#43940abfe15cd191ce4027d60294036e914613e9"
+  integrity sha512-Ak9CPtZgCFayUmq43X3Nsn4v67lkLfSzEdTUfMk1XAWA5s4HRn7lBTeTeDCzJ/rggi+dZ170VeJwc5T3gPk4HQ==
+  dependencies:
+    babel-runtime "6.26.0"
+    eosjs-ecc "4.0.4"
+    text-encoding "0.7.0"
 
 errno@^0.1.3, errno@~0.1.1, errno@~0.1.7:
   version "0.1.7"
@@ -6397,6 +6396,11 @@ isomorphic-fetch@^2.2.1:
   dependencies:
     node-fetch "^1.0.1"
     whatwg-fetch ">=0.10.0"
+
+isomorphic-ws@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
+  integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
 
 isstream@~0.1.2:
   version "0.1.2"
@@ -9509,9 +9513,8 @@ saxes@^3.1.5:
     bip32-path "^0.4.2"
     bip39 "^2.5.0"
     bitcoinjs-lib "^5.0.5"
-    eosjs "^16.0.9"
+    eosjs "^20.0.0"
     eosjs-ecc "^4.0.4"
-    eosjs2 "npm:eosjs@20.0.0-beta2"
     ethereumjs-tx "^2.1.0"
     ethereumjs-util "^6.1.0"
     fcbuffer "^2.2.2"
@@ -10438,10 +10441,10 @@ terser@^4.0.0:
     source-map "~0.6.1"
     source-map-support "~0.5.12"
 
-text-encoding@^0.6.4:
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
-  integrity sha1-45mpgiV6J22uQou5KEXLcb3CbRk=
+text-encoding@0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.7.0.tgz#f895e836e45990624086601798ea98e8f36ee643"
+  integrity sha512-oJQ3f1hrOnbRLOcwKz0Liq2IcrvDeZRHXhd9RgLrsT+DjWY/nty1Hi7v3dtkaEYbPYe0mUoOfzRrMwfXXwgPUA==
 
 throttleit@0.0.2:
   version "0.0.2"

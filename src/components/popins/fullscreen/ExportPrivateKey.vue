@@ -78,7 +78,6 @@
 	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
 	import Crypto from "scatter-core/util/Crypto";
-	import ElectronHelpers, {ipcAsync, remote} from "../../../util/ElectronHelpers";
 	import QRService from "scatter-core/services/secure/QRService";
 	import Seeder from "scatter-core/services/secure/Seeder";
 	import PopupService from "scatter-core/services/utility/PopupService";
@@ -156,31 +155,32 @@
 				const prv = await this.getPrivateKey();
 				const pub = this.getPublicKey();
 				const copy = `${this.blockchainName(this.keypair.enabledKey().blockchain)} - ${this.keypair.name}\r\nPublic: ${pub}\r\nPrivate: ${prv}`;
-				ElectronHelpers.copy(copy);
+				this.copyText(copy);
 			},
 			async createQR(){
 				this.qr = await QRService.createQR(this.keypair.privateKey, this.pass);
 				this.state = STATES.QR;
 			},
 			screenshot(){
-				this.screenshotting = true;
-				setTimeout(() => {
-					let location = remote.dialog.showOpenDialog({properties: ['openDirectory']});
-					if(!location) return this.screenshotting = false;
-					location = location[0];
-
-					const filename = `${location}/${this.keypair.name}.jpg`;
-
-					remote.getCurrentWindow().capturePage(img => {
-						remote.require('fs').writeFile(filename, img.toJPEG(99), saved => {
-							PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.SavedImage), 'check'));
-							ElectronHelpers.openLinkInBrowser(location);
-							setTimeout(() => {
-								this.screenshotting = false;
-							}, 500);
-						})
-					})
-				}, 500);
+				// TODO: fix the export qr screenshot
+				// this.screenshotting = true;
+				// setTimeout(() => {
+				// 	let location = remote.dialog.showOpenDialog({properties: ['openDirectory']});
+				// 	if(!location) return this.screenshotting = false;
+				// 	location = location[0];
+				//
+				// 	const filename = `${location}/${this.keypair.name}.jpg`;
+				//
+				// 	remote.getCurrentWindow().capturePage(img => {
+				// 		remote.require('fs').writeFile(filename, img.toJPEG(99), saved => {
+				// 			PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.SavedImage), 'check'));
+				// 			this.openInBrowser(location);
+				// 			setTimeout(() => {
+				// 				this.screenshotting = false;
+				// 			}, 500);
+				// 		})
+				// 	})
+				// }, 500);
 			},
 
 			...mapActions([

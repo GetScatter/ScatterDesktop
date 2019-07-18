@@ -50,7 +50,6 @@
 	import {Popup} from "scatter-core/models/popups/Popup";
 	import QRService from "scatter-core/services/secure/QRService";
 	import {Blockchains} from "scatter-core/models/Blockchains";
-	import ElectronHelpers from "../util/ElectronHelpers";
 	require('../styles/transfers.scss');
 
 	export default {
@@ -90,7 +89,7 @@
 				this.qr = await QRService.createUnEncryptedQR(qrData);
 			},
 			copy(){
-				ElectronHelpers.copy(this.account.sendable());
+				this.copyText(this.account.sendable());
 			}
 		}
 	}
