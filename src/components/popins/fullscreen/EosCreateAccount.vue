@@ -318,7 +318,6 @@
 					.then(tx => this.finishedAccountCreation(tx))
 					.catch(error => {
 						this.setWorkingScreen(false);
-						PopupService.push(Popup.prompt("Error", error));
 						console.error('error', error);
 					});
 			},

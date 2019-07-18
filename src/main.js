@@ -95,7 +95,7 @@ class Main {
 			},
 			WindowService.openPopOut,
 			// TODO:
-			null,
+			ElectronHelpers.getLedgerTransport(),
 			SocketService
 		)
 

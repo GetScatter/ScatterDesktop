@@ -163,7 +163,7 @@
 				this.setWorkingScreen(true);
 
 				const isBuying = this.state === STATES.BUY;
-				PluginRepository.plugin(Blockchains.EOSIO).buyOrSellRAM(this.account, bytes, this.account.network(), isBuying).then(res => {
+				PluginRepository.plugin(Blockchains.EOSIO).buyOrSellRAM(this.account, bytes, isBuying).then(res => {
 					this.setWorkingScreen(false);
 					if(!res || !res.hasOwnProperty('transaction_id')) {
 						return false;

@@ -18,7 +18,8 @@
     "release-win": "electron-builder --win",
     "start": "npm run dev",
     "testfile": "mocha --require test/babel --exit --timeout 1000000",
-    "test": "npm run testfile \"test/**/*.spec.js\" --timeout 1000000"
+    "test": "npm run testfile \"test/**/*.spec.js\" --timeout 1000000",
+    "update-core": "yarn upgrade scatter-core && npm run postinstall"
   },
   "dependencies": {
     "@babel/runtime": "^7.5.4",

@@ -177,7 +177,7 @@
 	import RequiredFields from "../../components/popouts/RequiredFields";
 	import KeyPairService from "scatter-core/services/secure/KeyPairService";
 	import ResourceService from "scatter-core/services/blockchain/ResourceService";
-	import RIDLService, {RIDL_WEB_HOST} from "scatter-core/services/apis/RIDLService";
+	import RIDLService, {RIDL_API} from "scatter-core/services/apis/RIDLService";
 	import PopOutApp from "../../components/popouts/PopOutApp";
 
 	const VIEW_TYPES = {
@@ -315,7 +315,7 @@
 			    return this.reputation.reputables.find(x => x.code === `${message.code}${message.type}`);
             },
 			ridlLink(reputable){
-			    return `${RIDL_WEB_HOST}/reputable?id=${reputable.id}`
+			    return `${RIDL_API}/reputable?id=${reputable.id}`
             },
 
 			resourcesFor(account){

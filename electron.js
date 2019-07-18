@@ -114,7 +114,7 @@ const createScatterInstance = () => {
   		mainWindow.focus(); 
 	});
 
-	// mainWindow.openDevTools();
+	mainWindow.openDevTools();
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => quit());
 
@@ -345,8 +345,8 @@ class LowLevelSocketService {
 				if(!request.plugin || request.plugin.length > 100) return killRequest();
 				request.plugin = request.plugin.replace(/\s/g, "");
 
-				if(request.plugin.trim().toLowerCase() === 'Scatter') killRequest();
-				if(request.data.hasOwnProperty('payload') && request.data.payload.origin.trim().toLowerCase() === 'Scatter') killRequest();
+				if(request.plugin.trim().toLowerCase() === 'Scatter') return killRequest();
+				if(request.data.hasOwnProperty('payload') && request.data.payload.origin.trim().toLowerCase() === 'Scatter') return killRequest();
 
 				let requestOrigin;
 				if(request.data.hasOwnProperty('payload')) requestOrigin = request.data.payload.origin;

@@ -149,7 +149,7 @@
 				const net = `${parseFloat(this.net).toFixed(this.systemToken.decimals)} ${this.systemToken.symbol}`;
 
 				const isStaking = this.state === STATES.STAKE;
-				PluginRepository.plugin(Blockchains.EOSIO).stakeOrUnstake(this.account, cpu, net, this.account.network(), isStaking).then(res => {
+				PluginRepository.plugin(Blockchains.EOSIO).stakeOrUnstake(this.account, cpu, net, isStaking).then(res => {
 					this.setWorkingScreen(false);
 					if(!res || !res.hasOwnProperty('transaction_id')) {
 						return false;

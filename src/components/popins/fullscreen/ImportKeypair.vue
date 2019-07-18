@@ -203,7 +203,7 @@
 
 			async finishImporting(keypair){
 				await KeyPairService.saveKeyPair(keypair);
-				await AccountService.importAllAccounts(keypair);
+				await AccountService.importAllAccounts(keypair, false, keypair.blockchains);
 				BalanceService.loadAllBalances(true);
 				this.setWorkingScreen(false);
 				this.returnResult(keypair);

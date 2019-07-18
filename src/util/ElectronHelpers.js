@@ -4,7 +4,7 @@ let electron = window.require('electron');
 export const remote = electron.remote;
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
-const {reloader} = remote.getGlobal('appShared');
+const {reloader, Transport} = remote.getGlobal('appShared');
 
 import {localizedState} from "scatter-core/localization/locales";
 import LANG_KEYS from "scatter-core/localization/keys";
@@ -63,6 +63,10 @@ ipcRenderer.on('error', (e, x) => console.log(x));
 ipcRenderer.on('console', (e, x) => console.log('Main process console: ', x));
 
 export default class ElectronHelpers {
+
+	static getLedgerTransport(){
+		return Transport.default
+	}
 
 	static getVersion(){
 		return remote.app.getVersion();

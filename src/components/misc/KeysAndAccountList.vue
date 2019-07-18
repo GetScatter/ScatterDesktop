@@ -196,9 +196,7 @@
 				return keypair.accounts(true)
 					.filter(x => this.accounts ? this.accounts.find(y => y.unique() === x.unique()) : true)
 					.filter(x => x.sendable().indexOf(this.terms) > -1)
-					.sort((a,b) => {
-						return b.totalFiatBalance() - a.totalFiatBalance();
-					})
+					.sort((a,b) => b.totalFiatBalance() - a.totalFiatBalance())
 			},
 			isNew(keypair){
 				return keypair.createdAt && keypair.createdAt > (+new Date() - (1000 * 30));
@@ -255,7 +253,7 @@
 				if(this.refreshingAccounts) return;
 				this.actionsMenu = null;
 				this.refreshingAccounts = keypair.unique();
-				await AccountService.importAllAccounts(keypair);
+				await AccountService.importAllAccounts(keypair, false, keypair.blockchains);
 				this.refreshingAccounts = false;
 			},
 			exportPrivateKey(keypair){
