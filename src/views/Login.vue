@@ -28,12 +28,12 @@
 		            <LoginButton
 				            @click.native="state = STATES.CREATE_NEW"
 				            primary="1"
-				            title="I'm new to blockchain"
-				            description="We'll set you up with a new blockchain account" />
+				            title="I'm a beginner"
+				            description="If you are new to blockchain, this is the easiest." />
 		            <LoginButton
 				            @click.native="state = STATES.IMPORT_KEYS"
-				            title="I have my own private keys"
-				            description="Import your accounts manually" />
+				            title="I'm an advanced user"
+				            description="Import your blockchain keys manually" />
 	            </section>
 
 	            <!-------------------------->
@@ -45,7 +45,8 @@
 		                   type="password" :disabled="opening || isLockedOut"
 		                   :loader-on-dynamic="opening && !success"
 		                   :text="password" v-on:enter="unlock" v-on:dynamic="unlock" v-on:changed="x => password = x"
-		                   :dynamic-button="badPassword ? 'icon-cancel' : success ? 'icon-check' : isLockedOut ? '' : 'icon-right-open-big'" :hide-dynamic-button="!password.length" />
+		                   :dynamic-button="badPassword ? 'icon-attention' : success ? 'icon-check' : isLockedOut ? '' : 'icon-right-open-big'" :hide-dynamic-button="!password.length" />
+
 
 	            </section>
             </section>
@@ -135,18 +136,6 @@
 	};
 
 
-
-	const lockoutTime = 1000*60*5;
-	const resetLockout = () => window.localStorage.removeItem('lockout');
-	const getLockout = () => JSON.parse(window.localStorage.getItem('lockout') || JSON.stringify({tries:0, stamp:0}));
-	const setLockout = () => {
-		const lockout = getLockout();
-		lockout.tries++;
-		lockout.stamp = +new Date();
-		return window.localStorage.setItem('lockout', JSON.stringify(lockout));
-	};
-
-
 	export default {
 		components:{
 			SpaceBackground,
@@ -227,11 +216,6 @@
 
 			async unlock(usingLocalStorage = false){
 				if(!usingLocalStorage){
-					const lockout = getLockout();
-					if(lockout.tries >= 5 && +new Date() < lockout.stamp + lockoutTime){
-						this.lockedOutTime = lockout.stamp + lockoutTime;
-						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.LockedOut), "attention-circled"));
-					}
 					if(this.opening) return;
 					this.opening = true;
 				}
@@ -239,7 +223,6 @@
 					await this[Actions.SET_SEED](this.password);
 					await this[Actions.LOAD_SCATTER](usingLocalStorage);
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-						resetLockout();
 						setTimeout(() => {
 							if(!this.scatter.onboarded){
 								PopupService.push(Popup.showTerms(async accepted => {
@@ -271,7 +254,6 @@
 						this.opening = false;
 						this.badPassword = true;
 						PopupService.push(Popup.snackbarBadPassword());
-						setLockout();
 					}
 				}, 400)
 			},

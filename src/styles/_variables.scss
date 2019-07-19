@@ -2,6 +2,8 @@
 $menuheight:40px;
 $quickactionsheight:135px;
 $quickactionsbuffer:45px;
+// 220
+
 
 $fullheight:calc(100vh - #{$menuheight});
 $quickheight:calc(100vh - #{$menuheight} - #{$quickactionsheight - #{$quickactionsbuffer}});

@@ -24,7 +24,8 @@ export default class SocketService {
 	}
 
 	static async initialize(){
-		socket = new WebSocket(`ws://localhost:50005/socket.io/?EIO=3&transport=websocket`);
+		// TODO: Replace with relay.get-scatter.com (and wss)
+		socket = new WebSocket(`ws://104.248.229.148:50005/socket.io/?EIO=3&transport=websocket`);
 
 		socket.onerror = e =>  console.error('Socket error', e);
 		// socket.onopen = () =>
@@ -50,6 +51,7 @@ export default class SocketService {
 
 	static async close(){
 		// return LowLevelSocketService.close();
+		if(!socket) return;
 		socket.close();
 		socket = null;
 	}

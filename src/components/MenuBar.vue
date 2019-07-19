@@ -1,17 +1,17 @@
 <template>
 	<section class="menu-bar">
 
-		<section class="actions" v-if="!isMacOS">
+		<section class="actions" v-if="!isBrowser && !isMacOS">
 
 			<!-- MINIMIZE -->
-			<section class="action" v-if="!isBrowser" @click="minimize">
+			<section class="action" @click="minimize">
 				<section class="action-inner">
 					<figure class="line"></figure>
 				</section>
 			</section>
 
 			<!-- EXPAND / CONTRACT -->
-			<section class="action" v-if="!isBrowser" @click="maximize">
+			<section class="action" @click="maximize">
 				<section class="action-inner">
 					<figure class="sqr"></figure>
 				</section>
