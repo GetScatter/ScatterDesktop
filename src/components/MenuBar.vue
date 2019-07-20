@@ -1,5 +1,7 @@
 <template>
-	<section class="menu-bar">
+	<section class="menu-bar" :class="{'web':isBrowser}">
+
+		<section v-if="isBrowser" class="logo scatter-logologo"></section>
 
 		<section class="actions" v-if="!isBrowser && !isMacOS">
 
@@ -87,6 +89,17 @@
 		border-top:1px solid $darkerblue;
 		border-left:1px solid $darkerblue;
 		border-right:1px solid $darkerblue;
+
+		&.web {
+
+		}
+
+		.logo {
+			text-align:left;
+			font-size: 24px;
+			margin-top:6px;
+			margin-left:10px;
+		}
 
 		.actions {
 			-webkit-app-region: drag;

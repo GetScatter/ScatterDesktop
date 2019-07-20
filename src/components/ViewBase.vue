@@ -3,14 +3,12 @@
 
         <Popups />
 
-        <section v-if="isPopout">
-            <router-view></router-view>
-        </section>
+        <router-view v-if="isPopout"></router-view>
 
         <section v-else>
-            <MenuBar v-if="!isWeb" />
+            <MenuBar />
 
-            <section class="app-content" :class="{'no-menu':isWeb}">
+            <section class="app-content">
                 <Sidebar v-if="unlocked && onboarded" />
                 <section class="view-pane">
                     <QuickActions v-if="showQuickActions" />
@@ -40,7 +38,6 @@
 
     import * as Actions         from 'scatter-core/store/constants';
     import SingletonService     from "scatter-core/services/utility/SingletonService";
-    import {isWeb} from "../util/WebOrWrapper";
 
     export default {
     	components:{
@@ -53,7 +50,6 @@
         data(){ return {
             routeNames:RouteNames,
 	        initialized:false,
-	        isWeb
         }},
         computed:{
             ...mapState([

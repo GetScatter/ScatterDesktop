@@ -156,13 +156,13 @@
 				align-items: center;
 				color: $lightgrey;
 				transition:all $time ease;
-				transition-property: background;
+				transition-property: background, padding;
 
 				i {
 					padding-right:18px;
 					font-size: 24px;
 					transition:all $time ease;
-					transition-property: color;
+					transition-property: color, margin;
 					color:$grey;
 				}
 
@@ -209,6 +209,13 @@
 
 		&:not(.locked){
 			.sidebar {
+				.item {
+					padding:12px 0;
+					i {
+						margin-left:7px;
+					}
+				}
+
 				&:hover {
 					width:$open;
 					transition: width $time ease, box-shadow 0.3s ease;

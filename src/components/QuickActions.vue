@@ -151,7 +151,6 @@
 		height:$quickactionsheight;
 		border-right:1px solid $darkerblue;
 		background:$blue;
-		border-top:1px solid rgba(255,255,255,0.12);
 		border-bottom:1px solid rgba(255,255,255,0.12);
 
 		&:not(.short){

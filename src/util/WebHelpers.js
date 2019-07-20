@@ -22,16 +22,24 @@ export const ipcAsync = (key, data) => {
 	window.localStorage.getItem(key);
 }
 
+// Seed is session based, and only exists in this running javascript scope
+let seed;
 export default class WebHelpers {
 
 	static initializeCore(){
 		return ScatterCore.initialize(
+			[
+				require('scatter-core/plugins/defaults/eos').default,
+				require('scatter-core/plugins/defaults/trx').default,
+				require('scatter-core/plugins/defaults/eth').default,
+				require('scatter-core/plugins/defaults/btc').default,
+			],
 			store,
 			StorageService,
 			{
-				get:() => window.localStorage.getItem('seed'),
-				set:(seed) => window.localStorage.setItem('seed', seed),
-				clear:() => window.localStorage.setItem('seed', null),
+				get:() => seed,
+				set:(_seed) => seed = _seed,
+				clear:() => seed = null,
 			},
 			{
 				getVersion:WebHelpers.getVersion,

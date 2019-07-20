@@ -72,6 +72,12 @@ export default class ElectronHelpers {
 	static initializeCore(){
 		ElectronHelpers.bindContextMenu();
 		ScatterCore.initialize(
+			[
+				require('scatter-core/plugins/defaults/eos').default,
+				require('scatter-core/plugins/defaults/trx').default,
+				require('scatter-core/plugins/defaults/eth').default,
+				require('scatter-core/plugins/defaults/btc').default,
+			],
 			store,
 			StorageService,
 			{
