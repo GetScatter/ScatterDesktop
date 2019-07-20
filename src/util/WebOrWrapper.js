@@ -1,1 +1,1 @@
-export const isWeb = false;//process.env.IS_WEB;
+export const isWeb = true;//process.env.IS_WEB;

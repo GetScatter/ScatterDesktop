@@ -12,12 +12,9 @@ module.exports = {
 	//devtool: 'source-map',
 	resolve: {
 		extensions: ['.js', '.vue', '.json'],
-		// alias: {
-		// 	'assets': utils.resolve('assets'),
-		// 	'pages': utils.resolve('src/pages'),
-		// 	'static': utils.resolve('static'),
-		// 	'components': utils.resolve('src/components')
-		// }
+		modules: [
+			'node_modules'
+		],
 		alias: {
 			'vue$': 'vue/dist/vue.esm.js'
 		}
@@ -85,6 +82,5 @@ module.exports = {
 			to: utils.resolve('dist/static'),
 			toType: 'dir'
 		}]),
-		new webpack.SourceMapDevToolPlugin({})
 	]
 }
