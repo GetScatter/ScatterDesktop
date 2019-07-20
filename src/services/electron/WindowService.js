@@ -1,7 +1,10 @@
+console.log(require('../../util/ElectronHelpers'));
+
 import {ipcRenderer, remote} from '../../util/ElectronHelpers';
 const path = window.require("path");
 const url = window.require("url");
 
+console.log(remote);
 const LowLevelWindowService = remote.getGlobal('appShared').LowLevelWindowService;
 
 import WindowMessage from 'scatter-core/models/popups/WindowMessage';

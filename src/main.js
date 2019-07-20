@@ -5,6 +5,7 @@ import './styles/confirm.scss'
 import './styles/blockchain-lists.scss'
 
 import {isWeb} from "./util/WebOrWrapper";
+console.log('isWeb', isWeb);
 const Helpers = isWeb ? require('./util/WebHelpers').default : require('./util/ElectronHelpers').default;
 
 import VueInitializer from './vue/VueInitializer';

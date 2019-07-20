@@ -163,7 +163,9 @@ export default class VueInitializer {
 
         // This removes the browser console's ability to
         // gain access to vuex store. ( for instance `scatter.__vue__.$store.state` )
-        document.getElementById('scatter').removeAttribute('id')
+	    if(document.getElementById('scatter')) {
+		    document.getElementById('scatter').removeAttribute('id')
+	    }
     }
 
 }

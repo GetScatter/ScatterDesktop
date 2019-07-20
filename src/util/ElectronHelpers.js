@@ -1,6 +1,8 @@
 import {Popup} from "scatter-core/models/popups/Popup";
 let electron = window.require('electron');
 
+console.log('electron', electron);
+
 export const remote = electron.remote;
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
@@ -11,8 +13,6 @@ import LANG_KEYS from "scatter-core/localization/keys";
 import ScatterCore from "scatter-core";
 import StorageService from "../services/electron/StorageService";
 import {store} from "../store/store";
-import WindowService from "../services/electron/WindowService";
-import SocketService from "../services/electron/SocketService";
 
 let popupService;
 const PopupService = () => {
@@ -89,10 +89,10 @@ export default class ElectronHelpers {
 				getVersion:ElectronHelpers.getVersion,
 				pushNotification:ElectronHelpers.pushNotificationMethod(),
 			},
-			WindowService.openPopOut,
+			require("../services/electron/WindowService").default.openPopOut,
 			// TODO:
 			ElectronHelpers.getLedgerTransport(),
-			SocketService
+			require("../services/electron/SocketService").default
 		)
 	}
 
