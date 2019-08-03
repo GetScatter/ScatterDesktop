@@ -1,6 +1,7 @@
-import {store} from '../store/store'
 import Hasher from '../util/Hasher';
 import IdGenerator from '../util/IdGenerator';
+import StoreService from "../services/utility/StoreService";
+import {IdentityRequiredFields} from "./Identity";
 
 export default class Permission {
 
@@ -35,7 +36,7 @@ export default class Permission {
     static fromAction(origin, identity, accounts, added){
         const base = Permission.fromJson({
             origin,
-            identity:identity.publicKey,
+            identity:identity.id,
             accounts:accounts.map(x => x.unique())
         });
         return Object.assign(base, added);
@@ -51,15 +52,14 @@ export default class Permission {
             this.action+
             (this.identityRequirements||[]).join(',')
         )
-        // (this.mutableActionFields||[]).join(',')+
     }
 
     getIdentity(){
-        return store.state.scatter.keychain.findIdentity(this.identity);
+        return StoreService.get().state.scatter.keychain.findIdentity(this.identity);
     }
 
     getAccounts(){
-        const accounts = store.state.scatter.keychain.accounts;
+        const accounts = StoreService.get().state.scatter.keychain.accounts;
         return this.accounts.map(unique => accounts.find(x => x.unique() === unique));
     }
 
@@ -72,5 +72,9 @@ export default class Permission {
             if(!mutableFields.includes(key)) return allFields[key];
             else return null;
         }).filter(x => x).sort().join(','));
+    }
+
+    asIdentityRequirements(){
+        return IdentityRequiredFields.fromPermission(this.identityRequirements);
     }
 }

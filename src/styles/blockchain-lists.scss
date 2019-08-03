@@ -1,0 +1,167 @@
+@import "./variables";
+
+.blockchain-list-container {
+  display:flex;
+  height: $fullheight;
+
+  .head {
+    flex:1;
+    display:flex;
+    align-items: center;
+    padding:0 20px;
+    font-size: $medium;
+    font-weight: bold;
+    height:60px;
+    border-bottom:1px solid $lightgrey;
+
+    &.with-button {
+      display:flex;
+      justify-content: space-between;
+    }
+  }
+
+  .tail {
+    flex:1;
+    display:flex;
+    align-items: center;
+    padding:0 20px;
+    height:70px;
+    border-top:1px solid $lightgrey;
+    justify-content: flex-end;
+
+    button {
+
+    }
+  }
+
+  .scroller {
+    flex:1;
+    height:calc(100vh - 40px - 70px);
+    overflow:auto;
+    padding:20px;
+
+    &.dynamic {
+      height:auto;
+    }
+
+    &.with-tail {
+      height:calc(100vh - 40px - 70px - 60px);
+
+      &.with-search {
+        height:calc(100vh - 40px - 70px - 60px - 70px);
+      }
+    }
+  }
+
+  .blockchains {
+    flex:0 0 auto;
+    width:280px;
+    border-right:1px solid $lightgrey;
+
+    .head {
+      &:not(:first-child){
+        border-top:1px solid $lightgrey;
+      }
+    }
+  }
+
+  .list-container {
+    flex:1;
+
+    .search-and-filter {
+      padding:0 20px;
+    }
+
+    .item-list {
+      padding:20px;
+
+      .item {
+        margin-bottom:40px;
+        display:flex;
+        flex-direction: column;
+
+        .expanded {
+          pre {
+            font-size: $small;
+            white-space: pre-wrap;
+            padding:20px;
+            background:$blue;
+            color:$white;
+            border-radius:$radius;
+          }
+        }
+
+        .basics {
+          display:flex;
+          width:100%;
+          align-items: center;
+
+          .chevron{
+            padding:0 30px 0 0;
+            color:$blue;
+            cursor: pointer;
+
+            i {
+              display:block;
+              transition:all 0.2s ease;
+              transition-property: transform;
+            }
+          }
+
+          &.open {
+            .chevron {
+              i {
+                transform:rotateZ(90deg);
+              }
+            }
+          }
+
+          .details {
+            flex:1;
+            cursor: pointer;
+
+            .name {
+              font-size: $medium;
+              font-weight: bold;
+            }
+
+            .text {
+              font-size: $small;
+              margin-top:3px;
+              color:$grey;
+            }
+
+            .connection-error {
+              background:$red;
+              color:$white;
+              padding:4px 5px;
+              border-radius:$radius;
+              display:inline-block;
+              font-size: $small;
+              font-weight: bold;
+              margin-top:8px;
+            }
+          }
+
+          .actions {
+            display:flex;
+            align-items: center;
+
+            .system-token {
+              font-size: $small;
+              font-weight: bold;
+              padding:3px 10px;
+              background: $lightgrey;
+              border-radius:20px;
+              margin-right:10px;
+            }
+
+            .switch {
+
+            }
+          }
+        }
+      }
+    }
+  }
+}

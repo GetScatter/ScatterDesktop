@@ -31,7 +31,7 @@
 <script>
 
 	import {remote} from '../util/ElectronHelpers';
-	import SocketService from "../services/SocketService";
+	import SocketService from "../services/utility/SocketService";
 
 	export default {
 		data(){return {
@@ -67,12 +67,12 @@
 	@import '../styles/variables';
 
 	.menu-bar {
-		-webkit-app-region: drag !important;
-		background:$secondary;
-		background-image: $blue-grad;
+		-webkit-app-region: drag;
+		-webkit-user-select: none !important;
+		background: $blue;
 		color:#fff;
-		height:80px;
-		line-height: 80px;
+		height:$menuheight;
+		line-height: $menuheight;
 		width:100%;
 		text-align:center;
 		z-index: 9999999999;
@@ -80,20 +80,24 @@
 		top:0;
 		left:0;
 		right:0;
+		border-top:1px solid $darkerblue;
+		border-left:1px solid $darkerblue;
+		border-right:1px solid $darkerblue;
 
 		.actions {
 			-webkit-app-region: drag;
+			-webkit-user-select: none !important;
 			position:absolute;
 			right:0;
 			top:0;
-			height:80px;
-			line-height: 80px;
+			height:$menuheight;
+			line-height: $menuheight;
 			display:flex;
 			justify-content: center;
 			align-items: center;
-			padding:0 35px;
+			padding:0 20px;
 
-			$action:15px;
+			$action:10px;
 
 			.action {
 				-webkit-app-region: no-drag;
@@ -120,11 +124,11 @@
 				}
 
 				&:not(:first-child){
-					margin-left:25px;
+					margin-left:5px;
 				}
 
 				.x1, .x2 {
-					width:18px;
+					width:12px;
 					height:2px;
 					background:#fff;
 					transform-origin: center center;
@@ -137,6 +141,7 @@
 					height:$action;
 					width:$action;
 					border:2px solid #fff;
+					border-radius:2px;
 				}
 
 				.line {

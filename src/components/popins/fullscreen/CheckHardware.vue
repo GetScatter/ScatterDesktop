@@ -1,17 +1,15 @@
 <template>
-	<section>
-		<section class="full-panel center-fold limited inner">
-			<section>
-				<section class="head">
-					<figure class="icon icon-spin4 animate-spin"></figure>
-					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.CHECK_HARDWARE.Title)}}</figure>
-					<p>{{locale(langKeys.POPINS.FULLSCREEN.CHECK_HARDWARE.Desc)}}</p>
-				</section>
+	<section class="pop-in">
+		<section>
+			<section class="head">
+				<figure class="icon font">
+					<i class="icon-spin4 animate-spin"></i>
+				</figure>
+				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.CHECK_HARDWARE.Title)}}</figure>
+				<p>{{locale(langKeys.POPINS.FULLSCREEN.CHECK_HARDWARE.Desc)}}</p>
 			</section>
 		</section>
-		<section class="action-bar short bottom centered" style="border-top:0;">
-			<btn :text="locale(langKeys.GENERIC.Cancel)" v-on:clicked="returnResult(false)" />
-		</section>
+		<!--<ActionBar :buttons-left="[{text:locale(langKeys.GENERIC.Cancel), click:() => returnResult(false)}]" />-->
 	</section>
 </template>
 
@@ -23,19 +21,31 @@
 		props:['popin'],
 		data () {return {
 			password:'',
+			hadWorkingScreen:false,
 		}},
 		computed:{
 			...mapState([
-
+				'workingScreen',
 			]),
 			...mapGetters([
 
 			]),
 		},
+		mounted(){
+			if(this.workingScreen){
+				this.hadWorkingScreen = true;
+				this.setWorkingScreen(false);
+			}
+		},
 		methods:{
 			returnResult(x){
-				this.popin.data.callback(x);
-				this[Actions.RELEASE_POPUP](this.popin);
+				if(this.hadWorkingScreen){
+					this.setWorkingScreen(true);
+				}
+				setTimeout(() => {
+					this.popin.data.callback(x);
+					this[Actions.RELEASE_POPUP](this.popin);
+				}, 10);
 			},
 			...mapActions([
 				Actions.RELEASE_POPUP

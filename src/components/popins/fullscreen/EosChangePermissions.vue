@@ -1,53 +1,45 @@
 <template>
-	<section>
-		<back-bar v-on:back="returnResult(null)" />
-		<section class="full-panel inner with-action center-fold limited">
+	<section class="pop-in">
+		<section>
 			<section>
 				<section class="head">
-					<figure class="icon icon-flow-tree"></figure>
-					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Title)}}</figure>
-					<br>
-					<section class="disclaimer less-pad">
-						{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Desc)}}
-						<p v-if="account.authorities().length > 1">{{locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.SubDesc)}}</p>
+					<figure class="icon font icon-flow-tree"></figure>
+					<figure class="subtitle">{{account.sendable()}}</figure>
+					<figure class="title">Changing Account Keys</figure>
+
+					<section class="disclaimer">
+						<figure class="title">This can be dangerous!</figure>
+						<figure class="description">You are about to change the keys that control this account. Make sure you know what you are doing.</figure>
 					</section>
 
-					<section class="split-inputs" v-if="hasPermission('owner')">
-						<sel :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel)"
-						     v-if="otherKeys.length"
-						     :options="otherKeys"
-						     :parser="x => x.name"
-						     :subparser="x => publicKeyForKeypair(x)"
-						     v-on:changed="x => ownerKey = publicKeyForKeypair(x)"></sel>
-						<cin :text="ownerKey"
-						     v-on:changed="x => ownerKey = x"
-						     :placeholder="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeyPlaceholder)"
-						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.OwnerLabel)"
-						     :dynamic-button="isValidPermission(ownerKey) ? 'icon-check' : null" />
-					</section>
+					<section class="authorities">
+						<section class="authority" v-if="hasPermission('owner')">
+							<label>Owner / Master Key</label>
+							<Select v-if="otherKeys.length" bordered="1"
+							        :options="otherKeys"
+							        :selected="ownerKey ? ownerKey.name : ''"
+							        :parser="x => x.name"
+							        truncate="1"
+							        :subparser="x => publicKeyForKeypair(x)"
+							        v-on:selected="x => ownerKey = x" />
+						</section>
 
-					<section class="split-inputs" v-if="hasPermission('active')">
-						<sel :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeysLabel)"
-						     v-if="otherKeys.length"
-						     :options="otherKeys"
-						     :parser="x => x.name"
-						     :subparser="x => publicKeyForKeypair(x)"
-						     v-on:changed="x => activeKey = publicKeyForKeypair(x)"></sel>
-						<cin :text="activeKey"
-						     v-on:changed="x => activeKey = x"
-							 :placeholder="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.KeyPlaceholder)"
-						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.ActiveLabel)"
-						     :dynamic-button="isValidPermission(activeKey) ? 'icon-check' : null" />
+						<section class="authority" v-if="hasPermission('active')">
+							<label>Active / Daily Key</label>
+							<Select v-if="otherKeys.length" bordered="1"
+							        :options="otherKeys"
+							        :selected="activeKey ? activeKey.name : ''"
+							        :parser="x => x.name"
+							        truncate="1"
+							        :subparser="x => publicKeyForKeypair(x)"
+							        v-on:selected="x => activeKey = x" />
+						</section>
 					</section>
 
 				</section>
 			</section>
 
-			<section class="action-bar short bottom centered">
-				<btn :disabled="!isValidPermission(ownerKey) && !isValidPermission(activeKey)"
-					 :text="locale(langKeys.POPINS.FULLSCREEN.EOS.CHANGE_PERMS.Button)"
-					 blue="1" v-on:clicked="changePermissions" />
-			</section>
+			<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:'Confirm', red:true, click:() => changePermissions()}]" />
 		</section>
 	</section>
 </template>
@@ -56,8 +48,8 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import '../../../styles/popins.scss';
-	import PasswordService from "../../../services/PasswordService";
-	import PopupService from "../../../services/PopupService";
+	import PasswordService from "../../../services/secure/PasswordService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import {Blockchains} from "../../../models/Blockchains";
 	import PluginRepository from "../../../plugins/PluginRepository";
@@ -65,8 +57,8 @@
 	export default {
 		props:['popin'],
 		data () {return {
-			ownerKey:'',
-			activeKey:'',
+			ownerKey:null,
+			activeKey:null,
 		}},
 		computed:{
 			...mapState([
@@ -80,8 +72,8 @@
 				return this.accounts.find(x => x.unique() === this.popin.data.props.account.unique());
 			},
 			otherKeys(){
-				return this.keypairs
-					.filter(x => x.publicKeys.some(key => key.blockchain === Blockchains.EOSIO))
+				return [{name:`Don't Change`}].concat(this.keypairs
+					.filter(x => x.publicKeys.some(key => key.blockchain === Blockchains.EOSIO)))
 			},
 		},
 		methods:{
@@ -89,17 +81,10 @@
 				this.popin.data.callback(result);
 				this[Actions.RELEASE_POPUP](this.popin);
 			},
-			publicKeyForKeypair(keypair){
-				return keypair.publicKeys.find(key => key.blockchain === Blockchains.EOSIO).key;
-			},
-			isValidPermission(keyOrAccountName){
-				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
-				return plugin.validPublicKey(keyOrAccountName) || plugin.isValidRecipient(keyOrAccountName);
-			},
 			changePermissions(){
 				this.returnResult({
-					owner:this.ownerKey,
-					active:this.activeKey,
+					owner:this.publicKeyForKeypair(this.ownerKey),
+					active:this.publicKeyForKeypair(this.activeKey),
 				})
 			},
 			hasPermission(type){
@@ -117,22 +102,33 @@
 	@import "../../../styles/variables";
 
 
-	.split-inputs {
-		max-width:600px;
-		width:100%;
-		margin-bottom:20px;
-		text-align:left;
+	.disclaimer {
+		margin-top:20px !important;
+		margin-bottom:30px !important;
+	}
 
-		> section {
-			margin-bottom:0;
+	.authorities {
+		margin-top:10px;
+		max-width:500px;
+		min-width:500px;
+		display:flex;
+		justify-content: space-between;
 
-			&:first-child {
-				flex:0.5;
-			}
-			&:last-child {
-				flex:1;
+		.authority {
+			flex:1;
+			margin:0 5px 20px;
+			display:inline-block;
+
+			label {
+				display:block;
+				margin-bottom:5px;
+				font-size: $medium;
+				font-weight: bold;
+				color:$silver;
+
 			}
 		}
 	}
+
 
 </style>

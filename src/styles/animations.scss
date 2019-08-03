@@ -1,0 +1,178 @@
+@import "variables";
+
+@keyframes slowbounce {
+  0%, 100% {
+    transform:translateY(0px);
+  }
+  50% {
+    transform:translateY(-4px);
+  }
+}
+
+
+@keyframes pulsate {
+  0%, 100% { transform:scale(1); }
+  50% { transform:scale(1.2); }
+}
+
+.spin, .animate-spin { animation: spin 0.65s linear infinite; }
+@keyframes spin {
+  0% { transform:rotateZ(0deg); }
+  100% { transform:rotateZ(360deg); }
+}
+
+.bounce-right { animation: bounce-right 1s ease infinite; }
+@keyframes bounce-right {
+  0%, 100% { transform:translateX(-2px); }
+  50% { transform:translateX(2px); }
+}
+
+@keyframes fadein {
+  0% { opacity:0; }
+  100% { opacity:1; }
+}
+
+@keyframes inFromTop {
+  0% { transform:translateY(-1000px);}
+  70% { transform:translateY(10px);}
+  100% { transform:translateY(0);}
+}
+
+@keyframes inFromBottom {
+  0% { transform:translateY(1000px);}
+  70% { transform:translateY(-10px);}
+  100% { transform:translateY(0);}
+}
+
+.fade-enter-active, .fade-leave-active {
+  //transition: opacity .1s;
+  //transition-delay: 0.1s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+
+
+.animated-gradient {
+  background: repeating-linear-gradient(to right, $lightergrey 0%, #f8fbfc 50%, $lightergrey 100%);
+  width: 100%;
+  background-size: 200% auto;
+  background-position: 0 100%;
+  animation: gradient 2s infinite;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+
+  &.blue {
+    background: repeating-linear-gradient(to right, $blue 0%, $lightblue 50%, $blue 100%);
+  }
+}
+
+@keyframes gradient {
+  0%   { background-position: 0 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+
+
+
+
+
+$shooting-time: 25s;
+
+.meteors {
+
+  .shooting_star {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    // width: 100px;
+    height: 4px;
+    background: linear-gradient(-45deg, $white, rgba(0, 0, 255, 0));
+    border-radius: 999px;
+    filter: drop-shadow(0 0 6px $white);
+
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: calc(50% - 1px);
+      right: 0;
+      height: 2px;
+      background: linear-gradient(-45deg, rgba(0, 0, 255, 0), $white, rgba(0, 0, 255, 0));
+      transform: translateX(50%) rotateZ(45deg);
+      box-shadow:0 0 10px $white;
+      border-radius: 100%;
+      animation: shining $shooting-time ease-in-out infinite;
+    }
+
+    &::after {
+      @extend .shooting_star::before;
+      transform: translateX(50%) rotateZ(-45deg);
+    }
+
+    @for $i from 1 through 20 {
+      &:nth-child(#{$i}) {
+        $delay: random(9999) + 100ms;
+        top: calc(20% - #{random(1920) - 800px});
+        left: calc(#{random(1) + 0px});
+        animation-delay: $delay;
+        opacity: random(50) / 100 + 0.1;
+
+        $rand:#{random(80)+25};
+        animation:
+                tail #{$rand}s ease-in-out infinite,
+                shooting #{$rand}s ease-in-out infinite;
+
+        &::before,
+        &::after {
+          animation-delay: $delay;
+        }
+      }
+    }
+  }
+
+  @keyframes tail {
+    0% {
+      width: 0;
+    }
+
+    30% {
+      width: 200px;
+    }
+
+    70% {
+      width: 500px;
+    }
+
+    100% {
+      width: 0;
+    }
+  }
+
+  @keyframes shining {
+    0% {
+      width: 0;
+    }
+
+    50% {
+      width: 5px;
+    }
+
+    100% {
+      width: 0;
+    }
+  }
+
+  @keyframes shooting {
+    0% {
+      transform: translateX(-200px);
+    }
+
+    100% {
+      transform: translateX(8000px);
+    }
+  }
+
+}

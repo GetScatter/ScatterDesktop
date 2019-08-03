@@ -1,35 +1,15 @@
 <template>
-	<section>
-		<section class="key-val" v-if="personalFields.length">
-			<figure>{{locale(langKeys.POPOUTS.REQ_FIELDS.PersonalInfo)}}</figure>
-			<figure v-for="field in personalFields" class="key-val nested split-inputs">
-				<figure>{{field}}</figure>
-				<figure v-if="fieldValueFor(field, true).length">{{fieldValueFor(field)}}</figure>
-				<cin red="1" v-else small="1"
-				     :text="selectedIdentity.personal[field]"
-				     v-on:changed="x => $emit('personalField', field, x)"
-				     :placeholder="field" />
-			</figure>
+	<section class="required-fields">
+
+		<section class="fields-title">
+			Required Identity Fields
 		</section>
 
-		<section class="key-val" v-if="locationFields.length">
-			<sel :selected="selectedLocation" label="Select a Location"
-			     :options="selectedIdentity.locations"
-			     :parser="location => location.name"
-			     short="1"
-			     v-on:changed="x => $emit('selectLocation', x)" />
-			<br>
-			<label>{{locale(langKeys.POPOUTS.REQ_FIELDS.LocationInfo)}}</label>
-			<figure v-for="field in locationFields" class="key-val nested split-inputs">
-				<figure>{{field}}</figure>
-				<figure v-if="fieldValueFor(field, true).length">{{fieldValueFor(field)}}</figure>
-				<cin red="1" v-else small="1"
-				     :text="clonedLocation[field]"
-				     v-on:changed="x => $emit('locationField', field, x)"
-				     :placeholder="field" />
+		<section>
+			<label>Personal information:</label>
+			<figure class="text">
+				{{identityRequirements}}
 			</figure>
-			<br>
-			<br>
 		</section>
 	</section>
 </template>
@@ -45,6 +25,10 @@
 
 		}},
 		computed:{
+
+			identityRequirements() {
+				return this.personalFields.concat(this.locationFields).join(', ');
+			},
 
 			personalFields(){
 				return this.fields.personal;
@@ -68,5 +52,18 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../../styles/variables";
 
+	.fields-title {
+		margin:-20px -30px 0;
+		padding:20px 30px;
+		background:$blue-gradient;
+		color:$white;
+		font-size: 18px;
+
+		margin-bottom:20px;
+	}
+
+	.required-fields {
+		padding:20px 0 0;
+	}
 
 </style>

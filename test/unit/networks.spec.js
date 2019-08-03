@@ -7,7 +7,7 @@ import {store} from "../../src/store/store";
 import {SET_SCATTER} from "../../src/store/constants";
 import {Blockchains} from "../../src/models/Blockchains";
 import PluginRepository from "../../src/plugins/PluginRepository";
-import NetworkService from "../../src/services/NetworkService";
+import NetworkService from "../../src/services/blockchain/NetworkService";
 import Network from "../../src/models/Network";
 import Token from "../../src/models/Token";
 

@@ -1,78 +1,71 @@
 <template>
-    <section>
-        <PopOutHead v-on:closed="returnResult(null)" />
-        <section class="multi-pane">
-            <section class="main-panel">
+    <section class="popout-window transfer">
+        <PopOutApp :app="popup.data.props.appData" suffix="is requesting a transfer" />
 
-                <section v-if="!account">
-                    <section class="participants">
-                        <section class="participant">{{network.name}}</section>
-                    </section>
-                    <br>
-                    <section class="padded">
-                        <section class="transfer-details">
-                            <span class="blue">{{popup.origin()}}</span>
-                            <span>{{locale(langKeys.POPOUTS.TRANSFER.SendingTo, token.symbol)}}</span>
-                            <span class="bold" :class="{'small':to.length > 12}">{{to}}</span>
+        <section v-if="!account">
+
+
+            <section class="padded">
+                <Input :disabled="amount > 0"
+                     :red="inputError"
+                     big="1"
+                     centered="1"
+                     :text="amount > 0 ? amount : customAmount"
+                     v-on:changed="x => customAmount = x"
+                     :placeholder="parseFloat(1).toFixed(decimals)" />
+
+                <section class="boxes">
+                    <section class="box nested account-selector" @click="selectTokenAndAccount">
+                        <section>
+                            <figure class="name">Select Account</figure>
+                            <figure class="network">{{network.name}}</figure>
                         </section>
-                    </section>
-
-
-                    <br>
-
-                    <section class="padded">
-                        <cin :disabled="amount > 0"
-                             :red="inputError"
-                             big="1"
-                             centered="1"
-                             :text="amount > 0 ? amount : customAmount"
-                             v-on:changed="x => customAmount = x"
-                             :placeholder="parseFloat(1).toFixed(decimals)" />
-                    </section>
-
-                    <SearchBar style="flex:1;" short="1"
-							   :placeholder="locale(langKeys.POPOUTS.TRANSFER.SearchPlaceholder)"
-							   v-on:terms="x => searchTerms = x" />
-
-                    <section class="popout-list">
-                        <FullWidthRow :items="validAccounts" popout="1" />
+                        <figure class="chevron icon-dot-3"></figure>
                     </section>
                 </section>
-
-                <section class="padded" v-else>
-                    <br>
-                    <br>
-                    <section class="transfer-details">
-                        <div v-if="amount > 0">{{parseFloat(amount).toFixed(decimals)}} {{token.symbol}}</div>
-                        <div v-else>{{customAmount}} {{token.symbol}}</div>
-                        <span :class="{'small':to.length > 12}">{{to}}</span>
-
-                    </section>
-                    <section class="memo" v-if="memo && memo.length">
-                        <section class="info-line">
-                            <span>{{locale(langKeys.GENERIC.Memo)}}</span>
-                        </section>
-                        <span>{{memo}}</span>
-                    </section>
-
-
-
-                    <section class="info-line">
-                        <span>From</span>
-                    </section>
-
-                    <FullWidthRow :items="selectedAccounts" popout="1" />
-
-                    <section class="fixed-actions" v-if="!pinning">
-                        <btn blue="1" :text="locale(langKeys.GENERIC.Confirm)" v-on:clicked="returnResult(true)" />
-                        <btn :text="locale(langKeys.GENERIC.Deny)" v-on:clicked="returnResult(null)" />
-                    </section>
-                </section>
-
-
             </section>
 
 
+        </section>
+
+        <section class="padded" v-else>
+            <br>
+            <br>
+            <section class="transfer-details">
+                <div v-if="amount > 0">{{parseFloat(amount).toFixed(decimals)}} {{token.symbol}}</div>
+                <div v-else>{{customAmount}} {{token.symbol}}</div>
+                <span :class="{'small':to.length > 12}">{{to}}</span>
+
+            </section>
+            <section class="memo" v-if="memo && memo.length">
+                <section class="info-line">
+                    <span>{{locale(langKeys.GENERIC.Memo)}}</span>
+                </section>
+                <span>{{memo}}</span>
+            </section>
+
+
+
+            <section class="info-line">
+                <span>From</span>
+            </section>
+
+            <section class="boxes">
+                <section class="box nested account-selector" @click="selectTokenAndAccount">
+                    <section>
+                        <figure class="name">{{account.sendable()}}</figure>
+                        <figure class="network">{{network.name}}</figure>
+                    </section>
+                    <figure class="chevron icon-dot-3"></figure>
+                </section>
+            </section>
+
+            <!--<FullWidthRow :items="selectedAccounts" popout="1" />-->
+
+            <section class="fixed-actions" v-if="!pinning">
+                <Button blue="1" :text="locale(langKeys.GENERIC.Confirm)" @click.native="returnResult(true)" />
+                <Button :text="locale(langKeys.GENERIC.Deny)" @click.native="returnResult(null)" />
+            </section>
         </section>
 
     </section>
@@ -80,28 +73,28 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import PopOutHead from '../../components/popouts/PopOutHead';
-	import PopOutAction from '../../components/popouts/PopOutAction';
-	import SearchBar from '../../components/reusable/SearchBar';
+	import PopOutApp from '../../components/popouts/PopOutApp';
+	// import SearchBar from '../../components/reusable/SearchBar';
 	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import Network from "../../models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import KeyPairService from "../../services/KeyPairService";
+	import KeyPairService from "../../services/secure/KeyPairService";
 	import Keypair from "../../models/Keypair";
 	import IdGenerator from "../../util/IdGenerator";
 	import Token from "../../models/Token";
 	import {Blockchains} from "../../models/Blockchains";
-	import TokenService from "../../services/TokenService";
+	import TokenService from "../../services/utility/TokenService";
+	import PopupService from "../../services/utility/PopupService";
+	import {Popup} from "../../models/popups/Popup";
 
 	export default {
 		props:['popup', 'expanded', 'pinning'],
 		components:{
 			RequiredFields,
-			PopOutHead,
-			PopOutAction,
+			PopOutApp,
 			FullWidthRow,
-			SearchBar,
+			// SearchBar,
 		},
 		data () {return {
 			searchTerms:'',
@@ -151,7 +144,6 @@
 
 						return acc;
 					}, [])
-                    .map(x => this.formatAccount(x, true))
 			},
             selectedAccounts(){
                 return [this.account]
@@ -175,6 +167,12 @@
 					account:this.account,
 					amount
 				});
+			},
+			selectTokenAndAccount(){
+				PopupService.push(Popup.selectAccount(account => {
+					if(!account) return;
+					this.account = account;
+				}, this.validAccounts))
 			},
 			selectAccount(account){
 				this.inputError = false;
@@ -210,12 +208,29 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../styles/variables";
 
+    .app-details {
+        padding:50px 50px 20px 50px;
+    }
+
+    .boxes {
+        width:100%;
+
+        .box {
+            width:100%;
+        }
+
+    }
+
+
+
+
+
     .memo {
         text-align:center;
 
         > span {
             font-size: 13px;
-            color:$primary;
+            color: $blue;
             font-weight: bold;
         }
     }
@@ -236,7 +251,7 @@
         }
 
         .blue {
-            color:$primary;
+            color: $blue;
         }
 
         .small {

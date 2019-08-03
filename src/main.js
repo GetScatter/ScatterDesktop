@@ -1,5 +1,8 @@
 import './styles/styles.scss'
-import './styles/tour.scss';
+import './styles/animations.scss'
+import './styles/popins.scss'
+import './styles/confirm.scss'
+import './styles/blockchain-lists.scss'
 
 // MUST BE LOADED FIRST
 import ElectronHelpers from './util/ElectronHelpers';
@@ -8,32 +11,34 @@ import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
 import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
-import WindowService from './services/WindowService';
+import WindowService from './services/utility/WindowService';
 ElectronHelpers.bindContextMenu();
 
-// Globals
 import MenuBar from './components/MenuBar.vue'
-import UserBar from './components/UserBar.vue'
 import ViewBase from './components/ViewBase.vue'
-
-// POPUPS
-
-// POP OUTS
-import LinkApp from './views/popouts/LinkApp.vue'
-import TransferRequest from './views/popouts/TransferRequest.vue'
-
-// Reusable components
-import InputComponent from './components/reusable/InputComponent.vue'
-import ButtonComponent from './components/reusable/ButtonComponent.vue'
-import SelectComponent from './components/reusable/SelectComponent.vue'
-import SwitchComponent from './components/reusable/SwitchComponent.vue'
-import SliderComponent from './components/reusable/SliderComponent.vue'
-import BackBar from './components/reusable/BackBar.vue'
+import Button from './components/reusable/Button.vue'
+import Input from './components/reusable/Input.vue'
+import Select from './components/reusable/Select.vue'
+import SearchBar from './components/reusable/SearchBar.vue'
+import Slider from './components/reusable/Slider.vue'
+import PopInHead from './components/reusable/PopInHead.vue'
+import Switcher from './components/reusable/Switcher.vue'
+import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
+import AnimatedNumber from './components/reusable/AnimatedNumber.vue'
+import ActionBar from './components/reusable/ActionBar.vue'
+import PopOutHead from './components/popouts/PopOutHead.vue'
+import SocketService from "./services/utility/SocketService";
+import SingletonService from "./services/utility/SingletonService";
 
 // f12 to open console from anywhere.
-document.addEventListener("keydown", function (e) {
+document.addEventListener("keydown", e => {
 	if (e.which === 123) WindowService.openTools();
 });
+
+document.onmousedown= e => {
+	if( e.which === 2 ) e.preventDefault();
+	// TODO: Add CMD click logic prevention
+}
 
 class Main {
 
@@ -42,34 +47,31 @@ class Main {
 		const hash = location.hash.replace("#/", '');
 
 		const shared = [
-			{tag:'btn', vue:ButtonComponent},
-			{tag:'cin', vue:InputComponent},
-			{tag:'sel', vue:SelectComponent},
-			{tag:'swch', vue:SwitchComponent},
-			{tag:'back-bar', vue:BackBar},
-
-			{tag:'menu-bar', vue:MenuBar},
-			{tag:'user-bar', vue:UserBar},
+			{tag:'Button', vue:Button},
+			{tag:'Input', vue:Input},
+			{tag:'Select', vue:Select},
+			{tag:'Slider', vue:Slider},
+			{tag:'Switcher', vue:Switcher},
+			{tag:'SearchBar', vue:SearchBar},
+			{tag:'SearchAndFilter', vue:SearchAndFilter},
+			{tag:'ActionBar', vue:ActionBar},
 			{tag:'view-base', vue:ViewBase},
+			{tag:'PopInHead', vue:PopInHead},
+			{tag:'AnimatedNumber', vue:AnimatedNumber},
 		];
 
 		let fragments;
-		if(hash === 'popout'){
+		if(hash === 'popout') fragments = [
+			{tag:'PopOutHead', vue:PopOutHead},
+		]
+		else {
 			fragments = [
-				{tag:'link-app', vue:LinkApp},
-				{tag:'transfer-request', vue:TransferRequest},
-			]
-		} else {
-			fragments = [
-				{tag:'slider', vue:SliderComponent},
+				// {tag:'slider', vue:SliderComponent},
 				{tag:'qr-reader', vue:QrcodeReader},
 			]
 		}
 
 		const components = shared.concat(fragments);
-
-		const routes = Routing.routes();
-
 		const middleware = (to, next, store) => {
 			if(hash === 'popout') return next();
 			if(Routing.isRestricted(to.name))
@@ -77,8 +79,8 @@ class Main {
 			else next();
 		};
 
-		new VueInitializer(routes, components, middleware, async (router, store) => {
-
+		new VueInitializer(Routing.routes(), components, middleware, async (router, store) => {
+			// SocketService.initialize();
 		});
 
 		// window.onerror = log => {

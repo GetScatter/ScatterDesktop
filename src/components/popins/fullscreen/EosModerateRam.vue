@@ -1,11 +1,10 @@
 <template>
-	<section>
-		<back-bar v-on:back="returnResult(null)" />
-		<section class="full-panel inner with-action center-fold limited">
+	<section class="pop-in">
+		<section>
 			<section class="head">
-				<figure class="icon icon-microchip"></figure>
+				<figure class="icon font icon-microchip" style="padding-top:7px;"></figure>
+				<figure class="subtitle">{{account.sendable()}}</figure>
 				<figure class="title">RAM</figure>
-				<p>{{account.sendable()}}</p>
 			</section>
 
 			<section class="panel-switch">
@@ -17,53 +16,46 @@
 				</figure>
 			</section>
 
-			<br>
-			<section v-if="state === STATES.BUY" class="disclaimer less-pad">
-				{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_RAM.BuyDesc)}}
-			</section>
-			<section v-if="state === STATES.SELL" class="disclaimer less-pad">
-				{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_RAM.SellDesc)}}
-			</section>
-
 			<section class="resource-moderator">
 				<section class="split-inputs">
-					<cin style="width:120px;"
+					<Input style="width:120px;"
 					     :label="quantityLabel"
 					     type="number"
 					     v-on:changed="x => ram.quantity = x"
 					     :text="ram.quantity" />
 
-					<sel style="width:200px;"
-					     label="Type"
-					     :selected="ram.denom"
-					     :options="Object.keys(denom).map(x => denom[x])"
-					     v-on:changed="changeRamDenom"></sel>
+					<section>
+						<label>Type</label>
+						<Select style="width:200px; margin-top:5px; text-align:left;" bordered="1"
+						        :selected="ram.denom"
+						        :options="Object.keys(denom).map(x => denom[x])"
+						        v-on:selected="changeRamDenom"></Select>
+					</section>
 
 					<section style="flex:1;"></section>
 
 					<section style="width:200px; align-self: flex-end;">
-						<cin v-if="state === STATES.BUY"
-							 :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Available, systemToken.symbol)"
+						<Input v-if="state === STATES.BUY"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Available, systemToken.symbol)"
 						     :text="parseFloat(balance - (ram.quantity * price)).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 
-						<cin v-if="state === STATES.SELL"
-							 :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Reclaiming, systemToken.symbol)"
+						<Input v-if="state === STATES.SELL"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Reclaiming, systemToken.symbol)"
 						     :text="parseFloat(ram.quantity * price).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 					</section>
 
 				</section>
 
-				<slider v-if="state === STATES.BUY" :min="0" :max="balance / price" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x"></slider>
-				<slider v-if="state === STATES.SELL && accountData" :min="0" :max="availableRam" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x"></slider>
+				<Slider v-if="state === STATES.BUY" :min="0" :max="balance / price" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x" />
+				<Slider v-if="state === STATES.SELL && accountData" :min="0" :max="availableRam" step="1" :value="ram.quantity" v-on:changed="x => ram.quantity = x" />
 			</section>
 
 
 		</section>
-		<section class="action-bar short bottom centered">
-			<btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" v-on:clicked="buyOrSell" />
-		</section>
+
+		<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:locale(langKeys.GENERIC.Confirm), red:true, click:() => buyOrSell()}]" />
 	</section>
 </template>
 
@@ -73,7 +65,7 @@
 	import '../../../styles/popins.scss';
 	import {Blockchains} from "../../../models/Blockchains";
 	import PluginRepository from "../../../plugins/PluginRepository";
-	import PopupService from "../../../services/PopupService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import HistoricAction from "../../../models/histories/HistoricAction";
 

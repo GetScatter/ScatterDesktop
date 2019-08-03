@@ -1,73 +1,86 @@
 <template>
-    <section>
+	<section class="prompt pop-over">
 
-        <PopinHead :popin="popin" :name="popin.data.props.title" />
-        <section class="panel centered">
-            <br>
-            <figure class="description">{{popin.data.props.description}}</figure>
+		<figure class="title">{{title}}</figure>
+		<figure class="description">{{description}}</figure>
 
-            <br>
-            <br>
-            <section class="split-inputs">
-                <btn :blue="popin.data.props.acceptDeny" :text="popin.data.props.acceptDeny ? locale(langKeys.GENERIC.Yes) : locale(langKeys.GENERIC.Confirm)"
-                     v-on:clicked="returnResult(true)" />
-                <btn red="1" v-if="popin.data.props.acceptDeny" :text="locale(langKeys.GENERIC.No)"
-                     v-on:clicked="returnResult(false)" />
-            </section>
-        </section>
+		<Input v-if="inputField" v-bind="inputField" centered="1" :text="text" v-on:changed="x => text = x" />
 
-    </section>
+		<section class="actions" :class="{'between':acceptDeny}">
+			<Button red="1" v-if="acceptDeny" text="Deny" @click.native="returnResult(false)" />
+			<Button blue="1" text="Okay" @click.native="returnResult(inputField ? text : true)" />
+		</section>
+
+	</section>
 </template>
 
 <script>
-    import {RouteNames} from '../../../vue/Routing'
-    import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from '../../../store/constants';
-    import {PopupDisplayTypes} from '../../../models/popups/Popup'
-    import PopinHead from "./PopinHead";
+	import { mapActions, mapGetters, mapState } from 'vuex'
+	import * as Actions from '../../../store/constants';
+	import KeysAndAccountList from "../../misc/KeysAndAccountList";
+	import SearchAndFilter from "../../reusable/SearchAndFilter";
+	import {BlockchainsArray, blockchainName} from '../../../models/Blockchains';
 
-    export default {
-	    components: {PopinHead},
-	    data(){ return {
+	export default {
+		props:['popin'],
+		data(){return {
+			text:'',
+		}},
+		computed:{
+			title(){ return this.popin.data.props.title; },
+			description(){ return this.popin.data.props.description; },
+			acceptDeny(){ return this.popin.data.props.acceptDeny; },
+			inputField(){ return this.popin.data.props.inputField; },
+		},
+		methods:{
+			returnResult(value){
+				this.popin.data.callback(value);
+				this[Actions.RELEASE_POPUP](this.popin);
+			},
 
-        }},
-        mounted(){
+			...mapActions([
+				Actions.RELEASE_POPUP
+			])
+		}
 
-        },
-        computed:{
-            ...mapState([
-                'popups'
-            ]),
-            ...mapGetters([
-
-            ])
-        },
-        methods:{
-	        returnResult(truthy){
-		        this.popin.data.callback(truthy);
-		        this[Actions.RELEASE_POPUP](this.popin);
-	        },
-            ...mapActions([
-                Actions.RELEASE_POPUP
-            ])
-        },
-        props:['popin']
-    }
+	}
 </script>
 
-<style scoped lang="scss" rel="stylesheet/scss">
-    @import "../../../styles/variables";
+<style scoped lang="scss">
+	@import "../../../styles/variables";
 
-    .description {
-        font-size: 16px;
-        text-align:center;
-    }
+	.prompt {
+		width:400px;
+		padding:30px;
+		display:flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 
-    .split-inputs {
-        width:100%;
-        button {
-            flex:1;
-        }
-    }
+		.title {
+			font-size: $large;
+			font-weight: bold;
+		}
+
+		.description {
+			margin-top:4px;
+			font-size: $small;
+		}
+
+		.input {
+			margin:30px 0 0 0;
+		}
+
+		.actions {
+			margin-top:20px;
+			display:flex;
+			justify-content: flex-end;
+			width:100%;
+
+			&.between {
+				justify-content: space-between;
+			}
+		}
+	}
 
 </style>

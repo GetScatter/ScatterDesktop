@@ -1,10 +1,9 @@
-import Identity from './Identity';
+import Identity, {LocationInformation} from './Identity';
 import Permission from './Permission';
 import Keypair from './Keypair';
 import Account from './Account';
 import AuthorizedApp from './AuthorizedApp';
-import ObjectHelpers from '../util/ObjectHelpers';
-import RecurringService from "../services/RecurringService";
+import CreditCard from "./CreditCard";
 
 export default class Keychain {
 
@@ -12,8 +11,13 @@ export default class Keychain {
         this.keypairs = [];
         this.accounts = [];
         this.identities = [];
+        this.locations = [];
         this.permissions = [];
+        this.cards = [];
         this.apps = [];
+        this.avatars = {};
+
+        this.lastUsedIdentity = null;
     }
 
     static placeholder(){ return new Keychain(); }
@@ -22,15 +26,17 @@ export default class Keychain {
         if(json.hasOwnProperty('keypairs')) p.keypairs = json.keypairs.map(x => Keypair.fromJson(x));
         if(json.hasOwnProperty('accounts')) p.accounts = json.accounts.map(x => Account.fromJson(x));
         if(json.hasOwnProperty('identities')) p.identities = json.identities.map(x => Identity.fromJson(x));
+        if(json.hasOwnProperty('locations')) p.locations = json.locations.map(x => LocationInformation.fromJson(x));
         if(json.hasOwnProperty('permissions')) p.permissions = json.permissions.map(x => Permission.fromJson(x));
+        if(json.hasOwnProperty('cards')) p.cards = json.cards.map(x => CreditCard.fromJson(x));
         if(json.hasOwnProperty('apps')) p.apps = json.apps.map(x => AuthorizedApp.fromJson(x));
         return p;
     }
 
     clone(){ return Keychain.fromJson(JSON.parse(JSON.stringify(this))) }
 
-    findIdentity(publicKey){
-        return this.identities.find(id => id.publicKey === publicKey);
+    findIdentity(id){
+        return this.identities.find(identity => identity.id === id);
     }
 
     updateOrPushApp(app){
@@ -48,14 +54,30 @@ export default class Keychain {
     }
 
     updateOrPushIdentity(identity){
-        this.identities.find(id => id.publicKey === identity.publicKey)
-            ? this.identities = this.identities.map(id => id.publicKey === identity.publicKey ? identity : id)
+        this.identities.find(id => id.id === identity.id)
+            ? this.identities = this.identities.map(id => id.id === identity.id ? identity : id)
             : this.identities.unshift(identity);
     }
 
     removeIdentity(identity){
-        this.identities = this.identities.filter(id => id.publicKey !== identity.publicKey);
-        this.permissions = this.permissions.filter(perm => perm.identity !== identity.publicKey);
+        this.identities = this.identities.filter(id => id.id !== identity.id);
+        this.permissions = this.permissions.filter(perm => perm.identity !== identity.id);
+        delete this.avatars[identity.id];
+    }
+
+    updateOrPushLocation(location){
+        this.locations.find(id => id.id === location.id)
+            ? this.locations = this.locations.map(id => id.id === location.id ? location : id)
+            : this.locations.unshift(location);
+    }
+
+    removeLocation(location){
+        this.locations = this.locations.filter(x => x.id !== location.id);
+        this.identities.map(identity => {
+            if(identity.location === location.id){
+                identity.location = null;
+            }
+        })
     }
 
     getKeyPairByName(name){
@@ -63,6 +85,7 @@ export default class Keychain {
     }
 
     getKeyPairByPublicKey(publicKey){
+        if(!publicKey) return;
         return this.keypairs.find(key => key.publicKeys.find(x => x.key.toLowerCase() === publicKey.toLowerCase()))
     }
 

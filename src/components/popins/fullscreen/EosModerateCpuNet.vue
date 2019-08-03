@@ -1,11 +1,10 @@
 <template>
-	<section>
-		<back-bar v-on:back="returnResult(null)" />
-		<section class="full-panel inner with-action center-fold limited">
+	<section class="pop-in">
+		<section>
 			<section class="head">
-				<figure class="icon icon-network"></figure>
+				<figure class="icon font icon-network"></figure>
+				<figure class="subtitle">{{account.sendable()}}</figure>
 				<figure class="title">CPU & NET</figure>
-				<p>{{account.sendable()}}</p>
 			</section>
 
 			<section class="panel-switch">
@@ -17,22 +16,14 @@
 				</figure>
 			</section>
 
-			<br>
-			<section v-if="state === STATES.STAKE" class="disclaimer less-pad">
-				{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_CPUNET.StakeDesc)}}
-			</section>
-			<section v-if="state === STATES.UNSTAKE" class="disclaimer less-pad">
-				{{locale(langKeys.POPINS.FULLSCREEN.EOS.MOD_CPUNET.UnstakeDesc)}}
-			</section>
-
 			<section class="resource-moderator">
 				<section class="split-inputs">
 					<section class="split-inputs" style="width:300px;">
-						<cin label="CPU"
-						     type="number"
-						     v-on:changed="x => cpu = x"
-						     :text="cpu" />
-						<cin label="NET"
+						<Input label="CPU"
+						       type="number"
+						       v-on:changed="x => cpu = x"
+						       :text="cpu" />
+						<Input label="NET"
 						     type="number"
 						     v-on:changed="x => net = x"
 						     :text="net" />
@@ -41,13 +32,13 @@
 					<section style="flex:1;"></section>
 
 					<section style="width:200px; align-self: flex-end;">
-						<cin v-if="state === STATES.STAKE"
-						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Available, systemToken.symbol)"
+						<Input v-if="state === STATES.STAKE"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Available, systemToken.symbol)" :disabled="true"
 						     :text="parseFloat(balance - cpu - net).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 
-						<cin v-if="state === STATES.UNSTAKE"
-							 :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Reclaiming, systemToken.symbol)"
+						<Input v-if="state === STATES.UNSTAKE"
+						     :label="locale(langKeys.POPINS.FULLSCREEN.EOS.Reclaiming, systemToken.symbol)" :disabled="true"
 						     :text="parseFloat(cpu + net).toFixed(systemToken.decimals)"
 						     v-on:changed="" />
 					</section>
@@ -57,23 +48,23 @@
 				<section v-if="state === STATES.STAKE">
 					<section class="split-inputs">
 						<figure class="resource">CPU</figure>
-						<slider :min="0" :max="balance - this.net" step="0.0001" :value="cpu" v-on:changed="x => cpu = x" />
+						<Slider :min="0" :max="balance - this.net" step="0.0001" :value="cpu" v-on:changed="x => cpu = x" />
 					</section>
 					<section class="split-inputs">
 						<figure class="resource">NET</figure>
-						<slider :min="0" :max="balance - this.cpu" step="0.0001" :value="net" v-on:changed="x => net = x" />
+						<Slider :min="0" :max="balance - this.cpu" step="0.0001" :value="net" v-on:changed="x => net = x" />
 					</section>
 				</section>
 
 				<section v-if="state === STATES.UNSTAKE">
 					<section class="split-inputs">
 						<figure class="resource">CPU</figure>
-						<slider :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)" />
+						<Slider :min="-availableCPU" :max="0" step="0.0001" :value="-cpu" v-on:changed="x => cpu = Math.abs(x)" />
 						<figure class="resource">{{parseFloat(availableCPU - cpu).toFixed(this.account.network().systemToken().decimals)}}</figure>
 					</section>
 					<section class="split-inputs">
 						<figure class="resource">NET</figure>
-						<slider :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)" />
+						<Slider :min="-availableNET" :max="0" step="0.0001" :value="-net" v-on:changed="x => net = Math.abs(x)" />
 						<figure class="resource">{{parseFloat(availableNET - net).toFixed(this.account.network().systemToken().decimals)}}</figure>
 					</section>
 				</section>
@@ -81,9 +72,8 @@
 
 
 		</section>
-		<section class="action-bar short bottom centered">
-			<btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" v-on:clicked="stakeOrUnstake" />
-		</section>
+
+		<ActionBar :buttons-left="[{text:'Cancel', click:() => returnResult(false)}]" :buttons-right="[{text:locale(langKeys.GENERIC.Confirm), red:true, click:() => stakeOrUnstake()}]" />
 	</section>
 </template>
 
@@ -93,7 +83,7 @@
 	import '../../../styles/popins.scss';
 	import {Blockchains} from "../../../models/Blockchains";
 	import PluginRepository from "../../../plugins/PluginRepository";
-	import PopupService from "../../../services/PopupService";
+	import PopupService from "../../../services/utility/PopupService";
 	import {Popup} from "../../../models/popups/Popup";
 	import HistoricAction from "../../../models/histories/HistoricAction";
 

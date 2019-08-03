@@ -1,0 +1,211 @@
+@import "./variables";
+
+.transfer, .receive, .exchange, .purchase, .app-login {
+  height:$quickheightnobuffer;
+  display:flex;
+  flex-direction: column;
+
+  .min-max {
+    display:flex;
+
+    div {
+      font-size: $small;
+      margin-left:30px;
+
+      span {
+        margin-left:8px;
+        font-weight: bold;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .tail {
+    justify-content: center;
+    display:flex;
+    align-items: center;
+    padding:20px 20px;
+    border-top:1px solid $lightgrey;
+    text-align:center;
+
+    button {
+      display:inline-block;
+      padding:0 60px;
+    }
+  }
+
+  .boxes {
+    display:flex;
+    justify-content: space-between;
+
+    .box {
+      border:1px solid $lightgrey;
+      border-radius:$radius;
+      background:$white;
+
+      &.not-allowed {
+        opacity:0.4;
+        cursor: not-allowed;
+        background:rgba(0,0,0,0.03);
+      }
+
+      &:not(.nested){
+        width:calc(50% - 10px);
+
+        &:hover {
+          border:1px solid $blue;
+        }
+      }
+
+      .symbol {
+        font-size: 48px;
+        flex:0 0 auto;
+        padding-right:20px;
+
+        .small {
+          font-size: 28px;
+        }
+      }
+
+      .line {
+        width:calc(100%);
+        height:2px;
+        background:$blue;
+      }
+
+      &.account-selector {
+        padding:20px;
+        display:flex;
+        align-items: center;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .recipient-selector {
+        display:flex;
+        align-items: center;
+        height:54px;
+        padding:0 20px;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .name {
+        font-size: $medium;
+        font-weight: bold;
+        color:$blue;
+        margin-bottom:2px;
+      }
+
+      .network {
+        font-size: $small;
+
+      }
+
+      .token {
+        margin-top:10px;
+        font-size: $medium;
+        font-weight: bold;
+      }
+
+      .price {
+        font-size: $tiny;
+        font-weight: bold;
+        color:$silver;
+      }
+
+      .chevron {
+        position:absolute;
+        top:0;
+        bottom:0;
+        right:20px;
+        display:flex;
+        align-items: center;
+        font-size: 24px;
+        color:$blue;
+      }
+
+      .input-container {
+        height:50px;
+        display:flex;
+        align-items: center;
+        padding:10px 20px;
+
+        .label {
+          flex:0 0 auto;
+          width:50px;
+          font-size: $medium;
+          font-weight: bold;
+        }
+
+        .input {
+          flex:1;
+          font-size: $medium;
+          color:$blue;
+          font-weight: bold;
+          text-align:left;
+
+          &.not-available {
+            color:$grey;
+          }
+        }
+
+        input, textarea {
+          height:36px;
+          border:0;
+          font-size: $medium;
+          text-align:left;
+          padding:0;
+          margin:0;
+          outline:0;
+        }
+
+        textarea {
+          height:80px;
+          padding:10px 0;
+          align-self:flex-start;
+          resize: none;
+        }
+      }
+
+      &.data-box {
+        padding:30px;
+        display: flex;
+        flex-direction: column;
+        flex:1;
+        margin-left:20px;
+        justify-content: space-between;
+
+        label {
+          margin-bottom:3px;
+          font-size: $small;
+        }
+
+        .receiver {
+          font-size: $large;
+          font-weight: bold;
+        }
+
+        .small-info {
+          font-size: $small;
+          color:$silver;
+          margin-bottom:10px;
+        }
+      }
+    }
+
+    .box-container {
+      width:calc(50% - 10px);
+    }
+
+    .box, .box-container {
+
+      &.auto-width {
+        width:auto;
+      }
+
+
+    }
+  }
+}

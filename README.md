@@ -9,7 +9,7 @@ Scatter Desktop from this GitHub, and **NOWHERE ELSE**.
 
 ### Running in development mode
 
-This runs best with `node v9.8.0` and `electron v1.8.2`
+This runs best with `node v10.15.3` and `electron v5.0.1`
 
 - clone the repo
 - run `yarn install` to install the dependencies. **Important: You can only use yarn to install right now as there's two versions of eosjs being pulled in and only yarn supports aliasing**.

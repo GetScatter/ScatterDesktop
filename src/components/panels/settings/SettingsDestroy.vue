@@ -10,7 +10,9 @@
             <section class="disclaimer red" style="margin-bottom:0;">
 				<b>{{locale(langKeys.SETTINGS.DESTROY.Important)}}</b>
 			</section>
-            <btn :text="locale(langKeys.SETTINGS.DESTROY.Button)" red="true" v-on:clicked="destroy"></btn>
+            <br>
+            <br>
+            <Button :text="locale(langKeys.SETTINGS.DESTROY.Button)" red="true" @click.native="destroy" />
         </section>
 
     </section>
@@ -20,9 +22,9 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../../store/constants';
 
-    import SocketService from '../../../services/SocketService';
-    import StorageService from '../../../services/StorageService';
-    import PopupService from '../../../services/PopupService';
+    import SocketService from '../../../services/utility/SocketService';
+    import StorageService from '../../../services/utility/StorageService';
+    import PopupService from '../../../services/utility/PopupService';
     import {Popup} from '../../../models/popups/Popup'
 
     export default {

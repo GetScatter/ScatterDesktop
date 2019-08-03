@@ -6,7 +6,9 @@ import Hasher from '../util/Hasher'
 import IdGenerator from '../util/IdGenerator'
 import Recurring from "./Recurring";
 import PluginRepository from "../plugins/PluginRepository";
-import Identity from "./Identity";
+import Identity, {LocationInformation} from "./Identity";
+import Contact from "./Contact";
+import Keypair from "./Keypair";
 
 export default class Scatter {
 
@@ -19,7 +21,7 @@ export default class Scatter {
 
         this.recurring = Recurring.placeholder();
 
-        this.toured = false;
+        this.onboarded = false;
 
         this.pin = null;
         this.pinForAll = false;
@@ -36,7 +38,11 @@ export default class Scatter {
 	    await firstIdentity.initialize(scatter.hash);
 
 	    firstIdentity.name = 'MyFirstIdentity';
+	    scatter.keychain.locations = [LocationInformation.fromJson({name:'Home'})];
+	    firstIdentity.location = scatter.keychain.locations[0];
+
 	    scatter.keychain.updateOrPushIdentity(firstIdentity);
+
 	    return scatter;
     }
     static placeholder(){ return new Scatter(); }
@@ -47,6 +53,8 @@ export default class Scatter {
         if(json.hasOwnProperty('keychain'))
             p.keychain = (typeof json.keychain === 'string')
                 ? json.keychain : Keychain.fromJson(json.keychain);
+
+	    if(json.hasOwnProperty('contacts')) p.contacts = json.contacts.map(x => Contact.fromJson(x));
 
         return p;
     }
@@ -74,14 +82,14 @@ export default class Scatter {
     }
 
     savable(seed){
+        // Encrypting in-place.
+        this.keychain.cards.map(card => card.encrypt(seed));
         this.keychain.keypairs.map(keypair => keypair.encrypt(seed));
+        this.keychain.identities.map(id => id.encrypt(seed));
 
+        // Encrypting clone
         const clone = this.clone();
-        clone.keychain.identities.map(id => id.encrypt(seed));
-
-        // Keychain is always stored encrypted.
         clone.encrypt(seed);
-
         return clone;
     }
 }

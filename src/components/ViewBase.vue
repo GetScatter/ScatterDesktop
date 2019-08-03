@@ -8,27 +8,22 @@
         </section>
 
         <section v-else>
-            <menu-bar></menu-bar>
-
-            <transition name="slide-up">
-                <user-bar v-if="route === routeNames.HOME"></user-bar>
-            </transition>
+            <MenuBar />
 
             <section class="app-content">
-
-                <transition :name="route === 'login' ? 'fade' : ''" mode="out-in">
-                    <router-view></router-view>
-                </transition>
+                <Sidebar v-if="unlocked && onboarded" />
+                <section class="view-pane">
+                    <QuickActions v-if="showQuickActions" />
+                    <router-view class="router-view" :class="{'lowered':true, 'floated':unlocked}"></router-view>
+                </section>
 
                 <Processes />
             </section>
         </section>
 
-        <transition name="fade" mode="out-in">
-            <section class="working-screen" v-if="workingScreen">
-                <figure class="spinner icon-spin4 animate-spin"></figure>
-            </section>
-        </transition>
+        <section class="working-screen" v-if="workingScreen">
+            <figure class="spinner icon-spin4 animate-spin"></figure>
+        </section>
 
     </section>
 </template>
@@ -40,14 +35,22 @@
 
     import Processes from './Processes';
     import Popups from './Popups';
+    import Sidebar from './Sidebar';
+    import QuickActions from './QuickActions';
+    import MenuBar from './MenuBar';
+    import SingletonService from "../services/utility/SingletonService";
 
     export default {
     	components:{
 		    Popups,
-		    Processes
+		    Processes,
+            Sidebar,
+		    QuickActions,
+		    MenuBar
         },
         data(){ return {
             routeNames:RouteNames,
+	        initialized:false,
         }},
         computed:{
             ...mapState([
@@ -58,15 +61,30 @@
             ...mapGetters([
                 'unlocked',
             ]),
-            onboarding(){
-                return this.scatter && this.scatter.meta && !this.scatter.meta.acceptedTerms;
+            onboarded(){
+                return this.unlocked && this.scatter.onboarded && this.route !== RouteNames.LOGIN
             },
             isPopout(){
                 return this.$route.name === 'popout';
             },
             route(){
                 return this.$route.name
-            }
+            },
+            showQuickActions(){
+            	if(!this.onboarded) return false;
+            	return ![
+		            RouteNames.ITEMS,
+		            RouteNames.NETWORKS,
+		            RouteNames.CONTACTS,
+		            RouteNames.HISTORIES,
+		            RouteNames.RIDL,
+		            RouteNames.SETTINGS,
+		            RouteNames.PURCHASE,
+		            RouteNames.IDENTITIES,
+		            RouteNames.LOCATIONS,
+                ].includes(this.$route.name);
+            },
+
         },
         mounted(){
 
@@ -75,8 +93,17 @@
             ...mapActions([
                 Actions.SET_SCATTER
             ])
-
         },
+        watch:{
+            ['unlocked'](){
+            	if(this.$route.fullPath.indexOf('popout') > -1) return;
+            	if(this.initialized) return;
+            	if(this.unlocked){
+            		this.initialized = true;
+            		SingletonService.init();
+                }
+            }
+        }
     }
 </script>
 
@@ -86,11 +113,11 @@
     .working-screen {
         background:rgba(255,255,255,0.93);
         position:fixed;
-        top:80px;
+        top:40px;
         left:0;
         right:0;
         bottom:0;
-        z-index:1000000;
+        z-index:10000;
         display:flex;
         justify-content: center;
         align-items: center;
@@ -98,20 +125,17 @@
 
         .spinner {
             font-size: 36px;
-            color:$secondary;
+            color:$blue;
         }
     }
 
     .app-content {
-        position:fixed;
-        overflow-y: auto;
-        overflow-x:hidden;
-        left: 0;
-        right: 0;
-        top: 80px;
-        bottom:0;
-        z-index: 1;
-        background: white;
+        height:$fullheight;
+        width:100%;
+        display:flex;
+        background:$white;
+        margin-top:40px;
+        box-shadow:inset 0 0 0 1px $lightgrey;
     }
 
     .view-base {
@@ -120,6 +144,16 @@
         display: flex;
         flex-direction: column;
         flex: 1;
+    }
+
+    .view-pane {
+        flex:1;
+        position: relative;
+        overflow-y: auto;
+    }
+
+    .floated {
+        flex:1;
     }
 
 

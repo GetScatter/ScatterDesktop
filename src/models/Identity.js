@@ -1,6 +1,8 @@
 import AES from 'aes-oop';
 import IdGenerator from '../util/IdGenerator'
 import Network from '../models/Network'
+import StoreService from "../services/utility/StoreService";
+import * as Actions from "../store/constants";
 
 
 
@@ -121,6 +123,8 @@ export default class Identity {
 
     constructor(){
         // Basic fields
+        this.id = IdGenerator.text(24);
+
         this.hash = '';
         this.privateKey = '';
         this.publicKey = '';
@@ -128,7 +132,8 @@ export default class Identity {
 
         // Requireable fields
         this.personal = PersonalInformation.placeholder();
-        this.locations = [LocationInformation.placeholder()];
+        // this.locations = [LocationInformation.placeholder()];
+        this.location = null;
 
         // KYC
         this.kyc = false;
@@ -150,8 +155,8 @@ export default class Identity {
     static fromJson(json){
         let p = Object.assign(this.placeholder(), json);
         p.personal = PersonalInformation.fromJson(json.personal);
-        if(json.hasOwnProperty('locations')) p.locations = json.locations.map(location => LocationInformation.fromJson(location));
-        else p.locations = [LocationInformation.placeholder()];
+        // if(json.hasOwnProperty('locations')) p.locations = json.locations.map(location => LocationInformation.fromJson(location));
+        // else p.locations = [LocationInformation.placeholder()];
         return p;
     }
 
@@ -159,7 +164,7 @@ export default class Identity {
     isEncrypted(){ return this.privateKey.length > 70 }
     encrypt(seed){ if(!this.isEncrypted()) this.privateKey = AES.encrypt(this.privateKey, seed); }
     decrypt(seed){ if(this.isEncrypted()) this.privateKey = AES.decrypt(this.privateKey, seed); }
-    defaultLocation(){ return this.locations.find(location => location.isDefault) || this.locations[0]; }
+    defaultLocation(){ return this.getLocation() || StoreService.get().getters.locations[0]; }
 
 
     /***
@@ -180,9 +185,13 @@ export default class Identity {
         if(selectedLocation){
             if(!selectedLocation.hasFields(fields.location)) return false;
         } else {
-	        if(requiredFields.location.length)
-		        if(!this.locations.find(location => location.hasFields(requiredFields.location)))
-			        return false;
+	        if(requiredFields.location.length){
+	            if(this.getLocation()){
+	                return !!this.getLocation().hasFields(requiredFields.location);
+                } else {
+	                return false;
+                }
+            }
         }
 
 
@@ -198,7 +207,7 @@ export default class Identity {
         const requiredFields = IdentityRequiredFields.fromJson(fields);
         if(!requiredFields.isValid()) return null;
 
-        const identity = {hash:this.hash, publicKey:this.publicKey, name:this.name, kyc:this.kyc};
+        const identity = {hash:this.hash, publicKey:this.publicKey, name:this.name};
 
         if(requiredFields.personal.length){
             identity.personal = {};
@@ -208,7 +217,9 @@ export default class Identity {
         if(requiredFields.location.length){
             identity.location = {};
             if(!location) location = this.defaultLocation();
-            requiredFields.location.map(field => identity.location[field] = location[field]);
+            if(location) {
+	            requiredFields.location.map(field => identity.location[field] = location[field]);
+            }
         }
 
         return identity;
@@ -247,5 +258,20 @@ export default class Identity {
 
     static nameIsValid(name){
         return /^[a-zA-Z0-9_-]{3,20}$/.test(name)
+    }
+
+    fullname(){
+        return `${this.personal.firstname || '[NO FIRST NAME]'} ${this.personal.lastname || '[NO LAST NAME]'}`
+    }
+
+    getLocation(){
+        if(!this.location) return;
+        return StoreService.get().getters.locations.find(x => x.id === this.location);
+    }
+
+    setAsLastUsed(){
+	    const scatter = StoreService.get().state.scatter.clone();
+	    scatter.keychain.lastUsedIdentity = this.id;
+	    return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
     }
 }

@@ -1,71 +1,70 @@
 <template>
     <section>
-        <PopOutHead v-on:closed="returnResult" :hide-close="hideCloseButton" />
-        <section class="multi-pane">
+        <section class="multi-pane popout-window">
 
 
             <!-- MAIN PANEL -->
             <section class="main-panel">
-                <PopOutAction :origin="popup.origin()" :action="limitedMessages.actions" />
+                <PopOutApp :app="appData" />
                 <figure class="has-more" v-if="limitedMessages.total > 1">{{locale(langKeys.POPOUTS.SIGNATURE.ActionsTotal,limitedMessages.total)}}</figure>
-                <section class="participants" :class="{'top-less':limitedMessages.total <= 1}" v-if="participantAccounts">
+
+
+                <section class="participants" v-if="participantAccounts">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.AccountsInvolved)}}</label>
-                    <section class="participant" v-for="p in participantAccounts">
-                        {{`${p.network().name} - ${p.sendable()}`}}
-                        <span v-if="resources[p.identifiable()]">
-                            <b>{{resourcesFor(p)}}</b>
-                        </span>
+                    <section v-if="!participantsAsSelector">
+                        <section class="participant" v-for="p in participantAccounts.slice(0,2)">
+                            {{p.network().name}} - <b>{{p.sendable()}}</b>
+                        </section>
+                        <figure class="more-participants" v-if="participantAccounts.length > 2" @click="participantsAsSelector = true">
+                            +{{participantAccounts.length}} more accounts
+                        </figure>
                     </section>
+                    <Select v-else bordered="1" :options="participantAccounts" :parser="x => `${x.network().name} - ${x.sendable()}`" />
                 </section>
-                <section class="participants top-less" v-if="isArbitrarySignature">
+
+                <section class="participants" v-if="isArbitrarySignature">
                     <label>{{locale(langKeys.POPOUTS.SIGNATURE.KeysInvolved)}}</label>
-                    <section class="participant">{{arbitraryKeypair.name}} -- {{payload.publicKey.substr(0,6)}}.....{{payload.publicKey.substr(payload.publicKey.length - 5)}}</section>
+                    <section class="participant">{{arbitraryKeypair.name}}</section>
                 </section>
+
+
+
 
                 <section class="fixed-actions">
 
-                    <section v-if="cannotSignArbitrary" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
-                        {{locale(langKeys.POPOUTS.SIGNATURE.ArbitraryDisabledTitle)}}
-                        <p>{{locale(langKeys.POPOUTS.SIGNATURE.ArbitraryDisabledDesc)}}</p>
+                    <section v-if="isDangerous" class="disclaimer less-pad red centered" style="margin-bottom:10px;">
+                        One of the actions included within this transaction is <b>dangerous</b>.
                     </section>
 
-                    <!-- ACCEPT TRANSACTION -->
-                    <btn blue="1" v-if="!pinning"
-                         :disabled="!isValidIdentity || cannotSignArbitrary"
-                         :text="locale(langKeys.GENERIC.Allow)"
-                         v-on:clicked="accepted" />
 
-                    <!-- DENY TRANSACTION -->
-                    <btn :text="locale(langKeys.GENERIC.Deny)" v-if="!pinning"
-                         v-on:clicked="returnResult(false)" />
+                    <section class="accept-deny">
+                        <!-- DENY TRANSACTION -->
+                        <Button :text="locale(langKeys.GENERIC.Deny)"
+                                big="1" v-if="!pinning"
+                                @click.native="returnResult(false)" />
 
-                    <section v-if="!isArbitrarySignature">
-                        <br>
-                        <br>
-                        <label style="text-align:center;">{{locale(langKeys.POPOUTS.SIGNATURE.WhitelistDesc)}}</label>
-
-                        <btn :red="!whitelisted" :blue="whitelisted"
-                             :text="whitelisted
-                             	? locale(langKeys.POPOUTS.SIGNATURE.DisableWhitelistButton)
-								: locale(langKeys.POPOUTS.SIGNATURE.EnableWhitelistButton)"
-                             v-on:clicked="whitelist" />
+                        <!-- ACCEPT TRANSACTION -->
+                        <Button :red="isDangerous || (reputation && reputation.decimal < 0)"
+                                big="1" blue="1" v-if="!pinning"
+                                :disabled="cannotSignArbitrary"
+                                :text="locale(langKeys.GENERIC.Allow)"
+                                @click.native="accepted" />
                     </section>
                 </section>
             </section>
 
 
             <!--SIDE PANEL-->
-            <figure class="side-bar" :class="!expanded ? 'icon-right-open-big' : 'icon-left-open-big'" @click="$emit('expanded', 500, null, true)"></figure>
             <section class="side-panel" v-if="!expanded">
 
-                <section class="view-types">
-                    <sel :selected="viewType" short="1"
-                         :options="viewTypesArray"
-                         :parser="x => formatViewType(x)"
-                         v-on:changed="x => viewType = x"></sel>
-                </section>
+                <!--<section class="view-types">-->
+                    <!--<Select :selected="viewType" bordered="1"-->
+                         <!--:options="viewTypesArray"-->
+                         <!--:parser="x => formatViewType(x)"-->
+                         <!--v-on:selected="x => viewType = x"></Select>-->
+                <!--</section>-->
 
-                <section class="scroller">
+                <section class="messages-scroller">
 
                     <RequiredFields v-if="!isArbitrarySignature && (personalFields.length || locationFields.length)"
                                     :identity="identity" :fields="fields"
@@ -77,7 +76,8 @@
                                     v-on:locationField="(key, val) => clonedLocation[key] = val"
                                     v-on:personalField="(key, val) => selectedIdentity.personal[key] = val" />
 
-                    <section class="messages" :ref="`message_${index}`" v-for="(message, index) in messages">
+                    <section class="messages" :class="{'dangerous':isDangerous || (reputable(message) && reputable(message).decimal < 0)}" :ref="`message_${index}`" v-for="(message, index) in messages">
+
 
                         <section class="whitelist-overlay" v-if="isPreviouslyWhitelisted(message)">
                             <section class="box">
@@ -87,15 +87,22 @@
 
                         <section :class="{'previous-whitelist':isPreviouslyWhitelisted(message)}">
 
-                            <section class="details">
+                            <section class="details contract-action">
+
+                                <section class="danger wiggle" v-if="isDangerous" v-tooltip.right="{content:isDangerous, classes:['dangertip']}">
+                                    <i class="icon-help"></i>
+                                </section>
+
                                 <figure class="title">
                                     <input v-if="whitelisted && !isPreviouslyWhitelisted(message)"
                                            :checked="!!getWhitelist(message)"
                                            type="checkbox"
                                            @change="addWhitelist(message)" />
 
+                                    <ReputationScore class="score" :reputable="reputable(message)" small="1" />
                                     <span @click="collapse(message)">{{message.code}} <i class="contract-split icon-right-open-big"></i> {{message.type}}</span>
                                 </figure>
+                                <span class="danger-title" v-if="isDangerous">This action is <b>dangerous</b>!</span>
                             </section>
 
                             <section v-if="!isCollapsed(message)">
@@ -105,7 +112,7 @@
                                     <section class="split-inputs">
                                         <input v-if="whitelisted && !isPreviouslyWhitelisted(message)" type="checkbox" @change="toggleWhitelistProp(getWhitelist(message), key)" />
                                         <figure class="value object" v-if="typeof value === 'object'">
-                                            <div :ref="key + hash(value)" :v-html="formatJson(value, key)"></div>
+                                            <div :ref="hash(JSON.stringify(message)) + key + hash(value)" :v-html="formatJson(value, hash(JSON.stringify(message))+key)"></div>
                                         </figure>
                                         <figure class="value" v-else>{{value}}</figure>
                                     </section>
@@ -126,6 +133,28 @@
                     </section>
                 </section>
 
+                <section class="whitelist-bar" v-if="!isArbitrarySignature && !isDangerous">
+                    <figure class="text" v-if="!whitelisted">You can whitelist this so that you don't have to keep re-accepting this transaction.</figure>
+                    <figure class="text blue" v-if="whitelisted">Checkboxes that are checked can have their values changed without breaking the whitelist.</figure>
+                    <Switcher :state="whitelisted" @click.native="whitelist" />
+                </section>
+
+            </section>
+        </section>
+
+
+        <section class="ridl-popup" v-if="showingRidlWarning">
+            <figure class="bg" @click="showingRidlWarning = false"></figure>
+            <section class="box">
+                <h2>Danger!</h2>
+                <p style="font-size: 11px; line-height: 13px;">
+                    Users of RIDL have rated contracts and/or actions within this transaction negatively.
+                    <b>This does not mean indefinitely that it is a scam, just that it is dangerous in some way.</b>
+                </p>
+
+                <br>
+                <span style="font-size: 9px;">Related Entities</span>
+                <i class="link" v-for="reputable in reputation.reputables.filter(x => x.decimal < 0)" @click="openInBrowser(ridlLink(reputable))">View <b>{{reputable.entity}}</b> on RIDL.</i>
             </section>
         </section>
 
@@ -135,21 +164,21 @@
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../../store/constants';
-	import PopOutHead from '../../components/popouts/PopOutHead';
-	import PopOutAction from '../../components/popouts/PopOutAction';
+	import ReputationScore from '../../components/reusable/ReputationScore';
 	import SearchBar from '../../components/reusable/SearchBar';
-	import FullWidthRow from '../../components/reusable/FullWidthRow';
 	import JSONFormatter from 'json-formatter-js'
 	import Hasher from "../../util/Hasher";
 	import Account from "../../models/Account";
-	import PopupService from "../../services/PopupService";
+	import PopupService from "../../services/utility/PopupService";
 	import {Popup} from "../../models/popups/Popup";
-	import PermissionService from "../../services/PermissionService";
+	import PermissionService from "../../services/apps/PermissionService";
 	import {Blockchains} from "../../models/Blockchains";
 	import {IdentityRequiredFields} from "../../models/Identity";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import KeyPairService from "../../services/KeyPairService";
-	import ResourceService from "../../services/ResourceService";
+	import KeyPairService from "../../services/secure/KeyPairService";
+	import ResourceService from "../../services/blockchain/ResourceService";
+	import RIDLService, {RIDL_WEB_HOST} from "../../services/apis/RIDLService";
+	import PopOutApp from "../../components/popouts/PopOutApp";
 
 	const VIEW_TYPES = {
 	    HUMAN:'human',
@@ -160,10 +189,9 @@
 	export default {
 		props:['popup', 'expanded', 'pinning'],
 		components:{
+			PopOutApp,
+			ReputationScore,
 			RequiredFields,
-			PopOutHead,
-			PopOutAction,
-			FullWidthRow,
 			SearchBar,
 		},
 		data () {return {
@@ -179,11 +207,16 @@
 			selectedLocation:null,
 			clonedLocation:null,
 			hideCloseButton:false,
+
+			reputation:null,
+            showingRidlWarning:false,
+
+            participantsAsSelector:false,
 		}},
 		created(){
 			this.selectedIdentity = this.identity.clone();
-			this.selectedLocation = this.selectedIdentity.locations[0];
-			this.clonedLocation = this.selectedIdentity.locations[0].clone();
+			this.selectedLocation = this.selectedIdentity.getLocation() || this.locations[0];
+			this.clonedLocation = this.selectedLocation.clone();
 
 			this.participantAccounts.map(async acc => {
 				if(ResourceService.usesResources(acc)){
@@ -191,6 +224,13 @@
 					this[Actions.ADD_RESOURCES]({acc:acc.identifiable(), res:resources});
                 }
             })
+
+			setTimeout(async() => {
+				this.loadingReputation = true;
+				this.reputation = await RIDLService.checkContracts(this.payload.network, this.messages);
+				if(this.reputation && this.reputation.decimal < 0) this.showingRidlWarning = true;
+				this.loadingReputation = false;
+			}, 50);
 		},
 		computed: {
 			...mapState([
@@ -202,7 +242,14 @@
 				'identities',
 				'accounts',
 				'networks',
+                'locations',
 			]),
+
+
+			appData(){
+				return this.popup.data.props.appData;
+			},
+
             viewTypesArray(){
 			    const hasEos = !this.isArbitrarySignature && !!this.payload.participants.find(x => Account.fromJson(x).blockchain() === Blockchains.EOSIO);
 			    const arrMap = [VIEW_TYPES.HUMAN, VIEW_TYPES.JSON];
@@ -250,12 +297,26 @@
             cannotSignArbitrary(){
 				if(!this.isArbitrarySignature) return false;
 				return this.payload.messages[0].data.signing.split(' ').some(x => x.length > 12);
+            },
+            isDangerous(){
+				if(this.messages.find(x => x.code === 'eosio' && x.type === 'updateauth')){
+					return `This action is dangerous. Accepting it will change your keys and possibly give your account to someone else. <br><br><b>Check to make sure the keys are correct.</b>`;
+                }
+				return false;
             }
 		},
 		methods: {
 			returnResult(result){
 				this.$emit('returned', result);
 			},
+
+            reputable(message){
+				if(!this.reputation) return;
+			    return this.reputation.reputables.find(x => x.code === `${message.code}${message.type}`);
+            },
+			ridlLink(reputable){
+			    return `${RIDL_WEB_HOST}/reputable?id=${reputable.id}`
+            },
 
 			resourcesFor(account){
 			    const resources = this.resources[account.identifiable()];
@@ -317,20 +378,24 @@
 			},
 
 			whitelist(){
-				this.hideCloseButton = true;
-				const finish = bool => {
-					this.whitelisted = bool;
-					this.hideCloseButton = false;
-					this.messages.map(message => {
-						if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
-					})
-				};
-
-				if(this.whitelisted) return finish(false);
-
-				PopupService.push(Popup.enableWhitelist(accepted => {
-					finish(accepted);
-				}));
+				this.whitelisted = !this.whitelisted;
+				this.messages.map(message => {
+					if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
+				})
+				// this.hideCloseButton = true;
+				// const finish = bool => {
+				// 	this.whitelisted = bool;
+				// 	this.hideCloseButton = false;
+				// 	this.messages.map(message => {
+				// 		if(!this.isPreviouslyWhitelisted(message)) this.addWhitelist(message);
+				// 	})
+				// };
+                //
+				// if(this.whitelisted) return finish(false);
+                //
+				// PopupService.push(Popup.enableWhitelist(accepted => {
+				// 	finish(accepted);
+				// }));
             },
 
 
@@ -385,15 +450,47 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../../styles/variables";
 
-    .scroller {
+    .app-details {
+        padding:60px 60px 30px;
+    }
+
+    .ridl-popup {
+        position: fixed;
+        top:79px;
+        left:0;
+        right:0;
+        bottom:0;
+        z-index:9999;
         display:flex;
-        flex-direction: column;
-        flex:1;
-        overflow:auto;
-        margin-left:-30px;
-        margin-right:-30px;
-        margin-bottom:-40px;
-        padding:0 30px;
+        justify-content: center;
+        align-items: center;
+
+        .bg {
+            position:absolute;
+            top:0;
+            bottom:0;
+            left:0;
+            right:0;
+            background: rgba(255, 0, 0, 0.8);
+            z-index:-1;
+        }
+
+        .box {
+            background:#fff;
+            border-radius:4px;
+            padding:30px;
+            text-align:center;
+            min-width:250px;
+            max-width:450px;
+            width:100%;
+            box-shadow:0 0 0 3px red, 0 0 0 6px white;
+
+            .link {
+                cursor: pointer;
+                display:block;
+                text-decoration: underline;
+            }
+        }
     }
 
     .view-types {
@@ -417,13 +514,13 @@
 
     .has-more {
         text-align:center;
-        font-size:11px;
+        font-size:$small;
         font-weight: bold;
-        color:$dark-grey;
+        color:$silver;
         border-radius:4px;
-        border:1px solid $medium-grey;
+        border:1px solid $grey;
         display:table;
-        padding:3px 6px;
+        padding:5px 8px;
         margin:-25px auto 0;
     }
 
@@ -432,18 +529,7 @@
         position: relative;
 
         &:not(:first-child){
-            padding:30px 0 20px;
-
-            &:after {
-                content:'';
-                position:absolute;
-                top:0;
-                left:-30px;
-                right:-30px;
-                height:2px;
-                background:rgba(0,0,0,0.05);
-                box-shadow:inset 0 1px 3px rgba(0,0,0,0.08), 0 1px 1px #fff;
-            }
+            margin-top:60px;
         }
 
         .previous-whitelist {
@@ -540,10 +626,54 @@
                 }
             }
         }
+
+        &.dangerous {
+
+            .danger {
+                cursor: pointer;
+                float:left;
+                padding:6px 5px 5px;
+                background:rgba(0,0,0,0.1);
+                box-shadow:inset 0 5px 10px rgba(0,0,0,0.1);
+                text-shadow:0 2px 0 rgba(0,0,0,0.1);
+                border-radius:4px;
+                margin-top:7px;
+                margin-right:10px;
+
+            }
+
+            .details {
+                &.contract-action {
+                    background:red;
+                    background:$red-gradient;
+                    border-bottom:1px solid darkred;
+                    color:#fff;
+                }
+            }
+
+            .danger-title {
+                font-size: 11px;
+                width:100%;
+            }
+        }
     }
 
     .json-formatter-dark.json-formatter-row {
         padding:0;
+    }
+
+    .contract-action {
+        margin:-20px -30px 0;
+        border-top:1px solid rgba(0,0,0,0.04);
+        padding:20px 30px;
+        background:$blue-gradient;
+        color:$white;
+
+        .title {
+            span {
+                font-size: 18px;
+            }
+        }
     }
 
 

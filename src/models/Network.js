@@ -2,14 +2,16 @@ import {Blockchains, BlockchainsArray} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
 import Token from "./Token";
 import PluginRepository from "../plugins/PluginRepository";
+import StoreService from "../services/utility/StoreService";
 
 export default class Network {
-    constructor(_name = '', _protocol = 'https', _host = '', _port = 0, blockchain = Blockchains.EOSIO, chainId = ''){
+    constructor(_name = '', _protocol = 'https', _host = '', _port = 0, blockchain = Blockchains.EOSIO, chainId = '', _path = ''){
         this.id = IdGenerator.numeric(12);
         this.name = _name;
         this.protocol = _protocol;
         this.host = _host;
         this.port = _port;
+        this.path = _path;
         this.blockchain = blockchain;
         this.chainId = chainId.toString();
 
@@ -38,7 +40,7 @@ export default class Network {
     }
 
     unique(){ return (`${this.blockchain}:` + (this.chainId.length ? `chain:${this.chainId}` : `${this.host}:${this.port}`)).toLowerCase(); }
-    fullhost(){ return `${this.protocol}://${this.host}${this.port ? ':' : ''}${this.port}` }
+    fullhost(){ return `${this.protocol}://${this.host}${this.port ? ':' : ''}${this.port}${this.path ? this.path : ''}` }
     clone(){ return Network.fromJson(JSON.parse(JSON.stringify(this))) }
 
     isValid(){
@@ -57,5 +59,16 @@ export default class Network {
         const token = PluginRepository.plugin(this.blockchain).defaultToken();
         token.chainId = this.chainId;
         return token;
+	}
+
+	accounts(unique = false){
+		const accounts = StoreService.get().getters.accounts.filter(x => x.networkUnique === this.unique());
+		if(!unique) return accounts;
+		return accounts.reduce((acc, account) => {
+			if(!acc.find(x => account.network().unique() === x.network().unique()
+				&& account.sendable() === x.sendable())) acc.push(account);
+			return acc;
+		}, [])
+
 	}
 }

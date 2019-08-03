@@ -1,9 +1,9 @@
 <template>
 	<section>
-		<section class="full-panel inner center-fold limited">
+		<section class="full-panel inner center-fold limited whitelist">
 			<section>
 				<section class="head">
-					<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.Title)}}</figure>
+					<!--<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.Title)}}</figure>-->
 					<p>
 						{{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.Desc)}}
 					</p>
@@ -19,7 +19,7 @@
 						<br>
 
 						<section class="mock-props">
-							<label>Amount <b class="red">( {{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.MutableProp)}} )</b></label>
+							<label>amount <b class="red">({{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.MutableProp)}})</b></label>
 							<section class="split-inputs">
 								<input checked disabled="true" type="checkbox" />
 								<figure class="value">1 TOKENS</figure>
@@ -27,7 +27,7 @@
 						</section>
 
 						<section class="mock-props">
-							<label>Recipient <b class="red">( {{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.ImmutableProp)}} )</b></label>
+							<label>recipient <b class="red">({{locale(langKeys.POPINS.FULLSCREEN.WHITELISTING.ImmutableProp)}})</b></label>
 							<section class="split-inputs">
 								<input disabled="true" type="checkbox" />
 								<figure class="value">xxxxxxxxxxxxx</figure>
@@ -39,8 +39,8 @@
 			</section>
 
 			<section class="action-bar short bottom centered">
-				<btn :text="locale(langKeys.GENERIC.Deny)" red="1" v-on:clicked="returnResult(false)" />
-				<btn :text="locale(langKeys.GENERIC.Confirm)" blue="1" v-on:clicked="returnResult(true)" />
+				<Button :text="locale(langKeys.GENERIC.Back)" @click.native="returnResult(false)" />
+				<Button :text="locale(langKeys.GENERIC.Enable)" blue="1" @click.native="returnResult(true)" />
 			</section>
 		</section>
 	</section>
@@ -50,9 +50,6 @@
 	import { mapActions, mapGetters, mapState } from 'vuex'
 	import * as Actions from '../../../store/constants';
 	import '../../../styles/popins.scss';
-	import PasswordService from "../../../services/PasswordService";
-	import PopupService from "../../../services/PopupService";
-	import {Popup} from "../../../models/popups/Popup";
 
 	export default {
 		props:['popin'],
@@ -94,6 +91,8 @@
 		border:1px solid rgba(0,0,0,0.1);
 		border-radius:4px;
 		margin-bottom:5px;
+		background:#fff;
+		color:$dark-grey;
 
 		input {
 			width:20px;
@@ -105,6 +104,18 @@
 			.red {
 				color:$red;
 			}
+		}
+	}
+
+	.whitelist {
+		background:$reverse-gradient;
+		color:#fff;
+	}
+
+	.head {
+		p {
+			color:rgba(255,255,255,0.65);
+			font-size: 13px;
 		}
 	}
 

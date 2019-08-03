@@ -20,6 +20,8 @@ export default class PluginInterface extends Plugin {
 
 	recipientLabel(){}
 
+	checkNetwork(network){}
+
 	getEndorsedNetwork(){}
 
 	isEndorsedNetwork(network){}

@@ -35,7 +35,7 @@ export default class Error {
     }
 
     static identityMissing(){
-        return this.signatureError("identity_missing", "Identity no longer exists on the user's keychain");
+        return this.signatureError("identity_missing", "Identity no longer exists on the user's keychain or user is not logged in.");
     }
 
     static badNetwork(){
@@ -48,6 +48,10 @@ export default class Error {
 
     static signatureAccountMissing(){
         return this.signatureError("account_missing", "You are trying to sign a request with an account that isn't currently linked or doesn't exist in the user's Scatter");
+    }
+
+    static cantParseTransaction(){
+        return this.signatureError("parsing_error", "Something happened while trying to parse the transaction internally.");
     }
 
     static noNetwork(){

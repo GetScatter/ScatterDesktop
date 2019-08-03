@@ -1,9 +1,9 @@
 import AES from 'aes-oop';
-import {Blockchains} from './Blockchains';
+import {blockchainName, Blockchains} from './Blockchains';
 import IdGenerator from '../util/IdGenerator';
 import Crypto from '../util/Crypto';
 import ExternalWallet from './hardware/ExternalWallet';
-import {store} from '../store/store';
+import StoreService from "../services/utility/StoreService";
 
 export default class Keypair {
 
@@ -11,13 +11,14 @@ export default class Keypair {
         this.id = IdGenerator.text(24);
         this.name = '';
         this.privateKey = '';
-        this.keyHash = '';
 
         this.external = null;
         this.fork = null;
 
         this.publicKeys = [];
         this.blockchains = blockchains ? blockchains : [Blockchains.EOSIO, Blockchains.ETH, Blockchains.TRX];
+
+        this.createdAt = +new Date();
     }
 
     static placeholder(blockchains){ return new Keypair(blockchains); }
@@ -33,13 +34,8 @@ export default class Keypair {
         // this.external = ExternalWallet.fromJson(this.external);
     }
 
-    hash(){
-        if(!this.external) this.keyHash = Crypto.bufferToHash(this.privateKey);
-        else this.keyHash = `${this.external.type}:${this.external.publicKey}`
-    }
-
     accounts(unique = false){
-        const accounts = store.state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique());
+        const accounts = StoreService.get().state.scatter.keychain.accounts.filter(x => x.keypairUnique === this.unique());
 	    if(!unique) return accounts;
 	    return accounts.reduce((acc, account) => {
 		    if(!acc.find(x => account.network().unique() === x.network().unique()
@@ -48,6 +44,20 @@ export default class Keypair {
 	    }, [])
 
     }
+
+    enabledKey(){
+        return this.publicKeys.find(x => x.blockchain === this.blockchains[0]);
+    }
+
+	isUnique(){
+		return !StoreService.get().getters.keypairs.find(x => {
+			return x.enabledKey().key === this.enabledKey().key
+		})
+	}
+
+	setName(){
+		this.name = `${blockchainName(this.enabledKey().blockchain)} Key - ${new Date().toDateString()} - ${IdGenerator.text(4)}`
+	}
 
     unique(){ return this.id; }
     clone(){ return Keypair.fromJson(JSON.parse(JSON.stringify(this))) }

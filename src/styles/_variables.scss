@@ -1,18 +1,65 @@
-$red: #e74c3c;
-$green: #2ecc71;
-$dark-red: #c33434;
+// Helpers
+$menuheight:40px;
+$quickactionsheight:135px;
+$quickactionsbuffer:45px;
 
+$fullheight:calc(100vh - #{$menuheight});
+$quickheight:calc(100vh - #{$menuheight} - #{$quickactionsheight - #{$quickactionsbuffer}});
+$quickheightnobuffer:calc(100vh - #{$menuheight} - #{$quickactionsheight});
+$radius:4px;
+
+
+// Font-sizes
+$larger:16px;
+$large:14px;
+$medium:12px;
+$small:10px;
+$tiny:9px;
+
+// Colors
+$white:#fff;
+$lightestblue: #b1e5ff;
+$lighterblue: #5fc6ff;
+$lightblue: #39b4ff;
+$blue:#0799ff;
+$darkblue: #0888f2;
+$darkerblue: #0778dd;
+$mid-light-blue: #eef2ff;
+$light-blue:#f3faff;
+$green: #1CCA02;
+$darkgreen: #159F00;
+$lightestgrey: #f7fafb;
+$lightergrey:#f3f6f7;
+$lightgrey:#dfe0e1;
+$grey: #c8c8c8;
+$silver:#7a7a7a;
+$red: #ff0707;
+$darkred: #cb0606;
 $black:#333;
+
+// Gradients
+$blue-gradient:linear-gradient(170deg, #007fd7 0%,#00a8ff 100%);
+$blue-gradient-completer:linear-gradient(135deg, #0095ed 0%,#00a8ff 100%);;
+
+// Shadows
+$blue-shadow:rgba(7,155,232,0.23);
+$complex-shadow:0 10px 12px 0 rgba(8,79,129,0.10), 0 2px 2px 0 rgba(10,69,100,0.06);
+
+
+
+
+
+
+
+
+// DEPRECATED
+
 $dark-grey: #525252;
 $mid-dark-grey: #9b9b9b;
 $medium-grey:#b1b1b1;
 $mid-light-grey:#d1d1d1;
 $light-grey: #f2f2f2;
 $lighter-grey: #f6f6f6;
-
-$secondary: #61667d;
-$primary:#50556C;
-
 $link:#00A8FF;
 $link-border: rgba(0, 168, 255, 0.17);
 

@@ -1,61 +1,45 @@
 <template>
     <section>
-
-        <back-bar v-on:back="back" />
-
-        <section class="full-panel inner limited" v-if="selectedOption">
-
-            <section class="split-panel dynamic no-divider">
-                <section class="panel menu padded">
-
-                    <label>{{locale(langKeys.SETTINGS.Basics)}}</label>
-
-                    <section class="group-list">
-                        <section class="item"
-                                 v-for="item in generalItems"
-                                 :class="{'selected':selectedOption.name === item.name}"
-                                 @click="selectOption(item)">
-                            {{translate(item)}}
+        <section class="blockchain-list-container" v-if="selectedOption">
+            <section class="blockchains">
+                <section class="head">
+                    Basics
+                </section>
+                <section class="scroller dynamic">
+                    <section class="blockchain-list">
+                        <section class="badge-item hoverable" :class="{'active':selectedOption.name === item.name}" v-for="item in generalItems" @click="selectOption(item)">
+                            <section class="details"><figure class="title">{{translate(item)}}</figure></section>
                         </section>
                     </section>
-
-
-                    <br><br>
-
-                    <label class="red">{{locale(langKeys.SETTINGS.DangerZone)}}</label>
-
-                    <section class="group-list" :class="{'danger':!unlocked}">
-                        <section class="item"
-                                 v-for="item in lockedItems"
-                                 :class="{'selected':selectedOption.name === item.name}"
-                                 @click="selectOption(item)">
-                            {{translate(item)}}
+                </section>
+                <section class="head">
+                    <i :class="{'unlocked':unlocked}" class="danger icon-lock"></i>
+                    Secure Settings
+                </section>
+                <section class="scroller dynamic">
+                    <section class="blockchain-list">
+                        <section class="badge-item hoverable" :class="{'active':selectedOption.name === item.name}" v-for="item in lockedItems" @click="selectOption(item)">
+                            <section class="details"><figure class="title">{{translate(item)}}</figure></section>
                         </section>
                     </section>
-
                 </section>
+            </section>
 
-                <section class="panel">
-                    <section v-if="selectedOption" class="settings-panels padded">
-                        <br>
-                        <h1>{{translate(selectedOption)}}</h1>
+            <section class="list-container">
 
-                        <SettingsGeneral v-if="selectedOption.name === settingsOptions.GENERAL.name" />
-                        <SettingsLanguage v-if="selectedOption.name === settingsOptions.LANGUAGE.name" />
-                        <SettingsTokens v-if="selectedOption.name === settingsOptions.TOKENS.name" />
-                        <SettingsExplorer v-if="selectedOption.name === settingsOptions.EXPLORER.name" />
-                        <SettingsNetworks v-if="selectedOption.name === settingsOptions.NETWORKS.name" />
-                        <SettingsPassword :mnemonic="mnemonic" v-on:mnemonic="x => mnemonic = x" v-if="selectedOption.name === settingsOptions.PASSWORD.name" />
-                        <SettingsBackup v-if="selectedOption.name === settingsOptions.BACKUP.name" />
-                        <SettingsDestroy v-if="selectedOption.name === settingsOptions.DESTROY.name" />
-                        <SettingsPIN v-if="selectedOption.name === settingsOptions.PIN.name" />
-                        <SettingsFirewall v-if="selectedOption.name === settingsOptions.FIREWALL.name" />
+                <h1>{{translate(selectedOption)}}</h1>
 
-                    </section>
-                </section>
-
+                <SettingsGeneral v-if="selectedOption.name === settingsOptions.GENERAL.name" />
+                <SettingsTokens v-if="selectedOption.name === settingsOptions.TOKENS.name" />
+                <SettingsExplorer v-if="selectedOption.name === settingsOptions.EXPLORER.name" />
+                <SettingsPassword v-if="selectedOption.name === settingsOptions.PASSWORD.name" />
+                <SettingsBackup v-if="selectedOption.name === settingsOptions.BACKUP.name" />
+                <SettingsDestroy v-if="selectedOption.name === settingsOptions.DESTROY.name" />
+                <SettingsFirewall v-if="selectedOption.name === settingsOptions.FIREWALL.name" />
             </section>
         </section>
+
+
 
     </section>
 </template>
@@ -64,19 +48,16 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import * as Actions from '../store/constants';
     import {Popup} from '../models/popups/Popup'
-    import PopupService from '../services/PopupService'
+    import PopupService from '../services/utility/PopupService'
 
     import {SETTINGS_OPTIONS} from '../models/Settings';
 
     import SettingsGeneral from '../components/panels/settings/SettingsGeneral.vue'
-    import SettingsLanguage from '../components/panels/settings/SettingsLanguage.vue'
     import SettingsTokens from '../components/panels/settings/SettingsTokens.vue'
     import SettingsExplorer from '../components/panels/settings/SettingsExplorer.vue'
-    import SettingsNetworks from '../components/panels/settings/SettingsNetworks.vue'
     import SettingsBackup from '../components/panels/settings/SettingsBackup.vue'
     import SettingsDestroy from '../components/panels/settings/SettingsDestroy.vue'
     import SettingsPassword from '../components/panels/settings/SettingsPassword.vue'
-    import SettingsPIN from '../components/panels/settings/SettingsPIN.vue'
     import SettingsFirewall from '../components/panels/settings/SettingsFirewall.vue'
 
 
@@ -84,19 +65,16 @@
     export default {
     	components:{
             SettingsGeneral,
-            SettingsLanguage,
 		    SettingsTokens,
             SettingsExplorer,
-            SettingsNetworks,
             SettingsBackup,
             SettingsDestroy,
             SettingsPassword,
-            SettingsPIN,
 		    SettingsFirewall,
         },
 	    data () {return {
             settingsOptions:SETTINGS_OPTIONS,
-            selectedOption:null,
+            selectedOption:SETTINGS_OPTIONS.GENERAL,
             unlocked:false,
 		    mnemonic:null,
         }},
@@ -110,24 +88,21 @@
 	        generalItems(){
             	return [
 		            SETTINGS_OPTIONS.GENERAL,
-		            SETTINGS_OPTIONS.LANGUAGE,
 		            SETTINGS_OPTIONS.TOKENS,
 		            SETTINGS_OPTIONS.EXPLORER,
+		            SETTINGS_OPTIONS.BACKUP,
                 ]
             },
 	        lockedItems(){
             	return [
-		            SETTINGS_OPTIONS.PIN,
-		            SETTINGS_OPTIONS.NETWORKS,
 		            SETTINGS_OPTIONS.PASSWORD,
-		            SETTINGS_OPTIONS.BACKUP,
 		            SETTINGS_OPTIONS.FIREWALL,
 		            SETTINGS_OPTIONS.DESTROY,
                 ]
             }
         },
         mounted(){
-    		this.selectedOption = this.$route.params.panel;
+
         },
         methods: {
 	        back(){
@@ -157,52 +132,49 @@
 <style scoped lang="scss" rel="stylesheet/scss">
     @import "../styles/variables";
 
-    .settings-panels {
-        flex:1;
-        height:0;
-        overflow:auto;
-    }
-
-    .padded {
-        padding:40px 70px;
-    }
-
-    .panel {
-        flex:1;
-        position: relative;
-        display:flex;
-        flex-direction: column;
-    }
-
-    .menu {
-        flex:0 0 auto;
-        width:250px;
-        padding-right:0;
-
-        .group-list {
-            border-radius:4px;
-            border:1px solid #dfe0e1;
+    .head {
+        .danger {
+            background:$red;
+            color:$white;
+            font-size: $small;
+            border-radius:$radius;
+            padding:3px 3px;
+            margin-right:10px;
             overflow:hidden;
 
-            .item {
-                cursor: pointer;
-                padding:12px 20px;
-                font-size: 14px;
-                background:#fafafa;
-
-                &.selected {
-                    background:#fff;
-                }
-
-                &:not(:last-child){
-                    border-bottom:1px solid #dfe0e1;
-                }
+            &.unlocked {
+                animation: popLock 0.6s normal forwards ease;
+                animation-delay: 0.1s;
             }
 
-            &.danger {
-                border:1px solid $red;
+            @keyframes popLock {
+                0% {
+                    transform:scale(1);
+                }
+                20% {
+                    transform:scale(0.8);
+                }
+                60% {
+                    opacity:1;
+                    transform:scale(2);
+                }
+                80% {
+                    transform:scale(0.5);
+                    opacity:0;
+                    margin-left:0;
+                }
+                100% {
+                    margin-left:-30px;
+                    opacity:0;
+                }
             }
         }
+    }
+
+    .list-container {
+        padding:30px;
+        height:calc(100vh - 40px);
+        overflow-y:auto;
     }
 
 </style>

@@ -5,21 +5,21 @@
             <label>{{locale(langKeys.SETTINGS.BACKUP.Label)}}</label>
             <p>{{locale(langKeys.SETTINGS.BACKUP.Description)}}</p>
 
-            <br><br>
+            <br>
 
             <section class="split-inputs">
-                <btn style="flex:1;" :text="locale(langKeys.SETTINGS.BACKUP.AutoBackupLocationLabel)"
-                     v-on:clicked="setBackupLocation()" />
-                <btn style="flex:0.6;" :text="locale(langKeys.SETTINGS.BACKUP.CreateBackupButton)"
-                     v-on:clicked="createBackup" />
+                <Button style="flex:1;" :text="locale(langKeys.SETTINGS.BACKUP.AutoBackupLocationLabel)"
+                     @click.native="setBackupLocation()" />
+                <Button style="flex:0.6;" :text="locale(langKeys.SETTINGS.BACKUP.CreateBackupButton)"
+                     @click.native="createBackup" />
             </section>
         </section>
 
         <section class="action-box top-pad">
             <label>{{locale(langKeys.SETTINGS.BACKUP.CurrentBackupFolderLabel)}}</label>
-            <cin style="margin-bottom:0;" dynamic-button="icon-folder-open-empty"
+            <Input style="margin-bottom:0;" dynamic-button="icon-folder-open-empty"
                  disabled="1" :text="scatter.settings.backupLocation"
-                 v-on:dynamic="openFilePathLink"></cin>
+                 v-on:dynamic="openFilePathLink"/>
         </section>
 
     </section>
@@ -30,8 +30,10 @@
     import * as Actions from '../../../store/constants';
 
     import {BACKUP_STRATEGIES} from '../../../models/Settings';
-    import BackupService from '../../../services/BackupService';
+    import BackupService from '../../../services/utility/BackupService';
     import ElectronHelpers from '../../../util/ElectronHelpers';
+    import PopupService from "../../../services/utility/PopupService";
+    import {Popup} from "../../../models/popups/Popup";
 
     export default {
         data () {return {
@@ -50,13 +52,16 @@
         },
         methods: {
 	        openFilePathLink(){
-		        ElectronHelpers.openLinkInBrowser(this.scatter.settings.backupLocation);
+		        ElectronHelpers.openLinkInBrowser(this.scatter.settings.backupLocation, true);
 	        },
             async setBackupLocation(){
                 await BackupService.setBackupLocation();
             },
             async createBackup(){
-                await BackupService.createBackup();
+                if(await BackupService.createBackup()){
+                	PopupService.push(Popup.snackbar("Backup created"))
+                }
+
             },
             ...mapActions([
                 Actions.SET_SCATTER

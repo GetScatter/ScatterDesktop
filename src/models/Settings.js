@@ -3,6 +3,7 @@ import {LANG} from '../localization/locales';
 import PluginRepository from '../plugins/PluginRepository';
 import Token from "./Token";
 import Explorer from "./Explorer";
+import Firewall from "./Firewall";
 
 export const BACKUP_STRATEGIES = {
     MANUAL:'manual',
@@ -11,14 +12,11 @@ export const BACKUP_STRATEGIES = {
 
 export const SETTINGS_OPTIONS = {
 	GENERAL:{ locked:false, name:'General' },
-	LANGUAGE:{ locked:false, name:'Language' },
 	TOKENS:{ locked:false, name:'Tokens' },
 	EXPLORER:{ locked:false, name:'Explorers' },
-	PIN:{ locked:true, name:'PIN' },
+	BACKUP:{ locked:false, name:'Backup' },
 	FIREWALL:{ locked:true, name:'Firewall' },
-	NETWORKS:{ locked:true, name:'Networks' },
 	PASSWORD:{ locked:true, name:'Password' },
-	BACKUP:{ locked:true, name:'Backup' },
 	DESTROY:{ locked:true, name:'Destroy' },
 };
 
@@ -32,6 +30,8 @@ export default class Settings {
         this.explorers = PluginRepository.defaultExplorers();
 	    this.showNotifications = true;
 
+	    this.firewall = Firewall.placeholder();
+
         // Tokens
         this.showMainnetsOnly = true;
         this.displayToken = null;
@@ -39,7 +39,14 @@ export default class Settings {
 	    this.tokens = [];
 	    this.blacklistTokens = [];
 
+	    // {contract:[actions]}
+	    this.blacklistActions = {
+	    	'eos::eosio':['updateauth'],
+	    	'eos::eosio.msig':['approve'],
+	    };
+
 	    this.balanceFilters = {};
+	    this.hideMainBalance = false;
     }
 
     static placeholder(){ return new Settings(); }
@@ -63,5 +70,27 @@ export default class Settings {
 
     removeNetwork(network){
         this.networks = this.networks.filter(n => n.id !== network.id);
+    }
+
+    blacklistAction(blockchain, contract, action){
+    	if(!contract.length || !action.length) return;
+    	if(!this.blacklistActions.hasOwnProperty(`${blockchain}::${contract}`)){
+    		this.blacklistActions[`${blockchain}::${contract}`] = []
+	    }
+
+	    this.blacklistActions[`${blockchain}::${contract}`].push(action);
+    }
+
+    removeBlacklistedAction(blockchain, contract, action){
+    	if(!this.blacklistActions.hasOwnProperty(`${blockchain}::${contract}`)) return;
+    	if(!this.blacklistActions[`${blockchain}::${contract}`].includes(action)) return;
+    	if(this.blacklistActions[`${blockchain}::${contract}`].length === 1) return delete this.blacklistActions[`${blockchain}::${contract}`];
+	    this.blacklistActions[`${blockchain}::${contract}`] = this.blacklistActions[`${blockchain}::${contract}`].filter(x => x !== action);
+    }
+
+    isActionBlacklisted(actionTag){
+    	const [blockchain, contract, action] = actionTag.split('::');
+    	return this.blacklistActions.hasOwnProperty(`${blockchain}::${contract}`)
+		    && this.blacklistActions[`${blockchain}::${contract}`].includes(action);
     }
 }
