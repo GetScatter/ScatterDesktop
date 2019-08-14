@@ -17,7 +17,11 @@ export default class PermissionService {
         const possibleId = permissions.find(x => x.isIdentityPermissionFor(origin));
         if(possibleId){
             let identityRequirements = IdentityRequiredFields.fromPermission(possibleId.identityRequirements);
-            let identity = formatForResult ? possibleId.getIdentity().asOnlyRequiredFields(identityRequirements) : possibleId.getIdentity();
+            let identity = possibleId.getIdentity();
+            if (!identity) return null;
+            if (formatForResult) {
+                identity = identity.asOnlyRequiredFields(identityRequirements);
+            }
             if(!identity) return null;
             identity.accounts = possibleId.getAccounts().map(x => formatForResult ? x.asReturnable() : x);
             return identity;
