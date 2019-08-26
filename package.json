@@ -9,7 +9,7 @@
     "url": "https://get-scatter.com/"
   },
   "scripts": {
-    "build": "webpack --progress --mode production --config build/webpack.config.prod.js",
+    "build": "webpack -p --mode=production --progress --config build/webpack.config.prod.js",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.config.dev.js",
     "install-deps":"electron-builder install-app-deps",
     "postinstall": "electron-rebuild",

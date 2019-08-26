@@ -19,6 +19,10 @@ module.exports = {
 			'vue$': 'vue/dist/vue.esm.js'
 		}
 	},
+	output: {
+		filename: '[name].bundle.js',
+		chunkFilename: '[name].bundle.js',
+	},
 
 	module: {
 		rules: [
@@ -69,12 +73,12 @@ module.exports = {
 			}
 		]
 	},
-	devtool: false,
 	plugins: [
 		new HtmlWebpackPlugin({
 			filename: 'index.html',
 			template: 'index.html',
-			inject: true
+			inject: true,
+			chunksSortMode: 'none'
 		}),
 		new VueLoaderPlugin(),
 		new CopyWebpackPlugin([{

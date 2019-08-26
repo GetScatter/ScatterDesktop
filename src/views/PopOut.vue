@@ -44,7 +44,7 @@
     import * as Actions from 'scatter-core/store/constants';
     import Scatter from 'scatter-core/models/Scatter';
     const {remote} = isWeb ? {} : require('../util/ElectronHelpers');
-    const WindowService = isWeb ? null : require('../services/electron/WindowService')
+    const WindowService = isWeb ? null : require('../services/electron/WindowService').default
     import * as ApiActions from 'scatter-core/models/api/ApiActions';
     import {Popup} from "scatter-core/models/popups/Popup";
     import PasswordService from "scatter-core/services/secure/PasswordService";

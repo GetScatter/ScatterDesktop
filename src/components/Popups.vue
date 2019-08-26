@@ -263,20 +263,4 @@
         }
     }
 
-
-    $speed:0.12s;
-    .snackbar-transition-leave-active,
-    .snackbar-transition-enter-active {
-        transition: $speed ease-in-out;
-    }
-
-    .snackbar-transition-enter {
-        opacity:0;
-        transform: translate(0, 20%);
-    }
-
-    .snackbar-transition-leave-to {
-        opacity:0;
-        transform: translate(0, 100%);
-    }
 </style>

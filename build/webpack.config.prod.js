@@ -5,11 +5,27 @@ const merge = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
 const MiniCssExtractPlugin  = require('mini-css-extract-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const rm = require('rimraf');
+
+rm.sync('./dist')
 
 module.exports = merge(baseConfig, {
 	mode: 'production',
 	optimization: {
+		minimizer: [new UglifyJsPlugin()],
+		namedModules: false,
+		namedChunks: false,
+		nodeEnv: 'production',
+		flagIncludedChunks: true,
+		occurrenceOrder: true,
+		sideEffects: true,
+		usedExports: true,
+		concatenateModules: true,
+		noEmitOnErrors: true,
+		checkWasmTypes: true,
+		minimize: true,
 		splitChunks: {
+			chunks: 'all',
 			cacheGroups: {
 				commons: {
 					test: /[\\/]node_modules[\\/]/,
@@ -27,13 +43,6 @@ module.exports = merge(baseConfig, {
 					MiniCssExtractPlugin.loader,
 					'css-loader'
 				]
-			}, {
-				test: /\.styl(us)?$/,
-				use: [
-					MiniCssExtractPlugin.loader,
-					'css-loader',
-					'stylus-loader'
-				]
 			}
 		]
 	},
@@ -45,14 +54,14 @@ module.exports = merge(baseConfig, {
 		new MiniCssExtractPlugin({
 			filename: 'main.css'
 		}),
-		new UglifyJsPlugin({
-			uglifyOptions: {
-				compress: {
-					warnings: false
-				}
-			},
-			sourceMap: true,
-			parallel: true
-		}),
+		// new UglifyJsPlugin({
+		// 	uglifyOptions: {
+		// 		compress: {
+		// 			warnings: false
+		// 		}
+		// 	},
+		// 	sourceMap: false,
+		// 	parallel: true
+		// }),
 	]
 })

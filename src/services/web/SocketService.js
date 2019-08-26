@@ -4,8 +4,9 @@ import WebSocket from 'isomorphic-ws';
 
 let socket, rekeyPromise;
 
+const HOSTPORT = 'relaysock.get-scatter.com';
 
-
+let closing = false;
 export default class SocketService {
 
 	static getNewKey(origin, id){
@@ -24,8 +25,8 @@ export default class SocketService {
 	}
 
 	static async initialize(){
-		// TODO: Replace with relay.get-scatter.com (and wss)
-		socket = new WebSocket(`ws://104.248.229.148:50005/socket.io/?EIO=3&transport=websocket`);
+		closing = false;
+		socket = new WebSocket(`wss://${HOSTPORT}/socket.io/?EIO=3&transport=websocket`);
 
 		socket.onerror = e =>  console.error('Socket error', e);
 		// socket.onopen = () =>
@@ -50,6 +51,7 @@ export default class SocketService {
 	}
 
 	static async close(){
+		closing = true;
 		// return LowLevelSocketService.close();
 		if(!socket) return;
 		socket.close();
