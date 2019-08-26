@@ -25,12 +25,12 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import PasswordService from "scatter-core/services/secure/PasswordService";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
+	import PopupService from "../../../services/utility/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
 	import Lock from '../../svgs/Lock'
+	import * as UIActions from "../../../store/ui_actions";
+	import PasswordHelpers from "../../../services/utility/PasswordHelpers";
 
 	export default {
 		components:{Lock},
@@ -52,19 +52,19 @@
 		methods:{
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			async verify(){
 				if(!this.password.length) return;
 				if(this.returnOnly) return this.returnResult(this.password);
 
-				const verified = await PasswordService.verifyPassword(this.password);
+				const verified = await PasswordHelpers.verifyPassword(this.password);
 				if(!verified) PopupService.push(Popup.snackbarBadPassword());
 				this.returnResult(verified);
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

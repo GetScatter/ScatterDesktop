@@ -20,10 +20,12 @@
 
 <script>
 	import {mapActions} from 'vuex';
-	import * as Actions from 'scatter-core/store/constants';
-	import PasswordService from "scatter-core/services/secure/PasswordService";
-	import StoreService from "scatter-core/services/utility/StoreService";
+	import PasswordService from "@walletpack/core/services/secure/PasswordService";
+	import StoreService from "@walletpack/core/services/utility/StoreService";
 	import Lock from '../svgs/Lock'
+	import * as UIActions from "../../store/ui_actions";
+	import PopupService from "../../services/utility/PopupService";
+	import {Popup} from "../../models/popups/Popup";
 
 	export default {
 		components:{Lock},
@@ -33,22 +35,27 @@
 		}},
 		computed:{
 			passwordStrength(){
-				return PasswordService.passwordStrength(this.password);
+				// TODO:
+				// return PasswordService.passwordStrength(this.password);
+				return 0;
 			},
 		},
 		methods:{
 			async checkPassword(){
-				if(!PasswordService.isValidPassword(this.password, this.confirmation)) return false;
+
+				const err = PasswordService.hasError(this.password);
+				if(err) return PopupService.push(Popup.snackbar(err));
+				if(this.password !== this.confirmation) return PopupService.push(Popup.snackbar("Password confirmation does not match password"));
 
 				StoreService.setWorking(true);
-				await this[Actions.CREATE_SCATTER](this.password);
+				await this[UIActions.CREATE_SCATTER](this.password);
 				StoreService.setWorking(false);
 
 				this.$emit('next');
 			},
 
 			...mapActions([
-				Actions.CREATE_SCATTER
+				UIActions.CREATE_SCATTER
 			])
 		}
 	}

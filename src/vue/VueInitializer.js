@@ -2,23 +2,24 @@ import Vue from 'vue'
 import {mapState, mapActions} from 'vuex';
 import VTooltip from 'v-tooltip'
 import VueQrcodeReader from 'vue-qrcode-reader'
-import {isWeb} from "../util/WebOrWrapper";
 
 
 import VueRouter from 'vue-router'
 import {RouteNames, Routing} from './Routing';
-const Helpers = isWeb ? require('../util/WebHelpers').default : require('../util/ElectronHelpers').default;
+const Helpers = require('../util/ElectronHelpers').default;
 import features from '../features';
 
-import * as Actions from 'scatter-core/store/constants'
-import {blockchainName, Blockchains} from 'scatter-core/models/Blockchains'
-import {SETTINGS_OPTIONS} from 'scatter-core/models/Settings'
-import {localized} from 'scatter-core/localization/locales'
-import LANG_KEYS from 'scatter-core/localization/keys'
-import StoreService from "scatter-core/services/utility/StoreService";
-import AppsService from "scatter-core/services/apps/AppsService";
-import {dateId} from "scatter-core/util/DateHelpers";
-import PriceService from "scatter-core/services/apis/PriceService";
+import * as Actions from '@walletpack/core/store/constants'
+import {blockchainName, Blockchains} from '@walletpack/core/models/Blockchains'
+import {SETTINGS_OPTIONS} from '@walletpack/core/models/Settings'
+import StoreService from "@walletpack/core/services/utility/StoreService";
+import AppsService from "@walletpack/core/services/apps/AppsService";
+import {dateId} from "@walletpack/core/util/DateHelpers";
+import PriceService from "@walletpack/core/services/apis/PriceService";
+import * as UIActions from "../store/ui_actions";
+
+// TODO:
+const LANG_KEYS = {};
 
 Vue.config.productionTip = false
 
@@ -61,7 +62,10 @@ export default class VueInitializer {
                 methods: {
 	                blockchainName,
 	                back(){ this.$router.back(); },
-	                locale:(key, args) => localized(key, args, StoreService.get().getters.language),
+	                locale:(key, args) => {
+	                	console.log('getting locale for', key, args);
+		                return 'NO LOCALES';
+	                },
 	                newKeypair(){ this.$router.push({name:RouteNames.NEW_KEYPAIR}); },
 	                canOpenApp(applink){
 		                const data = AppsService.getAppData(applink);
@@ -85,7 +89,7 @@ export default class VueInitializer {
 	                openInBrowser(url){
 		                Helpers.openLinkInBrowser(url);
                     },
-	                setWorkingScreen(bool){ StoreService.get().dispatch(Actions.SET_WORKING_SCREEN, bool); },
+	                setWorkingScreen(bool){ StoreService.get().dispatch(UIActions.SET_WORKING_SCREEN, bool); },
 	                copyText(text){ Helpers.copy(text) },
 	                publicKeyForKeypair(keypair){
 		                if(!keypair) return null;
@@ -121,7 +125,7 @@ export default class VueInitializer {
 
 
 	                ...mapActions([
-	                	Actions.SET_QUICK_BACK
+
 	                ])
                 }
             })
@@ -151,7 +155,7 @@ export default class VueInitializer {
     setupRouting(routes, middleware){
         const router = new VueRouter({routes});
         router.beforeEach((to, from, next) => {
-	        StoreService.get().dispatch(Actions.SET_SEARCH_TERMS, '');
+	        StoreService.get().dispatch(UIActions.SET_SEARCH_TERMS, '');
             return middleware(to, next, StoreService.get())
         });
         return router;

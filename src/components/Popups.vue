@@ -67,8 +67,7 @@
 <script>
     import {RouteNames} from '../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
-    import {PopupDisplayTypes, PopupTypes, isFullscreen} from 'scatter-core/models/popups/Popup'
+    import {PopupDisplayTypes, PopupTypes, isFullscreen} from '../models/popups/Popup'
 
     import Snackbar from './popins/overlay/Snackbar.vue'
     import TransactionSuccess from './popins/overlay/TransactionSuccess.vue'
@@ -107,6 +106,7 @@
     import Terms from "./popins/fullscreen/Terms";
     import ChangeIdentityKey from "./popins/fullscreen/ChangeIdentityKey";
     import EnterPIN from "./popins/overlay/EnterPIN";
+    import * as UIActions from "../store/ui_actions";
 
     export default {
     	components:{
@@ -170,7 +170,7 @@
             clickedFader(){
                 if(this.nextPopIn) {
                 	if(this.nextPopIn.hasOwnProperty('data') && typeof this.nextPopIn.data.callback === 'function') this.nextPopIn.data.callback(null);
-                    this[Actions.RELEASE_POPUP](this.popIns[this.popIns.length - 1]);
+                    this[UIActions.RELEASE_POPUP](this.popIns[this.popIns.length - 1]);
                 }
             },
 	        isWide(popIn){
@@ -178,7 +178,7 @@
 	            return wides.includes(popIn.data.type);
             },
             ...mapActions([
-                Actions.RELEASE_POPUP
+	            UIActions.RELEASE_POPUP
             ])
         }
     }

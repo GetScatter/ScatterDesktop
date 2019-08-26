@@ -21,22 +21,22 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from "scatter-core/store/constants";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import Mnemonic from "scatter-core/util/Mnemonic";
-	import StorageService from "scatter-core/services/utility/StorageService";
-	import Scatter from "scatter-core/models/Scatter";
-	import Keypair from "scatter-core/models/Keypair";
-	import KeyPairService from "scatter-core/services/secure/KeyPairService";
-	import AccountService from "scatter-core/services/blockchain/AccountService";
+	import * as Actions from "@walletpack/core/store/constants";
+	import PopupService from "../../../services/utility/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import Mnemonic from "@walletpack/core/util/Mnemonic";
+	import StorageService from "../../../services/electron/StorageService";
+	import Scatter from "@walletpack/core/models/Scatter";
+	import Keypair from "@walletpack/core/models/Keypair";
+	import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
+	import AccountService from "@walletpack/core/services/blockchain/AccountService";
 	import LoginButton from "../../login/LoginButton";
 	import AES from 'aes-oop';
-	import Crypto from "scatter-core/util/Crypto";
-	import {isWeb} from "../../../util/WebOrWrapper";
-	const {getFileLocation} = isWeb ? require('../../../services/web/FileService') : require('../../../services/electron/FileService');
-	const ipcFaF = isWeb ? require('../../../util/WebHelpers').ipcFaF : require('../../../util/ElectronHelpers').ipcFaF;
-	const reload = isWeb ? require('../../../util/WebHelpers').default.reload : require('../../../util/ElectronHelpers').default.reload;
+	import Crypto from "@walletpack/core/util/Crypto";
+	import * as UIActions from "../../../store/ui_actions";
+	const {getFileLocation} = require('../../../services/electron/FileService');
+	const ipcFaF = require('../../../util/ElectronHelpers').ipcFaF;
+	const reload = require('../../../util/ElectronHelpers').default.reload;
 	// const fs = window.require('fs');
 
 	export default {
@@ -50,7 +50,7 @@
 		methods:{
 			returnResult(proxy){
 				this.popin.data.callback(proxy);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			importBackup(){
 				const unrestore = () => {
@@ -75,7 +75,7 @@
 						decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
 						decrypted.settings.backupLocation = '';
 						StorageService.setSalt(salt);
-						await this[Actions.SET_SEED](password);
+						await this[UIActions.SET_SEED](password);
 						await this[Actions.SET_SCATTER](Scatter.fromJson(decrypted));
 						ipcFaF('key', null);
 						reload()
@@ -110,7 +110,7 @@
 						const scatter = await Scatter.create();
 						scatter.keychain.keypairs = keypairs;
 						StorageService.setSalt(salt);
-						await this[Actions.SET_SEED](password);
+						await this[UIActions.SET_SEED](password);
 						await this[Actions.SET_SCATTER](scatter);
 						await Promise.all(keypairs.map(keypair => {
 							return AccountService.importAllAccounts(keypair);
@@ -148,9 +148,9 @@
 			},
 
 			...mapActions([
-				Actions.SET_SEED,
+				UIActions.SET_SEED,
 				Actions.SET_SCATTER,
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		}
 	}

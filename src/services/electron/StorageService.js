@@ -1,5 +1,5 @@
-import {RUNNING_TESTS} from "scatter-core/util/TestingHelper";
-import * as Actions from 'scatter-core/store/constants';
+import {RUNNING_TESTS} from "@walletpack/core/util/TestingHelper";
+import * as Actions from '@walletpack/core/store/constants';
 const Store = window.require('electron-store');
 
 const ABIS_NAME = 'abi';
@@ -24,12 +24,12 @@ const abiStorage = () => getStore(ABIS_NAME);
 
 import {ipcAsync, ipcFaF, remote} from '../../util/ElectronHelpers';
 import {AES} from "aes-oop";
-import {HISTORY_TYPES} from "scatter-core/models/histories/History";
-import HistoricTransfer from "scatter-core/models/histories/HistoricTransfer";
-import HistoricExchange from "scatter-core/models/histories/HistoricExchange";
-import HistoricAction from "scatter-core/models/histories/HistoricAction";
-import StoreService from "scatter-core/services/utility/StoreService";
-import Seeder from "scatter-core/services/secure/Seeder";
+import {HISTORY_TYPES} from "@walletpack/core/models/histories/History";
+import HistoricTransfer from "@walletpack/core/models/histories/HistoricTransfer";
+import HistoricExchange from "@walletpack/core/models/histories/HistoricExchange";
+import HistoricAction from "@walletpack/core/models/histories/HistoricAction";
+import StoreService from "@walletpack/core/services/utility/StoreService";
+import Seeder from "@walletpack/core/services/secure/Seeder";
 import ElectronHelpers from "../../util/ElectronHelpers";
 import * as FileService from "./FileService";
 const fs = window.require('fs');

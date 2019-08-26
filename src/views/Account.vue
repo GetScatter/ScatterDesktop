@@ -72,12 +72,11 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
+    import * as Actions from '@walletpack/core/store/constants';
     import PanelTabs from "../components/reusable/PanelTabs";
-    import ResourceService from "scatter-core/services/blockchain/ResourceService";
-    import Process from "scatter-core/models/Process";
-    import BalanceService from "scatter-core/services/blockchain/BalanceService";
-    import PluginRepository from 'scatter-core/plugins/PluginRepository'
+    import ResourceService from "@walletpack/core/services/blockchain/ResourceService";
+    import BalanceService from "@walletpack/core/services/blockchain/BalanceService";
+    import PluginRepository from '@walletpack/core/plugins/PluginRepository'
     import TokenGraph from "../components/tokens/TokenGraph";
     import TokenList from "../components/tokens/TokenList";
 

@@ -17,10 +17,10 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
-    import {Blockchains, BlockchainsArray, blockchainName} from 'scatter-core/models/Blockchains';
-    import PluginRepository from 'scatter-core/plugins/PluginRepository'
-    import ExplorerService from "scatter-core/services/blockchain/ExplorerService";
+    import * as Actions from '@walletpack/core/store/constants';
+    import {Blockchains, BlockchainsArray, blockchainName} from '@walletpack/core/models/Blockchains';
+    import PluginRepository from '@walletpack/core/plugins/PluginRepository'
+    import ExplorerService from "@walletpack/core/services/blockchain/ExplorerService";
 
 
 

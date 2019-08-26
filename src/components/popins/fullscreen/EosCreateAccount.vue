@@ -101,16 +101,16 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
-	import {Blockchains} from "scatter-core/models/Blockchains";
-	import PluginRepository from "scatter-core/plugins/PluginRepository";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import AccountService from "scatter-core/services/blockchain/AccountService";
-	import Account from "scatter-core/models/Account";
-	import Keypair from "scatter-core/models/Keypair";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
+	import PluginRepository from "@walletpack/core/plugins/PluginRepository";
+	import PopupService from "../../../services/utility/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import AccountService from "@walletpack/core/services/blockchain/AccountService";
+	import Account from "@walletpack/core/models/Account";
+	import Keypair from "@walletpack/core/models/Keypair";
 	import Exchange from '../../svgs/quick-actions/Exchange'
 	import CreditCard from '../../svgs/CreditCard'
+	import * as UIActions from "../../../store/ui_actions";
 
 
 	const STATES = {
@@ -215,7 +215,7 @@
 		methods:{
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			selectKey(key, item){
 				this.keys[item.ref] = this.publicKeyForKeypair(key);
@@ -344,7 +344,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 

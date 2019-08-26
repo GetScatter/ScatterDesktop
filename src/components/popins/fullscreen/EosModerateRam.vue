@@ -61,13 +61,14 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import {Blockchains} from "scatter-core/models/Blockchains";
-	import PluginRepository from "scatter-core/plugins/PluginRepository";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import HistoricAction from "scatter-core/models/histories/HistoricAction";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
+	import PluginRepository from "@walletpack/core/plugins/PluginRepository";
+	import PopupService from "../../../services/utility/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import HistoricAction from "@walletpack/core/models/histories/HistoricAction";
+	import * as UIActions from "../../../store/ui_actions";
+	import * as Actions from "@walletpack/core/store/constants";
 
 	const STATES = {
 		BUY:'buy',
@@ -146,7 +147,7 @@
 		methods:{
 			returnResult(proxy){
 				this.popin.data.callback(proxy);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			buyOrSell(){
 
@@ -206,7 +207,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP,
+				UIActions.RELEASE_POPUP,
 				Actions.DELTA_HISTORY,
 			])
 		},

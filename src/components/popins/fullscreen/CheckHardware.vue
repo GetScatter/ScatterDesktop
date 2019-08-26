@@ -15,8 +15,9 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
+	import * as UIActions from "../../../store/ui_actions";
+
 	export default {
 		props:['popin'],
 		data () {return {
@@ -44,11 +45,11 @@
 				}
 				setTimeout(() => {
 					this.popin.data.callback(x);
-					this[Actions.RELEASE_POPUP](this.popin);
+					this[UIActions.RELEASE_POPUP](this.popin);
 				}, 10);
 			},
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

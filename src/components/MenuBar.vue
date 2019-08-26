@@ -32,9 +32,8 @@
 
 <script>
 
-	import {isWeb} from "../util/WebOrWrapper";
-	const {remote} = isWeb ? {} : require('../util/ElectronHelpers');
-	import SocketService from "scatter-core/services/utility/SocketService";
+	const {remote} = require('../util/ElectronHelpers');
+	import SocketService from "@walletpack/core/services/utility/SocketService";
 
 	export default {
 		data(){return {
@@ -48,23 +47,21 @@
 		methods:{
 			quit(){
 				SocketService.broadcastEvent('dced', {});
-				setTimeout(() => isWeb ? window.close() : remote.app.quit(), 1);
+				setTimeout(() => remote.app.quit(), 1);
 			},
 			minimize(){
-				if(isWeb) return;
 				remote.BrowserWindow.getFocusedWindow().hide();
 			},
 			maximize(){
-				if(isWeb) return;
 				const win = remote.BrowserWindow.getFocusedWindow();
 				win.isMaximized() ? win.unmaximize() : win.maximize();
 			},
 		},
 		computed:{
-			isWindows(){ return isWeb ? false : remote.process.platform === 'win32'; },
-			isMacOS(){ return isWeb ? false : remote.process.platform === 'darwin'; },
-			isLinux(){ return isWeb ? false : !this.isWindows && !this.isMacOS; },
-			isBrowser(){ return isWeb; }
+			isWindows(){ return remote.process.platform === 'win32'; },
+			isMacOS(){ return remote.process.platform === 'darwin'; },
+			isLinux(){ return !this.isWindows && !this.isMacOS; },
+			isBrowser(){ return false; }
 		}
 	}
 </script>

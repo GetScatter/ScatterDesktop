@@ -1,8 +1,8 @@
-import PluginRepository from 'scatter-core/plugins/PluginRepository';
-import Explorer from "scatter-core/models/Explorer";
-import {Blockchains, BlockchainsArray} from "scatter-core/models/Blockchains";
-import KeyPairService from "scatter-core/services/secure/KeyPairService";
-import IdGenerator from "scatter-core/util/IdGenerator";
+import PluginRepository from '@walletpack/core/plugins/PluginRepository';
+import Explorer from "@walletpack/core/models/Explorer";
+import {Blockchains, BlockchainsArray} from "@walletpack/core/models/Blockchains";
+import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
+import IdGenerator from "@walletpack/core/util/IdGenerator";
 
 export const m10_2_0 = async scatter => {
 

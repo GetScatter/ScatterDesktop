@@ -48,12 +48,12 @@
 	import Refresh from './svgs/quick-actions/Refresh';
 	import Exchange from './svgs/quick-actions/Exchange';
 	import Receive from './svgs/quick-actions/Receive';
-	import PriceService from "scatter-core/services/apis/PriceService";
-	import BalanceService from "scatter-core/services/blockchain/BalanceService";
+	import PriceService from "@walletpack/core/services/apis/PriceService";
+	import BalanceService from "@walletpack/core/services/blockchain/BalanceService";
 	import {RouteNames} from "../vue/Routing";
 	import AnimatedNumber from "./reusable/AnimatedNumber";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
 
 	export default {
 		components:{

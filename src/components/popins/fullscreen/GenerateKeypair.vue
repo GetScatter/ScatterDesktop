@@ -33,12 +33,12 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
-	import KeyPairService from "scatter-core/services/secure/KeyPairService";
-	import Keypair from "scatter-core/models/Keypair";
-	import {BlockchainsArray} from 'scatter-core/models/Blockchains'
-	import AccountService from "scatter-core/services/blockchain/AccountService";
+	import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
+	import Keypair from "@walletpack/core/models/Keypair";
+	import {BlockchainsArray} from '@walletpack/core/models/Blockchains'
+	import AccountService from "@walletpack/core/services/blockchain/AccountService";
 	import Key from '../../svgs/Key'
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		components:{Key},
@@ -58,7 +58,7 @@
 		methods:{
 			returnResult(keypair){
 				this.popin.data.callback(keypair);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 
 			async generate(blockchain){
@@ -75,7 +75,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 

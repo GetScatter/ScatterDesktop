@@ -20,10 +20,8 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
-
-    import PopupService from 'scatter-core/services/utility/PopupService';
-    import {Popup} from 'scatter-core/models/popups/Popup'
+    import PopupService from '../../../services/utility/PopupService';
+    import {Popup} from '../../../models/popups/Popup'
 
     export default {
         data () {return {
@@ -41,9 +39,6 @@
             destroy(){
                 PopupService.push(Popup.destroyScatter());
             },
-            ...mapActions([
-                Actions.SET_SCATTER
-            ])
         },
     }
 </script>

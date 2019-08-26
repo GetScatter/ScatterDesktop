@@ -13,7 +13,7 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
+    import * as UIActions from "../../../store/ui_actions";
 
     export default {
         computed:{
@@ -23,10 +23,10 @@
         },
         methods:{
             close(){
-                this[Actions.RELEASE_POPUP](this.popup)
+                this[UIActions.RELEASE_POPUP](this.popup)
             },
             ...mapActions([
-                Actions.RELEASE_POPUP
+	            UIActions.RELEASE_POPUP
             ])
         },
         props:['popup']

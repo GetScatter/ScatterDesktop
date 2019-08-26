@@ -76,13 +76,13 @@
 
 <script>
 	import {mapGetters, mapState} from 'vuex';
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import Token from "scatter-core/models/Token";
-	import BalanceService from "scatter-core/services/blockchain/BalanceService";
-	import TransferService from "scatter-core/services/blockchain/TransferService";
-	import PasswordService from "scatter-core/services/secure/PasswordService";
-	import PriceService from "scatter-core/services/apis/PriceService";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
+	import Token from "@walletpack/core/models/Token";
+	import BalanceService from "@walletpack/core/services/blockchain/BalanceService";
+	import TransferService from "@walletpack/core/services/blockchain/TransferService";
+	import PriceService from "@walletpack/core/services/apis/PriceService";
+	import PasswordHelpers from "../services/utility/PasswordHelpers";
 	require('../styles/transfers.scss');
 
 	export default {
@@ -195,7 +195,7 @@
 				const reset = () => this.sending = false;
 				if(!this.canSend) return;
 				this.sending = true;
-				if(!await PasswordService.verifyPIN()) return reset();
+				if(!await PasswordHelpers.verifyPIN()) return reset();
 				this.setWorkingScreen(true);
 				const sent = await TransferService[this.account.blockchain()]({
 					account:this.account,

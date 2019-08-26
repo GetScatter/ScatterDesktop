@@ -75,13 +75,13 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import Crypto from "scatter-core/util/Crypto";
-	import QRService from "scatter-core/services/secure/QRService";
-	import Seeder from "scatter-core/services/secure/Seeder";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
+	import Crypto from "@walletpack/core/util/Crypto";
+	import QRService from "@walletpack/core/services/secure/QRService";
+	import Seeder from "@walletpack/core/services/secure/Seeder";
+	import PopupService from "../../../services/utility/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import * as UIActions from "../../../store/ui_actions";
 
 	const STATES = {
 		SELECT:'select',
@@ -139,7 +139,7 @@
 		methods:{
 			returnResult(){
 				this.popin.data.callback(this.network);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			async init(){
 				this.privateKey = await this.getPrivateKey();
@@ -184,7 +184,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 		watch:{

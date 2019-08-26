@@ -58,15 +58,15 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import ImportPrivateKey from '../../panels/keypair/ImportPrivateKey';
 	import ImportHardwareKey from '../../panels/keypair/ImportHardwareKey';
-	import KeyPairService from "scatter-core/services/secure/KeyPairService";
-	import Keypair from "scatter-core/models/Keypair";
-	import AccountService from "scatter-core/services/blockchain/AccountService";
-	import BalanceService from "scatter-core/services/blockchain/BalanceService";
+	import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
+	import Keypair from "@walletpack/core/models/Keypair";
+	import AccountService from "@walletpack/core/services/blockchain/AccountService";
+	import BalanceService from "@walletpack/core/services/blockchain/BalanceService";
 	import ImportQRKey from "../../panels/keypair/ImportQRKey";
 	import Key from '../../../components/svgs/Key'
+	import * as UIActions from "../../../store/ui_actions";
 
 	const STATES = {
 		SELECT_TYPE:'selectType',
@@ -151,7 +151,7 @@
 			saveKeypair(){},
 			returnResult(){
 				this.popin.data.callback(this.keypair);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 
 			selectImportType(type){
@@ -210,7 +210,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 		watch:{

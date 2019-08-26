@@ -15,12 +15,11 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import SocketService from "scatter-core/services/utility/SocketService";
-	import StorageService from "scatter-core/services/utility/StorageService";
-	import {isWeb} from "../../../util/WebOrWrapper";
-	const Helpers = isWeb ? require('../../../util/WebHelpers').default : require('../../../util/ElectronHelpers').default;
+	import SocketService from "@walletpack/core/services/utility/SocketService";
+	import StorageService from "../../../services/electron/StorageService";
+	import * as UIActions from "../../../store/ui_actions";
+	const Helpers = require('../../../util/ElectronHelpers').default;
 
 	export default {
 		props:['popin'],
@@ -42,7 +41,7 @@
 		methods:{
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			async destroy(){
 				await SocketService.close();
@@ -54,7 +53,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

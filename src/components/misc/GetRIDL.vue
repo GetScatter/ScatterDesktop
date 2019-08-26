@@ -78,11 +78,11 @@
 
 <script>
 	import {mapState, mapGetters} from 'vuex';
-	import RIDLService from "scatter-core/services/apis/RIDLService";
-	import {Blockchains} from "scatter-core/models/Blockchains";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import PluginRepository from "scatter-core/plugins/PluginRepository";
-	import PopupService from "scatter-core/services/utility/PopupService";
+	import RIDLService from "../../services/utility/RIDLService";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
+	import {Popup} from "../../models/popups/Popup";
+	import PluginRepository from "@walletpack/core/plugins/PluginRepository";
+	import PopupService from "../../services/utility/PopupService";
 	require('../../styles/transfers.scss');
 
 	// TODO: Automatic claiming

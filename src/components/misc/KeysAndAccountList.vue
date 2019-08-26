@@ -85,14 +85,14 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import PluginRepository from "scatter-core/plugins/PluginRepository";
+	import PluginRepository from "@walletpack/core/plugins/PluginRepository";
 	import SearchAndFilter from "../reusable/SearchAndFilter";
-	import {blockchainName, BlockchainsArray, Blockchains} from 'scatter-core/models/Blockchains'
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import AccountService from "scatter-core/services/blockchain/AccountService";
-	import KeyPairService from "scatter-core/services/secure/KeyPairService";
-	import BalanceService from "scatter-core/services/blockchain/BalanceService";
+	import {blockchainName, BlockchainsArray, Blockchains} from '@walletpack/core/models/Blockchains'
+	import PopupService from "../../services/utility/PopupService";
+	import {Popup} from "../../models/popups/Popup";
+	import AccountService from "@walletpack/core/services/blockchain/AccountService";
+	import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
+	import BalanceService from "@walletpack/core/services/blockchain/BalanceService";
 
 	export default {
 		components: {SearchAndFilter},

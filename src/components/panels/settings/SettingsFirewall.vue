@@ -50,8 +50,8 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
-    import {Blockchains, BlockchainsArray} from "scatter-core/models/Blockchains";
+    import * as Actions from '@walletpack/core/store/constants';
+    import {Blockchains, BlockchainsArray} from "@walletpack/core/models/Blockchains";
 
     export default {
         data () {return {

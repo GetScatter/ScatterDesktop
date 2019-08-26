@@ -67,12 +67,12 @@
 
 <script>
 	import {mapState, mapGetters} from 'vuex';
-	import {Blockchains, BlockchainsArray} from "scatter-core/models/Blockchains";
+	import {Blockchains, BlockchainsArray} from "@walletpack/core/models/Blockchains";
 	import EditNetwork from "../../components/misc/EditNetwork";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
+	import PopupService from "../../services/utility/PopupService";
+	import {Popup} from "../../models/popups/Popup";
 	import SearchAndFilter from "../../components/reusable/SearchAndFilter";
-	import ContactService from "scatter-core/services/utility/ContactService";
+	import ContactService from "@walletpack/core/services/utility/ContactService";
 	import EditContact from "../../components/misc/EditContact";
 
 	export default {

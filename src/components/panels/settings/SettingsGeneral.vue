@@ -74,20 +74,18 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
+    import * as Actions from '@walletpack/core/store/constants';
+    import * as UIActions from "../../../store/ui_actions";
 
-    import UpdateService from 'scatter-core/services/utility/UpdateService';
-    import WindowService from 'scatter-core/services/utility/WindowService';
-    import {LANG} from 'scatter-core/localization/locales';
-    import LanguageService from "scatter-core/services/utility/LanguageService";
+    import UpdateService from '../../../services/utility/UpdateService';
+    import WindowService from '../../../services/electron/WindowService';
+    import LanguageService from "../../../services/utility/LanguageService";
 
-    import {isWeb} from "../../../util/WebOrWrapper";
-    const app = isWeb ? null : require('../../../util/ElectronHelpers').remote.app;
+    const app = require('../../../util/ElectronHelpers').remote.app;
 
     export default {
         data () {return {
             needsUpdate:null,
-	        languages:LANG,
 	        names:['English'],
         }},
         computed:{
@@ -104,7 +102,7 @@
                 return this.scatter.settings.showNotifications;
             },
             dataPath(){
-            	return isWeb ? null : app.getPath('userData');
+            	return app.getPath('userData');
             },
 	        selectedLanguage(){
 		        return this.scatter.settings.language
@@ -136,13 +134,13 @@
 		        scatter.settings.language = language;
 		        LanguageService.getLanguage(language).then(res => {
 			        res.raw = JSON.stringify(res);
-			        this[Actions.SET_LANGUAGE](res);
+			        this[UIActions.SET_LANGUAGE](res);
 			        this[Actions.SET_SCATTER](scatter);
 		        })
 	        },
             ...mapActions([
                 Actions.SET_SCATTER,
-	            Actions.SET_LANGUAGE,
+	            UIActions.SET_LANGUAGE,
             ])
         },
     }

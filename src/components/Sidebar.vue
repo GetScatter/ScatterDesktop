@@ -20,8 +20,8 @@
 
 <script>
 	import {mapGetters, mapState, mapActions} from 'vuex';
-	import * as Actions from 'scatter-core/store/constants'
 	import {RouteNames} from "../vue/Routing";
+	import * as UIActions from "../store/ui_actions";
 
 	export default {
 		data(){return {
@@ -65,7 +65,7 @@
 			}
 		},
 		mounted(){
-			this[Actions.SET_SIDEBAR](window.localStorage.getItem('sidebar') === 'true');
+			this[UIActions.SET_SIDEBAR](window.localStorage.getItem('sidebar') === 'true');
 		},
 		methods:{
 			itemIcon(item){
@@ -74,11 +74,11 @@
 				return `sidebar-sidebar_${item.name.toLowerCase()}`
 			},
 			toggleSidebar(){
-				this[Actions.SET_SIDEBAR](!this.sidebarLocked);
+				this[UIActions.SET_SIDEBAR](!this.sidebarLocked);
 				window.localStorage.setItem('sidebar', this.sidebarLocked);
 			},
 			...mapActions([
-				Actions.SET_SIDEBAR
+				UIActions.SET_SIDEBAR
 			])
 		}
 	}

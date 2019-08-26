@@ -7,11 +7,11 @@ const url = window.require("url");
 console.log(remote);
 const LowLevelWindowService = remote.getGlobal('appShared').LowLevelWindowService;
 
-import WindowMessage from 'scatter-core/models/popups/WindowMessage';
-import StoreService from "scatter-core/services/utility/StoreService";
-import AppsService from "scatter-core/services/apps/AppsService";
-import Recurring from 'scatter-core/models/Recurring'
-import Scatter from "scatter-core/models/Scatter";
+import WindowMessage from '../../models/popups/WindowMessage';
+import StoreService from "@walletpack/core/services/utility/StoreService";
+import AppsService from "@walletpack/core/services/apps/AppsService";
+import Recurring from '../../models/Recurring'
+import Scatter from "@walletpack/core/models/Scatter";
 
 let pendingMessages = [];
 const getPending = msg => pendingMessages.find(x => x.id === msg.id);

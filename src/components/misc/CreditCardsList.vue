@@ -6,7 +6,7 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import CreditCard from "scatter-core/models/CreditCard";
+	import CreditCard from "@walletpack/core/models/CreditCard";
 	import CreditCardIcon from '../../components/svgs/CreditCard';
 	import Card from './Card';
 

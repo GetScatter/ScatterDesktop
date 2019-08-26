@@ -127,14 +127,13 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import {IdentityRequiredFields} from "scatter-core/models/Identity";
-	import Network from "scatter-core/models/Network";
+	import {IdentityRequiredFields} from "@walletpack/core/models/Identity";
+	import Network from "@walletpack/core/models/Network";
 	import RequiredFields from "../../components/popouts/RequiredFields";
-	import RIDLService from "scatter-core/services/apis/RIDLService";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import {Blockchains} from "scatter-core/models/Blockchains";
-	import * as ApiActions from 'scatter-core/models/api/ApiActions';
+	import PopupService from "../../services/utility/PopupService";
+	import {Popup} from "../../models/popups/Popup";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
+	import * as ApiActions from '@walletpack/core/models/api/ApiActions';
 	import PopOutApp from "../../components/popouts/PopOutApp";
 	require('../../styles/transfers.scss');
 

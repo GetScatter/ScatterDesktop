@@ -36,8 +36,7 @@
     import QuickActions         from './QuickActions';
     import MenuBar              from './MenuBar';
 
-    import * as Actions         from 'scatter-core/store/constants';
-    import SingletonService     from "scatter-core/services/utility/SingletonService";
+    import SingletonService     from "@walletpack/core/services/utility/SingletonService";
 
     export default {
     	components:{
@@ -89,9 +88,7 @@
 
         },
         methods:{
-            ...mapActions([
-                Actions.SET_SCATTER
-            ])
+
         },
         watch:{
             ['unlocked'](){

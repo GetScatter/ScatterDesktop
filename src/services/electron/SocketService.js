@@ -1,9 +1,8 @@
-import * as Actions from 'scatter-core/store/constants';
 
 import {ipcRenderer, remote} from "../../util/ElectronHelpers";
-import StoreService from "scatter-core/services/utility/StoreService";
-
-import * as CoreSocketService from 'scatter-core/services/utility/SocketService';
+import StoreService from "@walletpack/core/services/utility/StoreService";
+import * as CoreSocketService from '@walletpack/core/services/utility/SocketService';
+import * as UIActions from "../../store/ui_actions";
 
 
 
@@ -19,7 +18,7 @@ export default class SocketService {
 		const certs = await CoreSocketService.getCerts();
 		ipcRenderer.on('api', (event, {request, id}) => CoreSocketService.handleApiResponse(request, id));
 		ipcRenderer.on('pair', (event, {request, id}) => CoreSocketService.handlePairedResponse(request, id));
-		ipcRenderer.on('ports', (event, ports) => StoreService.get().dispatch(Actions.SET_PORTS, ports));
+		ipcRenderer.on('ports', (event, ports) => StoreService.get().dispatch(UIActions.SET_PORTS, ports));
 		return remote.getGlobal('appShared').LowLevelSocketService.initialize(certs);
 	}
 

@@ -80,11 +80,11 @@
 	import SearchAndFilter from "../components/reusable/SearchAndFilter";
 	import Exchange from '../components/svgs/quick-actions/Exchange'
 	import Transfer from '../components/svgs/quick-actions/Send'
-	import {HISTORY_TYPES} from "scatter-core/models/histories/History";
-	import * as Actions from "scatter-core/store/constants";
-	import ExchangeService from "scatter-core/services/apis/ExchangeService";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
+	import {HISTORY_TYPES} from "@walletpack/core/models/histories/History";
+	import * as Actions from "@walletpack/core/store/constants";
+	import ExchangeService from "@walletpack/core/services/apis/ExchangeService";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
 
 	export default {
 		components: {
@@ -193,7 +193,6 @@
 			...mapActions([
 				Actions.DELTA_HISTORY,
 				Actions.UPDATE_HISTORY,
-				Actions.RELEASE_POPUP,
 			])
 		}
 	}

@@ -39,17 +39,17 @@
     import '../styles/popout.scss';
     import PopOutHead from '../components/popouts/PopOutHead';
 
-    import {isWeb} from "../util/WebOrWrapper";
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
-    import Scatter from 'scatter-core/models/Scatter';
-    const {remote} = isWeb ? {} : require('../util/ElectronHelpers');
-    const WindowService = isWeb ? null : require('../services/electron/WindowService').default
-    import * as ApiActions from 'scatter-core/models/api/ApiActions';
-    import {Popup} from "scatter-core/models/popups/Popup";
-    import PasswordService from "scatter-core/services/secure/PasswordService";
-    import Token from "scatter-core/models/Token";
-    import RIDLService from "scatter-core/services/apis/RIDLService";
+    import * as Actions from '@walletpack/core/store/constants';
+    import Scatter from '@walletpack/core/models/Scatter';
+    const {remote} = require('../util/ElectronHelpers');
+    const WindowService = require('../services/electron/WindowService').default
+    import * as ApiActions from '@walletpack/core/models/api/ApiActions';
+    import {Popup} from "../models/popups/Popup";
+    import Token from "@walletpack/core/models/Token";
+    import RIDLService from "../services/utility/RIDLService";
+    import * as UIActions from "../store/ui_actions";
+    import PasswordHelpers from "../services/utility/PasswordHelpers";
 
     export default {
         data () {return {
@@ -82,7 +82,6 @@
 		        Object.keys(this.windowMessage.data.balances).map(key => {
 			        balances[key] = this.windowMessage.data.balances[key].map(token => Token.fromJson(token));
 		        });
-		        this[Actions.SET_FULL_BALANCES](balances);
 
 		        const needsPIN = [
 			        ApiActions.SIGN_ARBITRARY,
@@ -93,7 +92,7 @@
 		        setTimeout(async () => {
 			        if(this.scatter.pinForAll && needsPIN.includes(this.popup.data.type)){
 				        this.pinning = true;
-				        if(! await PasswordService.verifyPIN()){
+				        if(! await PasswordHelpers.verifyPIN()){
 					        this.returnResult(null);
 				        }
 				        this.pinning = false;
@@ -101,8 +100,7 @@
 		        })
             }
 
-            if(isWeb) setWindowMessage(window.getData());
-            else WindowService.watch('popup', wm => setWindowMessage(wm));
+            WindowService.watch('popup', wm => setWindowMessage(wm));
         },
         computed:{
             ...mapState([
@@ -116,26 +114,17 @@
         methods: {
             async returnResult(result){
             	let w;
-
-            	if(isWeb){
-            		w = window;
-		            w.respond(result);
-		            w.close();
-                } else {
-		            await WindowService.sendResult(this.windowMessage, result);
-		            w = remote.getCurrentWindow();
-		            w.close();
-                }
-
+	            await WindowService.sendResult(this.windowMessage, result);
+	            w = remote.getCurrentWindow();
+	            w.close();
 				if(!w.closed) w.destroy();
             },
 	        async checkAppReputation(){
-		        this[Actions.SET_APP_REP](await RIDLService.checkApp(this .appData.applink));
+		        this[UIActions.SET_APP_REP](await RIDLService.checkApp(this.appData.applink));
 	        },
             ...mapActions([
                 Actions.HOLD_SCATTER,
-                Actions.SET_FULL_BALANCES,
-                Actions.SET_APP_REP,
+	            UIActions.SET_APP_REP,
             ])
         },
         watch:{

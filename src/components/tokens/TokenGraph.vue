@@ -16,10 +16,9 @@
 
 <script>
 	import {mapState, mapGetters, mapActions} from 'vuex';
-	import * as Actions from 'scatter-core/store/constants';
 	import Chartist from 'chartist';
-	import PriceService from "scatter-core/services/apis/PriceService";
-	import {dateId, utcToLocal} from "scatter-core/util/DateHelpers";
+	import PriceService from "@walletpack/core/services/apis/PriceService";
+	import {dateId, utcToLocal} from "@walletpack/core/util/DateHelpers";
 	require("../../styles/charts.scss");
 
 	export default {
@@ -134,10 +133,6 @@
 					console.error('err', e);
 				}
 			},
-
-			...mapActions([
-				Actions.SET_PRICE_DATA,
-			])
 		},
 		watch:{
 			['balances'](){

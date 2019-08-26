@@ -15,11 +15,11 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
 	import EditNetwork from "../../misc/EditNetwork";
-	import Network from 'scatter-core/models/Network'
-	import NetworkService from "scatter-core/services/blockchain/NetworkService";
+	import Network from '@walletpack/core/models/Network'
+	import NetworkService from "@walletpack/core/services/blockchain/NetworkService";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		components: {EditNetwork},
@@ -38,7 +38,7 @@
 		methods:{
 			returnResult(){
 				this.popin.data.callback(this.network);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			async saveNetwork(){
 				this.network.blockchain = this.popin.data.props.blockchain;
@@ -47,7 +47,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

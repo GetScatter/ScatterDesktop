@@ -18,7 +18,6 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
     import GetRIDL from '../components/misc/GetRIDL';
 
     const STATES = {

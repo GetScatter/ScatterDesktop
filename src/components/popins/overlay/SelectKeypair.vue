@@ -7,8 +7,8 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import KeysAndAccountList from "../../misc/KeysAndAccountList";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		components: {KeysAndAccountList},
@@ -27,11 +27,11 @@
 		methods:{
 			returnResult(keypair){
 				this.popin.data.callback(keypair);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		}
 

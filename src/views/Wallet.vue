@@ -52,13 +52,13 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
+    import * as Actions from '@walletpack/core/store/constants';
     import PanelTabs from '../components/reusable/PanelTabs';
-    import {Blockchains, blockchainName, BlockchainsArray} from "scatter-core/models/Blockchains";
-    import PopupService from "scatter-core/services/utility/PopupService";
-    import {Popup} from "scatter-core/models/popups/Popup";
+    import {Blockchains, blockchainName, BlockchainsArray} from "@walletpack/core/models/Blockchains";
+    import PopupService from "../services/utility/PopupService";
+    import {Popup} from "../models/popups/Popup";
     import KeysAndAccountList from "../components/misc/KeysAndAccountList";
-    import KeyPairService from "scatter-core/services/secure/KeyPairService";
+    import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
     import CreditCardsList from "../components/misc/CreditCardsList";
 
     const STATES = {

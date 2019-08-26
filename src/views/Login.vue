@@ -110,7 +110,7 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
+	import * as Actions from '@walletpack/core/store/constants';
 
 	import ProgressBubbles from "../components/reusable/ProgressBubbles";
 	import ActionBar from "../components/reusable/ActionBar";
@@ -119,14 +119,14 @@
 	import SetPassword from '../components/login/SetPassword'
 	import SelectBackupLocation from "../components/login/SelectBackupLocation";
 	import Welcome from "../components/login/Welcome";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
 
-	import SpaceBackground from '../components/backgrounds/SpaceBackground';
 	import Reset from '../components/svgs/login/Reset';
 	import Restore from '../components/svgs/login/Restore';
 	import Support from '../components/svgs/login/Support';
-	import BackupService from "scatter-core/services/utility/BackupService";
+	import BackupService from "../services/utility/BackupService";
+	import * as UIActions from "../store/ui_actions";
 
 	const STATES = {
 		NEW_OR_LOGIN:'newOrLogin',
@@ -138,7 +138,6 @@
 
 	export default {
 		components:{
-			SpaceBackground,
 			Welcome,
 			SelectBackupLocation,
 			ActionBar,
@@ -220,14 +219,14 @@
 					this.opening = true;
 				}
 				setTimeout(async () => {
-					await this[Actions.SET_SEED](this.password);
+					await this[UIActions.SET_SEED](this.password);
 					await this[Actions.LOAD_SCATTER](usingLocalStorage);
 					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
 						setTimeout(() => {
 							if(!this.scatter.onboarded){
 								PopupService.push(Popup.showTerms(async accepted => {
 									if(!accepted){
-										await this[Actions.SET_SEED](null);
+										await this[UIActions.SET_SEED](null);
 										await this[Actions.LOAD_SCATTER](false);
 										this.opening = false;
 										return;
@@ -263,7 +262,7 @@
 
 
 			...mapActions([
-				Actions.SET_SEED,
+				UIActions.SET_SEED,
 				Actions.LOAD_SCATTER,
 				Actions.SET_SCATTER,
 			])

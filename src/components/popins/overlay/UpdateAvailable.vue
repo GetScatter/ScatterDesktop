@@ -22,8 +22,8 @@
 <script>
     import {RouteNames} from '../../../vue/Routing'
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
     import VueMarkdown from 'vue-markdown'
+    import * as UIActions from "../../../store/ui_actions";
 
     export default {
 	    components: {VueMarkdown},
@@ -45,14 +45,14 @@
         methods:{
             returnResult(truthy){
                 this.popin.data.callback(truthy);
-                this[Actions.RELEASE_POPUP](this.popin);
+                this[UIActions.RELEASE_POPUP](this.popin);
             },
             open(){
                 this.openInBrowser(this.update.url);
                 this.returnResult(true);
             },
             ...mapActions([
-                Actions.RELEASE_POPUP
+	            UIActions.RELEASE_POPUP
             ])
         }
     }

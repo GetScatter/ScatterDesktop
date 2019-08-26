@@ -22,8 +22,8 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
-	import Hasher from "scatter-core/util/Hasher";
+	import Hasher from "@walletpack/core/util/Hasher";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		props:['popin'],
@@ -39,7 +39,7 @@
 		methods:{
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			validatePIN(){
 				if(!this.text.length) return;
@@ -51,7 +51,7 @@
 				}, 700);
 			},
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

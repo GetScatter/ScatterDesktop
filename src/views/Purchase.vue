@@ -84,12 +84,12 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
-    import CreditCard from "scatter-core/models/CreditCard";
+    import * as Actions from '@walletpack/core/store/constants';
+    import CreditCard from "@walletpack/core/models/CreditCard";
     import Card from "../components/misc/Card";
-    import PopupService from "scatter-core/services/utility/PopupService";
-    import {Popup} from "scatter-core/models/popups/Popup";
-    import PurchasingService from "../services/creditcards/PurchasingService";
+    import PopupService from "../services/utility/PopupService";
+    import {Popup} from "../models/popups/Popup";
+    // import PurchasingService from "../services/creditcards/PurchasingService";
     require('../styles/transfers.scss');
 
     const STATES = {
@@ -162,9 +162,9 @@
             async purchase(){
 	        	this.state = STATES.WORKING;
 
-	        	await PurchasingService.init();
-                const result = await PurchasingService.purchase(this.amount, this.token, this.account, this.card);
-                console.log('res', result);
+	        	// await PurchasingService.init();
+                // const result = await PurchasingService.purchase(this.amount, this.token, this.account, this.card);
+                // console.log('res', result);
 
 	        	setTimeout(() => {
 	        		this.state = STATES.SELECT_ACCOUNT;

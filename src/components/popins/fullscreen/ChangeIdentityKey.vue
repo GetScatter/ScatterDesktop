@@ -18,13 +18,14 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
+	import * as Actions from '@walletpack/core/store/constants';
 	import '../../../styles/popins.scss';
-	import KeyPairService from "scatter-core/services/secure/KeyPairService";
-	import {Blockchains} from "scatter-core/models/Blockchains";
-	import RIDLService from "scatter-core/services/apis/RIDLService";
-	import Keypair from "scatter-core/models/Keypair";
-	import PluginRepository from "scatter-core/plugins/PluginRepository";
+	import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
+	// import RIDLService from "../services/utility/RIDLService";
+	import Keypair from "@walletpack/core/models/Keypair";
+	import PluginRepository from "@walletpack/core/plugins/PluginRepository";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		props:['popin'],
@@ -57,7 +58,7 @@
 		methods:{
 			returnResult(){
 				this.popin.data.callback(true);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 
 			async randomKey(){
@@ -73,6 +74,7 @@
 				const plugin = PluginRepository.plugin(Blockchains.EOSIO);
 				const publicKey = plugin.privateToPublic(this.privateKey);
 
+				// TODO
 				// if(this.identity.id === this.identity.ridl){
 				// 	if(!await RIDLService.changeKey(this.identity.name, publicKey)) return;
 				// } else this.identity.ridl = -1;
@@ -88,7 +90,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP,
+				UIActions.RELEASE_POPUP,
 				Actions.SET_SCATTER,
 			])
 		},

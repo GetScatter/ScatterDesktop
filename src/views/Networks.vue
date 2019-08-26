@@ -68,15 +68,15 @@
 
 <script>
 	import {mapState, mapGetters} from 'vuex';
-	import {Blockchains, BlockchainsArray} from "scatter-core/models/Blockchains";
-	import {GET} from "scatter-core/services/apis/BackendApiService";
-	import Network from "scatter-core/models/Network";
-	import PluginRepository from 'scatter-core/plugins/PluginRepository'
-	import NetworkService from "scatter-core/services/blockchain/NetworkService";
+	import {Blockchains, BlockchainsArray} from "@walletpack/core/models/Blockchains";
+	import {GET} from "@walletpack/core/services/apis/BackendApiService";
+	import Network from "@walletpack/core/models/Network";
+	import PluginRepository from '@walletpack/core/plugins/PluginRepository'
+	import NetworkService from "@walletpack/core/services/blockchain/NetworkService";
 	import EditNetwork from "../components/misc/EditNetwork";
-	import AccountService from "scatter-core/services/blockchain/AccountService";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
+	import AccountService from "@walletpack/core/services/blockchain/AccountService";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
 
 	export default {
 		components: {EditNetwork},

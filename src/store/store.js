@@ -4,10 +4,10 @@ import Vuex from 'vuex';
 import {mutations} from './mutations';
 import {actions} from './actions';
 
-import {PopupDisplayTypes} from 'scatter-core/models/popups/Popup'
-import PluginRepository from 'scatter-core/plugins/PluginRepository'
-import Locale from "scatter-core/models/Locale";
-import BalanceService from "scatter-core/services/blockchain/BalanceService";
+import {PopupDisplayTypes} from '../models/popups/Popup'
+import PluginRepository from '@walletpack/core/plugins/PluginRepository'
+import Locale from "@walletpack/core/models/Locale";
+import BalanceService from "@walletpack/core/services/blockchain/BalanceService";
 
 Vue.use(Vuex);
 

@@ -15,11 +15,11 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
 	import EditContact from "../../misc/EditContact";
-	import Contact from "scatter-core/models/Contact";
-	import ContactService from "scatter-core/services/utility/ContactService";
+	import Contact from "@walletpack/core/models/Contact";
+	import ContactService from "@walletpack/core/services/utility/ContactService";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		components: {EditContact},
@@ -46,7 +46,7 @@
 		methods:{
 			returnResult(){
 				this.popin.data.callback(this.contact);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			async saveContact(){
 				const added = await ContactService.addOrUpdate(this.contact);
@@ -54,7 +54,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

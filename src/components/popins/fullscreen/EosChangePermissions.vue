@@ -46,10 +46,10 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import {Blockchains} from "scatter-core/models/Blockchains";
+	import {Popup} from "../../../models/popups/Popup";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		props:['popin'],
@@ -76,7 +76,7 @@
 		methods:{
 			returnResult(result){
 				this.popin.data.callback(result);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			changePermissions(){
 				this.returnResult({
@@ -89,7 +89,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

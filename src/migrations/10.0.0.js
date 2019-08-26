@@ -1,7 +1,7 @@
-import PluginRepository from 'scatter-core/plugins/PluginRepository';
-import Explorer from "scatter-core/models/Explorer";
-import {BlockchainsArray} from "scatter-core/models/Blockchains";
-import KeyPairService from "scatter-core/services/secure/KeyPairService";
+import PluginRepository from '@walletpack/core/plugins/PluginRepository';
+import Explorer from "@walletpack/core/models/Explorer";
+import {BlockchainsArray} from "@walletpack/core/models/Blockchains";
+import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
 
 export const m10_0_0 = async scatter => {
 

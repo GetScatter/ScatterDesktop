@@ -59,11 +59,12 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
+    import * as Actions from '@walletpack/core/store/constants';
 
-    import PasswordService from 'scatter-core/services/secure/PasswordService';
-    import PopupService from 'scatter-core/services/utility/PopupService';
-    import {Popup} from 'scatter-core/models/popups/Popup';
+    import PasswordService from '@walletpack/core/services/secure/PasswordService';
+    import PopupService from '../../../services/utility/PopupService';
+    import {Popup} from '../../../models/popups/Popup';
+    import PasswordHelpers from "../../../services/utility/PasswordHelpers";
 
     let saveTimeout;
     export default {
@@ -83,19 +84,18 @@
         },
         methods: {
             async changePassword(){
-                if(!PasswordService.isValidPassword(this.password, this.confirmPassword)) return false;
-
-                await PasswordService.changePassword(this.password);
+            	const err = PasswordService.hasError(this.password);
+            	if(err) return PopupService.push(Popup.snackbar(err));
+            	if(this.password !== this.confirmPassword) return PopupService.push(Popup.snackbar("Confirmation does not match"));
+                await PasswordHelpers.changePassword(this.password);
                 this.password = '';
                 this.confirmPassword = '';
             },
 	        async changePin(){
 		        clearTimeout(saveTimeout);
 		        saveTimeout = setTimeout(async () => {
-			        await PasswordService.setPIN(this.pin, false);
-			        PopupService.push(Popup.snackbar(
-				        this.locale(this.langKeys.SETTINGS.PIN.SavedSnackbar), 'check'
-			        ))
+			        await PasswordHelpers.setPIN(this.pin, false);
+			        PopupService.push(Popup.snackbar('Saved PIN', 'check'))
 		        }, 500);
 	        },
 	        togglePinForAll(){

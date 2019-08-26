@@ -89,9 +89,9 @@
 
 <script>
 	import {mapGetters, mapActions, mapState} from 'vuex';
-	import * as Actions from 'scatter-core/store/constants'
-	import {LocationInformation} from "scatter-core/models/Identity";
-	import Countries from 'scatter-core/data/Countries'
+	import * as Actions from '@walletpack/core/store/constants'
+	import {LocationInformation} from "@walletpack/core/models/Identity";
+	import Countries from '../data/Countries'
 
 	let saveTimeout;
 	export default {

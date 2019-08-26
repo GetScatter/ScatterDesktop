@@ -27,8 +27,8 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import Contact from "scatter-core/models/Contact";
-	import ContactService from "scatter-core/services/utility/ContactService";
+	import Contact from "@walletpack/core/models/Contact";
+	import ContactService from "@walletpack/core/services/utility/ContactService";
 
 	export default {
 		props:['original', 'brandNew'],

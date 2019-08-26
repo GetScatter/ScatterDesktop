@@ -97,12 +97,12 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
+    import * as Actions from '@walletpack/core/store/constants';
     import PanelTabs from "../components/reusable/PanelTabs";
-    import ObjectHelpers from "scatter-core/util/ObjectHelpers";
-    import AppsService from "scatter-core/services/apps/AppsService";
+    import ObjectHelpers from "@walletpack/core/util/ObjectHelpers";
+    import AppsService from "@walletpack/core/services/apps/AppsService";
     import Carousel from "../components/reusable/Carousel";
-    import PermissionService from "scatter-core/services/apps/PermissionService";
+    import PermissionService from "@walletpack/core/services/apps/PermissionService";
 
 
     export default {

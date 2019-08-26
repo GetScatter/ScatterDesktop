@@ -332,7 +332,6 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
     import Terms from '../svgs/Terms';
 
     export default {
@@ -344,19 +343,7 @@
             ...mapState([
                 'scatter'
             ]),
-            ...mapGetters([
-
-            ])
         },
-        mounted(){
-
-        },
-        methods: {
-            ...mapActions([
-                Actions.SET_SCATTER
-            ])
-        },
-        props:[],
     }
 </script>
 

@@ -46,10 +46,10 @@
 
 <script>
 	import {mapGetters} from 'vuex';
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import QRService from "scatter-core/services/secure/QRService";
-	import {Blockchains} from "scatter-core/models/Blockchains";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
+	import QRService from "@walletpack/core/services/secure/QRService";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
 	require('../styles/transfers.scss');
 
 	export default {

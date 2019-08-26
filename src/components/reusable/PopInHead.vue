@@ -9,7 +9,7 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
+    import * as UIActions from "../../store/ui_actions";
 
     export default {
     	props:['title'],
@@ -21,10 +21,10 @@
         methods:{
             returnResult(truthy){
                 this.nextPopIn.data.callback(truthy);
-                this[Actions.RELEASE_POPUP](this.nextPopIn);
+                this[UIActions.RELEASE_POPUP](this.nextPopIn);
             },
             ...mapActions([
-                Actions.RELEASE_POPUP
+	            UIActions.RELEASE_POPUP
             ])
         },
     }

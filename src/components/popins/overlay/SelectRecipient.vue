@@ -25,9 +25,9 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import KeysAndAccountList from "../../misc/KeysAndAccountList";
 	import Contacts from "../../../components/misc/Contacts";
+	import * as UIActions from "../../../store/ui_actions";
 
 	const STATES = {
 		CONTACTS:'contacts',
@@ -52,7 +52,7 @@
 		methods:{
 			returnResult(recipient){
 				this.popin.data.callback(recipient);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			switchState(state){
 				this.state = state;
@@ -63,7 +63,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		}
 

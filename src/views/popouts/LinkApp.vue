@@ -27,8 +27,8 @@
 
 <script>
     import { mapActions, mapGetters, mapState } from 'vuex'
-    import * as Actions from 'scatter-core/store/constants';
-    import AuthorizedApp from 'scatter-core/models/AuthorizedApp'
+    import * as Actions from '@walletpack/core/store/constants';
+    import AuthorizedApp from '@walletpack/core/models/AuthorizedApp'
     import PopOutApp from '../../components/popouts/PopOutApp';
 
     export default {

@@ -20,15 +20,16 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
-	import Account from "scatter-core/models/Account";
-	import AccountService from "scatter-core/services/blockchain/AccountService";
-	import BalanceService from "scatter-core/services/blockchain/BalanceService";
-	import ResourceService from "scatter-core/services/blockchain/ResourceService";
-	import {Blockchains} from "scatter-core/models/Blockchains";
-	import PluginRepository from "scatter-core/plugins/PluginRepository";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
+	import Account from "@walletpack/core/models/Account";
+	import AccountService from "@walletpack/core/services/blockchain/AccountService";
+	import BalanceService from "@walletpack/core/services/blockchain/BalanceService";
+	import ResourceService from "@walletpack/core/services/blockchain/ResourceService";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
+	import PluginRepository from "@walletpack/core/plugins/PluginRepository";
+	import PopupService from "../../../services/utility/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import * as UIActions from "../../../store/ui_actions";
+	import * as Actions from "@walletpack/core/store/constants";
 
 	export default {
 		props:['popin'],
@@ -59,7 +60,7 @@
 		methods:{
 			returnResult(value){
 				this.popin.data.callback(value);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			async addAccount(){
 				const [name, auth] = this.nameauth.trim().toLowerCase().split('@');
@@ -80,7 +81,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP,
+				UIActions.RELEASE_POPUP,
 				Actions.ADD_RESOURCES
 			])
 		}

@@ -1,17 +1,16 @@
-import PluginRepository from 'scatter-core/plugins/PluginRepository';
-import Explorer from "scatter-core/models/Explorer";
-import {blockchainName, Blockchains, BlockchainsArray} from "scatter-core/models/Blockchains";
-import KeyPairService from "scatter-core/services/secure/KeyPairService";
-import IdGenerator from "scatter-core/util/IdGenerator";
-import {LANG} from "scatter-core/localization/locales";
-import {LocationInformation} from "scatter-core/models/Identity";
+import PluginRepository from '@walletpack/core/plugins/PluginRepository';
+import Explorer from "@walletpack/core/models/Explorer";
+import {blockchainName, Blockchains, BlockchainsArray} from "@walletpack/core/models/Blockchains";
+import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
+import IdGenerator from "@walletpack/core/util/IdGenerator";
+import {LocationInformation} from "@walletpack/core/models/Identity";
 
 export const m11_0_0 = async scatter => {
 
 	const keypairs = scatter.keychain.keypairs.map(x => x.clone());
 	scatter.keychain.keypairs = [];
 
-	scatter.settings.language = LANG.ENGLISH;
+	scatter.settings.language = 'english';
 
 	await Promise.all(keypairs.map(async keypair => {
 		delete keypair.keyHash;

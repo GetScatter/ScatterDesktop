@@ -1,7 +1,7 @@
-import PluginRepository from 'scatter-core/plugins/PluginRepository';
-import {Blockchains} from 'scatter-core/models/Blockchains'
-import Crypto from 'scatter-core/util/Crypto';
-import {BlockchainsArray} from 'scatter-core/models/Blockchains';
+import PluginRepository from '@walletpack/core/plugins/PluginRepository';
+import {Blockchains} from '@walletpack/core/models/Blockchains'
+import Crypto from '@walletpack/core/util/Crypto';
+import {BlockchainsArray} from '@walletpack/core/models/Blockchains';
 
 export const m9_5_0 = async scatter => {
 

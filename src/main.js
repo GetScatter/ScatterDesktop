@@ -4,9 +4,7 @@ import './styles/popins.scss'
 import './styles/confirm.scss'
 import './styles/blockchain-lists.scss'
 
-import {isWeb} from "./util/WebOrWrapper";
-console.log('isWeb', isWeb);
-const Helpers = isWeb ? require('./util/WebHelpers').default : require('./util/ElectronHelpers').default;
+const Helpers = require('./util/ElectronHelpers').default;
 
 import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
@@ -27,7 +25,7 @@ import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import AnimatedNumber from './components/reusable/AnimatedNumber.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
 import PopOutHead from './components/popouts/PopOutHead.vue'
-import WindowService from 'scatter-core/services/utility/WindowService';
+import WindowService from './services/electron/WindowService';
 
 // f12 to open console from anywhere.
 document.addEventListener("keydown", e => {

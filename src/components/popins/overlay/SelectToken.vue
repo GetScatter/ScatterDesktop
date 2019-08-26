@@ -13,9 +13,9 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
-	import {blockchainName, BlockchainsArray} from "scatter-core/models/Blockchains";
+	import {blockchainName, BlockchainsArray} from "@walletpack/core/models/Blockchains";
 	import TokenList from "../../tokens/TokenList";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		components: {TokenList},
@@ -52,11 +52,11 @@
 		methods:{
 			returnResult(token){
 				this.popin.data.callback(token);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

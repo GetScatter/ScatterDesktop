@@ -119,16 +119,16 @@
 
 <script>
 	import {mapGetters, mapActions, mapState} from 'vuex';
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import BalanceService from "scatter-core/services/blockchain/BalanceService";
-	import PriceService from "scatter-core/services/apis/PriceService";
-	import Token from "scatter-core/models/Token";
-	import ExchangeService from "scatter-core/services/apis/ExchangeService";
-	import TokenService from "scatter-core/services/utility/TokenService";
-	import * as Actions from "scatter-core/store/constants";
-	import TransferService from "scatter-core/services/blockchain/TransferService";
-	import HistoricExchange from "scatter-core/models/histories/HistoricExchange";
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
+	import BalanceService from "@walletpack/core/services/blockchain/BalanceService";
+	import PriceService from "@walletpack/core/services/apis/PriceService";
+	import Token from "@walletpack/core/models/Token";
+	import ExchangeService from "@walletpack/core/services/apis/ExchangeService";
+	import TokenService from "@walletpack/core/services/utility/TokenService";
+	import * as Actions from "@walletpack/core/store/constants";
+	import TransferService from "@walletpack/core/services/blockchain/TransferService";
+	import HistoricExchange from "@walletpack/core/models/histories/HistoricExchange";
 	require('../styles/transfers.scss');
 
 	export default {

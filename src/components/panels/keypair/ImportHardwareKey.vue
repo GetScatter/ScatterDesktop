@@ -38,20 +38,19 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import ExternalWallet, {EXT_WALLET_TYPES, EXT_WALLET_TYPES_ARR} from 'scatter-core/models/hardware/ExternalWallet';
-	import {Blockchains, BlockchainsArray} from "scatter-core/models/Blockchains";
-	import Keypair from "scatter-core/models/Keypair";
-	import KeyPairService from "scatter-core/services/secure/KeyPairService";
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import HardwareService from "scatter-core/services/secure/HardwareService";
+	import ExternalWallet, {EXT_WALLET_TYPES} from '@walletpack/core/models/hardware/ExternalWallet';
+	import {Blockchains, BlockchainsArray} from "@walletpack/core/models/Blockchains";
+	import Keypair from "@walletpack/core/models/Keypair";
+	import KeyPairService from "@walletpack/core/services/secure/KeyPairService";
+	import PopupService from "../../../services/utility/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import HardwareService from "@walletpack/core/services/secure/HardwareService";
 
 	let inputTimeout;
 	export default {
 		data(){return {
 			hardwareType:EXT_WALLET_TYPES.LEDGER,
 			EXT_WALLET_TYPES,
-			EXT_WALLET_TYPES_ARR,
 			blockchain:Blockchains.EOSIO,
 			external:null,
 
@@ -75,6 +74,9 @@
 				if(!this.external) return [];
 				if(typeof this.external.interface.availableBlockchains === 'undefined') return [];
 				return this.external.interface.availableBlockchains();
+			},
+			EXT_WALLET_TYPES_ARR(){
+				return Object.keys(EXT_WALLET_TYPES).map(x => EXT_WALLET_TYPES[x]);
 			}
 		},
 

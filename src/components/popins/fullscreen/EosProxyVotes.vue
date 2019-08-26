@@ -61,15 +61,15 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import {Blockchains} from "scatter-core/models/Blockchains";
-	import PluginRepository from "scatter-core/plugins/PluginRepository";
-	import ObjectHelpers from "scatter-core/util/ObjectHelpers";
-	import RecurringService from "scatter-core/services/blockchain/RecurringService";
-	import {GET} from "scatter-core/services/apis/BackendApiService";
+	import PopupService from "../../../services/utility/PopupService";
+	import {Popup} from "../../../models/popups/Popup";
+	import {Blockchains} from "@walletpack/core/models/Blockchains";
+	import PluginRepository from "@walletpack/core/plugins/PluginRepository";
+	import ObjectHelpers from "@walletpack/core/util/ObjectHelpers";
+	import RecurringService from "../../../services/utility/RecurringService";
+	import {GET} from "@walletpack/core/services/apis/BackendApiService";
+	import * as UIActions from "../../../store/ui_actions";
 	require('../../../styles/transfers.scss')
 
 	export default {
@@ -121,7 +121,7 @@
 		methods:{
 			returnResult(truthy){
 				this.popin.data.callback(truthy);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			unrevote(){
 				RecurringService.removeProxies([this.account]);
@@ -152,7 +152,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}

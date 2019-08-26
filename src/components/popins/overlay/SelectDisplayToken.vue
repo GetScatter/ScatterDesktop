@@ -18,9 +18,9 @@
 
 <script>
 	import {mapState,mapGetters, mapActions} from 'vuex';
-	import * as Actions from 'scatter-core/store/constants';
-	import PriceService from "scatter-core/services/apis/PriceService";
-	import TokenService from "scatter-core/services/utility/TokenService";
+	import PriceService from "@walletpack/core/services/apis/PriceService";
+	import TokenService from "@walletpack/core/services/utility/TokenService";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		props:['popin'],
@@ -51,13 +51,13 @@
 		methods:{
 			returnResult(blockchain){
 				this.popin.data.callback(blockchain);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			setCurrency:TokenService.setDisplayCurrency,
 			setToken:TokenService.setDisplayToken,
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		}
 	}

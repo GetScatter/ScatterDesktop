@@ -36,9 +36,8 @@
 
 <script>
 	import {mapState, mapGetters, mapActions} from 'vuex';
-	import * as Actions from 'scatter-core/store/constants';
 	import SearchAndFilter from "../reusable/SearchAndFilter";
-	import Token from "scatter-core/models/Token";
+	import Token from "@walletpack/core/models/Token";
 
 	export default {
 		components: {SearchAndFilter},

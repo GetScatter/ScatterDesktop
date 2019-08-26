@@ -193,14 +193,13 @@
 
 <script>
 	import {mapGetters, mapActions, mapState} from 'vuex';
-	import * as Actions from 'scatter-core/store/constants'
-	import IdGenerator from "scatter-core/util/IdGenerator";
-	import Identity from "scatter-core/models/Identity";
-	import {isWeb} from "../util/WebOrWrapper";
-	const {getFileLocation, uploadAvatar} = isWeb ? require('../services/web/FileService') : require('../services/electron/FileService');
-	import PopupService from "scatter-core/services/utility/PopupService";
-	import {Popup} from "scatter-core/models/popups/Popup";
-	import RIDLService from "scatter-core/services/apis/RIDLService";
+	import * as Actions from '@walletpack/core/store/constants'
+	import IdGenerator from "@walletpack/core/util/IdGenerator";
+	import Identity from "@walletpack/core/models/Identity";
+	const {getFileLocation, uploadAvatar} = require('../services/electron/FileService');
+	import PopupService from "../services/utility/PopupService";
+	import {Popup} from "../models/popups/Popup";
+	import RIDLService from "../services/utility/RIDLService";
 
 	let saveTimeout;
 	export default {

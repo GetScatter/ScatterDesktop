@@ -24,9 +24,9 @@
 
 <script>
 	import { mapActions, mapGetters, mapState } from 'vuex'
-	import * as Actions from 'scatter-core/store/constants';
 	import '../../../styles/popins.scss';
-	import AccountService from "scatter-core/services/blockchain/AccountService";
+	import AccountService from "@walletpack/core/services/blockchain/AccountService";
+	import * as UIActions from "../../../store/ui_actions";
 
 	export default {
 		props:['popin'],
@@ -51,7 +51,7 @@
 		methods:{
 			returnResult(removed){
 				this.popin.data.callback(removed);
-				this[Actions.RELEASE_POPUP](this.popin);
+				this[UIActions.RELEASE_POPUP](this.popin);
 			},
 			async unlinkAccount(){
 				await AccountService.removeAccounts(this.account.authorities());
@@ -59,7 +59,7 @@
 			},
 
 			...mapActions([
-				Actions.RELEASE_POPUP
+				UIActions.RELEASE_POPUP
 			])
 		},
 	}
