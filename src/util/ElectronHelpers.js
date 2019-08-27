@@ -78,6 +78,7 @@ export default class ElectronHelpers {
 
 		const eventListener = async (type, data) => {
 			if(type === 'popout') {
+				console.log('POPOUT!')
 				const popup =  new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data));
 				return WindowService.openPopOut(popup);
 			}
@@ -87,12 +88,7 @@ export default class ElectronHelpers {
 
 		ScatterCore.initialize(
 			{
-				blockchains:{
-					EOSIO:'eos',
-					ETH:'eth',
-					// TRX:'trx',
-					BTC:'btc',
-				},
+				blockchains:{},
 				plugins:[
 					require('@walletpack/eosio').default,
 					require('@walletpack/ethereum').default,
@@ -121,34 +117,11 @@ export default class ElectronHelpers {
 			}
 		);
 
-		ExternalWallet.loadWallets([
-			{name:'LEDGER', wallet:LedgerWallet}
-		])
+		// TODO: Ledger
+		// ExternalWallet.loadWallets([
+		// 	{name:'LEDGER', wallet:LedgerWallet}
+		// ])
 
-
-		// ScatterCore.initialize(
-		// 	[
-		// 		require('scatter-core/plugins/defaults/eos').default,
-		// 		require('scatter-core/plugins/defaults/trx').default,
-		// 		require('scatter-core/plugins/defaults/eth').default,
-		// 		require('scatter-core/plugins/defaults/btc').default,
-		// 	],
-		// 	store,
-		// 	StorageService,
-		// 	{
-		// 		get:() => ipcAsync('seed'),
-		// 		set:(seed) => ipcFaF('seeding', seed),
-		// 		clear:() => ipcFaF('key', null),
-		// 	},
-		// 	{
-		// 		getVersion:ElectronHelpers.getVersion,
-		// 		pushNotification:ElectronHelpers.pushNotificationMethod(),
-		// 	},
-		// 	require("../services/electron/WindowService").default.openPopOut,
-		// 	// TODO:
-		// 	ElectronHelpers.getLedgerTransport(),
-		// 	require("../services/electron/SocketService").default
-		// )
 	}
 
 	static getLedgerTransport(){

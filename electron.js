@@ -378,6 +378,7 @@ class LowLevelSocketService {
 			res.setHeader('Content-Type', 'application/json');
 			res.end('scatter');
 		}
+
 		await Promise.all(Object.keys(this.ports).map(async port => {
 			const server = this.ports[port] ? https.createServer(_certs, requestHandler) : http.createServer(requestHandler);
 			this.websockets.push(new WebSocket.Server({ server }));
@@ -466,7 +467,7 @@ global.appShared = {
 	LowLevelSocketService:new LowLevelSocketService(),
 	NotificationService,
 	savingData:false,
-	reloader:() => mainWindow.reload()
+	reloader:() => mainWindow.reload(),
 };
 
 
@@ -510,4 +511,10 @@ const logerr = console.error;
 console.error = (...params) => {
 	mainWindow.webContents.send('console', params);
 	logerr(...params);
+}
+
+
+// FORWARDING FROM INJECTED DOM
+global.scatterMessage = (data) => {
+	mainWindow.webContents.send('scatter', data);
 }

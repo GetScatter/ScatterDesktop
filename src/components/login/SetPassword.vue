@@ -47,9 +47,8 @@
 				if(err) return PopupService.push(Popup.snackbar(err));
 				if(this.password !== this.confirmation) return PopupService.push(Popup.snackbar("Password confirmation does not match password"));
 
-				StoreService.setWorking(true);
+				// TODO: Loaders
 				await this[UIActions.CREATE_SCATTER](this.password);
-				StoreService.setWorking(false);
 
 				this.$emit('next');
 			},

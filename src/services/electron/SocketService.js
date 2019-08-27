@@ -3,22 +3,22 @@ import {ipcRenderer, remote} from "../../util/ElectronHelpers";
 import StoreService from "@walletpack/core/services/utility/StoreService";
 import * as CoreSocketService from '@walletpack/core/services/utility/SocketService';
 import * as UIActions from "../../store/ui_actions";
+import WebViewService from "./WebViewService";
 
 
-
-let websockets = [];
 export default class SocketService {
 
 	static async initialize(){
+		console.log('initializing')
 		remote.getGlobal('appShared').QuitWatcher = () => {
 			console.log('dced')
 			SocketService.broadcastEvent('dced', {});
 		};
 
 		const certs = await CoreSocketService.getCerts();
-		ipcRenderer.on('api', (event, {request, id}) => CoreSocketService.handleApiResponse(request, id));
-		ipcRenderer.on('pair', (event, {request, id}) => CoreSocketService.handlePairedResponse(request, id));
-		ipcRenderer.on('ports', (event, ports) => StoreService.get().dispatch(UIActions.SET_PORTS, ports));
+		ipcRenderer.on('api', (event, {request, id}) => WebViewService.get().send('sockets', {type:'api', request, id}));
+		ipcRenderer.on('pair', (event, {request, id}) => WebViewService.get().send('sockets', {type:'pair', request, id}));
+		ipcRenderer.on('ports', (event, ports) => WebViewService.get().send('sockets', {type:'ports', ports}));
 		return remote.getGlobal('appShared').LowLevelSocketService.initialize(certs);
 	}
 
@@ -26,19 +26,20 @@ export default class SocketService {
 		return remote.getGlobal('appShared').LowLevelSocketService.close();
 	}
 
-	static sendEvent(event, payload, origin){
+	static async sendEvent(event, payload, origin){
 		return remote.getGlobal('appShared').LowLevelSocketService.sendEvent(event, payload, origin);
 	}
 
-	static broadcastEvent(event, payload){
+	static async broadcastEvent(event, payload){
 		return remote.getGlobal('appShared').LowLevelSocketService.broadcastEvent(event, payload);
 	}
 
-	static emit(origin, id, path, data){
+	static async emit(origin, id, path, data){
+		console.log('emit', origin, path, data);
 		return remote.getGlobal('appShared').LowLevelSocketService.emit(origin, id, path, data);
 	}
 
-	static getNewKey(origin, id){
+	static async getNewKey(origin, id){
 		return remote.getGlobal('appShared').LowLevelSocketService.getNewKey(origin, id);
 	}
 

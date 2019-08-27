@@ -1,3 +1,5 @@
+import {Popup, PopupData, PopupDisplayTypes} from "../../models/popups/Popup";
+
 console.log(require('../../util/ElectronHelpers'));
 
 import {ipcRenderer, remote} from '../../util/ElectronHelpers';
@@ -72,38 +74,43 @@ export default class WindowService {
 	}
 
 	static openPopOut(popup){
+		return new Promise((resolve) => {
+			popup = Popup.fromJson(popup);
 
-		let responded = false;
+			let responded = false;
 
-		const scatter = StoreService.get().state.scatter.clone();
-		scatter.keychain.keypairs.map(keypair => delete keypair.privateKey);
-		scatter.keychain.identities.map(identity => delete identity.privateKey);
-		delete scatter.keychain.avatars;
-		scatter.recurring = Recurring.placeholder();
-		scatter.contacts = [];
+			const scatter = StoreService.get().state.scatter.clone();
+			scatter.keychain.keypairs.map(keypair => delete keypair.privateKey);
+			scatter.keychain.identities.map(identity => delete identity.privateKey);
+			delete scatter.keychain.avatars;
+			scatter.recurring = Recurring.placeholder();
+			scatter.contacts = [];
 
-		const respond = result => {
-			popouts = popouts.filter(x => x.id !== popup.id);
-			popup.data.callback(Object.assign(popup, {result}));
-		};
+			const respond = result => {
+				popouts = popouts.filter(x => x.id !== popup.id);
+				// popup.data.callback(Object.assign(popup, {result}));
+				resolve(Object.assign(popup, {result}));
+			};
 
-		// Rate limiting: One open pop out at a time per origin.
-		if(popouts.find(x => x.data.props.payload.origin === popup.data.props.payload.origin))
-			return false;
+			// Rate limiting: One open pop out at a time per origin.
+			if(popouts.find(x => x.data.props.payload.origin === popup.data.props.payload.origin))
+				return resolve(false);
 
-		popup.data.props.appData = AppsService.getAppData(popup.data.props.payload.origin);
+			popup.data.props.appData = AppsService.getAppData(popup.data.props.payload.origin);
 
-		popouts.push(popup);
+			popouts.push(popup);
 
-		const {width, height} = popup.dimensions();
-		return LowLevelWindowService.openPopOut(
-			readyWindow => WindowService.sendAndWait(readyWindow.id, 'popup', {scatter, popup, balances:{}}).then(result => {
-				responded = true;
-				respond(result);
-			}),
-			closedWithoutAction => { if(!responded) respond(null); },
-			width, height,
-			popup.internal
-		);
+			const {width, height} = popup.dimensions();
+			return LowLevelWindowService.openPopOut(
+				readyWindow => WindowService.sendAndWait(readyWindow.id, 'popup', {scatter, popup, balances:{}}).then(result => {
+					responded = true;
+					respond(result);
+				}),
+				closedWithoutAction => { if(!responded) respond(null); },
+				width, height,
+				popup.internal
+			);
+		})
+
 	}
 }

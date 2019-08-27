@@ -45,7 +45,6 @@ export const actions = {
             return commit(Actions.SET_SCATTER, scatter);
         }
 
-        console.log(await PasswordHelpers.verifyPassword(null, forceLocal));
         if(await PasswordHelpers.verifyPassword(null, forceLocal)){
             const scatter = state.scatter.clone();
 

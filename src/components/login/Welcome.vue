@@ -32,7 +32,7 @@
 				const scatter = this.scatter.clone();
 				scatter.onboarded = true;
 				await this[Actions.SET_SCATTER](scatter);
-				this.$router.push({name:RouteNames.HOME})
+				this.$router.push({name:RouteNames.SCATTER})
 			},
 			...mapActions([
 				Actions.SET_SCATTER

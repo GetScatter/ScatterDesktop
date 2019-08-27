@@ -1,6 +1,5 @@
 <template>
     <section class="view-base">
-
         <Popups />
 
         <router-view v-if="isPopout"></router-view>
@@ -9,18 +8,10 @@
             <MenuBar />
 
             <section class="app-content">
-                <Sidebar v-if="unlocked && onboarded" />
                 <section class="view-pane">
-                    <QuickActions v-if="showQuickActions" />
-                    <router-view class="router-view" :class="{'lowered':true, 'floated':unlocked}"></router-view>
+                    <router-view class="router-view"></router-view>
                 </section>
-
-                <Processes />
             </section>
-        </section>
-
-        <section class="working-screen" v-if="workingScreen">
-            <figure class="spinner icon-spin4 animate-spin"></figure>
         </section>
 
     </section>
@@ -30,20 +21,13 @@
     import { mapActions, mapGetters, mapState } from 'vuex'
     import {RouteNames, Routing} from '../vue/Routing'
 
-    import Processes            from './Processes';
-    import Popups               from './Popups';
-    import Sidebar              from './Sidebar';
-    import QuickActions         from './QuickActions';
     import MenuBar              from './MenuBar';
+    import Popups from './Popups';
 
-    import SingletonService     from "../services/utility/SingletonService";
 
     export default {
     	components:{
 		    Popups,
-		    Processes,
-            Sidebar,
-		    QuickActions,
 		    MenuBar
         },
         data(){ return {
@@ -59,28 +43,8 @@
             ...mapGetters([
                 'unlocked',
             ]),
-            onboarded(){
-                return this.unlocked && this.scatter.onboarded && this.route !== RouteNames.LOGIN
-            },
             isPopout(){
                 return this.$route.name === 'popout';
-            },
-            route(){
-                return this.$route.name
-            },
-            showQuickActions(){
-            	if(!this.onboarded) return false;
-            	return ![
-		            RouteNames.ITEMS,
-		            RouteNames.NETWORKS,
-		            RouteNames.CONTACTS,
-		            RouteNames.HISTORIES,
-		            RouteNames.RIDL,
-		            RouteNames.SETTINGS,
-		            RouteNames.PURCHASE,
-		            RouteNames.IDENTITIES,
-		            RouteNames.LOCATIONS,
-                ].includes(this.$route.name);
             },
 
         },
@@ -90,16 +54,6 @@
         methods:{
 
         },
-        watch:{
-            ['unlocked'](){
-            	if(this.$route.fullPath.indexOf('popout') > -1) return;
-            	if(this.initialized) return;
-            	if(this.unlocked){
-            		this.initialized = true;
-            		SingletonService.init();
-                }
-            }
-        }
     }
 </script>
 

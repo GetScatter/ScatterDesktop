@@ -241,11 +241,11 @@
 									}
 
 									this.success = true;
-									this.$router.push({name:this.RouteNames.HOME});
+									this.$router.push({name:this.RouteNames.SCATTER});
 								}))
 							} else {
 								this.success = true;
-								this.$router.push({name:this.RouteNames.HOME});
+								this.$router.push({name:this.RouteNames.SCATTER});
 							}
 						}, 1000);
 					} else {
