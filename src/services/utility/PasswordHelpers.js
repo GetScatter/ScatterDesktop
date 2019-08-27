@@ -10,6 +10,7 @@ import Locale from "@walletpack/core/models/Locale";
 import * as UIActions from "../../store/ui_actions";
 import PopupService from "./PopupService";
 import {Popup} from "../../models/popups/Popup";
+import IdGenerator from "@walletpack/core/util/IdGenerator";
 
 export default class PasswordHelpers {
 
@@ -26,9 +27,13 @@ export default class PasswordHelpers {
 					mnemonic = m;
 				}
 
-				if(setToState) await Seeder.setSeed(seed);
+				if(setToState) {
+					console.log('setting to state', seed);
+					await Seeder.setSeed(seed);
+				}
 				resolve([mnemonic, seed]);
 			} catch(e){
+				console.log('caugh', e);
 				resolve([null, null]);
 			}
 		})
@@ -50,6 +55,7 @@ export default class PasswordHelpers {
 					if(setToState) await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
 					resolve(true);
 				} catch(e) {
+					console.log('e', e);
 					resolve(false);
 				}
 			}
@@ -58,7 +64,7 @@ export default class PasswordHelpers {
 				await testPassword(true, await Seeder.getSeed());
 			} else {
 				const [mnemonic, seed] = await PasswordHelpers.seedPassword(password, false);
-				await testPassword(false, seed, mnemonic);
+				await testPassword(false, seed);
 			}
 
 		})

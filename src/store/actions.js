@@ -15,22 +15,24 @@ export const actions = {
     [UIActions.SET_SIDEBAR]:({commit}, x) => commit(UIActions.SET_SIDEBAR, x),
     [UIActions.SET_APP_REP]:({commit}, x) => commit(UIActions.SET_APP_REP, x),
     [UIActions.SET_ACTION_REP]:({commit}, x) => commit(UIActions.SET_ACTION_REP, x),
-    [UIActions.SET_PRICE_DATA]:({commit}, x) => commit(UIActions.SET_PRICE_DATA, x),
+    [Actions.SET_PRICE_DATA]:({commit}, x) => commit(Actions.SET_PRICE_DATA, x),
     [UIActions.HIDE_BACK_BTN]:({commit}, x) => commit(UIActions.HIDE_BACK_BTN, x),
     [Actions.ADD_RESOURCES]:({commit}, x) => commit(Actions.ADD_RESOURCES, x),
     [Actions.SET_RESOURCES]:({commit}, x) => commit(Actions.SET_RESOURCES, x),
     [UIActions.SET_PROCESS]:({commit}, x) => commit(UIActions.SET_PROCESS, x),
     [UIActions.RELEASE_PROCESS]:({commit}, x) => commit(UIActions.RELEASE_PROCESS, x),
     [UIActions.SET_WORKING_SCREEN]:({commit}, x) => commit(UIActions.SET_WORKING_SCREEN, x),
-    [UIActions.SET_DAPP_DATA]:({commit}, x) => commit(UIActions.SET_DAPP_DATA, x),
-    [UIActions.SET_DAPP_LOGO]:({commit}, x) => commit(UIActions.SET_DAPP_LOGO, x),
+    [Actions.SET_DAPP_DATA]:({commit}, x) => commit(Actions.SET_DAPP_DATA, x),
+    [Actions.SET_DAPP_LOGO]:({commit}, x) => commit(Actions.SET_DAPP_LOGO, x),
     [UIActions.SET_SEARCH_TERMS]:({commit}, terms) => commit(UIActions.SET_SEARCH_TERMS, terms),
     [Actions.HOLD_SCATTER]:({commit}, scatter) => commit(Actions.SET_SCATTER, scatter),
 
 
 	[UIActions.SET_SEED]:({commit}, password) => {
 		return new Promise(async (resolve, reject) => {
+		    console.log('seeting')
 			const [mnemonic, seed] = await PasswordHelpers.seedPassword(password, true);
+		    console.log('mne', mnemonic, seed);
 			resolve(mnemonic);
 		})
 	},
@@ -43,6 +45,7 @@ export const actions = {
             return commit(Actions.SET_SCATTER, scatter);
         }
 
+        console.log(await PasswordHelpers.verifyPassword(null, forceLocal));
         if(await PasswordHelpers.verifyPassword(null, forceLocal)){
             const scatter = state.scatter.clone();
 

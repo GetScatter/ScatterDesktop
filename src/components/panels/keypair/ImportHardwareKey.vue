@@ -17,7 +17,7 @@
 
 		<br>
 
-		<Input v-if="external && hardwareType === EXT_WALLET_TYPES.LEDGER"
+		<Input v-if="external && hardwareType === 'LEDGER'"
 		     :text="external.addressIndex"
 		     v-on:changed="x => external.addressIndex = x"
 		     type="number"
@@ -49,7 +49,7 @@
 	let inputTimeout;
 	export default {
 		data(){return {
-			hardwareType:EXT_WALLET_TYPES.LEDGER,
+			hardwareType:'LEDGER',
 			EXT_WALLET_TYPES,
 			blockchain:Blockchains.EOSIO,
 			external:null,

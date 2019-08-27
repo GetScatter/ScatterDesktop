@@ -36,7 +36,7 @@
     import QuickActions         from './QuickActions';
     import MenuBar              from './MenuBar';
 
-    import SingletonService     from "@walletpack/core/services/utility/SingletonService";
+    import SingletonService     from "../services/utility/SingletonService";
 
     export default {
     	components:{

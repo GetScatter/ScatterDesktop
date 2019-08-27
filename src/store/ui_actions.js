@@ -12,12 +12,9 @@ export const SET_SIDEBAR = 'setSidebar';
 export const SET_PORTS = 'setPorts';
 
 export const SET_ACTION_REP = 'SET_ACTION_REP';
-export const SET_PRICE_DATA = 'SET_PRICE_DATA';
 export const HIDE_BACK_BTN = 'HIDE_BACK_BTN';
 export const SET_PROCESS = 'SET_PROCESS';
 export const RELEASE_PROCESS = 'RELEASE_PROCESS';
-export const SET_DAPP_DATA = 'SET_DAPP_DATA';
-export const SET_DAPP_LOGO = 'SET_DAPP_LOGO';
 export const SET_SEARCH_TERMS = 'SET_SEARCH_TERMS';
 export const SET_HARDWARE = 'SET_HARDWARE';
 export const REMOVE_HARDWARE = 'REMOVE_HARDWARE';

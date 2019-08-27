@@ -13,6 +13,8 @@ import StorageService from "../services/electron/StorageService";
 import {store} from "../store/store";
 import WindowService from "../services/electron/WindowService";
 import SocketService from "../services/electron/SocketService";
+import ExternalWallet from "@walletpack/core/models/hardware/ExternalWallet";
+import LedgerWallet from "../models/hardware/LedgerWallet";
 
 let popupService;
 const PopupService = () => {
@@ -118,6 +120,10 @@ export default class ElectronHelpers {
 				}
 			}
 		);
+
+		ExternalWallet.loadWallets([
+			{name:'LEDGER', wallet:LedgerWallet}
+		])
 
 
 		// ScatterCore.initialize(
