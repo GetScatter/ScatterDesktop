@@ -4,7 +4,7 @@ import './styles/popins.scss'
 import './styles/confirm.scss'
 import './styles/blockchain-lists.scss'
 
-const Helpers = require('./util/ElectronHelpers').default;
+import Helpers, {ipcRenderer} from './util/ElectronHelpers';
 
 import VueInitializer from './vue/VueInitializer';
 import {Routing} from './vue/Routing';
@@ -12,7 +12,6 @@ import {RouteNames} from './vue/Routing'
 import { QrcodeReader } from 'vue-qrcode-reader'
 
 
-import MenuBar from './components/MenuBar.vue'
 import ViewBase from './components/ViewBase.vue'
 import Button from './components/reusable/Button.vue'
 import Input from './components/reusable/Input.vue'
@@ -24,8 +23,10 @@ import Switcher from './components/reusable/Switcher.vue'
 import SearchAndFilter from './components/reusable/SearchAndFilter.vue'
 import AnimatedNumber from './components/reusable/AnimatedNumber.vue'
 import ActionBar from './components/reusable/ActionBar.vue'
-import PopOutHead from './components/popouts/PopOutHead.vue'
 import WindowService from './services/electron/WindowService';
+import * as Actions from "@walletpack/core/store/constants";
+import WalletTalk from "./util/WalletTalk";
+import {store} from "./store/store";
 
 // f12 to open console from anywhere.
 document.addEventListener("keydown", e => {
@@ -40,10 +41,11 @@ document.onmousedown= e => {
 class Main {
 
 	constructor(){
+		console.log('This is desktop wrapper');
 
-		const hash = location.hash.replace("#/", '');
+		const isPopOut = location.hash.replace("#/", '') === 'popout';
 
-		const shared = [
+		const components = [
 			{tag:'Button', vue:Button},
 			{tag:'Input', vue:Input},
 			{tag:'Select', vue:Select},
@@ -57,29 +59,26 @@ class Main {
 			{tag:'AnimatedNumber', vue:AnimatedNumber},
 		];
 
-		let fragments;
-		if(hash === 'popout') fragments = [
-			{tag:'PopOutHead', vue:PopOutHead},
-		]
-		else {
-			fragments = [
-				// {tag:'slider', vue:SliderComponent},
-				{tag:'qr-reader', vue:QrcodeReader},
-			]
-		}
+		const middleware = (to, next) => {
+			if(to.name === RouteNames.POP_OUT) return next();
 
-		const components = shared.concat(fragments);
-		const middleware = (to, next, store) => {
-			if(hash === 'popout') return next();
-			if(Routing.isRestricted(to.name)) store.getters.unlocked ? next() : next({name:RouteNames.LOGIN});
-			else next();
+			if(!store.getters.unlocked && to.name !== RouteNames.LOGIN){
+				return next({name:RouteNames.LOGIN});
+			}
+
+			return next();
 		};
 
 		Helpers.initializeCore();
 
-		new VueInitializer(Routing.routes(), components, middleware, async (router, _store) => {
+		ipcRenderer.on('loaded', (e,payload) => {
+			console.log('loaded', payload);
+			store.dispatch(Actions.HOLD_SCATTER, payload);
+		})
+		ipcRenderer.send('load');
 
-		});
+		new VueInitializer(Routing.routes(), components, middleware);
+		WalletTalk.setup();
 	}
 
 }

@@ -1,7 +1,7 @@
 import * as Actions from '@walletpack/core/store/constants';
 import {BACKUP_STRATEGIES} from '@walletpack/core/models/Settings';
 import StorageService from '../../services/electron/StorageService';
-import StoreService from "@walletpack/core/services/utility/StoreService";
+import {store} from "../../store/store";
 
 const saveBackup = (filepath) => {
 	const scatter = StorageService.getScatter();
@@ -10,7 +10,7 @@ const saveBackup = (filepath) => {
 	const year = date.getUTCFullYear();
 	const salt = StorageService.getSalt();
 	const file = scatter + '|SLT|' + salt;
-	const name = `scatter__${StoreService.get().state.scatter.hash.substr(0,4)}-${StoreService.get().state.scatter.hash.slice(-4)}__${StoreService.get().state.scatter.meta.version}__${month}-${year}.json`;
+	const name = `scatter__${store.state.scatter.hash.substr(0,4)}-${store.state.scatter.hash.slice(-4)}__${store.state.scatter.meta.version}__${month}-${year}.json`;
 
 	return StorageService.saveFile(filepath, name, file);
 };
@@ -18,9 +18,9 @@ const saveBackup = (filepath) => {
 export default class BackupService {
 
 	static async setBackupStrategy(strategy){
-		const scatter = StoreService.get().state.scatter.clone();
+		const scatter = store.state.scatter.clone();
 		scatter.settings.autoBackup = strategy;
-		return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+		return store.dispatch(Actions.SET_SCATTER, scatter);
 	}
 
 	static async createBackup(){
@@ -38,9 +38,9 @@ export default class BackupService {
 			return null;
 		})();
 		if(!location) return false;
-		const scatter = StoreService.get().state.scatter.clone();
+		const scatter = store.state.scatter.clone();
 		scatter.settings.backupLocation = location;
-		return StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
+		return store.dispatch(Actions.SET_SCATTER, scatter);
 	}
 
 	static async setDefaultBackupLocation(){
@@ -52,11 +52,11 @@ export default class BackupService {
 	}
 
 	static async createAutoBackup(){
-		if(!StoreService.get().state.scatter || !StoreService.get().state.scatter.settings) return;
-		const strategy = StoreService.get().state.scatter.settings.autoBackup;
+		if(!store.state.scatter || !store.state.scatter.settings) return;
+		const strategy = store.state.scatter.settings.autoBackup;
 		if(!strategy || !strategy.length || strategy === BACKUP_STRATEGIES.MANUAL) return;
 
-		const backupLocation = StoreService.get().state.scatter.settings.backupLocation;
+		const backupLocation = store.state.scatter.settings.backupLocation;
 		if(!backupLocation || !backupLocation.length) return false;
 
 

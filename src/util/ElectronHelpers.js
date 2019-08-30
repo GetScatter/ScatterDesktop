@@ -80,7 +80,8 @@ export default class ElectronHelpers {
 			if(type === 'popout') {
 				console.log('POPOUT!')
 				const popup =  new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data));
-				return WindowService.openPopOut(popup);
+				const popoutResult = await WindowService.openPopOut(popup);
+				console.log("POPOUT RESULT?", popoutResult);
 			}
 
 		};
@@ -88,11 +89,16 @@ export default class ElectronHelpers {
 
 		ScatterCore.initialize(
 			{
-				blockchains:{},
+				blockchains:{
+					EOSIO:'eos',
+					ETH:'eth',
+					TRX:'trx',
+					BTC:'btc',
+				},
 				plugins:[
 					require('@walletpack/eosio').default,
 					require('@walletpack/ethereum').default,
-					// require('@walletpack/tron').default,
+					require('@walletpack/tron').default,
 					require('@walletpack/bitcoin').default,
 				]
 			},

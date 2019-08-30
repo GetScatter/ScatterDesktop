@@ -2,12 +2,10 @@
     <section class="view-base">
         <Popups />
 
-        <router-view v-if="isPopout"></router-view>
+        <section>
+            <MenuBar v-if="!isPopOut" />
 
-        <section v-else>
-            <MenuBar />
-
-            <section class="app-content">
+            <section class="app-content" :class="{'popout':isPopOut}">
                 <section class="view-pane">
                     <router-view class="router-view"></router-view>
                 </section>
@@ -43,9 +41,9 @@
             ...mapGetters([
                 'unlocked',
             ]),
-            isPopout(){
-                return this.$route.name === 'popout';
-            },
+	        isPopOut(){
+            	return this.$route.name === RouteNames.POP_OUT
+            }
 
         },
         mounted(){
@@ -87,8 +85,9 @@
         margin-top:40px;
         box-shadow:inset 0 0 0 1px $lightgrey;
 
-        &.no-menu {
-
+        &.popout {
+            height:100vh;
+            margin-top:0;
         }
     }
 

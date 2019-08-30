@@ -11,8 +11,9 @@ import { Serialize } from 'eosjs';
 const EthTx = require('ethereumjs-tx')
 import Eth from "@ledgerhq/hw-app-eth";
 import {EXT_WALLET_TYPES} from "@walletpack/core/models/hardware/ExternalWallet";
-import StoreService from "@walletpack/core/services/utility/StoreService";
 // import {encoderOptions, eosjsUtil} from '../../plugins/defaults/eos'
+import {store} from "../../store/store";
+
 let encoderOptions, eosjsUtil;
 
 
@@ -27,8 +28,8 @@ export const LEDGER_PATHS = {
 }
 
 const getTransport = () => {
-	if(!StoreService.get().state.hardware.hasOwnProperty('LEDGER')) return null;
-	return StoreService.get().state.hardware['LEDGER'];
+	if(!store.state.hardware.hasOwnProperty('LEDGER')) return null;
+	return store.state.hardware['LEDGER'];
 }
 
 export default class LedgerWallet {

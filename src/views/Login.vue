@@ -128,6 +128,8 @@
 	import BackupService from "../services/utility/BackupService";
 	import * as UIActions from "../store/ui_actions";
 
+	const {Wallet} = window.require('electron').remote.getGlobal('appShared');
+
 	const STATES = {
 		NEW_OR_LOGIN:'newOrLogin',
 		CREATE_NEW:'createNew',
@@ -213,48 +215,68 @@
 				}));
 			},
 
-			async unlock(usingLocalStorage = false){
-				if(!usingLocalStorage){
-					if(this.opening) return;
-					this.opening = true;
+			async unlock(){
+				if(this.opening) return;
+				this.opening = true;
+
+				const scatter = await Wallet.unlock(this.password);
+
+				if(!scatter){
+					this.opening = false;
+					this.badPassword = true;
+					PopupService.push(Popup.snackbarBadPassword());
+					return;
 				}
-				setTimeout(async () => {
-					await this[UIActions.SET_SEED](this.password);
-					await this[Actions.LOAD_SCATTER](usingLocalStorage);
-					if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
-						setTimeout(() => {
-							if(!this.scatter.onboarded){
-								PopupService.push(Popup.showTerms(async accepted => {
-									if(!accepted){
-										await this[UIActions.SET_SEED](null);
-										await this[Actions.LOAD_SCATTER](false);
-										this.opening = false;
-										return;
-									}
 
-									const clone = this.scatter.clone();
-									clone.onboarded = true;
-									await this[Actions.SET_SCATTER](clone);
+				await this[Actions.HOLD_SCATTER](scatter);
+				this.success = true;
+				this.$router.push({name:this.RouteNames.SCATTER});
+				console.log('unlocked', scatter);
 
-									if(!this.scatter.settings.backupLocation.length){
-										await BackupService.setDefaultBackupLocation();
-									}
 
-									this.success = true;
-									this.$router.push({name:this.RouteNames.SCATTER});
-								}))
-							} else {
-								this.success = true;
-								this.$router.push({name:this.RouteNames.SCATTER});
-							}
-						}, 1000);
-					} else {
-						if(!usingLocalStorage) return this.unlock(true);
-						this.opening = false;
-						this.badPassword = true;
-						PopupService.push(Popup.snackbarBadPassword());
-					}
-				}, 400)
+
+
+				// if(!usingLocalStorage){
+				// 	if(this.opening) return;
+				// 	this.opening = true;
+				// }
+				// setTimeout(async () => {
+				// 	await this[UIActions.SET_SEED](this.password);
+				// 	await this[Actions.LOAD_SCATTER](usingLocalStorage);
+				// 	if(typeof this.scatter === 'object' && !this.scatter.isEncrypted()){
+				// 		setTimeout(() => {
+				// 			if(!this.scatter.onboarded){
+				// 				PopupService.push(Popup.showTerms(async accepted => {
+				// 					if(!accepted){
+				// 						await this[UIActions.SET_SEED](null);
+				// 						await this[Actions.LOAD_SCATTER](false);
+				// 						this.opening = false;
+				// 						return;
+				// 					}
+				//
+				// 					const clone = this.scatter.clone();
+				// 					clone.onboarded = true;
+				// 					await this[Actions.SET_SCATTER](clone);
+				//
+				// 					if(!this.scatter.settings.backupLocation.length){
+				// 						await BackupService.setDefaultBackupLocation();
+				// 					}
+				//
+				// 					this.success = true;
+				// 					this.$router.push({name:this.RouteNames.SCATTER});
+				// 				}))
+				// 			} else {
+				// 				this.success = true;
+				// 				this.$router.push({name:this.RouteNames.SCATTER});
+				// 			}
+				// 		}, 1000);
+				// 	} else {
+				// 		if(!usingLocalStorage) return this.unlock(true);
+				// 		this.opening = false;
+				// 		this.badPassword = true;
+				// 		PopupService.push(Popup.snackbarBadPassword());
+				// 	}
+				// }, 400)
 			},
 			destroy(){
 				PopupService.push(Popup.destroyScatter());
@@ -265,6 +287,7 @@
 				UIActions.SET_SEED,
 				Actions.LOAD_SCATTER,
 				Actions.SET_SCATTER,
+				Actions.HOLD_SCATTER,
 			])
 		},
 		watch:{

@@ -28,7 +28,6 @@ import {HISTORY_TYPES} from "@walletpack/core/models/histories/History";
 import HistoricTransfer from "@walletpack/core/models/histories/HistoricTransfer";
 import HistoricExchange from "@walletpack/core/models/histories/HistoricExchange";
 import HistoricAction from "@walletpack/core/models/histories/HistoricAction";
-import StoreService from "@walletpack/core/services/utility/StoreService";
 import Seeder from "@walletpack/core/services/secure/Seeder";
 import ElectronHelpers from "../../util/ElectronHelpers";
 import * as FileService from "./FileService";
@@ -108,9 +107,7 @@ export default class StorageService {
 		abiStorage().clear();
 		historyStorage().clear();
 		translationStorage().clear();
-		StoreService.get().commit(Actions.SET_SCATTER, null);
-		window.localStorage.removeItem('scatter');
-		ipcFaF('key', null);
+		// TODO: Clear main process
 		return true;
 	}
 

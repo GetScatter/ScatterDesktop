@@ -2,10 +2,10 @@
 	<section class="pop-in">
 		<section class="head">
 			<figure class="icon font icon-attention"></figure>
-			<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Title)}}</figure>
+			<figure class="title">You are about to Destroy your Scatter</figure>
 			<section class="disclaimer">
-				<figure class="title">{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Disclaimer)}}</figure>
-				<figure class="description">{{locale(langKeys.POPINS.FULLSCREEN.DESTROY.Desc)}}</figure>
+				<figure class="title">This action is <b>dangerous!</b></figure>
+				<figure class="description">Make sure you have all of your keys before doing this, or you will lose them forever.</figure>
 			</section>
 		</section>
 

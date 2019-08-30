@@ -3,9 +3,9 @@
 		<section>
 			<!--<h1>{{locale(langKeys.LOGIN.RESTORE.Title)}}</h1>-->
 			<!--<p class="limited-p">{{locale(langKeys.LOGIN.RESTORE.SubTitle)}}</p>-->
-			<h2>{{locale(langKeys.LOGIN.RESTORE.Title)}}</h2>
+			<h2>Import a Scatter Backup</h2>
 			<p>
-				{{locale(langKeys.LOGIN.RESTORE.SubTitle)}}
+				Scatter backups are <u>.json</u> files that allow you to recover your full Scatter data.
 			</p>
 
 			<br>
@@ -54,7 +54,8 @@
 			},
 			importBackup(){
 				const unrestore = () => {
-					this.setWorkingScreen(false);
+					// TODO:
+					// this.setWorkingScreen(false);
 					this.restoringBackup = false;
 				}
 				if(this.restoringBackup) return;

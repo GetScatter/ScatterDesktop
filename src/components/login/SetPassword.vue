@@ -21,7 +21,6 @@
 <script>
 	import {mapActions} from 'vuex';
 	import PasswordService from "@walletpack/core/services/secure/PasswordService";
-	import StoreService from "@walletpack/core/services/utility/StoreService";
 	import Lock from '../svgs/Lock'
 	import * as UIActions from "../../store/ui_actions";
 	import PopupService from "../../services/utility/PopupService";
