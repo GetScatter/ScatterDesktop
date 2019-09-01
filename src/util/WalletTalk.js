@@ -20,7 +20,7 @@ export default class WalletTalk {
 	static setup(){
 		ipcRenderer.on('popoutResponse', async (e, payload) => {
 			console.log('popoutresponse', payload);
-			WebViewService.get().send('scatter', {data:payload.result, id:payload.original.id})
+			WebViewService.get().send('scatter', {data:payload.data.result, id:payload.data.original.id})
 		});
 
 		ipcRenderer.on('scatter', async (e, payload) => {

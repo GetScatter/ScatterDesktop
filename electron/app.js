@@ -216,11 +216,16 @@ global.scatterMessage = async (data) => {
 		return null;
 	}
 
+	if(data.service === 'sign' && data.method === 'sign') {
+		return {data:await wallet.sign(...data.data), id:data.id};
+	}
+
 	if(data.method === 'getScatter') return {data:wallet.getScatter(), id:data.id};
 
 	// Popouts can only get scatter data, not update it
 	if(data.isPopOut) return;
 
+	if(data.method === 'sign') return {data:await wall.sign(...data.data), id:data.id};
 	if(data.method === 'setScatter') return {data:await wallet.updateScatter(...data.data), id:data.id};
 
 	mainWindow.webContents.send('scatter', data);

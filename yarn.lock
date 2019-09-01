@@ -880,18 +880,18 @@
     source-map "~0.6.1"
     vue-template-es2015-compiler "^1.9.0"
 
-"@walletpack/bitcoin@^1.0.20":
-  version "1.0.20"
-  resolved "https://registry.yarnpkg.com/@walletpack/bitcoin/-/bitcoin-1.0.20.tgz#50ccdf0889e804a3d4a3084a5e170b9cc24692d8"
-  integrity sha512-aYXeZENBy/aP+i7Ap/43Ccdi9dLACb4moV8C8CY56bDsKIbuBTKo4WnwPn0Jxtx14GAP+JixuBrhLzM97tYVUA==
+"@walletpack/bitcoin@^1.0.24":
+  version "1.0.24"
+  resolved "https://registry.yarnpkg.com/@walletpack/bitcoin/-/bitcoin-1.0.24.tgz#995ebc4d8e01ae5718e32b8eb0ed1c9cc8d4c3c3"
+  integrity sha512-QsWYn/i+VqIvQKK6vC/1099744gqmnV7JH/+P6Sxy9EL3EWq9ZO9FLCxSeCy6FFAm/+geIW2NJ7evqV2e+m7yA==
   dependencies:
-    "@walletpack/core" "^1.0.19"
+    "@walletpack/core" "^1.0.22"
     bitcoinjs-lib "^5.1.2"
 
-"@walletpack/core@^1.0.19":
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.19.tgz#5eb072679387681424ab08132894c5947f8a5f84"
-  integrity sha512-S3Ej1J65cfOa4i9BAn/sExfamQ77TN/GGWgja0gV1O7iZ0jXls0dA8RRQmEeWHsW/2wUaGfaFfsZTcXC3ymKKQ==
+"@walletpack/core@^1.0.22", "@walletpack/core@^1.0.23":
+  version "1.0.22"
+  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.22.tgz#b41d46315ef6ef81eb283a43a6e442ef6599a44c"
+  integrity sha512-SgwFq544fZ0YUa1SWhDnsmc6jRCZFGT7DXLJD6FsAAhxe7zGd8T+q++t+6+fWja4Os/3/aNkHx4OGDNwFPVH+w==
   dependencies:
     aes-oop "^1.0.4"
     bignumber.js "^9.0.0"
@@ -900,32 +900,32 @@
     qrcode "^1.4.1"
     scrypt-async "^2.0.1"
 
-"@walletpack/eosio@^0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@walletpack/eosio/-/eosio-0.0.20.tgz#c80246142f56a2510436b6ef6a5e278ba1aa04e5"
-  integrity sha512-Qh3EBPwQmqGca5tBnk+VrFsK9ABOpModaF+KGxdedo4J2fkpnQpRN4SYfahnmKtNTdFVDMuZc0+l27iiX81zJw==
+"@walletpack/eosio@^0.0.24":
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/@walletpack/eosio/-/eosio-0.0.24.tgz#df4409afed34f0cd4a4e11ca34dfd2dbc7868bcb"
+  integrity sha512-MsaG0+K4UrWY49XLwlXG3ANNCtCTrdJUC2xMTONg2BhyqNsQtWPXfg6+9pYwnZs9XIxZ7ef7M98MC0LFUWdV4A==
   dependencies:
-    "@walletpack/core" "^1.0.19"
+    "@walletpack/core" "^1.0.22"
     eosjs "^20.0.0"
     eosjs-ecc "^4.0.4"
 
-"@walletpack/ethereum@^0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@walletpack/ethereum/-/ethereum-0.0.20.tgz#241d4535476f6ff3ba6f29deac1461c56d430853"
-  integrity sha512-OP4f2P8HR9zoTL5U8r7kMLSMTW9XxLpgtNC8Nn04AAqbxo2msxYDpMMlmVi+/13ooJJ8IQnX8k/eRJLFTy0Okw==
+"@walletpack/ethereum@^0.0.24":
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/@walletpack/ethereum/-/ethereum-0.0.24.tgz#74d81c59a217570e7701e12501e7aa5b150937d3"
+  integrity sha512-s7K1OrMGncn5R3OjiM2CIjFCk3RRNnEYVYJ2TevBksk7YUjPXavVc3dt+YhqwwHOE4pRVJOVkxnETq7uhjnfFQ==
   dependencies:
-    "@walletpack/core" "^1.0.19"
+    "@walletpack/core" "^1.0.22"
     ethereumjs-tx "^2.1.0"
     ethereumjs-util "^6.1.0"
     web3 "^1.2.0"
     web3-provider-engine "^15.0.0"
 
-"@walletpack/tron@^0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@walletpack/tron/-/tron-0.0.20.tgz#9f06f4438950e2cf1016ce05b2c6213408ccd374"
-  integrity sha512-8/BZp5e0e14k/hpjEIBJq+ZnXTeYdPrn4wPzfs2d79GAmgMQHfxoJUSQh40SBA6/HizNEQz6hahJL8gMFeHlug==
+"@walletpack/tron@^0.0.24":
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/@walletpack/tron/-/tron-0.0.24.tgz#2865692bef0f0517893d990ac3815167ea3da397"
+  integrity sha512-iIyZ0z0H3SGH+gDKfYQWqO2rRXzQ0Q5nJYvtrC36iQXhAb0tFHvyZkLszuLbeMMC2YVjpu6g/sEuzkGi3Xi5kQ==
   dependencies:
-    "@walletpack/core" "^1.0.19"
+    "@walletpack/core" "^1.0.22"
     ethereumjs-util "^6.1.0"
     tronweb "^2.6.4"
 

@@ -8,7 +8,21 @@ const AES = require("aes-oop").default;
 const storage = require('./storage')
 const path = require('path')
 const Scatter = require('@walletpack/core/models/Scatter').default;
+const PluginRepository = require('@walletpack/core/plugins/PluginRepository').default;
+const Error = require('@walletpack/core/models/errors/Error').default;
 
+
+const EOSIO = require('@walletpack/eosio').default;
+const TRON = require('@walletpack/tron').default;
+const BITCOIN = require('@walletpack/bitcoin').default;
+const ETHEREUM = require('@walletpack/ethereum').default;
+
+const plugins = {
+	eos:new EOSIO(),
+	trx:new TRON(),
+	btc:new BITCOIN(),
+	eth:new ETHEREUM()
+}
 
 
 let seed, salt;
@@ -94,8 +108,29 @@ const unlock = async password => {
 	}
 }
 
-const sign = () => {
+const sign = (network, publicKey, payload, arbitrary = false, isHash = false) => {
+	try {
 
+		const plugin = plugins[network.blockchain];
+		console.log('plugin', plugin, network.blockchain);
+		if(!plugin) return false;
+
+		const keypair = scatter.keychain.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey))
+		console.log('keypair', !!keypair);
+		if(!keypair) return Error.signatureError('no_keypair', 'This keypair could not be found');
+
+		let privateKey = AES.decrypt(keypair.privateKey, seed);
+		if(!privateKey) return Error.signatureError('sign_err', 'Could not decode private key');
+		if(typeof privateKey === 'object' && privateKey.hasOwnProperty('data')) privateKey = privateKey.data;
+
+
+		// TODO: eosjs-ecc needs an update with a patch for ripemd, for now edit 'eosjs-ecc/hash.js'
+		// https://github.com/EOSIO/eosjs-ecc/pull/56/commits/a4f409927bc84022d5fc9811dfccec85b7ffbb2b
+		return plugin.signer(payload, publicKey, arbitrary, isHash, privateKey);
+	} catch(e){
+		console.error('Signing Error!', e);
+		return Error.signatureError('sign_err', 'There was an error signing this transaction.');
+	}
 };
 
 ipcMain.on('load', (e) => {
