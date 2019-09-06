@@ -888,7 +888,7 @@
     "@walletpack/core" "^1.0.22"
     bitcoinjs-lib "^5.1.2"
 
-"@walletpack/core@^1.0.22", "@walletpack/core@^1.0.23":
+"@walletpack/core@^1.0.22":
   version "1.0.22"
   resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.22.tgz#b41d46315ef6ef81eb283a43a6e442ef6599a44c"
   integrity sha512-SgwFq544fZ0YUa1SWhDnsmc6jRCZFGT7DXLJD6FsAAhxe7zGd8T+q++t+6+fWja4Os/3/aNkHx4OGDNwFPVH+w==

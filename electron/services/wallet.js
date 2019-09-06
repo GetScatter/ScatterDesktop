@@ -31,7 +31,7 @@ let scatter = storage.getScatter();
 salt = storage.getSalt();
 
 const setScatter = (_s) => scatter = JSON.parse(JSON.stringify(_s));
-const getScatter = () => JSON.parse(JSON.stringify(scatter));
+const getScatter = () => scatter ? JSON.parse(JSON.stringify(scatter)) : null;
 
 const updateScatter = async (_s) => {
 	const isEncrypted = x => x.toString().indexOf('"iv":') > -1
@@ -66,6 +66,7 @@ const updateScatter = async (_s) => {
 
 const hashPassword = (password) => {
 	return new Promise(async resolve => {
+		salt = storage.getSalt();
 		scrypt(password, salt, {
 			N: 16384,
 			r: 8,
@@ -87,13 +88,15 @@ const passwordToSeed = async password => {
 
 
 
-const unlock = async password => {
+const unlock = async (password, isNew = false) => {
 	try {
 		seed = await passwordToSeed(password);
-		const decrypted = AES.decrypt(scatter, seed);
-		if(!decrypted.hasOwnProperty('keychain')) return false;
-		decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
-		scatter = decrypted;
+		if(!isNew) {
+			const decrypted = AES.decrypt(scatter, seed);
+			if (!decrypted.hasOwnProperty('keychain')) return false;
+			decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
+			scatter = decrypted;
+		}
 
 		setTimeout(() => {
 			LowLevelWindowService.queuePopup();

@@ -3,9 +3,6 @@ const electron = window.require('electron');
 const {ipcRenderer} = electron;
 
 import WebViewService from "../services/electron/WebViewService";
-import Scatter from "@walletpack/core/models/Scatter";
-import * as Actions from "@walletpack/core/store/constants";
-import {store} from "../store/store";
 
 
 const services = {
@@ -13,25 +10,25 @@ const services = {
 	SocketService:require('../services/electron/SocketService').default,
 	StorageService:require('../services/electron/StorageService').default,
 	WindowService:require('../services/electron/WindowService').default,
+	Injectable:require('../services/electron/Injectable').default,
 }
 
 export default class WalletTalk {
 
 	static setup(){
 		ipcRenderer.on('popoutResponse', async (e, payload) => {
-			console.log('popoutresponse', payload);
 			WebViewService.get().send('scatter', {data:payload.data.result, id:payload.id})
 		});
 
 		ipcRenderer.on('scatter', async (e, payload) => {
 			const {service, method, data, id, isPopOut} = payload;
-			console.log('ipc', service, method);
 
 			if(![
 				'FileService',
 				'SocketService',
 				'StorageService',
 				'WindowService',
+				'Injectable',
 			].includes(service)) return; // console.log('Propagated from embed: ', service, method, data, id);
 
 			if(service === 'StorageService'){
@@ -40,7 +37,6 @@ export default class WalletTalk {
 			}
 
 			const result = await services[service][method](...data);
-			console.log('REEEEEESSSULLLLTTTTTT', result, id, payload);
 			WebViewService.get().send('scatter', {data:result, id})
 
 		});

@@ -72,7 +72,6 @@ class Main {
 		Helpers.initializeCore();
 
 		ipcRenderer.on('loaded', (e,payload) => {
-			console.log('loaded', payload);
 			store.dispatch(Actions.HOLD_SCATTER, payload);
 		})
 		ipcRenderer.send('load');

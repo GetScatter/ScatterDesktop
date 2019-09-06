@@ -1,13 +1,11 @@
+require("babel-polyfill")
+const electron = require('electron');
+const {remote, app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
+
+const {isDev, icon, trayIcon, mainUrl} = require('./utils');
 const LowLevelWindowService = require("./services/windows");
 const LowLevelSocketService = require('./services/sockets');
 const NotificationService = require('./services/notifier');
-
-
-require("babel-polyfill")
-
-const electron = require('electron');
-const {remote, app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
-const {isDev, icon, trayIcon, mainUrl} = require('./utils');
 
 
 
@@ -216,13 +214,10 @@ global.scatterMessage = async (data) => {
 	if(data.service === 'popout' && data.method === 'response') { mainWindow.webContents.send('popoutResponse', data); return null; }
 	if(data.method === 'getScatter') return {data:wallet.getScatter(), id:data.id};
 
-	// Popouts can only get scatter data, not update it
+	// Popouts can only get scatter data
 	if(data.isPopOut) return;
 
-	if(data.service === 'sign' && data.method === 'sign') {
-		console.log('sign result', await wallet.sign(...data.data));
-		return {data:await wallet.sign(...data.data), id:data.id};
-	}
+	if(data.service === 'sign' && data.method === 'sign') return {data:await wallet.sign(...data.data), id:data.id};
 	if(data.method === 'setScatter') return {data:await wallet.updateScatter(...data.data), id:data.id};
 
 	mainWindow.webContents.send('scatter', data);

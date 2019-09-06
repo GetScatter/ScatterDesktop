@@ -1,6 +1,6 @@
 {
   "name": "scatter",
-  "version": "11.0.1",
+  "version": "11.1.0",
   "private": true,
   "buttonText": "Scatter Desktop Companion",
   "author": {
@@ -143,16 +143,16 @@
     },
     "files": [
       "dist/**/*",
+      "electron/**/*",
       "static/**/*",
       "electron.js",
+      "preload.js",
       "package.json"
     ],
     "publish": {
       "provider": "github"
     },
     "nsis": {
-      "deleteAppDataOnUninstall": true,
-      "allowToChangeInstallationDirectory": true,
       "oneClick": false,
       "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,

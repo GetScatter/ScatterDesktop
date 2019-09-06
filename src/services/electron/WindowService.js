@@ -14,12 +14,9 @@ let popouts = [];
 
 
 ipcRenderer.on('popoutResponse', (event, data) => {
-	console.log('PPPRESSSSPPPP', data);
 	if(!data) return;
 	const result = data.data;
 	if(!result) return;
-
-	console.log('RESULT', result);
 
 	const popout = popouts.find(x => x.id === result.original.id);
 	if(popout){

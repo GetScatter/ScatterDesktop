@@ -17,7 +17,7 @@ export const actions = {
 
             await Storage.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 
-            await Wallet.unlock(password);
+            await Wallet.unlock(password, true);
 	        dispatch(Actions.SET_SCATTER, scatter).then(async _scatter => {
 		        await BackupService.setDefaultBackupLocation();
 		        resolve();

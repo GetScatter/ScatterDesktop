@@ -6,13 +6,6 @@
 		<section class="actions" v-if="!isBrowser && !isMacOS">
 
 			<!-- MINIMIZE -->
-			<section class="action" @click="test">
-				<section class="action-inner">
-					<figure class="line"></figure>
-				</section>
-			</section>
-
-			<!-- MINIMIZE -->
 			<section class="action" @click="minimize">
 				<section class="action-inner">
 					<figure class="line"></figure>
@@ -52,12 +45,6 @@
 			}, 500);
 		},
 		methods:{
-			test(){
-				this.$router.push({name:this.RouteNames.LOGIN});
-				setTimeout(() => {
-					this.$router.push({name:this.RouteNames.SCATTER});
-				},10)
-			},
 			quit(){
 				SocketService.broadcastEvent('dced', {});
 				setTimeout(() => remote.app.quit(), 1);

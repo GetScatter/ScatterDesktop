@@ -1,8 +1,6 @@
 import {Popup, PopupData, PopupDisplayTypes} from "../models/popups/Popup";
 let electron = window.require('electron');
 
-console.log('electron', electron);
-
 export const remote = electron.remote;
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
@@ -116,7 +114,6 @@ export default class ElectronHelpers {
 			{
 				socketService:SocketService,
 				publicToPrivate:async publicKey => {
-					console.log('pubkey', publicKey);
 					return false;
 				}
 			}

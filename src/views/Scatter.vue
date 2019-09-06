@@ -18,7 +18,7 @@
 		mounted(){
 			WebViewService.set(this.$refs.webview);
 			WebViewService.get().addEventListener('dom-ready', () => {
-				WebViewService.get().openDevTools();
+				// WebViewService.get().openDevTools();
 				WebViewService.get().executeJavaScript('window.injector();');
 			})
 
