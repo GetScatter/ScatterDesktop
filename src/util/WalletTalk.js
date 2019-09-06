@@ -20,7 +20,7 @@ export default class WalletTalk {
 	static setup(){
 		ipcRenderer.on('popoutResponse', async (e, payload) => {
 			console.log('popoutresponse', payload);
-			WebViewService.get().send('scatter', {data:payload.data.result, id:payload.data.original.id})
+			WebViewService.get().send('scatter', {data:payload.data.result, id:payload.id})
 		});
 
 		ipcRenderer.on('scatter', async (e, payload) => {
@@ -40,6 +40,7 @@ export default class WalletTalk {
 			}
 
 			const result = await services[service][method](...data);
+			console.log('REEEEEESSSULLLLTTTTTT', result, id, payload);
 			WebViewService.get().send('scatter', {data:result, id})
 
 		});

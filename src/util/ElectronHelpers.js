@@ -77,11 +77,10 @@ export default class ElectronHelpers {
 
 
 		const eventListener = async (type, data) => {
+			// console.log('event listener', type, data);
 			if(type === 'popout') {
-				console.log('POPOUT!')
 				const popup =  new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data));
-				const popoutResult = await WindowService.openPopOut(popup);
-				console.log("POPOUT RESULT?", popoutResult);
+				return await WindowService.openPopOut(popup);
 			}
 
 		};

@@ -211,21 +211,18 @@ const wallet = require('./services/wallet');
 
 // FORWARDING FROM INJECTED DOM
 global.scatterMessage = async (data) => {
-	if(data.service === 'popout' && data.method === 'response') {
-		mainWindow.webContents.send('popoutResponse', data);
-		return null;
-	}
+	console.log('got data',data);
 
-	if(data.service === 'sign' && data.method === 'sign') {
-		return {data:await wallet.sign(...data.data), id:data.id};
-	}
-
+	if(data.service === 'popout' && data.method === 'response') { mainWindow.webContents.send('popoutResponse', data); return null; }
 	if(data.method === 'getScatter') return {data:wallet.getScatter(), id:data.id};
 
 	// Popouts can only get scatter data, not update it
 	if(data.isPopOut) return;
 
-	if(data.method === 'sign') return {data:await wall.sign(...data.data), id:data.id};
+	if(data.service === 'sign' && data.method === 'sign') {
+		console.log('sign result', await wallet.sign(...data.data));
+		return {data:await wallet.sign(...data.data), id:data.id};
+	}
 	if(data.method === 'setScatter') return {data:await wallet.updateScatter(...data.data), id:data.id};
 
 	mainWindow.webContents.send('scatter', data);
