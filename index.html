@@ -10,11 +10,24 @@
 	<link rel="stylesheet" href="./static/fonts/sidebar-icons/style.css">
 	<link rel="stylesheet" href="./static/fonts/google-fonts/google-fonts.css">
 	<title>Scatter</title>
+
+	<style>
+		#loader-bg {
+			position:fixed;
+			top:0;
+			bottom:0;
+			left:0;
+			right:0;
+			background:red;
+			z-index:-1;
+		}
+	</style>
 </head>
 <body>
 	<div id="scatter">
 		<view-base></view-base>
 	</div>
+	<section id="loader-bg"></section>
 	<!-- built files will be auto injected -->
 </body>
 </html>

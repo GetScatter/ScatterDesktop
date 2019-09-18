@@ -34,10 +34,11 @@
 	import AES from 'aes-oop';
 	import Crypto from "@walletpack/core/util/Crypto";
 	import * as UIActions from "../../../store/ui_actions";
+	import * as FileService from "../../../services/electron/FileService";
 	const {getFileLocation} = require('../../../services/electron/FileService');
-	const ipcFaF = require('../../../util/ElectronHelpers').ipcFaF;
 	const reload = require('../../../util/ElectronHelpers').default.reload;
-	// const fs = window.require('fs');
+	const fs = window.require('fs');
+	const {Wallet} = window.require('electron').remote.getGlobal('appShared');
 
 	export default {
 		components: {LoginButton},
@@ -58,38 +59,48 @@
 					// this.setWorkingScreen(false);
 					this.restoringBackup = false;
 				}
+
 				if(this.restoringBackup) return;
 				this.restoringBackup = true;
+
 				const possibleFile = getFileLocation(['json', 'txt']);
 				if(!possibleFile) return unrestore();
 				const file = possibleFile[0];
 				if(!file) return unrestore();
+
+				console.log('file', file);
+
+
+
 				const importDesktopBackup = async (data, password) => {
 					const [obj, salt] = data.split('|SLT|');
 					if(!obj || !salt) {
 						unrestore();
-						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorParsingBackup)));
+						return PopupService.push(Popup.snackbar(`Error parsing backup file`));
 					}
 					const [_, seed] = await Mnemonic.generateMnemonic(password, salt);
 					const decrypted = AES.decrypt(obj, seed);
 					if(typeof decrypted === 'object' && decrypted.hasOwnProperty('keychain')){
 						decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
 						decrypted.settings.backupLocation = '';
-						StorageService.setSalt(salt);
-						await this[UIActions.SET_SEED](password);
-						await this[Actions.SET_SCATTER](Scatter.fromJson(decrypted));
-						ipcFaF('key', null);
+
+						await StorageService.setSalt(salt);
+						await Wallet.unlock(password, true);
+						await Wallet.updateScatter(decrypted);
 						reload()
 					} else {
 						unrestore();
-						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
+						return PopupService.push(Popup.snackbar(`Error decrypting backup file`));
 					}
 				};
+
+
+
 				const importExtensionBackup = async (data, password) => {
 					const [obj, salt] = data.split('|SSLT|');
 					if(!obj || !salt) {
 						unrestore();
-						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorParsingBackup)));
+						return PopupService.push(Popup.snackbar(`Error parsing backup file`));
 					}
 					const [_, seed] = await Mnemonic.generateMnemonic(password, salt);
 					const decrypted = AES.decrypt(obj, seed);
@@ -116,36 +127,38 @@
 						await Promise.all(keypairs.map(keypair => {
 							return AccountService.importAllAccounts(keypair);
 						}));
-						ipcFaF('key', null);
 						reload()
 					} else {
 						unrestore();
-						return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
+						return PopupService.push(Popup.snackbar(`Error decrypting backup file`));
 					}
 				};
 
-				// TODO: Fix for both web and desktop
-				// fs.readFile(file, 'utf-8', (err, data) => {
-				// 	const fileExtension = file.split('.')[file.split('.').length-1];
-				// 	if(err) {
-				// 		unrestore();
-				// 		return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.CantReadBackup)));
-				// 	}
-				// 	PopupService.push(Popup.verifyPassword(async password => {
-				// 		if(!password || !password.length) return unrestore();
-				// 		this.setWorkingScreen(true);
-				// 		try {
-				// 			switch(fileExtension){
-				// 				case 'json': return await importDesktopBackup(data, password);
-				// 				case 'txt': return await importExtensionBackup(data, password);
-				// 			}
-				// 		} catch(e){
-				// 			console.error('e',e);
-				// 			unrestore();
-				// 			return PopupService.push(Popup.snackbar(this.locale(this.langKeys.SNACKBARS.AUTH.ErrorDecryptingBackup)));
-				// 		}
-				// 	}, true))
-				// });
+				FileService.openFile(file).then(data => {
+					if(!data){
+
+						unrestore();
+						return PopupService.push(Popup.snackbar(`Can't read backup file`));
+					}
+
+					PopupService.push(Popup.verifyPassword(async password => {
+						console.log('pass?', password);
+						if(!password || !password.length) return unrestore();
+						// TODO:
+						// this.setWorkingScreen(true);
+						try {
+							const fileExtension = file.split('.')[file.split('.').length-1];
+							switch(fileExtension){
+								case 'json': return await importDesktopBackup(data, password);
+								case 'txt': return await importExtensionBackup(data, password);
+							}
+						} catch(e){
+							console.error('e',e);
+							unrestore();
+							return PopupService.push(Popup.snackbar(`Error decrypting backup file`));
+						}
+					}, true))
+				})
 			},
 
 			...mapActions([

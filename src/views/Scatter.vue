@@ -5,10 +5,14 @@
 </template>
 
 <script>
+	import PopupService from "../services/utility/PopupService";
+
 	const path = require('path');
 
 	import {ipcRenderer, remote} from '../util/ElectronHelpers';
 	import WebViewService from "../services/electron/WebViewService";
+	import {Popup} from "../models/popups/Popup";
+	import WebHashChecker from "../services/utility/WebHashChecker";
 
 
 	export default {
@@ -16,11 +20,24 @@
 			preload:() => `file://${path.join(remote.app.getAppPath(), 'preload.js')}`,
 		},
 		mounted(){
-			WebViewService.set(this.$refs.webview);
-			WebViewService.get().addEventListener('dom-ready', () => {
-				// WebViewService.get().openDevTools();
-				WebViewService.get().executeJavaScript('window.injector();');
-			})
+
+			const bindApp = () => {
+				WebViewService.set(this.$refs.webview);
+				WebViewService.get().addEventListener('dom-ready', () => {
+					WebViewService.get().openDevTools();
+				})
+			}
+
+			bindApp();
+			// WebHashChecker.check().then(check => {
+			// 	if(typeof check === 'object' && check.hasOwnProperty('error')){
+			// 		return PopupService.push(Popup.snackbar(check.error));
+			// 	}
+			//
+			// 	bindApp();
+			// })
+
+
 
 		},
 	}

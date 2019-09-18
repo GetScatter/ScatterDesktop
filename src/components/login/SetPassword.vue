@@ -34,9 +34,18 @@
 		}},
 		computed:{
 			passwordStrength(){
-				// TODO:
-				// return PasswordService.passwordStrength(this.password);
-				return 0;
+				const clamp = (min, max, val) => {
+					if(val < min) val = min;
+					if(val > max) val = max;
+					return val;
+				}
+
+				let total = 0;
+				if(this.password.length >= 8) total += clamp(0, 4, this.password.length-7);
+				if(PasswordService.uppercaseCount(this.password) >= 2) total += clamp(0, 4, PasswordService.uppercaseCount(this.password)-1);
+				if(PasswordService.lowercaseCount(this.password) >= 2) total += clamp(0, 4, PasswordService.lowercaseCount(this.password)-1);
+				if(PasswordService.specialCharCount(this.password) >= 2) total += clamp(0, 4, PasswordService.specialCharCount(this.password)-1);
+				return total / 8 / 2 * 100;
 			},
 		},
 		methods:{

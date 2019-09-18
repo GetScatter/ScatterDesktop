@@ -6,8 +6,9 @@ export default class Injectable {
 		return ElectronHelpers.getDefaultPath();
 	}
 
-	static async openLink(link){
-		return ElectronHelpers.openLinkInBrowser(link);
+	static async openLink(link, filepath = false){
+		console.log('opening link')
+		return ElectronHelpers.openLinkInBrowser(link, filepath);
 	}
 
 	static async copy(text){

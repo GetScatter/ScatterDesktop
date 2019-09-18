@@ -4,7 +4,7 @@ let electron = window.require('electron');
 export const remote = electron.remote;
 export const ipcRenderer = electron.ipcRenderer;
 const {clipboard, shell} = electron;
-const {reloader, Transport} = remote.getGlobal('appShared');
+const {reloader, Transport, Wallet, NotificationService} = remote.getGlobal('appShared');
 
 import ScatterCore from "@walletpack/core";
 import StorageService from "../services/electron/StorageService";
@@ -12,7 +12,6 @@ import {store} from "../store/store";
 import WindowService from "../services/electron/WindowService";
 import SocketService from "../services/electron/SocketService";
 import ExternalWallet from "@walletpack/core/models/hardware/ExternalWallet";
-import LedgerWallet from "../models/hardware/LedgerWallet";
 
 let popupService;
 const PopupService = () => {
@@ -71,19 +70,6 @@ export default class ElectronHelpers {
 	static initializeCore(){
 		ElectronHelpers.bindContextMenu();
 
-
-
-
-		const eventListener = async (type, data) => {
-			// console.log('event listener', type, data);
-			if(type === 'popout') {
-				const popup =  new Popup(PopupDisplayTypes.POP_OUT, new PopupData(data.type, data));
-				return await WindowService.openPopOut(popup);
-			}
-
-		};
-
-
 		ScatterCore.initialize(
 			{
 				blockchains:{
@@ -100,54 +86,30 @@ export default class ElectronHelpers {
 				]
 			},
 			store,
-			{
+			/* security */ {
 				getSalt:StorageService.getSalt,
-				get:() => ipcAsync('seed'),
-				set:(seed) => ipcFaF('seeding', seed),
-				clear:() => ipcFaF('key', null),
 			},
-			{
-				getVersion:ElectronHelpers.getVersion,
-				pushNotification:ElectronHelpers.pushNotificationMethod(),
+			/* framwork */ {
+				getVersion:remote.app.getVersion,
+				pushNotification:NotificationService.pushNotification,
 			},
-			eventListener,
-			{
-				socketService:SocketService,
-				publicToPrivate:async publicKey => {
-					return false;
-				}
-			}
+			/* eventListener */ () => {},
+			{ socketService:SocketService }
 		);
 
-		// TODO: Ledger
-		// ExternalWallet.loadWallets([
-		// 	{name:'LEDGER', wallet:LedgerWallet}
-		// ])
-
-	}
-
-	static getLedgerTransport(){
-		return Transport.default
-	}
-
-	static getVersion(){
-		return remote.app.getVersion();
-	}
-
-	static pushNotificationMethod(){
-		return remote ? remote.getGlobal('appShared').NotificationService.pushNotification : () => {};
 	}
 
 	static reload(){
+		Wallet.reloading();
 		reloader();
 	}
 
     static copy(txt){
         clipboard.writeText(txt);
-	    PopupService().push(Popup.snackbar("Copied to clipboard", 'check'))
     }
 
     static openLinkInBrowser(link, filepath = false){
+		console.log('link', link, filepath);
     	if(filepath) shell.openItem(link);
         else {
             if(link.indexOf('https://') === 0 || link.indexOf('http://') === 0) {

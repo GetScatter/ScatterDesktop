@@ -1,5 +1,4 @@
 import * as Actions from '@walletpack/core/store/constants'
-import StorageService from '../services/electron/StorageService';
 import BackupService from '../services/utility/BackupService';
 import Hasher from '@walletpack/core/util/Hasher'
 import IdGenerator from '@walletpack/core/util/IdGenerator'

@@ -41,8 +41,6 @@ document.onmousedown= e => {
 class Main {
 
 	constructor(){
-		console.log('This is desktop wrapper');
-
 		const isPopOut = location.hash.replace("#/", '') === 'popout';
 
 		const components = [

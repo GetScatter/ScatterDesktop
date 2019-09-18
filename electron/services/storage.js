@@ -22,7 +22,6 @@ const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
 
 const electron = require('electron');
-console.log('electron', electron);
 const {app} = electron;
 const fs = require('fs');
 
@@ -81,7 +80,6 @@ const removeScatter = () => {
 }
 
 const getSalt = () => {
-	console.log('getting salt')
 	return scatterStorage().get('salt') || 'SALT_ME';
 }
 const setSalt = (salt) => scatterStorage().set('salt', salt);

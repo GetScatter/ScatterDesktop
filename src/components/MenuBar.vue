@@ -6,6 +6,13 @@
 		<section class="actions" v-if="!isBrowser && !isMacOS">
 
 			<!-- MINIMIZE -->
+			<section class="action" @click="test">
+				<section class="action-inner">
+					<figure class="line"></figure>
+				</section>
+			</section>
+
+			<!-- MINIMIZE -->
 			<section class="action" @click="minimize">
 				<section class="action-inner">
 					<figure class="line"></figure>
@@ -32,6 +39,8 @@
 
 <script>
 
+	import {RouteNames} from "../vue/Routing";
+
 	const {remote} = require('../util/ElectronHelpers');
 	import SocketService from "@walletpack/core/services/utility/SocketService";
 
@@ -45,6 +54,12 @@
 			}, 500);
 		},
 		methods:{
+			test(){
+				this.$router.push({name:RouteNames.POP_OUT});
+				setTimeout(() => {
+					this.$router.push({name:RouteNames.SCATTER});
+				}, 200);
+			},
 			quit(){
 				SocketService.broadcastEvent('dced', {});
 				setTimeout(() => remote.app.quit(), 1);

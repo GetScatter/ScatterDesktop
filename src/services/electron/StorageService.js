@@ -1,6 +1,7 @@
 import {RUNNING_TESTS} from "@walletpack/core/util/TestingHelper";
 import * as Actions from '@walletpack/core/store/constants';
 const Store = window.require('electron-store');
+const {Wallet} = window.require('electron').remote.getGlobal('appShared');
 
 const ABIS_NAME = 'abi';
 const HISTORIES_NAME = 'histories';
@@ -107,6 +108,7 @@ export default class StorageService {
 		abiStorage().clear();
 		historyStorage().clear();
 		translationStorage().clear();
+		Wallet.setScatter(null);
 		// TODO: Clear main process
 		return true;
 	}

@@ -157,8 +157,6 @@ app.on('will-finish-launching', () => {
 
 const Transport = require('@ledgerhq/hw-transport-node-hid');
 
-
-
 global.appShared = {
 	Transport,
 	QuitWatcher:null,
@@ -209,7 +207,7 @@ const wallet = require('./services/wallet');
 
 // FORWARDING FROM INJECTED DOM
 global.scatterMessage = async (data) => {
-	console.log('got data',data);
+	console.log('ipc data', data.service, data.method);
 
 	if(data.service === 'popout' && data.method === 'response') { mainWindow.webContents.send('popoutResponse', data); return null; }
 	if(data.method === 'getScatter') return {data:wallet.getScatter(), id:data.id};
@@ -219,6 +217,10 @@ global.scatterMessage = async (data) => {
 
 	if(data.service === 'sign' && data.method === 'sign') return {data:await wallet.sign(...data.data), id:data.id};
 	if(data.method === 'setScatter') return {data:await wallet.updateScatter(...data.data), id:data.id};
+
+	// Hardware wallets
+	if(data.service === 'hardware' && data.method === 'types') return {data:await wallet.hardwareTypes, id:data.id};
+	if(data.service === 'hardware' && data.method === 'keys') return {data:await wallet.getHardwareKeys(data.data), id:data.id};
 
 	mainWindow.webContents.send('scatter', data);
 }

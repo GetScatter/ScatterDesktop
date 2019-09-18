@@ -86,5 +86,9 @@ module.exports = {
 			to: utils.resolve('dist/static'),
 			toType: 'dir'
 		}]),
-	]
+	],
+	// module not found fs error revealer
+	// node: {
+	// 	fs: 'empty'
+	// }
 }

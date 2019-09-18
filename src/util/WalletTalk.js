@@ -11,6 +11,7 @@ const services = {
 	StorageService:require('../services/electron/StorageService').default,
 	WindowService:require('../services/electron/WindowService').default,
 	Injectable:require('../services/electron/Injectable').default,
+	SecurePasswords:require('../services/electron/SecurePasswords').default,
 }
 
 export default class WalletTalk {
@@ -29,6 +30,8 @@ export default class WalletTalk {
 				'StorageService',
 				'WindowService',
 				'Injectable',
+				'BackupService',
+				'SecurePasswords',
 			].includes(service)) return; // console.log('Propagated from embed: ', service, method, data, id);
 
 			if(service === 'StorageService'){

@@ -1,8 +1,6 @@
 <template>
     <section class="login">
-
-
-
+	    
         <section class="entry" v-if="state === STATES.NEW_OR_LOGIN" :class="{'success':success}">
 	        <figure class="login-bg">
 		        <img src="../assets/login_bg.png" />
@@ -127,6 +125,7 @@
 	import Support from '../components/svgs/login/Support';
 	import BackupService from "../services/utility/BackupService";
 	import * as UIActions from "../store/ui_actions";
+	import ElectronHelpers from "../util/ElectronHelpers";
 
 	const {Wallet} = window.require('electron').remote.getGlobal('appShared');
 
@@ -201,12 +200,10 @@
 			},
 
 			goToSupport(){
-				this.openInBrowser('https://support.get-scatter.com/');
+				ElectronHelpers.openLinkInBrowser('https://support.get-scatter.com/')
 			},
 			importBackup(){
-				PopupService.push(Popup.importFullBackup({}, done => {
-
-				}));
+				PopupService.push(Popup.importFullBackup({}, done => {}));
 			},
 			importKeypair(){
 				this.stepForward();

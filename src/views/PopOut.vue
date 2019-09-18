@@ -1,6 +1,7 @@
 <template>
-	<section class="marketplace">
+	<section class="popout-holder">
 		<webview v-if="ready" ref="webview" class="webview" src="http://localhost:8081/#/popout" :preload="preload" />
+
 	</section>
 </template>
 
@@ -35,7 +36,6 @@
 				WebViewService.set(this.$refs.webview);
 				WebViewService.get().addEventListener('dom-ready', () => {
 					// WebViewService.get().openDevTools();
-					WebViewService.get().executeJavaScript('window.injector();');
 					WebViewService.get().send('popout', this.popOut);
 				})
 			}
@@ -46,7 +46,7 @@
 <style scoped lang="scss" rel="stylesheet/scss">
 	@import "../styles/variables";
 
-	.marketplace, .webview {
+	.popout-holder, .webview {
 		height:100vh;
 
 		&:after {

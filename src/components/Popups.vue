@@ -7,6 +7,8 @@
                 <section class="fullscreen">
                     <DestroyScatter :popin="popIn" v-if="popIn.data.type === popupTypes.DESTROY_SCATTER" />
                     <ImportBackup :popin="popIn" v-if="popIn.data.type === popupTypes.IMPORT_FULL_BACKUP" />
+                    <ConfirmPassword :popin="popIn" v-if="popIn.data.type === popupTypes.VERIFY_PASSWORD" />
+                    <ExportPrivateKey :popin="popIn" v-if="popIn.data.type === popupTypes.EXPORT_PRIVATE_KEY" />
                     <Terms :popin="popIn" v-if="popIn.data.type === popupTypes.SHOW_TERMS" />
                 </section>
             </section>
@@ -32,9 +34,13 @@
 
     import Snackbar from './popins/overlay/Snackbar.vue'
     import * as UIActions from "../store/ui_actions";
+    import ConfirmPassword from "./popins/fullscreen/ConfirmPassword";
+    import ExportPrivateKey from "./popins/fullscreen/ExportPrivateKey";
 
     export default {
     	components:{
+		    ExportPrivateKey,
+		    ConfirmPassword,
 		    Terms:() => import("./popins/fullscreen/Terms"),
 		    DestroyScatter:() => import("./popins/fullscreen/DestroyScatter"),
 		    ImportBackup:() => import("./popins/fullscreen/ImportBackup"),

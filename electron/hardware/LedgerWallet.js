@@ -1,42 +1,50 @@
-import bippath from 'bip32-path';
-import {Blockchains} from '@walletpack/core/models/Blockchains';
-import PopupService from '../../services/utility/PopupService';
-import {Popup} from '../popups/Popup';
+const bippath = require('bip32-path');
+const {Blockchains} = require('@walletpack/core/models/Blockchains');
 
-const fcbuffer = require('fcbuffer');
 const asn1 = require('asn1-ber');
-import ecc from 'eosjs-ecc';
-import { Serialize } from 'eosjs';
+const ecc = require('eosjs-ecc');
+const { Serialize } = require('eosjs');
 
 const EthTx = require('ethereumjs-tx')
-import Eth from "@ledgerhq/hw-app-eth";
-import {EXT_WALLET_TYPES} from "@walletpack/core/models/hardware/ExternalWallet";
-// import {encoderOptions, eosjsUtil} from '../../plugins/defaults/eos'
-import {store} from "../../store/store";
+const Eth = require("@ledgerhq/hw-app-eth");
 
-let encoderOptions, eosjsUtil;
+const Transport = require('@ledgerhq/hw-transport-node-hid').default;
+let transport, openedTransport;
+class LedgerTransport {
+	static setup(){
+		transport = Transport.listen({next:({type, device}) => this[type](device)});
+	}
+
+	static async add(device){
+		const {path} = device;
+		openedTransport = await Transport.open(path);
+	}
+
+	static async remove(device){
+		openedTransport = null;
+		transport = Transport.listen({next:({type, device}) => this[type](device)});
+	}
+}
+
+const getTransport = () => openedTransport;
 
 
-const throwErr = () => PopupService.push(Popup.prompt(
-	'No Hardware Available',
-	'You either need to plug in your Ledger, or select the appropriate App.'
-));
 
-export const LEDGER_PATHS = {
+
+
+
+const LEDGER_PATHS = {
 	[Blockchains.EOSIO]:(index = 0) => `44'/194'/0'/0/${index}`,
 	[Blockchains.ETH]:(index = 0) => `44'/60'/0'/0/${index}`,
 }
 
-const getTransport = () => {
-	if(!store.state.hardware.hasOwnProperty('LEDGER')) return null;
-	return store.state.hardware['LEDGER'];
-}
 
-export default class LedgerWallet {
 
-	constructor(blockchain){
-		this.blockchain = blockchain;
-		this.api = null;
+let encoderOptions, eosjsUtil;
+class LedgerWallet {
+
+	static setup(){
+		LedgerTransport.setup();
 
 		const EosPlugin = require('@walletpack/eosio');
 		if(EosPlugin){
@@ -45,11 +53,16 @@ export default class LedgerWallet {
 		}
 	}
 
+	constructor(blockchain){
+		this.blockchain = blockchain;
+		this.api = null;
+	}
+
 	static typeToInterface(blockchain){
 		return new LedgerWallet(blockchain);
 	};
 
-	availableBlockchains(){
+	static availableBlockchains(){
 		return [Blockchains.EOSIO, Blockchains.ETH];
 	}
 
@@ -60,6 +73,7 @@ export default class LedgerWallet {
 		this.sign = this.api.signTransaction;
 		this.canConnect = this.api.getAppConfiguration;
 		this.setAddressIndex = this.api.setAddressIndex;
+		return true;
 	}
 
 	close(){
@@ -69,6 +83,7 @@ export default class LedgerWallet {
 		delete this.sign;
 		delete this.canConnect;
 		delete this.setAddressIndex;
+		return true;
 	}
 
 }
@@ -115,10 +130,10 @@ class LedgerAPI {
 		prefix.addressIndex = index;
 	}
 
-	async getAddress(delta = 0){
+	async getAddress(index){
 		if(!getTransport()) return;
 		const prefix = this.api ? this.api : this;
-		return prefix[`getAddress`+this.blockchain](delta);
+		return prefix[`getAddress`+this.blockchain](index);
 	}
 
 
@@ -150,8 +165,8 @@ class LedgerAPI {
 	/*                 GET ADDRESS                   */
 	/*************************************************/
 
-	[`getAddress`+Blockchains.EOSIO](delta = 0, boolChaincode = false){
-		const path = LEDGER_PATHS[this.blockchain]((parseInt(this.addressIndex) + parseInt(delta)).toString());
+	[`getAddress`+Blockchains.EOSIO](index, boolChaincode = false){
+		const path = LEDGER_PATHS[this.blockchain](index.toString());
 		const paths = bippath.fromString(path).toPathArray();
 		let buffer = new Buffer(1 + paths.length * 4);
 		buffer[0] = paths.length;
@@ -166,12 +181,15 @@ class LedgerAPI {
 				result.chainCode = response.slice(1 + publicKeyLength + 1 + addressLength, 1 + publicKeyLength + 1 + addressLength + 32).toString("hex");
 			}
 			return result.address;
+		}).catch(err => {
+			console.error('Ledger address error', err);
+			return null;
 		});
 	}
 
-	[`getAddress`+Blockchains.ETH](delta = 0){
+	[`getAddress`+Blockchains.ETH](index){
 		return new Promise(async (resolve, reject) => {
-			const path = LEDGER_PATHS[this.blockchain](parseInt(this.addressIndex) + parseInt(delta));
+			const path = LEDGER_PATHS[this.blockchain](index);
 			const eth = new Eth(getTransport());
 			eth.getAddress(path, false)
 				.then(response => {
@@ -181,75 +199,6 @@ class LedgerAPI {
 			});
 		})
 	}
-
-
-
-
-
-	/*************************************************/
-	/*                 GET PUBLIC KEY                */
-	/*************************************************/
-
-	[`getPublicKey`+Blockchains.EOSIO](){
-		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
-				const paths = bippath.fromString(path).toPathArray();
-				const buffer = Buffer.alloc(1 + paths.length * 4);
-				buffer[0] = paths.length;
-				paths.forEach((element, index) => buffer.writeUInt32BE(element, 1 + 4 * index));
-
-				const popup = Popup.checkHardwareWalletScreen();
-				PopupService.push(popup);
-
-				return getTransport()
-					.send(
-						LEDGER_CODES.CLA,
-						LEDGER_CODES.PK,
-						LEDGER_CODES.YES, // Trigger on-screen approval
-						LEDGER_CODES.NO, // chaincode
-						buffer
-					)
-					.then(response => {
-						PopupService.remove(popup);
-						const result = {};
-						const publicKeyLength = response[0];
-						const addressLength = response[1 + publicKeyLength];
-
-						resolve(response
-							.slice(
-								1 + publicKeyLength + 1,
-								1 + publicKeyLength + 1 + addressLength
-							)
-							.toString("ascii"));
-					}).catch(err => {
-						PopupService.remove(popup);
-						reject(err);
-					})
-			}, 1);
-		})
-	}
-
-	[`getPublicKey`+Blockchains.ETH](){
-		return new Promise(async (resolve, reject) => {
-			const popup = Popup.checkHardwareWalletScreen();
-			PopupService.push(popup);
-			const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
-			const eth = new Eth(getTransport());
-			eth.getAddress(path, true)
-				.then(response => {
-					PopupService.remove(popup);
-					resolve(response.address);
-				}).catch(err => {
-				PopupService.remove(popup);
-				reject(err);
-			});
-		})
-	}
-
-
-
-
 
 
 
@@ -269,7 +218,8 @@ class LedgerAPI {
 			rawTx = serializeEosjs(network, transaction);
 		} catch(e){
 			console.error('e', e);
-			PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
+			// TODO: NOTIFICATIONS
+			// PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
 			return null;
 		}
 
@@ -288,22 +238,23 @@ class LedgerAPI {
 			offset += chunkSize;
 		}
 
-		const popup = Popup.checkHardwareWalletScreen();
-		PopupService.push(popup);
+		// TODO: NOTIFICATIONS
+		// const popup = Popup.checkHardwareWalletScreen();
+		// PopupService.push(popup);
 
 		return foreach(toSend, (data, i) =>
 			getTransport()
 				.send(LEDGER_CODES.CLA, LEDGER_CODES.SIGN, i === 0 ? LEDGER_CODES.FIRST : LEDGER_CODES.MORE, 0x00, data)
 				.then(apduResponse => response = apduResponse)
 		).then(() => {
-			PopupService.remove(popup);
+			// PopupService.remove(popup);
 			const v = response.slice(0, 1).toString("hex");
 			const r = response.slice(1, 1 + 32).toString("hex");
 			const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
 			return ecc.Signature.fromHex(v+r+s).toString();
 		}).catch(err => {
 			console.error('err', err);
-			PopupService.remove(popup);
+			// PopupService.remove(popup);
 			return null;
 		})
 	}
@@ -313,19 +264,19 @@ class LedgerAPI {
 		const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
 		const eth = new Eth(getTransport());
 		const popup = Popup.checkHardwareWalletScreen();
-		PopupService.push(popup);
+		// PopupService.push(popup);
 		const chainIdHex = '0x'+(network.chainId.length === 1 ? '0'+ network.chainId : network.chainId).toString();
 		const baseTransaction = Object.assign(transaction, {chainId:parseInt(network.chainId), r:'0x00', s:'0x00', v:chainIdHex});
 		const rawTxHex = (new EthTx(baseTransaction)).serialize().toString('hex');
 		return eth.signTransaction(path, rawTxHex).then(res => {
-			PopupService.remove(popup);
+			// PopupService.remove(popup);
 			const r = '0x' + res.r;
 			const s = '0x' + res.s;
 			const v = '0x' + res.v;
 			const signed = Object.assign(baseTransaction, {r,s,v});
 			return '0x'+(new EthTx(signed)).serialize().toString('hex');
 		}).catch(err => {
-			PopupService.remove(popup);
+			// PopupService.remove(popup);
 			return null;
 		})
 	}
@@ -372,7 +323,7 @@ class LedgerAPI {
 
 
 
-export const serializeEosjs = (network, transaction) => {
+const serializeEosjs = (network, transaction) => {
 
 	const types = {};
 	eosjsUtil.abiTypes.forEach((value, key) => types[key] = value);
@@ -463,3 +414,13 @@ const serialize = (chainId, transaction, types) => {
 }
 
 const encode = (writer, buffer) => writer.writeBuffer(buffer, asn1.Ber.OctetString);
+
+
+
+
+
+
+
+
+
+module.exports = LedgerWallet;
