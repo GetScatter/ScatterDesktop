@@ -7,9 +7,8 @@
 
 <script>
 
-	import WebViewService from "../services/electron/WebViewService";
 
-	import {ipcRenderer, remote} from '../util/ElectronHelpers';
+	const {ipcRenderer, remote} = window.require('electron');
 	import {mapState} from "vuex";
 	const path = require('path');
 
@@ -27,16 +26,16 @@
 		beforeMount(){
 			ipcRenderer.on('ready', (event, popOut) => {
 				this.popOut = popOut;
+				console.log('this.popOut.id', this.popOut, this.popOut.id);
 				this.ready = true;
 				this.$nextTick(() => this.setup());
 			})
 		},
 		methods:{
 			setup(){
-				WebViewService.set(this.$refs.webview);
-				WebViewService.get().addEventListener('dom-ready', () => {
-					// WebViewService.get().openDevTools();
-					WebViewService.get().send('popout', this.popOut);
+				this.$refs.webview.addEventListener('dom-ready', () => {
+					this.$refs.webview.openDevTools();
+					this.$refs.webview.send('popout', this.popOut);
 				})
 			}
 		},

@@ -1,5 +1,4 @@
 const Store = require('electron-store');
-const {saveFile} = require('./files')
 
 const ABIS_NAME = 'abi';
 const HISTORIES_NAME = 'histories';
@@ -54,12 +53,9 @@ const safeSetScatter = async (scatter, resolver) => {
 	});
 };
 
-const isPopup = typeof location === 'undefined' ? false : location.hash.indexOf('popout') > -1;
-
 
 const getScatter = () => scatterStorage().get('scatter');
 const setScatter = (scatter) => {
-	if(isPopup) return;
 	return new Promise(async resolve => {
 		clearSaveTimeouts();
 		saveResolvers.push(resolve);
@@ -68,7 +64,6 @@ const setScatter = (scatter) => {
 }
 
 const removeScatter = () => {
-	if(isPopup) return;
 	scatterStorage().clear();
 	abiStorage().clear();
 	historyStorage().clear();
@@ -85,10 +80,101 @@ const getSalt = () => {
 const setSalt = (salt) => scatterStorage().set('salt', salt);
 
 
+
+
+
+
+
+/***********************************/
+/**            EXTRAS             **/
+/***********************************/
+
+let getSeed;
+const getSeedSetter = (seeder) => getSeed = seeder;
+
+const AES = require("aes-oop").default;
+const HistoricTransfer = require('@walletpack/core/models/histories/HistoricTransfer').default;
+const HistoricExchange = require('@walletpack/core/models/histories/HistoricTransfer').default;
+const HistoricAction = require('@walletpack/core/models/histories/HistoricTransfer').default;
+const {HISTORY_TYPES} = require('@walletpack/core/models/histories/History');
+
+const cacheABI = (contractName, chainId, abi) =>{
+	return abiStorage().set(`abis.${contractName}_${chainId}`, abi);
+}
+
+const getCachedABI = (contractName, chainId) => {
+	return abiStorage().get(`abis.${contractName}_${chainId}`);
+}
+
+const getTranslation = async () => {
+	let translation = translationStorage().get('translation');
+	if(!translation) return null;
+	return AES.decrypt(translation, getSeed());
+}
+
+const setTranslation =  async (translation) => {
+	const encrypted = AES.encrypt(translation, getSeed());
+	return translationStorage().set('translation', encrypted);
+}
+
+const getHistory = async () => {
+	let history = historyStorage().get('history');
+	if(!history) return [];
+	history = AES.decrypt(history, getSeed());
+	return history;
+}
+
+const updateHistory = async (x) => {
+	let history = await getHistory();
+	if(history.find(h => h.id === x.id)) history = history.filter(h => h.id !== x.id);
+	history.unshift(x);
+	const encrypted = AES.encrypt(history, getSeed());
+	return historyStorage().set('history', encrypted);
+}
+
+const deltaHistory = async (x) => {
+	let history = await getHistory();
+	if(x === null) history = [];
+	else {
+		if(history.find(h => h.id === x.id)) history = history.filter(h => h.id !== x.id);
+		else history.unshift(x);
+	}
+
+	const encrypted = AES.encrypt(history, getSeed());
+	return historyStorage().set('history', encrypted);
+}
+
+const swapHistory = async (history) => {
+	const encrypted = AES.encrypt(history, getSeed());
+	return historyStorage().set('history', encrypted);
+}
+
+
+
+
+
+
+
+
+
+
 module.exports = {
 	getScatter,
 	setScatter,
 	removeScatter,
 	getSalt,
 	setSalt,
+
+	getSeedSetter,
+	getSeed,
+
+	// EXTRAS
+	cacheABI,
+	getCachedABI,
+	getTranslation,
+	setTranslation,
+	getHistory,
+	updateHistory,
+	deltaHistory,
+	swapHistory,
 }

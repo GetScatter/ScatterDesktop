@@ -1,14 +1,10 @@
 <template>
     <section class="view-base">
-        <Popups />
+        <MenuBar v-if="!isPopOut" />
 
-        <section>
-            <MenuBar v-if="!isPopOut" />
-
-            <section class="app-content" :class="{'popout':isPopOut}">
-                <section class="view-pane">
-                    <router-view class="router-view"></router-view>
-                </section>
+        <section class="app-content" :class="{'popout':isPopOut}">
+            <section class="view-pane">
+                <router-view class="router-view"></router-view>
             </section>
         </section>
 
@@ -20,12 +16,10 @@
     import {RouteNames, Routing} from '../vue/Routing'
 
     import MenuBar              from './MenuBar';
-    import Popups from './Popups';
 
 
     export default {
     	components:{
-		    Popups,
 		    MenuBar
         },
         data(){ return {
@@ -58,24 +52,6 @@
 <style lang="scss" rel="stylesheet/scss">
     @import '../styles/variables';
 
-    .working-screen {
-        background:rgba(255,255,255,0.93);
-        position:fixed;
-        top:40px;
-        left:0;
-        right:0;
-        bottom:0;
-        z-index:10001;
-        display:flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-
-        .spinner {
-            font-size: 36px;
-            color:$blue;
-        }
-    }
 
     .app-content {
         height:$fullheight;

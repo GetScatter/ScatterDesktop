@@ -41,6 +41,7 @@
     "eosjs": "^20.0.0",
     "ethereumjs-tx": "^2.1.0",
     "isomorphic-ws": "^4.0.1",
+    "isomorphic-fetch": "^2.2.1",
     "json-formatter-js": "^2.2.1",
     "mini-css-extract-plugin": "^0.8.0",
     "murmurhash": "^0.0.2",
@@ -70,13 +71,12 @@
     "electron": "^5.0.6",
     "electron-builder": "^21.0.15",
     "electron-rebuild": "^1.8.5",
-    "eosjs-ecc": "^4.0.4",
+    "eosjs-ecc": "^4.0.7",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^3.2.0",
     "inject-loader": "^3.0.0",
-    "isomorphic-fetch": "^2.2.1",
     "jsdom": "^13.0.0",
     "jsdom-global": "^3.0.2",
     "mocha": "^6.2.0",
@@ -117,7 +117,8 @@
   "resolutions": {
     "**/lodash": "^4.13.1",
     "**/mixin-deep": "^2.0.1",
-    "**/set-value": "^3.0.1"
+    "**/set-value": "^3.0.1",
+    "**/eosjs-ecc": "4.0.7"
   },
   "browserslist": [
     "> 1%",

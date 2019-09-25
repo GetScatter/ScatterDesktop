@@ -10,7 +10,6 @@ import ScatterCore from "@walletpack/core";
 import StorageService from "../services/electron/StorageService";
 import {store} from "../store/store";
 import WindowService from "../services/electron/WindowService";
-import SocketService from "../services/electron/SocketService";
 import ExternalWallet from "@walletpack/core/models/hardware/ExternalWallet";
 
 let popupService;
@@ -68,34 +67,7 @@ ipcRenderer.on('console', (e, x) => console.log('Main process console: ', x));
 export default class ElectronHelpers {
 
 	static initializeCore(){
-		ElectronHelpers.bindContextMenu();
 
-		ScatterCore.initialize(
-			{
-				blockchains:{
-					EOSIO:'eos',
-					ETH:'eth',
-					TRX:'trx',
-					BTC:'btc',
-				},
-				plugins:[
-					require('@walletpack/eosio').default,
-					require('@walletpack/ethereum').default,
-					require('@walletpack/tron').default,
-					require('@walletpack/bitcoin').default,
-				]
-			},
-			store,
-			/* security */ {
-				getSalt:StorageService.getSalt,
-			},
-			/* framwork */ {
-				getVersion:remote.app.getVersion,
-				pushNotification:NotificationService.pushNotification,
-			},
-			/* eventListener */ () => {},
-			{ socketService:SocketService }
-		);
 
 	}
 

@@ -41,8 +41,7 @@
 
 	import {RouteNames} from "../vue/Routing";
 
-	const {remote} = require('../util/ElectronHelpers');
-	import SocketService from "@walletpack/core/services/utility/SocketService";
+	const {remote} = window.require('electron');
 
 	export default {
 		data(){return {
@@ -61,7 +60,6 @@
 				}, 200);
 			},
 			quit(){
-				SocketService.broadcastEvent('dced', {});
 				setTimeout(() => remote.app.quit(), 1);
 			},
 			minimize(){

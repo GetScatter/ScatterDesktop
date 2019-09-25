@@ -1,15 +1,12 @@
 import PopOut from '../views/PopOut';
 import Scatter from '../views/Scatter';
-import Login from '../views/Login';
 
 export const RouteNames = {
 	POP_OUT:'popout',
 	SCATTER:'scatter',
-	LOGIN:'login',
 };
 
 const RouteViews = {
-	[RouteNames.LOGIN]:Login,
 	[RouteNames.SCATTER]:Scatter,
 	[RouteNames.POP_OUT]:PopOut,
 };
@@ -42,7 +39,6 @@ export class Routing {
 
 	static isRestricted(routeName) {
 		return ![
-			RouteNames.LOGIN,
 			RouteNames.POP_OUT,
 		].includes(routeName)
 	}

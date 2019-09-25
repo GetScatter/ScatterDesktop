@@ -1,3 +1,7 @@
+const CoreSocketService = require("@walletpack/core/services/utility/SocketService");
+
+const {app, BrowserWindow} = require('electron');
+
 const http = require('http');
 const https = require('https');
 const WebSocket = require('ws');
@@ -5,6 +9,7 @@ const net = require('net');
 const {isDev} = require('../utils');
 
 let mainWindow;
+const sendToEmbed = (payload) => mainWindow.webContents.send('socketResponse', payload);
 
 class LowLevelSocketService {
 
@@ -13,10 +18,6 @@ class LowLevelSocketService {
 		this.openConnections = {};
 		this.websockets = [];
 		this.ports = {};
-	}
-
-	static setWindow(w){
-		mainWindow = w;
 	}
 
 	async getNewKey(origin, id){
@@ -76,9 +77,9 @@ class LowLevelSocketService {
 				if(!this.openConnections.hasOwnProperty(origin+id)) this.openConnections[origin+id] = socket;
 
 				switch(type){
-					case 'pair':        return mainWindow.webContents.send('pair', {request, id});
+					case 'pair':        return sendToEmbed({type:'pair', request, id});
 					case 'rekeyed':     return this.rekeyPromise.resolve(request);
-					case 'api':         return mainWindow.webContents.send('api', {request, id});
+					case 'api':         return sendToEmbed({type:'api', request, id});
 				}
 
 			});
@@ -87,7 +88,7 @@ class LowLevelSocketService {
 		if(this.websockets.length) return this.websockets;
 
 		await this.findOpenPorts();
-		mainWindow.webContents.send('ports', this.ports);
+		sendToEmbed({type:'ports', ports:this.ports});
 
 		const requestHandler = (_, res) => {
 			res.setHeader('Access-Control-Allow-Origin', '*');
@@ -159,4 +160,37 @@ class LowLevelSocketService {
 
 }
 
-module.exports = LowLevelSocketService;
+let sockets = new LowLevelSocketService();
+class HighLevelSockets {
+
+	static setMainWindow(w){
+		mainWindow = w;
+	}
+
+	static async initialize(){
+		const certs = await CoreSocketService.getCerts();
+		return sockets.initialize(certs);
+	}
+
+	static async close(){
+		return sockets.close();
+	}
+
+	static async sendEvent(event, payload, origin){
+		return sockets.sendEvent(event, payload, origin);
+	}
+
+	static async broadcastEvent(event, payload){
+		return sockets.broadcastEvent(event, payload);
+	}
+
+	static async emit(origin, id, path, data){
+		return sockets.emit(origin, id, path, data);
+	}
+
+	static async getNewKey(origin, id){
+		return sockets.getNewKey(origin, id);
+	}
+}
+
+module.exports = HighLevelSockets;

@@ -35,11 +35,19 @@ let scatter = storage.getScatter();
 
 salt = storage.getSalt();
 
+storage.getSeedSetter(() => seed);
+
+
 const setScatter = (_s) => scatter = JSON.parse(JSON.stringify(_s));
 const getScatter = () => scatter ? JSON.parse(JSON.stringify(scatter)) : null;
 
-const isEncrypted = x => x.toString().indexOf('"iv":') > -1
+const exists = () => !!scatter;
+
+const isEncrypted = x => x.toString().indexOf('"iv":') > -1;
+const isUnlocked = () => !!seed && !isEncrypted(scatter);
+
 const updateScatter = async (_s) => {
+	if(exists() && !isUnlocked()) return;
 
 	_s.keychain.keypairs.map(x => {
 		if(!isEncrypted(x.privateKey)){
@@ -132,9 +140,7 @@ const reloading = () => {
 };
 
 const getPrivateKey = async (keypairId, blockchain) => {
-	console.log('getting private key')
 	let keypair = scatter.keychain.keypairs.find(x => x.id === keypairId);
-	console.log('keypair', keypair);
 	if(!keypair) return;
 
 	keypair = Keypair.fromJson(keypair);
@@ -145,14 +151,25 @@ const getPrivateKey = async (keypairId, blockchain) => {
 	return plugins[blockchain].bufferToHexPrivate(decryptedKey);
 }
 
-const unlock = async (password, isNew = false) => {
+const lock = () => {
+	seed = null;
+	scatter = storage.getScatter();
+	return true;
+}
+
+const unlock = async (password, isNew = false, salt = null) => {
+	if(isUnlocked()) return getScatter();
+
 	try {
+		if(salt) await storage.setSalt(salt);
 		seed = await passwordToSeed(password);
 		if(!isNew) {
 			const decrypted = AES.decrypt(scatter, seed);
 			if (!decrypted.hasOwnProperty('keychain')) return false;
 			decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
 			scatter = decrypted;
+		} else {
+			if(!salt) await storage.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 		}
 
 		setTimeout(() => {
@@ -248,17 +265,28 @@ const signWithHardware = async (keypair, network, publicKey, payload, arbitrary 
 	}, 100));
 }
 
+const encrypt = data => AES.encrypt(data, seed);
+const decrypt = data => AES.decrypt(data, seed);
+
+const getSeed = () => seed;
 
 module.exports = {
+	exists,
 	updateScatter,
 	setScatter,
 	getScatter,
 	sign,
 	getPrivateKey,
 	reloading,
+	isUnlocked,
 	unlock,
+	lock,
 	verifyPassword,
 	changePassword,
 	hardwareTypes,
-	getHardwareKeys
+	getHardwareKeys,
+	encrypt,
+	decrypt,
+
+	getSeed,
 }

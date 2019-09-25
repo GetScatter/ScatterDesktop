@@ -5,13 +5,10 @@
 </template>
 
 <script>
-	import PopupService from "../services/utility/PopupService";
 
 	const path = require('path');
 
-	import {ipcRenderer, remote} from '../util/ElectronHelpers';
-	import WebViewService from "../services/electron/WebViewService";
-	import {Popup} from "../models/popups/Popup";
+	const {ipcRenderer, remote} = window.require('electron');
 	import WebHashChecker from "../services/utility/WebHashChecker";
 
 
@@ -20,11 +17,19 @@
 			preload:() => `file://${path.join(remote.app.getAppPath(), 'preload.js')}`,
 		},
 		mounted(){
+			console.log('mounted scatter');
+
+			ipcRenderer.on('socketResponse', (event, payload) => {
+				console.log('got socket response in scatter desktop', payload);
+				this.$refs.webview.send('socketResponse', payload);
+			})
 
 			const bindApp = () => {
-				WebViewService.set(this.$refs.webview);
-				WebViewService.get().addEventListener('dom-ready', () => {
-					WebViewService.get().openDevTools();
+				console.log('wv?', this.$refs.webview);
+				// WebViewService.set('main', this.$refs.webview);
+				// console.log('get wv', WebViewService.get('main'));
+				this.$refs.webview.addEventListener('dom-ready', () => {
+					this.$refs.webview.openDevTools();
 				})
 			}
 

@@ -1,11 +1,12 @@
 require("babel-polyfill")
+require("isomorphic-fetch")
 const electron = require('electron');
-const {remote, app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
+const {app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
 
 const {isDev, icon, trayIcon, mainUrl} = require('./utils');
 const LowLevelWindowService = require("./services/windows");
-const LowLevelSocketService = require('./services/sockets');
 const NotificationService = require('./services/notifier');
+const HighLevelSockets = require('./services/sockets');
 
 
 
@@ -17,8 +18,7 @@ const quit = () => {
 			quit();
 		}, 100);
 	} else {
-		if(global && global.appShared && global.appShared.QuitWatcher !== null)
-			global.appShared.QuitWatcher();
+		HighLevelSockets.broadcastEvent('dced', {});
 		app.quit();
 	}
 }
@@ -99,6 +99,8 @@ const createScatterInstance = () => {
 	mainWindow.loadURL(mainUrl(false));
 
 	mainWindow.once('ready-to-show', () => {
+		console.log('ready to show')
+		HighLevelSockets.setMainWindow(mainWindow);
 		mainWindow.show();
 		mainWindow.focus();
 	});
@@ -109,10 +111,6 @@ const createScatterInstance = () => {
 
 	setupTray();
 	setupMenu();
-
-
-	LowLevelSocketService.setWindow(mainWindow);
-	require('./security');
 };
 
 app.on('ready', createScatterInstance);
@@ -155,20 +153,13 @@ app.on('will-finish-launching', () => {
 });
 
 
-const Transport = require('@ledgerhq/hw-transport-node-hid');
+const webviews = require('./services/webviews');
 
 global.appShared = {
-	Transport,
 	QuitWatcher:null,
 	ApiWatcher:null,
-	LowLevelWindowService,
-	LowLevelSocketService:new LowLevelSocketService(),
-	NotificationService,
-	savingData:false,
 	reloader:() => mainWindow.reload(),
-
-	Wallet:require('./services/wallet'),
-	Storage:require('./services/storage'),
+	webviews,
 };
 
 
@@ -185,25 +176,120 @@ global.appShared = {
 // We're throwing all exceptions and console up to the renderer console so they can be visible in running builds.
 // -------------------------------------------------------------
 process.on('uncaughtException', (err) => {
-	mainWindow.webContents.send('error', {message:err.message, file:err.fileName, line:err.lineNumber});
+	if(mainWindow) mainWindow.webContents.send('error', {message:err.message, file:err.fileName, line:err.lineNumber});
 	console.error('There was an uncaught error', err)
 	// process.exit(1) //mandatory (as per the Node docs)
 });
 
 const log = console.log;
 console.log = (...params) => {
-	mainWindow.webContents.send('console', params);
+	if(mainWindow) mainWindow.webContents.send('console', params);
 	log(...params);
 }
 
 const logerr = console.error;
 console.error = (...params) => {
-	mainWindow.webContents.send('console', params);
+	if(mainWindow) mainWindow.webContents.send('console', params);
 	logerr(...params);
 }
 
 
 const wallet = require('./services/wallet');
+const storage = require('./services/storage');
+const files = require('./services/files');
+const windows = require('./services/windows');
+
+
+let multipartPromises = {};
+
+global.wallet = {
+	/************************************/
+	/**       SIGNING & WALLET         **/
+	/************************************/
+	exists:wallet.exists,
+	unlocked:wallet.isUnlocked,
+	unlock:wallet.unlock,
+	lock:wallet.lock,
+	verifyPassword:wallet.verifyPassword,
+	changePassword:wallet.changePassword,
+	hardwareTypes:async () => wallet.hardwareTypes,
+	hardwareKeys:wallet.getHardwareKeys,
+	getPrivateKey:wallet.getPrivateKey,
+	sign:wallet.sign,
+	encrypt:wallet.encrypt,
+	decrypt:wallet.decrypt,
+	getSalt:storage.getSalt,
+	setSalt:storage.setSalt,
+
+
+
+	/************************************/
+	/**        FILES / STORAGE         **/
+	/************************************/
+	storage:{
+		setWalletData:wallet.updateScatter,
+		getWalletData:wallet.getScatter,
+		clearWalletData:storage.removeScatter,
+		getDefaultPath:files.getDefaultPath,
+
+		saveFile:files.saveFile,
+		openFile:files.openFile,
+		getFileLocation:files.getFileLocation,
+		getFolderLocation:files.getFolderLocation,
+
+		cacheABI:storage.cacheABI,
+		getCachedABI:storage.getCachedABI,
+		getTranslation:storage.getTranslation,
+		setTranslation:storage.setTranslation,
+		getHistory:storage.getHistory,
+		updateHistory:storage.updateHistory,
+		deltaHistory:storage.deltaHistory,
+		swapHistory:storage.swapHistory,
+	},
+
+
+	/************************************/
+	/**           UTILITIES            **/
+	/************************************/
+	utility:{
+		openTools:(windowId = null) => {
+			const w = windowId ? BrowserWindow.fromId(windowId) : mainWindow;
+			w.openDevTools()
+		},
+		closeWindow:(windowId = null) => {
+			const w = windowId ? BrowserWindow.fromId(windowId) : mainWindow;
+			w.close()
+		},
+		flashWindow:() => console.error('flashing not implemented'),
+		openLink:(link, filepath = false) => {
+			if(filepath) return electron.shell.openItem(link);
+			else {
+				if(link.indexOf('https://') === 0 || link.indexOf('http://') === 0) {
+					return electron.shell.openExternal(link);
+				}
+			}
+		},
+		reload:() => mainWindow.reload(),
+		copy:electron.clipboard.writeText,
+		openPopOut:(popup) => {
+			return new Promise(resolve => {
+				multipartPromises[popup.id] = resolve;
+				windows.openPopOutFromPopupOnly(popup);
+			});
+		},
+		popoutResponse:({original, result}) => {
+			console.log('response', original, result);
+			multipartPromises[original.id]({original, result});
+			delete multipartPromises[original.id];
+		},
+		socketResponse:() => {},
+	},
+
+	sockets:HighLevelSockets,
+};
+
+// global.sockets = mainWindow.webContents.send('scatter', data);
+
 
 // FORWARDING FROM INJECTED DOM
 global.scatterMessage = async (data) => {
@@ -212,10 +298,14 @@ global.scatterMessage = async (data) => {
 	if(data.service === 'popout' && data.method === 'response') { mainWindow.webContents.send('popoutResponse', data); return null; }
 	if(data.method === 'getScatter') return {data:wallet.getScatter(), id:data.id};
 
-	// Popouts can only get scatter data
+
+	if(data.service === 'wallet' && data.method === 'unlock') return {data:await wallet.unlock(...data.data), id:data.id};
+
+	// Popouts can't sign or set, and neither can locked wallets
 	if(data.isPopOut) return;
 
-	if(data.service === 'sign' && data.method === 'sign') return {data:await wallet.sign(...data.data), id:data.id};
+
+	if(data.service === 'wallet' && data.method === 'sign') return {data:await wallet.sign(...data.data), id:data.id};
 	if(data.method === 'setScatter') return {data:await wallet.updateScatter(...data.data), id:data.id};
 
 	// Hardware wallets
