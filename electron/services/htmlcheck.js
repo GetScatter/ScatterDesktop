@@ -1,8 +1,5 @@
-import {GET} from "@walletpack/core/services/apis/BackendApiService";
-
+const {GET} = require("@walletpack/core/services/apis/BackendApiService");
 const sha256 = require('eosjs-ecc').sha256;
-
-
 const HOST = `http://localhost:8081/`;
 
 const getIndexHTML = () => {
@@ -13,7 +10,7 @@ const getJavaScriptSource = filename => {
 	return fetch(`${HOST}/${filename}`).then(x => x.text()).catch(() => null);
 };
 
-export default class WebHashChecker {
+class WebHashChecker {
 
 	static async check(){
 		const html = await getIndexHTML();
@@ -44,3 +41,5 @@ export default class WebHashChecker {
 	}
 
 }
+
+module.exports = WebHashChecker;

@@ -200,9 +200,7 @@ const sign = (network, publicKey, payload, arbitrary = false, isHash = false) =>
 		if(!privateKey) return Error.signatureError('sign_err', 'Could not decode private key');
 		if(typeof privateKey === 'object' && privateKey.hasOwnProperty('data')) privateKey = privateKey.data;
 
-
-		// TODO: eosjs-ecc needs an update with a patch for ripemd, for now edit 'eosjs-ecc/hash.js'
-		// https://github.com/EOSIO/eosjs-ecc/pull/56/commits/a4f409927bc84022d5fc9811dfccec85b7ffbb2b
+		console.log('payload?', payload, publicKey, arbitrary, isHash);
 		return plugin.signer(payload, publicKey, arbitrary, isHash, privateKey);
 	} catch(e){
 		console.error('Signing Error!', e);

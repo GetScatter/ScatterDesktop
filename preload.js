@@ -1,6 +1,5 @@
 const { ipcRenderer: ipc, remote } = require('electron');
 let wallet = remote.getGlobal('wallet');
-let send = remote.getGlobal('scatterMessage');
 let sendLog = remote.getGlobal('scatterLog');
 
 if(!window.wallet) window.wallet = {};

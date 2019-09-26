@@ -105,7 +105,7 @@ class LowLevelWindowService {
 		if(!win) win = await this.getWindow();
 		else waitingPopup = null;
 
-		win.webContents.send('ready', popup);
+		win.webContents.send('popout', popup);
 
 		win.setSize(width, height);
 

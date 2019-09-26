@@ -1,4 +1,3 @@
-require("babel-polyfill")
 require("isomorphic-fetch")
 const electron = require('electron');
 const {app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
@@ -105,7 +104,7 @@ const createScatterInstance = () => {
 		mainWindow.focus();
 	});
 
-	mainWindow.openDevTools();
+	// mainWindow.openDevTools();
 	mainWindow.on('closed', () => mainWindow = null);
 	mainWindow.on('close', () => quit());
 
@@ -139,6 +138,7 @@ app.on('web-contents-created', (event, contents) => {
 })
 
 const callDeepLink = url => {
+	// TODO: Need to rebuild deep link functionality
 	if(global.appShared.ApiWatcher !== null)
 		global.appShared.ApiWatcher(url);
 }
@@ -153,13 +153,10 @@ app.on('will-finish-launching', () => {
 });
 
 
-const webviews = require('./services/webviews');
 
 global.appShared = {
-	QuitWatcher:null,
 	ApiWatcher:null,
-	reloader:() => mainWindow.reload(),
-	webviews,
+	htmlcheck:require('./services/htmlcheck')
 };
 
 
@@ -253,8 +250,7 @@ global.wallet = {
 	/************************************/
 	utility:{
 		openTools:(windowId = null) => {
-			const w = windowId ? BrowserWindow.fromId(windowId) : mainWindow;
-			w.openDevTools()
+			(windowId ? BrowserWindow.fromId(windowId) : mainWindow).webContents.send('openTools');
 		},
 		closeWindow:(windowId = null) => {
 			const w = windowId ? BrowserWindow.fromId(windowId) : mainWindow;
@@ -290,30 +286,6 @@ global.wallet = {
 
 // global.sockets = mainWindow.webContents.send('scatter', data);
 
-
-// FORWARDING FROM INJECTED DOM
-global.scatterMessage = async (data) => {
-	console.log('ipc data', data.service, data.method);
-
-	if(data.service === 'popout' && data.method === 'response') { mainWindow.webContents.send('popoutResponse', data); return null; }
-	if(data.method === 'getScatter') return {data:wallet.getScatter(), id:data.id};
-
-
-	if(data.service === 'wallet' && data.method === 'unlock') return {data:await wallet.unlock(...data.data), id:data.id};
-
-	// Popouts can't sign or set, and neither can locked wallets
-	if(data.isPopOut) return;
-
-
-	if(data.service === 'wallet' && data.method === 'sign') return {data:await wallet.sign(...data.data), id:data.id};
-	if(data.method === 'setScatter') return {data:await wallet.updateScatter(...data.data), id:data.id};
-
-	// Hardware wallets
-	if(data.service === 'hardware' && data.method === 'types') return {data:await wallet.hardwareTypes, id:data.id};
-	if(data.service === 'hardware' && data.method === 'keys') return {data:await wallet.getHardwareKeys(data.data), id:data.id};
-
-	mainWindow.webContents.send('scatter', data);
-}
 
 global.scatterLog = (data) => mainWindow.webContents.send('scatterLog', data);
 
