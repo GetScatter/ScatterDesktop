@@ -101,7 +101,6 @@ const createScatterInstance = async () => {
 	mainWindow.loadURL(mainUrl(false));
 
 	mainWindow.once('ready-to-show', () => {
-		console.log('ready to show')
 		HighLevelSockets.setMainWindow(mainWindow);
 		mainWindow.show();
 		mainWindow.focus();
@@ -259,7 +258,6 @@ global.wallet = {
 	/************************************/
 	utility:{
 		openTools:(windowId = null) => {
-			console.log('opening tools', windowId);
 			(windowId ? BrowserWindow.fromId(windowId) : mainWindow).webContents.send('openTools');
 		},
 		closeWindow:(windowId = null) => {
@@ -286,7 +284,6 @@ global.wallet = {
 			});
 		},
 		popoutResponse:({original, result}) => {
-			console.log('response', original, result);
 			multipartPromises[original.id]({original, result});
 			delete multipartPromises[original.id];
 		},
