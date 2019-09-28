@@ -270,6 +270,9 @@ global.wallet = {
 		},
 		reload:() => mainWindow.reload(),
 		copy:electron.clipboard.writeText,
+		screenshot:(windowId) => {
+			return (windowId ? BrowserWindow.fromId(windowId) : mainWindow).capturePage().then(img => img.toJPEG(99))
+		},
 		openPopOut:(popup) => {
 			return new Promise(resolve => {
 				multipartPromises[popup.id] = resolve;

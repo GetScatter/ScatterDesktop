@@ -148,6 +148,19 @@ const swapHistory = async (history) => {
 
 
 
+const reencryptOptionals = async (oldseed, newseed) => {
+	if(translationStorage().get('translation')){
+		translationStorage().set('translation',
+			AES.encrypt(AES.decrypt(translationStorage().get('translation'), oldseed), newseed));
+	}
+
+	if(historyStorage().get('translation')){
+		historyStorage().set('translation',
+			AES.encrypt(AES.decrypt(historyStorage().get('translation'), oldseed), newseed));
+	}
+
+}
+
 
 
 
@@ -173,4 +186,5 @@ module.exports = {
 	updateHistory,
 	deltaHistory,
 	swapHistory,
+	reencryptOptionals,
 }

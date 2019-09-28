@@ -100,14 +100,9 @@ const changePassword = async (newPassword) => {
 	});
 
 	await updateScatter(clone);
-	return true;
 
-	// TODO:! need to reseed other storages as well
-	// await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
-	// await StorageService.swapHistory(StoreService.get().state.history);
-	// await StorageService.setTranslation(Locale.fromJson(StoreService.get().state.language.json));
-	// StoreService.get().dispatch(Actions.LOAD_HISTORY);
-	// StoreService.get().dispatch(UIActions.LOAD_LANGUAGE);
+	await storage.reencryptOptionals(oldSeed, newSeed);
+	return true;
 }
 
 
