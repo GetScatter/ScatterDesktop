@@ -214,29 +214,6 @@
 		webview.src = `http://localhost:8081/${isPopOut ? '#/popout' : ''}`;
 		document.getElementById('webviewer').appendChild(webview);
 
-		// TODO: Remove / comment out
-		webview.addEventListener('dom-ready', () => {
-			webview.openDevTools();
-		});
-
-
-
-
-		/***************************************/
-		/**        CONSOLE FORWARDERS         **/
-		/***************************************/
-		// const log = console.log;
-		// console.log = (...params) => {
-		// 	if(mainWindow) webview.send('console', params);
-		// 	log(...params);
-		// };
-		//
-		// const logerr = console.error;
-		// console.error = (...params) => {
-		// 	if(mainWindow) webview.send('console', params);
-		// 	logerr(...params);
-		// };
-
 
 		/***************************************/
 		/**            IPC MESSAGES           **/

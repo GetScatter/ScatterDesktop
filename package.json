@@ -15,7 +15,7 @@
     "release-mac": "electron-builder --mac",
     "release-win": "electron-builder --win",
     "release-web": "node package_web.js",
-    "testfile": "electron-mocha --exit --timeout 1000000",
+    "testfile": "cross-env TESTING=1 electron-mocha --exit --timeout 1000000",
     "test": "npm run testfile \"test/**/*.spec.js\" --timeout 1000000"
   },
   "dependencies": {

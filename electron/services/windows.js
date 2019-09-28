@@ -83,10 +83,6 @@ class LowLevelWindowService {
 				return resolve(false);
 			}
 
-
-			// TODO: This should now be done on the web app
-			popup.data.props.appData = AppsService.getAppData(popup.data.props.payload.origin);
-
 			popouts.push(popup);
 
 			const {width, height} = LowLevelWindowService.dimensions(popup);

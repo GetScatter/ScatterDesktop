@@ -11,8 +11,7 @@ const wallet = require('../../electron/services/wallet');
 wallet.setStorage(storage);
 wallet.init();
 
-const sha256 = require('eosjs-ecc').sha256;
-const elliptic = require('elliptic').ec;
+const ecc = require('eosjs-ecc');
 const Signature = require('elliptic/lib/elliptic/ec/signature');
 
 
@@ -48,8 +47,8 @@ describe('wallet', () => {
 		new Promise(async() => {
 			const scatter = await wallet.getScatter();
 			const keypair = scatter.keychain.keypairs[0];
-			const privateKey = await wallet.getPrivateKey(keypair.id);
-			assert(privateKey && Array.isArray(privateKey) && privateKey.length === 32, 'Private key is invalid');
+			const privateKey = await wallet.getPrivateKey(keypair.id, 'eos');
+			assert(privateKey && typeof privateKey === 'string' && privateKey.length === 51, 'Private key is invalid');
 			done();
 		})
 	})
@@ -58,22 +57,36 @@ describe('wallet', () => {
 		new Promise(async() => {
 			const scatter = await wallet.getScatter();
 			const keypair = scatter.keychain.keypairs[0];
-			const privateKey = await wallet.getPrivateKey(keypair.id);
 			const publicKey = keypair.publicKeys[0].key;
 
-			const hash = sha256('test');
-			// console.log('signing hash', hash);
-			const signature = await wallet.sign(hash, publicKey, 'secp256k1');
-			assert(signature, 'Signature was not provided')
+			const hash = ecc.sha256('test');
 
+			const signature = await wallet.sign(
+				{blockchain:'eos'},
+				publicKey,
+				{data:hash},
+				true,
+				true
+			)
 
-			const ec = elliptic('secp256k1');
-			const ecSig = new Signature(signature);
-			const ecKey = ec.keyFromPrivate(privateKey);
-			// const ecKey = ec.keyFromPrivate(Buffer.from(privateKey).toString('hex'), 'hex');
-			console.log('verify', ecKey.verify(hash, signature));
-			// assert(ec.verify(hash, ecSig, ecKey), 'Signature was incorrect');
-			// console.log('signature', signature);
+			assert(ecc.verifyHash(signature, hash, publicKey), 'Signature could not be verified');
+			done();
+		})
+	})
+
+	it('should be able to lock', done => {
+		new Promise(async() => {
+			await wallet.lock();
+			assert(!wallet.getSeed(), 'Wallet was not locked')
+			done();
+		})
+	})
+
+	it('should be able to unlock again', done => {
+		new Promise(async() => {
+			await wallet.unlock(PASSWORD);
+			assert(wallet.getSeed(), 'Wallet was not unlocked [seed]')
+			assert(wallet.getScatter(), 'Wallet was not unlocked [data]')
 			done();
 		})
 	})

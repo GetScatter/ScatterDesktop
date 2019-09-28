@@ -8,21 +8,20 @@ const bip39 = require('bip39');
 const scrypt = require('scrypt-async');
 const AES = require("aes-oop").default;
 const path = require('path')
+const Scatter = require('@walletpack/core/models/Scatter').default;
 const Error = require('@walletpack/core/models/errors/Error').default;
 const IdGenerator = require('@walletpack/core/util/IdGenerator').default;
 const Hasher = require('@walletpack/core/util/Hasher').default;
 
-// TODO: Changing to curve-based
-const EOSIO = require('@walletpack/eosio').default;
-const TRON = require('@walletpack/tron').default;
-const BITCOIN = require('@walletpack/bitcoin').default;
-const ETHEREUM = require('@walletpack/ethereum').default;
+require('@walletpack/core/services/utility/Framework').default.init({
+	getVersion:() => require('../../package').version,
+});
 
 const plugins = {
-	eos:new EOSIO(),
-	trx:new TRON(),
-	btc:new BITCOIN(),
-	eth:new ETHEREUM()
+	eos:new (require('@walletpack/eosio').default)(),
+	trx:new (require('@walletpack/tron').default)(),
+	btc:new (require('@walletpack/bitcoin').default)(),
+	eth:new (require('@walletpack/ethereum').default)()
 }
 
 
@@ -52,13 +51,13 @@ const updateScatter = async (_s) => {
 
 	_s.keychain.keypairs.map(x => {
 		if(!isEncrypted(x.privateKey)){
-			x.privateKey = AES.encrypt(x.privateKey, seed);
+			x.privateKey = AES.encrypt(Buffer.from(x.privateKey), seed);
 		}
 	})
 
 	_s.keychain.identities.map(x => {
 		if(!isEncrypted(x.privateKey)){
-			x.privateKey = AES.encrypt(x.privateKey, seed);
+			x.privateKey = AES.encrypt(Buffer.from(x.privateKey), seed);
 		}
 	})
 
@@ -157,22 +156,30 @@ const lock = () => {
 	return true;
 }
 
-const unlock = async (password, isNew = false, salt = null) => {
+const forceSalt = async _salt => {
+	await storage.setSalt(_salt);
+	salt = _salt;
+	return true;
+}
+
+const unlock = async (password, isNew = false, _salt = null) => {
 	if(isUnlocked()) return getScatter();
 
 	try {
-		if(salt) await storage.setSalt(salt);
+		if(_salt) await forceSalt(_salt);
+		if(!salt) await forceSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
+
 		seed = await passwordToSeed(password);
+
 		if(!isNew) {
-			const decrypted = AES.decrypt(scatter, seed);
+			let decrypted = AES.decrypt(scatter, seed);
 			if (!decrypted.hasOwnProperty('keychain')) return false;
-			decrypted.keychain = AES.decrypt(decrypted.keychain, seed);
+			decrypted = Scatter.fromJson(decrypted);
+			decrypted.decrypt(seed);
 			scatter = decrypted;
-		} else {
-			if(!salt) await storage.setSalt(Hasher.unsaltedQuickHash(IdGenerator.text(32)));
 		}
 
-		setTimeout(() => {
+		if(!process.env.TESTING) setTimeout(() => {
 			LowLevelWindowService.queuePopup();
 		}, 1000);
 
@@ -185,7 +192,7 @@ const unlock = async (password, isNew = false, salt = null) => {
 	}
 }
 
-const sign = (network, publicKey, payload, arbitrary = false, isHash = false) => {
+const sign = async (network, publicKey, payload, arbitrary = false, isHash = false) => {
 	try {
 
 		const plugin = plugins[network.blockchain];
@@ -196,21 +203,13 @@ const sign = (network, publicKey, payload, arbitrary = false, isHash = false) =>
 
 		if(keypair.external) return signWithHardware(keypair, network, publicKey, payload, arbitrary, isHash);
 
-		let privateKey = AES.decrypt(keypair.privateKey, seed);
-		if(!privateKey) return Error.signatureError('sign_err', 'Could not decode private key');
-		if(typeof privateKey === 'object' && privateKey.hasOwnProperty('data')) privateKey = privateKey.data;
-
-		console.log('payload?', payload, publicKey, arbitrary, isHash);
+		const privateKey = await getPrivateKey(keypair.id, network.blockchain);
 		return plugin.signer(payload, publicKey, arbitrary, isHash, privateKey);
 	} catch(e){
 		console.error('Signing Error!', e);
 		return Error.signatureError('sign_err', 'There was an error signing this transaction.');
 	}
 };
-
-ipcMain.on('load', (e) => {
-	e.sender.send('loaded', getScatter());
-})
 
 
 
