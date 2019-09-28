@@ -7,16 +7,12 @@ const {ipcMain} = require("electron");
 const bip39 = require('bip39');
 const scrypt = require('scrypt-async');
 const AES = require("aes-oop").default;
-const storage = require('./storage')
 const path = require('path')
-const Scatter = require('@walletpack/core/models/Scatter').default;
 const Error = require('@walletpack/core/models/errors/Error').default;
 const IdGenerator = require('@walletpack/core/util/IdGenerator').default;
 const Hasher = require('@walletpack/core/util/Hasher').default;
-const Keypair = require('@walletpack/core/models/Keypair').default;
-const Crypto = require('@walletpack/core/util/Crypto').default;
 
-
+// TODO: Changing to curve-based
 const EOSIO = require('@walletpack/eosio').default;
 const TRON = require('@walletpack/tron').default;
 const BITCOIN = require('@walletpack/bitcoin').default;
@@ -30,12 +26,17 @@ const plugins = {
 }
 
 
-let seed, salt;
-let scatter = storage.getScatter();
+let seed, salt, scatter, storage;
 
-salt = storage.getSalt();
+// Storage is not set by default, this allows
+// changing the storage mechanism for testing purposes.
+const setStorage = _s => storage = _s;
 
-storage.getSeedSetter(() => seed);
+const init = () => {
+	scatter = storage.getScatter();
+	salt = storage.getSalt();
+	storage.getSeedSetter(() => seed);
+}
 
 
 const setScatter = (_s) => scatter = JSON.parse(JSON.stringify(_s));
@@ -100,8 +101,9 @@ const changePassword = async (newPassword) => {
 	});
 
 	await updateScatter(clone);
-	resolve(true);
+	return true;
 
+	// TODO:! need to reseed other storages as well
 	// await StoreService.get().dispatch(Actions.SET_SCATTER, scatter);
 	// await StorageService.swapHistory(StoreService.get().state.history);
 	// await StorageService.setTranslation(Locale.fromJson(StoreService.get().state.language.json));
@@ -142,8 +144,6 @@ const reloading = () => {
 const getPrivateKey = async (keypairId, blockchain) => {
 	let keypair = scatter.keychain.keypairs.find(x => x.id === keypairId);
 	if(!keypair) return;
-
-	keypair = Keypair.fromJson(keypair);
 
 	const encryptedKey = JSON.parse(JSON.stringify(keypair.privateKey));
 	const decryptedKey = AES.decrypt(encryptedKey, seed);
@@ -269,6 +269,8 @@ const decrypt = data => AES.decrypt(data, seed);
 const getSeed = () => seed;
 
 module.exports = {
+	setStorage,
+	init,
 	exists,
 	updateScatter,
 	setScatter,

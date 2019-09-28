@@ -129,11 +129,20 @@
 </head>
 <body>
 
+
+	<!------------------------------------>
+	<!-- FAKE MENU OVERLAY FOR POPOUTS --->
+	<!------------------------------------>
+	<!--   Enables moving the window    --->
+	<!------------------------------------>
 	<figure id="popout-menu"></figure>
+
+
+	<!------------------------------------>
+	<!----------- TOP BAR MENU ----------->
+	<!------------------------------------>
 	<section id="menu-bar">
-
 		<section id="actions" class="actions">
-
 			<!-- MINIMIZE -->
 			<section class="action" onclick="minimize()">
 				<section class="action-inner">
@@ -158,15 +167,20 @@
 		</section>
 	</section>
 	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+	<!------------------------------------>
+	<!-------- WEBVIEW CONTAINER --------->
+	<!------------------------------------>
 	<section id="webviewer"></section>
+
+
+
+
+
+
+
+
 
 	<script>
 		const path = require('path');
@@ -175,6 +189,10 @@
 
 		const isPopOut = location.hash.replace("#/", '') === 'popout';
 
+
+		/***************************************/
+		/**       TOP BAR MENU DISPLAY        **/
+		/***************************************/
 		if(isPopOut){
 			document.getElementById('menu-bar').remove();
 			document.getElementById('webviewer').className = 'full';
@@ -183,54 +201,70 @@
 			if(remote.process.platform === 'darwin'){
 				document.getElementById('actions').remove();
 			}
+
 		}
 
 
+		/***************************************/
+		/**        WEBVIEW INSTANTIATOR       **/
+		/***************************************/
 
-		let webview;
-		const createWebview = () => {
-			webview = document.createElement('webview');
-			webview.preload = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
-			console.log('webview.preload', webview.preload);
-			webview.src = `http://localhost:8081/${isPopOut ? '#/popout' : ''}`;
-			document.getElementById('webviewer').appendChild(webview);
+		const webview = document.createElement('webview');
+		webview.preload = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
+		webview.src = `http://localhost:8081/${isPopOut ? '#/popout' : ''}`;
+		document.getElementById('webviewer').appendChild(webview);
 
-			// webview.addEventListener('dom-ready', () => {
-			// 	webview.openDevTools();
-			// })
-		}
+		// TODO: Remove / comment out
+		webview.addEventListener('dom-ready', () => {
+			webview.openDevTools();
+		});
 
-		if(!isPopOut){
-			createWebview();
-			ipcRenderer.on('socketResponse', (event, payload) => {
-				webview.send('socketResponse', payload);
-			})
-		} else {
-			createWebview();
-			ipcRenderer.on('popout', (event, popOut) => {
-				webview.send('popout', popOut);
-			})
-		}
 
-		ipcRenderer.on('openTools', (event, payload) => {
+
+
+		/***************************************/
+		/**        CONSOLE FORWARDERS         **/
+		/***************************************/
+		// const log = console.log;
+		// console.log = (...params) => {
+		// 	if(mainWindow) webview.send('console', params);
+		// 	log(...params);
+		// };
+		//
+		// const logerr = console.error;
+		// console.error = (...params) => {
+		// 	if(mainWindow) webview.send('console', params);
+		// 	logerr(...params);
+		// };
+
+
+		/***************************************/
+		/**            IPC MESSAGES           **/
+		/***************************************/
+		ipcRenderer.on('openTools', () => {
+			console.log('opening webview tools')
 			webview.openDevTools();
 		})
+		ipcRenderer.on('socketResponse', (event, payload) => webview.send('socketResponse', payload));
+		ipcRenderer.on('popout', (event, popOut) => webview.send('popout', popOut));
+		ipcRenderer.on('error', (e, x) => webview.send('error', x));
+		ipcRenderer.on('console', (e, x) => webview.send('console', x));
 
 
 
-		window.minimize = () => {
-			remote.BrowserWindow.getFocusedWindow().hide();
 
-		}
 
+		/***************************************/
+		/**         TOP MENU METHODS          **/
+		/***************************************/
+		window.quit = () => setTimeout(() => remote.app.quit(), 1);
+		window.minimize = () => remote.BrowserWindow.getFocusedWindow().hide();
 		window.maximize = () => {
 			const win = remote.BrowserWindow.getFocusedWindow();
 			win.isMaximized() ? win.unmaximize() : win.maximize();
 		}
 
-		window.quit = () => {
-			setTimeout(() => remote.app.quit(), 1);
-		}
+
 
 	</script>
 </body>

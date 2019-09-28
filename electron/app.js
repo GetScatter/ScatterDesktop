@@ -196,6 +196,9 @@ const storage = require('./services/storage');
 const files = require('./services/files');
 const windows = require('./services/windows');
 
+wallet.setStorage(storage);
+wallet.init();
+
 
 let multipartPromises = {};
 
@@ -250,11 +253,11 @@ global.wallet = {
 	/************************************/
 	utility:{
 		openTools:(windowId = null) => {
+			console.log('opening tools', windowId);
 			(windowId ? BrowserWindow.fromId(windowId) : mainWindow).webContents.send('openTools');
 		},
 		closeWindow:(windowId = null) => {
-			const w = windowId ? BrowserWindow.fromId(windowId) : mainWindow;
-			w.close()
+			(windowId ? BrowserWindow.fromId(windowId) : mainWindow).close()
 		},
 		flashWindow:() => console.error('flashing not implemented'),
 		openLink:(link, filepath = false) => {
@@ -279,6 +282,7 @@ global.wallet = {
 			delete multipartPromises[original.id];
 		},
 		socketResponse:() => {},
+		pushNotification:NotificationService.pushNotification
 	},
 
 	sockets:HighLevelSockets,

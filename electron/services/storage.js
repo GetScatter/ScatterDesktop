@@ -93,10 +93,6 @@ let getSeed;
 const getSeedSetter = (seeder) => getSeed = seeder;
 
 const AES = require("aes-oop").default;
-const HistoricTransfer = require('@walletpack/core/models/histories/HistoricTransfer').default;
-const HistoricExchange = require('@walletpack/core/models/histories/HistoricTransfer').default;
-const HistoricAction = require('@walletpack/core/models/histories/HistoricTransfer').default;
-const {HISTORY_TYPES} = require('@walletpack/core/models/histories/History');
 
 const cacheABI = (contractName, chainId, abi) =>{
 	return abiStorage().set(`abis.${contractName}_${chainId}`, abi);

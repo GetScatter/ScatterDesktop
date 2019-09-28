@@ -1,9 +1,13 @@
 const bippath = require('bip32-path');
-const {Blockchains} = require('@walletpack/core/models/Blockchains');
+
+const Blockchains = {
+	EOSIO:'eos',
+	ETH:'eth',
+}
 
 const asn1 = require('asn1-ber');
 const ecc = require('eosjs-ecc');
-const { Serialize } = require('eosjs');
+const { Serialize, Api } = require('eosjs');
 
 const EthTx = require('ethereumjs-tx')
 const Eth = require("@ledgerhq/hw-app-eth");
@@ -38,19 +42,15 @@ const LEDGER_PATHS = {
 	[Blockchains.ETH]:(index = 0) => `44'/60'/0'/0/${index}`,
 }
 
-
-
 let encoderOptions, eosjsUtil;
+
 class LedgerWallet {
 
 	static setup(){
 		LedgerTransport.setup();
 
-		const EosPlugin = require('@walletpack/eosio');
-		if(EosPlugin){
-			encoderOptions = EosPlugin.encoderOptions;
-			eosjsUtil = EosPlugin.eosjsUtil;
-		}
+		encoderOptions = TextEncoder ? {textEncoder:new require('util').TextEncoder(), textDecoder:new require('util').TextDecoder()} : {};
+		eosjsUtil = new Api(encoderOptions);
 	}
 
 	constructor(blockchain){

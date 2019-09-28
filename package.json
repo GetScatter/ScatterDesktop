@@ -14,21 +14,24 @@
     "release-linux": "electron-builder --linux",
     "release-mac": "electron-builder --mac",
     "release-win": "electron-builder --win",
-    "release-web": "node package_web.js"
+    "release-web": "node package_web.js",
+    "testfile": "electron-mocha --exit --timeout 1000000",
+    "test": "npm run testfile \"test/**/*.spec.js\" --timeout 1000000"
   },
   "dependencies": {
     "@ledgerhq/hw-app-eth": "^4.68.4",
     "@ledgerhq/hw-transport-node-hid": "^4.55.0",
-    "@walletpack/bitcoin": "^1.0.24",
+    "@walletpack/bitcoin": "^1.0.26",
     "@walletpack/core": "^1.0.22",
-    "@walletpack/eosio": "^0.0.24",
-    "@walletpack/ethereum": "^0.0.24",
-    "@walletpack/tron": "^0.0.24",
+    "@walletpack/eosio": "^0.0.27",
+    "@walletpack/ethereum": "^0.0.26",
+    "@walletpack/tron": "^0.0.26",
     "aes-oop": "^1.0.4",
     "asn1-ber": "^1.0.9",
     "bip32-path": "^0.4.2",
     "bip39": "^2.6.0",
     "electron-store": "^3.2.0",
+    "elliptic": "^6.5.1",
     "eosjs": "^20.0.0",
     "eosjs-ecc": "^4.0.7",
     "ethereumjs-tx": "^2.1.0",
@@ -39,9 +42,13 @@
     "ws": "^7.0.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "cross-env": "^6.0.0",
     "electron": "^5.0.6",
     "electron-builder": "^21.0.15",
+    "electron-mocha": "^8.1.2",
     "electron-rebuild": "^1.8.5",
+    "mocha": "^6.2.0",
     "secp256k1": "^3.6.2",
     "web3": "^1.0.0-beta.55"
   },
