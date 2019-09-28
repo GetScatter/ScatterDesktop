@@ -37,9 +37,7 @@ class LowLevelWindowService {
 					webviewTag:true,
 				} });
 			win.loadURL(mainUrl(true));
-			// win.loadURL('http://localhost:8081/#/popout');
 			resolve(win)
-			// win.once('ready-to-show', () => resolve(win));
 		})
 	}
 

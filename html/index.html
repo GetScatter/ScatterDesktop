@@ -211,7 +211,7 @@
 
 		const webview = document.createElement('webview');
 		webview.preload = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
-		webview.src = `http://localhost:8081/${isPopOut ? '#/popout' : ''}`;
+		webview.src = `${process.env.WEB_HOST}${isPopOut ? '#/popout' : ''}`;
 		document.getElementById('webviewer').appendChild(webview);
 
 

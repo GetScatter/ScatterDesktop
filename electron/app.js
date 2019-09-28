@@ -1,4 +1,5 @@
-require("isomorphic-fetch")
+require('dotenv').config();
+require("isomorphic-fetch");
 const electron = require('electron');
 const {app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
 
@@ -7,7 +8,7 @@ const LowLevelWindowService = require("./services/windows");
 const NotificationService = require('./services/notifier');
 const HighLevelSockets = require('./services/sockets');
 
-
+const htmlcheck = require('./services/htmlcheck');
 
 
 
@@ -73,7 +74,7 @@ const setupTray = () => {
 	tray.on('click', () => restoreInstance())
 };
 
-const createScatterInstance = () => {
+const createScatterInstance = async () => {
 	app.setAsDefaultProtocolClient('scatter');
 
 	const createMainWindow = (show, backgroundColor) => new BrowserWindow({
@@ -93,6 +94,8 @@ const createScatterInstance = () => {
 			webviewTag:true,
 		}
 	});
+
+	if(!await htmlcheck.check()) return process.exit(0);
 
 	mainWindow = createMainWindow(false, '#fff');
 	mainWindow.loadURL(mainUrl(false));
@@ -203,6 +206,8 @@ wallet.init();
 let multipartPromises = {};
 
 global.wallet = {
+	getVersion:() => `desktop_${require('../package').version}`,
+
 	/************************************/
 	/**       SIGNING & WALLET         **/
 	/************************************/
