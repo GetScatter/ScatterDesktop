@@ -17,7 +17,6 @@ class WebHashChecker {
 		const ERR_TITLE = 'Scatter Embed Check Failure';
 		const BASIC_ERR = `Your desktop client could not make a connection with our web wallet embed, so it can't verify that it is safe to use. If you are in a country which restricts IPs such as China or Russia, you may need to enable a proxy.`;
 		const html = await getIndexHTML();
-		console.log('html', html);
 		if(!html) return dialog.showErrorBox(
 			ERR_TITLE,
 			BASIC_ERR

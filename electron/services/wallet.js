@@ -238,7 +238,6 @@ const signWithHardware = async (keypair, network, publicKey, payload, arbitrary 
 	await ledger.open();
 
 	return new Promise(r => setTimeout(async () => {
-		// TODO: fix me
 		if(!(await ledger.canConnect())) return {error:`cant_connect`};
 		ledger.setAddressIndex(keypair.external.addressIndex);
 		r(await ledger.sign(publicKey, payload, payload.abi, network));
