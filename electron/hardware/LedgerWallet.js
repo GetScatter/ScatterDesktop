@@ -14,14 +14,28 @@ const Eth = require("@ledgerhq/hw-app-eth");
 
 const Transport = require('@ledgerhq/hw-transport-node-hid').default;
 let transport, openedTransport;
+
+let setupPromise;
 class LedgerTransport {
-	static setup(){
+	static async setup(){
 		transport = Transport.listen({next:({type, device}) => this[type](device)});
+		const p = new Promise(r => setupPromise = r);
+		setTimeout(() => {
+			if(setupPromise) {
+				setupPromise(false);
+				setupPromise = null;
+			}
+		}, 3000);
+		return p;
 	}
 
 	static async add(device){
 		const {path} = device;
 		openedTransport = await Transport.open(path);
+		setTimeout(() => {
+			setupPromise(true);
+			setupPromise = null;
+		}, 100);
 	}
 
 	static async remove(device){
@@ -30,7 +44,6 @@ class LedgerTransport {
 	}
 }
 
-const getTransport = () => openedTransport;
 
 
 
@@ -46,11 +59,16 @@ let encoderOptions, eosjsUtil;
 
 class LedgerWallet {
 
-	static setup(){
-		LedgerTransport.setup();
+	static async setup(){
+		if(!(await LedgerTransport.setup())){
+			return false;
+		}
 
-		encoderOptions = TextEncoder ? {textEncoder:new require('util').TextEncoder(), textDecoder:new require('util').TextDecoder()} : {};
+		const util = require('util');
+		encoderOptions = {textEncoder:new util.TextEncoder(), textDecoder:new util.TextDecoder()};
 		eosjsUtil = new Api(encoderOptions);
+
+		return true;
 	}
 
 	constructor(blockchain){
@@ -116,7 +134,7 @@ class LedgerAPI {
 		}
 
 		try {
-			getTransport().decorateAppAPIMethods(
+			openedTransport.decorateAppAPIMethods(
 				this,
 				[ "getAddress", "getPublicKey", "signTransaction", "getAppConfiguration" ],
 				scrambleKey
@@ -125,32 +143,32 @@ class LedgerAPI {
 	}
 
 	async setAddressIndex(index){
-		if(!getTransport()) return;
+		if(!openedTransport) return;
 		const prefix = this.api ? this.api : this;
 		prefix.addressIndex = index;
 	}
 
 	async getAddress(index){
-		if(!getTransport()) return;
+		if(!openedTransport) return;
 		const prefix = this.api ? this.api : this;
 		return prefix[`getAddress`+this.blockchain](index);
 	}
 
 
 	async getPublicKey(){
-		if(!getTransport()) return;
+		if(!openedTransport) return;
 		const prefix = this.api ? this.api : this;
 		return prefix[`getPublicKey`+this.blockchain]();
 	}
 
 	async getAppConfiguration(){
-		if(!getTransport()) return;
+		if(!openedTransport) return;
 		const prefix = this.api ? this.api : this;
 		return prefix[`getAppConfiguration`+this.blockchain]();
 	}
 
 	async signTransaction(publicKey, rawTxHex, abi, network){
-		if(!getTransport()) return;
+		if(!openedTransport) return;
 		const prefix = this.api ? this.api : this;
 		return prefix[`signTransaction`+this.blockchain](publicKey, rawTxHex, abi, network);
 	}
@@ -171,7 +189,7 @@ class LedgerAPI {
 		let buffer = new Buffer(1 + paths.length * 4);
 		buffer[0] = paths.length;
 		paths.forEach((element, index) => buffer.writeUInt32BE(element, 1 + 4 * index));
-		return getTransport().send(0xD4, 0x02, 0x00, 0x00, buffer).then((response) => {
+		return openedTransport.send(0xD4, 0x02, 0x00, 0x00, buffer).then((response) => {
 			let result = {};
 			let publicKeyLength = response[0];
 			let addressLength = response[1 + publicKeyLength];
@@ -183,19 +201,19 @@ class LedgerAPI {
 			return result.address;
 		}).catch(err => {
 			console.error('Ledger address error', err);
-			return null;
+			return {error:err.message};
 		});
 	}
 
 	[`getAddress`+Blockchains.ETH](index){
 		return new Promise(async (resolve, reject) => {
 			const path = LEDGER_PATHS[this.blockchain](index);
-			const eth = new Eth(getTransport());
+			const eth = new Eth(openedTransport);
 			eth.getAddress(path, false)
 				.then(response => {
 					resolve(response.address);
 				}).catch(err => {
-				reject(err);
+				resolve({error:err});
 			});
 		})
 	}
@@ -218,8 +236,6 @@ class LedgerAPI {
 			rawTx = serializeEosjs(network, transaction);
 		} catch(e){
 			console.error('e', e);
-			// TODO: NOTIFICATIONS
-			// PopupService.push(Popup.prompt('Ledger Action Not Supported', 'Looks like this action isn\'t supported by the Ledger App'));
 			return null;
 		}
 
@@ -238,12 +254,8 @@ class LedgerAPI {
 			offset += chunkSize;
 		}
 
-		// TODO: NOTIFICATIONS
-		// const popup = Popup.checkHardwareWalletScreen();
-		// PopupService.push(popup);
-
 		return foreach(toSend, (data, i) =>
-			getTransport()
+			openedTransport
 				.send(LEDGER_CODES.CLA, LEDGER_CODES.SIGN, i === 0 ? LEDGER_CODES.FIRST : LEDGER_CODES.MORE, 0x00, data)
 				.then(apduResponse => response = apduResponse)
 		).then(() => {
@@ -262,7 +274,7 @@ class LedgerAPI {
 	async [`signTransaction`+Blockchains.ETH](publicKey, payload, abi, network){
 		const transaction = payload.hasOwnProperty('transaction') ? payload.transaction : payload;
 		const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
-		const eth = new Eth(getTransport());
+		const eth = new Eth(openedTransport);
 		const popup = Popup.checkHardwareWalletScreen();
 		// PopupService.push(popup);
 		const chainIdHex = '0x'+(network.chainId.length === 1 ? '0'+ network.chainId : network.chainId).toString();
@@ -293,7 +305,7 @@ class LedgerAPI {
 	/*************************************************/
 
 	[`getAppConfiguration`+Blockchains.EOSIO](){
-		return getTransport().send(LEDGER_CODES.CLA, LEDGER_CODES.INFO, LEDGER_CODES.NO, LEDGER_CODES.NO).then(res => {
+		return openedTransport.send(LEDGER_CODES.CLA, LEDGER_CODES.INFO, LEDGER_CODES.NO, LEDGER_CODES.NO).then(res => {
 			return true;
 		}).catch(err => {
 			return `Open the ${this.blockchain.toUpperCase()} Ledger App before you continue.`;
@@ -302,7 +314,7 @@ class LedgerAPI {
 
 	async [`getAppConfiguration`+Blockchains.ETH](){
 		const path = LEDGER_PATHS[this.blockchain](this.addressIndex);
-		const eth = new Eth(getTransport());
+		const eth = new Eth(openedTransport);
 		return eth.getAppConfiguration().then(res => {
 			return true;
 		}).catch(err => {

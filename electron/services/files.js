@@ -42,10 +42,16 @@ const openFile = (path, encoding = 'utf-8') => {
 	})
 };
 
+const existsOrMkdir = (path) => {
+	if(!fs.existsSync(path)) fs.mkdirSync(path);
+	return true;
+}
+
 module.exports = {
 	getDefaultPath,
 	getFileLocation,
 	getFolderLocation,
+	existsOrMkdir,
 	saveFile,
 	openFile
 }

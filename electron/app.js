@@ -213,7 +213,7 @@ global.wallet = {
 	verifyPassword:wallet.verifyPassword,
 	changePassword:wallet.changePassword,
 	hardwareTypes:async () => wallet.hardwareTypes,
-	hardwareKeys:wallet.getHardwareKeys,
+	hardwareKey:wallet.getHardwareKey,
 	getPrivateKey:wallet.getPrivateKey,
 	sign:wallet.sign,
 	encrypt:wallet.encrypt,
@@ -236,6 +236,7 @@ global.wallet = {
 		openFile:files.openFile,
 		getFileLocation:files.getFileLocation,
 		getFolderLocation:files.getFolderLocation,
+		mkdir:files.existsOrMkdir,
 
 		cacheABI:storage.cacheABI,
 		getCachedABI:storage.getCachedABI,
