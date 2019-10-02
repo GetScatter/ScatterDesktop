@@ -7,7 +7,7 @@ const {ipcMain} = require("electron");
 const bip39 = require('bip39');
 const scrypt = require('scrypt-async');
 const AES = require("aes-oop").default;
-const path = require('path')
+const path = require('path');
 const Scatter = require('@walletpack/core/models/Scatter').default;
 const Error = require('@walletpack/core/models/errors/Error').default;
 const IdGenerator = require('@walletpack/core/util/IdGenerator').default;
@@ -67,7 +67,7 @@ const updateScatter = async (_s) => {
 		}
 	});
 
-	scatter = JSON.parse(JSON.stringify(_s));
+	scatter = Scatter.fromJson(JSON.parse(JSON.stringify(_s)));
 
 	_s.keychain = AES.encrypt(_s.keychain, seed);
 	await storage.setScatter(AES.encrypt(_s, seed));

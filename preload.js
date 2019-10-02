@@ -1,5 +1,5 @@
 const { ipcRenderer, remote } = require('electron');
-let wallet = remote.getGlobal('wallet');
+const wallet = remote.getGlobal('wallet');
 
 if(!window.wallet) window.wallet = {};
 

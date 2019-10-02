@@ -210,9 +210,22 @@
 		/***************************************/
 
 		const webview = document.createElement('webview');
+
+		const PRELOAD = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
+		const INDEX = `file://${path.join(remote.app.getPath('userData'), 'dist')}`;
+
 		webview.preload = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
+
+		console.log('preload', PRELOAD, INDEX);
+
 		webview.src = `${process.env.WEB_HOST}${isPopOut ? '#/popout' : ''}`;
+
+
 		document.getElementById('webviewer').appendChild(webview);
+
+		webview.addEventListener('dom-ready', () => {
+			webview.openDevTools()
+		})
 
 
 		/***************************************/

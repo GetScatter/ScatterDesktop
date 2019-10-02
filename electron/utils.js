@@ -18,8 +18,8 @@ let trayIcon = isDev
 // 	hash:isPopup ? '/popout' : null
 // });
 
-let mainUrl = isPopup => url.format({
-	pathname:  `${__dirname}/../html/index.html`,
+let mainUrl = (isPopup = false, html = 'index') => url.format({
+	pathname:  `${__dirname}/../html/${html}.html`,
 	protocol: "file:",
 	slashes: true,
 	hash:isPopup ? '/popout' : null

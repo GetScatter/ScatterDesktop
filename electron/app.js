@@ -9,6 +9,7 @@ const NotificationService = require('./services/notifier');
 const HighLevelSockets = require('./services/sockets');
 
 const htmlcheck = require('./services/htmlcheck');
+const files = require('./services/files');
 
 
 
@@ -77,17 +78,17 @@ const setupTray = () => {
 const createScatterInstance = async () => {
 	app.setAsDefaultProtocolClient('scatter');
 
-	const createMainWindow = (show, backgroundColor) => new BrowserWindow({
-		width: 1024,
-		height: 800,
+	const createMainWindow = (show, width = 1024, height = 800) => new BrowserWindow({
+		width,
+		height,
 		frame: false,
 		radii: [5,5,5,5],
 		icon,
 		resizable: true,
-		minWidth: 800,
-		minHeight:720,
+		// minWidth: 800,
+		// minHeight:720,
 		titleBarStyle:'hiddenInset',
-		backgroundColor,
+		backgroundColor:"#fff",
 		show,
 		webPreferences:{
 			nodeIntegration:true,
@@ -95,10 +96,21 @@ const createScatterInstance = async () => {
 		}
 	});
 
-	if(!await htmlcheck.check()) return process.exit(0);
+	const loadingWindow = createMainWindow(true, 400, 250);
+	loadingWindow.loadURL(mainUrl(false, 'loading'));
+	loadingWindow.once('ready-to-show', () => {
 
-	mainWindow = createMainWindow(false, '#fff');
+		loadingWindow.show();
+		loadingWindow.focus();
+	});
+
+	if(!await htmlcheck.check(loadingWindow)) return process.exit(0);
+	files.toggleAllowInternals(false);
+
+	mainWindow = createMainWindow(false);
 	mainWindow.loadURL(mainUrl(false));
+	mainWindow.openDevTools();
+	loadingWindow.close();
 
 	mainWindow.once('ready-to-show', () => {
 		HighLevelSockets.setMainWindow(mainWindow);
@@ -195,7 +207,6 @@ console.error = (...params) => {
 
 const wallet = require('./services/wallet');
 const storage = require('./services/storage');
-const files = require('./services/files');
 const windows = require('./services/windows');
 
 wallet.setStorage(storage);
@@ -272,7 +283,9 @@ global.wallet = {
 				}
 			}
 		},
-		reload:() => mainWindow.reload(),
+		reload:(windowId = null) => {
+			(windowId ? BrowserWindow.fromId(windowId) : mainWindow).reload()
+		},
 		copy:electron.clipboard.writeText,
 		screenshot:(windowId) => {
 			return (windowId ? BrowserWindow.fromId(windowId) : mainWindow).capturePage().then(img => img.toJPEG(99))

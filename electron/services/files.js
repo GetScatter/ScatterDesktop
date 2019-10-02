@@ -5,9 +5,24 @@ const getDefaultPath = () => app.getPath('userData');
 const getFileLocation = (extensions) => dialog.showOpenDialog({ filters: [ { name: 'only', extensions } ] });
 const getFolderLocation = () => dialog.showOpenDialog({properties: ['openDirectory']});
 
+let internals = true;
+const toggleAllowInternals = (bool) => internals = bool;
 const saveFile = (path, name, data, encoding = 'utf-8') => {
 	if(`${path}/${name}` === `${getDefaultPath()}/scatter.json`) {
 		console.error('cannot manually overwrite scatter.json data');
+		return false;
+	}
+
+	if(name.indexOf('.') === -1) {
+		console.error('File must be [html, js, jpg]');
+		return false;
+	}
+
+	const lastPeriod = name.lastIndexOf('.');
+	const ext = name.substring(lastPeriod+1,name.length);
+	const allowed = internals ? ['html', 'js', 'json', 'jpg'] : ['json', 'jpg'];
+	if(!allowed.includes(ext)){
+		console.error('Cannot save files that are not json or jpg');
 		return false;
 	}
 
@@ -48,6 +63,7 @@ const existsOrMkdir = (path) => {
 }
 
 module.exports = {
+	toggleAllowInternals,
 	getDefaultPath,
 	getFileLocation,
 	getFolderLocation,
