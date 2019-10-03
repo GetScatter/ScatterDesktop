@@ -220,12 +220,7 @@
 
 		webview.src = `${process.env.WEB_HOST}${isPopOut ? '#/popout' : ''}`;
 
-
 		document.getElementById('webviewer').appendChild(webview);
-
-		webview.addEventListener('dom-ready', () => {
-			webview.openDevTools()
-		})
 
 
 		/***************************************/

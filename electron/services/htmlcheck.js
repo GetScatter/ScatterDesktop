@@ -19,7 +19,10 @@ const applyETAG = async (filename, tag) => {
 const getSource = (filename, method = "GET") => {
 	return fetch(`${HOST}/${filename}`, {method}).then(async x => {
 		return {etag:x.headers.get('etag'), file:await x.text()};
-	}).catch(() => null);
+	}).catch(err => {
+		console.error('source error', err);
+		return null;
+	});
 };
 
 const ERR_TITLE = 'Scatter Embed Check Failure';
@@ -42,12 +45,14 @@ class WebHashChecker {
 		const etagsFile = await openFile(path.join(getDefaultPath(), 'etags.json')).catch(() => null);
 		if(etagsFile) ETAGS = JSON.parse(etagsFile);
 
+		let error;
+
 
 		const checkFileHash = async (filename) => {
+			if(error) return false;
 			const result = await getSource(filename).catch(() => null);
-			if(!result) return dialog.showErrorBox(ERR_TITLE, WEB_APP_ERR);
+			if(!result) return error = WEB_APP_ERR;
 
-			console.log('hash check', filename, hash(result.file), hashes[filename]);
 			if(hash(result.file) === hashes[filename]){
 				await applyETAG(filename, result.etag);
 				return true;
@@ -57,15 +62,17 @@ class WebHashChecker {
 		};
 
 		const checkEtag = async (filename) => {
+			if(error) return false;
 			if(ETAGS.hasOwnProperty(filename) && ETAGS[filename]){
 				const result = await getSource(filename, "HEAD").catch(() => null);
-				if(!result) return dialog.showErrorBox(ERR_TITLE, WEB_APP_ERR);
+				if(!result) return error = WEB_APP_ERR;
 				return result.etag === ETAGS[filename];
 			}
 			return false;
 		};
 
 		const checkFile = async filename => {
+			if(error) return false;
 			if(await checkEtag(filename)) return true;
 			else return await checkFileHash(filename);
 		};
@@ -74,13 +81,15 @@ class WebHashChecker {
 		await Promise.all(filesList.map(async filename => {
 
 			if(!await checkFile(filename)) {
-				return dialog.showErrorBox(ERR_TITLE, HASH_ERR);
+				return  error = HASH_ERR;
 			} else {
 				verified++;
 				window.webContents.send('hashstat', {hash:hash(filename), verified, total:filesList.length});
 			}
 		}));
 
+
+		if(error) return dialog.showErrorBox(ERR_TITLE, error);
 		return verified === filesList.length;
 	}
 

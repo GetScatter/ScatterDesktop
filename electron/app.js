@@ -109,7 +109,6 @@ const createScatterInstance = async () => {
 
 	mainWindow = createMainWindow(false);
 	mainWindow.loadURL(mainUrl(false));
-	mainWindow.openDevTools();
 	loadingWindow.close();
 
 	mainWindow.once('ready-to-show', () => {
