@@ -249,6 +249,13 @@ const decrypt = data => AES.decrypt(data, seed);
 
 const getSeed = () => seed;
 
+const availableBlockchains = () => ({
+	EOSIO:'eos',
+	ETH:'eth',
+	TRX:'trx',
+	BTC:'btc',
+});
+
 module.exports = {
 	setStorage,
 	init,
@@ -270,4 +277,5 @@ module.exports = {
 	decrypt,
 
 	getSeed,
+	availableBlockchains,
 }

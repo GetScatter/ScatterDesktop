@@ -220,6 +220,7 @@ global.wallet = {
 	/************************************/
 	/**       SIGNING & WALLET         **/
 	/************************************/
+	availableBlockchains:wallet.availableBlockchains,
 	exists:wallet.exists,
 	unlocked:wallet.isUnlocked,
 	unlock:wallet.unlock,
