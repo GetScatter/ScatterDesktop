@@ -1,7 +1,7 @@
 const {dialog, app} = require('electron');
 const fs = require('fs');
 
-const getDefaultPath = () => app.getPath('userData');
+const getDefaultPath = () => process.env.TESTING ? './test/exports' : app.getPath('userData');
 const getFileLocation = (extensions) => dialog.showOpenDialog({ filters: [ { name: 'only', extensions } ] });
 const getFolderLocation = () => dialog.showOpenDialog({properties: ['openDirectory']});
 
@@ -20,9 +20,9 @@ const saveFile = (path, name, data, encoding = 'utf-8') => {
 
 	const lastPeriod = name.lastIndexOf('.');
 	const ext = name.substring(lastPeriod+1,name.length);
-	const allowed = internals ? ['html', 'js', 'json', 'jpg'] : ['json', 'jpg'];
+	const allowed = internals ? ['html', 'js', 'css', 'json', 'jpg'] : ['json', 'jpg'];
 	if(!allowed.includes(ext)){
-		console.error('Cannot save files that are not json or jpg');
+		console.error('Cannot save files that are not', JSON.stringify(allowed));
 		return false;
 	}
 
@@ -42,11 +42,7 @@ const openFile = (path, encoding = 'utf-8') => {
 	return new Promise(resolve => {
 		try {
 			fs.readFile(path, encoding, (err, data) => {
-				if(err) {
-					console.error('err', err);
-					resolve(null);
-				}
-
+				if(err) return resolve(null);
 				resolve(data);
 			});
 		}
@@ -57,8 +53,12 @@ const openFile = (path, encoding = 'utf-8') => {
 	})
 };
 
+const exists = path => {
+	return fs.existsSync(path);
+}
+
 const existsOrMkdir = (path) => {
-	if(!fs.existsSync(path)) fs.mkdirSync(path);
+	if(!fs.existsSync(path)) fs.mkdirSync(path, { recursive: true });
 	return true;
 }
 
@@ -67,6 +67,7 @@ module.exports = {
 	getDefaultPath,
 	getFileLocation,
 	getFolderLocation,
+	exists,
 	existsOrMkdir,
 	saveFile,
 	openFile

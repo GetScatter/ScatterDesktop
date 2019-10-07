@@ -1,5 +1,5 @@
 const {dialog} = require('electron');
-const {getDefaultPath, saveFile, openFile} = require('./files');
+const {getDefaultPath, saveFile, openFile, existsOrMkdir, exists} = require('./files');
 const createHash = require('create-hash');
 const {GET} = require('./embedapi');
 const path = require('path');
@@ -12,12 +12,14 @@ const hash = x => createHash('sha256').update(x).digest('hex')
 
 const applyETAG = async (filename, tag) => {
 	ETAGS[filename] = tag;
+	existsOrMkdir(getDefaultPath());
 	await saveFile(getDefaultPath(), 'etags.json', JSON.stringify(ETAGS));
 	return true;
 }
 
 const getSource = (filename, method = "GET") => {
-	return fetch(`${HOST}/${filename}`, {method}).then(async x => {
+	console.log('getting source', filename);
+	return fetch(`${HOST}/${filename}`, {method, cache:"no-cache"}).then(async x => {
 		return {etag:x.headers.get('etag'), file:await x.text()};
 	}).catch(err => {
 		console.error('source error', err);
@@ -30,12 +32,28 @@ const WEB_APP_ERR = `Your desktop client could not make a connection with our we
 const API_ERR = `Scatter failed to make a connection with our API which is used to verify the hash of the web wallet embed. If you are in a country which restricts IPs such as China or Russia, you may need to enable a proxy.`
 const HASH_ERR = `The hash created from the web wallet embed does not match the hash returned from our secure API. This could be due to an update happening right now. Please try again in a moment. If this problem persists please contact support immediately at support@get-scatter.com, or on Telegram on the @Scatter channel, or Twitter at @Get_Scatter.`
 
+
+const saveSource = (filename, file) => {
+	const sourcePath = path.join(getDefaultPath(), 'cached_sources');
+	console.log('saving source to', sourcePath);
+	existsOrMkdir(sourcePath);
+	return saveFile(sourcePath, filename, file);
+};
+
+
+
+
+
+
+
+
 class WebHashChecker {
 
 	static async check(window){
+		const isTesting = process.env.WEB_HOST.indexOf('http://localhost:') === 0;
 
 		// Don't do checks when running on localhost
-		if(process.env.WEB_HOST.indexOf('http://localhost:') === 0) return true;
+		// if(process.env.WEB_HOST.indexOf('http://localhost:') === 0) return true;
 
 
 		const hashes = await GET(`hashes`).catch(() => null);
@@ -47,16 +65,21 @@ class WebHashChecker {
 
 		let error;
 
+		let io = 0;
 
 		const checkFileHash = async (filename) => {
 			if(error) return false;
 			const result = await getSource(filename).catch(() => null);
-			if(!result) return error = WEB_APP_ERR;
+			if(!result || !result.file.length) return error = WEB_APP_ERR;
 
-			if(hash(result.file) === hashes[filename]){
+			if(isTesting || hash(result.file) === hashes[filename]){
 				await applyETAG(filename, result.etag);
+				result.file = result.file.replace(/static\/assets\//g, "https://embed.get-scatter.com/static/assets/");
+				result.file = result.file.replace(/static\/fonts\//g, "https://embed.get-scatter.com/static/fonts/");
+				saveSource(filename, result.file);
 				return true;
 			}
+
 
 			return false;
 		};
@@ -73,7 +96,7 @@ class WebHashChecker {
 
 		const checkFile = async filename => {
 			if(error) return false;
-			if(await checkEtag(filename)) return true;
+			if(await checkEtag(filename) && exists(path.join(getDefaultPath(), 'cached_sources', filename))) return true;
 			else return await checkFileHash(filename);
 		};
 
@@ -81,10 +104,13 @@ class WebHashChecker {
 		await Promise.all(filesList.map(async filename => {
 
 			if(!await checkFile(filename)) {
-				return  error = HASH_ERR;
+				return error = HASH_ERR;
 			} else {
 				verified++;
-				window.webContents.send('hashstat', {hash:hash(filename), verified, total:filesList.length});
+
+				const hashstat = {hash:hash(filename), verified, total:filesList.length};
+				if(window) window.webContents.send('hashstat', hashstat);
+				else console.log('hashstat', hashstat);
 			}
 		}));
 

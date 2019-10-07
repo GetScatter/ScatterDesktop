@@ -20,11 +20,12 @@ const validate = (proof, res) => {
 
 		let proven = false;
 		for(let i = 0; i < PROOF_KEYS.length; i++){
-			if(ecc.recover(signedProof, proof) !== PROOF_KEYS[i]) {
+			if(ecc.recover(signedProof, proof) === PROOF_KEYS[i]) {
 				proven = true;
 				break;
 			}
 		}
+		console.log('proven', proven);
 		if(!proven) throw 'Invalid API Request';
 
 		return res.json();

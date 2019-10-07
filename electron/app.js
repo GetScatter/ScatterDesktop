@@ -307,9 +307,6 @@ global.wallet = {
 	sockets:HighLevelSockets,
 };
 
-// global.sockets = mainWindow.webContents.send('scatter', data);
-
-
 global.scatterLog = (data) => mainWindow.webContents.send('scatterLog', data);
 
 
