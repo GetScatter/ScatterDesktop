@@ -126,7 +126,7 @@ class WebHashChecker {
 
 		// If an ETAG already exists on the user's local machine then
 		// Scatter won't try to refresh the Embed file.
-		// This is completely to rely on since even if a malicious server spoofs the ETAG
+		// This is completely safe to rely on since even if a malicious server spoofs the ETAG
 		// Scatter will simply not download their malicious version of the file as it will
 		// use the one locally stored on the user's machine and not the one with the spoofed
 		// ETAG.
