@@ -1,7 +1,6 @@
 require('dotenv').config();
 require("isomorphic-fetch");
-const electron = require('electron');
-const {app, BrowserWindow, Tray, Menu, MenuItem, ipcMain} = electron;
+const {shell, clipboard, dialog, app, BrowserWindow, Tray, Menu} = require('electron');
 
 const {isDev, icon, trayIcon, mainUrl} = require('./utils');
 const LowLevelWindowService = require("./services/windows");
@@ -99,12 +98,22 @@ const createScatterInstance = async () => {
 	const loadingWindow = createMainWindow(true, 400, 250);
 	loadingWindow.loadURL(mainUrl(false, 'loading'));
 	loadingWindow.once('ready-to-show', () => {
-
 		loadingWindow.show();
 		loadingWindow.focus();
 	});
 
-	if(!await htmlcheck.check(loadingWindow)) return process.exit(0);
+	if(!await htmlcheck.check(loadingWindow)) {
+		if(!await new Promise(resolve => {
+			dialog.showMessageBox({
+				type:'question',
+				title:'Do you want to use a cached version?',
+				message:'Would you like to try using a locally cached (on your machine) version of Scatter Embed which has already been verified previously?',
+				buttons:['Yes', 'No']
+			}, btn => {
+				resolve(btn === 0);
+			})
+		})) return process.exit(0);
+	}
 	files.toggleAllowInternals(false);
 
 	mainWindow = createMainWindow(false);
@@ -276,17 +285,17 @@ global.wallet = {
 		},
 		flashWindow:() => console.error('flashing not implemented'),
 		openLink:(link, filepath = false) => {
-			if(filepath) return electron.shell.openItem(link);
+			if(filepath) return shell.openItem(link);
 			else {
 				if(link.indexOf('https://') === 0 || link.indexOf('http://') === 0) {
-					return electron.shell.openExternal(link);
+					return shell.openExternal(link);
 				}
 			}
 		},
 		reload:(windowId = null) => {
 			(windowId ? BrowserWindow.fromId(windowId) : mainWindow).reload()
 		},
-		copy:electron.clipboard.writeText,
+		copy:clipboard.writeText,
 		screenshot:(windowId) => {
 			return (windowId ? BrowserWindow.fromId(windowId) : mainWindow).capturePage().then(img => img.toJPEG(99))
 		},

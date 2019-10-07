@@ -25,7 +25,6 @@ const validate = (proof, res) => {
 				break;
 			}
 		}
-		console.log('proven', proven);
 		if(!proven) throw 'Invalid API Request';
 
 		return res.json();

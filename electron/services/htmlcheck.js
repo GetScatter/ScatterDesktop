@@ -65,8 +65,6 @@ class WebHashChecker {
 
 		let error;
 
-		let io = 0;
-
 		const checkFileHash = async (filename) => {
 			if(error) return false;
 			const result = await getSource(filename).catch(() => null);
@@ -74,8 +72,12 @@ class WebHashChecker {
 
 			if(isTesting || hash(result.file) === hashes[filename]){
 				await applyETAG(filename, result.etag);
-				result.file = result.file.replace(/static\/assets\//g, "https://embed.get-scatter.com/static/assets/");
-				result.file = result.file.replace(/static\/fonts\//g, "https://embed.get-scatter.com/static/fonts/");
+
+				// Applying absolute URLs to relative static assets
+				result.file = result.file.replace(/static\//g, "https://embed.get-scatter.com/static/");
+				result.file = result.file.replace(/static\//g, "https://embed.get-scatter.com/static/");
+
+				// Saving the source locally.
 				saveSource(filename, result.file);
 				return true;
 			}
@@ -113,7 +115,6 @@ class WebHashChecker {
 				else console.log('hashstat', hashstat);
 			}
 		}));
-
 
 		if(error) return dialog.showErrorBox(ERR_TITLE, error);
 		return verified === filesList.length;
