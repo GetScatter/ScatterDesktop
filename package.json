@@ -128,7 +128,8 @@
             "ia32"
           ]
         }
-      ]
+      ],
+      "certificateSubjectName":"GetScatter Ltd."
     },
     "linux": {
       "category": "Network",
