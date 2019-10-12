@@ -6,8 +6,9 @@ const {isDev, icon, trayIcon, mainUrl} = require('./utils');
 const LowLevelWindowService = require("./services/windows");
 const NotificationService = require('./services/notifier');
 const HighLevelSockets = require('./services/sockets');
+const prompt = require('./services/prompt');
 
-const htmlcheck = require('./services/htmlcheck');
+const embedder = require('./services/embedder');
 const files = require('./services/files');
 
 
@@ -102,18 +103,53 @@ const createScatterInstance = async () => {
 		loadingWindow.focus();
 	});
 
-	if(!await htmlcheck.check(loadingWindow)) {
-		if(!await new Promise(resolve => {
-			dialog.showMessageBox({
-				type:'question',
-				title:'Do you want to use a cached version?',
-				message:'Would you like to try using a locally cached (on your machine) version of Scatter Embed which has already been verified previously?',
-				buttons:['Yes', 'No']
-			}, btn => {
-				resolve(btn === 0);
-			})
-		})) return process.exit(0);
+	let hasEmbed = false;
+
+	const updateLocalFiles = async () => {
+		if(!await embedder.cacheEmbedFiles(loadingWindow)){
+			hasEmbed = await prompt.accepted(
+				'There was an issue getting the latest Embed version.',
+				'Would you like to keep using your locally cached version of Scatter Embed which has already been verified previously?'
+			);
+		} else hasEmbed = true;
+		return true;
 	}
+
+	if(await embedder.versionAvailable()){
+		// User doesn't have a local version,
+		// so they must grab the version.
+		if(!await embedder.hasLocalVersion()){
+			hasEmbed = await embedder.cacheEmbedFiles(loadingWindow);
+		}
+
+		// User has a local version, so they can choose to
+		// update their local version to the next one.
+		else {
+			if(await prompt.accepted(
+				'An updated Scatter Embed is available.',
+				'There is an updated version of Scatter Embed available. Do you want to use it?'
+			)) await updateLocalFiles();
+			else hasEmbed = true;
+		}
+	} else {
+		// Checking if the user's local file hashes match the ones on the server.
+		if(await embedder.checkCachedHashes(loadingWindow)) hasEmbed = true;
+
+		// If they don't then we will notify the user and allow them to
+		// either continue using their local files, or re-pull the version from
+		// the web.
+		else {
+			if(!await prompt.accepted(
+				'Some of your local files had mismatched hashes.',
+				`It looks like some of the files you have locally don't match the hashes of the current embed version, but your version says it's up to date. 
+				 Do you want to continue using your local version instead of trying to re-pull the current embed?`
+			)) hasEmbed = true;
+			else await updateLocalFiles();
+		}
+	}
+
+	if(!hasEmbed) return process.exit(0);
+
 	files.toggleAllowInternals(false);
 
 	mainWindow = createMainWindow(false);
@@ -178,7 +214,7 @@ app.on('will-finish-launching', () => {
 
 global.appShared = {
 	ApiWatcher:null,
-	htmlcheck:require('./services/htmlcheck')
+	embedder:require('./services/embedder')
 };
 
 

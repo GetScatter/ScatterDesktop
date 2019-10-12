@@ -1,8 +1,6 @@
-
-
 const LowLevelWindowService = require("./windows");
-
 const {ipcMain} = require("electron");
+const prompt = require('./prompt');
 
 const bip39 = require('bip39');
 const scrypt = require('scrypt-async');
@@ -136,6 +134,15 @@ const reloading = () => {
 };
 
 const getPrivateKey = async (keypairId, blockchain) => {
+	if(!await prompt.accepted(
+		`Exporting a private key.`,
+		`Something has requested a private key. Are you currently exporting the private key from Scatter?`
+	)) return null;
+
+	return getPrivateKeyForSigning(keypairId, blockchain);
+}
+
+const getPrivateKeyForSigning = async (keypairId, blockchain) => {
 	let keypair = scatter.keychain.keypairs.find(x => x.id === keypairId);
 	if(!keypair) return;
 
@@ -198,7 +205,8 @@ const sign = async (network, publicKey, payload, arbitrary = false, isHash = fal
 
 		if(keypair.external) return signWithHardware(keypair, network, publicKey, payload, arbitrary, isHash);
 
-		const privateKey = await getPrivateKey(keypair.id, network.blockchain);
+		const privateKey = await getPrivateKeyForSigning(keypair.id, network.blockchain);
+
 		return plugin.signer(payload, publicKey, arbitrary, isHash, privateKey);
 	} catch(e){
 		console.error('Signing Error!', e);

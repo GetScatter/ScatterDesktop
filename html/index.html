@@ -212,7 +212,9 @@
 		const webview = document.createElement('webview');
 
 		const PRELOAD = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
-		const INDEX = `file://${path.join(remote.app.getPath('userData'), 'cached_sources')}`;
+		const INDEX = process.env.LOCAL_TESTING
+			? `http://localhost:8081`
+			: `file://${path.join(remote.app.getPath('userData'), 'cached_sources')}`;
 		webview.preload = PRELOAD;
 		webview.src = `${INDEX}/index.html${isPopOut ? '#/popout' : ''}`;
 		document.getElementById('webviewer').appendChild(webview);

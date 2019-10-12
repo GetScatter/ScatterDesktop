@@ -4,14 +4,14 @@ const {assert} = require('chai');
 require('electron-mocha');
 require('isomorphic-fetch');
 
-const htmlcheck = require('../../electron/services/htmlcheck');
+const embedder = require('../../electron/services/embedder');
 
 
-describe('htmlcheck', () => {
+describe('embedder', () => {
 
 	it('should check the sources for embed', done => {
 		new Promise(async() => {
-			const result = await htmlcheck.check(null);
+			const result = await embedder.cacheEmbedFiles(null);
 			console.log('result', result);
 			done();
 		})

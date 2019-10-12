@@ -20,7 +20,7 @@ const saveFile = (path, name, data, encoding = 'utf-8') => {
 
 	const lastPeriod = name.lastIndexOf('.');
 	const ext = name.substring(lastPeriod+1,name.length);
-	const allowed = internals ? ['html', 'js', 'css', 'json', 'jpg'] : ['json', 'jpg'];
+	const allowed = internals ? ['html', 'js', 'css', 'json', 'jpg', 'timestamp'] : ['json', 'jpg'];
 	if(!allowed.includes(ext)){
 		console.error('Cannot save files that are not', JSON.stringify(allowed));
 		return false;
@@ -60,7 +60,11 @@ const exists = path => {
 const existsOrMkdir = (path) => {
 	if(!fs.existsSync(path)) fs.mkdirSync(path, { recursive: true });
 	return true;
-}
+};
+
+const getFilesForDirectory = async (path) => {
+	return fs.readdirSync(path);
+};
 
 module.exports = {
 	toggleAllowInternals,
@@ -70,5 +74,6 @@ module.exports = {
 	exists,
 	existsOrMkdir,
 	saveFile,
-	openFile
+	openFile,
+	getFilesForDirectory
 }
