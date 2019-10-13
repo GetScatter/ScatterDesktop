@@ -36,7 +36,6 @@ const HASH_ERR = `The hash created from the web wallet embed does not match the 
 
 const saveSource = (filename, file) => {
 	const sourcePath = path.join(getDefaultPath(), 'cached_sources');
-	console.log('saving source to', sourcePath);
 	existsOrMkdir(sourcePath);
 	return saveFile(sourcePath, filename, file);
 };
@@ -115,7 +114,7 @@ class WebHashChecker {
 
 	}
 
-	static async cacheEmbedFiles(window){
+	static async cacheEmbedFiles(window, regenerate = false){
 		if(process.env.LOCAL_TESTING) return true;
 
 
@@ -129,7 +128,7 @@ class WebHashChecker {
 		).catch(() => null);
 		if(!filesList) return dialog.showErrorBox(ERR_TITLE, API_ERR);
 
-		const etagsFile = await openFile(path.join(getDefaultPath(), 'etags.json')).catch(() => null);
+		const etagsFile = regenerate ? null : await openFile(path.join(getDefaultPath(), 'etags.json')).catch(() => null);
 		if(etagsFile) ETAGS = JSON.parse(etagsFile);
 
 		let error;

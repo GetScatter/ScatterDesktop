@@ -105,8 +105,8 @@ const createScatterInstance = async () => {
 
 	let hasEmbed = false;
 
-	const updateLocalFiles = async () => {
-		if(!await embedder.cacheEmbedFiles(loadingWindow)){
+	const updateLocalFiles = async (regenerate = false) => {
+		if(!await embedder.cacheEmbedFiles(loadingWindow, regenerate)){
 			hasEmbed = await prompt.accepted(
 				'There was an issue getting the latest Embed version.',
 				'Would you like to keep using your locally cached version of Scatter Embed which has already been verified previously?'
@@ -144,7 +144,7 @@ const createScatterInstance = async () => {
 				`It looks like some of the files you have locally don't match the hashes of the current embed version, but your version says it's up to date. 
 				 Do you want to continue using your local version instead of trying to re-pull the current embed?`
 			)) hasEmbed = true;
-			else await updateLocalFiles();
+			else await updateLocalFiles(true);
 		}
 	}
 
