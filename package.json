@@ -20,8 +20,8 @@
   "dependencies": {
     "@ledgerhq/hw-app-eth": "^4.68.4",
     "@ledgerhq/hw-transport-node-hid": "^4.55.0",
-    "@walletpack/bitcoin": "10.0.29",
-    "@walletpack/core": "10.0.26",
+    "@walletpack/bitcoin": "1.0.29",
+    "@walletpack/core": "1.0.26",
     "@walletpack/eosio": "0.0.30",
     "@walletpack/ethereum": "0.0.29",
     "@walletpack/tron": "0.0.29",
@@ -86,6 +86,7 @@
       "electron/**/*",
       "static/**/*",
       "html/**/*",
+      ".env",
       "electron.js",
       "preload.js",
       "package.json"

@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 require("isomorphic-fetch");
 const {shell, clipboard, dialog, app, BrowserWindow, Tray, Menu} = require('electron');
 

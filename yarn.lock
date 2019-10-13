@@ -164,7 +164,7 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.13.tgz#ac786d623860adf39a3f51d629480aacd6a6eec7"
   integrity sha512-yN/FNNW1UYsRR1wwAoyOwqvDuLDtVXnaJTZ898XIw/Q5cCaeVAlVwvsmXLX5PuiScBYwZsZU4JYSHB3TvfdwvQ==
 
-"@walletpack/bitcoin@10.0.29":
+"@walletpack/bitcoin@1.0.29":
   version "1.0.29"
   resolved "https://registry.yarnpkg.com/@walletpack/bitcoin/-/bitcoin-1.0.29.tgz#d085a2a3a389f9056d14848c121b5b12b5d7d28c"
   integrity sha512-ag3OaHklZZUkp0oguMS2ebU8NMakPW6j5zsgx9NHC3OLxfUC49HdAo++LtB2E+osJODgG1jWy4RW2F6z3n7JlA==
@@ -172,7 +172,7 @@
     "@walletpack/core" "^1.0.26"
     bitcoinjs-lib "^5.1.2"
 
-"@walletpack/core@10.0.26", "@walletpack/core@^1.0.26":
+"@walletpack/core@1.0.26", "@walletpack/core@^1.0.26":
   version "1.0.26"
   resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.26.tgz#51fdec4854536a9e957dc5e5166a65569b9c244e"
   integrity sha512-7bS/yEoFjf5T1PXjIOKoAypC5cd1CyAJNTV+apPtWSult165achF6WaP5XVIxJZsVnVyVRLCdEjjfpbk36kc4Q==
