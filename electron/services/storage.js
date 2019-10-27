@@ -54,6 +54,9 @@ const safeSetScatter = async (scatter, resolver) => {
 };
 
 
+const getSimpleMode = () => scatterStorage().get('simple_mode');
+const setSimpleMode = isSimpleMode => scatterStorage().set('simple_mode', isSimpleMode);
+
 const getScatter = () => scatterStorage().get('scatter');
 const setScatter = (scatter) => {
 	return new Promise(async resolve => {
@@ -154,9 +157,9 @@ const reencryptOptionals = async (oldseed, newseed) => {
 			AES.encrypt(AES.decrypt(translationStorage().get('translation'), oldseed), newseed));
 	}
 
-	if(historyStorage().get('translation')){
-		historyStorage().set('translation',
-			AES.encrypt(AES.decrypt(historyStorage().get('translation'), oldseed), newseed));
+	if(historyStorage().get('history')){
+		historyStorage().set('history',
+			AES.encrypt(AES.decrypt(historyStorage().get('history'), oldseed), newseed));
 	}
 
 }
@@ -168,6 +171,9 @@ const reencryptOptionals = async (oldseed, newseed) => {
 
 
 module.exports = {
+	getSimpleMode,
+	setSimpleMode,
+
 	getScatter,
 	setScatter,
 	removeScatter,

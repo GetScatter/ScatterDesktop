@@ -1,20 +1,9 @@
 const ApiActions = require("@walletpack/core/models/api/ApiActions");
-const AppsService = require("@walletpack/core/services/apps/AppsService").default;
-const StoreService = require('@walletpack/core/services/utility/StoreService').default;
 
-StoreService.init({
-	state:{
-		dappData:{},
-	}
-});
-
-AppsService.getApps([], false).then(dappData => {
-	StoreService.get().state.dappData = dappData;
-})
 
 const electron = require('electron');
 const {Menu, BrowserWindow} = electron;
-const {mainUrl} = require('../utils')
+const {mainUrl} = require('../utils');
 
 const isMac = () => process.platform === 'darwin';
 

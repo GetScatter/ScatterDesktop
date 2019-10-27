@@ -287,6 +287,8 @@ global.wallet = {
 	/**        FILES / STORAGE         **/
 	/************************************/
 	storage:{
+		setSimpleMode:storage.setSimpleMode,
+
 		setWalletData:wallet.updateScatter,
 		getWalletData:wallet.getScatter,
 		clearWalletData:storage.removeScatter,

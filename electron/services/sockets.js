@@ -63,17 +63,21 @@ class LowLevelSocketService {
 				const killRequest = () => this.emitSocket(socket, 'api', {id:request.id, result:null});
 
 				if(!request.plugin || request.plugin.length > 100) return killRequest();
-				request.plugin = request.plugin.replace(/\s/g, "");
+				request.plugin = request.plugin.replace(/\s/g, "").trim();
 
-				if(request.plugin.trim().toLowerCase() === 'Scatter') return killRequest();
-				if(request.data.hasOwnProperty('payload') && request.data.payload.origin.trim().toLowerCase() === 'Scatter') return killRequest();
+				if(request.plugin.toLowerCase() === 'scatter') return killRequest();
 
 				let requestOrigin;
-				if(request.data.hasOwnProperty('payload')) requestOrigin = request.data.payload.origin;
-				else requestOrigin = request.data.origin;
+				if(request.data.hasOwnProperty('payload')){
+					request.data.payload.origin = request.data.payload.origin.replace(/\s/g, "").trim();
+					if(request.data.payload.origin.toLowerCase() === 'scatter') return killRequest();
+					requestOrigin = request.data.payload.origin;
+
+				} else requestOrigin = request.data.origin.replace(/\s/g, "").trim();
 
 				if(!origin) origin = requestOrigin;
-				else if(origin && requestOrigin !== origin) return this.emitSocket(socket, 'api', {id:request.id, result:null});
+				else if(origin && requestOrigin !== origin) return killRequest();
+
 				if(!this.openConnections.hasOwnProperty(origin+id)) this.openConnections[origin+id] = socket;
 
 				switch(type){

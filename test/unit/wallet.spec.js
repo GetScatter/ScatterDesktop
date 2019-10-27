@@ -29,6 +29,7 @@ describe('wallet', () => {
 		new Promise(async() => {
 			assert(wallet.getSeed() === undefined, 'Seed was already set');
 			await wallet.unlock(PASSWORD, true);
+			console.log('seed', wallet.getSeed());
 			assert(wallet.getSeed(), 'Seed was not set');
 			done();
 		})

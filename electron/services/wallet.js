@@ -5,7 +5,6 @@ const prompt = require('./prompt');
 const bip39 = require('bip39');
 const scrypt = require('scrypt-async');
 const AES = require("aes-oop").default;
-const path = require('path');
 const Scatter = require('@walletpack/core/models/Scatter').default;
 const Error = require('@walletpack/core/models/errors/Error').default;
 const IdGenerator = require('@walletpack/core/util/IdGenerator').default;

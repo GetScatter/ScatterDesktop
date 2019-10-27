@@ -6,7 +6,7 @@ const path = require('path');
 const ecc = require('eosjs-ecc');
 
 
-const HOST = process.env.WEB_HOST;
+const HOST = process.env.LOCAL_TESTING ? process.env.LOCAL_TESTING : process.env.WEB_HOST;
 const PROOF_KEYS = process.env.PROOF_KEYS.split(',');
 let ETAGS = {};
 
@@ -63,12 +63,16 @@ class WebHashChecker {
 	// Checks if the user has a timestamp file locally at all,
 	// which is always the last file that is cached.
 	static async hasLocalVersion(){
+		if(process.env.LOCAL_TESTING) return true;
+
 		return openFile(path.join(getDefaultPath(), 'cached_sources', 'embed.timestamp')).then(x => !!x).catch(() => null)
 	}
 
 	// Checks if a version is available using a timestamp file which matches when the
 	// server had it's code updated.
 	static async versionAvailable(){
+		if(process.env.LOCAL_TESTING) return false;
+
 		const localTimestamp = await openFile(path.join(getDefaultPath(), 'cached_sources', 'embed.timestamp')).catch(() => null);
 		if(!localTimestamp) return true;
 		const serverTimestamp = await getSource(`hashes/embed.timestamp`).then(x => x.file.trim()).catch(() => null);
@@ -88,6 +92,8 @@ class WebHashChecker {
 	}
 
 	static async checkCachedHashes(window){
+		if(process.env.LOCAL_TESTING) return true;
+
 		const filesList = await getFilesForDirectory(path.join(getDefaultPath(), 'cached_sources')).then(x => x.filter(f => f !== 'embed.timestamp'));
 		if(!filesList) return dialog.showErrorBox(ERR_TITLE, API_ERR);
 
@@ -99,7 +105,7 @@ class WebHashChecker {
 			if(!file) return console.log('missing file', filename, file);
 
 			// We need to revert the static absolute path overwrites for this to verify hashes properly.
-			file = file.replace(/https:\/\/embed.get-scatter.com\/static\//g, "static/");
+			file = file.replace(/https:\/\/embed.get-scatter.com\/static\/assets\//g, "static/assets/");
 
 			if(await this.fileVerified(filename, file)) verified++;
 
@@ -148,7 +154,7 @@ class WebHashChecker {
 				// Applying absolute URLs to relative static assets.
 				// Note: These files won't be available if Embed is down, however they are all purely aesthetic.
 				// This saves the user from download another 3+mb of data which will be static anyway.
-				result.file = result.file.replace(/static\//g, "https://embed.get-scatter.com/static/");
+				result.file = result.file.replace(/static\/assets\//g, "https://embed.get-scatter.com/static/assets/");
 
 				// Saving the source locally for quicker use and fallback for later hash verification failures.
 				// This makes it so the user's local Scatter can never "not work" just because the online Embed is down.

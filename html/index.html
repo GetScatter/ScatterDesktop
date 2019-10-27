@@ -184,8 +184,11 @@
 
 	<script>
 		const path = require('path');
+		const storage = require('../electron/services/storage');
 		const {remote, ipcRenderer} = window.require('electron');
 
+		// TODO: Simple mode
+		console.log('uitype', storage.getSimpleMode());
 
 		const isPopOut = location.hash.replace("#/", '') === 'popout';
 
@@ -213,10 +216,10 @@
 
 		const PRELOAD = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
 		const INDEX = process.env.LOCAL_TESTING
-			? `http://localhost:8081`
-			: `file://${path.join(remote.app.getPath('userData'), 'cached_sources')}`;
+			? process.env.LOCAL_TESTING
+			: `file://${path.join(remote.app.getPath('userData'), 'cached_sources', 'index.html')}`;
 		webview.preload = PRELOAD;
-		webview.src = `${INDEX}/index.html${isPopOut ? '#/popout' : ''}`;
+		webview.src = `${INDEX}${isPopOut ? '#/popout' : ''}`;
 		document.getElementById('webviewer').appendChild(webview);
 
 		// webview.addEventListener('dom-ready', () => {
