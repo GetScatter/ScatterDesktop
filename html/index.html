@@ -184,11 +184,9 @@
 
 	<script>
 		const path = require('path');
-		const storage = require('../electron/services/storage');
+		const getHost = require('../electron/services/getHost');
 		const {remote, ipcRenderer} = window.require('electron');
 
-		// TODO: Simple mode
-		console.log('uitype', storage.getSimpleMode());
 
 		const isPopOut = location.hash.replace("#/", '') === 'popout';
 

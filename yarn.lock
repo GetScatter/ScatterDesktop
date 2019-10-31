@@ -623,7 +623,7 @@ bip32@^2.0.4:
     typeforce "^1.11.5"
     wif "^2.0.6"
 
-bip39@^2.6.0:
+bip39@2.6.0, bip39@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/bip39/-/bip39-2.6.0.tgz#9e3a720b42ec8b3fbe4038f1e445317b6a99321c"
   integrity sha512-RrnQRG2EgEoqO24ea+Q/fftuPUZLmrEM3qNhhGsA3PbaXaCW791LTzPuVyx/VprXQcTbPJ3K3UeTna8ZnVl2sg==
@@ -1797,6 +1797,10 @@ elliptic@^6.4.0, elliptic@^6.4.1:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
+
+"embedder@git+https://git@github.com/GetScatter/Scatter-Embedder.git#master":
+  version "1.0.0"
+  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#ab3545a6a2a1a6f873094eea6bcedc48646dc575"
 
 emoji-regex@^7.0.1:
   version "7.0.3"

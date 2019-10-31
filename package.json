@@ -18,6 +18,7 @@
     "test": "npm run testfile \"test/**/*.spec.js\" --timeout 1000000"
   },
   "dependencies": {
+    "embedder":"git+https://git@github.com/GetScatter/Scatter-Embedder.git#master",
     "@ledgerhq/hw-app-eth": "^4.68.4",
     "@ledgerhq/hw-transport-node-hid": "^4.55.0",
     "@walletpack/bitcoin": "1.0.29",

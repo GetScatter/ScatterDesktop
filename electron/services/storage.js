@@ -54,7 +54,7 @@ const safeSetScatter = async (scatter, resolver) => {
 };
 
 
-const getSimpleMode = () => scatterStorage().get('simple_mode');
+const getSimpleMode = () => scatterStorage().get('simple_mode') || false;
 const setSimpleMode = isSimpleMode => scatterStorage().set('simple_mode', isSimpleMode);
 
 const getScatter = () => scatterStorage().get('scatter');

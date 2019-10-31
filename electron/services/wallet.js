@@ -21,6 +21,7 @@ const plugins = {
 	eth:new (require('@walletpack/ethereum').default)()
 }
 
+plugins.trx.init();
 
 let seed, salt, scatter, storage;
 
