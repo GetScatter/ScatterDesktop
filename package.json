@@ -1,6 +1,6 @@
 {
   "name": "scatter",
-  "version": "12.0.0",
+  "version": "12.0.1",
   "private": true,
   "buttonText": "Scatter Desktop Companion",
   "author": {
@@ -18,14 +18,13 @@
     "test": "npm run testfile \"test/**/*.spec.js\" --timeout 1000000"
   },
   "dependencies": {
-    "embedder":"git+https://git@github.com/GetScatter/Scatter-Embedder.git#master",
     "@ledgerhq/hw-app-eth": "^4.68.4",
     "@ledgerhq/hw-transport-node-hid": "^4.55.0",
-    "@walletpack/bitcoin": "1.0.29",
-    "@walletpack/core": "1.0.26",
-    "@walletpack/eosio": "0.0.30",
-    "@walletpack/ethereum": "0.0.29",
-    "@walletpack/tron": "0.0.29",
+    "@walletpack/bitcoin": "file:../../Libraries/walletpack/packages/bitcoin",
+    "@walletpack/core": "file:../../Libraries/walletpack/packages/core",
+    "@walletpack/eosio": "file:../../Libraries/walletpack/packages/eosio",
+    "@walletpack/ethereum": "file:../../Libraries/walletpack/packages/ethereum",
+    "@walletpack/tron": "file:../../Libraries/walletpack/packages/tron",
     "aes-oop": "^1.0.4",
     "asn1-ber": "^1.0.9",
     "bip32-path": "^0.4.2",
@@ -34,6 +33,7 @@
     "dotenv": "^8.1.0",
     "electron-store": "^3.2.0",
     "elliptic": "^6.5.1",
+    "embedder": "git+https://git@github.com/GetScatter/Scatter-Embedder.git#master",
     "eosjs": "^20.0.0",
     "eosjs-ecc": "^4.0.7",
     "ethereumjs-tx": "^2.1.0",
@@ -131,7 +131,7 @@
           ]
         }
       ],
-      "certificateSubjectName":"GetScatter Ltd."
+      "certificateSubjectName": "GetScatter Ltd."
     },
     "linux": {
       "category": "Network",

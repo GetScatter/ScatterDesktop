@@ -164,18 +164,16 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.13.tgz#ac786d623860adf39a3f51d629480aacd6a6eec7"
   integrity sha512-yN/FNNW1UYsRR1wwAoyOwqvDuLDtVXnaJTZ898XIw/Q5cCaeVAlVwvsmXLX5PuiScBYwZsZU4JYSHB3TvfdwvQ==
 
-"@walletpack/bitcoin@1.0.29":
-  version "1.0.29"
-  resolved "https://registry.yarnpkg.com/@walletpack/bitcoin/-/bitcoin-1.0.29.tgz#d085a2a3a389f9056d14848c121b5b12b5d7d28c"
-  integrity sha512-ag3OaHklZZUkp0oguMS2ebU8NMakPW6j5zsgx9NHC3OLxfUC49HdAo++LtB2E+osJODgG1jWy4RW2F6z3n7JlA==
+"@walletpack/bitcoin@file:../../Libraries/walletpack/packages/bitcoin":
+  version "1.0.34"
   dependencies:
-    "@walletpack/core" "^1.0.26"
+    "@walletpack/core" "^1.0.31"
     bitcoinjs-lib "^5.1.2"
 
-"@walletpack/core@1.0.26", "@walletpack/core@^1.0.26":
-  version "1.0.26"
-  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.26.tgz#51fdec4854536a9e957dc5e5166a65569b9c244e"
-  integrity sha512-7bS/yEoFjf5T1PXjIOKoAypC5cd1CyAJNTV+apPtWSult165achF6WaP5XVIxJZsVnVyVRLCdEjjfpbk36kc4Q==
+"@walletpack/core@^1.0.31":
+  version "1.0.31"
+  resolved "https://registry.yarnpkg.com/@walletpack/core/-/core-1.0.31.tgz#6ddea7201b481cab9c1b34a33a7fbe508a649b15"
+  integrity sha512-LxZU2CFA72H7Uk2cTow98dR9D5iL9yiMZfg/daA6K0vrRGNST21A1ct3MihLzjdqDlgVAlgcNt5GEpYw0y8ACg==
   dependencies:
     aes-oop "^1.0.4"
     bignumber.js "^9.0.0"
@@ -184,34 +182,38 @@
     qrcode "^1.4.1"
     scrypt-async "^2.0.1"
 
-"@walletpack/eosio@0.0.30":
-  version "0.0.30"
-  resolved "https://registry.yarnpkg.com/@walletpack/eosio/-/eosio-0.0.30.tgz#0b720c1bf1ead231c9befbc114fc4cec4125003e"
-  integrity sha512-H6l4lYgXUYpwsz0zliRDW+fTS0ktWa3hNPMOoYJ6vpBfcCHQMXBRV8gRuug6KSBwLWYy/1drG1EulaTFxJ4x+A==
+"@walletpack/core@file:../../Libraries/walletpack/packages/core":
+  version "1.0.31"
   dependencies:
-    "@walletpack/core" "^1.0.26"
+    aes-oop "^1.0.4"
+    bignumber.js "^9.0.0"
+    bip39 "^2.6.0"
+    eosjs-ecc "^4.0.4"
+    qrcode "^1.4.1"
+    scrypt-async "^2.0.1"
+
+"@walletpack/eosio@file:../../Libraries/walletpack/packages/eosio":
+  version "0.0.38"
+  dependencies:
+    "@walletpack/core" "^1.0.31"
     eosjs "^20.0.0"
     eosjs-ecc "^4.0.4"
 
-"@walletpack/ethereum@0.0.29":
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/@walletpack/ethereum/-/ethereum-0.0.29.tgz#aab5a9ac55b5b29a102231fdc71c6ac3eca1b87b"
-  integrity sha512-FN0vTksa2M5zd6cppR/x1qK635BSFF0zerLt0Ep8dp+H4LQ9bE5+sz4a4g6ohjd+/iq+HGU33eploKGYPNm+CQ==
+"@walletpack/ethereum@file:../../Libraries/walletpack/packages/ethereum":
+  version "0.0.37"
   dependencies:
-    "@walletpack/core" "^1.0.26"
+    "@walletpack/core" "^1.0.31"
     ethereumjs-tx "^2.1.0"
     ethereumjs-util "^6.1.0"
     web3 "^1.2.0"
-    web3-provider-engine "^15.0.0"
+    web3-provider-engine "^15.0.4"
 
-"@walletpack/tron@0.0.29":
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/@walletpack/tron/-/tron-0.0.29.tgz#be65cd75e8dfc8ca49db3681ba9b311fd782d3a8"
-  integrity sha512-011IYk2qA/GfdmHsKePYpnYN2pw9r3KIAEuAxTs9eh8POufDqn/21wRVi0Kng5dsLYiqFR6aedZQJ3FwRnWkEA==
+"@walletpack/tron@file:../../Libraries/walletpack/packages/tron":
+  version "0.0.40"
   dependencies:
-    "@walletpack/core" "^1.0.26"
+    "@walletpack/core" "^1.0.31"
     ethereumjs-util "^6.1.0"
-    tronweb "^2.6.4"
+    tronweb "^2.8.0"
 
 abbrev@1:
   version "1.1.1"
@@ -1800,7 +1802,7 @@ elliptic@^6.4.0, elliptic@^6.4.1:
 
 "embedder@git+https://git@github.com/GetScatter/Scatter-Embedder.git#master":
   version "1.0.0"
-  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#ab3545a6a2a1a6f873094eea6bcedc48646dc575"
+  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#92860148e9b690538bb2d817f29b92ee79cee481"
 
 emoji-regex@^7.0.1:
   version "7.0.3"
@@ -1994,10 +1996,10 @@ eth-json-rpc-errors@^1.0.1, eth-json-rpc-errors@^1.1.0:
   dependencies:
     fast-safe-stringify "^2.0.6"
 
-eth-json-rpc-filters@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/eth-json-rpc-filters/-/eth-json-rpc-filters-4.1.0.tgz#e7357a38983cde29858818dc55d394b9cf47c0f0"
-  integrity sha512-r/Zk0Tvx3BNYOCPCSEXxe2BeZJpKlA+E+76kYo8g95cHGXRP4uXKDnoTkFaRc/mamabmRhfyCoOjhDDx8iA3eA==
+eth-json-rpc-filters@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/eth-json-rpc-filters/-/eth-json-rpc-filters-4.1.1.tgz#15277c66790236d85f798f4d7dc6bab99a798cd2"
+  integrity sha512-GkXb2h6STznD+AmMzblwXgm1JMvjdK9PTIXG7BvIkTlXQ9g0QOxuU1iQRYHoslF9S30BYBSoLSisAYPdLggW+A==
   dependencies:
     await-semaphore "^0.1.3"
     eth-json-rpc-middleware "^4.1.4"
@@ -2949,6 +2951,11 @@ ini@^1.3.4, ini@~1.3.0:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
   integrity sha512-RZY5huIKCMRWDUqZlEi72f/lmXKMvuszcMBduliQ3nnWbx9X/ZBQO7DijMEYS9EhHBb2qacRUMtC7svLwe0lcw==
+
+injectpromise@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/injectpromise/-/injectpromise-1.0.0.tgz#c621f7df2bbfc1164d714f1fb229adec2079da39"
+  integrity sha512-qNq5wy4qX4uWHcVFOEU+RqZkoVG65FhvGkyDWbuBxILMjK6A1LFf5A1mgXZkD4nRx5FCorD81X/XvPKp/zVfPA==
 
 invert-kv@^2.0.0:
   version "2.0.0"
@@ -5410,10 +5417,10 @@ trim-newlines@^1.0.0:
   resolved "https://registry.yarnpkg.com/trim-newlines/-/trim-newlines-1.0.0.tgz#5887966bb582a4503a41eb524f7d35011815a613"
   integrity sha1-WIeWa7WCpFA6QetST301ARgVphM=
 
-tronweb@^2.6.4:
-  version "2.7.2"
-  resolved "https://registry.yarnpkg.com/tronweb/-/tronweb-2.7.2.tgz#65ef246822325ab6e5182acecaba756019fa1d47"
-  integrity sha512-bm6PK/LG5Flnm7EmMe599NZtNPlDJfAvJRNan92HGTRc3rC6GjMnQCqFNXHcekt7kROX9DjuQeOttp9tYpPjAg==
+tronweb@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/tronweb/-/tronweb-2.8.0.tgz#e70247486590376a4ee3497d4c5dd66aa5f312d6"
+  integrity sha512-B5vn2TsH8hV9z7jvxlmMlIcKjd+qq7TS4p5E1w4422FJ1tBVe3cQqQZ0YP09aj/9k6eJQsGdWfBB1WYQQb0d5Q==
   dependencies:
     "@babel/runtime" "^7.0.0"
     axios "^0.19.0"
@@ -5422,6 +5429,7 @@ tronweb@^2.6.4:
     elliptic "^6.4.1"
     ethers "^4.0.7"
     eventemitter3 "^3.1.0"
+    injectpromise "^1.0.0"
     lodash "^4.17.14"
     semver "^5.6.0"
     validator "^10.7.1"
@@ -6009,10 +6017,10 @@ web3-net@1.2.1:
     web3-core-method "1.2.1"
     web3-utils "1.2.1"
 
-web3-provider-engine@^15.0.0:
-  version "15.0.3"
-  resolved "https://registry.yarnpkg.com/web3-provider-engine/-/web3-provider-engine-15.0.3.tgz#462d2439dafa6fdc3550696be8cdb80c44593c96"
-  integrity sha512-E2/j0iEA1JJVijV84bPpiFKZPA6jFkcCKJtzDCl/CUn8CeqtkGykpjP55pnQtzxszzmpGgSZlThMEFUzBU7X2g==
+web3-provider-engine@^15.0.4:
+  version "15.0.4"
+  resolved "https://registry.yarnpkg.com/web3-provider-engine/-/web3-provider-engine-15.0.4.tgz#5c336bcad2274dff5218bc8db003fa4e9e464c24"
+  integrity sha512-Ob9oK0TUZfVC7NXkB7CQSWAiCdCD/Xnlh2zTnV8NdJR8LCrMAy2i6JedU70JHaxw59y7mM4GnsYOTTGkquFnNQ==
   dependencies:
     async "^2.5.0"
     backoff "^2.5.0"
@@ -6020,7 +6028,7 @@ web3-provider-engine@^15.0.0:
     cross-fetch "^2.1.0"
     eth-block-tracker "^4.4.2"
     eth-json-rpc-errors "^1.0.1"
-    eth-json-rpc-filters "^4.1.0"
+    eth-json-rpc-filters "^4.1.1"
     eth-json-rpc-infura "^4.0.1"
     eth-json-rpc-middleware "^4.1.5"
     eth-sig-util "^1.4.2"

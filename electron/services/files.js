@@ -53,6 +53,22 @@ const openFile = (path, encoding = 'utf-8') => {
 	})
 };
 
+const removeFile = path => {
+	if(path.indexOf(getDefaultPath()) !== 0) return console.error('Cannot remove files from outside the default directory');
+	return new Promise(resolve => {
+		try {
+			fs.unlink(path, (err) => {
+				if(err) return resolve(null);
+				resolve(true);
+			});
+		}
+		catch(e) {
+			console.error('Error removing file', e);
+			resolve(null);
+		}
+	});
+}
+
 const exists = path => {
 	return fs.existsSync(path);
 }
@@ -75,5 +91,6 @@ module.exports = {
 	existsOrMkdir,
 	saveFile,
 	openFile,
-	getFilesForDirectory
+	getFilesForDirectory,
+	removeFile
 }

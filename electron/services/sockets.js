@@ -60,7 +60,7 @@ class LowLevelSocketService {
 				if(msg.indexOf('42/scatter') === -1) return false;
 				const [type, request] = JSON.parse(msg.replace('42/scatter,', ''));
 
-				const killRequest = () => this.emitSocket(socket, 'api', {id:request.id, result:null});
+				const killRequest = () => this.emitSocket(socket, 'api', {id:request.data.id, result:null});
 
 				if(!request.plugin || request.plugin.length > 100) return killRequest();
 				request.plugin = request.plugin.replace(/\s/g, "").trim();

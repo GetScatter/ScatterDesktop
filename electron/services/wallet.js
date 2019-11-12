@@ -134,7 +134,7 @@ const reloading = () => {
 };
 
 const getPrivateKey = async (keypairId, blockchain) => {
-	if(!await prompt.accepted(
+	if(!process.env.TESTING && !await prompt.accepted(
 		`Exporting a private key.`,
 		`Something has requested a private key. Are you currently exporting the private key from Scatter?`
 	)) return null;
@@ -143,13 +143,48 @@ const getPrivateKey = async (keypairId, blockchain) => {
 }
 
 const getPrivateKeyForSigning = async (keypairId, blockchain) => {
-	let keypair = scatter.keychain.keypairs.find(x => x.id === keypairId);
+	let keypair = getKeypairByID(keypairId);
 	if(!keypair) return;
 
 	const encryptedKey = JSON.parse(JSON.stringify(keypair.privateKey));
-	const decryptedKey = AES.decrypt(encryptedKey, seed);
+	let decryptedKey = AES.decrypt(encryptedKey, seed);
+
+	// Legacy scatters held private keys for identities in hex format already.
+	if(typeof decryptedKey === 'string') return decryptedKey;
 
 	return plugins[blockchain].bufferToHexPrivate(decryptedKey);
+}
+
+const getKeypair = (publicKey, blockchain) => {
+	const keypair = scatter.keychain.keypairs
+		.filter(x => x.blockchains.includes(blockchain))
+		.find(x => x.publicKeys.find(k => k.key === publicKey));
+	if(keypair) return JSON.parse(JSON.stringify(keypair));
+
+	const identity = scatter.keychain.identities.find(x => x.publicKey === publicKey);
+	if(identity) return {
+		id:identity.id,
+		name:identity.name,
+		publicKeys:[{blockchain:'eos', key:publicKey}],
+		privateKey:identity.privateKey
+	}
+
+	return null;
+}
+
+const getKeypairByID = id => {
+	const keypair = scatter.keychain.keypairs.find(x => x.id === id);
+	if(keypair) return JSON.parse(JSON.stringify(keypair));
+
+	const identity = scatter.keychain.identities.find(x => x.id === id);
+	if(identity) return {
+		id:identity.id,
+		name:identity.name,
+		publicKeys:[{blockchain:'eos', key:identity.publicKey}],
+		privateKey:identity.privateKey
+	}
+
+	return null;
 }
 
 const lock = () => {
@@ -196,11 +231,10 @@ const unlock = async (password, isNew = false, _salt = null) => {
 
 const sign = async (network, publicKey, payload, arbitrary = false, isHash = false) => {
 	try {
-
 		const plugin = plugins[network.blockchain];
 		if(!plugin) return false;
 
-		const keypair = scatter.keychain.keypairs.find(x => x.publicKeys.find(k => k.key === publicKey))
+		const keypair = getKeypair(publicKey, network.blockchain);
 		if(!keypair) return Error.signatureError('no_keypair', 'This keypair could not be found');
 
 		if(keypair.external) return signWithHardware(keypair, network, publicKey, payload, arbitrary, isHash);
@@ -264,7 +298,7 @@ const availableBlockchains = () => ({
 	BTC:'btc',
 });
 
-module.exports = {
+const EXPORTS = {
 	setStorage,
 	init,
 	exists,
@@ -286,4 +320,12 @@ module.exports = {
 
 	getSeed,
 	availableBlockchains,
+
 }
+
+if(process.env.TESTING){
+	EXPORTS.getKeypair = getKeypair;
+	EXPORTS.getKeypairByID = getKeypairByID;
+}
+
+module.exports = EXPORTS;

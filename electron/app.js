@@ -107,6 +107,7 @@ const createScatterInstance = async () => {
 
 
 	Embedder.init(
+		require('../package').version,
 		process.env.LOCAL_TESTING ? process.env.LOCAL_TESTING : process.env.WEB_HOST,
 		process.env.PROOF_KEYS.split(','),
 		files,
