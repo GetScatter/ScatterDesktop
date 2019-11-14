@@ -4,6 +4,7 @@ const ApiActions = require("@walletpack/core/models/api/ApiActions");
 const electron = require('electron');
 const {Menu, BrowserWindow} = electron;
 const {mainUrl} = require('../utils');
+const {getSimpleMode} = require('./storage');
 
 const isMac = () => process.platform === 'darwin';
 
@@ -36,7 +37,9 @@ class LowLevelWindowService {
 		}, 100);
 	}
 
+	// TODO: This should really be on the popup now.
 	static dimensions(popup){
+		if(getSimpleMode() || process.env.FORCE_SIMPLE) return {width:360, height:650};
 		switch (popup.data.type) {
 			case ApiActions.LOGIN:
 			case ApiActions.LOGIN_ALL:
@@ -72,7 +75,7 @@ class LowLevelWindowService {
 
 			popouts.push(popup);
 
-			const {width, height} = LowLevelWindowService.dimensions(popup);
+			const {width, height} = popup.hasOwnProperty('dimensions') ? popup.dimensions : LowLevelWindowService.dimensions(popup);
 			const win = LowLevelWindowService.openPopOut(
 				popup,
 				() /* closed without action */ => { if(!responded) respond(null); },

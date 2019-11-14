@@ -12,6 +12,7 @@ const ecc = require('eosjs-ecc');
 
 const Embedder = require('embedder');
 const files = require('./services/files');
+const getHost = require('./services/getHost')
 
 
 
@@ -105,10 +106,9 @@ const createScatterInstance = async () => {
 		loadingWindow.focus();
 	});
 
-
 	Embedder.init(
 		require('../package').version,
-		process.env.LOCAL_TESTING ? process.env.LOCAL_TESTING : process.env.WEB_HOST,
+		process.env.LOCAL_TESTING ? process.env.LOCAL_TESTING : getHost(),
 		process.env.PROOF_KEYS.split(','),
 		files,
 		ecc.sha256,
@@ -300,7 +300,12 @@ global.wallet = {
 				}
 			}
 		},
-		reload:(windowId = null) => {
+		reload:(windowId = null, main = false) => {
+			if(main){
+				app.relaunch();
+				app.quit();
+				return;
+			}
 			(windowId ? BrowserWindow.fromId(windowId) : mainWindow).reload()
 		},
 		copy:clipboard.writeText,

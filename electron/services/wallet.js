@@ -41,7 +41,7 @@ const getScatter = () => scatter ? JSON.parse(JSON.stringify(scatter)) : null;
 
 const exists = () => !!scatter;
 
-const isEncrypted = x => x.toString().indexOf('"iv":') > -1;
+const isEncrypted = x => !x ? false : x.toString().indexOf('"iv":') > -1;
 const isUnlocked = () => !!seed && !isEncrypted(scatter);
 
 const updateScatter = async (_s) => {

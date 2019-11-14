@@ -53,8 +53,13 @@ const safeSetScatter = async (scatter, resolver) => {
 	});
 };
 
-
-const getSimpleMode = () => scatterStorage().get('simple_mode') || false;
+const getSimpleMode = () => {
+	const saved = scatterStorage().get('simple_mode');
+	if(saved === undefined){
+		return process.env.SIMPLE_BY_DEFAULT || false;
+	}
+	return saved;
+};
 const setSimpleMode = isSimpleMode => scatterStorage().set('simple_mode', isSimpleMode);
 
 const getScatter = () => scatterStorage().get('scatter');
