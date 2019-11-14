@@ -1,6 +1,6 @@
 {
   "name": "scatter",
-  "version": "12.0.1",
+  "version": "12.0.0",
   "private": true,
   "buttonText": "Scatter Desktop Companion",
   "author": {
@@ -20,11 +20,11 @@
   "dependencies": {
     "@ledgerhq/hw-app-eth": "^4.68.4",
     "@ledgerhq/hw-transport-node-hid": "^4.55.0",
-    "@walletpack/bitcoin": "file:../../Libraries/walletpack/packages/bitcoin",
-    "@walletpack/core": "file:../../Libraries/walletpack/packages/core",
-    "@walletpack/eosio": "file:../../Libraries/walletpack/packages/eosio",
-    "@walletpack/ethereum": "file:../../Libraries/walletpack/packages/ethereum",
-    "@walletpack/tron": "file:../../Libraries/walletpack/packages/tron",
+    "@walletpack/bitcoin": "^1.0.34",
+    "@walletpack/core": "^1.0.31",
+    "@walletpack/eosio": "^0.0.40",
+    "@walletpack/ethereum": "^0.0.37",
+    "@walletpack/tron": "^0.0.40",
     "aes-oop": "^1.0.4",
     "asn1-ber": "^1.0.9",
     "bip32-path": "^0.4.2",
