@@ -50,6 +50,7 @@
     "electron": "^5.0.6",
     "electron-builder": "^21.0.15",
     "electron-mocha": "^8.1.2",
+    "electron-notarize": "^0.2.0",
     "electron-rebuild": "^1.8.5",
     "mocha": "^6.2.0",
     "secp256k1": "^3.6.2",
@@ -72,6 +73,7 @@
   "build": {
     "productName": "scatter",
     "appId": "com.get-scatter.server",
+    "afterSign": "macos/notarize.js",
     "artifactName": "${os}-${productName}-${version}-${arch}.${ext}",
     "asar": true,
     "asarUnpack": [
@@ -104,6 +106,13 @@
     "directories": {
       "buildResources": "build",
       "output": "release"
+    },
+    "mac": {
+      "entitlements": "macos/entitlements.mac.plist",
+      "entitlementsInherit": "macos/entitlements.mac.plist",
+      "icon": "static/icons/icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
     },
     "dmg": {
       "icon": "static/icons/icon.png",

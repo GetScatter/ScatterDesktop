@@ -19,3 +19,5 @@ selenium-debug.log
 dist/
 release/
 test/exports/*
+
+macos/.env
