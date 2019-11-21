@@ -12,7 +12,7 @@ const ecc = require('eosjs-ecc');
 
 const Embedder = require('embedder');
 const files = require('./services/files');
-const getHost = require('./services/getHost')
+const getHost = require('./services/getHost');
 
 
 
@@ -119,7 +119,7 @@ const createScatterInstance = async () => {
 		process.env.LOCAL_TESTING,
 	);
 
-	if(!await Embedder.check()) return process.exit(0);
+	if(!process.env.LOCAL_TESTING && !await Embedder.check()) return process.exit(0);
 
 	files.toggleAllowInternals(false);
 
@@ -258,6 +258,8 @@ global.wallet = {
 	/************************************/
 	storage:{
 		setSimpleMode:storage.setSimpleMode,
+		setLanguage:storage.setLanguage,
+		getLanguage:storage.getLanguage,
 
 		setWalletData:wallet.updateScatter,
 		getWalletData:wallet.getScatter,

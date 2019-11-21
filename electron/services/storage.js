@@ -19,6 +19,7 @@ const historyStorage = () => getStore(HISTORIES_NAME);
 const translationStorage = () => getStore(TRANSLATION_NAME);
 const scatterIntermedStorage = () => getStore(SCATTER_INTERMED_NAME);
 const abiStorage = () => getStore(ABIS_NAME);
+const generalSettings = () => getStore('general_settings');
 
 const electron = require('electron');
 const {app} = electron;
@@ -53,14 +54,22 @@ const safeSetScatter = async (scatter, resolver) => {
 	});
 };
 
+const getLanguage = () => {
+	const saved = generalSettings().get('language');
+	if(saved === undefined) return null;
+	return saved;
+}
+const setLanguage = lang => generalSettings().set('language', lang);
+
 const getSimpleMode = () => {
-	const saved = scatterStorage().get('simple_mode');
+	const saved = generalSettings().get('simple_mode');
 	if(saved === undefined){
 		return process.env.SIMPLE_BY_DEFAULT || false;
 	}
 	return saved;
 };
-const setSimpleMode = isSimpleMode => scatterStorage().set('simple_mode', isSimpleMode);
+
+const setSimpleMode = isSimpleMode => generalSettings().set('simple_mode', isSimpleMode);
 
 const getScatter = () => scatterStorage().get('scatter');
 const setScatter = (scatter) => {
@@ -178,6 +187,8 @@ const reencryptOptionals = async (oldseed, newseed) => {
 module.exports = {
 	getSimpleMode,
 	setSimpleMode,
+	getLanguage,
+	setLanguage,
 
 	getScatter,
 	setScatter,
