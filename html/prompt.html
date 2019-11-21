@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Scatter</title>
+
+	<style>
+		body {
+			padding:0;
+			margin:0;
+		}
+
+		div, figure, section, nav, article, input, textarea, h1, h2 {
+			padding:0; margin:0; box-sizing: border-box;
+		}
+
+		h2 {
+			font-size: 13px;
+			font-weight: 300;
+			padding:10px;
+			background: rgba(0,0,0,0.02);
+			text-align:left;
+		}
+
+		span {
+			font-size: 16px;
+			padding:30px;
+			flex:1;
+			display:flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.prompt {
+			display:flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			border:1px solid #0778dd;
+			position: fixed;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			object-fit: cover;
+			width:100%;
+		}
+
+		.container {
+			display:flex;
+			flex-direction: column;
+			height:100vh;
+			width:100%;
+		}
+
+		#info {
+			flex:1;
+			display:flex;
+			flex-direction: column;
+			-webkit-app-region: drag;
+			-webkit-user-select: none !important;
+		}
+
+		.actions {
+			flex:0 0 auto;
+			display:flex;
+			justify-content: space-between;
+			background:rgba(0,0,0,0.05);
+			padding:10px 0;
+			position: relative;
+			z-index:2;
+		}
+
+		button {
+			cursor: pointer;
+			display: inline-block;
+			padding: 10px 14px;
+			border:0;
+			border-radius: 3px;
+			text-transform: uppercase;
+			background-color: #0799FF;
+			color: white;
+			text-decoration: none;
+			position: relative;
+			overflow: hidden;
+			font-weight:bold;
+			font-size:16px;
+			transition:background-color 0.12s ease-in-out;
+			outline:0;
+			flex:1;
+
+			margin:0 10px;
+		}
+
+		.cancel {
+			background-color: rgba(0,0,0,0.2);
+			color: white;
+		}
+
+	</style>
+
+</head>
+<body>
+
+	<section class="prompt">
+		<section class="container">
+			<figure id="info"></figure>
+			<section class="actions">
+				<button onclick="window.respond(true)">Yes</button>
+				<button onclick="window.respond(false)" class="cancel">No</button>
+			</section>
+		</section>
+	</section>
+
+	<script>
+		const {ipcRenderer} = window.require('electron');
+
+		let windowId;
+
+		ipcRenderer.on('prompt', (_, {title, text, id}) => {
+			windowId = id;
+			document.getElementById('info').innerHTML = `
+				<h2>${title}</h2>
+				<span>${text}</span>
+			`;
+		});
+
+		window.respond = response => {
+			ipcRenderer.send('prompt-response', {id:windowId, response});
+			window.close();
+		};
+
+	</script>
+
+</body>
+</html>

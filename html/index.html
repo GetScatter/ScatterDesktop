@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Scatter</title>
+
+	<style>
+		body {
+			padding:0;
+			margin:0;
+		}
+
+		div, figure, section, nav, article, input, textarea {
+			padding:0; margin:0; box-sizing: border-box;
+		}
+
+		#webviewer {
+			height:calc(100vh - 40px);
+			width:100%;
+		}
+
+		webview {
+			height:100%;
+			width:100%;
+		}
+
+		#webviewer.full {
+			height:100vh;
+		}
+
+		#popout-menu {
+			position:fixed;
+			top:0;
+			left:0;
+			right:100px;
+			height:40px;
+			z-index:2;
+
+			-webkit-app-region: drag;
+			-webkit-user-select: none !important;
+		}
+
+		#menu-bar {
+			-webkit-app-region: drag;
+			-webkit-user-select: none !important;
+			background: #0799ff;
+			color:#fff;
+			height:40px;
+			line-height: 40px;
+			width:100%;
+			text-align:center;
+			z-index: 9999999999;
+			border-top:1px solid #0778dd;
+			border-left:1px solid #0778dd;
+			border-right:1px solid #0778dd;
+		}
+
+		.actions {
+			-webkit-app-region: drag;
+			-webkit-user-select: none !important;
+			position: absolute;
+			right: 0;
+			top: 0;
+			height: 40px;
+			line-height: 40px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 0 20px;
+		}
+
+		.action {
+			-webkit-app-region: no-drag;
+			float: right;
+			padding: 10px;
+			cursor: pointer;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			border-radius: 4px;
+		}
+
+		.action:hover {
+			background:rgba(255,255,255,0.1);
+		}
+
+		.action-inner {
+			width:10px;
+			height:10px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.action-inner:not(:first-child) {
+			margin-left:5px;
+
+		}
+
+		.x1, .x2 {
+			width:12px;
+			height:2px;
+			background:#fff;
+			transform-origin: center center;
+		}
+
+		.x1 { transform:rotateZ(45deg); }
+		.x2 { transform:rotateZ(-45deg); margin-top:-2px; }
+
+		.sqr {
+			height:10px;
+			width:10px;
+			border:2px solid #fff;
+			border-radius:2px;
+		}
+
+		.line {
+			height:2px;
+			width:10px;
+			background:#fff;
+		}
+
+
+	</style>
+
+</head>
+<body>
+
+
+	<!------------------------------------>
+	<!-- FAKE MENU OVERLAY FOR POPOUTS --->
+	<!------------------------------------>
+	<!--   Enables moving the window    --->
+	<!------------------------------------>
+	<figure id="popout-menu"></figure>
+
+
+	<!------------------------------------>
+	<!----------- TOP BAR MENU ----------->
+	<!------------------------------------>
+	<section id="menu-bar">
+		<section id="actions" class="actions">
+			<!-- MINIMIZE -->
+			<section class="action" onclick="minimize()">
+				<section class="action-inner">
+					<figure class="line"></figure>
+				</section>
+			</section>
+
+			<!-- EXPAND / CONTRACT -->
+			<section class="action" onclick="maximize()">
+				<section class="action-inner">
+					<figure class="sqr"></figure>
+				</section>
+			</section>
+
+			<!-- QUIT -->
+			<section class="action" onclick="quit()">
+				<section class="action-inner">
+					<figure class="x1"></figure>
+					<figure class="x2"></figure>
+				</section>
+			</section>
+		</section>
+	</section>
+
+
+
+	<!------------------------------------>
+	<!-------- WEBVIEW CONTAINER --------->
+	<!------------------------------------>
+	<section id="webviewer"></section>
+
+
+
+
+
+
+
+
+
+	<script>
+		const path = require('path');
+		const getHost = require('../electron/services/getHost');
+		const {remote, ipcRenderer} = window.require('electron');
+
+
+		const isPopOut = location.hash.replace("#/", '') === 'popout';
+
+
+		/***************************************/
+		/**       TOP BAR MENU DISPLAY        **/
+		/***************************************/
+		if(isPopOut){
+			document.getElementById('menu-bar').remove();
+			document.getElementById('webviewer').className = 'full';
+		} else {
+			document.getElementById('popout-menu').remove();
+			if(remote.process.platform === 'darwin'){
+				document.getElementById('actions').remove();
+			}
+
+		}
+
+
+		/***************************************/
+		/**        WEBVIEW INSTANTIATOR       **/
+		/***************************************/
+
+		const webview = document.createElement('webview');
+
+		const PRELOAD = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
+		const INDEX = process.env.LOCAL_TESTING
+			? process.env.LOCAL_TESTING
+			: `file://${path.join(remote.app.getPath('userData'), 'cached_sources', 'index.html')}`;
+		webview.preload = PRELOAD;
+		webview.src = `${INDEX}${isPopOut ? '#/popout' : ''}`;
+		document.getElementById('webviewer').appendChild(webview);
+
+		// webview.addEventListener('dom-ready', () => {
+		// 	webview.openDevTools()
+		// })
+
+
+		/***************************************/
+		/**            IPC MESSAGES           **/
+		/***************************************/
+		ipcRenderer.on('openTools', () => {
+			webview.openDevTools();
+		})
+		ipcRenderer.on('socketResponse', (event, payload) => webview.send('socketResponse', payload));
+		ipcRenderer.on('popout', (event, popOut) => webview.send('popout', popOut));
+		ipcRenderer.on('error', (e, x) => webview.send('error', x));
+		ipcRenderer.on('console', (e, x) => webview.send('console', x));
+
+
+
+
+
+		/***************************************/
+		/**         TOP MENU METHODS          **/
+		/***************************************/
+		window.quit = () => setTimeout(() => remote.app.quit(), 1);
+		window.minimize = () => remote.BrowserWindow.getFocusedWindow().hide();
+		window.maximize = () => {
+			const win = remote.BrowserWindow.getFocusedWindow();
+			win.isMaximized() ? win.unmaximize() : win.maximize();
+		}
+
+
+
+	</script>
+</body>
+</html>
