@@ -37,7 +37,6 @@ class LowLevelWindowService {
 		}, 100);
 	}
 
-	// TODO: This should really be on the popup now.
 	static dimensions(popup){
 		if(getSimpleMode() || process.env.FORCE_SIMPLE) return {width:360, height:650};
 		switch (popup.data.type) {

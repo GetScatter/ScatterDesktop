@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 require("isomorphic-fetch");
-const {shell, clipboard, dialog, app, BrowserWindow, Tray, Menu} = require('electron');
+const {ipcMain, shell, clipboard, dialog, app, BrowserWindow, Tray, Menu} = require('electron');
 
 const {isDev, icon, trayIcon, mainUrl} = require('./utils');
 const LowLevelWindowService = require("./services/windows");
@@ -27,7 +27,9 @@ const quit = () => {
 	}
 }
 
-let tray, mainWindow;
+let tray, mainWindow, loadingWindow;
+
+ipcMain.on('loaderconsole', () => { if(loadingWindow) loadingWindow.openDevTools(); });
 
 const setupMenu = () => {
 	const menu = new Menu();
@@ -99,12 +101,17 @@ const createScatterInstance = async () => {
 		}
 	});
 
-	const loadingWindow = createMainWindow(true, 400, 250);
+	loadingWindow = createMainWindow(true, 400, 250);
 	loadingWindow.loadURL(mainUrl(false, 'loading'));
+
+
 	loadingWindow.once('ready-to-show', () => {
+
 		loadingWindow.show();
 		loadingWindow.focus();
 	});
+
+
 
 	Embedder.init(
 		require('../package').version,
@@ -209,12 +216,14 @@ process.on('uncaughtException', (err) => {
 const log = console.log;
 console.log = (...params) => {
 	if(mainWindow) mainWindow.webContents.send('console', params);
+	if(loadingWindow) loadingWindow.webContents.send('console', params);
 	log(...params);
 }
 
 const logerr = console.error;
 console.error = (...params) => {
 	if(mainWindow) mainWindow.webContents.send('console', params);
+	if(loadingWindow) loadingWindow.webContents.send('console', params);
 	logerr(...params);
 }
 

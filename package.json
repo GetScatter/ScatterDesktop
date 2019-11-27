@@ -11,9 +11,7 @@
   "scripts": {
     "install-deps": "electron-builder install-app-deps",
     "postinstall": "electron-rebuild",
-    "release-linux": "electron-builder --linux",
-    "release-mac": "electron-builder --mac",
-    "release-win": "electron-builder --win",
+    "release":"node scripts/release",
     "testfile": "cross-env TESTING=1 electron-mocha --exit --timeout 1000000",
     "test": "npm run testfile \"test/**/*.spec.js\" --timeout 1000000"
   },

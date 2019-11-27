@@ -105,6 +105,13 @@
 				<span>Verifying file ${verified} of ${total}</span>
 			`;
 		})
+
+		document.addEventListener('keydown', e => {
+			if(e.which === 123) ipcRenderer.send('loaderconsole')
+		})
+
+		ipcRenderer.on('error', (event, data) => console.error('Error from client: ', ...data));
+		ipcRenderer.on('console', (event, data) => console.log('Console from client: ', ...data));
 	</script>
 
 </body>
