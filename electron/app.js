@@ -302,7 +302,16 @@ global.wallet = {
 		closeWindow:(windowId = null) => {
 			(windowId ? BrowserWindow.fromId(windowId) : mainWindow).close()
 		},
-		flashWindow:() => console.error('flashing not implemented'),
+		flashWindow:() => {
+			mainWindow.once('focus', () => mainWindow.flashFrame(false));
+			mainWindow.flashFrame(true);
+			setTimeout(() => {
+				mainWindow.setAlwaysOnTop(true);
+				mainWindow.show();
+				mainWindow.setAlwaysOnTop(false);
+				app.focus();
+			}, 200);
+		},
 		openLink:(link, filepath = false) => {
 			if(filepath) return shell.openItem(link);
 			else {
