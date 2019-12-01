@@ -54,6 +54,13 @@ const safeSetScatter = async (scatter, resolver) => {
 	});
 };
 
+const getGeneralSetting = (key) => {
+	const saved = generalSettings().get(key);
+	if(saved === undefined) return null;
+	return saved;
+}
+const setGeneralSetting = (key, val) => generalSettings().set(key, val);
+
 const getLanguage = () => {
 	const saved = generalSettings().get('language');
 	if(saved === undefined) return null;
@@ -185,6 +192,8 @@ const reencryptOptionals = async (oldseed, newseed) => {
 
 
 module.exports = {
+	getGeneralSetting,
+	setGeneralSetting,
 	getSimpleMode,
 	setSimpleMode,
 	getLanguage,

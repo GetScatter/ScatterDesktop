@@ -266,6 +266,8 @@ global.wallet = {
 	/**        FILES / STORAGE         **/
 	/************************************/
 	storage:{
+		getGeneralSetting:storage.getGeneralSetting,
+		setGeneralSetting:storage.setGeneralSetting,
 		setSimpleMode:storage.setSimpleMode,
 		setLanguage:storage.setLanguage,
 		getLanguage:storage.getLanguage,
