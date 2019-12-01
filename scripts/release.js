@@ -11,6 +11,7 @@ if(!platform) return quit('Please run as `yarn release [win/linux/mac]`');
 console.log('Building for platform: ', platform);
 
 if(process.env.LOCAL_TESTING) return quit('LOCAL_TESTING is enabled');
+if(process.env.FORCE_STAGING) return quit('FORCE_STAGING is enabled');
 if(!process.env.WEB_HOST || process.env.WEB_HOST.indexOf('staging') > -1) return quit('WEB_HOST is missing or is staging');
 if(!process.env.WEB_HOST_SIMPLE_MODE || process.env.WEB_HOST_SIMPLE_MODE.indexOf('staging') > -1) return quit('WEB_HOST_SIMPLE_MODE is missing or is staging');
 

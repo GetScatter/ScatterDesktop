@@ -112,6 +112,7 @@ const createScatterInstance = async () => {
 	});
 
 
+	console.log('host', getHost());
 
 	Embedder.init(
 		require('../package').version,
@@ -133,6 +134,7 @@ const createScatterInstance = async () => {
 	mainWindow = createMainWindow(false);
 	mainWindow.loadURL(mainUrl(false));
 	loadingWindow.close();
+	loadingWindow = null;
 
 	mainWindow.once('ready-to-show', () => {
 		HighLevelSockets.setMainWindow(mainWindow);
