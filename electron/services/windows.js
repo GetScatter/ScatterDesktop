@@ -37,25 +37,6 @@ class LowLevelWindowService {
 		}, 100);
 	}
 
-	static dimensions(popup){
-		if(getSimpleMode() || process.env.FORCE_SIMPLE) return {width:360, height:650};
-		switch (popup.data.type) {
-			case ApiActions.LOGIN:
-			case ApiActions.LOGIN_ALL:
-			case ApiActions.GET_PUBLIC_KEY:
-			case ApiActions.TRANSFER:
-				return {width:600, height:600};
-			case ApiActions.UPDATE_IDENTITY:
-				return {width:420, height:600};
-			case ApiActions.SIGN:
-				return {width:920, height:600};
-			case 'linkApp':
-				return {width:420, height:500};
-			default:
-				return {width:800, height:600};
-		}
-	}
-
 	static async openPopOutFromPopupOnly(popup){
 		return new Promise((resolve) => {
 			let responded = false;
@@ -74,7 +55,8 @@ class LowLevelWindowService {
 
 			popouts.push(popup);
 
-			const {width, height} = popup.hasOwnProperty('dimensions') ? popup.dimensions : LowLevelWindowService.dimensions(popup);
+			const {width, height} = popup.dimensions;
+
 			const win = LowLevelWindowService.openPopOut(
 				popup,
 				() /* closed without action */ => { if(!responded) respond(null); },
