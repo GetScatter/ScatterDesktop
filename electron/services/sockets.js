@@ -29,6 +29,7 @@ class LowLevelSocketService {
 	}
 
 	async emit(origin, id, path, data){
+		origin = origin.replace(/\s/g, "").trim();
 		const socket = this.openConnections[origin+id];
 		return this.emitSocket(socket, path, data);
 	}
