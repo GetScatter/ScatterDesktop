@@ -74,7 +74,7 @@ class LowLevelSocketService {
 					if(request.data.payload.origin.toLowerCase() === 'scatter') return killRequest();
 					requestOrigin = request.data.payload.origin;
 
-				} else requestOrigin = request.data.origin.replace(/\s/g, "").trim();
+				} else requestOrigin = request.data.origin = request.data.origin.replace(/\s/g, "").trim();
 
 				if(!origin) origin = requestOrigin;
 				else if(origin && requestOrigin !== origin) return killRequest();
