@@ -151,6 +151,8 @@ const getPrivateKeyForSigning = async (keypairId, blockchain) => {
 
 	// Legacy scatters held private keys for identities in hex format already.
 	if(typeof decryptedKey === 'string') return decryptedKey;
+	// Might not be a true buffer.
+	if(typeof decryptedKey === 'object' && decryptedKey.hasOwnProperty('data')) decryptedKey = decryptedKey.data;
 
 	return plugins[blockchain].bufferToHexPrivate(decryptedKey);
 }

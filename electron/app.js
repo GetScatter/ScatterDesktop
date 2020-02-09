@@ -15,7 +15,6 @@ const files = require('./services/files');
 const getHost = require('./services/getHost');
 
 
-
 const quit = () => {
 	if(global && global.appShared && global.appShared.savingData){
 		setTimeout(() => {
@@ -103,31 +102,47 @@ const createScatterInstance = async () => {
 
 	loadingWindow = createMainWindow(true, 400, 250);
 	loadingWindow.loadURL(mainUrl(false, 'loading'));
-
-
 	loadingWindow.once('ready-to-show', () => {
-
 		loadingWindow.show();
 		loadingWindow.focus();
 	});
 
-
-	console.log('host', getHost());
+	const repo = storage.getSimpleMode() ? 'Bridge' : 'ScatterEmbed';
 
 	Embedder.init(
 		require('../package').version,
-		process.env.LOCAL_TESTING ? process.env.LOCAL_TESTING : getHost(),
+		repo,
 		process.env.PROOF_KEYS.split(','),
 		files,
 		ecc.sha256,
 		dialog.showErrorBox,
 		prompt.accepted,
 		(hashed, signed) => ecc.recoverHash(signed, hashed),
-		hashstat => loadingWindow.webContents.send('hashstat', hashstat),
+		msg => loadingWindow.webContents.send('progress_event', msg),
 		process.env.LOCAL_TESTING,
+		!!storage.getGeneralSetting('testingMode'),
 	);
 
-	if(!process.env.LOCAL_TESTING && !await Embedder.check()) return process.exit(0);
+	// await Embedder.removeOldFiles();
+	if(!process.env.LOCAL_TESTING){
+		if(!await Embedder.check()){
+		// if(true){
+			const updateManually = await prompt.manualUpdate(`https://github.com/GetScatter/${repo}/releases`)
+			if(!updateManually) return process.exit(0);
+			const zipFiles = await files.getFileLocation(['zip']);
+			if(!zipFiles || !zipFiles.length) return process.exit(0);
+
+			const zipFileLocation = zipFiles[0];
+			const [repoTag, releaseTag, signature, ext] = zipFileLocation.split('/')[zipFileLocation.split('/').length-1].split('.');
+			const zipBuffer = await files.openFile(zipFileLocation, null);
+			const updated = await Embedder.loadManualZipFile(zipBuffer, signature, releaseTag.replace(/-/g, '.'));
+			if(!updated) {
+				dialog.showErrorBox('An error occurred', 'Looks like there was a problem with extracting this zip file. Contact support.');
+				return process.exit(0);
+			}
+		}
+	}
+	// if(!process.env.LOCAL_TESTING && !await Embedder.check()) return process.exit(0);
 
 	files.toggleAllowInternals(false);
 

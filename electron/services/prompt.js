@@ -23,14 +23,17 @@ ipcMain.on('prompt-response', (_, {id, response}) => {
 });
 
 class Prompt {
-	static accepted(title, text){
+	static manualUpdate(updateUrl){
+		return this.accepted(null, updateUrl, true);
+	}
+	static accepted(title, text, manualUpdate = false){
 
 		return new Promise(resolve => {
 			let responded = false;
 
 
 			const promptWindow = createMainWindow(true, 400, 250);
-			promptWindow.loadURL(mainUrl(false, 'prompt'));
+			promptWindow.loadURL(mainUrl(false, manualUpdate ? 'manual-update' : 'prompt'));
 			promptWindow.once('ready-to-show', () => {
 				promptWindow.show();
 				promptWindow.focus();

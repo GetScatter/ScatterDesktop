@@ -100,11 +100,9 @@
 	<script>
 		const {ipcRenderer} = window.require('electron');
 
-		ipcRenderer.on('hashstat', (_, {hash, verified, total}) => {
-			document.getElementById('status').innerHTML = `
-				<span>Verifying file ${verified} of ${total}</span>
-			`;
-		})
+		ipcRenderer.on('progress_event', (_, msg) => {
+			document.getElementById('status').innerHTML = `<span>${msg}</span>`;
+		});
 
 		document.addEventListener('keydown', e => {
 			if(e.which === 123) ipcRenderer.send('loaderconsole')

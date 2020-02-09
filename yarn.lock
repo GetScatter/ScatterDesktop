@@ -1808,7 +1808,9 @@ elliptic@^6.4.0, elliptic@^6.4.1:
 
 "embedder@git+https://git@github.com/GetScatter/Scatter-Embedder.git#master":
   version "1.0.0"
-  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#92860148e9b690538bb2d817f29b92ee79cee481"
+  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#e533874eccf3059274af9631ba9959b37499bc5f"
+  dependencies:
+    yauzl "^2.10.0"
 
 emoji-regex@^7.0.1:
   version "7.0.3"
@@ -6519,7 +6521,7 @@ yauzl@2.4.1:
   dependencies:
     fd-slicer "~1.0.1"
 
-yauzl@^2.4.2:
+yauzl@^2.10.0, yauzl@^2.4.2:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/yauzl/-/yauzl-2.10.0.tgz#c7eb17c93e112cb1086fa6d8e51fb0667b79a5f9"
   integrity sha1-x+sXyT4RLLEIb6bY5R+wZnt5pfk=

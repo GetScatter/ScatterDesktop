@@ -211,6 +211,7 @@
 		/***************************************/
 
 		const webview = document.createElement('webview');
+		webview.enableremotemodule = false;
 
 		const PRELOAD = `file://${path.join(remote.app.getAppPath(), 'preload.js')}`;
 		const INDEX = process.env.LOCAL_TESTING

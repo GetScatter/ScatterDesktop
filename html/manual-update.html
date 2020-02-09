@@ -23,8 +23,8 @@
 			text-align:left;
 		}
 
-		span {
-			font-size: 16px;
+		.info {
+			font-size: 13px;
 			padding:30px;
 			flex:1;
 			display:flex;
@@ -98,6 +98,16 @@
 			color: white;
 		}
 
+		#update_url {
+			cursor: pointer;
+			margin-top:10px;
+			display:block;
+			font-weight: bold;
+			position: relative;
+			z-index:5;
+			-webkit-app-region: no-drag;
+		}
+
 	</style>
 
 </head>
@@ -105,31 +115,41 @@
 
 	<section class="prompt">
 		<section class="container">
-			<figure id="info"></figure>
+			<figure id="info">
+				<h2>Manual Update</h2>
+				<figure class="info">
+					<span>
+						It looks like we couldn't automatically update your Scatter.
+						If you want you can try a manual update by downloading a zip file from <u onclick="window.openLink()" id="update_url"></u>
+					</span>
+				</figure>
+			</figure>
 			<section class="actions">
-				<button onclick="window.respond(true)">Yes</button>
-				<button onclick="window.respond(false)" class="cancel">No</button>
+				<button onclick="window.respond(true)">Select zip file</button>
+				<button onclick="window.respond(false)" class="cancel">Cancel</button>
 			</section>
 		</section>
 	</section>
 
 	<script>
-		const {ipcRenderer} = window.require('electron');
+		const {ipcRenderer, shell} = window.require('electron');
 
-		let windowId;
+		let windowId, repoLink;
 
 		ipcRenderer.on('prompt', (_, {title, text, id}) => {
+			repoLink = text;
 			windowId = id;
-			document.getElementById('info').innerHTML = `
-				<h2>${title}</h2>
-				<span>${text}</span>
-			`;
+			document.getElementById('update_url').innerHTML = repoLink;
 		});
 
 		window.respond = response => {
 			ipcRenderer.send('prompt-response', {id:windowId, response});
 			window.close();
 		};
+
+		window.openLink = () => {
+			shell.openExternal(repoLink)
+		}
 
 	</script>
 
