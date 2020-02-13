@@ -9,6 +9,7 @@
 		body {
 			padding:0;
 			margin:0;
+			font-family: 'Helvetica','Segoe UI','Roboto', sans-serif;
 		}
 
 		div, figure, section, nav, article, input, textarea, h1, h2 {
@@ -72,6 +73,12 @@
 			z-index:2;
 		}
 
+		.warning {
+			color:red;
+			font-weight: bold;
+			font-size: 11px;
+		}
+
 		button {
 			cursor: pointer;
 			display: inline-block;
@@ -121,6 +128,8 @@
 					<span>
 						It looks like we couldn't automatically update your Scatter.
 						If you want you can try a manual update by downloading a zip file from <u onclick="window.openLink()" id="update_url"></u>
+
+						<b class="warning">Do not import zip files from unknown publishers!</b>
 					</span>
 				</figure>
 			</figure>
