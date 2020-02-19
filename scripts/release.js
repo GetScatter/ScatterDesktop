@@ -11,7 +11,6 @@ if(!platform) return quit('Please run as `yarn release [win/linux/mac]`');
 console.log('Building for platform: ', platform);
 
 if(process.env.LOCAL_TESTING) return quit('LOCAL_TESTING is enabled');
-if(process.env.FORCE_STAGING) return quit('FORCE_STAGING is enabled');
 
 const run = (cmd, callback = () => {}) => {
 	console.log('running: ', cmd)

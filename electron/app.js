@@ -12,7 +12,6 @@ const ecc = require('eosjs-ecc');
 
 const Embedder = require('embedder');
 const files = require('./services/files');
-const getHost = require('./services/getHost');
 
 
 const quit = () => {
@@ -123,7 +122,6 @@ const createScatterInstance = async () => {
 		!!storage.getGeneralSetting('testingMode'),
 	);
 
-	// await Embedder.removeOldFiles();
 	if(!process.env.LOCAL_TESTING){
 		if(!await Embedder.check()){
 		// if(true){
@@ -142,7 +140,6 @@ const createScatterInstance = async () => {
 			}
 		}
 	}
-	// if(!process.env.LOCAL_TESTING && !await Embedder.check()) return process.exit(0);
 
 	files.toggleAllowInternals(false);
 
@@ -291,6 +288,7 @@ global.wallet = {
 
 		setWalletData:wallet.updateScatter,
 		getWalletData:wallet.getScatter,
+		getRawData:wallet.getRawData,
 		clearWalletData:storage.removeScatter,
 		getDefaultPath:files.getDefaultPath,
 

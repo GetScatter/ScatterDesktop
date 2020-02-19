@@ -38,6 +38,7 @@ const init = () => {
 
 const setScatter = (_s) => scatter = JSON.parse(JSON.stringify(_s));
 const getScatter = () => scatter ? JSON.parse(JSON.stringify(scatter)) : null;
+const getRawData = () => storage.getScatter();
 
 const exists = () => !!scatter;
 
@@ -307,6 +308,7 @@ const EXPORTS = {
 	updateScatter,
 	setScatter,
 	getScatter,
+	getRawData,
 	sign,
 	getPrivateKey,
 	reloading,
