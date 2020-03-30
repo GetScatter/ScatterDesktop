@@ -1,17 +1,19 @@
-version: 2.1
+version: 2
 orbs:
   node: circleci/node@1.1.6
 jobs:
   build_macos:
-    executor:
-      name: node/default
-    steps:
-    - checkout
-    - node/with-cache:
-        steps:
-        - run: npm install
-        - run: npm run release mac
+    macos:
+      xcode: 11.3.0
+    steps: # a series of commands to run
+    - checkout  # pull down code from your version control system.
+    - run: yarn && yarn release mac
+#    - store_artifacts: # store this build output. Read more: https://circleci.com/docs/2.0/artifacts/
+#        path: app.zip
+#        destination: app
+
 workflows:
+  version: 2
   build:
     jobs:
     - build_macos
