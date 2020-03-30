@@ -106,7 +106,7 @@ const createScatterInstance = async () => {
 		loadingWindow.focus();
 	});
 
-	const repo = 'NONE';// storage.getSimpleMode() ? 'Bridge' : 'ScatterEmbed';
+	const repo = storage.getSimpleMode() ? 'Bridge' : 'ScatterEmbed';
 
 	Embedder.init(
 		require('../package').version,
