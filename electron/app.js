@@ -106,7 +106,7 @@ const createScatterInstance = async () => {
 		loadingWindow.focus();
 	});
 
-	const repo = storage.getSimpleMode() ? 'Bridge' : 'ScatterEmbed';
+	const repo = 'NONE';// storage.getSimpleMode() ? 'Bridge' : 'ScatterEmbed';
 
 	Embedder.init(
 		require('../package').version,
@@ -118,25 +118,28 @@ const createScatterInstance = async () => {
 		prompt.accepted,
 		(hashed, signed) => ecc.recoverHash(signed, hashed),
 		msg => loadingWindow.webContents.send('progress_event', msg),
-		process.env.LOCAL_TESTING,
-		!!storage.getGeneralSetting('testingMode'),
+		process.env.LOCAL_TESTING
 	);
 
 	if(!process.env.LOCAL_TESTING){
 		if(!await Embedder.check()){
-		// if(true){
-			const updateManually = await prompt.manualUpdate(`https://github.com/GetScatter/${repo}/releases`)
-			if(!updateManually) return process.exit(0);
-			const zipFiles = await files.getFileLocation(['zip']);
-			if(!zipFiles || !zipFiles.length) return process.exit(0);
+			const updateManually = await prompt.manualUpdate(`https://github.com/GetScatter/${repo}/releases`);
+			if(updateManually){
+				const zipFiles = await files.getFileLocation(['zip']);
+				if(!zipFiles || !zipFiles.length) return process.exit(0);
 
-			const zipFileLocation = zipFiles[0];
-			const [repoTag, releaseTag, signature, ext] = zipFileLocation.split('/')[zipFileLocation.split('/').length-1].split('.');
-			const zipBuffer = await files.openFile(zipFileLocation, null);
-			const updated = await Embedder.loadManualZipFile(zipBuffer, signature, releaseTag.replace(/-/g, '.'));
-			if(!updated) {
-				dialog.showErrorBox('An error occurred', 'Looks like there was a problem with extracting this zip file. Contact support.');
-				return process.exit(0);
+				const zipFileLocation = zipFiles[0];
+				const [repoTag, releaseTag, signature, ext] = zipFileLocation.split('/')[zipFileLocation.split('/').length-1].split('.');
+				const zipBuffer = await files.openFile(zipFileLocation, null);
+				const updated = await Embedder.loadManualZipFile(zipBuffer, signature, releaseTag.replace(/-/g, '.'));
+				if(!updated) {
+					dialog.showErrorBox('An error occurred', 'Looks like there was a problem with extracting this zip file. Contact support.');
+					return process.exit(0);
+				}
+			} else {
+				if(!await Embedder.hasLocalVersion()){
+					return process.exit(0);
+				}
 			}
 		}
 	}

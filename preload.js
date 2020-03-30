@@ -1,15 +1,5 @@
 const { ipcRenderer, remote } = require('electron');
 const wallet = remote.getGlobal('wallet');
-const getHost = require('./electron/services/getHost');
-
-const loadStyles = (tries = 0) => {
-	if(tries >= 20) return console.error('Could not load styles!');
-	if(typeof window.loadStyles === 'function'){
-		window.loadStyles(getHost());
-	}
-	else setTimeout(() => loadStyles(tries++), 100);
-};
-loadStyles();
 
 if(!window.wallet) window.wallet = {};
 

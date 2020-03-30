@@ -21,6 +21,6 @@ const run = (cmd, callback = () => {}) => {
 	p.on('exit', function (code) { console.log('exited', code); callback(); });
 }
 
-run(`yarn install`, () => {
+// run(`yarn install`, () => {
 	run(`electron-builder --${platform} --publish=never`);
-})
+// })
