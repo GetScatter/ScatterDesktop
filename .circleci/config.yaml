@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build_macos:
+    macos:
+      xcode: "10.0.0"
+    steps:
+    - checkout
+    - run: security create-keychain -p $KEYCHAIN_PASSWORD build.keychain
+    - run: security default-keychain -s build.keychain
+    - run: security unlock-keychain -p $KEYCHAIN_PASSWORD build.keychain
+    - run: echo $KEYSTORE | base64 --decode - > keystore.p12
+    - run: security import keystore.p12 -k build.keychain -P $KEYCHAIN_PASSWORD -T /usr/bin/codesign
+    - run: yarn && yarn release --mac
+
+workflows:
+  version: 2
+  build:
+    jobs:
+    - build_macos
