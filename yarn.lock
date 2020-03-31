@@ -1836,7 +1836,7 @@ elliptic@^6.4.0, elliptic@^6.4.1:
 
 "embedder@git+https://git@github.com/GetScatter/Scatter-Embedder.git#master":
   version "1.0.0"
-  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#9bc09b9798980817563a71ee60b4743f8a4e454f"
+  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#cff08d2e4cbafa0c833ecec0a032e31eb2d7dd47"
   dependencies:
     yauzl "^2.10.0"
 
@@ -4774,6 +4774,8 @@ rxjs@^6.3.1, rxjs@^6.4.0, rxjs@^6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.2.tgz#2e35ce815cd46d84d02a209fb4e5921e051dbec7"
   integrity sha512-HUb7j3kvb7p7eCUHE3FqjoDsC1xfZQ4AHFWfTKSpZ+sAhhz5X1WX0ZuUqWbzB2QhSLp3DoLUG+hMdEDKqWo2Zg==
+  dependencies:
+    tslib "^1.9.0"
 
 rxjs@^6.5.3:
   version "6.5.3"
