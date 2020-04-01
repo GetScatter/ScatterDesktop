@@ -111,7 +111,8 @@
       "entitlementsInherit": "macos/entitlements.mac.plist",
       "icon": "static/icons/icon.icns",
       "hardenedRuntime": true,
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "target":"pkg"
     },
     "dmg": {
       "icon": "static/icons/icon.png",
