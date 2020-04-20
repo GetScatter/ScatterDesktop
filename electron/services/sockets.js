@@ -107,7 +107,6 @@ class LowLevelSocketService {
 			const server = this.ports[port] ? https.createServer(_certs, requestHandler) : http.createServer(requestHandler);
 			this.websockets.push(new WebSocket.Server({ server }));
 			server.listen(port);
-
 			return true;
 		}));
 

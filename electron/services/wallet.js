@@ -191,6 +191,14 @@ const getKeypairByID = id => {
 	return null;
 }
 
+const createSharedSecret = async (blockchain, scatterPublicKey, otherPublicKey) => {
+	if(typeof plugins[blockchain].createSharedSecret !== 'function') return null;
+
+	const keypair = getKeypair(scatterPublicKey, blockchain);
+	const privateKey = await getPrivateKeyForSigning(keypair.id, blockchain);
+	return plugins[blockchain].createSharedSecret(scatterPublicKey, otherPublicKey, privateKey);
+};
+
 const lock = () => {
 	seed = null;
 	scatter = storage.getScatter();
@@ -312,6 +320,7 @@ const EXPORTS = {
 	getRawData,
 	sign,
 	getPrivateKey,
+	createSharedSecret,
 	reloading,
 	isUnlocked,
 	unlock,

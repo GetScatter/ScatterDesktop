@@ -276,6 +276,7 @@ global.wallet = {
 	decrypt:wallet.decrypt,
 	getSalt:storage.getSalt,
 	setSalt:storage.setSalt,
+	createSharedSecret:wallet.createSharedSecret,
 
 
 
