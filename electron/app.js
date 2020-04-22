@@ -84,7 +84,7 @@ const createScatterInstance = async () => {
 	const createMainWindow = (show, width = 1024, height = 800) => new BrowserWindow({
 		width,
 		height,
-		frame: false,
+		frame: true,
 		radii: [5,5,5,5],
 		icon,
 		resizable: true,
