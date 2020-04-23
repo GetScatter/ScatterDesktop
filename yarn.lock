@@ -1813,7 +1813,7 @@ elliptic@6.5.2, elliptic@^6.0.0, elliptic@^6.4.0, elliptic@^6.4.1, elliptic@^6.5
 
 "embedder@git+https://git@github.com/GetScatter/Scatter-Embedder.git#master":
   version "1.0.0"
-  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#cff08d2e4cbafa0c833ecec0a032e31eb2d7dd47"
+  resolved "git+https://git@github.com/GetScatter/Scatter-Embedder.git#c3f3d87c02a7328a579e78a7e4044779d2305360"
   dependencies:
     yauzl "^2.10.0"
 
