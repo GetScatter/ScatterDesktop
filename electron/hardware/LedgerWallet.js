@@ -18,7 +18,9 @@ let transport, openedTransport;
 let setupPromise;
 class LedgerTransport {
 	static async setup(){
-		transport = Transport.listen({next:({type, device}) => this[type](device)});
+		if(!openedTransport){
+			transport = Transport.listen({next:({type, device}) => this[type](device)});
+		} else return true;
 		const p = new Promise(r => setupPromise = r);
 		setTimeout(() => {
 			if(setupPromise) {
