@@ -19,7 +19,8 @@ const plugins = {
 	trx:new (require('@walletpack/tron').default)(),
 	btc:new (require('@walletpack/bitcoin').default)(),
 	eth:new (require('@walletpack/ethereum').default)(),
-	fio:new (require('@walletpack/fio').default)()
+	fio:new (require('@walletpack/fio').default)(),
+	cyber:new (require('@walletpack/cyberway').default)()
 }
 
 plugins.trx.init();
@@ -308,6 +309,7 @@ const availableBlockchains = () => ({
 	ETH:'eth',
 	TRX:'trx',
 	BTC:'btc',
+	CYBER:'cyber',
 });
 
 const EXPORTS = {
