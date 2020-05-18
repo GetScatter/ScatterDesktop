@@ -24,6 +24,7 @@
     "@walletpack/ethereum": "^0.0.56",
     "@walletpack/fio": "^0.0.23",
     "@walletpack/tron": "^0.0.59",
+    "@walletpack/cyberway": "^0.0.4-alpha.14",
     "aes-oop": "^1.0.4",
     "asn1-ber": "^1.0.9",
     "bip32-path": "^0.4.2",

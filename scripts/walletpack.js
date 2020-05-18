@@ -7,6 +7,7 @@ const packages = [
 	'tron',
 	'bitcoin',
 	'ethereum',
+	'cyberway'
 ];
 
 const args = process.argv.slice(2);
